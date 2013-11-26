@@ -1,0 +1,93 @@
+/*
+ * Standard styling for the scroll gallery
+ *
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.xiv-scrollgallery {
+    top: 0px;
+    left: 0px;
+    width: 180px;
+    height: 700px;
+    position: absolute;
+    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+
+.xiv-scrollgallery-scrollarea {
+    position: relative;
+    width: 93%;
+    left: 14px;
+}
+
+
+.xiv-scrollgallery-zippyheader {
+
+    position: relative;
+    background-color: rgb(70,70,70);
+    left: 0px;
+    height: 1.5em;
+    color: rgb(0,0,0);
+    font-size: 12px;
+    font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
+    cursor: pointer;
+    
+}
+
+
+.xiv-scrollgallery-zippyheaderlabel {
+    position: absolute;
+    margin-top: .25em;
+    margin-left: 1em;
+    background-color: none;
+    color: rgb(0,0,0);
+}
+
+
+.xiv-scrollgallery-zippyexpandicon {
+    position: absolute;
+    right: .5em;
+    margin-top: .25em;
+    margin-left: -1em;
+    color: rgb(100,100,100);
+}
+
+
+.xiv-scrollgallery-zippycontent {
+    width: 166px;
+    top: 20px;
+    left: 12px;
+}
+
+
+
+.xiv-scrollgallery-slider-widget {
+    width: 7px;
+    background-color: rgb(0,0,0);
+    border: none;
+    height: 100%;
+}
+
+
+
+.xiv-scrollgallery-slider-thumb {
+    height: 60px;
+    width: 100%;
+    background-color: rgb(120,120,120);
+    border: none;
+    border-radius: 0px;
+    z-index: 100;
+}
+
+
+.xiv-scrollgallery-slider-track {
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0,0);
+    border: none;
+    z-index: 99;
+}

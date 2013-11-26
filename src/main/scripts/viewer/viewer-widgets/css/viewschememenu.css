@@ -1,0 +1,70 @@
+/*
+ * Standard styling for the viewscheme menu
+ *
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.xiv-viewschememenu, .xiv-viewschememenu-icon {
+    height: 19px; 
+    width: 19px; 
+    cursor: pointer;
+    
+    position: absolute;
+}
+
+
+.xiv-viewschememenu {
+    left: 3px;
+    top: 4px;
+    z-index: 10000;    
+}
+
+
+.xiv-viewschememenu-icon {
+    margin-left: 1px;
+    opacity: .5; 
+    z-index: 10000;
+}
+
+
+.xiv-viewschememenu-icon-hovered {
+    opacity: 1; 
+}
+
+
+.xiv-viewschememenu-menuholder {
+    position : absolute;
+    left: 0px;
+    top: 25px;	
+    background-color: rgba(255,100,22,1);    
+    z-index: 10000;
+}
+
+
+.xiv-viewschememenu-menu {
+  background-color: rgb(125,125,125);
+  border: solid 1px rgb(50,50,50);
+  z-index: 20000; 
+  cursor: pointer;
+  width: 130px;
+}
+
+
+.xiv-viewschememenu-menuitem {
+    overflow: visible;
+}
+
+
+.xiv-viewschememenu-menuitem-highlight {
+    color: white;
+}
+
+.xiv-viewschememenu-menuitem-icon {
+    position: absolute;
+    margin-top: -2px;
+    left: 5px;
+    width: 18px;
+    height: 18px;
+}
