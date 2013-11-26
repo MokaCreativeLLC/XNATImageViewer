@@ -130,30 +130,40 @@ utils.style.prototype.cssProperties = [
 
 
 /**
- * Swaps one CSS from an element with another. 
- * The swapped class name should have 'containsStr' in its
- * name, and the new class ('toClass') should be the full
- * class name.
+ * Remove all classes from an element that 
+ * contain 'containsStr' within it.
  *
- * @param {!Element, !string, !string}
+ * @param {!Element, !string} elt The element to remove the class, 
+ * containsStr The evaluation string -- if the class contains it, the class is removed.
  */
-utils.style.swapClass = function (elt, containsStr, toClass) {
-    var classes = goog.dom.classes.get(elt);
-    var classInd = -1;
+utils.style.removeClassesThatContain = function (elt, containsStr) {
 
+    var classes = goog.dom.classes.get(elt);
+    var removeClasses = [];
+
+    
+
+    //------------------
+    // Loop throught the classes, track
+    // all that contain 'containsStr'.
+    //------------------
     containsStr = containsStr.toLowerCase();
     for (var i=0, len = classes.length; i < len; i++){
-        if (classes[i].toLowerCase().indexOf(containsStr) > -1){
-            classInd = i;
-            break;
+        if (classes[i].toLowerCase().indexOf(containsStr) > -1) {
+            removeClasses.push(classes[i])
         }
     }
     
-    if (classInd > -1){
-        //console.log("Swapping!");
-        goog.dom.classes.swap(elt, classes[i], toClass); 
+
+
+    //------------------
+    // Remove all classes that met the criteria.
+    //------------------
+    for (var i=0, len = removeClasses.length; i < len; i++){
+	goog.dom.classes.remove(elt, removeClasses[i]); 
     }
 }
+
 
 
 

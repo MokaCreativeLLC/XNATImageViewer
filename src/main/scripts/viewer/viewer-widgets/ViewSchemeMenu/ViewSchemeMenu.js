@@ -559,7 +559,7 @@ ViewSchemeMenu.prototype.getSelectedViewScheme = function(viewScheme) {
  * @param {Array.<number>, Array.<number>, function=}
  */
 ViewSchemeMenu.prototype.animateMenu  = function (startPos, endPos, opt_callback) {
-    utils.dom.debug("Animate!");
+    //utils.dom.debug("Animate!");
     var that = this;
     var animQueue = new goog.fx.AnimationParallelQueue();
     var easing = goog.fx.easing.easeOut;

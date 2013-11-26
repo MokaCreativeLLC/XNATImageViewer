@@ -270,7 +270,7 @@ Displayer.prototype.makeSlicerTab = function(data) {
     // Loop through the keys array to create elements.
     //------------------
     goog.array.forEach(keys, function(key){
-	utils.dom.debug("KEY", key)
+	//utils.dom.debug("KEY", key)
 	currLabel = key['label'];
 	currValue = key['value'];
 	currTop = prevBottom + 6;

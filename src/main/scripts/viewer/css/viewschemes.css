@@ -6,11 +6,9 @@
 
 
 
-/*-----------
-*
+/**********************************
 * Sagittal, Coronal and Transverse (One plane visible)
-*
--------------/
+*********************************/
 
 /* Hidden planes */
 .xiv-viewscheme-sagittal-y, .xiv-viewscheme-sagittal-z, .xiv-viewscheme-sagittal-v,  .xiv-viewscheme-coronal-x, .xiv-viewscheme-coronal-z, .xiv-viewscheme-coronal-v, .xiv-viewscheme-transverse-x, .xiv-viewscheme-transverse-y, .xiv-viewscheme-transverse-v, .xiv-viewscheme-threed-x, .xiv-viewscheme-threed-y, .xiv-viewscheme-threed-z{

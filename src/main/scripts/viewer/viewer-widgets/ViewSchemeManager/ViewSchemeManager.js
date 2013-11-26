@@ -469,7 +469,7 @@ ViewSchemeManager.prototype.implementViewScheme = function() {
     var INTERACTOR_PREFIX = ViewScheme.VIEWSCHEME_INTERACTOR_CLASS_PREFIX + '-';
 
 
-
+    
     //------------------
     // Loop through planes to change their stylesheets.
     // The same thing applies for their interactors.
@@ -479,50 +479,52 @@ ViewSchemeManager.prototype.implementViewScheme = function() {
 
 	//
 	// Clear any inline attributes with the ViewPlanes.  
-	// (Remove all 'VIEW_SCHEME_PREFIX' classes).
 	//
 	viewPlaneElement.removeAttribute("style");
-	utils.style.swapClass(viewPlaneElement, VIEW_SCHEME_PREFIX,  '');
+
+	//
+	// Remove all 'VIEW_SCHEME_PREFIX' classes.
+	//	
+	utils.style.removeClassesThatContain(viewPlaneElement, VIEW_SCHEME_PREFIX);
 
 
 	//
 	// Clear any inline attributes with the interactors.  
-	// (Remove all 'INTERACTOR_PREFIX' classes).
+	// Remove all 'INTERACTOR_PREFIX' classes.
 	//
 	if (interactor){ 
 	    interactor.removeAttribute("style");
-	    utils.style.swapClass(interactor, INTERACTOR_PREFIX, '');
+	    utils.style.removeClassesThatContain(interactor, INTERACTOR_PREFIX);
 	}
 
 
 	//
-	// Add the default multi-view class first if a single ViewPlane 
-	// view is selected. This allows planes to animate to a logical place.
+	// If a single view plane is selected to be shown,
+	// we want to add the default multi-view to the unselected planes
+	// so that there's no awkard animating when the selected plane
+	// is deselected back to the multi-view.
 	//
 	if ((that.visiblePlanes_.length === 1) && (that.visiblePlanes_[0] !== viewPlaneElement)) {
+
 	    goog.dom.classes.add(viewPlaneElement, that._defaultMultiView.cssSheets[plane]);
 
-
-	    //
-	    // Apply the same logic as parent step to the interactors.
-	    //
 	    if (interactor){
-		utils.style.swapClass(interactor, INTERACTOR_PREFIX, '');
 		goog.dom.classes.add(interactor, that._defaultMultiView.cssSheetsInteractor[plane]);
 	    }
 	}
 
-
+	
 	//
-	// Apply the to-be class the ViewPlane element.
+	// Apply the to-be class to the ViewPlane element.
 	//
 	goog.dom.classes.add(viewPlaneElement, that.currViewScheme_.cssSheets[plane]);
 
-
 	//
-	// Apply the to-be class for the interactor.
+	// Apply the to-be class to the interactor.
 	//
-	if (interactor) { goog.dom.classes.add(interactor, that.currViewScheme_.cssSheetsInteractor[plane]) }
+	if (interactor) { 
+	    goog.dom.classes.add(interactor, that.currViewScheme_.cssSheetsInteractor[plane]); 
+	}
 
 
 	//
