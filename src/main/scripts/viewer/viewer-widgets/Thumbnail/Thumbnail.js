@@ -207,7 +207,9 @@ Thumbnail.prototype._activatedCallbacks = [];
  * Sets the thumbnail state to 'active'.  Applies the appropriate 
  * CSS for style changes.
  *
- * @param {boolean, boolean=}
+ * @param {boolean, boolean=} active Active state, opt_highlight_bg 
+ * whether or not to highlight the background (false if it pertains
+ * to thumbnails that have been dropped in a viewer).
  */
 Thumbnail.prototype.setActive = function(active, opt_highlight_bg) {
 

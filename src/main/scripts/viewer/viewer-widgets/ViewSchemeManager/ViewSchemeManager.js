@@ -492,10 +492,9 @@ ViewSchemeManager.prototype.implementViewScheme = function() {
 	// Clear any inline attributes with the interactors.  
 	// Remove all 'INTERACTOR_PREFIX' classes.
 	//
-	if (interactor){ 
-	    interactor.removeAttribute("style");
-	    utils.style.removeClassesThatContain(interactor, INTERACTOR_PREFIX);
-	}
+	interactor && interactor.removeAttribute("style");
+	interactor && utils.style.removeClassesThatContain(interactor, INTERACTOR_PREFIX);
+	
 
 
 	//
@@ -508,9 +507,8 @@ ViewSchemeManager.prototype.implementViewScheme = function() {
 
 	    goog.dom.classes.add(viewPlaneElement, that._defaultMultiView.cssSheets[plane]);
 
-	    if (interactor){
-		goog.dom.classes.add(interactor, that._defaultMultiView.cssSheetsInteractor[plane]);
-	    }
+	    interactor && goog.dom.classes.add(interactor, that._defaultMultiView.cssSheetsInteractor[plane]);
+	    
 	}
 
 	
@@ -522,10 +520,7 @@ ViewSchemeManager.prototype.implementViewScheme = function() {
 	//
 	// Apply the to-be class to the interactor.
 	//
-	if (interactor) { 
-	    goog.dom.classes.add(interactor, that.currViewScheme_.cssSheetsInteractor[plane]); 
-	}
-
+	interactor && goog.dom.classes.add(interactor, that.currViewScheme_.cssSheetsInteractor[plane]); 
 
 	//
 	// Run callbacks.

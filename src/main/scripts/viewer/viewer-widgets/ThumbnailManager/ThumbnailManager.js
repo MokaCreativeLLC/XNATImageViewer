@@ -65,6 +65,23 @@ ThumbnailManager.prototype.thumbs_ = [];
 
 
 /**
+ * Loops through all the thumbnails, applying
+ * a callback to them as necessary.
+ *
+ * @param {opt_callback?} The callback to apply
+ * to each thumbnail.
+ * @public
+ */
+ThumbnailManager.prototype.loop = function(opt_callback){
+    goog.array.forEach(this.thumbs_, function(Thumbnail){
+	opt_callback && opt_callback(Thumbnail);
+    })
+}
+
+
+
+
+/**
  * Defines the goog.fx.DragDropGroup listeners, using the
  * methods outlined in goog.fx.DragDrop tutorials. Such as here:
  * https://code.google.com/p/closure-library/wiki/DragDrop

@@ -420,6 +420,33 @@ Modal.prototype.addThumbnailsToThumbnailGallery = function (zippyKey, viewablePr
 
 
 /**
+ * Highlights all thumgnails that are being viewed 
+ * a ViewBox.
+ *
+ * @public
+ */
+Modal.prototype.highlightInUseThumbnails = function () {
+    //------------------
+    // Unhighlight all thumbnails.
+    //------------------
+    this.ThumbnailManager.loop(function(Thumbnail){  
+	Thumbnail.setActive(false, false);
+    })
+
+
+    //------------------
+    // Highight only in use thumbnails by 
+    // looping through the ViewBoxes.
+    //------------------
+    this.ViewBoxManager.loop(function(ViewBox){  
+	ViewBox.currThumbnail_ && ViewBox.currThumbnail_.setActive(true, false);
+    })
+}
+
+
+
+
+/**
  * Makes the buttons for Row / Column insertion and removal. 
  *
  * @param {!Element, !string, !Object.<string,number|string>}
@@ -564,11 +591,19 @@ Modal.prototype.addRowMenu_ = function () {
  * @param {function=}
  */
 Modal.prototype.animateModal  = function (opt_callback) {
+
     var that = this;
     var modalDims = this.calculateModalDims_();
     var animQueue = new goog.fx.AnimationParallelQueue();
 
     
+
+    //------------------
+    // Highlight only in use thumbnails
+    //------------------    
+    this.highlightInUseThumbnails();
+
+
 
     //------------------
     // Define the animation methods, leveraging
@@ -941,5 +976,12 @@ Modal.prototype.updateStyle = function (opt_args) {
 	    utils.style.setStyle(menu, modalDims[menuNames[i]]);	    
 	})	
     }
+
+
+
+    //------------------
+    // Highlight in use thumbnails
+    //------------------    
+    this.highlightInUseThumbnails();
 	
 }

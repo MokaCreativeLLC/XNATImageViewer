@@ -410,10 +410,13 @@ ViewBox.prototype.loadThumbnail = function (thumb, loadFramework) {
     // Sync style.
     //------------------
     this.updateStyle();
-    
-    this.currThumbnail_.setActive(true, false);
+
     
 
+    //------------------
+    // Highlight in use thumbnails
+    //------------------    
+    XV.highlightInUseThumbnails();
 }
 
 
@@ -846,5 +849,5 @@ ViewBox.prototype.updateStyle = function (opt_args) {
  	'width': widgetDims['width'],
  	'height': xtkHolderDims['height']
     });
-    	
+        
 }
