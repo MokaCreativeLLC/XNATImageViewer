@@ -49,9 +49,9 @@ ContentDivider = function (opt_args) {
     //------------------
     // Icon setup.
     //------------------
-    this.icon_ = utils.dom.makeElement("div", this._element,  'ContentDividerIcon');	
+    this.icon_ = utils.dom.makeElement("img", this._element,  'ContentDividerIcon');	
     goog.dom.classes.set(this.icon_, ContentDivider.ICON_CLASS);	
-    this.icon_.innerHTML = "..."	 
+    this.icon_.src = XnatViewerGlobals.ICON_URL + 'Icons/Toggle-ContentDivider.png'	 
 	
 
 

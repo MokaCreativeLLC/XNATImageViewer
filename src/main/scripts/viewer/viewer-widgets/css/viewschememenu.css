@@ -7,8 +7,8 @@
 
 
 .xiv-viewschememenu, .xiv-viewschememenu-icon {
-    height: 19px; 
-    width: 19px; 
+    height: 16px; 
+    width: 16px; 
     cursor: pointer;
     
     position: absolute;
@@ -54,6 +54,9 @@
 
 .xiv-viewschememenu-menuitem {
     overflow: visible;
+    margin-left: 13px;
+    margin-top: 7px;
+    height: 20px;
 }
 
 
@@ -63,8 +66,8 @@
 
 .xiv-viewschememenu-menuitem-icon {
     position: absolute;
-    margin-top: -2px;
+    margin-top: -8px;
     left: 5px;
-    width: 18px;
-    height: 18px;
+    width: 30px;
+    height: 30px;
 }
