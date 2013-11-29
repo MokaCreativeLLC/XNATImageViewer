@@ -110,7 +110,8 @@ goog.inherits(ViewBox, goog.fx.DragDrop);
 ViewBox.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-viewbox');
 ViewBox.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(ViewBox.CSS_CLASS_PREFIX, '');
 ViewBox.HIDDEN_CLASS = /**@type {string} @const*/ goog.getCssName(ViewBox.CSS_CLASS_PREFIX, 'hidden');
-
+ViewBox.DRAG_AND_DROP_HANDLE_CLASS = /**@type {string} @const*/ goog.getCssName(ViewBox.CSS_CLASS_PREFIX, 'draganddrophandle');
+ViewBox.DRAGGING_CLASS = /**@type {string} @const*/ goog.getCssName(ViewBox.CSS_CLASS_PREFIX, 'dragging');
 
 
 

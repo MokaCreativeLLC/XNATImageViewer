@@ -146,7 +146,7 @@ Modal = function (opt_args) {
     //	ViewBox changed callback
     //------------------
     that.ViewBoxManager.addViewBoxesChangedCallback(function() {
-	that.ThumbnailManager.addDragDropTargets(that.ViewBoxManager.getViewBoxWidgets());
+	that.ThumbnailManager.addDragDropTargets(that.ViewBoxManager.getViewBoxElements());
     })
 
 
@@ -952,6 +952,8 @@ Modal.prototype.updateStyle = function (opt_args) {
 		'left': modalDims['ViewBox']['lefts'][i][j],
 		'top': modalDims['ViewBox']['tops'][i][j]
 	    });	
+
+	    that.ViewBoxManager.updateDragDropHandles();
 	}); 		
     }	
 

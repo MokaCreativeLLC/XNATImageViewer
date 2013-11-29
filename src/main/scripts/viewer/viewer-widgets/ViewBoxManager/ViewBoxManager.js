@@ -5,10 +5,13 @@
 /**
  * Google closure includes
  */
+goog.require('goog.fx.DragDrop');
+goog.require('goog.fx.AnimationParallelQueue');
 
 /**
  * utils includes
  */
+goog.require('utils.style');
 
 /**
  * viewer-widget includes
@@ -54,6 +57,23 @@ ViewBoxManager.prototype.Modal_  = null;
  */
 ViewBoxManager.prototype.viewersChangedCallbacks_ = [];
 
+
+
+
+/**
+ * @type {?goog.fx.DragDropGroup}
+ * @private
+ */
+ViewBoxManager.prototype.dragDropGroup = null;
+
+
+
+
+/**
+ * @type {Object.<string, Element>}
+ * @private
+ */
+ViewBoxManager.prototype.dragDropHandles = {};
 
 
 
@@ -208,6 +228,13 @@ ViewBoxManager.prototype.insertColumn = function(opt_animate) {
     // Run the appropriate updates.
     //------------------
     this.updateModal(newColumn, opt_animate);
+
+
+
+    //------------------
+    // Reset DragDropGroup
+    //------------------
+    this.resetDragDropGroup();
 }
 
 
@@ -245,6 +272,13 @@ ViewBoxManager.prototype.removeColumn = function(opt_animate) {
     // Run the appropriate updates.
     //------------------
     this.updateModal(null, opt_animate);
+
+
+
+    //------------------
+    // Reset DragDropGroup
+    //------------------
+    this.resetDragDropGroup();
 }
 
 
@@ -284,6 +318,13 @@ ViewBoxManager.prototype.insertRow = function(opt_animate) {
     // Run the appropriate updates.
     //------------------
     this.updateModal(newSet, opt_animate);
+
+
+
+    //------------------
+    // Reset DragDropGroup
+    //------------------
+    this.resetDragDropGroup();
 }
 
 
@@ -322,6 +363,13 @@ ViewBoxManager.prototype.removeRow = function(opt_animate) {
     // Run the appropriate updates.
     //------------------
     this.updateModal(null, opt_animate);
+
+
+
+    //------------------
+    // Reset DragDropGroup
+    //------------------
+    this.resetDragDropGroup();
 }
 
 
@@ -403,7 +451,7 @@ ViewBoxManager.prototype.getViewBoxByElement = function(element) {
  * @param {!number, !number}
  * @return {Element}
  */
-ViewBoxManager.prototype.getViewBoxWidget = function(row, col) {
+ViewBoxManager.prototype.getViewBoxElement = function(row, col) {
     return this.ViewBoxes_[row][col]._element
 }
 
@@ -447,7 +495,7 @@ ViewBoxManager.prototype.getViewBoxes = function() {
  *
  * @return {Array.<Element>}
  */
-ViewBoxManager.prototype.getViewBoxWidgets = function() {
+ViewBoxManager.prototype.getViewBoxElements = function() {
     var ws = this.loop (function (ViewBox) { 
 	return ViewBox._element;	
     })
@@ -468,11 +516,22 @@ ViewBoxManager.prototype.makeViewBox = function() {
     //------------------
     // Create ViewBox
     //------------------
-    var v = new ViewBox({
+    var viewBox = new ViewBox({
 	'parent': this.Modal_._modal
     });
-    return v;
-    
+
+
+
+    //------------------
+    // DragAndDrop Handle.
+    //------------------    	
+    var modalWindow = goog.dom.getElementsByClass(Modal.MODAL_CLASS)[0];
+    var dragDropHandle = utils.dom.makeElement("img", modalWindow, "DragAndDropHandle");
+    dragDropHandle.src = XnatViewerGlobals.ICON_URL + "Icons/Toggle-DragAndDrop.png";
+    dragDropHandle.ViewBoxId = viewBox._element.id; 
+    goog.dom.classes.set(dragDropHandle, ViewBox.DRAG_AND_DROP_HANDLE_CLASS);
+    this.dragDropHandles[viewBox._element.id] = dragDropHandle;
+    return viewBox;    
 }
 
 
@@ -490,7 +549,7 @@ ViewBoxManager.prototype.swap = function(v1, v2) {
     // Loop through all view boxes to determine
     // the locations of the two ViewBoxes to swap.
     //------------------
-    var arrLoc = loop ( function (v, i, j) { 
+    var arrLoc = this.loop ( function (v, i, j) { 
 	var byObj = (v === v1) || (v === v2);
 	var byElement = (v._element === v1) || (v._element === v2);
 	var byId = (v._element.id === v1) || (v._element.id === v2);
@@ -502,7 +561,6 @@ ViewBoxManager.prototype.swap = function(v1, v2) {
 	    }				
 	}
     })
-    
 
 
     //------------------
@@ -616,3 +674,272 @@ ViewBoxManager.prototype.getFirstEmpty = function() {
 }
 
 
+
+
+/**
+ * Animates a position swap between two view boxes.
+ *
+ * @param {ViewBox, ViewBox, Object.<string, string>, ?boolean}
+ */
+ViewBoxManager.prototype.animateSwap = function(ViewBoxElementA, ViewBoxElementB, ViewBoxPositions, opt_animated) {
+
+    var that = this;
+    var animLen = (opt_animated === false) ? 0 : XnatViewerGlobals.ANIM_MED;
+    var animQueue = new goog.fx.AnimationParallelQueue();
+    var ViewBoxADims = ViewBoxPositions[ViewBoxElementA.id]['relative'];
+    var ViewBoxBDims = ViewBoxPositions[ViewBoxElementB.id]['relative'];
+
+
+
+    //------------------
+    // Define the animation method.
+    //------------------
+    function slide(el, a, b, duration) {
+	return new goog.fx.dom.Slide(el, [el.offsetLeft, el.offsetTop], [a, b], duration, goog.fx.easing.easeOut);
+    }
+
+
+
+    //------------------
+    // Add animations to queue.
+    //------------------
+    animQueue.add(slide(ViewBoxElementA, ViewBoxBDims['left'], ViewBoxBDims['top'], XnatViewerGlobals.ANIM_MED));
+    animQueue.add(slide(ViewBoxElementB, ViewBoxADims['left'], ViewBoxADims['top'], XnatViewerGlobals.ANIM_MED));
+
+
+
+    //------------------
+    // When animation finishes do an array swap
+    // within the ViewBox tracking property.
+    //------------------
+    goog.events.listen(animQueue, 'end', function() {
+	that.updateDragDropHandles();
+    })
+
+
+
+    //------------------
+    // Play animation
+    //------------------
+    animQueue.play();
+
+}
+
+
+
+
+/**
+ * Initializes and/or resets the DragDrop swapping of ViewBoxes.
+ * This needs to be called every time a ViewBox is added or 
+ * removed from the MODAL.
+ */
+ViewBoxManager.prototype.resetDragDropGroup = function() {
+    
+    var that = this;
+    var ViewBoxPositions = /**@type {<Object.<string, Object>}*/{};
+
+    //------------------
+    // Clear the dragDrop groups and delete.
+    //------------------
+    if (this.dragDropGroup) {
+	this.dragDropGroup.removeItems();
+	this.dragDropTargets.removeItems();
+	delete this.dragDropGroup;
+	delete this.dragDropTargets;
+    }
+
+
+
+    //------------------
+    // Create new drag-drop groups:
+    // for the draggers (the handle) and 
+    // the targets (the ViewBox._elements).
+    //------------------
+    this.dragDropGroup = new goog.fx.DragDropGroup();
+    this.dragDropTargets = new goog.fx.DragDropGroup();
+
+
+
+    //------------------
+    // Add the items to the dragDropGroups.
+    //------------------
+    this.loop(function(ViewBox) {
+	that.dragDropGroup.addItem(that.dragDropHandles[ViewBox._element.id]);
+	that.dragDropTargets.addItem(ViewBox._element);
+    })
+
+
+
+    //------------------
+    // Set the target of the 
+    // dragDropGroup (the handles) 
+    // to the targets (the ViewBox elements).
+    //------------------   
+    this.dragDropGroup.addTarget(this.dragDropTargets);
+
+
+
+    //------------------
+    // Init both drag drop groups.
+    //------------------   
+    this.dragDropGroup.init();
+    this.dragDropTargets.init();
+
+
+
+    //------------------
+    // Function to create drag clone.
+    //------------------
+    var makeDragClone = function(ViewBoxElement, opt_parent) {
+	var dragElement = ViewBoxElement.cloneNode(false);
+	goog.dom.classes.set(dragElement, ViewBox.DRAGGING_CLASS);
+	opt_parent && opt_parent.appendChild(dragElement);
+	return dragElement;
+    };
+
+
+
+    //------------------
+    // google.fx.dragDropGroup inherited function
+    // to create a dragElement (a childless clone 
+    // of the ViewBox._element).
+    //------------------
+    this.dragDropGroup.createDragElement = function(sourceElt) {
+	var dragElement = makeDragClone(goog.dom.getElement(sourceElt.ViewBoxId));
+	return dragElement;
+    };
+
+
+
+    //------------------
+    // Define DRAG START function
+    //
+    // We record the ViewBox positions.
+    //------------------
+    var dragStart = function(event) {
+	that.loop(function(ViewBox){
+	    ViewBoxPositions[ViewBox._element.id] = {
+		'absolute': utils.style.absolutePosition(ViewBox._element),
+		'relative': utils.style.dims(ViewBox._element)
+	    }
+	    that.dragDropHandles[ViewBox._element.id].style.visibility = 'hidden';
+	})
+    }
+
+
+
+    //------------------
+    // Define DRAG OVER function.
+    //------------------
+    var dragOver = function(event) {
+
+	if (event.dropTargetItem.element.id !== event.dragSourceItem.currentDragElement_.ViewBoxId) {
+	    var ViewBoxElementA = goog.dom.getElement(event.dragSourceItem.currentDragElement_.ViewBoxId);
+	    var ViewBoxElementB = goog.dom.getElement(event.dropTargetItem.element.id);
+
+	    that.swap(ViewBoxElementA, ViewBoxElementB);
+	    
+	    that.animateSwap(ViewBoxElementA, ViewBoxElementB, ViewBoxPositions);
+
+	    //
+	    // We have to update ViewBoxPositions as it
+	    // does not update after the swap.
+	    //
+	    var valA = ViewBoxPositions[ViewBoxElementA.id];
+	    var valB = ViewBoxPositions[ViewBoxElementB.id];
+	    ViewBoxPositions[ViewBoxElementA.id] = valB;
+	    ViewBoxPositions[ViewBoxElementB.id] = valA;
+	    
+	}
+    }
+
+
+
+
+    //------------------
+    // Define DRAG END function.
+    //
+    // NOTE: goog.fx.dragDropGroup will delete the original dragger
+    // so we have to clone it to reanimate it back 
+    // into place.
+    //------------------
+    var dragEnd = function(event) {
+
+	var originalViewBox = goog.dom.getElement(event.dragSourceItem.currentDragElement_.ViewBoxId);
+	var originalViewBoxDims = utils.style.absolutePosition(originalViewBox);
+	var dragger = event.dragSourceItem.parent_.dragEl_;
+	var draggerViewBoxDims = utils.style.absolutePosition(dragger);
+	var animQueue = new goog.fx.AnimationParallelQueue();	
+
+	//
+	// We have to clone the dragger as goog.fx.dragDropGroup
+	// will delete the original dragger.
+	//
+	var draggerClone = makeDragClone(dragger, document.body);
+	draggerClone.style.left =  draggerViewBoxDims['left'];
+	draggerClone.style.top = draggerViewBoxDims['top'];
+	draggerClone.style.zIndex = 10000;
+
+	//
+	// Define the slide animation.
+	//
+	function slide(el, a, b, duration) {
+	    return new goog.fx.dom.Slide(el, [el.offsetLeft, el.offsetTop], [a, b], 
+					 duration, goog.fx.easing.easeOut);
+	}
+
+	//
+	// Add the slide animation to the 
+	// animQueue.
+	//
+	animQueue.add(slide(draggerClone, originalViewBoxDims['left'], 
+			    originalViewBoxDims['top'], XnatViewerGlobals.ANIM_FAST));
+
+	//
+	// When animation finishes, delete
+	// the draggerClone.
+	//
+	goog.events.listen(animQueue, 'end', function() {
+	    document.body.removeChild(draggerClone); 
+	    delete draggerClone;
+	})
+	
+	//
+	// Play animation
+	//
+	animQueue.play();
+
+	//
+	// Show dragDropHandles
+	//
+	that.loop(function(ViewBox){
+	    that.dragDropHandles[ViewBox._element.id].style.visibility = 'visible';	
+	})
+    }
+
+
+
+    //------------------
+    // Listen for drag events.
+    //------------------
+    goog.events.listen(this.dragDropGroup, 'dragstart', dragStart);
+    goog.events.listen(this.dragDropGroup, 'dragover', dragOver);
+    goog.events.listen(this.dragDropGroup, 'dragend', dragEnd);
+}
+
+
+
+/**
+ * Updates the position of the dragDropHandles.
+ */
+ViewBoxManager.prototype.updateDragDropHandles = function() {
+
+    var that = this;
+
+    this.loop(function(ViewBox){
+	var ViewBoxDims = utils.style.dims(ViewBox._element);
+	var dragDropHandle = that.dragDropHandles[ViewBox._element.id];
+	dragDropHandle.style.left = ViewBoxDims['left'];
+	dragDropHandle.style.top = ViewBoxDims['top'];
+    })
+}

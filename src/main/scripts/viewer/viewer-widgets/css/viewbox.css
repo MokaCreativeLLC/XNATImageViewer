@@ -18,3 +18,24 @@
 .xiv-viewbox-hidden {
     visibility: hidden;
 }
+
+
+.xiv-viewbox-draganddrophandle {
+    position: absolute; 
+    cursor: pointer;
+    width: 6px;
+    height: 13px;
+    opacity: .4;
+    z-index: 1000;
+    margin-top: 5px;
+    margin-left: -10px;
+}
+
+
+.xiv-viewbox-dragging {
+    z-Index: 100000;
+    opacity: .55;
+    border: solid rgba(255,255,255,1) 1px;
+    background-color: rgba(0,0,0, .5);
+    overflow: hidden;
+}
