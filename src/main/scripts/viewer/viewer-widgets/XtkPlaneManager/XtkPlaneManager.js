@@ -350,7 +350,7 @@ XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, callb
  */
 XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs, opt_onloadPlane) {
 
-    utils.dom.debug("loadInRenderers", renderables);
+    //utils.dom.debug("loadInRenderers", renderables);
     var that = this;
     var renderCount = 0; 
     var xtkPlanes = [];
