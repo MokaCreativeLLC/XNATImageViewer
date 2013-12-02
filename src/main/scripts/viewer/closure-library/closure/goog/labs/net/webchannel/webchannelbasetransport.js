@@ -40,7 +40,9 @@ goog.require('goog.string.path');
  * implementation.
  *
  * @constructor
+ * @struct
  * @implements {goog.net.WebChannelTransport}
+ * @final
  */
 goog.labs.net.webChannel.WebChannelBaseTransport = function() {};
 
@@ -70,6 +72,7 @@ WebChannelBaseTransport.prototype.createWebChannel = function(
  * @constructor
  * @implements {goog.net.WebChannel}
  * @extends {goog.events.EventTarget}
+ * @final
  */
 WebChannelBaseTransport.Channel = function(url, opt_options) {
   goog.base(this);
@@ -77,35 +80,44 @@ WebChannelBaseTransport.Channel = function(url, opt_options) {
   /**
    * The underlying channel object.
    *
-   * @type {!WebChannelBase}
-   * @private
+   * @private {!WebChannelBase}
    */
-  this.channel_ = new WebChannelBase();
+  this.channel_ = new WebChannelBase(opt_options);
 
   /**
    * The URL of the target server end-point.
    *
-   * @type {string}
-   * @private
+   * @private {string}
    */
   this.url_ = url;
 
   /**
-   * The channel options.
+   * The test URL of the target server end-point. This value defaults to
+   * this.url_ + '/test'.
    *
-   * @type {?goog.net.WebChannel.Options}
-   * @private
+   * @private {string}
    */
-  this.options_ = opt_options || null;
+  this.testUrl_ = (opt_options && opt_options.testUrl) ? opt_options.testUrl :
+      goog.string.path.join(this.url_, 'test');
 
   /**
    * The logger for this class.
-   * @type {goog.log.Logger}
-   * @private
+   * @private {goog.log.Logger}
    */
   this.logger_ = goog.log.getLogger(
       'goog.labs.net.webChannel.WebChannelBaseTransport');
 
+
+  /**
+   * @private {Object} messageUrlParams Extra URL parameters
+   * to be added to each HTTP request.
+   */
+  this.messageUrlParams = (opt_options && opt_options.messageUrlParams) || null;
+
+  var messageHeaders = (opt_options && opt_options.messageHeaders) || null;
+  if (messageHeaders) {
+    this.channel_.setExtraHeaders(messageHeaders);
+  }
 };
 goog.inherits(WebChannelBaseTransport.Channel, goog.events.EventTarget);
 
@@ -122,13 +134,11 @@ WebChannelBaseTransport.Channel.prototype.channelHandler_ = null;
 /**
  * Test path is always set to "/url/test".
  *
- * TODO(user): The test path may be made configurable via the options.
- *
  * @override
  */
 WebChannelBaseTransport.Channel.prototype.open = function() {
-  var testUrl = goog.string.path.join(this.url_, 'test');
-  this.channel_.connect(testUrl, this.url_);
+  this.channel_.connect(this.testUrl_, this.url_,
+                        (this.messageUrlParams || undefined));
 
   this.channelHandler_ = new WebChannelBaseTransport.Channel.Handler_(this);
   this.channel_.setHandler(this.channelHandler_);
@@ -175,6 +185,7 @@ WebChannelBaseTransport.Channel.prototype.disposeInternal = function() {
  * @param {!Array} array The data array from the underlying channel.
  * @constructor
  * @extends {goog.net.WebChannel.MessageEvent}
+ * @final
  */
 WebChannelBaseTransport.Channel.MessageEvent = function(array) {
   goog.base(this);
@@ -192,6 +203,7 @@ goog.inherits(WebChannelBaseTransport.Channel.MessageEvent,
  * @param {WebChannelBase.Error} error The error code.
  * @constructor
  * @extends {goog.net.WebChannel.ErrorEvent}
+ * @final
  */
 WebChannelBaseTransport.Channel.ErrorEvent = function(error) {
   goog.base(this);
@@ -207,7 +219,7 @@ goog.inherits(WebChannelBaseTransport.Channel.ErrorEvent,
 
 
 /**
- * Implementation of the {@link WebChannelBase.Handler} interface.
+ * Implementation of {@link WebChannelBase.Handler} interface.
  *
  * @param {!WebChannelBaseTransport.Channel} channel The enclosing WebChannel.
  *
@@ -270,5 +282,42 @@ WebChannelBaseTransport.Channel.Handler_.prototype.channelClosed = function(
   goog.log.info(this.channel_.logger_,
       'WebChannel closed on ' + this.channel_.url_);
   this.channel_.dispatchEvent(goog.net.WebChannel.EventType.CLOSE);
+};
+
+
+/**
+ * @override
+ */
+WebChannelBaseTransport.Channel.prototype.getRuntimeProperties = function() {
+  return new WebChannelBaseTransport.ChannelProperties(this.channel_);
+};
+
+
+
+/**
+ * Implementation of the {@link goog.net.WebChannel.RuntimeProperties}.
+ *
+ * @param {!WebChannelBase} channel The underlying channel object.
+ *
+ * @constructor
+ * @implements {goog.net.WebChannel.RuntimeProperties}
+ * @final
+ */
+WebChannelBaseTransport.ChannelProperties = function(channel) {
+  /**
+   * The underlying channel object.
+   *
+   * @private {!WebChannelBase}
+   */
+  this.channel_ = channel;
+};
+
+
+/**
+ * @override
+ */
+WebChannelBaseTransport.ChannelProperties.prototype.getSpdyRequestLimit =
+    function() {
+  return this.channel_.getForwardChannelRequestPool().getMaxSize();
 };
 });  // goog.scope

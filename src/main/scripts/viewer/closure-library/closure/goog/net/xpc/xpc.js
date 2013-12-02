@@ -49,7 +49,6 @@ goog.provide('goog.net.xpc.UriCfgFields');
 goog.require('goog.log');
 
 
-
 /**
  * Enum used to identify transport types.
  * @enum {number}
@@ -60,7 +59,8 @@ goog.net.xpc.TransportTypes = {
   IFRAME_RELAY: 3,
   IFRAME_POLLING: 4,
   FLASH: 5,
-  NIX: 6
+  NIX: 6,
+  DIRECT: 7
 };
 
 
@@ -75,7 +75,8 @@ goog.net.xpc.TransportNames = {
   '3': 'IframeRelayTransport',
   '4': 'IframePollingTransport',
   '5': 'FlashTransport',
-  '6': 'NixTransport'
+  '6': 'NixTransport',
+  '7': 'DirectTransport'
 };
 
 
@@ -217,7 +218,7 @@ goog.net.xpc.ChannelStates = {
 /**
  * The name of the transport service (used for internal signalling).
  * @type {string}
- * @suppress {underscore}
+ * @suppress {underscore|visibility}
  */
 goog.net.xpc.TRANSPORT_SERVICE_ = 'tp';
 
@@ -239,7 +240,7 @@ goog.net.xpc.SETUP_NTPV2 = 'SETUP_NTPV2';
 /**
  * Transport signaling message: setup acknowledgement.
  * @type {string}
- * @suppress {underscore}
+ * @suppress {underscore|visibility}
  */
 goog.net.xpc.SETUP_ACK_ = 'SETUP_ACK';
 

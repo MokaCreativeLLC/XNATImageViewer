@@ -72,7 +72,6 @@ Author: attila@google.com (Attila Bodis)
       control.dispose();
       expectedFailures.handleTearDown();
       goog.dom.removeChildren(sandbox);
-      goog.events.removeAllNativeListeners();
       resetEventCount();
     }
 
@@ -2136,6 +2135,11 @@ Author: attila@google.com (Attila Bodis)
       assertTrue('Control must highlight on mouseup', control.isHighlighted());
       assertTrue('Action must have been performed', actionPerformed);
       assertFalse('Control must have been deactivated', control.isActive());
+    }
+
+    function testDefaultConstructor() {
+      var control = new goog.ui.Control();
+      assertNull(control.getContent());
     }
   </script>
 </body>

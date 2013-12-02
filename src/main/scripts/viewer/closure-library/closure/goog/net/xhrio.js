@@ -93,7 +93,7 @@ goog.net.XhrIo = function(opt_xmlHttpFactory) {
 
   /**
    * The XMLHttpRequest object that is being used for the transfer.
-   * @private {XMLHttpRequest|GearsHttpRequest}
+   * @private {goog.net.XhrLike.OrNative|GearsHttpRequest}
    */
   this.xhr_ = null;
 
@@ -575,7 +575,7 @@ goog.net.XhrIo.prototype.send = function(url, opt_method, opt_content,
  * @see http://www.w3.org/TR/XMLHttpRequest/#the-timeout-attribute
  * @see https://bugzilla.mozilla.org/show_bug.cgi?id=525816
  *
- * @param {!XMLHttpRequest|!GearsHttpRequest} xhr The request.
+ * @param {!goog.net.XhrLike.OrNative|!GearsHttpRequest} xhr The request.
  * @return {boolean} True if the request supports level 2 timeout.
  * @private
  */
@@ -601,7 +601,8 @@ goog.net.XhrIo.isContentTypeHeader_ = function(header) {
 
 /**
  * Creates a new XHR object.
- * @return {XMLHttpRequest|GearsHttpRequest} The newly created XHR object.
+ * @return {goog.net.XhrLike.OrNative|GearsHttpRequest} The newly created XHR
+ *     object.
  * @protected
  */
 goog.net.XhrIo.prototype.createXhr = function() {
@@ -1143,6 +1144,36 @@ goog.net.XhrIo.prototype.getResponseHeader = function(key) {
 goog.net.XhrIo.prototype.getAllResponseHeaders = function() {
   return this.xhr_ && this.isComplete() ?
       this.xhr_.getAllResponseHeaders() : '';
+};
+
+
+/**
+ * Returns all response headers as a key-value map.
+ * Multiple values for the same header key can be combined into one,
+ * separated by a comma and a space.
+ * Note that the native getResponseHeader method for retrieving a single header
+ * does a case insensitive match on the header name. This method does not
+ * include any case normalization logic, it will just return a key-value
+ * representation of the headers.
+ * See: http://www.w3.org/TR/XMLHttpRequest/#the-getresponseheader()-method
+ * @return {!Object.<string, string>} An object with the header keys as keys
+ *     and header values as values.
+ */
+goog.net.XhrIo.prototype.getResponseHeaders = function() {
+  var headersObject = {};
+  var headersArray = this.getAllResponseHeaders().split('\r\n');
+  for (var i = 0; i < headersArray.length; i++) {
+    if (goog.string.isEmpty(headersArray[i])) {
+      continue;
+    }
+    var keyValue = goog.string.splitLimit(headersArray[i], ': ', 2);
+    if (headersObject[keyValue[0]]) {
+      headersObject[keyValue[0]] += ', ' + keyValue[1];
+    } else {
+      headersObject[keyValue[0]] = keyValue[1];
+    }
+  }
+  return headersObject;
 };
 
 
