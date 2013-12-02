@@ -263,7 +263,13 @@ ViewBoxManager.prototype.removeColumn = function(opt_animate) {
 	    var rowLen = ViewBox.length - 1;
 	    utils.fx.fadeTo(ViewBox[rowLen]._element, XnatViewerGlobals.ANIM_FAST, 0);
 	    ViewBox[rowLen]._element.parentNode.removeChild(ViewBox[rowLen]._element);
-	    ViewBox.splice(rowLen, 1);							
+	    ViewBox.splice(rowLen, 1);		
+
+	    //
+	    // Remove the drag drop handles
+	    // 
+	    that.dragDropHandles[ViewBox[rowLen]._element.id].parentNode.removeChild;
+	    delete that.dragDropHandles[ViewBox[rowLen]._element.id];
 	})
     }
 
@@ -354,6 +360,11 @@ ViewBoxManager.prototype.removeRow = function(opt_animate) {
 	goog.array.forEach(delRow, function(currDelViewBox) { 
 	    utils.fx.fadeTo(currDelViewBox._element, XnatViewerGlobals.ANIM_FAST, 0);
 	    currDelViewBox._element.parentNode.removeChild(currDelViewBox._element);
+	    //
+	    // Remove the drag drop handles
+	    // 
+	    that.dragDropHandles[currDelViewBox._element.id].parentNode.removeChild;
+	    delete that.dragDropHandles[currDelViewBox._element.id];
 	})
 	this.ViewBoxes_.splice(this.ViewBoxes_.length -1, 1);
     }

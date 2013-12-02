@@ -174,7 +174,7 @@ var XNAT_IMAGE_VIEWER_DEMO_SCANS = [{'category': 'dicom',
                   'projects': 'XNATImageViewerDemo',
                   'subjects': 'XNATImageViewerDemo',
                   'type': {'label': 'type', 'value': ['MPRAGE']}},
-  'thumbnailImageSrc': ''}]
+  'thumbnailImageSrc': 'https://rawgithub.com/MokaCreativeLLC/XNATImageViewer/master/demo/sample-data/scans/UCLA_1366/UCLA_1366_Thumbnail.jpg'}]
 
 var XNAT_IMAGE_VIEWER_DEMO_SLICER = [{'Name': '7',
   'Size': '',
