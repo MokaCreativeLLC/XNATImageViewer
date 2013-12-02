@@ -943,5 +943,6 @@ ViewBoxManager.prototype.updateDragDropHandles = function() {
 	console.log(dragDropHandle);
 	dragDropHandle.style.left = ViewBoxDims['left'];
 	dragDropHandle.style.top = ViewBoxDims['top'];
+	console.log(dragDropHandle.style);
     })
 }
