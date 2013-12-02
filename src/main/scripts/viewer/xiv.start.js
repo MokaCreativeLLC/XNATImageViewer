@@ -72,7 +72,7 @@ xiv.start = function (XNAT_SERVER_ROOT, target) {
         parent : document.body,
         pathPrepend: XNAT_SERVER_ROOT + "/REST/"
     });	
-
+    
 
 
     //------------------

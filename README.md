@@ -8,9 +8,9 @@ Features
 
 
 
-Demos
+Demo
 --------------
-Coming Soon!
+Click [here](https://rawgithub.com/MokaCreativeLLC/XNATImageViewer/master/demo/html/XNATImageViewerDemo.html)!
 
 
 

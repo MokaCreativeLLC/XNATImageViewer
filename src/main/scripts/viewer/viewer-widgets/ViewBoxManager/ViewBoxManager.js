@@ -7,6 +7,7 @@
  */
 goog.require('goog.fx.DragDrop');
 goog.require('goog.fx.AnimationParallelQueue');
+goog.require('goog.ui.Tooltip');
 
 /**
  * utils includes
@@ -529,8 +530,23 @@ ViewBoxManager.prototype.makeViewBox = function() {
     var dragDropHandle = utils.dom.makeElement("img", modalWindow, "DragAndDropHandle");
     dragDropHandle.src = XnatViewerGlobals.ICON_URL + "Icons/Toggle-DragAndDrop.png";
     dragDropHandle.ViewBoxId = viewBox._element.id; 
+
+    //
+    // Apply class.
+    //
     goog.dom.classes.set(dragDropHandle, ViewBox.DRAG_AND_DROP_HANDLE_CLASS);
+    
+    //
+    // Add to class property.
+    //
     this.dragDropHandles[viewBox._element.id] = dragDropHandle;
+
+    //
+    // Tool tip
+    //
+    dragDropHandle.title = "Drag and drop view box to swap.";
+
+
     return viewBox;    
 }
 
@@ -939,12 +955,6 @@ ViewBoxManager.prototype.updateDragDropHandles = function() {
     this.loop(function(ViewBox){
 	var ViewBoxDims = utils.style.dims(ViewBox._element);
 	var dragDropHandle = that.dragDropHandles[ViewBox._element.id];
-	//console.log("UPDATE DRAG DROP HANDLE: ", ViewBoxDims['left'],  ViewBoxDims['top']);
-	//console.log(dragDropHandle);
-	//dragDropHandle.style.left = ViewBoxDims['left'];
-	//dragDropHandle.style.top = ViewBoxDims['top'];
 	utils.style.setStyle(dragDropHandle, {'left': ViewBoxDims['left'], 'top': ViewBoxDims['top']});
-	//console.log(dragDropHandle.style.left);
-	//console.log(dragDropHandle.style.left);
     })
 }
