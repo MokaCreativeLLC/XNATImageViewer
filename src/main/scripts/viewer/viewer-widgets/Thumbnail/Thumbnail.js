@@ -1,6 +1,6 @@
 /** 
-* @author amh1646@rit.edu (Amanda Hartung)
 * @author sunilk@mokacreativellc.com (Sunil Kumar)
+* @author amh1646@rit.edu (Amanda Hartung)
 */
 
 /**
@@ -66,7 +66,7 @@ Thumbnail = function (properties, opt_args) {
     switch(this._properties['category'].toLowerCase())
     {
     case 'dicom':
-	headerText = "Scan " + this._properties['sessionInfo']["Scan"]['value'];
+	headerText = this._properties['sessionInfo']["Scan"]['value'];
 	break;
     case 'slicer':
 	headerText = this._properties['Name'].split(".")[0];
@@ -78,9 +78,9 @@ Thumbnail = function (properties, opt_args) {
     //------------------
     // Other metadata queries
     //------------------
-    this._displayText.innerHTML += "<b><font size = '3'>" + headerText  + "</font></b><br>";
-    this._displayText.innerHTML += this._properties['sessionInfo']["Format"]['value'].toString().toUpperCase()  + "<br>";
-    this._displayText.innerHTML += 'Expt: ' + this._properties['sessionInfo']['experiments'];
+    this._displayText.innerHTML += "<b><font size = '2'>" + headerText  + "</font></b><br>";
+    this._displayText.innerHTML += "Format: <b>" + this._properties['sessionInfo']["Format"]['value'].toString()  + "</b><br>";
+    this._displayText.innerHTML += 'Experiment: ' + this._properties['sessionInfo']['experiments'];
 
 
 
@@ -115,6 +115,27 @@ Thumbnail = function (properties, opt_args) {
 	    goog.array.forEach(that._onloadCallbacks, function (callback) { callback(); })	
 	}
     }
+
+
+
+    //------------------
+    // Set Hover Clone
+    //------------------
+    this._hoverClone = that._element.cloneNode(true);
+    this._hoverClone.style.visibility = 'hidden';
+    document.body.appendChild(this._hoverClone);
+    this.setHoverListeners(true, this._hoverClone);
+    this._hoverClone.setAttribute('thumbnailid', that._element.id);
+    this._hoverClone.id = 'HOVERCLONE_' + this._hoverClone.id;
+
+    //
+    // Add the .thumbnailId property for retrieval of original
+    // thumbnail (drag and drop)
+    //
+    goog.array.forEach(this._hoverClone.childNodes, function(node){
+	node.setAttribute('thumbnailid', that._element.id);
+    })
+    
 }
 goog.inherits(Thumbnail, XnatViewerWidget);
 goog.exportSymbol('Thumbnail', Thumbnail);
@@ -162,6 +183,15 @@ Thumbnail.prototype._image = null;
  * @protected
  */	
 Thumbnail.prototype._displayText = null;
+
+
+
+
+/**
+* @type {?Element}
+* @public
+*/
+Thumbnail.prototype._hoverClone = null;
 
 
 
@@ -264,14 +294,29 @@ Thumbnail.prototype.getFiles = function() {
 Thumbnail.prototype.setHovered = function(hovered) {
     var that = this;
     if (hovered){
-	goog.dom.classes.add(that._element, Thumbnail.ELEMENT_MOUSEOVER_CLASS);			
-	goog.dom.classes.add(that._displayText, Thumbnail.TEXT_MOUSEOVER_CLASS);		
-	goog.dom.classes.add(that._image, Thumbnail.IMAGE_MOUSEOVER_CLASS);		
-	
+
+	var eltAbsPos = utils.style.absolutePosition(this._element);
+	var imgClone = goog.dom.getElementByClass(Thumbnail.IMAGE_CLASS, this._hoverClone)
+	var textClone = goog.dom.getElementByClass(Thumbnail.TEXT_CLASS, this._hoverClone);
+
+	if (this._hoverClone.style.visibility != 'visible') {
+	    goog.dom.classes.add(that._hoverClone, Thumbnail.ELEMENT_MOUSEOVER_CLASS);			
+	    goog.dom.classes.add(that._hoverClone.childNodes[1], Thumbnail.TEXT_MOUSEOVER_CLASS);		
+	    goog.dom.classes.add(that._hoverClone.childNodes[0], Thumbnail.IMAGE_MOUSEOVER_CLASS);
+
+	    this._hoverClone.style.visibility = 'visible';
+	    utils.style.setStyle(this._hoverClone, {
+		'position': 'absolute',
+		'top': eltAbsPos['top'], 
+		'left': eltAbsPos['left'],
+		'width':  imgClone.scrollWidth + textClone.scrollWidth + 25
+	    });
+	}
+
     } else {
-	goog.dom.classes.remove(that._element, Thumbnail.ELEMENT_MOUSEOVER_CLASS);			
-	goog.dom.classes.remove(that._displayText, Thumbnail.TEXT_MOUSEOVER_CLASS);		
-	goog.dom.classes.remove(that._image, Thumbnail.IMAGE_MOUSEOVER_CLASS);
+	if (this._hoverClone){
+	    this._hoverClone.style.visibility = 'hidden';
+	}
     }
 }
 
@@ -281,20 +326,27 @@ Thumbnail.prototype.setHovered = function(hovered) {
 /**
  * Sets the listener events for when the thumbnail is hovered on.
  *
- * @type {function(boolean)}
+ * @type {function(boolean, Element=)}
  * @private
  */
-Thumbnail.prototype.setHoverListeners = function(set) {
+Thumbnail.prototype.setHoverListeners = function(set, opt_hoverable) {
     var that = this;
     var mouseover = function() { that.setHovered(true) };
     var mouseout = function() { that.setHovered(false) };
+    var hoverable = opt_hoverable ? opt_hoverable : this._element
 
+
+    
     if (set) {
-	goog.events.listen(this._element, goog.events.EventType.MOUSEOVER, mouseover);
-	goog.events.listen(this._element, goog.events.EventType.MOUSEOUT, mouseout);
+
+	goog.events.listen(hoverable, goog.events.EventType.MOUSEOVER, mouseover);
+	goog.events.listen(hoverable, goog.events.EventType.MOUSEOUT, mouseout);
+	
     } else {
-	goog.events.unlisten(this._element, goog.events.EventType.MOUSEOVER, mouseover);
-	goog.events.unlisten(this._element, goog.events.EventType.MOUSEOUT, mouseout);
+
+	goog.events.unlisten(hoverable, goog.events.EventType.MOUSEOVER, mouseover);
+	goog.events.unlisten(hoverable, goog.events.EventType.MOUSEOUT, mouseout);
+
     }
 }
 

@@ -38,8 +38,10 @@
 }
 
 .xiv-thumbnail-mouseover, .xiv-thumbnail-highlight {
-    background-color: rgb(50,50,50);
+    background-color: rgba(50,50,50, .8);
     opacity: 1;
+    z-index: 10000;
+    overflow: visible;
 }
 
 
@@ -66,14 +68,11 @@
 .xiv-thumbnail-displaytext {
     position: absolute;
     height: 70px;
-    width: 70px;
     top: 8px;
     left: 86px;
     font-size: 11;		
-    font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
-    overflow: visible;        
-    text-overflow: ellipsis;   
-    whitespace: nowrap;  
+    font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
+    white-space: nowrap;  
     color : rgb(200,200,200);    
 	
 }
@@ -81,7 +80,6 @@
 
 .xiv-thumbnail-displaytext-mouseover {
     color : rgb(230,230,230);
-	
 }
 
 

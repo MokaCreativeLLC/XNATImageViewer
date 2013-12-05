@@ -10,7 +10,7 @@ emptyScanDict = {
         'Accession #': {'label': 'Acession #', 'value': []},
         'AcqDate': {'label': 'Acq. Date', 'value': []}, 
         'Age': { 'label': "Age", 'value': ['-100']},
-        'Format': { 'label': "Format", 'value': ['DICOM']},
+        'Format': { 'label': "Format", 'value': ['']},
         'Gender': { 'label': "Gender", 'value': ['de-identified']},
         'Handedness': { 'label': "Handedness", 'value': ['none']},
         'Scan': { 'label': "Scan", 'value': ['']},
@@ -113,7 +113,10 @@ def main():
                 scans[scanKey]['files'].append(fileUri)
                 scans[scanKey]['sessionInfo']['Scan']['value'] = [scanKey]
 
-
+                if f.endswith('nii'):
+                    scans[scanKey]['sessionInfo']['Format']['value'] = ['NifTI']
+                else:
+                    scans[scanKey]['sessionInfo']['Format']['value'] = ['DICOM']
 
 
 

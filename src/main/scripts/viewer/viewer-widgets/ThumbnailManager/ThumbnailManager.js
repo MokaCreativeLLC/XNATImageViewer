@@ -113,7 +113,7 @@ ThumbnailManager.prototype.initDragDrop = function(){
     // be cloned.
     //------------------
     this.thumbnailDragDropGroup.createDragElement = function(sourceEl) {
-	var originalThumbnail = goog.dom.getAncestorByClass(sourceEl, Thumbnail.CSS_CLASS_PREFIX);
+	var originalThumbnail = goog.dom.getElement(sourceEl.getAttribute('thumbnailid'));
 	var Thumb = that.getThumbnailByElement(originalThumbnail);
 	Thumb.setActive(true);
 	var dragEl = originalThumbnail.cloneNode(true);
@@ -151,10 +151,11 @@ ThumbnailManager.prototype.initDragDrop = function(){
 	// Get the origin thumbnail Element, from which the cloned Thumbnail 
         // came.  This is conducted through a class query.
 	//
-	var originalThumbnail = goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, Thumbnail.CSS_CLASS_PREFIX);
-
+	var dragThumbnail = goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, Thumbnail.CSS_CLASS_PREFIX);
+	var originalThumbnail = goog.dom.getElement(dragThumbnail.getAttribute('thumbnailid'))
+	
 	//
-	// Get the Thumbnail class that holds the originalThumbnail element.
+	// Get the Thumbnail class that holds the dragThumbnail element.
 	//
 	var Thumb = that.getThumbnailByElement(originalThumbnail);
 
@@ -164,13 +165,14 @@ ThumbnailManager.prototype.initDragDrop = function(){
 	//
 	Thumb.setActive(false);
 
-	if (originalThumbnail.dropTarget) {
+	if (dragThumbnail.dropTarget) {
 	    //
 	    // Callbacks - this is where thumbnail will be loaded into the ViewBox.
 	    //
 	    goog.array.forEach(that.dropCallbacks_, function(callback) {
-		callback(originalThumbnail.dropTarget, originalThumbnail);
-		delete originalThumbnail.dropTarget;
+
+		callback(dragThumbnail.dropTarget, originalThumbnail);
+		delete dragThumbnail.dropTarget;
  	    })
 	}
     }
@@ -185,7 +187,7 @@ ThumbnailManager.prototype.initDragDrop = function(){
 	// Get the origin thumbnail Element, from which the cloned Thumbnail 
         // came.  This is conducted through a class query.
 	//
-	var originalThumbnail = goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, Thumbnail.CSS_CLASS_PREFIX);
+	var dragThumbnail = goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, Thumbnail.CSS_CLASS_PREFIX);
 	
 	//
 	// Revert border of target, which is the ViewBox.
@@ -212,7 +214,7 @@ ThumbnailManager.prototype.initDragDrop = function(){
 	// of the two, the ViewBox 'loadThumbnail' call will occur
 	// at dragEnd if there's a dropTarget for original Thumbnail
 	//
-	originalThumbnail.dropTarget = event.dropTargetItem.element;
+	dragThumbnail.dropTarget = event.dropTargetItem.element;
     }
 
 
@@ -287,8 +289,12 @@ ThumbnailManager.prototype.add = function(thumbnail){
  * @param {Thumbnail}
  */
 ThumbnailManager.prototype.addDragDropSource = function(thumbnail){
-    var thumbElt = goog.dom.getAncestorByClass(thumbnail.getElement(), Thumbnail.CSS_CLASS_PREFIX);
-    this.thumbnailDragDropGroup.addItem(thumbElt, thumbElt.firstChild.nodeValue);
+    //var thumbElt = goog.dom.getAncestorByClass(thumbnail.getElement(), Thumbnail.CSS_CLASS_PREFIX);
+    var thumbElt = thumbnail._hoverClone;
+    //console.log("HVOER CLONE", thumbElt);
+    if (thumbElt) {
+	this.thumbnailDragDropGroup.addItem(thumbElt, thumbElt.firstChild.nodeValue);
+    }
 }
 
 
