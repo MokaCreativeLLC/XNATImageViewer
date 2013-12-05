@@ -135,6 +135,14 @@ X.renderer3D = function() {
    * @protected
    */
   this._center = [0, 0, 0];
+  
+  /**
+   * The background color.
+   *
+   * @type {!Array}
+   * @protected
+   */
+  this._bgColor = [0, 0, 0];
 
   /**
    * The frame buffer which is used for picking.
@@ -304,8 +312,8 @@ X.renderer3D.prototype.init = function() {
 
     // configure opacity to 0.0 to overwrite the viewport background-color by
     // the container color
-    this._context.clearColor(0.0, 0.0, 0.0, 0.0);
-
+    this._context.clearColor(this._bgColor[0], this._bgColor[1], this._bgColor[2], 0.0);
+    
     // enable transparency
     this._context.enable(this._context.BLEND);
     this._context.blendEquation(this._context.FUNC_ADD);
@@ -517,6 +525,9 @@ X.renderer3D.prototype.update_ = function(object) {
   // check if object already existed..
   var existed = false;
 
+  if(!goog.isDefAndNotNull(object)){
+    return;
+  }
   if (this.get(object._id)) {
     // this means, we are updating
     existed = true;
@@ -816,6 +827,8 @@ X.renderer3D.prototype.update_ = function(object) {
       texturePositionBuffer = new X.buffer(glTexturePositionBuffer,
           textureCoordinateMap.length, 2);
 
+     this._texturePositionBuffers.set(id, texturePositionBuffer);
+
       texture._dirty = false;
 
     } else {
@@ -1067,7 +1080,6 @@ X.renderer3D.prototype.update_ = function(object) {
 
       // resize the dynamic array
       colors.resize();
-
       this._context.bindBuffer(this._context.ARRAY_BUFFER, glColorBuffer);
       this._context.bufferData(this._context.ARRAY_BUFFER, colors._triplets,
           this._context.STATIC_DRAW);
@@ -1233,40 +1245,30 @@ X.renderer3D.prototype.showCaption_ = function(x, y) {
  */
 X.renderer3D.prototype.orientVolume_ = function(volume) {
 
-  // TODO once we have arbitary sliced volumes, we need to modify the vectors
-  // here
-  var realCentroidVector = X.matrix.multiplyByVector(this._camera._view, 1, 0, 0);
-  var distanceFromEyeX = X.vector.distance(this._camera._position,
-      realCentroidVector);
-  realCentroidVector = X.matrix.multiplyByVector(this._camera._view, -1, 0, 0);
-  var distanceFromEyeX2 = X.vector.distance(this._camera._position,
-      realCentroidVector);
+  var realCentroidVector = X.matrix.multiplyByVector(this._camera._view, volume._RASCenter[0]+volume._childrenInfo[0]._sliceNormal[0],volume._RASCenter[1]+ volume._childrenInfo[0]._sliceNormal[1], volume._RASCenter[2]+volume._childrenInfo[0]._sliceNormal[2]);
+  var realCentroidVector2 = X.matrix.multiplyByVector(this._camera._view,volume._RASCenter[0]-volume._childrenInfo[0]._sliceNormal[0], volume._RASCenter[1]-volume._childrenInfo[0]._sliceNormal[1], volume._RASCenter[2]-volume._childrenInfo[0]._sliceNormal[2]);
+  var dX = Math.abs(realCentroidVector.z - realCentroidVector2.z);
 
-  realCentroidVector = X.matrix.multiplyByVector(this._camera._view, 0, 1, 0);
-  var distanceFromEyeY = X.vector.distance(this._camera._position,
-      realCentroidVector);
-  realCentroidVector = X.matrix.multiplyByVector(this._camera._view, 0, -1, 0);
-  var distanceFromEyeY2 = X.vector.distance(this._camera._position,
-      realCentroidVector);
+  realCentroidVector = X.matrix.multiplyByVector(this._camera._view, volume._RASCenter[0]+volume._childrenInfo[1]._sliceNormal[0], volume._RASCenter[1]+volume._childrenInfo[1]._sliceNormal[1], volume._RASCenter[2]+volume._childrenInfo[1]._sliceNormal[2]);
+  realCentroidVector2 = X.matrix.multiplyByVector(this._camera._view, volume._RASCenter[0]-volume._childrenInfo[1]._sliceNormal[0], volume._RASCenter[1]-volume._childrenInfo[1]._sliceNormal[1], volume._RASCenter[2] +-volume._childrenInfo[1]._sliceNormal[2]);
+  var dY = Math.abs(realCentroidVector.z - realCentroidVector2.z);
 
-  realCentroidVector = X.matrix.multiplyByVector(this._camera._view, 0, 0, 1);
-  var distanceFromEyeZ = X.vector.distance(this._camera._position,
-      realCentroidVector);
-  realCentroidVector = X.matrix.multiplyByVector(this._camera._view, 0, 0, -1);
-  var distanceFromEyeZ2 = X.vector.distance(this._camera._position,
-      realCentroidVector);
+  realCentroidVector = X.matrix.multiplyByVector(this._camera._view, volume._RASCenter[0]+volume._childrenInfo[2]._sliceNormal[0], volume._RASCenter[1]+volume._childrenInfo[2]._sliceNormal[1], volume._RASCenter[2]+volume._childrenInfo[2]._sliceNormal[2]);
+  realCentroidVector2 = X.matrix.multiplyByVector(this._camera._view, volume._RASCenter[0]-volume._childrenInfo[2]._sliceNormal[0], volume._RASCenter[1]-volume._childrenInfo[2]._sliceNormal[1], volume._RASCenter[2]-volume._childrenInfo[2]._sliceNormal[2]);
+  var dZ = Math.abs(realCentroidVector.z - realCentroidVector2.z);
 
-  var maxDistance = Math
-      .max(distanceFromEyeX, distanceFromEyeY, distanceFromEyeZ,
-          distanceFromEyeX2, distanceFromEyeY2, distanceFromEyeZ2);
+  var maxDistance = Math.max(dX, dY, dZ);
 
-  if (maxDistance == distanceFromEyeX || maxDistance == distanceFromEyeX2) {
+  if (maxDistance == dX) {
+
     volume.volumeRendering_(0);
-  } else if (maxDistance == distanceFromEyeY ||
-      maxDistance == distanceFromEyeY2) {
+
+  } else if (maxDistance == dY) {
+
     volume.volumeRendering_(1);
-  } else if (maxDistance == distanceFromEyeZ ||
-      maxDistance == distanceFromEyeZ2) {
+
+  } else {
+    
     volume.volumeRendering_(2);
   }
 
@@ -1312,54 +1314,51 @@ X.renderer3D.prototype.order_ = function() {
 
     // special case for X.volumes in volumeRendering mode
     // a) we know the volumeRendering direction and the center of the volume
-    // b) based on this we can minimize the expensive distance calculation to
-    // the first and last slices
-    // c) .. and get the distance for the other slices by simple multiplication
-    if (object instanceof X.volume && object._volumeRendering) {
+    // b) check if first or last slice is the closest an order slices accordingly
+    if (object instanceof X.volume && object._volumeRendering && object._volumeRenderingDirection != -1) {
 
-      var _volumeRenderingDirection = object._volumeRenderingDirection;
+        var _slices = object._children[object._volumeRenderingDirection]._children;
+        var numberOfSlices = _slices.length;
 
-      var _slices = object._slicesX._children;
-      if (_volumeRenderingDirection == 1) {
-        _slices = object._slicesY._children;
-      } else if (_volumeRenderingDirection == 2) {
-        _slices = object._slicesZ._children;
-      }
+        // grab the first slice, attach the distance and opacity
+        var firstSlice = _slices[0];
 
-      var numberOfSlices = _slices.length;
+        var _targetChild = object._volumeRenderingDirection;
+        var realCentroidVector = X.matrix.multiplyByVector(this._camera._view, object._RASCenter[0]+object._childrenInfo[_targetChild]._sliceDirection[0], object._RASCenter[1]+object._childrenInfo[_targetChild]._sliceDirection[1], object._RASCenter[2]+object._childrenInfo[_targetChild]._sliceDirection[2]);
+        var realCentroidVector2 = X.matrix.multiplyByVector(this._camera._view,object._RASCenter[0]-object._childrenInfo[_targetChild]._sliceDirection[0], object._RASCenter[1]-object._childrenInfo[_targetChild]._sliceDirection[1], object._RASCenter[2]-object._childrenInfo[_targetChild]._sliceDirection[2]);
+        var dX = realCentroidVector.z - realCentroidVector2.z;
 
-      // grab the first slice, attach the distance and opacity
-      var firstSlice = _slices[0];
-      firstSlice._distance = this.distanceToEye_(firstSlice);
-      firstSlice._opacity = object._opacity;
+         var _acquisitionDirection = Math.max(object._IJKToRAS[object._volumeRenderingDirection], Math.max(object._IJKToRAS[object._volumeRenderingDirection+4], object._IJKToRAS[object._volumeRenderingDirection+8])); 
+         var _acquisitionDirection2 = Math.min(object._IJKToRAS[object._volumeRenderingDirection], Math.min(object._IJKToRAS[object._volumeRenderingDirection+4], object._IJKToRAS[object._volumeRenderingDirection+8])); 
+         var _acquisitionSign = _acquisitionDirection + _acquisitionDirection2;
 
-      // grab the last slice, attach the distance and opacity
-      var lastSlice = _slices[numberOfSlices - 1];
-      lastSlice._distance = this.distanceToEye_(lastSlice);
-      lastSlice._opacity = object._opacity;
+        if(dX*_acquisitionSign < 0) {
 
-      // get the distanceDifference the distanceStep
-      // if these are > 0: the firstSlice is closer to the eye
-      // if these are < 0: the lastSlice is closer to the eye
-      var distanceDifference = lastSlice._distance - firstSlice._distance;
-      var distanceStep = Math
-          .round((distanceDifference / numberOfSlices) * 1000) / 1000;
+          var s = 0;
+          for (s = 0; s < object._range[_targetChild] - 1; s++) {
 
-      // loop through all other slices in the volumeRendering direction and
-      // calculate the distance and attach the opacity
-      var s = 1;
-      for (s = 1; s < numberOfSlices - 1; s++) {
+            if (!_slices[s]) continue;
 
-        var currentDistance = Math
-            .round((firstSlice._distance + (s * distanceStep)) * 1000) / 1000;
+            _slices[s]._opacity = object._opacity;
+            _slices[s]._distance =   object._childrenInfo[_targetChild]._sliceSpacing*s;
 
-        _slices[s]._distance = currentDistance;
-        _slices[s]._opacity = object._opacity;
+          }
+        }
+        else {
 
-      }
+         var s = object._range[_targetChild] - 1;
+         for (s = object._range[_targetChild] - 1; s >= 0; s--) {
 
-      // we need to update the rendering order
-      reSortRequired = true;
+            if (!_slices[s]) continue;
+
+            _slices[s]._opacity = object._opacity;
+            _slices[s]._distance =   (object._range[_targetChild]-1)*object._childrenInfo[_targetChild]._sliceSpacing -object._childrenInfo[_targetChild]._sliceSpacing*s;
+
+          }
+        }
+
+        // we need to update the rendering order
+        reSortRequired = true;
 
     }
 
@@ -1398,6 +1397,8 @@ X.renderer3D.prototype.order_ = function() {
 
   // only re-sort the tree if required
   if (reSortRequired) {
+
+    //console.log('resorting');
 
     this._objects.sort();
 
@@ -1855,7 +1856,7 @@ X.renderer3D.prototype.render_ = function(picking, invoked) {
 
         } else if (labelmap && labelmap._visible) {
           // only if we have an associated labelmap..
-
+          
           // grab the id of the labelmap
           var labelmapTextureID = object._labelmap._id;
 
@@ -2005,90 +2006,84 @@ X.renderer3D.prototype.remove = function(object) {
   var id = object._id;
 
   // check if the object exists
-  if (this.get(id)) {
-
-    var oldTexturePositionBuffer = this._texturePositionBuffers.get(id);
-    if (goog.isDefAndNotNull(oldTexturePositionBuffer)) {
-
-      if (this._context.isBuffer(oldTexturePositionBuffer._glBuffer)) {
-
-        this._context.deleteBuffer(oldTexturePositionBuffer._glBuffer);
-
-      }
+  var oldTexturePositionBuffer = this._texturePositionBuffers.get(id);
+  if (goog.isDefAndNotNull(oldTexturePositionBuffer)) {
+    if (this._context.isBuffer(oldTexturePositionBuffer._glBuffer)) {
+  
+      this._context.deleteBuffer(oldTexturePositionBuffer._glBuffer);
 
     }
-
-    if (object.texture) {
-      var _texture = this._textures.get(object._texture._id);
-
-      if (_texture) {
-
-        this._context.deleteTexture(_texture);
-
-        this._textures.remove(object._texture._id);
-
-      }
-
-    }
-
-    var oldVertexBuffer = this._vertexBuffers.get(id);
-    if (goog.isDefAndNotNull(oldVertexBuffer)) {
-
-      if (this._context.isBuffer(oldVertexBuffer._glBuffer)) {
-
-        this._context.deleteBuffer(oldVertexBuffer._glBuffer);
-
-      }
-
-    }
-
-
-    var oldNormalBuffer = this._vertexBuffers.get(id);
-    if (goog.isDefAndNotNull(oldNormalBuffer)) {
-
-      if (this._context.isBuffer(oldNormalBuffer._glBuffer)) {
-
-        this._context.deleteBuffer(oldNormalBuffer._glBuffer);
-
-      }
-
-    }
-
-    var oldColorBuffer = this._colorBuffers.get(id);
-    if (goog.isDefAndNotNull(oldColorBuffer)) {
-
-      if (this._context.isBuffer(oldColorBuffer._glBuffer)) {
-
-        this._context.deleteBuffer(oldColorBuffer._glBuffer);
-
-      }
-
-    }
-
-    var oldScalarBuffer = this._scalarBuffers.get(id);
-    if (goog.isDefAndNotNull(oldScalarBuffer)) {
-
-      if (this._context.isBuffer(oldScalarBuffer._glBuffer)) {
-
-        this._context.deleteBuffer(oldScalarBuffer._glBuffer);
-
-      }
-
-    }
-
-    this._vertexBuffers.remove(id);
-    this._normalBuffers.remove(id);
-    this._colorBuffers.remove(id);
-    this._texturePositionBuffers.remove(id);
-    this._scalarBuffers.remove(id);
-
-    this._objects.remove(object);
-
-    return true;
 
   }
 
-  return false;
+  if (object._texture) {
+    
+    var _texture = this._textures.get(object._texture._id);
+
+    if (_texture) {
+
+      this._context.deleteTexture(_texture);
+
+      this._textures.remove(object._texture._id);
+
+    }
+
+  }
+
+  var oldVertexBuffer = this._vertexBuffers.get(id);
+  if (goog.isDefAndNotNull(oldVertexBuffer)) {
+
+    if (this._context.isBuffer(oldVertexBuffer._glBuffer)) {
+
+      this._context.deleteBuffer(oldVertexBuffer._glBuffer);
+
+    }
+
+  }
+
+
+  var oldNormalBuffer = this._normalBuffers.get(id);
+  if (goog.isDefAndNotNull(oldNormalBuffer)) {
+
+    if (this._context.isBuffer(oldNormalBuffer._glBuffer)) {
+
+      this._context.deleteBuffer(oldNormalBuffer._glBuffer);
+
+    }
+
+  }
+
+  var oldColorBuffer = this._colorBuffers.get(id);
+  if (goog.isDefAndNotNull(oldColorBuffer)) {
+
+    if (this._context.isBuffer(oldColorBuffer._glBuffer)) {
+
+      this._context.deleteBuffer(oldColorBuffer._glBuffer);
+
+    }
+
+  }
+
+  var oldScalarBuffer = this._scalarBuffers.get(id);
+  if (goog.isDefAndNotNull(oldScalarBuffer)) {
+
+    if (this._context.isBuffer(oldScalarBuffer._glBuffer)) {
+
+      this._context.deleteBuffer(oldScalarBuffer._glBuffer);
+
+    }
+
+  }
+
+  this._vertexBuffers.remove(id);
+  this._normalBuffers.remove(id);
+  this._colorBuffers.remove(id);
+  this._texturePositionBuffers.remove(id);
+  this._scalarBuffers.remove(id);
+
+  this._objects.remove(object);
+
+  return true;
 
 };
 
@@ -2111,6 +2106,295 @@ X.renderer3D.prototype.destroy = function() {
 
 };
 
+/**
+ * Get the background color.
+ *
+ * @return {!Array} The background color normalized.
+ * @public
+ */
+X.renderer3D.prototype.__defineGetter__('bgColor', function() {
+  
+  return this._bgColor;
+
+});
+
+/**
+ * Set the background color.
+ *
+ * @param {!Array}
+ *          bgColor The background color normalized.
+ * @public
+ */
+X.renderer3D.prototype.__defineSetter__('bgColor', function(bgColor) {
+
+  this._bgColor = bgColor;
+
+});
+
+/**
+ * Calculate the intersection between a bounding box and rays.
+ *
+ * @param {!Array} box The bounding box as [minX, maxX, minY, maxY, minZ, maxZ]
+ * @param {!Array} ray_start The ray origin as [x,y,z]
+ * @param {!Array} ray_direction The ray direction as [x,y,z]
+ * @return {!Array} An array with collections of in and out intersections.
+ * @protected
+ */
+X.renderer3D.prototype.ray_intersect_box_ = function(box, ray_start, ray_direction) {
+
+
+  var _solutionsIn = new Array();
+  var _solutionsOut = new Array();
+  
+  // xmin, xmax, ymin, ymax, zmin, zmax
+  for(var _i = 0; _i < 6; _i++) {
+
+    var _i2 = Math.floor(_i/2);
+    var _i3 = (_i2 + 1)%3;
+    var _i4 = (_i2 + 2)%3;
+    var _j1 = (2 + (2*_i2))%6;
+    var _j2 = (4 + (2*_i2))%6;
+    var _dir = _i2;
+    
+    
+    var _sol0 = box[_i];
+    var _invN1 = 1/ray_direction[_i2];
+    
+    var _t = (_sol0 - ray_start[_i2])*_invN1;
+    
+    // if _t infinity, we are //
+    if(_t != Infinity && _t != -Infinity) {
+
+      var _sol1 = ray_start[_i3] + ray_direction[_i3]*_t;
+      var _sol2 = ray_start[_i4] + ray_direction[_i4]*_t;
+        
+      // in range?
+      if( (_sol1 >= box[_j1] && _sol1 <= box[_j1+1]) &&
+          (_sol2 >= box[_j2] && _sol2 <= box[_j2+1])) {
+        
+        var _sol = new Array();
+        _sol[_i2] = box[_i];
+        _sol[_i3] = _sol1;
+        _sol[_i4] = _sol2;
+
+        _solutionsIn.push(_sol);
+
+      }
+      else {
+
+        var _sol = new Array();
+        _sol[_i2] = box[_i];
+        _sol[_i3] = _sol1;
+        _sol[_i4] = _sol2;
+        
+        _solutionsOut.push(_sol);
+
+      }
+    }
+  }
+  
+  return [_solutionsIn, _solutionsOut];
+
+};
+
+/**
+ * Pick an object intersection in world space by using raycasting.
+ *
+ * @param {!number} x The viewport X coordinate.
+ * @param {!number} y The viewport Y coordinate.
+ * @param {!number=} delta The sample rate to probe for intersections. Default is 5.
+ * @param {!number=} epsilon The threshold to mark a neighboring point as intersection. Default is 2mm.
+ * @param {X.object=} object The object to pick on. Default is auto-detect.
+ * @return {?Array} The closest 3D point of a valid object after ray casting. If NULL, than delta and epsilon should be tuned.
+ * @public
+ */
+X.renderer3D.prototype.pick3d = function(x, y, delta, epsilon, object) {
+
+  // default values for delta and epsilon 
+  // to determine the picking accuracy with a speed tradeoff
+  if (!goog.isDefAndNotNull(delta)) {
+    delta = 4.0;
+  }
+
+  if (!goog.isDefAndNotNull(epsilon)) {
+    epsilon = 2;
+  }
+
+  // if a object was specified, use it directly
+  if (!goog.isDefAndNotNull(object)) {
+
+    // grab the object under the cursor
+    var id = this.pick(x,y);
+    if (id == -1) {
+      // quickly exit if there is no object
+      return null;
+    }
+
+    
+    object = this.get(id);
+    if (!object) {
+      return null;
+    }
+
+  }
+
+  // we know now that the object has been hit
+  // the question is: where exactly?
+
+  var ray_near = this._camera.unproject_(x/this._width*2.0-1.0, ((this._height-y)/this._height)*2.0-1.0, 0.0);
+  var ray_far = this._camera.unproject_(x/this._width*2.0-1.0, ((this._height-y)/this._height)*2.0-1.0, 1.0);
+
+  // add center to both
+  ray_near[0] += this._center[0];
+  ray_near[1] += this._center[1];
+  ray_near[2] += this._center[2];
+  ray_far[0] += this._center[0];
+  ray_far[1] += this._center[1];
+  ray_far[2] += this._center[2];
+
+  // and apply the transform of the object
+  // ray_near = X.matrix.multiplyByVector(object.transform.matrix, ray_near[0], ray_near[1], ray_near[2]);
+  // ray_far = X.matrix.multiplyByVector(object.transform.matrix, ray_far[0], ray_far[1], ray_far[2]);
+  // ray_near = [ray_near.xx, ray_near.yy, ray_near.zz];
+  // ray_far = [ray_far.xx, ray_far.yy, ray_far.zz];
+
+
+  // find the intersection of the ray with the bounding box
+
+  // first, reconstruct the box coordinates from the boundingbox
+  var A = [object._points._minA, object._points._minB, object._points._minC];
+  var B = [object._points._maxA, object._points._minB, object._points._minC];
+  var C = [object._points._maxA, object._points._maxB, object._points._minC];
+  var D = [object._points._minA, object._points._maxB, object._points._minC];
+  var E = [object._points._minA, object._points._maxB, object._points._maxC];
+  var F = [object._points._minA, object._points._minB, object._points._maxC];
+  var G = [object._points._maxA, object._points._maxB, object._points._maxC];
+  var H = [object._points._maxA, object._points._minB, object._points._maxC];
+  // transform all box coordinates
+  var transformed_points = [X.matrix.multiplyByVector(object._transform._matrix, A[0], A[1], A[2]),
+    X.matrix.multiplyByVector(object._transform._matrix, B[0], B[1], B[2]),
+    X.matrix.multiplyByVector(object._transform._matrix, C[0], C[1], C[2]),
+    X.matrix.multiplyByVector(object._transform._matrix, D[0], D[1], D[2]),
+    X.matrix.multiplyByVector(object._transform._matrix, E[0], E[1], E[2]),
+    X.matrix.multiplyByVector(object._transform._matrix, F[0], F[1], F[2]),
+    X.matrix.multiplyByVector(object._transform._matrix, G[0], G[1], G[2]),
+    X.matrix.multiplyByVector(object._transform._matrix, H[0], H[1], H[2])];
+
+  // now create a bigger bounding box around the maybe rotated box
+  // by finding x_min, x_max, y_min, y_max, z_min, z_max
+  var extremes = [Infinity, -Infinity, Infinity, -Infinity, Infinity, -Infinity];
+  for (var t in transformed_points) {
+
+    t = transformed_points[t];
+
+    extremes = [Math.min(extremes[0], t.x), 
+                Math.max(extremes[1], t.x), 
+                Math.min(extremes[2], t.y), 
+                Math.max(extremes[3], t.y), 
+                Math.min(extremes[4], t.z), 
+                Math.max(extremes[5], t.z)];
+
+  }
+
+
+  // var minA = X.matrix.multiplyByVector(object._transform.matrix, object._points._minA, 0, 0);
+  // var maxA = X.matrix.multiplyByVector(object._transform.matrix, object._points._maxA, 0, 0);
+  // var minB = X.matrix.multiplyByVector(object._transform.matrix, 0, object._points._minB, 0);
+  // var maxB = X.matrix.multiplyByVector(object._transform.matrix, 0, object._points._maxB, 0);
+  // var minC = X.matrix.multiplyByVector(object._transform.matrix, 0, 0, object._points._minC);
+  // var maxC = X.matrix.multiplyByVector(object._transform.matrix, 0, 0, object._points._maxC);
+  //var box = [object._points._minA, object._points._maxA, object._points._minB, object._points._maxB, object._points._minC, object._points._maxC];
+  //var box = [minA.x, maxA.x, minB.y, maxB.y, minC.z, maxC.z];
+  var box = extremes;
+
+
+  //console.log(box);
+  var box_intersections = this.ray_intersect_box_(box, ray_near, ray_far);
+  //console.log(box_intersections);
+  box_intersections = box_intersections[0];
+  // we should always have two intersections
+  // find the closest one..
+  if (box_intersections.length == 0) {
+    //console.log('w')
+    return null;
+  }
+
+  var distances = new Array(2);
+  for (var i=0; i<2; i++) {
+    var p = box_intersections[i];
+    distances[i] = Math.sqrt((p[0]-ray_near[0])*(p[0]-ray_near[0])+(p[1]-ray_near[1])*(p[1]-ray_near[1])+(p[2]-ray_near[2])*(p[2]-ray_near[2]));
+  }
+
+  // now we need to sample the space between the two points
+  var sample_start = null;
+  var sample_end = null;
+  var sample_space = null;
+
+  if (distances[0] < distances[1]) {
+    sample_start = box_intersections[0];
+    sample_end = box_intersections[1];
+  } else {
+    sample_start = box_intersections[1];
+    sample_end = box_intersections[0];
+  }
+
+  sample_space = Math.sqrt((sample_start[0]-sample_end[0])*(sample_start[0]-sample_end[0])+(sample_start[1]-sample_end[1])*(sample_start[1]-sample_end[1])+(sample_start[2]-sample_end[2])*(sample_start[2]-sample_end[2]));
+
+  var sample_count = sample_space/delta;
+  var s_p = sample_start;
+  var sample_direction = [sample_end[0]-sample_start[0],sample_end[1]-sample_start[1],sample_end[2]-sample_start[2]];
+  var sample_direction_length = Math.sqrt(sample_direction[0]*sample_direction[0]+sample_direction[1]*sample_direction[1]+sample_direction[2]*sample_direction[2]);
+  var sample_unit_v = [sample_direction[0]/sample_direction_length, sample_direction[1]/sample_direction_length, sample_direction[2]/sample_direction_length];
+
+  var points = object._points._triplets;
+  var points_count = points.length;
+
+  var min_d = Infinity;
+  var min_p = null;
+
+  var sampled = new Array(10);
+
+  //var m_i = X.matrix.identity();
+  //X.matrix.invert(object.transform.matrix, m_i);
+
+  // sample
+  for (var i=0; i<sample_count; i+=delta) {
+
+    // the marching point
+    // 
+    s_p = [s_p[0] + delta*sample_unit_v[0], s_p[1] + delta*sample_unit_v[1], s_p[2] + delta*sample_unit_v[2]];
+
+    // multiply s_p with the inverse transformation matrix
+    // s_p = X.matrix.multiplyByVector(m_i, s_p);
+    // s_p = [s_p.x, s_p.y, s_p.z];
+
+    // find the closest point
+    for (var p=0; p<points_count; p+=3) {
+
+      var c_p_x = points[p];
+      var c_p_y = points[p+1];
+      var c_p_z = points[p+2];
+      var c_p = new X.vector(c_p_x, c_p_y, c_p_z);
+      c_p = X.matrix.multiplyByVector(object._transform._matrix, c_p_x, c_p_y, c_p_z);
+
+      // calculate distance to the marching point
+      var d = Math.sqrt((s_p[0]-c_p.x)*(s_p[0]-c_p.x)+(s_p[1]-c_p.y)*(s_p[1]-c_p.y)+(s_p[2]-c_p.z)*(s_p[2]-c_p.z));
+
+      if (d <= epsilon) {
+
+        // found the point
+        return [c_p.x, c_p.y, c_p.z];
+
+      }
+
+    }
+
+  }
+
+  // nothing found with the current delta and epsilon settings
+  return null;
+
+};
 
 // export symbols (required for advanced compilation)
 goog.exportSymbol('X.renderer3D', X.renderer3D);
@@ -2132,3 +2416,4 @@ goog.exportSymbol('X.renderer3D.prototype.resetBoundingBox',
 goog.exportSymbol('X.renderer3D.prototype.resetViewAndRender',
     X.renderer3D.prototype.resetViewAndRender);
 goog.exportSymbol('X.renderer3D.prototype.pick', X.renderer3D.prototype.pick);
+goog.exportSymbol('X.renderer3D.prototype.pick3d', X.renderer3D.prototype.pick3d);

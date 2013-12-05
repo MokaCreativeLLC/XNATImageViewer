@@ -661,7 +661,7 @@ ViewSchemeManager.prototype.setViewScheme = function(viewScheme, callback) {
 		    //
 		    var track = goog.dom.getElementByClass(XtkPlane.SLIDER_TRACK_CLASS, interactor);		    
 		    var singleSlider = [80, 80, 80];
-		    var multSlider = (plane === 'x') ? [255,255,0] : (plane === 'y') ? [0,255,0] : [255,0,0];
+		    var multSlider = (plane === 'x') ? [0,0,255] : (plane === 'y') ? [0,255,0] : [255,0,0];
 		    var currColor = utils.style.getComputedStyle(track, ['background-color'])['background-color'];
 		    var toBeColor = (that.visiblePlanes_.length <= 1) ? singleSlider : multSlider;
 		    animatableElts.push(track);

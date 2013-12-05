@@ -317,26 +317,35 @@ XtkPlane.prototype.resetSlider = function() {
 
     //------------------
     // Add slider listener
+    //
+    // NOTE: this is different from the default
+    // 2D renderer listener on the XtkPlane.  We basically
+    // have to create two separate listers: one on the slider
+    // and one on the Xtk plane.
     //------------------
     this.Slider_.addSlideCallback(function() { 
 	var currVol = that.getCurrVolume();
+	var planeSlices = currVol['_slices' + that.id_.toUpperCase()]['_children'].length;
 	if (!currVol) return;
 	currVol.modified();
-	currVol[plane] = that.Slider_.getValue();
-	that.indexBox_.innerHTML = currVol[plane] + ' / ' + currVol._dimensionsRAS[num];
+	currVol['index' + that.id_.toUpperCase()] = that.Slider_.getValue();
+	that.indexBox_.innerHTML = currVol['_index' + that.id_.toUpperCase()] + ' / ' + planeSlices;
     });	
 
 
 
     //------------------
     // Add Renderer Scroll listener (allows slider to slide)
+    //
+    // NOTE: this moves the slider when we move the Xtk plane.
     //------------------
     this.Renderer_.onScroll = function(event) {  
 	var currVol = that.getCurrVolume();
-	var currSlice = currVol[plane];
+	var currSlice = currVol['_index' + that.id_.toUpperCase()];
+	var planeSlices = currVol['_slices' + that.id_.toUpperCase()]['_children'].length;
 	if (!currVol) return;
 	that.Slider_.setValue(currSlice)
-	that.indexBox_.innerHTML =  currSlice + ' / ' + currVol._dimensionsRAS[num];
+	that.indexBox_.innerHTML =  currSlice + ' / ' + planeSlices;
     }; 
 
 
@@ -357,10 +366,11 @@ XtkPlane.prototype.resetSlider = function() {
  */
 XtkPlane.prototype.resetSliderValues = function(opt_volume) {
 	
+    var that = this;
     var plane = this.indexPlane_;
     var num = this.indexNumber_;
     var currVol = opt_volume ? opt_volume : this.currVolume_;
-
+    
 
 
     //------------------
@@ -373,10 +383,14 @@ XtkPlane.prototype.resetSliderValues = function(opt_volume) {
     //------------------
     // Set properties accordingly.
     //------------------
-    currVol[plane] = Math.round(currVol[plane]);
-    this.Slider_.setMaximum(currVol._dimensionsRAS[num]-1);
-    this.Slider_.setValue(Math.round(currVol._dimensionsRAS[num]/2));
-    this.indexBox_.innerHTML = currVol[plane] + ' / ' + currVol._dimensionsRAS[num];  
+    var currSlice = currVol['_index' + that.id_.toUpperCase()];
+    currVol['_index' + that.id_.toUpperCase()] = Math.round(currSlice);
+    //console.log(this.id_, plane, currVol[plane]);
+    //console.log(currVol);
+    var planeSlices = currVol['_slices' + that.id_.toUpperCase()]['_children'].length;
+    this.Slider_.setMaximum(planeSlices);
+    this.Slider_.setValue(Math.round(planeSlices/2));
+    this.indexBox_.innerHTML = currSlice + ' / ' + planeSlices;  
 };
 
 

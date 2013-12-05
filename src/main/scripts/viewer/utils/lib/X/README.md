@@ -8,16 +8,15 @@
  * <i><b>Label maps, color tables and surface overlays</b></i> are supported, as well as <i><a href="http://evanw.github.com/csg.js/" target="_blank">Constructive Solid Geometry</a></i><br>
  * CDash + Google Closure driven <a href="http://cdash.goxtk.com/index.php?project=XTK" target="_blank"><i>build and test system</i></a>
 
-## Demos ##
+## Demos 
 <table>
-<tr>
+<tr> 
 <td valign="middle" width="100"><a href="http://demos.goxtk.com/knee_atlas/"><img src="http://xtk.github.com/demosgfx/knee_atlas/minicaption.png" alt="lesson00" title="Click me!"></a><br><sup>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><a href="http://demos.goxtk.com/knee_atlas/">Knee Atlas</a></b></sup></td>
 <td valign="middle" width="100"><a href="http://demos.goxtk.com/brainfibers/"><img src="http://xtk.github.com/demosgfx/brainfibers/minicaption.png" alt="lesson00" title="Click me!"></a><br><sup>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><a href="http://demos.goxtk.com/brainfibers/">Fiber Atlas</a></b></sup></td>
 <td valign="middle" width="100"><a href="http://ecm2.mathcs.emory.edu/aneurisk/"><img src="http://xtk.github.com/demosgfx/aneurysm/minicaption.png" alt="lesson00" title="Click me!"></a><br><sup>&nbsp;&nbsp;&nbsp;&nbsp;<b><a href="http://ecm2.mathcs.emory.edu/aneurisk/">Aneuriskweb</a></b></sup></td>
 <td valign="middle" width="100"><a href="http://demos.goxtk.com/brain_atlas/"><img src="http://xtk.github.com/demosgfx/brain_atlas/minicaption.png" alt="lesson00" title="Click me!"></a><br><sup>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><a href="http://demos.goxtk.com/brain_atlas/">Brain Atlas</a></b></sup></td>
 <td valign="middle" width="100"><a href="http://www.mindboggle.info/"><img src="http://xtk.github.com/demosgfx/mindboggle/minicaption.png" alt="lesson00" title="Click me!"></a><br><sup>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><a href="http://www.mindboggle.info/">Mindboggle</a></b></sup></td>
 <td valign="middle" width="100"><a href="http://slicedrop.com/"><img src="http://xtk.github.com/demosgfx/slicedrop/minicaption.png" alt="lesson00" title="Click me!"></a><br><sup>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><a href="http://slicedrop.com/">Slice:Drop</a></b></sup></td>
-<td valign="middle" width="100"><a href="http://demos.goxtk.com/babybrains/"><img src="http://xtk.github.com/demosgfx/babybrains/minicaption.png" alt="lesson00" title="Click me!"></a><br><sup>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><a href="http://demos.goxtk.com/babybrains/">Babybrains</a></b></sup></td>
 </tr>
 </table>
 
@@ -74,8 +73,8 @@
 <tr>
 <td valign="middle" width="100"><a href="http://lessons.goxtk.com/16/"><img src="http://xtk.github.com/lessonsgfx/16/minicaption.png" alt="lesson16" title="Click me!"></a><a href='http://jsfiddle.net/gh/get/toolkit/edge/xtk/lessons/tree/master/16/#run' target=_blank><img src="http://xtk.github.com/fiddlelogo_small2.png"></a></td>
 <td valign="top"><a href="http://lessons.goxtk.com/16/"><b>Lesson 16: 10 PRINT 3D</b></a><br>A 3D version of the excellent <a href='http://10print.org/' target=_blank>10 PRINT</a> pattern showcasing advanced XTK object generation.</td>
-<td valign="middle" width="100"></td>
-<td valign="top"></td>
+<td valign="middle" width="100"><a href="http://lessons.goxtk.com/17/"><img src="http://xtk.github.com/lessonsgfx/17/minicaption.png" alt="lesson17" title="(RE)Slice it!"></a><a href='http://jsfiddle.net/gh/get/toolkit/edge/xtk/lessons/tree/master/17/#run' target=_blank><img src="http://xtk.github.com/fiddlelogo_small2.png"></a></td>
+<td valign="top"><a href="http://lessons.goxtk.com/17/"><b>Lesson 17: (RE)Slice it!</b></a><br>New arbitrary reslicing capabilities. Everything is happening in Real Time!</td>
 </tr>
 </table>
 

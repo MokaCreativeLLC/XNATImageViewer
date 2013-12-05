@@ -370,6 +370,26 @@ XtkDisplayer.prototype.loadFileCollection = function (fileCollection, opt_onload
 
 
     //----------------
+    // Cycle through any volumes 
+    // If none of them have the proeprty 'isSelectedVolume',
+    // then we set the first one to be selected.
+    //---------------
+    if (that.currentViewables_['volumes'].length) { 
+	var selectedVolumeFound = false;
+	goog.array.forEach(that.currentViewables_['volumes'], function(vol){
+	    if (vol.isSelectedVolume){
+		selectedVolumeFound = true;
+	    }
+	})
+
+	if (!selectedVolumeFound){
+	    that.currentViewables_['volumes'][0].isSelectedVolume = true;
+	}
+    };
+
+
+
+    //----------------
     // Load renderables as single array of currentViewables_
     //----------------
     renderables = utils.convert.objectToArray(this.currentViewables_);

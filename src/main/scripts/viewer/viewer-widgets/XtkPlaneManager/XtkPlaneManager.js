@@ -336,8 +336,6 @@ XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, callb
 }
 
 
-
-
 /**
  * Loads renderables into all of the renderers for all of the XtkPlanes.  
  * The 'planeStrs' parameter is an array of strings
@@ -408,6 +406,7 @@ XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs, op
     //------------------
     // Add object and render in onloadPlane first.
     //------------------
+
     that.loadInRenderer(renderables, onloadPlane, function(){
 
 

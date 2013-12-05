@@ -33,6 +33,7 @@ goog.provide('X.volume');
 // requires
 goog.require('X.object');
 goog.require('X.slice');
+goog.require('X.parser');
 goog.require('X.thresholdable');
 
 
@@ -77,6 +78,23 @@ X.volume = function(volume) {
    * @protected
    */
   this._dimensions = [ 10, 10, 10 ];
+
+
+  /**
+   * The RAS Bonding Box of this volume.
+   *
+   * @type {!Array}
+   * @protected
+   */
+  this._BBox = [1, 1, 1];
+
+  /**
+   * The range of the x, y and z slices.
+   *
+   * @type {!Array}
+   * @protected
+   */
+  this._range = [ 10, 10, 10 ];
 
   /**
    * The spacing of this volume.
@@ -143,38 +161,6 @@ X.volume = function(volume) {
   this._indexZold = 0;
 
   /**
-   * The index of the shown slice in Left-Right direction.
-   *
-   * @type {!number}
-   * @protected
-   */
-  this._indexLR = 0;
-
-  /**
-   * The index of the shown slice in Posterior-Anterior direction.
-   *
-   * @type {!number}
-   * @protected
-   */
-  this._indexPA = 0;
-
-  /**
-   * The index of the shown slice in Inferior-Superior direction.
-   *
-   * @type {!number}
-   * @protected
-   */
-  this._indexIS = 0;
-
-  /**
-   * The dimensions of this volume 0: SAGITTAL, 1: CORONAL, 2: AXIAL.
-   *
-   * @type {!Array}
-   * @protected
-   */
-  this._dimensionsRAS = [ 10, 10, 10 ];
-
-  /**
    * The X.object holding the slices in X-direction.
    *
    * @type {!X.object}
@@ -220,7 +206,15 @@ X.volume = function(volume) {
    * @type {!number}
    * @private
    */
-  this._volumeRenderingDirection = 0;
+  this._volumeRenderingDirection = -1;
+
+  /**
+   * Cache for the already computed volume rendering directions.
+   *
+   * @type {!Array}
+   * @private
+   */
+  this._volumeRenderingCache = [];
 
   /**
    * The label map of this volume.
@@ -261,46 +255,6 @@ X.volume = function(volume) {
    * @protected
    */
   this._reslicing = true;
-
-  /**
-   * The space in which the image was acquired.
-   *
-   * @type {!Array}
-   * @protected
-   */
-  this._space = [ 'left', 'posterior', 'superior' ];
-
-  /**
-   * The image orientation
-   *
-   * @type {!Array}
-   * @protected
-   */
-  this._spaceorientation = [ 1, 0, 0, 0, 1, 0, 0, 0, 1 ];
-
-  /**
-   * The image orientation in RAS space
-   *
-   * @type {!Array}
-   * @protected
-   */
-  this._rasspaceorientation = [ -1, 0, 0, 0, -1, 0, 0, 0, 1 ];
-
-  /**
-   * The orientation of each cosine
-   *
-   * @type {!Array}
-   * @protected
-   */
-  this._orientation = [ -1, -1, 1 ];
-
-  /**
-   * The normalized cosines
-   *
-   * @type {!Array}
-   * @protected
-   */
-  this._normcosine = [ [ -1, 0, 0 ], [ 0, -1, 0 ], [ 0, 0, 1 ] ];
 
   /**
    * The max intensity in the image
@@ -352,20 +306,12 @@ X.volume.prototype.copy_ = function(volume) {
   this._indexYold = volume._indexYold;
   this._indexZ = volume._indexZ;
   this._indexZold = volume._indexZold;
-  this._indexLR = volume._indexLR;
-  this._indexPA = volume._indexPA;
-  this._indexIS = volume._indexIS;
 
   this._dimensionsRAS = volume._dimensionsRAS.slice();
   this._slicesX = new X.object(volume._slicesX);
   this._slicesY = new X.object(volume._slicesY);
   this._slicesZ = new X.object(volume._slicesZ);
 
-  this._space = volume.space;
-  this._spaceorientation = volume._spaceorientation;
-  this._rasspaceorientation = volume._rasspaceorientation;
-  this._orientation = volume._orientation;
-  this._normcosine = volume._normcosine;
   this._max = volume._max;
   this._data = volume._data;
 
@@ -402,62 +348,15 @@ X.volume.prototype.create_ = function(_info) {
   this._children.push(this._slicesZ);
 
   // setup image specific information
-  this._space = _info.space;
-  this._spaceorientation = _info.spaceorientation;
-  this._rasspaceorientation = _info.rasspaceorientation;
-  this._orientation = _info.orientation;
-  this._normcosine = _info.normcosine;
+  this._RASOrigin = _info.RASOrigin;
+  this._RASSpacing = _info.RASSpacing;
+  this._RASDimensions = _info.RASDimensions;
+  this._IJKToRAS = _info.IJKToRAS;
+  this._RASToIJK = _info.RASToIJK;
   this._max = _info.max;
   this._data = _info.data;
   this._dirty = true;
 };
-
-
-/**
- * Map variables to user friendly named variables
- *
- * @private
- */
-X.volume.prototype.map_ = function() {
-
-  var _normcosine = this._normcosine[2];
-  var _dimensions =  this._dimensions;
-
-  // here indexX is the scan direction
-
-  if (_normcosine[0] != 0) {
-
-    // this is a sagittal scan
-
-    this._indexLR = this._indexX;
-    this._indexPA = this._indexY;
-    this._indexIS = this._indexZ;
-    this._dimensionsRAS = [_dimensions[2], _dimensions[0], _dimensions[1]];
-
-  } else if (_normcosine[1] != 0) {
-
-    // this is a coronal scan
-
-    this._indexLR = this._indexY;
-    this._indexPA = this._indexX;
-    this._indexIS = this._indexZ;
-    this._dimensionsRAS = [_dimensions[0], _dimensions[2], _dimensions[1]];
-
-  } else {
-
-    // this is an axial scan
-
-    this._indexLR = this._indexY;
-    this._indexPA = this._indexZ;
-    this._indexIS = this._indexX;
-    this._dimensionsRAS = _dimensions;
-
-  }
-  
-  
-
-};
-
 
 /**
  * Re-show the slices or re-activate the volume rendering for this volume.
@@ -476,18 +375,7 @@ X.volume.prototype.modified = function(propagateEvent) {
 
     if (this._volumeRendering != this._volumeRenderingOld) {
 
-      if (this._volumeRendering) {
-
-        // first, hide possible slicing slices but only if volume rendering was
-        // just switched on
-        var _sliceX = this._children[0]._children[parseInt(this._indexX, 10)];
-        _sliceX['visible'] = false;
-        var _sliceY = this._children[1]._children[parseInt(this._indexY, 10)];
-        _sliceY['visible'] = false;
-        var _sliceZ = this._children[2]._children[parseInt(this._indexZ, 10)];
-        _sliceZ['visible'] = false;
-
-      } else {
+      if (!this._volumeRendering && this._volumeRenderingDirection != -1) {
 
         // hide the volume rendering slices
         var _child = this._children[this._volumeRenderingDirection];
@@ -506,15 +394,12 @@ X.volume.prototype.modified = function(propagateEvent) {
       return;
 
     }
-    if (this._volumeRendering) {
 
+    this.slicing_();
+
+    if (this._volumeRendering && this._volumeRenderingDirection != -1) {
       // prepare volume rendering
       this.volumeRendering_(this._volumeRenderingDirection);
-
-    } else {
-
-      // prepare slicing
-      this.slicing_();
 
     }
   }
@@ -541,6 +426,7 @@ X.volume.prototype.slicing_ = function() {
     var _child = this._children[xyz];
     var currentIndex = 0;
     var oldIndex = 0;
+
     // buffer the old indices
     if (xyz == 0) {
 
@@ -562,15 +448,63 @@ X.volume.prototype.slicing_ = function() {
 
     }
 
+    // RESLICE VOLUME IF NECESSARY!
+    if(!goog.isDefAndNotNull(this._children[xyz]._children[parseInt(currentIndex, 10)])){
+
+      // GO reslice!
+      var _sliceOrigin = goog.vec.Vec3.createFloat32();
+
+      _sliceOrigin[0] = this._childrenInfo[xyz]._solutionsLine[0][0][0] + this._childrenInfo[xyz]._sliceDirection[0]*parseInt(currentIndex, 10);
+      _sliceOrigin[1] = this._childrenInfo[xyz]._solutionsLine[0][0][1] + this._childrenInfo[xyz]._sliceDirection[1]*parseInt(currentIndex, 10);
+      _sliceOrigin[2] = this._childrenInfo[xyz]._solutionsLine[0][0][2] + this._childrenInfo[xyz]._sliceDirection[2]*parseInt(currentIndex, 10);
+
+      //attach labelmap
+      if(this.hasLabelMap){
+        var _sliceLabel = X.parser.reslice2(_sliceOrigin, this._childrenInfo[xyz]._sliceXYSpacing, this._childrenInfo[xyz]._sliceNormal, this._childrenInfo[xyz]._color, this._BBox, this._labelmap._IJKVolume, this._labelmap, this._labelmap.hasLabelMap, this._labelmap._colortable._map);
+        this._labelmap._children[xyz]._children[parseInt(currentIndex, 10)] = _sliceLabel;
+        // add it to create the texture
+        this._labelmap._children[xyz].modified(true);
+      }
+
+      var _slice = X.parser.reslice2(_sliceOrigin, this._childrenInfo[xyz]._sliceXYSpacing, this._childrenInfo[xyz]._sliceNormal, this._childrenInfo[xyz]._color, this._BBox, this._IJKVolume, this, true, null);
+
+      if(this.hasLabelMap){
+        _slice._labelmap = _slice._texture;
+        _slice._labelmap = this._labelmap._children[xyz]._children[parseInt(currentIndex, 10)]._texture;
+      }
+
+      _child._children[parseInt(currentIndex, 10)] = _slice;
+
+      // add it to renderer!
+      this._children[xyz].modified(true);
+    }
+    // DONE RESLICING!
+
     // hide the old slice
     var _oldSlice = _child._children[parseInt(oldIndex, 10)];
-    _oldSlice['visible'] = false;
+    if(!this._volumeRendering){
+
+      _oldSlice['visible'] = false;
+
+    }
 
     // show the current slice and also show the borders if they exist by
     // calling the setter of visible rather than accessing the _visible property
     var _currentSlice = _child._children[parseInt(currentIndex, 10)];
     _currentSlice['visible'] = true;
     _currentSlice._opacity = 1.0;
+
+    if(this._volumeRendering){
+
+      _currentSlice._children[0]._visible = false;
+      if(xyz != this._volumeRenderingDirection){
+
+        _currentSlice['visible'] = false;
+        _currentSlice._opacity = 0.0; 
+
+      }
+
+    }
 
   }
 
@@ -586,6 +520,30 @@ X.volume.prototype.slicing_ = function() {
 X.volume.prototype.__defineGetter__('dimensions', function() {
 
   return this._dimensions;
+
+});
+
+/**
+ * Get the RAS Bounding Box of this volume.
+ *
+ * @return {!Array} The dimensions of this volume.
+ * @public
+ */
+X.volume.prototype.__defineGetter__('bbox', function() {
+
+  return this._BBox;
+
+});
+
+/**
+ * Get the range of this volume.
+ *
+ * @return {!Array} The dimensions of this volume.
+ * @public
+ */
+X.volume.prototype.__defineGetter__('range', function() {
+
+  return this._range;
 
 });
 
@@ -751,183 +709,6 @@ X.volume.prototype.__defineGetter__('labelmap', function() {
   return this._labelmap;
 
 });
-
-
-/**
- * Get the slice index in Inferior-Superior direction.
- *
- * @return {!number} The slice index in Inferior-Superior direction.
- * @public
- */
-X.volume.prototype.__defineGetter__('indexIS', function() {
-
-  // map variables based on orientation
-  if (this._normcosine[2][2] != 0) {
-
-    this._indexIS = this._indexX;
-
-  } else {
-
-    this._indexIS = this._indexZ;
-
-  }
-
-  return this._indexIS;
-
-});
-
-
-/**
- * Set the slice index in Inferior-Superior direction.
- *
- * @param {!number}
- *          indexIS The slice index in Inferior-Superior direction.
- * @public
- */
-X.volume.prototype.__defineSetter__('indexIS', function(indexIS) {
-
-  if (goog.isNumber(indexIS)) {
-
-    // map variables based on orientation
-    if (this._normcosine[2][2] != 0) {
-
-      this._indexX = indexIS;
-
-    } else {
-
-      this._indexZ = indexIS;
-
-    }
-
-    this._indexIS = indexIS;
-
-    // fire a modified event without propagation for fast slicing
-    this.modified(false);
-
-  }
-
-});
-
-
-/**
- * Get the slice index in Left-Right direction.
- *
- * @return {!number} The slice index in Left-Right direction.
- * @public
- */
-X.volume.prototype.__defineGetter__('indexLR', function() {
-
-  // map variables based on orientation
-  if (this._normcosine[2][0] != 0) {
-
-    this._indexLR = this._indexX;
-
-  } else {
-
-    this._indexLR = this._indexY;
-
-  }
-
-  return this._indexLR;
-
-});
-
-
-/**
- * Set the slice index in Left-Right direction.
- *
- * @param {!number}
- *          indexLR The slice index in Left-Right direction.
- * @public
- */
-X.volume.prototype.__defineSetter__('indexLR', function(indexLR) {
-
-  if (goog.isNumber(indexLR)) {
-
-    // map variables based on orientation
-    if (this._normcosine[2][0] != 0) {
-
-      this._indexX = indexLR;
-
-    } else {
-
-      this._indexY = indexLR;
-
-    }
-
-    this._indexLR = indexLR;
-
-    // fire a modified event without propagation for fast slicing
-    this.modified(false);
-
-  }
-
-});
-
-
-/**
- * Get the slice index in Posterior-Anterior direction.
- *
- * @return {!number} The slice index in Posterior-Anterior direction.
- * @public
- */
-X.volume.prototype.__defineGetter__('indexPA', function() {
-
-  // map variables based on orientation
-  if (this._normcosine[2][0] != 0) {
-
-    this._indexPA = this._indexY;
-
-  } else if (this._normcosine[2][1] != 0) {
-
-    this._indexPA = this._indexX;
-
-  } else {
-
-    this._indexPA = this._indexZ;
-
-  }
-
-  return this._indexPA;
-
-});
-
-
-/**
- * Set the slice index in Posterior-Anterior direction.
- *
- * @param {!number}
- *          indexPA The slice index in Posterior-Anterior direction.
- * @public
- */
-X.volume.prototype.__defineSetter__('indexPA', function(indexPA) {
-
-  if (goog.isNumber(indexPA)) {
-
-    // map variables based on orientation
-    if (this._normcosine[2][0] != 0) {
-
-      this._indexY = indexPA;
-
-    } else if (this._normcosine[2][1] != 0) {
-
-      this._indexX = indexPA;
-
-    } else {
-
-      this._indexZ = indexPA;
-
-    }
-
-    this._indexPA = indexPA;
-
-    // fire a modified event without propagation for fast slicing
-    this.modified(false);
-
-  }
-
-});
-
 
 /**
  * Get the slice index in X-direction.
@@ -1145,6 +926,405 @@ X.volume.prototype.__defineSetter__('reslicing', function(reslicing) {
 
 });
 
+/**
+ * Set value of normal X of slice X.
+ *
+ * @param {number} xNormX Value between -1 and 1.
+*
+ * @public
+ */
+X.volume.prototype.__defineSetter__('xNormX', function(xNormX) {
+
+  this._childrenInfo[0]._sliceNormal[0] = xNormX;
+
+});
+
+/**
+ * Get value of normal X of slice X.
+ *
+ * @return {number} xNormX.
+ *
+ * @public
+ */
+X.volume.prototype.__defineGetter__('xNormX', function() {
+
+  return this._childrenInfo[0]._sliceNormal[0] ;
+
+});
+
+/**
+ * Set value of normal Y of slice X.
+ *
+ * @param {number} xNormY Value between -1 and 1.
+*
+ * @public
+ */
+X.volume.prototype.__defineSetter__('xNormY', function(xNormY) {
+
+  this._childrenInfo[0]._sliceNormal[1] = xNormY;
+
+});
+
+/**
+ * Get value of normal Y of slice X.
+ *
+ * @return {number} xNormY.
+ *
+ * @public
+ */
+ X.volume.prototype.__defineGetter__('xNormY', function() {
+
+  return this._childrenInfo[0]._sliceNormal[1];
+
+});
+
+/**
+ * Set value of normal Z of slice X.
+ *
+ * @param {number} xNormZ Value between -1 and 1.
+*
+ * @public
+ */
+X.volume.prototype.__defineSetter__('xNormZ', function(xNormZ) {
+
+  this._childrenInfo[0]._sliceNormal[2] = xNormZ;
+
+});
+
+/**
+ * Get value of normal Z of slice X.
+ *
+ * @return {number} xNormZ.
+ *
+ * @public
+ */
+X.volume.prototype.__defineGetter__('xNormZ', function() {
+
+  return this._childrenInfo[0]._sliceNormal[2];
+
+});
+
+/**
+ * Set value of slice X color.
+ *
+ * @param {!Array} xColor [0-1, 0-1, 0-1].
+ *
+ * @public
+ */
+X.volume.prototype.__defineSetter__('xColor', function(xColor) {
+
+  this._childrenInfo[0]._color = xColor;
+
+});
+
+/**
+ * Get value of slice X color.
+ *
+ * @return {!Array} xColor.
+ *
+ * @public
+ */
+X.volume.prototype.__defineGetter__('xColor', function() {
+
+  return this._childrenInfo[0]._color;
+
+});
+
+/**
+ * Set value of normal X of slice Y.
+ *
+ * @param {number} yNormX Value between -1 and 1.
+*
+ * @public
+ */
+X.volume.prototype.__defineSetter__('yNormX', function(yNormX) {
+
+  this._childrenInfo[1]._sliceNormal[0] = yNormX;
+
+});
+
+/**
+ * Get value of normal X of slice X.
+ *
+ * @return {number} yNormX.
+ *
+ * @public
+ */
+X.volume.prototype.__defineGetter__('yNormX', function() {
+
+  return this._childrenInfo[1]._sliceNormal[0] ;
+
+});
+
+/**
+ * Set value of normal Y of slice X.
+ *
+ * @param {number} yNormY Value between -1 and 1.
+*
+ * @public
+ */
+X.volume.prototype.__defineSetter__('yNormY', function(yNormY) {
+
+  this._childrenInfo[1]._sliceNormal[1] = yNormY;
+
+});
+
+/**
+ * Get value of normal Y of slice Y.
+ *
+ * @return {number} yNormY.
+ *
+ * @public
+ */
+ X.volume.prototype.__defineGetter__('yNormY', function() {
+
+  return this._childrenInfo[1]._sliceNormal[1];
+
+});
+
+/**
+ * Set value of normal Z of slice Y.
+ *
+ * @param {number} yNormZ Value between -1 and 1.
+*
+ * @public
+ */
+X.volume.prototype.__defineSetter__('yNormZ', function(yNormZ) {
+
+  this._childrenInfo[1]._sliceNormal[2] = yNormZ;
+
+});
+
+/**
+ * Get value of normal Z of slice Y.
+ *
+ * @return {number} yNormZ.
+ *
+ * @public
+ */
+X.volume.prototype.__defineGetter__('yNormZ', function() {
+
+  return this._childrenInfo[1]._sliceNormal[2];
+
+});
+
+/**
+ * Set value of slice Y color.
+ *
+ * @param {!Array} yColor [0-1, 0-1, 0-1].
+ *
+ * @public
+ */
+X.volume.prototype.__defineSetter__('yColor', function(yColor) {
+
+  this._childrenInfo[1]._color = yColor;
+
+});
+
+/**
+ * Get value of slice Y color.
+ *
+ * @return {!Array} yColor.
+ *
+ * @public
+ */
+X.volume.prototype.__defineGetter__('yColor', function() {
+
+  return this._childrenInfo[1]._color;
+
+});
+
+/**
+ * Set value of normal X of slice Z.
+ *
+ * @param {number} zNormX Value between -1 and 1.
+*
+ * @public
+ */
+X.volume.prototype.__defineSetter__('zNormX', function(zNormX) {
+
+  this._childrenInfo[2]._sliceNormal[0] = zNormX;
+
+});
+
+/**
+ * Get value of normal X of slice Z.
+ *
+ * @return {number} zNormX.
+ *
+ * @public
+ */
+X.volume.prototype.__defineGetter__('zNormX', function() {
+
+  return this._childrenInfo[2]._sliceNormal[0] ;
+
+});
+
+/**
+ * Set value of normal Y of slice Z.
+ *
+ * @param {number} zNormY Value between -1 and 1.
+*
+ * @public
+ */
+X.volume.prototype.__defineSetter__('zNormY', function(zNormY) {
+
+  this._childrenInfo[2]._sliceNormal[1] = zNormY;
+
+});
+
+/**
+ * Get value of normal Y of slice X.
+ *
+ * @return {number} zNormY.
+ *
+ * @public
+ */
+ X.volume.prototype.__defineGetter__('zNormY', function() {
+
+  return this._childrenInfo[2]._sliceNormal[1];
+
+});
+
+/**
+ * Set value of normal Z of slice Z.
+ *
+ * @param {number} zNormZ Value between -1 and 1.
+*
+ * @public
+ */
+X.volume.prototype.__defineSetter__('zNormZ', function(zNormZ) {
+
+  this._childrenInfo[2]._sliceNormal[2] = zNormZ;
+
+});
+
+/**
+ * Get value of normal Z of slice X.
+ *
+ * @return {number} zNormZ.
+ *
+ * @public
+ */
+X.volume.prototype.__defineGetter__('zNormZ', function() {
+
+  return this._childrenInfo[2]._sliceNormal[2];
+
+});
+
+/**
+ * Set value of slice Z color.
+ *
+ * @param {!Array} zColor [0-1, 0-1, 0-1].
+ *
+ * @public
+ */
+X.volume.prototype.__defineSetter__('zColor', function(zColor) {
+
+  this._childrenInfo[2]._color = zColor;
+
+});
+
+/**
+ * Get value of slice Z color.
+ *
+ * @return {!Array} zColor.
+ *
+ * @public
+ */
+X.volume.prototype.__defineGetter__('zColor', function() {
+
+  return this._childrenInfo[2]._color;
+
+});
+
+/**
+ * Recompute the slice information.
+ * Only supports normals and color for now.
+ * Todo: origin
+ *
+ * @param {number}
+ *          index Slice to be updated.
+ *
+ * @public
+ */
+X.volume.prototype.sliceInfoChanged = function(index){
+
+  // Hide slices
+  this._children[index]['visible'] = false;
+
+  // delete all textures attached to 1 child
+  // for each child
+  for(var i=0; i<this._children[index]._children.length; i++){
+    if(typeof this._children[index]._children[i] != 'undefined'){
+      
+      if(this.hasLabelMap) {
+        // add it to create the texture
+        this._labelmap._children[index]._children[i].remove();
+        this._labelmap._children[index]._children[i] = null;
+      }
+
+      this._children[index]._children[i].remove();
+      this._children[index]._children[i] = null;
+    
+    }
+
+  }
+
+  // UPDATE SLICE INFO
+  goog.vec.Vec3.normalize(this._childrenInfo[index]._sliceNormal, this._childrenInfo[index]._sliceNormal);
+  //
+  X.parser.prototype.updateSliceInfo(index, this._childrenInfo[index]._sliceOrigin, this._childrenInfo[index]._sliceNormal, this);
+  // Create empty array for all slices in this direction
+  this._children[index]._children = [];
+  this._children[index]._children = new Array(this._childrenInfo[index]._nb);
+
+  //attach labelmap
+  if(this.hasLabelMap) {
+
+    var _sliceLabel = X.parser.reslice2(this._childrenInfo[index]._sliceOrigin, this._childrenInfo[index]._sliceXYSpacing, this._childrenInfo[index]._sliceNormal, this._childrenInfo[index]._color, this._BBox, this._labelmap._IJKVolume, this._labelmap, this._labelmap.hasLabelMap, this._labelmap._colortable._map);
+    this._labelmap._children[index]._children = [];
+    this._labelmap._children[index]._children = new Array(this._childrenInfo[index]._nb);
+    this._labelmap._children[index]._children[Math.floor(this._childrenInfo[index]._nb/2)] = _sliceLabel;
+    // add it to create the texture
+    this._labelmap._children[index].modified();
+  }
+
+  var _slice = X.parser.reslice2(this._childrenInfo[index]._sliceOrigin, this._childrenInfo[index]._sliceXYSpacing, this._childrenInfo[index]._sliceNormal, this._childrenInfo[index]._color, this._BBox, this._IJKVolume, this, true, null);
+
+  if(this.hasLabelMap) {
+
+    _slice._labelmap = _slice._texture;
+    _slice._labelmap = this._labelmap._children[index]._children[Math.floor(this._childrenInfo[index]._nb/2)]._texture;
+    
+  }
+
+ this._children[index]._children[Math.floor(this._childrenInfo[index]._nb/2)] = _slice;
+
+  if(index == 0) {
+
+    this._indexX = Math.floor(this._childrenInfo[index]._nb/2);
+    this._indexXold = Math.floor(this._childrenInfo[index]._nb/2);
+  
+  }
+  else if(index == 1) {
+    
+    this._indexY = Math.floor(this._childrenInfo[index]._nb/2);
+    this._indexYold = Math.floor(this._childrenInfo[index]._nb/2);
+
+  }
+  else {
+
+    this._indexZ = Math.floor(this._childrenInfo[index]._nb/2);
+    this._indexZold = Math.floor(this._childrenInfo[index]._nb/2);
+  
+  }
+
+  // add it to renderer!
+  this._children[index].modified();
+  this._children[index]._children[Math.floor(this._childrenInfo[index]._nb/2)]._visible = true;
+
+}
 
 /**
  * Perform volume rendering of this volume along a specific direction. The
@@ -1161,61 +1341,407 @@ X.volume.prototype.volumeRendering_ = function(direction) {
   // mapping based on slice's normal
   // direction 0: sagittal container
   // direction 1: coronal container
-  // direction 3: axial container
-  var _dir = (direction + 2) % 3;
-  if (this._normcosine[0][_dir] != 0) {
+  // direction 2: axial container
 
-    _dir = 2;
+  if(this._computing){
 
-  } else if (this._normcosine[1][_dir] != 0) {
-
-    _dir = 0;
-
-  } else {
-
-    _dir = 1;
-
-  }
-
-  if (this._normcosine[2][1] != 0) {
-
-    // if coronally acquired
-    _dir = (_dir + 1) % 3;
-
+    return;
   }
 
   if ((!this._volumeRendering)
-      || (!this._dirty && _dir == this._volumeRenderingDirection)) {
+      || (!this._dirty && direction == this._volumeRenderingDirection)) {
+
+    this._volumeRenderingDirection = direction;
 
     // we do not have to do anything
     return;
 
   }
 
-  // hide old volume rendering slices
-  var _child = this._children[this._volumeRenderingDirection];
-  _child['visible'] = false;
+  if (this._volumeRenderingCache.indexOf(direction) == -1) {
 
-  // show new volume rendering slices, but don't show the borders
-  _child = this._children[_dir];
-  var _numberOfSlices = _child._children.length;
+    this._volumeRenderingCache.push(direction);
 
-  var i;
-  for (i = 0; i < _numberOfSlices; i++) {
+    this._computing = true;
 
-    _child._children[i]._visible = true;
+    // call computing callback
+    this.onComputing_(direction);
+
+  } else {
+
+    // we do not need to reslice
+
+    // hide old volume rendering slices
+    var _child = this._children[this._volumeRenderingDirection];
+    _child['visible'] = false;
+
+    // show new volume rendering slices, but don't show the borders
+    _child = this._children[direction];
+    var _numberOfSlices = _child._children.length;
+
+    var i;
+    for (i = 0; i < _numberOfSlices; i++) {
+
+      _child._children[i]._visible = true;
+
+    }
+
+    // store the direction
+    this._volumeRenderingDirection = direction;
+
+    this._dirty = false;      
+
+    // and that's it 
+
+    return;
 
   }
 
-  // _child['visible'] = true;
-  // store the direction
-  this._volumeRenderingDirection = _dir;
+  //
+  // we are using timeouts here, just for interaction with the user interface
+  //
 
-  this._dirty = false;
+    
+  setTimeout(function() {
+
+    // hide old volume rendering slices
+    var _child = null;
+    
+    if( this._volumeRenderingDirection >= 0 ){
+
+      _child = this._children[this._volumeRenderingDirection];
+      _child['visible'] = false;
+
+    }
+
+    // show new volume rendering slices, but don't show the borders
+    _child = this._children[direction];
+    var _numberOfSlices = _child._children.length;
+
+    var _progress = 0;
+
+    var quarters = Math.floor(_numberOfSlices/4);
+
+    //
+    // THE FOLLOWING IS UNROLLED AND THIS PROBABLY COULD BE OPTIMIZED
+    //
+
+    var i;
+    for (i = 0; i < 1*quarters; i++) {
+
+      // RESLICE VOLUME IF NECESSARY!
+      //loop through slice
+      if(!goog.isDefAndNotNull(_child._children[i])){
+
+        var _sliceOrigin = goog.vec.Vec3.createFloat32();
+
+        _sliceOrigin[0] = this._childrenInfo[direction]._solutionsLine[0][0][0] + this._childrenInfo[direction]._sliceDirection[0]*i;
+        _sliceOrigin[1] = this._childrenInfo[direction]._solutionsLine[0][0][1] + this._childrenInfo[direction]._sliceDirection[1]*i;
+        _sliceOrigin[2] = this._childrenInfo[direction]._solutionsLine[0][0][2] + this._childrenInfo[direction]._sliceDirection[2]*i;
+
+        //attach labelmap
+        if(this.hasLabelMap){
+          var _sliceLabel = X.parser.reslice2(_sliceOrigin, this._childrenInfo[direction]._sliceXYSpacing, this._childrenInfo[direction]._sliceNormal, this._childrenInfo[direction]._color, this._BBox, this._labelmap._IJKVolume, this._labelmap, this._labelmap.hasLabelMap, this._labelmap._colortable._map);
+          this._labelmap._children[direction]._children[i] = _sliceLabel;
+          // add it to create the texture
+          this._labelmap._children[direction].modified(true);
+        }
+
+        var _slice = X.parser.reslice2(_sliceOrigin, this._childrenInfo[direction]._sliceXYSpacing, this._childrenInfo[direction]._sliceNormal, this._childrenInfo[direction]._color, this._BBox, this._IJKVolume, this, true, null);
+        _slice._children[0]._visible = false;
+
+        if(this.hasLabelMap){
+          _slice._labelmap = _slice._texture;
+          _slice._labelmap = this._labelmap._children[direction]._children[i]._texture;
+        }
+
+        _child._children[i] = _slice;
+
+        _child._children[i]._visible = true;
+
+      }
+      else{
+
+        _child._children[i]._visible = true;
+
+      }
+      
+    }
+
+    this.onComputingProgress_(0.25);
+
+    setTimeout(function() {
+
+      for (; i < 2*quarters; i++) {
+
+        // RESLICE VOLUME IF NECESSARY!
+        //loop through slice
+        if(!goog.isDefAndNotNull(_child._children[i])){
+
+          var _sliceOrigin = goog.vec.Vec3.createFloat32();
+
+          _sliceOrigin[0] = this._childrenInfo[direction]._solutionsLine[0][0][0] + this._childrenInfo[direction]._sliceDirection[0]*i;
+          _sliceOrigin[1] = this._childrenInfo[direction]._solutionsLine[0][0][1] + this._childrenInfo[direction]._sliceDirection[1]*i;
+          _sliceOrigin[2] = this._childrenInfo[direction]._solutionsLine[0][0][2] + this._childrenInfo[direction]._sliceDirection[2]*i;
+
+          //attach labelmap
+          if(this.hasLabelMap){
+            var _sliceLabel = X.parser.reslice2(_sliceOrigin, this._childrenInfo[direction]._sliceXYSpacing, this._childrenInfo[direction]._sliceNormal, this._childrenInfo[direction]._color, this._BBox, this._labelmap._IJKVolume, this._labelmap, this._labelmap.hasLabelMap, this._labelmap._colortable._map);
+            this._labelmap._children[direction]._children[i] = _sliceLabel;
+            // add it to create the texture
+            this._labelmap._children[direction].modified(true);
+          }
+
+          var _slice = X.parser.reslice2(_sliceOrigin, this._childrenInfo[direction]._sliceXYSpacing, this._childrenInfo[direction]._sliceNormal, this._childrenInfo[direction]._color, this._BBox, this._IJKVolume, this, true, null);
+          _slice._children[0]._visible = false;
+
+          if(this.hasLabelMap){
+            _slice._labelmap = _slice._texture;
+            _slice._labelmap = this._labelmap._children[direction]._children[i]._texture;
+          }
+
+          _child._children[i] = _slice;
+
+          _child._children[i]._visible = true;
+
+        }
+        else{
+
+          _child._children[i]._visible = true;
+
+        } 
+      }
+
+      this.onComputingProgress_(0.50);
+
+      setTimeout(function() {
+
+        for (; i < 3*quarters; i++) {
+
+          // RESLICE VOLUME IF NECESSARY!
+          //loop through slice
+          if(!goog.isDefAndNotNull(_child._children[i])){
+
+            var _sliceOrigin = goog.vec.Vec3.createFloat32();
+
+            _sliceOrigin[0] = this._childrenInfo[direction]._solutionsLine[0][0][0] + this._childrenInfo[direction]._sliceDirection[0]*i;
+            _sliceOrigin[1] = this._childrenInfo[direction]._solutionsLine[0][0][1] + this._childrenInfo[direction]._sliceDirection[1]*i;
+            _sliceOrigin[2] = this._childrenInfo[direction]._solutionsLine[0][0][2] + this._childrenInfo[direction]._sliceDirection[2]*i;
+
+            //attach labelmap
+            if(this.hasLabelMap){
+              var _sliceLabel = X.parser.reslice2(_sliceOrigin, this._childrenInfo[direction]._sliceXYSpacing, this._childrenInfo[direction]._sliceNormal, this._childrenInfo[direction]._color, this._BBox, this._labelmap._IJKVolume, this._labelmap, this._labelmap.hasLabelMap, this._labelmap._colortable._map);
+              this._labelmap._children[direction]._children[i] = _sliceLabel;
+              // add it to create the texture
+              this._labelmap._children[direction].modified(true);
+            }
+
+            var _slice = X.parser.reslice2(_sliceOrigin, this._childrenInfo[direction]._sliceXYSpacing, this._childrenInfo[direction]._sliceNormal, this._childrenInfo[direction]._color, this._BBox, this._IJKVolume, this, true, null);
+            _slice._children[0]._visible = false;
+
+            if(this.hasLabelMap){
+              _slice._labelmap = _slice._texture;
+              _slice._labelmap = this._labelmap._children[direction]._children[i]._texture;
+            }
+
+            _child._children[i] = _slice;
+
+            _child._children[i]._visible = true;
+
+          }
+          else{
+
+             _child._children[i]._visible = true;
+
+          } 
+          
+        }
+
+        this.onComputingProgress_(0.75);
+
+        setTimeout(function() {
+
+          for (i=3*quarters; i < _numberOfSlices; i++) {
+
+            // RESLICE VOLUME IF NECESSARY!
+            //loop through slice
+            if(!goog.isDefAndNotNull(_child._children[i])){
+
+              var _sliceOrigin = goog.vec.Vec3.createFloat32();
+
+              _sliceOrigin[0] = this._childrenInfo[direction]._solutionsLine[0][0][0] + this._childrenInfo[direction]._sliceDirection[0]*i;
+              _sliceOrigin[1] = this._childrenInfo[direction]._solutionsLine[0][0][1] + this._childrenInfo[direction]._sliceDirection[1]*i;
+              _sliceOrigin[2] = this._childrenInfo[direction]._solutionsLine[0][0][2] + this._childrenInfo[direction]._sliceDirection[2]*i;
+
+              //attach labelmap
+              if(this.hasLabelMap){
+                var _sliceLabel = X.parser.reslice2(_sliceOrigin, this._childrenInfo[direction]._sliceXYSpacing, this._childrenInfo[direction]._sliceNormal, this._childrenInfo[direction]._color, this._BBox, this._labelmap._IJKVolume, this._labelmap, this._labelmap.hasLabelMap, this._labelmap._colortable._map);
+                this._labelmap._children[direction]._children[i] = _sliceLabel;
+                // add it to create the texture
+                this._labelmap._children[direction].modified(true);
+              }
+
+              var _slice = X.parser.reslice2(_sliceOrigin, this._childrenInfo[direction]._sliceXYSpacing, this._childrenInfo[direction]._sliceNormal, this._childrenInfo[direction]._color, this._BBox, this._IJKVolume, this, true, null);
+              _slice._children[0]._visible = false;
+
+              if(this.hasLabelMap){
+                _slice._labelmap = _slice._texture;
+                _slice._labelmap = this._labelmap._children[direction]._children[i]._texture;
+              }
+
+              _child._children[i] = _slice;
+
+              _child._children[i]._visible = true;
+
+            }
+            else{
+
+             _child._children[i]._visible = true;
+
+            } 
+
+          }
+
+          this.onComputingProgress_(1.0);
+
+          setTimeout(function() {
+
+            if (this._computing) {
+
+              // add it to renderer!
+              this._children[direction].modified(true);            
+
+            }
+
+            // store the direction
+            this._volumeRenderingDirection = direction;
+
+            this._dirty = false;      
+
+            if (this._computing) {
+              //call computing end callback
+              this.onComputingEnd_(direction);
+
+            }
+
+            this._computing = false;
+
+          }.bind(this), 10);
+
+        }.bind(this), 10);
+
+      }.bind(this), 10);
+
+    }.bind(this), 10);
+
+  }.bind(this), 10);
 
 };
+
+
+/**
+ * The oncomputing internal callback. Any actions prior to firing the
+ * public oncomputing callback go here.
+ *
+ * @param {!number} direction The direction to compute.
+ * @protected
+ *
+ */
+X.volume.prototype.onComputing_ = function(direction) {
+
+  var computingEvent = new X.event.ComputingEvent();
+  computingEvent._object = this;
+  this.dispatchEvent(computingEvent);
+
+  this['onComputing'](direction);
+
+};
+
+
+/**
+ * The oncomputingprogress internal callback. Any actions prior to
+ * firing the public oncomputingprogress callback go here.
+ *
+ * @param {!number} progress The progress value in percent.
+ * @protected
+ */
+X.volume.prototype.onComputingProgress_ = function(progress) {
+
+  var computingProgressEvent = new X.event.ComputingProgressEvent();
+  computingProgressEvent._value = progress;
+  this.dispatchEvent(computingProgressEvent);
+
+  this['onComputingProgress'](progress*100);
+
+};
+
+
+/**
+ * The oncomputingend internal callback. Any actions prior to firing the
+ * public oncomputingend callback go here.
+ *
+ * @param {!number} direction The direction which was computed.
+ * @protected
+ *
+ */
+X.volume.prototype.onComputingEnd_ = function(direction) {
+
+  var computingEndEvent = new X.event.ComputingEndEvent();
+  computingEndEvent._object = this;
+  this.dispatchEvent(computingEndEvent);
+
+  this['onComputingEnd'](direction);
+
+};
+
+
+/**
+ * This callback gets fired when computation has to happen in order
+ * to display volume rendering.
+ * 
+ * @param {!number} direction The direction to compute.
+ * @public
+ *
+ */
+X.volume.prototype.onComputing = function(direction) {
+
+  // should be overloaded
+
+};
+
+
+/**
+ * This callback gets fired when computation is happening.
+ * 
+ * @param {!number} progress The current computation progress in percent.
+ * @public
+ *
+ */
+X.volume.prototype.onComputingProgress = function(progress) {
+
+  // should be overloaded
+
+};
+
+
+/**
+ * This callback gets fired when computation is complete.
+ * 
+ * @param {!number} direction The direction which was computed.
+ * @public
+ *
+ */
+X.volume.prototype.onComputingEnd = function(direction) {
+
+  // should be overloaded
+
+}
 
 
 // export symbols (required for advanced compilation)
 goog.exportSymbol('X.volume', X.volume);
 goog.exportSymbol('X.volume.prototype.modified', X.volume.prototype.modified);
+goog.exportSymbol('X.volume.prototype.sliceInfoChanged', X.volume.prototype.sliceInfoChanged);
+goog.exportSymbol('X.volume.prototype.onComputing', X.volume.prototype.onComputing);
+goog.exportSymbol('X.volume.prototype.onComputingProgress', X.volume.prototype.onComputingProgress);
+goog.exportSymbol('X.volume.prototype.onComputingEnd', X.volume.prototype.onComputingEnd);

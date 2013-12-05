@@ -268,8 +268,9 @@ ViewBoxManager.prototype.removeColumn = function(opt_animate) {
 	    //
 	    // Remove the drag drop handles
 	    // 
-	    that.dragDropHandles[ViewBox[rowLen]._element.id].parentNode.removeChild;
-	    delete that.dragDropHandles[ViewBox[rowLen]._element.id];
+	    var dragDropHandle = that.dragDropHandles[ViewBox[rowLen]];
+	    dragDropHandle.parentNode.removeChild(dragDropHandle);
+	    delete dragDropHandle;
 	})
     }
 
@@ -344,6 +345,8 @@ ViewBoxManager.prototype.insertRow = function(opt_animate) {
  */
 ViewBoxManager.prototype.removeRow = function(opt_animate) {
 
+    var that = this;
+
     //------------------
     // Animate remove if opt_animate argument not provided.
     //------------------
@@ -363,8 +366,9 @@ ViewBoxManager.prototype.removeRow = function(opt_animate) {
 	    //
 	    // Remove the drag drop handles
 	    // 
-	    that.dragDropHandles[currDelViewBox._element.id].parentNode.removeChild;
-	    delete that.dragDropHandles[currDelViewBox._element.id];
+	    var dragDropHandle = that.dragDropHandles[currDelViewBox._element.id];
+	    dragDropHandle.parentNode.removeChild(dragDropHandle);
+	    delete dragDropHandle;
 	})
 	this.ViewBoxes_.splice(this.ViewBoxes_.length -1, 1);
     }
