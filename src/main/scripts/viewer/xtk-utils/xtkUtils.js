@@ -473,7 +473,7 @@ xtkUtils.extractFileInfo = function(scene, tagName, storageNodeType) {
 			    //
                             if (colorMode == '1') {
                                 var fancyColors = itemDisplay.getAttribute('DiffusionTensorDisplayPropertiesNodeRef');
-                                console.log(fancyColors);
+                                //console.log(fancyColors);
                             }
                         }
                     }
@@ -496,14 +496,14 @@ xtkUtils.extractFileInfo = function(scene, tagName, storageNodeType) {
             if (displayNodeType == 'GPURayCastVolumeRenderingDisplay')
                 displayNodeType = 'GPURayCastVolumeRendering';
             
-	    console.log(scene);
-	    console.log(displayNodeType);
+	    //console.log(scene);
+	    //console.log(displayNodeType);
 	    //
             // Find corresponding tagName display component.
 	    //
             goog.array.forEach(scene.getElementsByTagName(displayNodeType), function(itemDisplay) {
                 
-		console.log(itemDisplay.getAttribute('id') , displayNodeRef)
+		//console.log(itemDisplay.getAttribute('id') , displayNodeRef)
                 if (itemDisplay.getAttribute('id') == displayNodeRef) {
                     displayNode = itemDisplay;
                     color = itemDisplay.getAttribute('color');
