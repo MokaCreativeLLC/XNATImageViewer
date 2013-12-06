@@ -22,7 +22,7 @@ emptyScanDict = {
         'subjects': "XNATImageViewerDemo",
         'type': { 'label': "type", 'value': ['MPRAGE']} 
         },
-    'thumbnailImageSrc' : ''
+    'thumbnailUrl' : ''
 }
 
 
@@ -54,7 +54,7 @@ emptySlicerDict = {
     'subjects': "XNATImageViewerDemo",
     'type': { 'label': "type", 'value': ['']} 
     },
-    'thumbnailImageSrc' : ''
+    'thumbnailUrl' : ''
 }
 
 
@@ -96,15 +96,15 @@ def main():
     #------------------------------------   
     for root, dirs, files in os.walk(scanPath):
         for f in files:
+            scansSplit = root.split('/')
+            scanKey = ''
+            for s in scansSplit:
+                if not '.' in s:
+                    if not 'scans' in s:
+                        scanKey += s + "_"
+            scanKey = scanKey[:-1]
             if f.endswith('dicom') or f.endswith('dcm') or f.endswith('nii'):
-                scansSplit = root.split('/')
-                scanKey = ''
-                for s in scansSplit:
-                    if not '.' in s:
-                        if not 'scans' in s:
-                            scanKey += s + "_"
-                
-                scanKey = scanKey[:-1]
+
                 if f.endswith('nii'):
                     print scanKey, f
                 if not scanKey in scans:
@@ -117,6 +117,13 @@ def main():
                     scans[scanKey]['sessionInfo']['Format']['value'] = ['NifTI']
                 else:
                     scans[scanKey]['sessionInfo']['Format']['value'] = ['DICOM']
+                    
+            elif f.endswith('jpg'):
+                if not scanKey in scans:
+                    scans[scanKey] = copy.deepcopy(emptyScanDict)
+                thumbnailFile = os.path.join(root, f).replace('./', './sample-data/')
+                scans[scanKey]['thumbnailUrl'] = thumbnailFile
+                print thumbnailFile
 
 
 
@@ -157,7 +164,7 @@ def main():
                 slicer[slicerKey]['Name'] = f.split('.')[0]
                 slicer[slicerKey]['URI'] = fileUri
                 slicer[slicerKey]['files'] = mrbFiles
-                slicer[slicerKey]['thumbnailImageSrc'] = thumbImg
+                slicer[slicerKey]['thumbnailUrl'] = thumbImg
                 #slicer[slicerKey]['sessionInfo']['Scan']['value'] = [slicerKey]
 
 

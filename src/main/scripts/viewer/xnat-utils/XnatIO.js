@@ -52,7 +52,7 @@ XnatIO.prototype.getEmptyViewableData = function(){
     return {
         'category' : 'dicom',
         'files':['testfile.text'],
-        'thumbnailImageSrc':'image.jpeg',
+        'thumbnailUrl':'image.jpeg',
         'sessionInfo': {
             "SessionID": {'label': "Session ID", 'value': ['EMPTY EXPT']},
             "Accession #": {'label':"Accession #", 'value': ['Empty Accession']},
@@ -397,7 +397,7 @@ XnatIO.prototype.getScans = function (url, callback){
 		//
 		// Define the thumbnailImage URI
 		//
-		viewable['thumbnailImageSrc'] = thumbImg + "?format=image/jpeg";
+		viewable['thumbnailUrl'] = thumbImg + "?format=image/jpeg";
 
 		
 		//
@@ -504,7 +504,7 @@ XnatIO.prototype.getSlicer = function (url, callback){
 		    var ext = utils.string.getFileExtension(fileName);
 		    goog.array.forEach(imageArr, function(imageType){
 			if (ext === imageType && !imageFound){
-			    viewable['thumbnailImageSrc'] = fileName; 
+			    viewable['thumbnailUrl'] = fileName; 
 			    imageFound = true;
 			}
 		    })

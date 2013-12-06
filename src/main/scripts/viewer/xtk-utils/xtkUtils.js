@@ -493,13 +493,17 @@ xtkUtils.extractFileInfo = function(scene, tagName, storageNodeType) {
                 displayNodeType = 'VolumeDisplay';
             if (displayNodeType == 'NCIRayCastVolumeRenderingDisplay')
                 displayNodeType = 'NCIRayCastVolumeRendering';
+            if (displayNodeType == 'GPURayCastVolumeRenderingDisplay')
+                displayNodeType = 'GPURayCastVolumeRendering';
             
-
+	    console.log(scene);
+	    console.log(displayNodeType);
 	    //
             // Find corresponding tagName display component.
 	    //
             goog.array.forEach(scene.getElementsByTagName(displayNodeType), function(itemDisplay) {
                 
+		console.log(itemDisplay.getAttribute('id') , displayNodeRef)
                 if (itemDisplay.getAttribute('id') == displayNodeRef) {
                     displayNode = itemDisplay;
                     color = itemDisplay.getAttribute('color');

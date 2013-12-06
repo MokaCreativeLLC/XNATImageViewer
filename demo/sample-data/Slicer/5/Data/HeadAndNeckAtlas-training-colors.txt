@@ -1,0 +1,121 @@
+# Color table file /Users/rkikinis/Downloads/Slicer4-temp/__BundleSaveTemp-2012-09-30_18+37+09.877/2012-09-30-HN-Atlas-preliminary/Data/HeadAndNeckAtlas-training-colors.txt
+
+# 118 values
+
+2 bone 255 200 135 255
+
+3 skin 175 120 100 255
+
+8 muscle 190 104 90 255
+
+9 hyoid 240 140 15 255
+
+10 skull 245 245 245 255
+
+11 atlas 200 200 200 255
+
+12 axis 230 210 25 255
+
+13 cervical3 255 175 135 255
+
+14 cervical4 195 50 65 255
+
+15 cervical5 225 90 110 255
+
+16 cervical6 105 95 215 255
+
+17 cervical7 35 100 75 255
+
+21 thoracic1 210 230 30 255
+
+22 thoracic2 230 220 30 255
+
+23 thoracic3 230 180 30 255
+
+24 thoracic4 230 100 30 255
+
+25 mandible 220 225 105 255
+
+26 right_clavicle 175 90 70 255
+
+27 left_clavicle 140 65 50 255
+
+28 sternum 130 35 125 255
+
+31 rib1 100 170 180 255
+
+32 rib2 100 130 180 255
+
+33 rib3 110 100 180 255
+
+34 rib4 135 100 180 255
+
+35 rib5 160 100 180 255
+
+36 thoracic5 255 70 30 255
+
+49 left_parotid_gland 244 50 214 255
+
+50 right_parotid_gland 244 214 50 255
+
+51 left_temporalis_muscle 188 65 28 255
+
+52 right_temporalis_muscle 166 84 94 255
+
+53 left_trapezius_muscle 238 164 5 255
+
+54 right_trapezius_muscle 213 187 132 255
+
+55 left_masseter_muscle 218 236 32 255
+
+56 right_masseter_muscle 192 203 79 255
+
+57 left_levator_scapulae_muscle 117 140 166 255
+
+58 right_levator_scapulae_muscle 33 123 230 255
+
+59 left_scalenius_muscle 150 140 170 255
+
+60 right_scalenius_muscle 99 33 230 255
+
+61 left_sternocleidomastoideus_muscle 135 225 88 255
+
+62 right_sternocleidomastoideus_muscle 54 141 44 255
+
+63 left_zygomatic_muscle 200 167 200 255
+
+64 right_zygomatic_muscle 170 57 166 255
+
+101 right_common_carotid 245 15 60 255
+
+102 left_common_carotid 230 150 155 255
+
+103 right_subclavian_artery 245 100 15 255
+
+104 left_subclavian_artery 230 215 150 255
+
+105 right_vertebral_artery 245 200 15 255
+
+106 left_vertebral_artery 170 205 150 255
+
+107 right_internal_carotid 170 245 15 255
+
+108 left_internal_carotid 150 205 190 255
+
+109 right_internal_jugular_vein 15 245 245 255
+
+110 left_internal_jugular_vein 130 175 200 255
+
+111 right_external_carotid 15 80 245 255
+
+112 left_external_carotid 135 135 200 255
+
+113 right_subclavian_vein 180 15 245 255
+
+114 left_subclavian_vein 180 130 200 255
+
+115 arch_of_aorta 230 15 150 255
+
+116 brachiocephalic_trunk 230 15 15 255
+
+117 superior_vena_cava 120 150 230 255

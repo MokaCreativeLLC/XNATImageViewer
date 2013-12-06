@@ -47,7 +47,7 @@ Thumbnail = function (properties, opt_args) {
     // Image
     //------------------
     this._image = new Image();
-    this._image.src = this._properties['thumbnailImageSrc'];
+    this._image.src = this._properties['thumbnailUrl'];
     this._element.appendChild(this._image)
 
     
