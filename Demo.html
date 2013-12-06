@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+
+<!-- BEGIN /xnat-templates/screens/XIViewer.vm -->
+
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/menu.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/menuitem.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/menuseparator.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/menubutton.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/custombutton.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/utils/css/genericslider.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/utils/css/scrollablecontainer.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/viewer-widgets/css/viewschememenu.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/viewer-widgets/css/viewbox.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/viewer-widgets/css/modal.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/viewer-widgets/css/thumbnail.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/viewer-widgets/css/displayer.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/viewer-widgets/css/xtkplane.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/viewer-widgets/css/contentdivider.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/viewer-widgets/css/viewboxtabs.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/viewer-widgets/css/viewschemes.css">
+
+
+<script src="sample-data/XNAT_IMAGE_VIEWER_DEMO_DATA.js"></script>
+<script src="src/main/scripts/viewer/closure-library/closure/goog/base.js"></script>
+<script src="src/main/scripts/viewer/utils/lib/X/xtk-deps.js"></script>
+
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xtk-utils/css/controllermenu.css">
+
+
+<script type="text/javascript">
+    XNAT_IMAGE_VIEWER_MODE = 'demo';
+    XNAT_SAMPLE_DATA_URI = 'sample-data/';
+    XNAT_SERVER_ROOT = 'src/main';
+</script>
+
+
+<script src="src/main/scripts/viewer/utils/utils.js"></script>
+<script src="src/main/scripts/viewer/utils/array/utils.array.js"></script>
+<script src="src/main/scripts/viewer/utils/convert/utils.convert.js"></script>
+<script src="src/main/scripts/viewer/utils/dom/utils.dom.js"></script>
+<script src="src/main/scripts/viewer/utils/string/utils.string.js"></script>
+<script src="src/main/scripts/viewer/utils/gui/utils.gui.js"></script>
+<script src="src/main/scripts/viewer/utils/gui/GenericSlider/GenericSlider.js"></script>
+<script src="src/main/scripts/viewer/utils/gui/ScrollableContainer/ScrollableContainer.js"></script>
+<script src="src/main/scripts/viewer/utils/style/utils.style.js"></script>
+<script src="src/main/scripts/viewer/utils/fx/utils.fx.js"></script>
+<script src="src/main/scripts/viewer/utils/includes.js"></script>
+<script src="src/main/scripts/viewer/xtk-utils/xtkUtils.js"></script>
+<script src="src/main/scripts/viewer/xtk-utils/ControllerMenu/ControllerMenu.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/includes.js"></script>
+<script src="src/main/scripts/viewer/xnat-utils/XnatIO.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/XnatViewerGlobals.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/XnatViewerWidget.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/ContentDivider/ContentDivider.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/ViewBoxTabs/ViewBoxTabs.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/Displayer/Displayer.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/Displayer/XtkDisplayer/XtkDisplayer.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/XtkPlane/XtkPlane.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/XtkPlaneManager/XtkPlaneManager.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/Thumbnail/Thumbnail.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/ViewSchemeMenu/ViewSchemeMenu.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/ViewBox/ViewBox.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/ViewScheme/ViewScheme.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/ViewSchemeManager/ViewSchemeManager.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/ViewBoxManager/ViewBoxManager.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/ThumbnailManager/ThumbnailManager.js"></script>
+<script src="src/main/scripts/viewer/viewer-widgets/Modal/Modal.js"></script>
+<script src="src/main/scripts/viewer/xiv.start.js"></script>
+
+
+
+<!-- /XIViewer.vm -->
+
+
+
+<title></title>
+</head>
+
+
+
+</body>
+
+<script type="text/javascript">
+
+     //---------
+     // 'XNAT_SERVER_ROOT' set above.
+     //---------
+     xiv.start(XNAT_SERVER_ROOT, XNAT_SAMPLE_DATA_URI);
+        
+</script>
+
+
+</html>
