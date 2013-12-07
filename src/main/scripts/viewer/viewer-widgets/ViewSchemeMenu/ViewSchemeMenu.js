@@ -479,7 +479,7 @@ ViewSchemeMenu.prototype.setMenuInteraction = function() {
 	// to go away if the user lingers on the clicked menu item.
 	//
 	isHovered = false;
-	closeCountdown(1000);
+	closeCountdown(700);
     });  
 }
 

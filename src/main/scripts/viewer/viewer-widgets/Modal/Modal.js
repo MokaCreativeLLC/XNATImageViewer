@@ -439,7 +439,7 @@ Modal.prototype.highlightInUseThumbnails = function () {
     // looping through the ViewBoxes.
     //------------------
     this.ViewBoxManager.loop(function(ViewBox){  
-	ViewBox.currThumbnail_ && ViewBox.currThumbnail_.setActive(true, false);
+	ViewBox.currentThumbnail_ && ViewBox.currentThumbnail_.setActive(true, false);
     })
 }
 

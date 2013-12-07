@@ -247,6 +247,8 @@ ViewBoxManager.prototype.insertColumn = function(opt_animate) {
  */
 ViewBoxManager.prototype.removeColumn = function(opt_animate) {
 
+    var that = this;
+
     //------------------
     // Animate remove if opt_animate argument not provided.
     //------------------
@@ -262,15 +264,19 @@ ViewBoxManager.prototype.removeColumn = function(opt_animate) {
 	goog.array.forEach(this.ViewBoxes_, function(ViewBox, i) {
 	    var rowLen = ViewBox.length - 1;
 	    utils.fx.fadeTo(ViewBox[rowLen]._element, XnatViewerGlobals.ANIM_FAST, 0);
-	    ViewBox[rowLen]._element.parentNode.removeChild(ViewBox[rowLen]._element);
-	    ViewBox.splice(rowLen, 1);		
-
+	    
 	    //
 	    // Remove the drag drop handles
 	    // 
-	    var dragDropHandle = that.dragDropHandles[ViewBox[rowLen]];
+	    var dragDropHandle = that.dragDropHandles[ViewBox[rowLen]._element.id];
 	    dragDropHandle.parentNode.removeChild(dragDropHandle);
 	    delete dragDropHandle;
+
+	    //
+	    // Remove the ViewBox
+	    //
+	    ViewBox[rowLen]._element.parentNode.removeChild(ViewBox[rowLen]._element);
+	    ViewBox.splice(rowLen, 1);		
 	})
     }
 
@@ -692,15 +698,34 @@ ViewBoxManager.prototype.getViewBoxAfter = function (currViewBox) {
 ViewBoxManager.prototype.getFirstEmpty = function() {
 
     //------------------
-    // Populate any empty ViewBoxes
+    // Populate any empty ViewBoxes, if they exist.
     //------------------
-    var w = this.loop(function(viewbox){
-	if (!viewbox.getThumbnail()) {
-	    return viewbox;
+    var ViewBoxesByLoad = {};
+    var loadTimes = [];
+    var w = this.loop(function(ViewBox){
+	
+	if (!ViewBox.getThumbnail()) {
+	    return ViewBox;
+	}
+	else{
+	    ViewBoxesByLoad[ViewBox._thumbnailLoadTime] = ViewBox;
+	    loadTimes.push(ViewBox._thumbnailLoadTime);
 	}
     })
     if (w) {
 	return (w instanceof Array) ? w[0] : w;
+    }
+
+
+
+    //------------------
+    // If there are no empty ViewBoxes,
+    // then choose the one where the thumbnail was
+    // loaded the farthest time ago.
+    //------------------
+    else {
+	loadTimes.sort();
+	return ViewBoxesByLoad[loadTimes[0]];
     }
 }
 

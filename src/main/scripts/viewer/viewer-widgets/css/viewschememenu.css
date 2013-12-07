@@ -11,6 +11,7 @@
     width: 17px; 
     cursor: pointer;
     position: absolute;
+    z-index: 1000002;
 }
 
 

@@ -138,7 +138,7 @@ ThumbnailManager.prototype.initDragDrop = function(){
     //------------------
     function dragOut(event) {
 	var elt = event.dropTargetItem.element;
-	elt.style.borderColor = elt.originalBorderColor;
+	elt.style.borderColor = elt.getAttribute('originalbordercolor');
     }
 
 
@@ -192,7 +192,7 @@ ThumbnailManager.prototype.initDragDrop = function(){
 	//
 	// Revert border of target, which is the ViewBox.
 	//
-	event.dropTargetItem.element.style.borderColor = event.dropTargetItem.element.originalBorderColor;
+	event.dropTargetItem.element.style.borderColor = event.dropTargetItem.element.getAttribute('originalbordercolor');
 
 	//
 	// Delete the Thumbnail by finding the "stray" element
@@ -276,6 +276,31 @@ ThumbnailManager.prototype.add = function(thumbnail){
     //------------------
     this.addDragDropSource(thumbnail);
 
+
+
+    //------------------
+    // If the thumbnail is in a ViewBox, 
+    // then highlight the view box that the 
+    // thumbnail was dropped into when we hover over it.
+    //------------------
+    thumbnail.addMouseoverCallback(function(Thumbnail){
+	XV.ViewBoxManager.loop(function(ViewBox){
+	    if (ViewBox.currentThumbnail_ === Thumbnail){
+		utils.style.setStyle(ViewBox._element, {'border-color':'rgb(255,255,255)'});
+	    }
+	})
+    })
+    //
+    // Do the opposite on mouseout
+    //
+    thumbnail.addMouseoutCallback(function(Thumbnail){
+	XV.ViewBoxManager.loop(function(ViewBox){
+	    if (ViewBox.currentThumbnail_ === Thumbnail){
+		utils.style.setStyle(ViewBox._element, {'border-color':ViewBox._element.getAttribute('originalbordercolor')});
+	    }
+	})
+    })
+
 }
 
 
@@ -324,7 +349,7 @@ ThumbnailManager.prototype.addDragDropSources = function(thumbnails){
  */
 ThumbnailManager.prototype.addDragDropTarget = function(target) {
     this.thumbnailTargetGroup.addItem(target);
-    target.originalBorderColor = target.style.borderColor;
+    target.setAttribute('originalbordercolor', target.style.borderColor);
 }
 
 
@@ -424,12 +449,13 @@ ThumbnailManager.prototype.makeThumbnail = function(parent, properties, style, a
 	//
 	// Add click listener
 	//
-	goog.events.listen(thumbnail._element, goog.events.EventType.CLICK, function(){
+	goog.events.listen(thumbnail._hoverClone, goog.events.EventType.CLICK, function(){
 
 	    //
 	    // Run click callbacks
 	    //
 	    goog.array.forEach(that.clickCallbacks_, function(callback){
+		console.log("click callback");
 		callback(thumbnail)
 	    })
 	});

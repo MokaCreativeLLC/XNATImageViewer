@@ -496,7 +496,7 @@ ViewSchemeManager.prototype.implementViewScheme = function() {
 	interactor && utils.style.removeClassesThatContain(interactor, INTERACTOR_PREFIX);
 	
 
-
+	console.log(that.visiblePlanes_);
 	//
 	// If a single view plane is selected to be shown,
 	// we want to add the default multi-view to the unselected planes
@@ -691,6 +691,9 @@ ViewSchemeManager.prototype.setViewScheme = function(viewScheme, callback) {
 	})
 	
 	
+
+	
+
 	//
 	// Run a parallel animation of the dim changes
 	//
@@ -698,7 +701,10 @@ ViewSchemeManager.prototype.setViewScheme = function(viewScheme, callback) {
 				 startDims, endDims, 400, 
 				 undefined,
 				 function() { goog.array.forEach(that.onViewSchemeAnimateCallbacks_, function(callback){ callback() })}, 
-				 function(){ that.implementViewScheme() });
+				 function(){ 
+				     that.implementViewScheme()
+
+				 });
 
 
 
@@ -731,7 +737,8 @@ ViewSchemeManager.prototype.setPlanesDoubleClicked = function(callback){
     // Loop through all of the planes...
     //------------------
     goog.array.forEach(this.planesAll_, function(planeElt){
-	goog.events.listen(planeElt, goog.events.EventType.DBLCLICK, function(event) {
+
+	var planeDoubleClick = function(event) {
 
 	    //
 	    // Acquire the anatomical plane string from the clicked
@@ -760,6 +767,10 @@ ViewSchemeManager.prototype.setPlanesDoubleClicked = function(callback){
 	    //
 	    goog.array.forEach(that.planeDoubleClickedCallback_, function(callback){ callback(newViewScheme.title) })
 	    
-	})
+	}
+
+
+	goog.events.removeAll(planeElt);
+	goog.events.listen(planeElt, goog.events.EventType.DBLCLICK, planeDoubleClick)
     })     
 }

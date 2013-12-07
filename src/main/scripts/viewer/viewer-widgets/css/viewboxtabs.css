@@ -32,7 +32,6 @@
     border-right-color: rgb(60, 60, 60);
     border-left-color: rgb(60, 60, 60);
     border-bottom-color: rgba(0, 0, 0, 0);
-    z-index: 999;
 }
 
 
@@ -45,7 +44,7 @@
 
 
 .xiv-viewboxtabs-tab-active {
-    z-index: 100001
+    z-index: 3;
 }
 
 	
@@ -95,7 +94,6 @@
     height: 0px;
     width: 100%;
     border: solid 1px rgb(60, 60, 60);
-    z-index: 1000;
     visibility: hidden;
 }
 
@@ -103,7 +101,7 @@
 .xiv-viewboxtabs-tabpage-active {
     border: solid 1px rgb(120, 120, 120);
     visibility: visible;
-    z-index: 2000
+    z-index: 2;
 }
 
 

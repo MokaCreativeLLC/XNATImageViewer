@@ -216,7 +216,7 @@ ViewBox.prototype._ViewSchemeMenu = undefined;
  * @type {string}
  * @private
  */
-ViewBox.prototype.currThumbnail_ = undefined;
+ViewBox.prototype.currentThumbnail_ = undefined;
 
 
 
@@ -227,7 +227,7 @@ ViewBox.prototype.currThumbnail_ = undefined;
  * @private
  */	
 ViewBox.prototype.setThumbnail = function(t) {		
-    this.currThumbnail_ = t;				
+    this.currentThumbnail_ = t;				
 }
 
 
@@ -237,7 +237,7 @@ ViewBox.prototype.setThumbnail = function(t) {
  * @return {string}
  */	
 ViewBox.prototype.getThumbnail = function() {
-    return this.currThumbnail_;
+    return this.currentThumbnail_;
 }
 
 
@@ -323,6 +323,15 @@ ViewBox.prototype.loadThumbnail = function (thumb, loadFramework) {
 
 
     //------------------
+    // Remember the time in which 
+    // the thumbnail was loaded
+    //------------------
+    var d = new Date();
+    this._thumbnailLoadTime = d.getTime();
+
+
+
+    //------------------
     // This is here because the ViewBoxTabs may not fully adjust themselves
     // properly during the initiation process.  It's especially relevant
     // when multiple ViewBoxes are open.
@@ -388,7 +397,7 @@ ViewBox.prototype.loadThumbnail = function (thumb, loadFramework) {
     //------------------
     // Info Tab.
     //------------------
-    this.ViewBoxTabs_.setTabContents('Info', this.Displayer_.makeInfoTabContents(this.currThumbnail_._properties));
+    this.ViewBoxTabs_.setTabContents('Info', this.Displayer_.makeInfoTabContents(this.currentThumbnail_._properties));
     
 
 

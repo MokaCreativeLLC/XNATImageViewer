@@ -129,7 +129,7 @@ Thumbnail = function (properties, opt_args) {
     this._hoverClone.id = 'HOVERCLONE_' + this._hoverClone.id;
 
     //
-    // Add the .thumbnailId property for retrieval of original
+    // Add the .thumbnailid property for retrieval of original
     // thumbnail (drag and drop)
     //
     goog.array.forEach(this._hoverClone.childNodes, function(node){
@@ -197,10 +197,40 @@ Thumbnail.prototype._hoverClone = null;
 
 
 /**
-* @type {Object=}
+* @type {Array.<function>}
 * @private
 */
-Thumbnail.prototype.hoverMethods_ = {}
+Thumbnail.prototype.mouseoverCallbacks_ = [];
+
+
+
+/**
+* @type {Array.<function>}
+* @private
+*/
+Thumbnail.prototype.mouseoutCallbacks_ = [];
+
+
+
+
+/**
+* @param {!function}
+* @private
+*/
+Thumbnail.prototype.addMouseoverCallback = function(callback) {
+    this.mouseoverCallbacks_.push(callback);
+}
+
+
+
+
+/**
+* @param {!function}
+* @private
+*/
+Thumbnail.prototype.addMouseoutCallback = function(callback) {
+    this.mouseoutCallbacks_.push(callback);
+}
 
 
 
@@ -210,24 +240,6 @@ Thumbnail.prototype.hoverMethods_ = {}
 * @private
 */
 Thumbnail.prototype.isActive_ = false;
-
-
-
-
-/**
-* @type {Array}
-* @protected
-*/
-Thumbnail.prototype._activatedCallbacks = [];
-
-
-
-
-/**
- * @type {Array}
- * @protected
- */
-Thumbnail.prototype._activatedCallbacks = [];
 
 
 
@@ -266,7 +278,7 @@ Thumbnail.prototype.setActive = function(active, opt_highlight_bg) {
 /**
 * @return {boolean}
 */
-Thumbnail.prototype.getActive = function() {
+Thumbnail.prototype.isActive = function() {
     return this.isActive_;	
 }
 
@@ -292,6 +304,7 @@ Thumbnail.prototype.getFiles = function() {
  * @private
  */
 Thumbnail.prototype.setHovered = function(hovered) {
+
     var that = this;
     if (hovered){
 
@@ -313,10 +326,18 @@ Thumbnail.prototype.setHovered = function(hovered) {
 	    });
 	}
 
+	goog.array.forEach(that.mouseoverCallbacks_, function(callback){
+	    callback(that);
+	})
+
     } else {
 	if (this._hoverClone){
 	    this._hoverClone.style.visibility = 'hidden';
 	}
+
+	goog.array.forEach(that.mouseoutCallbacks_, function(callback){
+	    callback(that);
+	})
     }
 }
 
@@ -348,18 +369,6 @@ Thumbnail.prototype.setHoverListeners = function(set, opt_hoverable) {
 	goog.events.unlisten(hoverable, goog.events.EventType.MOUSEOUT, mouseout);
 
     }
-}
-
-
-
-
-/**
- * Callback array for when the thumbnail is activated.
- *
- * @type {function(function)}
- */
-Thumbnail.prototype.addActivatedCallback = function (callback) {
-    this._activatedCallbacks.push(callback)
 }
 
 

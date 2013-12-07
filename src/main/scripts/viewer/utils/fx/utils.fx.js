@@ -125,6 +125,7 @@ utils.fx.fadeTo = function (element, time, opacity, callback) {
 utils.fx.getAnimationsFromDimChange = function(elt, startDim, endDim, duration) {
 
     var animations = {};
+    var easing = goog.fx.easing.easeOut;
 
 
 
@@ -149,7 +150,7 @@ utils.fx.getAnimationsFromDimChange = function(elt, startDim, endDim, duration) 
 	// Filter out Nan values.
 	if (!isNaN(startDim['height']) && !isNaN(endDim['height']) && !isNaN(startDim['width']) && !isNaN(endDim['width'])) {
 	    //console.log("RESIZE", elt, [startDim['width'], startDim['height']],  [endDim['width'], endDim['height']]);
-	    var resize = new goog.fx.dom.Resize(elt, [startDim['width'], startDim['height']],  [endDim['width'], endDim['height']], duration, goog.fx.easing.easeOut);
+	    var resize = new goog.fx.dom.Resize(elt, [startDim['width'], startDim['height']],  [endDim['width'], endDim['height']], duration, easing);
 	    animations['resize'] = resize;
 	}
     }
@@ -163,7 +164,7 @@ utils.fx.getAnimationsFromDimChange = function(elt, startDim, endDim, duration) 
 	// Filter out Nan values.
 	if (!isNaN(startDim['top']) && !isNaN(endDim['top']) && !isNaN(startDim['left']) && !isNaN(endDim['left'])) {
 	    //console.log("SLIDE", elt, [startDim['left'], startDim['top']],  [endDim['left'], endDim['top']]);
-	    var slide = new goog.fx.dom.Slide(elt, [startDim['left'], startDim['top']],  [endDim['left'], endDim['top']], duration, goog.fx.easing.easeOut);
+	    var slide = new goog.fx.dom.Slide(elt, [startDim['left'], startDim['top']],  [endDim['left'], endDim['top']], duration, easing);
 	    animations['slide'] = slide;
 	}
     }
@@ -195,7 +196,7 @@ utils.fx.getAnimationsFromDimChange = function(elt, startDim, endDim, duration) 
 	var endColor = (typeof endBG === 'string') ? utils.convert.rgbToArray(endBG).slice(0, 3) : (endBG).slice(0, 3);
 
 	if (startColor !== endColor && startColor !== undefined && endColor !== undefined) {
-	    animations['bgcolortransform'] = new goog.fx.dom.BgColorTransform(elt, startColor, endColor, duration, goog.fx.easing.easeOut);
+	    animations['bgcolortransform'] = new goog.fx.dom.BgColorTransform(elt, startColor, endColor, duration, easing);
 	}
     }
 
@@ -225,19 +226,23 @@ utils.fx.parallelAnimate  = function (elts, startDims, endDims, duration, opt_on
     var animCallbackApplied = false;
 
 
-
+ 
     //------------------
     // Apply animation states and add to queue.
     //------------------
     goog.array.forEach(elts, function(elt, i) {
 	var anims = utils.fx.getAnimationsFromDimChange(elt, startDims[i], endDims[i], duration);
-	for (var key in anims) { animQueue.add(anims[key]) }
+	for (var key in anims) { 
+	    animQueue.add(anims[key]) 
+	}
 
 
 	// Animate callbacks cannot be conductd in the 
 	// animQueue so we have to apply it to one of the
 	// internal animations.
-	if (!animCallbackApplied) {
+	if (!animCallbackApplied && key in anims) {
+
+	   
 	    goog.events.listen(anims[key], goog.fx.Animation.EventType.ANIMATE, function() {
 		opt_onanimate();
 	    })
@@ -245,7 +250,6 @@ utils.fx.parallelAnimate  = function (elts, startDims, endDims, duration, opt_on
 	}
     })
 
-    
 
     //------------------
     // Start / End Callbacks.
