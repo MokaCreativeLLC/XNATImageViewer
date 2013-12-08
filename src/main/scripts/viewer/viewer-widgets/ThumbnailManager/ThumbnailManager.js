@@ -115,8 +115,12 @@ ThumbnailManager.prototype.initDragDrop = function(){
     this.thumbnailDragDropGroup.createDragElement = function(sourceEl) {
 	var originalThumbnail = goog.dom.getElement(sourceEl.getAttribute('thumbnailid'));
 	var Thumb = that.getThumbnailByElement(originalThumbnail);
+	if (!Thumb) {
+	    return;
+	}
 	Thumb.setActive(true);
 	var dragEl = originalThumbnail.cloneNode(true);
+	dragEl.setAttribute('id', 'THUMBNAIL_DRAGGER');
 	goog.dom.classes.set(dragEl, Thumbnail.DRAGGING_CLASS);
 	return dragEl;
     };
@@ -165,12 +169,23 @@ ThumbnailManager.prototype.initDragDrop = function(){
 	//
 	Thumb.setActive(false);
 
-	if (dragThumbnail.dropTarget) {
-	    //
-	    // Callbacks - this is where thumbnail will be loaded into the ViewBox.
-	    //
-	    goog.array.forEach(that.dropCallbacks_, function(callback) {
 
+	//////////////////////////////////
+	//
+	// THIS IS WHERE THE THUMBNAIL IS LOADED INTO THE VIEW BOX.
+	//
+	//////////////////////////////////
+	if (dragThumbnail.dropTarget) {
+
+	    var thumbDraggerFader = goog.dom.getElement('THUMBNAIL_DRAGGER_FADER');
+
+	    utils.fx.fadeOutAndRemove(thumbDraggerFader, XnatViewerGlobals.ANIM_MED, function(){
+		
+		delete thumbDraggerFader;	
+
+
+	    });
+	    goog.array.forEach(that.dropCallbacks_, function(callback) {
 		callback(dragThumbnail.dropTarget, originalThumbnail);
 		delete dragThumbnail.dropTarget;
  	    })
@@ -188,24 +203,29 @@ ThumbnailManager.prototype.initDragDrop = function(){
         // came.  This is conducted through a class query.
 	//
 	var dragThumbnail = goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, Thumbnail.CSS_CLASS_PREFIX);
-	
-	//
-	// Revert border of target, which is the ViewBox.
-	//
-	event.dropTargetItem.element.style.borderColor = event.dropTargetItem.element.getAttribute('originalbordercolor');
+
 
 	//
-	// Delete the Thumbnail by finding the "stray" element
-        // of xiv-thumbnail-image that doesn't have a xiv-thumbnail ancestor.
-	// This is the cloned element.
+	// The dragger element
 	//
-	var elts = goog.dom.getElementsByClass(Thumbnail.IMAGE_CLASS);
-	for (var i=0, len = elts.length; i < len; i++) {
-	    if (!goog.dom.getAncestorByClass(elts[i], Thumbnail.CSS_CLASS_PREFIX)){
-		goog.dom.removeNode(elts[i]);
-		break;
-	    }
-	}
+	var thumbDragger = goog.dom.getElement('THUMBNAIL_DRAGGER'); 
+
+
+	//
+	// Clone the dragger element so we can fade the clone out
+	// in the 'dragEnd' function.
+	//
+	var dragClone = thumbDragger.cloneNode(true);
+	dragClone.setAttribute('id', 'THUMBNAIL_DRAGGER_FADER');
+	document.body.appendChild(dragClone);
+
+
+	//
+	// Delete the Thumbnail Dragger.  
+	//
+	goog.dom.removeNode(thumbDragger);
+	delete thumbDragger;
+
 
 	//
 	// We don't do the drop callbacks here

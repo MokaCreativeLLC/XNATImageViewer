@@ -242,11 +242,13 @@ XtkPlane.prototype.resetRenderer = function () {
 * @param {XObject}
 */
 XtkPlane.prototype.addToRenderer = function(xObj) {
-
+    console.log("add to renderer", xObj);
+    //return;
     //------------------
     // Only add selected volumes to 2D renderers.
     //------------------
     if(xObj.isSelectedVolume === true) {
+	console.log("add selected vol", xObj);
 	this.currVolume_ = xObj;
 	this.Renderer_.add(xObj);
 
@@ -256,6 +258,7 @@ XtkPlane.prototype.addToRenderer = function(xObj) {
     // Add all else to the 3D renderer.
     //------------------
     } else if (this.id_ === 'v')  {
+	console.log("ASDF add");
 	 this.Renderer_.add(xObj);
     }
 };

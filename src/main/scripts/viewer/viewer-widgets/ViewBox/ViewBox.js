@@ -297,6 +297,9 @@ ViewBox.prototype.initDisplayer = function(){
     // Onload callbacks
     //------------------
     this.Displayer_.onOnload(function(){
+	if (that._element.hasAttribute('originalbordercolor')){
+	    that._element.style.borderColor = that._element.getAttribute('originalbordercolor');
+	}
 	that.ViewSchemeMenu_.setViewScheme('Four-up');
 	that.setChildrenVisible(true);	
     })

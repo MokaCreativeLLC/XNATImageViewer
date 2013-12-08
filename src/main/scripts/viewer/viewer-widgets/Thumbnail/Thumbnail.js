@@ -123,7 +123,7 @@ Thumbnail = function (properties, opt_args) {
     //------------------
     this._hoverClone = that._element.cloneNode(true);
     this._hoverClone.style.visibility = 'hidden';
-    document.body.appendChild(this._hoverClone);
+    XV._modal.parentNode.appendChild(this._hoverClone);
     this.setHoverListeners(true, this._hoverClone);
     this._hoverClone.setAttribute('thumbnailid', that._element.id);
     this._hoverClone.id = 'HOVERCLONE_' + this._hoverClone.id;
@@ -308,9 +308,11 @@ Thumbnail.prototype.setHovered = function(hovered) {
     var that = this;
     if (hovered){
 
+	var modalAbsPos = utils.style.absolutePosition(XV._modal);
 	var eltAbsPos = utils.style.absolutePosition(this._element);
 	var imgClone = goog.dom.getElementByClass(Thumbnail.IMAGE_CLASS, this._hoverClone)
 	var textClone = goog.dom.getElementByClass(Thumbnail.TEXT_CLASS, this._hoverClone);
+
 
 	if (this._hoverClone.style.visibility != 'visible') {
 	    goog.dom.classes.add(that._hoverClone, Thumbnail.ELEMENT_MOUSEOVER_CLASS);			

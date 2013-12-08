@@ -294,8 +294,11 @@ xtkUtils.getViewables = function(fileCollection) {
  */
 xtkUtils.createXObject = function(fileCollection) {
     var ext = (goog.isArray(fileCollection)) ? utils.string.getFileExtension(fileCollection[0]) : utils.string.getFileExtension(fileCollection);
-    var obj = this.generateXtkObjectFromExtension(ext);        
+    var obj = this.generateXtkObjectFromExtension(ext);  
+    //console.log("FIRST", obj);  
     obj.file = fileCollection;
+    //console.log(obj);
+    //return
     return obj;
 }
 

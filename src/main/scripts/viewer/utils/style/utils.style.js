@@ -183,6 +183,37 @@ utils.style.absolutePosition = function ( elt) {
 
 
 /**
+ * Returns the offset dimensions of 
+ * the provided element.
+ *
+ * @param {!Element} elt The element to calculate the offset dims on.
+ * @return {Object.<string, number>} The offset dimensions.
+ */
+utils.style.offsetDims = function (elt) {
+    
+    var offsetDims = {'top': 0, 'left': 0};
+
+    do {
+	if ( !isNaN( elt.offsetTop ) )
+	{
+	    offsetDims['top'] += elt.offsetTop;
+	}
+
+	if ( !isNaN( elt.offsetLeft ) )
+	{
+	    offsetDims['left'] += elt.offsetLeft;
+	}
+
+    } while( elt = elt.offsetParent );
+
+
+    return offsetDims
+}
+
+
+
+
+/**
  * Gets the in-line dimensions of a given element.
  *
  * @param {!Element, Array.<string>=|string=}

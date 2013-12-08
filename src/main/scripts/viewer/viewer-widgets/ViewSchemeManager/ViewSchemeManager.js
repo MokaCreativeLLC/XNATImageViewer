@@ -496,7 +496,7 @@ ViewSchemeManager.prototype.implementViewScheme = function() {
 	interactor && utils.style.removeClassesThatContain(interactor, INTERACTOR_PREFIX);
 	
 
-	console.log(that.visiblePlanes_);
+	//console.log(that.visiblePlanes_);
 	//
 	// If a single view plane is selected to be shown,
 	// we want to add the default multi-view to the unselected planes

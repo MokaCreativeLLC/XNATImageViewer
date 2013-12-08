@@ -94,10 +94,10 @@ XtkPlaneManager.prototype.cameraSettings_ = {}
 
 
 /**
- * @type {Array.function}
+ * @type {?Array.function}
  * @private
  */
-XtkPlaneManager.prototype.allRenderedCallbacks_ = [];
+XtkPlaneManager.prototype.allRenderedCallbacks_ = null;
 
 
 
@@ -301,8 +301,8 @@ XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, callb
     //------------------
     // Add the renderables to the renderer.
     //------------------
-    goog.array.forEach(renderables, function(newObj){
-	xtkPlane.addToRenderer(newObj);
+    goog.array.forEach(renderables, function(renderable){
+	xtkPlane.addToRenderer(renderable);
     })
 
 
@@ -344,7 +344,9 @@ XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, callb
  * the onloadPlane string is not specified.
  *
  * 
- * @param {Object, Array.String, String=} object X object to be displayed
+ * @param {Array.<X.Object>} renderables object X object to be displayed.
+ * @param {Array<.String>} planeStrs The render planes where the renderables should be rendered.
+ * @param {String=} opt_onloadPlane The optional plane to render first.
  */
 XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs, opt_onloadPlane) {
 

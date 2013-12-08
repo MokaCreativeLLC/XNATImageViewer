@@ -43,10 +43,15 @@ goog.exportSymbol('utils.fx', utils.fx);
  * Fades in an element in 'time' time, with 'callback'
  * called once completed.
  *
- * @param {!Element, !number, function=} the element to fade, the fade time, and the callback on completion.
+ * @param {!Element} element Element to fade. 
+ * @param {number=} opt_time Time for animation to occur. Default is 500.
+ * @param {function=} opt_callback Callback when animation is complete.
  */
-utils.fx.fadeIn = function (element, time, callback) {
-    utils.fx.fadeTo(element, time, 1, callback);
+utils.fx.fadeIn = function (element, opt_time, opt_callback) {
+    if (opt_time === undefined) {
+	opt_time = 500;
+    }
+    utils.fx.fadeTo(element, opt_time, 1, opt_callback);
 }
 
 
@@ -55,11 +60,16 @@ utils.fx.fadeIn = function (element, time, callback) {
 /**
  * Fades in an Element, setting the start opacity to zero.
  *
- * @param {!Element, !number, function=} the element to fade, the fade time, and the callback on completion.
+ * @param {!Element} element Element to fade. 
+ * @param {number=} opt_time Time for animation to occur. Default is 500.
+ * @param {function=} opt_callback Callback when animation is complete.
  */
-utils.fx.fadeInFromZero = function (element, time, callback) {
+utils.fx.fadeInFromZero = function (element, opt_time, opt_callback) {
+    if (opt_time === undefined) {
+	opt_time = 500;
+    }
     utils.fx.fadeTo(element, 0, 0, function() {
-	utils.fx.fadeTo(element, time, 1, callback);
+	utils.fx.fadeTo(element, opt_time, 1, opt_callback);
     });
 }
 
@@ -69,10 +79,15 @@ utils.fx.fadeInFromZero = function (element, time, callback) {
 /**
  * Fades out an Element.
  *
- * @param {!Element, !number, function=} the element to fade, the fade time, and the callback on completion.
+ * @param {!Element} element Element to fade. 
+ * @param {number=} opt_time Time for animation to occur. Default is 500.
+ * @param {function=} opt_callback Callback when animation is complete.
  */
-utils.fx.fadeOut = function (element, time, callback) {
-    utils.fx.fadeTo(element, time, 0, callback);
+utils.fx.fadeOut = function (element, opt_time, opt_callback) {
+    if (opt_time === undefined) {
+	opt_time = 500;
+    }
+    utils.fx.fadeTo(element, opt_time, 0, opt_callback);
 }
 
 
@@ -81,12 +96,19 @@ utils.fx.fadeOut = function (element, time, callback) {
 /**
  * Fades out an Element, then removes it frop the dom.
  *
- * @param {!Element, !number, function=} the element to fade, the fade time, and the callback on completion.
+ * @param {!Element} element Element to fade. 
+ * @param {number=} opt_time Time for animation to occur. Default is 500.
+ * @param {function=} opt_callback Callback when animation is complete.
  */
-utils.fx.fadeOutAndRemove = function (element, time, callback) {
-    utils.fx.fadeTo(element, time, 0, function() { 
+utils.fx.fadeOutAndRemove = function (element, opt_time, opt_callback) {
+
+    if (opt_time === undefined) {
+	opt_time = 500;
+    }
+
+    utils.fx.fadeTo(element, opt_time, 0, function() { 
 	element.parentNode.removeChild(element);
-	callback();
+	opt_callback && opt_callback();
     });
 }
 

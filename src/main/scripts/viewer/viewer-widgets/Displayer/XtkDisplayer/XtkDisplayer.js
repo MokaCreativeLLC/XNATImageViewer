@@ -141,10 +141,10 @@ XtkDisplayer.prototype.getPreloadCallbacks = function(){
 
 
 /**
- * @type {Array.function}
+ * @type {?Array.function}
  * @private
  */ 
-XtkDisplayer.prototype.onloadCallbacks_ = [];
+XtkDisplayer.prototype.onloadCallbacks_ = null;
 
 
 
@@ -304,7 +304,7 @@ XtkDisplayer.prototype.loadFileCollection = function (fileCollection, opt_onload
     //
     // NOTE: Need to differentiate DICOM sets, and viewables that fall under
     // the category of 'slicer', from single viewable 
-    // files.  DICOM sets will get loaded as a list of file, and 'slicer' 
+    // files.  DICOM sets will get loaded as a list of files, and 'slicer' 
     // viewables are .mrmls, which are not XtkLoadable (see xtkUtils.getViewables 
     // for further categorization information).
     //----------------
@@ -329,9 +329,12 @@ XtkDisplayer.prototype.loadFileCollection = function (fileCollection, opt_onload
 	// as an XObject.
 	//
 	} else if (key === 'dicoms' && viewables[key].length > 0){
+	    console.log("DICOMS KEY");
 	    newObj = xtkUtils.createXObject(viewables[key]);
 	    newObj.isSelectedVolume = true; // Critical for 2D Rendering.
 	    that.currentViewables_[key].push(newObj);
+	    console.log(newObj);
+
 	}
     }
  
@@ -394,6 +397,7 @@ XtkDisplayer.prototype.loadFileCollection = function (fileCollection, opt_onload
     //----------------
     renderables = utils.convert.objectToArray(this.currentViewables_);
     this.XtkPlaneManager_.onAllRendered(this.onloadCallbacks_);
+    console.log(renderables);
     this.XtkPlaneManager_.loadInRenderers(renderables)
  
 

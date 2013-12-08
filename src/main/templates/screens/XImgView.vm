@@ -3,6 +3,16 @@
 #* @vtlvariable name="om" type="org.nrg.xdat.om.XnatMrsessiondata" *#
 <!-- BEGIN /xnat-templates/screens/XIViewer.vm -->
 
+<!-- SET THE SERVER ROOT -->
+<script type="text/javascript">
+    XNAT_IMAGE_VIEWER_MODE = 'live';
+    XNAT_SAMPLE_DATA_URI = 'sample-data/';
+    XNAT_SERVER_ROOT = serverRoot;
+</script>
+<!-- END THE SERVER ROOT -->
+
+
+
 <link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/closure-library/closure/goog/css/menu.css")">
 <link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/closure-library/closure/goog/css/menuitem.css")">
 <link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/closure-library/closure/goog/css/menuseparator.css")">
@@ -19,6 +29,9 @@
 <link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/viewer-widgets/css/contentdivider.css")">
 <link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/viewer-widgets/css/viewboxtabs.css")">
 <link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/viewer-widgets/css/viewschemes.css")">
+
+
+
 
 <script src="$content.getURI("scripts/viewer/closure-library/closure/goog/base.js")"></script>
 <script src="$content.getURI("scripts/viewer/utils/lib/X/xtk-deps.js")"></script>
@@ -60,7 +73,6 @@
 
 <script type="text/javascript">
     function launchXImgView() {
-        XNAT_SERVER_ROOT = serverRoot;
         xiv.start(XNAT_SERVER_ROOT, 'projects/$om.getProject()/subjects/$om.getSubjectId()/experiments/$om.getId()');
     }
 </script>

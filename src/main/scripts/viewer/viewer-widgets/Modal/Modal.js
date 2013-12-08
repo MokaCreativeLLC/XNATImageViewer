@@ -26,7 +26,7 @@ goog.require('ViewBoxManager');
  * meet: XnatIO, ScrollableContainer, Thumbnails, ViewBoxes.  It also 
  * oversees the ViewBoxManager and ThumbnailManager classes and 
  * the actual modal window.  It should be noted that
- * the 'Modal._element' variable is the background, which is 
+ * the 'Modal._element' variable is the background, which is the
  * parent of the 'Modal._modal' element.
  *
  * @constructor
@@ -729,6 +729,15 @@ Modal.prototype.destroy = function (fadeOut) {
 	}
 	catch(e) {}
     });
+
+
+
+    //------------------
+    // NOTE: This is in response to xiv.start()
+    // where it's set to hidden to prevent
+    // Webkit-based browsers from scrolling.
+    //------------------
+    document.body.style.overflow = 'visible';
 }
 
 
@@ -921,15 +930,15 @@ Modal.prototype.calculateModalDims_ = function () {
  * @param {Object.<string, string | number>=}
  */
 Modal.prototype.updateStyle = function (opt_args) {	
+
     var that = this;
     
-
 
     //-------------------------	
     // Modal 
     //-------------------------	
     modalDims = this.calculateModalDims_();
-    utils.style.setStyle( this._modal, modalDims);	
+    utils.style.setStyle( this._modal, modalDims);
     if (opt_args) {  utils.style.setStyle( this._modal, opt_args); }	
     
 
