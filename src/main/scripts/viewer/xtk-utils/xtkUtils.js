@@ -58,6 +58,21 @@ xtkUtils.dicomExtensions_ = [
  * @type {Array.<string>}
  * 
  */
+xtkUtils.imageExtensions_ = [
+    'jpeg',
+    'jpg',
+    'png'
+];
+
+
+
+
+
+/**
+ * @const
+ * @type {Array.<string>}
+ * 
+ */
 xtkUtils.meshExtensions_ = [
     'stl',
     'vtk',
@@ -95,7 +110,7 @@ xtkUtils.generateXtkObjectFromExtension = function(ext) {
     var obj = undefined;
     if (this.isMesh(ext)) { 
 	obj = new X.mesh();
-    } else if (this.isVolume(ext) || this.isDicom(ext)){
+    } else if (this.isVolume(ext) || this.isDicom(ext) || this.isImage(ext)){
 	obj = new X.volume();
     } else if (this.isFiber(ext)){
 	obj = new X.fibers();
@@ -150,9 +165,26 @@ xtkUtils.isVolume = function(ext) {
 
 /**
  * Scans the 'ext' argument to determine if the extension
+ * at hand is paret of an image set.
+ *
+ * @param {string} ext
+ * @return {boolean}
+ */
+xtkUtils.isImage = function(ext) {
+    for (var j=0; j < this.imageExtensions_.length; j++) {
+        if (this.imageExtensions_[j] == ext) {return true;}
+    }
+    return false;
+}
+
+
+
+
+/**
+ * Scans the 'ext' argument to determine if the extension
  * at hand is a DICOM set.
  *
- * @param {string}
+ * @param {string} ext
  * @return {boolean}
  */
 xtkUtils.isDicom = function(ext) {
@@ -209,7 +241,8 @@ xtkUtils.getEmptyViewablesObject = function(){
 	'volumes': [],
 	'dicoms': [],
 	'meshes':[],
-	'annotations': []
+	'annotations': [],
+	'images':[]
     };
 }
 
@@ -219,7 +252,7 @@ xtkUtils.getEmptyViewablesObject = function(){
  * Returns the type of the object associated with the given file type. 
  * The object type will be either 'volume', 'mesh', or 'fiber'.
  *
- * @param {!string | !Array.<string>}
+ * @param {!string | !Array.<string>} fileCollection The files to categorize based on X.Objects.
  * @return {!string | !Array.<string>}
  */
 
@@ -246,7 +279,7 @@ xtkUtils.getViewables = function(fileCollection) {
     //-------------------------	
     for (var i = 0, len = fileCollection.length; i < len; i++) {
 	var basename = utils.string.basename(fileCollection[i]);
-
+	var ext = utils.string.getFileExtension(basename);
 
 	//
 	// Skip if the filename starts with a period
@@ -254,7 +287,7 @@ xtkUtils.getViewables = function(fileCollection) {
 	if (goog.string.startsWith(basename, '.')) continue;
 
 
-	var ext = utils.string.getFileExtension(basename);
+	
 	if (ext === 'mrml') { 
 	    viewableTypes['slicer'].push(fileCollection[i]);
 	
@@ -270,7 +303,10 @@ xtkUtils.getViewables = function(fileCollection) {
 	} else if (this.isFiber(ext)){
 	    viewableTypes['fibers'].push(fileCollection[i]);
 
-	}
+	} else if (this.isImage(ext)){
+	    viewableTypes['images'].push(fileCollection[i]);
+
+	} 
     }
     
 

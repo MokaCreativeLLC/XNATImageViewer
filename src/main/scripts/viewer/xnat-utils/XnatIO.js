@@ -13,6 +13,11 @@ goog.require('goog.dom.xml');
 goog.require('goog.array');
 
 /**
+ * Custom XTK indcludes
+ */
+//goog.require('X.parserIMA');
+
+/**
  * utils indcludes
  */
 goog.require('utils.dom');
@@ -35,8 +40,37 @@ goog.require('utils.array');
  * @constructor
  */
 goog.provide("XnatIO");
-var XnatIO = function() {}
+var XnatIO = function() {
+
+    var that = this;
+
+
+    //------------------
+    // ADD CUSTOM XTK PARSERS
+    //
+    // Add filetypes that XTK's 'X.loader.extensions' 
+    // doesn't default include and link them to their parser.
+    //------------------ 
+
+    //
+    // NOTE: If using a custom parser, need to make sure to 
+    // include in the 'xtk-custom-deps.js' file!
+    //
+    X.loader.extensions['IMA'] = [X.parserIMA, null];
+    
+
+
+}
 goog.exportSymbol('XnatIO', XnatIO)
+
+
+
+
+/**
+ * @const {String}
+ */
+XnatIO.prototype.JPEG_CONVERT_SUFFIX = '?format=image/jpeg';
+
 
 
 
@@ -362,9 +396,13 @@ XnatIO.prototype.getScans = function (url, callback){
 		//
 		var scanFileArr = [];
 		goog.array.forEach(fileList, function(fileObj){
+
 		    // NOTE: Adding XnatViewerGlobals.ROOT_URL is 
 		    // SUPER CRITICAL!
-		    scanFileArr.push(XnatViewerGlobals.ROOT_URL + fileObj['URI']);
+		    var scanUrl = XnatViewerGlobals.ROOT_URL + fileObj['URI'];
+		    var scanUrlLower = scanUrl.toLowerCase();		    
+
+		    scanFileArr.push(scanUrl);
 		});
 		
 		
@@ -397,7 +435,7 @@ XnatIO.prototype.getScans = function (url, callback){
 		//
 		// Define the thumbnailImage URI
 		//
-		viewable['thumbnailUrl'] = thumbImg + "?format=image/jpeg";
+		viewable['thumbnailUrl'] = goog.string.endsWith(thumbImg , that.JPEG_CONVERT_SUFFIX) ? thumbImg : thumbImg + that.JPEG_CONVERT_SUFFIX;
 
 		
 		//

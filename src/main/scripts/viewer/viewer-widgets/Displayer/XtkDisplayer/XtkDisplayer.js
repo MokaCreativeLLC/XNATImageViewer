@@ -278,7 +278,6 @@ XtkDisplayer.prototype.loadFileCollection = function (fileCollection, opt_onload
     var renderablePlanes = (viewables['volumes'].length > 0 || viewables['dicoms'].length > 0) ? ['Sagittal', 'Coronal', 'Transverse', '3D'] : ['3D']; 
     var newObj = {};
     var slicerSettings = {}
-    var renderables = [];
     var culledViewables = {};
     var hasSameFile = /**@type{boolean}*/false;
     var isMatchingAnnotation =  /**@type{boolean}*/false;
@@ -315,7 +314,7 @@ XtkDisplayer.prototype.loadFileCollection = function (fileCollection, opt_onload
 	// Cycle through the individual 'viewable' files and
 	// convert them to XObjects
 	//
-	if ((key !== 'slicer' && key !== 'dicoms') && viewables[key].length > 0){
+	if ((key !== 'slicer' && key !== 'dicoms' && key !== 'images') && viewables[key].length > 0){
 	    goog.array.forEach(viewables[key], function(viewableFile){
 		viewableFile = (viewableFile.indexOf(' ') > -1) ? goog.string.urlEncode(viewableFile) : viewableFile;
 		newObj = xtkUtils.createXObject(decodeURIComponent(viewableFile));	 
@@ -328,16 +327,16 @@ XtkDisplayer.prototype.loadFileCollection = function (fileCollection, opt_onload
 	// For dicom sets, apply the whole file set to load
 	// as an XObject.
 	//
-	} else if (key === 'dicoms' && viewables[key].length > 0){
+	} else if ((key === 'dicoms' || key === 'images') && viewables[key].length > 0){
 	    console.log("DICOMS KEY");
 	    newObj = xtkUtils.createXObject(viewables[key]);
 	    newObj.isSelectedVolume = true; // Critical for 2D Rendering.
 	    that.currentViewables_[key].push(newObj);
-	    console.log(newObj);
+	    //console.log(newObj);
 
 	}
     }
- 
+
 
     
     //----------------
@@ -395,9 +394,8 @@ XtkDisplayer.prototype.loadFileCollection = function (fileCollection, opt_onload
     //----------------
     // Load renderables as single array of currentViewables_
     //----------------
-    renderables = utils.convert.objectToArray(this.currentViewables_);
+    var renderables = utils.convert.objectToArray(this.currentViewables_);
     this.XtkPlaneManager_.onAllRendered(this.onloadCallbacks_);
-    console.log(renderables);
     this.XtkPlaneManager_.loadInRenderers(renderables)
  
 

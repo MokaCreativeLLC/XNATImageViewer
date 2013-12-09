@@ -296,7 +296,7 @@ XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, callb
 	if (callback) { callback(renderables, xtkPlane); }
     })
 
-
+    //return;
 
     //------------------
     // Add the renderables to the renderer.
@@ -305,7 +305,7 @@ XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, callb
 	xtkPlane.addToRenderer(renderable);
     })
 
-
+    //return;
 
     //------------------
     // Reset the slider.
@@ -350,7 +350,7 @@ XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, callb
  */
 XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs, opt_onloadPlane) {
 
-    //utils.dom.debug("loadInRenderers", renderables);
+    utils.dom.debug("loadInRenderers", renderables);
     var that = this;
     var renderCount = 0; 
     var xtkPlanes = [];
@@ -399,6 +399,7 @@ XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs, op
     // kick back any errors.
     //------------------
     onloadPlane = opt_onloadPlane ? that.anatomicalToViewPlane(opt_onloadPlane) : xtkPlanes[0];
+    //onloadPlane = that.anatomicalToViewPlane('Sagittal');
     index = xtkPlanes.indexOf(onloadPlane);
     culledViewPlanes = xtkPlanes;
     if (index > -1) { culledViewPlanes.splice(index, 1); }
@@ -408,9 +409,9 @@ XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs, op
     //------------------
     // Add object and render in onloadPlane first.
     //------------------
-
+    //console.log("ONLOAD PLANE", onloadPlane, xtkPlanes);
+    //return;
     that.loadInRenderer(renderables, onloadPlane, function(){
-
 
 	//
 	// When onloadPlane is finished rendering,
