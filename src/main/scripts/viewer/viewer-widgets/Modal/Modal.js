@@ -343,11 +343,23 @@ Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
 
 
 
+
+
+
+
+
     //------------------
     // IF IN DEMO MODE: 
     // Get viewables from stored json.
     //------------------    
     if (XNAT_IMAGE_VIEWER_MODE && XNAT_IMAGE_VIEWER_MODE == 'demo'){
+
+
+
+	XNAT_IMAGE_VIEWER_DEMO_SCANS.sort(that.XnatIO_.compareScan);
+	XNAT_IMAGE_VIEWER_DEMO_SLICER.sort(that.XnatIO_.compareSlicer);
+
+
 	goog.array.forEach(XNAT_IMAGE_VIEWER_DEMO_SCANS, function(demoScan){
 	    that.addThumbnailsToThumbnailGallery('scans',  [demoScan]);
 	})
@@ -362,7 +374,6 @@ Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
     //------------------
     // ELSE: Get Viewables from XNAT server.
     // Scans Thumbnails first, then Slicer Thumbnails.
-    //------------------
     else {
 	that.XnatIO_.getViewables(that.xnatPath_, 'scans', function(viewable){
 	    //

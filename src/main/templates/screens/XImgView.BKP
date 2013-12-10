@@ -6,22 +6,22 @@
 
 <!-- BEGIN /xnat-templates/screens/XIViewer.vm -->
 
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/closure-library/closure/goog/css/menu.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/closure-library/closure/goog/css/menuitem.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/closure-library/closure/goog/css/menuseparator.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/closure-library/closure/goog/css/menubutton.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/closure-library/closure/goog/css/custombutton.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/utils/css/genericslider.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/utils/css/scrollablecontainer.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/viewer-widgets/css/viewschememenu.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/viewer-widgets/css/viewbox.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/viewer-widgets/css/modal.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/viewer-widgets/css/thumbnail.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/viewer-widgets/css/displayer.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/viewer-widgets/css/xtkplane.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/viewer-widgets/css/contentdivider.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/viewer-widgets/css/viewboxtabs.css")">
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/viewer-widgets/css/viewschemes.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/closure-library/closure/goog/css/menu.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/closure-library/closure/goog/css/menuitem.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/closure-library/closure/goog/css/menuseparator.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/closure-library/closure/goog/css/menubutton.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/closure-library/closure/goog/css/custombutton.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/utils/css/genericslider.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/utils/css/scrollablecontainer.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/viewer-widgets/css/viewschememenu.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/viewer-widgets/css/viewbox.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/viewer-widgets/css/modal.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/viewer-widgets/css/thumbnail.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/viewer-widgets/css/displayer.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/viewer-widgets/css/xtkplane.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/viewer-widgets/css/contentdivider.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/viewer-widgets/css/viewboxtabs.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/viewer-widgets/css/viewschemes.css")">
 
 
 
@@ -35,7 +35,7 @@
 
 
 
-<link type="text/css" rel="stylesheet" href="$content.getURI("$content.getURI(")"scripts/viewer/xtk-utils/css/controllermenu.css")">
+<link type="text/css" rel="stylesheet" href="$content.getURI("scripts/viewer/xtk-utils/css/controllermenu.css")">
 
 
 <script type="text/javascript">

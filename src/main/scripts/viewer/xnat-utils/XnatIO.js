@@ -115,7 +115,7 @@ XnatIO.prototype.getEmptyViewableData = function(){
  * @expose
  */
 XnatIO.prototype.jsonGet = function(url, callback){
-    utils.dom.debug("XnatIO - jsonGet: ", url);
+    //utils.dom.debug("XnatIO - jsonGet: ", url);
 
 
 
@@ -151,7 +151,7 @@ XnatIO.prototype.jsonGet = function(url, callback){
  * @expose
  */
 XnatIO.prototype.get = function(url, callback){
-    utils.dom.debug("XnatIO - get: ", url);
+    //utils.dom.debug("XnatIO - get: ", url);
     goog.net.XhrIo.send(url, function(e) {
 	var xhr = e.target;
 	var obj = xhr;
@@ -350,13 +350,48 @@ XnatIO.prototype.getViewables = function(url, viewableType, callback){
 
 
 /**
+ * Function for sorting scan objects.
+ *
+ * @param {!Object.<String, String | Object.<String, String | Object>} a First scan object to compare. 
+ * @param {!Object.<String, String | Object.<String, String | Object>} b Second scan object to compare. 
+ */
+XnatIO.prototype.compareScan = function(a,b) {
+    if (a['sessionInfo']['Scan']['value'][0].toLowerCase() < b['sessionInfo']['Scan']['value'][0].toLowerCase())
+	return -1;
+    if (a['sessionInfo']['Scan']['value'][0].toLowerCase() > b['sessionInfo']['Scan']['value'][0].toLowerCase())
+	return 1;
+    return 0;
+}
+
+
+
+
+/**
+ * Function for sorting the slicer objects.
+ *
+ * @param {!Object.<String, String | Object.<String, String | Object>} a First scan object to compare. 
+ * @param {!Object.<String, String | Object.<String, String | Object>} b Second scan object to compare. 
+ */
+XnatIO.prototype.compareSlicer = function(a,b) {
+    if (a['Name'][0].toLowerCase() < b['Name'][0].toLowerCase())
+	return -1;
+    if (a['Name'][0].toLowerCase() > b['Name'][0].toLowerCase())
+	return 1;
+    return 0;
+}
+
+
+
+
+/**
  * Inventories the 'scans' within a given XNAT URI to 
  * construct an object that can be described as a 'viewable'
  * which is key-value structure pointing to various data and
  * meatadata of a given 'scan' for loading into the 'Displayer'
  * object. 
  *
- * @param {!string, !function}
+ * @param {!string} url The XNAT url where to get the scan JSON from.
+ * @param {!function} callback The callback to run once the scan JSON is gotten.
  */
 XnatIO.prototype.getScans = function (url, callback){
 
@@ -364,7 +399,8 @@ XnatIO.prototype.getScans = function (url, callback){
     var viewableFolder = 'scans';
     var queryFolder = url + "/" + viewableFolder;
     var pathObj = this.getXnatPathObject(url);
-
+    var gottenScans = 0;
+    var viewableCollection = [];
 
 
     utils.dom.debug('XnatIO.getScans: Sending simple request for ['+ queryFolder + ']');
@@ -375,8 +411,8 @@ XnatIO.prototype.getScans = function (url, callback){
     // Loop through all the scans within a given
     // experiment.
     //--------------------
-    that.jsonGet(queryFolder, function(obj){
-	goog.array.forEach(obj, function(scans){
+    that.jsonGet(queryFolder, function(scanJson){
+	goog.array.forEach(scanJson, function(scans){
 
 
 	    //
@@ -439,11 +475,32 @@ XnatIO.prototype.getScans = function (url, callback){
 
 		
 		//
-		// Run callback.
+		// Sort all viewables once they're collected
+		// before sending back, then run the callback.
 		//
-		callback(viewable);
+		viewableCollection.push(viewable);
+		gottenScans++;
+		if (gottenScans === scanJson.length){
+		    viewableCollection.sort(that.compareScan);
+		    goog.array.forEach(viewableCollection, function(viewable){
+			callback(viewable);
+		    })
+		}
+		
 	    })	
 	})
+
+    })
+
+    console.log("VIEABLES", viewableCollection.length);
+
+    //viewableCollection.sort(that.compareScan);
+    
+
+    //console.log("VIEABLE2", viewableCollection); 
+    goog.array.forEach(viewableCollection, function(viewable){
+	console.log("CALLBACK");
+	callback(viewable)
     })
 }
 
@@ -460,11 +517,14 @@ XnatIO.prototype.getScans = function (url, callback){
  * @param {!string, !function}
  */
 XnatIO.prototype.getSlicer = function (url, callback){
+
     var that = this;
     var viewableFolder = 'Slicer';
     var queryFolder = url + "/resources/" + viewableFolder + "/files";
     var pathObj = this.getXnatPathObject(url);
     var readableFiles = ['.mrml', '.nrrd']; 
+    var viewableCollection = [];
+    var gottenSlicerFiles = 0;
 
 
 
@@ -476,9 +536,9 @@ XnatIO.prototype.getSlicer = function (url, callback){
     // Loop through the contents of the 'Slicer' query
     // folder.
     //--------------------
-    that.jsonGet(queryFolder, function(obj){
-	utils.dom.debug('XNAT IO 386: ' + obj)
-	goog.array.forEach(obj, function(viewableFile){
+    that.jsonGet(queryFolder, function(slicerJson){
+	//utils.dom.debug('XNAT IO 480: ' + obj)
+	goog.array.forEach(slicerJson, function(viewableFile){
 	    var viewableSlicerPackageFiles = [];
 	    var slicerThumb = ""; 
 	    var fileQueryStr = queryFolder + "/" + viewableFile['Name'];
@@ -495,7 +555,7 @@ XnatIO.prototype.getSlicer = function (url, callback){
 		// be viewed.  This is done through the 'listContents' suffix
 		// when communicating with an XNAT server.
 		//
-		utils.dom.debug('XNAT IO 392: ' + fileQueryStr + "?listContents=true");
+		//utils.dom.debug('XNAT IO 392: ' + fileQueryStr + "?listContents=true");
 		goog.array.forEach(response, function(r) {
 
 		    //
@@ -549,10 +609,19 @@ XnatIO.prototype.getSlicer = function (url, callback){
 		})
 	
 
+
 		//
-		// Run callback.
+		// Sort all viewables once they're collected
+		// before sending back, then run the callback.
 		//
-		callback(viewable);
+		viewableCollection.push(viewable);
+		gottenSlicerFiles++;
+		if (gottenSlicerFiles === slicerJson.length){
+		    viewableCollection.sort(that.compareSlicer);
+		    goog.array.forEach(viewableCollection, function(viewable){
+			callback(viewable);
+		    })
+		}
 	    });
 
 	})		
