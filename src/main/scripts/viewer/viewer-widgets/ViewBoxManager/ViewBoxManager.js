@@ -37,6 +37,7 @@ goog.provide('ViewBoxManager');
 ViewBoxManager = function (XnatViewerModal) {
     this.Modal_  = XnatViewerModal;
     this.viewersChangedCallbacks_ = [];
+    this.ViewBoxes_ = [[]];
 }
 goog.exportSymbol('ViewBoxManager', ViewBoxManager);
 
@@ -94,9 +95,9 @@ ViewBoxManager.prototype.runViewBoxesChangedCallbacks = function() {
 
 /**
 * @private
-* @type {Array.<Array.<ViewBox>>}
+* @type {?Array.<Array.<ViewBox>>}
 */
-ViewBoxManager.prototype.ViewBoxes_ = [[]];
+ViewBoxManager.prototype.ViewBoxes_ = null;
 
 
 
@@ -924,7 +925,6 @@ ViewBoxManager.prototype.resetDragDropGroup = function() {
 	var originalViewBox = goog.dom.getElement(event.dragSourceItem.currentDragElement_.ViewBoxId);
 	var originalViewBoxDims = utils.style.absolutePosition(originalViewBox);
 	var dragger = event.dragSourceItem.parent_.dragEl_;
-	var draggerViewBoxDims = utils.style.absolutePosition(dragger);
 	var animQueue = new goog.fx.AnimationParallelQueue();	
 
 	//
@@ -932,15 +932,22 @@ ViewBoxManager.prototype.resetDragDropGroup = function() {
 	// will delete the original dragger.
 	//
 	var draggerClone = makeDragClone(dragger, document.body);
-	draggerClone.style.left =  draggerViewBoxDims['left'];
-	draggerClone.style.top = draggerViewBoxDims['top'];
-	draggerClone.style.zIndex = 10000;
+	// Set the draggerClone parent to the modal parent
+	// to avoid any weird positioning issues.
+	XV._modal.parentNode.appendChild(draggerClone);
+	var draggerViewBoxDims = utils.style.absolutePosition(dragger);
+	utils.style.setStyle(draggerClone, {
+	    'top': draggerViewBoxDims['top'], 
+	    'left': draggerViewBoxDims['left'],
+	    'z-index': 10000
+	});
+
 
 	//
 	// Define the slide animation.
 	//
 	function slide(el, a, b, duration) {
-	    return new goog.fx.dom.Slide(el, [el.offsetLeft, el.offsetTop], [a, b], 
+	    return new goog.fx.dom.Slide(el, [el.offsetLeft, el.offsetTop], [a,b], 
 					 duration, goog.fx.easing.easeOut);
 	}
 
@@ -948,15 +955,17 @@ ViewBoxManager.prototype.resetDragDropGroup = function() {
 	// Add the slide animation to the 
 	// animQueue.
 	//
-	animQueue.add(slide(draggerClone, originalViewBoxDims['left'], 
-			    originalViewBoxDims['top'], XnatViewerGlobals.ANIM_FAST));
+	animQueue.add(slide(draggerClone, 
+			    originalViewBoxDims['left'], 
+			    originalViewBoxDims['top'], 
+			    XnatViewerGlobals.ANIM_FAST));
 
 	//
 	// When animation finishes, delete
 	// the draggerClone.
 	//
 	goog.events.listen(animQueue, 'end', function() {
-	    document.body.removeChild(draggerClone); 
+	    draggerClone.parentNode.removeChild(draggerClone); 
 	    delete draggerClone;
 	})
 	

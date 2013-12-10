@@ -308,7 +308,6 @@ Thumbnail.prototype.setHovered = function(hovered) {
     var that = this;
     if (hovered){
 
-	var modalAbsPos = utils.style.absolutePosition(XV._modal);
 	var eltAbsPos = utils.style.absolutePosition(this._element);
 	var imgClone = goog.dom.getElementByClass(Thumbnail.IMAGE_CLASS, this._hoverClone)
 	var textClone = goog.dom.getElementByClass(Thumbnail.TEXT_CLASS, this._hoverClone);
