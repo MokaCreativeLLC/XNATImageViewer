@@ -1,0 +1,17 @@
+
+CT-ThoraxAbdomen: 
+http://www.na-mic.org/Wiki/images/6/66/RSNA2012_1.zip
+
+MR-Brain-1:
+https://central.xnat.org/data/archive/projects/IGT_GLIOMA/subjects/case28/experiments/CENTRAL_E00661/scans/2/files?format=zip
+
+MR-Brain-2:
+https://central.xnat.org/data/archive/projects/LONI_PL_ICBM/subjects/DE-IDENTIFIED/experiments/UCLA_1193/scans/7/files?format=zip
+
+
+IMA_Complex_Original:
+https://central.xnat.org/data/archive/projects/IGT_GLIOMA/subjects/case27/experiments/00001/scans/1/files?format=zip
+
+
+IMA_Simple_Original:
+https://central.xnat.org/data/archive/projects/IGT_GLIOMA/subjects/case27/experiments/00027/scans/7/files?format=zip

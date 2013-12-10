@@ -67,6 +67,8 @@ X.parserIMA.prototype.parse = function(container, object, data, flag) {
 
   // parse the byte stream
   this.parseStream(data, object);
+
+
     //console.log(object, container, data);
   // return;
   // X.TIMERSTOP(this._classname + '.parse');
