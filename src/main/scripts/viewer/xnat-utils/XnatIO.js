@@ -473,34 +473,28 @@ XnatIO.prototype.getScans = function (url, callback){
 		//
 		viewable['thumbnailUrl'] = goog.string.endsWith(thumbImg , that.JPEG_CONVERT_SUFFIX) ? thumbImg : thumbImg + that.JPEG_CONVERT_SUFFIX;
 
-		
+
+		//
+		// Add to collection
+		//
+		viewableCollection.push(viewable);
+		gottenScans++;
+
+
+		//
+		// SORT THUMBNAILS BY NAME (NATURAL SORT)
 		//
 		// Sort all viewables once they're collected
 		// before sending back, then run the callback.
 		//
-		viewableCollection.push(viewable);
-		gottenScans++;
 		if (gottenScans === scanJson.length){
-		    viewableCollection.sort(that.compareScan);
+		    viewableCollection = that.sortViewableCollection(viewableCollection, ['sessionInfo', 'Scan', 'value', 0]);
 		    goog.array.forEach(viewableCollection, function(viewable){
 			callback(viewable);
 		    })
 		}
-		
 	    })	
 	})
-
-    })
-
-    console.log("VIEABLES", viewableCollection.length);
-
-    //viewableCollection.sort(that.compareScan);
-    
-
-    //console.log("VIEABLE2", viewableCollection); 
-    goog.array.forEach(viewableCollection, function(viewable){
-	console.log("CALLBACK");
-	callback(viewable)
     })
 }
 
@@ -609,15 +603,17 @@ XnatIO.prototype.getSlicer = function (url, callback){
 		})
 	
 
+		viewableCollection.push(viewable);
+		gottenSlicerFiles++;
+
+
 
 		//
 		// Sort all viewables once they're collected
 		// before sending back, then run the callback.
 		//
-		viewableCollection.push(viewable);
-		gottenSlicerFiles++;
 		if (gottenSlicerFiles === slicerJson.length){
-		    viewableCollection.sort(that.compareSlicer);
+		    viewableCollection = that.sortViewableCollection(viewableCollection, ['Name']);
 		    goog.array.forEach(viewableCollection, function(viewable){
 			callback(viewable);
 		    })
@@ -626,4 +622,49 @@ XnatIO.prototype.getSlicer = function (url, callback){
 
 	})		
     })
+}
+
+
+
+
+/**
+ * Sorts the viewable collection, which is an array of XNAT derived JSONS
+ * customized (added to) for the purposes of the Image viewer.
+ *
+ * @param {!Array.<Object>} viewableCollection the collection to sort. 
+ * @param {!Array.<String>} keyDepthArr The key depth array indicating the sorting criteria.
+ */
+XnatIO.prototype.sortViewableCollection = function (viewableCollection, keyDepthArr){
+
+    var sorterKeys = [];
+    var sorterObj = {};
+    var sortedViewableCollection = [];
+
+    //
+    // Update sorting data types.
+    //
+    goog.array.forEach(viewableCollection, function(viewable){
+	var sorterKey = viewable;
+	goog.array.forEach(keyDepthArr, function(key){
+	    sorterKey = sorterKey[key];
+	})
+	sorterKey = sorterKey.toLowerCase();
+	sorterKeys.push(sorterKey);
+	sorterObj[sorterKey] = viewable;
+    })
+
+    //
+    // Natural sort sorterKeys.
+    //
+    sorterKeys = sorterKeys.sort(utils.array.naturalCompare);
+    //goog.array.sort(sorterKeys);
+
+
+    //
+    // Construct and return the sorted collection.
+    //
+    goog.array.forEach(sorterKeys, function(sorterKey){
+	sortedViewableCollection.push(sorterObj[sorterKey]);
+    })
+    return sortedViewableCollection;
 }

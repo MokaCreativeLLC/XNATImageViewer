@@ -28,6 +28,148 @@
  * CREDITS: Thank you to Thomas J. Re for his initial implementation.
  *
  */
+
+
+
+
+
+//****************************************************
+//
+// MOKA CREATIVE LLC ADD 
+//
+// Example of a working fsge3d .IMA file:
+//
+//****************************************************
+
+/*
+  (0008, 0005) Specific Character Set              CS: 'ISO_IR 100'
+  (0008, 0008) Image Type                          CS: ['ORIGINAL', 'PRIMARY']
+  (0008, 0016) SOP Class UID                       UI: MR Image Storage
+  (0008, 0018) SOP Instance UID                    UI: 1.2.840.113619.2.1.1.2703111462.985.1148036686.766
+  (0008, 0020) Study Date                          DA: '20060703'
+  (0008, 0021) Series Date                         DA: '20060703'
+  (0008, 0023) Content Date                        DA: '20060703'
+  (0008, 0030) Study Time                          TM: '091845.000000'
+  (0008, 0031) Series Time                         TM: '121923'
+  (0008, 0033) Content Time                        TM: '121923'
+  (0008, 0050) Accession Number                    SH: '7706910'
+  (0008, 0060) Modality                            CS: 'MR'
+  (0008, 0070) Manufacturer                        LO: 'GE MEDICAL SYSTEMS'
+  (0008, 1030) Study Description                   LO: 'IGT_GLIOMA'
+  (0008, 103e) Series Description                  LO: '3D SPGR VOLUME'
+  (0008, 1090) Manufacturer's Model Name           LO: 'GENESIS_SIGNA'
+  (0008, 1110)  Referenced Study Sequence   3 item(s) ---- 
+  (0008, 1150) Referenced SOP Class UID            UI: Detached Study Management SOP Class
+  (0008, 1155) Referenced SOP Instance UID         UI: 1.2.124.113932.1.170.223.162.178.20060703.70326.15254269
+  ---------
+      (0008, 1150) Referenced SOP Class UID            UI: Detached Study Management SOP Class
+      (0008, 1155) Referenced SOP Instance UID         UI: 1.2.124.113932.1.170.223.162.178.20060703.70327.15254270
+  ---------
+      (0008, 1150) Referenced SOP Class UID            UI: Detached Study Management SOP Class
+      (0008, 1155) Referenced SOP Instance UID         UI: 1.2.124.113932.1.170.223.162.178.20060703.70327.15254271
+  ---------
+  (0008, 1120)  Referenced Patient Sequence   1 item(s) ---- 
+      (0008, 1150) Referenced SOP Class UID            UI: Detached Patient Management SOP Class
+      (0008, 1155) Referenced SOP Instance UID         UI: 1.2.124.113932.1.170.223.162.178.20060703.70118.15254262
+  ---------
+  (0009, 0010) Private Creator                     OB: 'GEIIS '
+  (0009, 1010) Private tag data                    OB: Array of 1188 bytes
+  (0009, 1012) Private tag data                    OB: '1 '
+  (0010, 0010) Patient's Name                      PN: 'case27'
+  (0010, 0020) Patient ID                          LO: '00027'
+  (0010, 0021) Issuer of Patient ID                LO: '001R74:20050625:205502036:195212'
+  (0010, 1010) Patient's Age                       AS: '100Y'
+  (0018, 0010) Contrast/Bolus Agent                LO: 'NONE'
+  (0018, 0020) Scanning Sequence                   CS: 'GR'
+  (0018, 0021) Sequence Variant                    CS: ['SS', 'SP', 'SK']
+  (0018, 0022) Scan Options                        CS: ['FAST_GEMS', 'GRAPH_GEMS', 'EDR_GEMS']
+  (0018, 0023) MR Acquisition Type                 CS: '3D'
+  (0018, 0024) Sequence Name                       SH: 'fgre3d'
+  (0018, 0025) Angio Flag                          CS: 'Y'
+  (0018, 0050) Slice Thickness                     DS: '2.500000'
+  (0018, 0080) Repetition Time                     DS: '28.799999'
+  (0018, 0081) Echo Time                           DS: '12.500000'
+  (0018, 0083) Number of Averages                  DS: '1.000000'
+  (0018, 0084) Imaging Frequency                   DS: '21.3063660000'
+  (0018, 0085) Imaged Nucleus                      SH: 'H1'
+  (0018, 0086) Echo Number(s)                      IS: '1'
+  (0018, 0087) Magnetic Field Strength             DS: '5000'
+  (0018, 0088) Spacing Between Slices              DS: '2.500000'
+  (0018, 0091) Echo Train Length                   IS: '0'
+  (0018, 0093) Percent Sampling                    DS: '100.000000'
+  (0018, 0094) Percent Phase Field of View         DS: '100.000000'
+  (0018, 0095) Pixel Bandwidth                     DS: '56.250000'
+  (0018, 1020) Software Version(s)                 LO: '04'
+  (0018, 1050) Spatial Resolution                  DS: '0.859375'
+  (0018, 1062) Nominal Interval                    IS: '28'
+  (0018, 1088) Heart Rate                          IS: '0'
+  (0018, 1090) Cardiac Number of Images            IS: '0'
+  (0018, 1094) Trigger Window                      IS: '0'
+  (0018, 1100) Reconstruction Diameter             DS: '220.0000000000'
+  (0018, 1250) Receive Coil Name                   SH: 'FLEX3'
+  (0018, 1310) Acquisition Matrix                  US: [256, 0, 0, 128]
+  (0018, 1314) Flip Angle                          DS: '30'
+  (0018, 1315) Variable Flip Angle Flag            CS: 'N'
+  (0018, 1316) SAR                                 DS: '0.000272'
+  (0018, 5100) Patient Position                    CS: 'HFDL'
+  (0020, 000d) Study Instance UID                  UI: 1.2.124.113932.1.170.223.162.178.20060703.70326.15254269
+  (0020, 000e) Series Instance UID                 UI: 1.2.840.113619.2.1.1.2703111462.985.1148036686.707
+  (0020, 0010) Study ID                            SH: 'MR1'
+  (0020, 0011) Series Number                       IS: ' 8'
+  (0020, 0012) Acquisition Number                  IS: '1'
+  (0020, 0013) Instance Number                     IS: '59'
+  (0020, 0032) Image Position (Patient)            DS: ['-140.000000', '91.000000', '71.500000']
+  (0020, 0037) Image Orientation (Patient)         DS: ['0.000000', '-1.000000', '0.000000', '1.000000', '0.000000', '0.000000']
+  (0020, 0060) Laterality                          CS: ''
+  (0020, 1040) Position Reference Indicator        LO: 'NA'
+  (0020, 1041) Slice Location                      DS: '71.5000000000'
+  (0028, 0002) Samples per Pixel                   US: 1
+  (0028, 0004) Photometric Interpretation          CS: 'MONOCHROME2'
+  (0028, 0010) Rows                                US: 256
+  (0028, 0011) Columns                             US: 256
+  (0028, 0030) Pixel Spacing                       DS: ['0.8593750000', '0.8593750000']
+  (0028, 0100) Bits Allocated                      US: 16
+  (0028, 0101) Bits Stored                         US: 16
+  (0028, 0102) High Bit                            US: 15
+  (0028, 0103) Pixel Representation                US: 1
+  (0029, 0010) Private Creator                     OB: Array of 22 bytes
+  (0029, 1001) [Unknown]                           OB: '189 '
+  (0029, 1002) [Unknown]                           OB: '94'
+  (0029, 1003) [Unknown]                           OB: 'F '
+  (0032, 000a) Study Status ID                     CS: 'COMPLETED'
+  (0032, 000c) Study Priority ID                   CS: 'LOW'
+  (0032, 1030) Reason for Study                    LO: ['RT. TEMPORAL TUMOR
+  RT. TEMPORAL TUMOR 
+  disk # 126A. Gad. 20cc Lot: 53022B exp: 08/08 NV. ', ' 
+  ']
+  (0032, 4000) Study Comments                      LT: 'C'
+  (0038, 0300) Current Patient Location            LO: 'PRIVATE'
+  (0040, 1001) Requested Procedure ID              SH: '7706910'
+  (0905, 0010) Private Creator                     OB: 'GEIIS '
+  (0905, 1030) Private tag data                    OB: Array of 32 bytes
+  (7fd1, 0010) Private Creator                     OW or OB: 'GEIIS '
+  (7fd1, 1010) Private tag data                    OB: '\x00\x00\x00\x00'
+  (7fe0, 0010) Pixel Data                          OW or OB: Array of 131072 bytes
+
+
+*/
+
+
+//****************************************************
+//
+// MOKA CREATIVE LLC ADD - IMA SPECIFIC
+//
+//****************************************************
+
+
+
+
+
+
+
+
+
+
 // provides
 goog.provide('X.parserIMA');
 // requires
@@ -144,7 +286,7 @@ X.parserIMA.prototype.parse = function(container, object, data, flag) {
     // -> -> The value shall be unique within a series
 
     var _ordering = 'image_position_patient';
-
+    //var _ordering = 'instance_number';
 
     if(first_image_stacks == 1){
         
@@ -195,8 +337,37 @@ X.parserIMA.prototype.parse = function(container, object, data, flag) {
       window.console.log("Could not resolve the ordering mode");
 
     }
-      //_ordering = 'instance_number';
-      //first_image.sort(function(a,b){return a["instance_number"]-b["instance_number"]});
+      
+
+
+      //****************************************************
+      //
+      // MOKA CREATIVE LLC ADD - IMA SPECIFIC
+      //
+      //****************************************************
+
+      
+      //
+      // LOCALIZER or fgre SequenceNames need to be ordered
+      // by instance number.
+      //
+      if (first_image[0]['sequence_name'] === 'fgre') {
+	  window.console.log("FGRE reordering...");
+	  //
+	  //window.console.log(first_image[0])
+	  _ordering = 'instance_number';
+	  first_image.sort(function(a,b){return a["instance_number"]-b["instance_number"]});
+      }
+      //****************************************************
+      //
+      // MOKA CREATIVE LLC ADD - IMA SPECIFIC
+      //
+      //****************************************************
+
+
+
+
+
 
     ////////////////////////////////////////////////////////////////////////
     // At this point:
@@ -304,7 +475,7 @@ X.parserIMA.prototype.parse = function(container, object, data, flag) {
     ////////////////////////////////////////////////////////////////////////
 
     var first_image_data = null;
-      console.log("BITS ALLOCATED", first_image[0].bits_allocated)
+
     // create data container
     switch (first_image[0].bits_allocated) {
       case 8:
@@ -353,11 +524,11 @@ X.parserIMA.prototype.parse = function(container, object, data, flag) {
           var _x = first_image[_i]['image_position_patient'][0] - first_image[0]['image_position_patient'][0];
           var _y = first_image[_i]['image_position_patient'][1] - first_image[0]['image_position_patient'][1];
           var _z = first_image[_i]['image_position_patient'][2] - first_image[0]['image_position_patient'][2];
-	  console.log("PIXEL SPACING:", first_image[0]['pixel_spacing'][2]);
+	  //console.log("PIXEL SPACING:", first_image[0]['pixel_spacing'][2]);
           _distance_position = Math.sqrt(_x*_x + _y*_y  + _z*_z)/first_image[0]['pixel_spacing'][2];
           break;
         case 'instance_number':
-	  console.log("INSTANCES", _i, first_image[_i]['instance_number'], first_image[0]['instance_number'])
+	  //console.log("INSTANCES", _i, first_image[_i]['instance_number'], first_image[0]['instance_number'])
           _distance_position = first_image[_i]['instance_number'] - first_image[0]['instance_number'];
           break;
         default:
@@ -365,15 +536,10 @@ X.parserIMA.prototype.parse = function(container, object, data, flag) {
           break;
       }
 
-	//console.log(_data);
-	console.log(_i, "ordering", _ordering);
-	
-	var multiplyer = ((_distance_position) * first_slice_size);
-	console.log("_distance_position", _distance_position, "\tfirst_slice_size:", first_slice_size, '\tmult', multiplyer);
-	//console.log(_data);
-	first_image_data.set(_data, multiplyer);
-	//first_image_data.set(_data, 100000);
-	//first_image_data.set(_data);
+
+	//console.log("_distance_position", _distance_position, "\tfirst_slice_size:", first_slice_size, '\tmult', multiplyer);
+	first_image_data.set(_data, _distance_position * first_slice_size);
+
 
     }
 
@@ -658,7 +824,7 @@ X.parserIMA.prototype.parseStream = function(data, object) {
       
     _tagGroup = _bytes[_bytePointer++];
     _tagElement = _bytes[_bytePointer++];
-//      console.log(_bytePointer, _bytes.length)
+      //console.log(_bytePointer, _bytes.length)
       //console.log(_tagGroup);
     _VR = _bytes[_bytePointer++];
     _VL = _bytes[_bytePointer++];
@@ -668,45 +834,91 @@ X.parserIMA.prototype.parseStream = function(data, object) {
 
 
 
-      //////////////////////////
-      // SUNIL
-      ////////////////
-      console.log(_bytePointer);
-      if ((_bytePointer === 347) || (_bytePointer === 526) || (_bytePointer === 523)){// || _bytePointer === 355 || _bytePointer === 371 || _bytePointer === 412 || _bytePointer === 428 || _bytePointer === 485 || _bytePointer === 469){
-	  //_bytePointer++;
-	  //_bytePointer++;
+
+      //****************************************************
+      //
+      // MOKA CREATIVE LLC ADD - IMA SPECIFIC
+      //
+      //****************************************************
+
+      //
+      // These byte pointers screw up the parsing and it appears
+      // to be an IMA specifc thing related to these memory addresses, 
+      // specifically:
+      //
+      // [0x0008, 0x1110]
+      // [0x0008, 0x1150]
+      // [0x0008, 0x1155]
+      //
+      //
+      // Here's a sample of whay pydicom.read_file spits out at a given
+      // IMA file:
+      //
+      //(0008, 1110)  Referenced Study Sequence   3 item(s) ---- 
+      //   (0008, 1150) Referenced SOP Class UID            UI: Detached Study Management SOP Class
+      //   (0008, 1155) Referenced SOP Instance UID         UI: 1.2.124.113932.1.170.223.162.178.20060703.70326.15254269
+      //   ---------
+      //   (0008, 1150) Referenced SOP Class UID            UI: Detached Study Management SOP Class
+      //   (0008, 1155) Referenced SOP Instance UID         UI: 1.2.124.113932.1.170.223.162.178.20060703.70327.15254270
+      //   ---------
+      //   (0008, 1150) Referenced SOP Class UID            UI: Detached Study Management SOP Class
+      //   (0008, 1155) Referenced SOP Instance UID         UI: 1.2.124.113932.1.170.223.162.178.20060703.70327.15254271
+      //   ---------
+      //(0008, 1120)  Referenced Patient Sequence   1 item(s) ---- 
+      //   (0008, 1150) Referenced SOP Class UID            UI: Detached Patient Management SOP Class
+      //   (0008, 1155) Referenced SOP Instance UID         UI: 1.2.124.113932.1.170.223.162.178.20060703.70118.15254262
+      //
+      //
+      // TODO: Need to determine why stuff behaves wierd at these addresses.
+      //
+      // Skipping for now.
+      //
+      if ((_bytePointer === 347) || (_bytePointer === 526) || (_bytePointer === 523)){
 	  continue;
       }
 
+      //****************************************************
+      //
+      // MOKA CREATIVE LLC ADD - IMA SPECIFIC
+      //
+      //****************************************************
 
 
 
-      //console.log('_VR', _VR);
-      //console.log('_VL', _VL);
+
+
+
+
       if ((_tagGroup !== undefined) && (_tagElement !== undefined)){
-	  window.console.log( '(' + _tagGroup.toString(16) + ',' + _tagElement.toString(16) +')');
-      if (_tagGroup.toString(16) === '8'){
-	  //if ((_tagElement.toString(16) == '1110') || (_tagElement.toString(16) === '1120') || (_tagElement.toString(16) === '1150') || (_tagElement.toString(16) === '1155')){
-	  //    console.log("HERE!");
-	  //    continue;
-	 // }
+	  //window.console.log( '(' + _tagGroup.toString(16) + ',' + _tagElement.toString(16) +')');
       }
 
+      // var _b0 = _VR & 0x00FF;
+      // var _b1 = (_VR & 0xFF00) >> 8;
+      // window.console.log('_VR: '+_VR+' - ' + String.fromCharCode( _b0 ) + String.fromCharCode( _b1 ));
+      // window.console.log('_VL: ' + _VL);
+
+
+
+
+      // Implicit VR Little Endian case
+      if((slice['transfer_syntax_uid'] == '1.2.840.10008.1.2') && (_VL == 0)){
+	  
+	  _VL = _VR;
+
       }
 
-    // var _b0 = _VR & 0x00FF;
-    // var _b1 = (_VR & 0xFF00) >> 8;
-    // window.console.log('_VR: '+_VR+' - ' + String.fromCharCode( _b0 ) + String.fromCharCode( _b1 ));
-    // window.console.log('_VL: ' + _VL);
+      switch (_tagGroup) {
 
-    // Implicit VR Little Endian case
-    if((slice['transfer_syntax_uid'] == '1.2.840.10008.1.2') && (_VL == 0)){
-      
-      _VL = _VR;
 
-    }
 
-    switch (_tagGroup) {
+
+
+
+
+
+
+
       case 0x0002:
 	//console.log('0x0002');
         // Group of DICOM meta info header
@@ -867,6 +1079,45 @@ X.parserIMA.prototype.parseStream = function(data, object) {
           }
 
         break;
+
+
+
+
+
+	//****************************************************
+	//
+	// MOKA CREATIVE LLC ADD - IMA SPECIFIC
+	//
+	//****************************************************
+    case 0x0018:
+	//
+        // Sequence Name
+	//
+        switch (_tagElement) {
+        case 0x0024:
+            slice['sequence_name'] = "";
+            var i = 0;
+            for (i = 0; i < _VL / 2; i++) {
+		var _short = _bytes[_bytePointer++];
+		var _b0 = _short & 0x00FF;
+		var _b1 = (_short & 0xFF00) >> 8;
+		slice['sequence_name'] += String.fromCharCode(_b0);
+		slice['sequence_name'] += String.fromCharCode(_b1);
+            }
+            break;
+        default:
+	    _bytePointer =X.parserIMA.prototype.handleDefaults(_bytes, _bytePointer, _VR, _VL);
+            break;
+	}
+	//****************************************************
+	//
+	// MOKA CREATIVE LLC ADD - IMA SPECIFIC
+	//
+	//****************************************************
+
+
+
+
 
     case 0xfffe:
         // Group of undefined item

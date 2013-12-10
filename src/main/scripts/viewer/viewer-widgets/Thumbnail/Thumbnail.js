@@ -79,9 +79,9 @@ Thumbnail = function (properties, opt_args) {
     // Other metadata queries
     //------------------
     this._displayText.innerHTML += "<b><font size = '2'>" + headerText  + "</font></b><br>";
-    this._displayText.innerHTML += "Format: <b>" + this._properties['sessionInfo']["Format"]['value'].toString()  + "</b><br>";
-    this._displayText.innerHTML += 'Experiment: ' + this._properties['sessionInfo']['experiments'];
-
+    this._displayText.innerHTML += "Frmt: " + this._properties['sessionInfo']["Format"]['value'].toString()  + "<br>";
+    this._displayText.innerHTML += 'Type: ' + this._properties['sessionInfo']["type"]['value']   + "</b><br>";
+    this._displayText.innerHTML += 'Expt: ' + this._properties['sessionInfo']['experiments'];
 
 
     //------------------
