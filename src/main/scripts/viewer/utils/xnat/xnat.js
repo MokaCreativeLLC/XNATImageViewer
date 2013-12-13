@@ -383,6 +383,11 @@ utils.xnat.getScans = function (url, callback){
     var pathObj = utils.xnat.getXnatPathObject(url);
     var gottenScans = 0;
     var viewableCollection = [];
+    var fileQueryUrl = '';
+    var scanFileArr = [];
+    var viewable = utils.xnat.getEmptyViewableData();
+    var imgInd = 0;
+    var thumbImg = '';
 
 
     utils.dom.debug('utils.xnat.getScans: Sending simple request for ['+ queryFolder + ']');
@@ -400,7 +405,7 @@ utils.xnat.getScans = function (url, callback){
 	    //
 	    // Construct a fileQueryUrl for every scan folder.
 	    //
-	    var fileQueryUrl = url + "/" + viewableFolder + "/" + scans['ID'] + "/files";
+	    fileQueryUrl = url + "/" + viewableFolder + "/" + scans['ID'] + "/files";
 
 
 	    //
@@ -412,15 +417,16 @@ utils.xnat.getScans = function (url, callback){
 		//
 		// Add file URIs to array.
 		//
-		var scanFileArr = [];
+		scanFileArr = [];
 		goog.array.forEach(fileList, function(fileObj){
 
-		    // NOTE: Adding XnatViewerGlobals.ROOT_URL is 
-		    // SUPER CRITICAL!
-		    var scanUrl = XnatViewerGlobals.ROOT_URL + fileObj['URI'];
-		    var scanUrlLower = scanUrl.toLowerCase();		    
-
-		    scanFileArr.push(scanUrl);
+		    // NOTE: This is critical because the paths
+		    // returned in the json may not always be the necessary 
+		    // query paths.
+		    // This joins the 'experiments' portion of both paths
+		    scanFileArr.push((queryFolder.split('experiments/')[0] + 
+				      'experiments' + 
+				      fileObj['URI'].split('experiments')[1]));
 		});
 		
 		
@@ -428,7 +434,7 @@ utils.xnat.getScans = function (url, callback){
 		// Populate medatadata object pertaining to
 		// the scan. See keys below...
 		//
-		var viewable = utils.xnat.getEmptyViewableData();
+		viewable = utils.xnat.getEmptyViewableData();
 		for (key in pathObj){
 		    if (pathObj[key] !== 'undefined'){
 			viewable['sessionInfo'][key] = pathObj[key]; 
@@ -446,14 +452,16 @@ utils.xnat.getScans = function (url, callback){
 		// using natural sort.
 		//
 		scanFileArr = scanFileArr.sort(utils.array.naturalCompare);
-		var imgInd = Math.floor((scanFileArr.length) / 2);
-		var thumbImg = scanFileArr[imgInd];
+		imgInd = Math.floor((scanFileArr.length) / 2);
+		thumbImg = scanFileArr[imgInd];
 
 
 		//
 		// Define the thumbnailImage URI
 		//
-		viewable['thumbnailUrl'] = goog.string.endsWith(thumbImg , utils.xnat.JPEG_CONVERT_SUFFIX) ? thumbImg : thumbImg + utils.xnat.JPEG_CONVERT_SUFFIX;
+		viewable['thumbnailUrl'] = goog.string.endsWith(thumbImg , 
+								utils.xnat.JPEG_CONVERT_SUFFIX) ? 
+		    thumbImg : thumbImg + utils.xnat.JPEG_CONVERT_SUFFIX;
 
 
 		//

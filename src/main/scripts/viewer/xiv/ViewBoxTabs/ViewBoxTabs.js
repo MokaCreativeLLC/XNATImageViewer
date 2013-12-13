@@ -249,7 +249,7 @@ xiv.ViewBoxTabs.prototype.addTab = function(tabTitle) {
     //------------------	
     var tabIcon = utils.dom.makeElement('img', tab, 'TabIcon');
     goog.dom.classes.add(tabIcon, xiv.ViewBoxTabs.TABICON_CLASS);
-    var iconSrc = xiv.prototype.ICON_URL + this.iconSrc_[goog.string.removeAll(tabTitle)]
+    var iconSrc = xiv.ICON_URL + this.iconSrc_[goog.string.removeAll(tabTitle)]
     tabIcon.src = iconSrc ? iconSrc : undefined;
     if (tabIcon.src.toString().indexOf('undefined') > -1 ){ tabIcon.innerHTML = tabTitle}
 

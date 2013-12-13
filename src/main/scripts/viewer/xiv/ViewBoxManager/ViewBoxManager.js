@@ -555,7 +555,7 @@ xiv.ViewBoxManager.prototype.makeViewBox = function() {
     //------------------    	
     var modalWindow = goog.dom.getElementsByClass(xiv.Modal.MODAL_CLASS)[0];
     var dragDropHandle = utils.dom.makeElement("img", modalWindow, "DragAndDropHandle");
-    dragDropHandle.src = xiv.prototype.ICON_URL + "Icons/Toggle-DragAndDrop.png";
+    dragDropHandle.src = xiv.ICON_URL + "Icons/Toggle-DragAndDrop.png";
     dragDropHandle.ViewBoxId = viewBox._element.id; 
 
     //

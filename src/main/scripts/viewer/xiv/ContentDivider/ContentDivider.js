@@ -60,7 +60,7 @@ xiv.ContentDivider = function (containmentParent) {
     //------------------
     this.icon_ = utils.dom.makeElement("img", this._element,  'xiv.ContentDividerIcon');	
     goog.dom.classes.set(this.icon_, xiv.ContentDivider.ICON_CLASS);	
-    this.icon_.src = xiv.prototype.ICON_URL + 'Icons/Toggle-ContentDivider.png'	 
+    this.icon_.src = xiv.ICON_URL + 'Icons/Toggle-ContentDivider.png'	 
 	
 
 

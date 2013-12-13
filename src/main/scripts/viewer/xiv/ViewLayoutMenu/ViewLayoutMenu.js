@@ -68,7 +68,7 @@ xiv.ViewLayoutMenu = function (viewLayouts) {
     // Define the icon of the menu and apply its class.
     //------------------
     this.icon_ = utils.dom.makeElement("img", this._element, "menuIcon");	
-    this.icon_.src = xiv.prototype.ICON_URL + "ViewLayoutMenu/Menu.png";
+    this.icon_.src = xiv.ICON_URL + "ViewLayoutMenu/Menu.png";
     goog.dom.classes.set(this.icon_, xiv.ViewLayoutMenu.ICON_CLASS);
 
     

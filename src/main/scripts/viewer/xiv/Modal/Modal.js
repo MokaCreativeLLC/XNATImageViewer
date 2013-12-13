@@ -81,7 +81,7 @@ xiv.Modal = function () {
     // Define close button.
     //------------------
     this.closeButton_ = utils.dom.makeElement("img", this._element, "closeButton", {'opacity':.5});
-    this.closeButton_.src = xiv.prototype.ICON_URL + "closeX.png";
+    this.closeButton_.src = xiv.ICON_URL + "closeX.png";
     goog.events.listen(that.closeButton_, goog.events.EventType.MOUSEOVER, function(event) { utils.style.setStyle(that.closeButton_, {'opacity':1});});
     goog.events.listen(that.closeButton_, goog.events.EventType.MOUSEOUT, function(event) { utils.style.setStyle(that.closeButton_, {'opacity':.5});});
     goog.dom.classes.set(this.closeButton_, xiv.Modal.CLOSEBUTTON_CLASS);
@@ -524,7 +524,7 @@ xiv.Modal.prototype.addColumnMenu_ = function () {
     //------------------
     this.makeRowColButton(that.columnMenu_, xiv.Modal.COLUMNMENU_BUTTON_CLASS, {
 	'id' : "InsertColumnButton", 
-	'src':  xiv.prototype.ICON_URL + "Arrows/insertColumn.png",
+	'src':  xiv.ICON_URL + "Arrows/insertColumn.png",
 	'style': {'top': 0},
 	'title': "Insert Column",
 	'onclick': function () { that._ViewBoxManager.insertColumn(); 
@@ -538,7 +538,7 @@ xiv.Modal.prototype.addColumnMenu_ = function () {
     //------------------
     this.makeRowColButton(that.columnMenu_, xiv.Modal.COLUMNMENU_BUTTON_CLASS, {
 	'id' : "RemoveColumnButton", 
-	'src':  xiv.prototype.ICON_URL + "/Arrows/removeColumn.png",
+	'src':  xiv.ICON_URL + "/Arrows/removeColumn.png",
 	'style': {'top': 22},
 	'title': "Remove Column",
 	'onclick': function () { that._ViewBoxManager.removeColumn();  
@@ -570,7 +570,7 @@ xiv.Modal.prototype.addRowMenu_ = function () {
     //------------------
     this.makeRowColButton(that.rowMenu_, xiv.Modal.ROWMENU_BUTTON_CLASS, {
 	'id' : "InsertRowButton", 
-	'src':  xiv.prototype.ICON_URL + "Arrows/insertRow.png",
+	'src':  xiv.ICON_URL + "Arrows/insertRow.png",
 	'style': {'left': 0},
 	'title': "Insert Row",
 	'onclick': function () { that._ViewBoxManager.insertRow(); 
@@ -584,7 +584,7 @@ xiv.Modal.prototype.addRowMenu_ = function () {
     //------------------
     this.makeRowColButton(that.rowMenu_, xiv.Modal.ROWMENU_BUTTON_CLASS, {
 	'id' : "RemoveRowButton", 
-	'src':  xiv.prototype.ICON_URL + "Arrows/removeRow.png",
+	'src':  xiv.ICON_URL + "Arrows/removeRow.png",
 	'style': {'left': 22},
 	'title': "Remove Row",
 	'onclick': function () { that._ViewBoxManager.removeRow();  
