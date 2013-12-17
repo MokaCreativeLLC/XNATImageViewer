@@ -30,6 +30,7 @@ goog.require('xiv.ViewLayoutMenu');
 goog.require('xiv.ContentDivider');
 goog.require('xiv.ViewBoxTabs');
 goog.require('xiv.XtkDisplayer');
+goog.require('xiv.SlicerViewMenu');
 
 
 
@@ -42,9 +43,10 @@ goog.require('xiv.XtkDisplayer');
  * to talk to one another.  For instance, it links the xiv.ViewLayoutMenu to 
  * to the xiv.ViewLayoutManager to the xiv.Displayer. 
  * 
- * @param {Object=}
  * @constructor
+ * 
  * @extends {xiv.Widget}
+ * @extents {goog.fx.DragDrop}
  */
 goog.provide('xiv.ViewBox');
 xiv.ViewBox = function (opt_args) {
@@ -57,13 +59,6 @@ xiv.ViewBox = function (opt_args) {
   
 
 
-    //------------------
-    // The user can specify the load framework (XTK) in the args
-    // if needed.
-    //------------------
-    if (opt_args && opt_args['loadFramework'] && opt_args['loadFramework'].length > 0){
-	this.loadFramework_ =  opt_args['loadFramework'];
-    }
     this.initDisplayer();
 
 
@@ -78,8 +73,8 @@ xiv.ViewBox = function (opt_args) {
     //------------------
     // View scheme menu
     //------------------    
-    this.ViewLayoutMenu_ = new xiv.ViewLayoutMenu(this.ViewLayoutManager_.getViewLayouts());
-    this.ViewLayoutMenu_.setElementParentNode(this._element);
+    this._ViewLayoutMenu = new xiv.ViewLayoutMenu(this.ViewLayoutManager_.getViewLayouts());
+    this._ViewLayoutMenu.setElementParentNode(this._element);
     this.setViewLayoutMenuCallbacks();
     
 
@@ -100,6 +95,13 @@ xiv.ViewBox = function (opt_args) {
 
 
     //------------------
+    // View Box Tabs.
+    //------------------    	
+    this._SlicerViewMenu = new xiv.SlicerViewMenu();
+
+
+
+    //------------------
     // Allows the content divider to update the 
     // xiv.ViewBox components when moved.
     //------------------
@@ -110,7 +112,7 @@ xiv.ViewBox = function (opt_args) {
 }
 goog.inherits(xiv.ViewBox, xiv.Widget);
 goog.inherits(xiv.ViewBox, goog.fx.DragDrop);
-
+goog.exportSymbol('xiv.ViewBox', xiv.ViewBox);
 
 
 
@@ -130,12 +132,17 @@ xiv.ViewBox.prototype.ViewLayoutManager_ = null;
 
 
 
+/**
+ * @type {?xiv.SlicerViewMenu}
+ */
+xiv.ViewBox.prototype._SlicerViewMenu = null;
+
+
 
 /**
  * @type {?xiv.ViewLayoutMenu}
- * @private
  */
-xiv.ViewBox.prototype.ViewLayoutMenu_ = null;
+xiv.ViewBox.prototype._ViewLayoutMenu = null;
 
 
 
@@ -249,7 +256,7 @@ xiv.ViewBox.prototype.getThumbnail = function() {
  * @param {string}
  */
 xiv.ViewBox.prototype.setViewLayout = function(viewPlane) {
-    this.ViewLayoutMenu_.setViewLayout(viewPlane);
+    this._ViewLayoutMenu.setViewLayout(viewPlane);
 }
 
 
@@ -298,7 +305,7 @@ xiv.ViewBox.prototype.initDisplayer = function(){
 	if (that._element.hasAttribute('originalbordercolor')){
 	    that._element.style.borderColor = that._element.getAttribute('originalbordercolor');
 	}
-	that.ViewLayoutMenu_.setViewLayout('Four-up');
+	//that._ViewLayoutMenu.setViewLayout('Four-up');
 	that.setChildrenVisible(true);	
     })
 }
@@ -369,7 +376,7 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb, loadFramework) {
     // Feed view planes into xiv.ViewLayoutManager and set 
     // the default xiv.ViewLayout (most likely '3D')
     //------------------
-    this.ViewLayoutMenu_.setViewLayout(onloadPlane);
+    this._ViewLayoutMenu.setViewLayout(onloadPlane);
 
 
 
@@ -381,10 +388,28 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb, loadFramework) {
     
 
     //------------------
-    // Load collection in Xtkxiv.Displayer, prioritizing the 3D viewer
+    // Load collection in Xtk.Displayer, prioritizing the 3D viewer
     // as that is where the progress bar lies.
     //------------------
-    this.Displayer_.loadFileCollection(thumb._properties.files, onloadPlane);
+    //console.log(thumb._properties);
+    var thumbCategory = thumb._properties['category'].toLowerCase();
+
+    switch(thumbCategory) {
+
+    case 'slicer':
+	this.Displayer_.loadSlicer(thumb._properties.files);
+	return;
+	//break;
+    default:
+	this.Displayer_.loadFileCollection(thumb._properties.files);
+    }
+
+   
+
+    //console.log("LAYOUT", slicerSettings['layout']);
+    //this.onOnload(function(){
+    // 	that.ViewBox_._ViewLayoutMenu.setViewLayout(slicerSettings['layout']);			  
+    //})
     
 
 
@@ -449,8 +474,8 @@ xiv.ViewBox.prototype.setViewLayoutMenuCallbacks = function () {
     //------------------
     // When a menu Item is clicked.
     //------------------
-    this.ViewLayoutMenu_.onMenuItemClicked( function() {
-	that.ViewLayoutManager_.setViewLayout(that.ViewLayoutMenu_.getSelectedViewLayout());
+    this._ViewLayoutMenu.onMenuItemClicked( function() {
+	that.ViewLayoutManager_.setViewLayout(that._ViewLayoutMenu.getSelectedViewLayout());
 	//that.updateStyle();
 	
     });
@@ -495,7 +520,7 @@ xiv.ViewBox.prototype.setViewLayoutMenuCallbacks = function () {
     // Callback when a plane is double clicked.
     //------------------
     this.ViewLayoutManager_.onPlaneDoubleClicked(function(anatomicalPlane){ 
-	that.ViewLayoutMenu_.setViewLayout(anatomicalPlane);
+	that._ViewLayoutMenu.setViewLayout(anatomicalPlane);
 	that.Displayer_.updateStyle()
 
     });

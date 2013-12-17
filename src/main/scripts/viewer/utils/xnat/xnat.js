@@ -509,8 +509,13 @@ utils.xnat.getSlicer = function (url, callback){
     var readableFiles = ['.mrml', '.nrrd']; 
     var viewableCollection = [];
     var gottenSlicerFiles = 0;
-
-
+    var viewableSlicerPackageFiles = [];
+    var slicerThumb = ''; 
+    var fileQueryStr = queryFolder + "/" + viewableFile['Name'];
+    var viewable = utils.xnat.getEmptyViewableData();
+    var imageArr = ['jpeg', 'jpg', 'png', 'gif'];
+    var imageFound = false;
+    var ext = '';
 
     utils.dom.debug('utils.xnat.getSlicer: Sending simple request for ['+ queryFolder + ']');
 
@@ -523,9 +528,9 @@ utils.xnat.getSlicer = function (url, callback){
     utils.xnat.jsonGet(queryFolder, function(slicerJson){
 	//utils.dom.debug('XNAT IO 480: ' + obj)
 	goog.array.forEach(slicerJson, function(viewableFile){
-	    var viewableSlicerPackageFiles = [];
-	    var slicerThumb = ""; 
-	    var fileQueryStr = queryFolder + "/" + viewableFile['Name'];
+	    viewableSlicerPackageFiles = [];
+	    slicerThumb = ""; 
+	    fileQueryStr = queryFolder + "/" + viewableFile['Name'];
 
 
 	    //
@@ -558,7 +563,7 @@ utils.xnat.getSlicer = function (url, callback){
 		// Populate medatadata object.  See keys
 		// below for specificity.
 		//
-		var viewable = utils.xnat.getEmptyViewableData();
+		viewable = utils.xnat.getEmptyViewableData();
 		for (key in viewableFile){
 		    viewable[key] = viewableFile[key];
 		}
@@ -580,10 +585,9 @@ utils.xnat.getSlicer = function (url, callback){
 		// (Slicer usually packages a screenshot).
 		// Select the first one.
 		//
-		var imageArr = ['jpeg', 'jpg', 'png', 'gif'];
-		var imageFound = false;
+		imageFound = false;
 		goog.array.forEach(viewable['files'], function(fileName){
-		    var ext = utils.string.getFileExtension(fileName);
+		    ext = utils.string.getFileExtension(fileName);
 		    goog.array.forEach(imageArr, function(imageType){
 			if (ext === imageType && !imageFound){
 			    viewable['thumbnailUrl'] = fileName; 
@@ -629,12 +633,13 @@ utils.xnat.sortViewableCollection = function (viewableCollection, keyDepthArr){
     var sorterKeys = [];
     var sorterObj = {};
     var sortedViewableCollection = [];
+    var sorterKey = {};
 
     //
     // Update sorting data types.
     //
     goog.array.forEach(viewableCollection, function(viewable){
-	var sorterKey = viewable;
+	sorterKey = viewable;
 	goog.array.forEach(keyDepthArr, function(key){
 	    sorterKey = sorterKey[key];
 	})

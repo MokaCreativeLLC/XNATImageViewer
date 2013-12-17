@@ -33,6 +33,7 @@ goog.addDependency('../../../xiv/Thumbnail/Thumbnail.js', ['xiv.Thumbnail'], [
 'goog.events',
 'utils.dom',
 'utils.style',
+'utils.ui.Thumbnail',
 'xiv',
 'xiv.Widget',
 ]);
@@ -214,6 +215,17 @@ goog.addDependency('../../../xiv/XtkPlaneManager/XtkPlaneManager.js', ['xiv.XtkP
 'utils.dom',
 'xiv.Displayer',
 'xiv.XtkPlane',
+]);
+
+
+goog.addDependency('../../../xiv/SlicerViewMenu/SlicerViewMenu.js', ['xiv.SlicerViewMenu'], [
+'goog.array',
+'utils.dom',
+'utils.ui.Thumbnail',
+'utils.ui.ScrollableContainer',
+'xiv',
+'xiv.Widget',
+'xiv.ViewBox',
 ]);
 
 

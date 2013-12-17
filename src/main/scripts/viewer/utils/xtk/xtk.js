@@ -227,7 +227,6 @@ utils.xtk.isFiber = function(ext) {
  */
 utils.xtk.getEmptyViewablesObject = function(){
     return {
-	'slicer': [],
 	'fibers': [],
 	'volumes': [],
 	'dicoms': [],
@@ -332,51 +331,7 @@ utils.xtk.createXObject = function(fileCollection) {
 
 
 
-/**
- * Creates and returns annotations, which are X.spheres.
- *
- * @param {!ActiveXObject | !Document} mrml The mrml document.
- * @return {Array.<X.sphere>} sphere The annotations as an array of X.sphere
- */
-utils.xtk.extractAnnotations = function(mrml) {
-    var annotations = [];
-    
 
-
-    //-------------------------	
-    // Loop through the mrml to determine 
-    // the annotation objects.
-    //-------------------------	
-    goog.array.forEach(mrml.getElementsByTagName('AnnotationFiducials'), function(a) {
-        var displayNodeRefs = a.getAttribute('displayNodeRef').split(' ');
-        var displayNodeTypes = [];
-        var pointDisplay;
-        
-
-	//
-	// Extraction stage 1.
-	//
-        for (var i = 0; i < displayNodeRefs.length; ++i) {
-            displayNodeTypes[i] = displayNodeRefs[i].split('vtkMRML')[1].split('Node')[0];
-        }
-        
-
-	//
-        // Extraction stage 2.
-	//
-        goog.array.forEach(mrml.getElementsByTagName(displayNodeTypes[1]), function(itemDisplay) {
-            if (itemDisplay.getAttribute('id') == displayNodeRefs[1]) {
-                pointDisplay = itemDisplay;
-            }
-        });
-        
-        annotations.push([a, pointDisplay]);
-        
-    });
-    
-    return annotations;
-    
-}
 
 
 

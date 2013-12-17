@@ -46,7 +46,7 @@ xiv.ViewLayout = function(viewSchemeName, cssSuffixes) {
     this.cssSheetsInteractor = {}
     goog.array.forEach(cssSuffixes, function(suffix){
 	that.cssSheets[suffix] = goog.getCssName(that.cssPrefix, suffix);
-	console.log(that.cssSheets[suffix]);
+	//console.log(that.cssSheets[suffix]);
 	that.cssSheetsInteractor[suffix] = goog.getCssName(goog.getCssName(xiv.ViewLayout.VIEWSCHEME_INTERACTOR_CLASS_PREFIX, cssId), suffix);
     })
 

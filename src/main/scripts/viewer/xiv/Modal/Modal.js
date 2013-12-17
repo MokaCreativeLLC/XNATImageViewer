@@ -411,7 +411,9 @@ xiv.Modal.prototype.addThumbnailsToThumbnailGallery = function (zippyKey, viewab
     var thumbnail = /**@type{?xiv.Thumbnail}*/ null;
     //utils.dom.debug(viewablePropertiesArray);
 
-
+    
+    //var sgML = that.ThumbnailGallery_._Slider._MouseWheelHandler.getListeners(goog.events.MouseWheelHandler.EventType.MOUSEWHEEL, false);
+    var sgML = that.ThumbnailGallery_._Slider._MouseWheelHandler.getListeners(goog.events.MouseWheelHandler.EventType.MOUSEWHEEL, false);
 
     //------------------
     // Convert every viewableProperty object to a new xiv.Thumbnail.
@@ -423,6 +425,39 @@ xiv.Modal.prototype.addThumbnailsToThumbnailGallery = function (zippyKey, viewab
 	//
 	if (!contents[zippyKey.toString()]) {contents[zippyKey.toString()] = []};
 	contents[zippyKey.toString()].push(thumbnail._element);
+
+
+
+	
+	var currClone = thumbnail._hoverClone;
+	var currThumb = thumbnail;
+	that.ThumbnailGallery_.bindToMouseWheel(thumbnail._hoverClone, function(){
+	    //console.log("MOUSEWHEEL");
+	    //thumbnail._hoverClone.style.visibility = 'hidden';
+	    var x = event.clientX, y = event.clientY, elementMouseIsOver = document.elementFromPoint(x, y);
+	    //console.log(x, y, elementMouseIsOver);
+	    var originalThumbnailId  = goog.dom.getAncestorByClass(elementMouseIsOver, utils.ui.Thumbnail.CSS_CLASS_PREFIX).getAttribute('thumbnailid');
+
+	    if (originalThumbnailId === null) {
+		that._ThumbnailManager.loop(function(thumb){
+		    thumb.setHovered(false);
+		})
+		originalThumbnailId  = goog.dom.getAncestorByClass(elementMouseIsOver, utils.ui.Thumbnail.CSS_CLASS_PREFIX).id
+		currThumb = that._ThumbnailManager.getThumbnailByElement(goog.dom.getElement(originalThumbnailId))
+		currClone = currThumb._hoverClone;
+		//currClone.style.visibility = 'visible';
+		currThumb.setHovered(true);
+	    }
+	    
+	    //console.log(originalThumbnailId);
+	    var eltAbsPos = utils.style.absolutePosition(currThumb._element);
+	    utils.style.setStyle(currClone, {
+		'position': 'absolute',
+		'top': eltAbsPos['top'], 
+		'left': eltAbsPos['left'],
+	    });
+	    
+	});	
     })	
 
     this.ThumbnailGallery_.addContents(contents);   
@@ -951,7 +986,7 @@ xiv.Modal.prototype.updateStyle = function (opt_args) {
     // xiv.Modal 
     //-------------------------	
     modalDims = this.calculateModalDims_();
-    console.log(modalDims);
+    //window.console.log(modalDims);
     utils.style.setStyle( this._modal, modalDims);
     if (opt_args) {  utils.style.setStyle( this._modal, opt_args); }	
     

@@ -54,9 +54,11 @@ goog.require('xiv.Thumbnail');
  * @extends {xiv.Displayer}
  */
 goog.provide('xiv.XtkDisplayer');
-xiv.XtkDisplayer = function(viewBox) {
+xiv.XtkDisplayer = function(ViewBox) {
  
     var that = this;
+
+    that.ViewBox_ = ViewBox;
     xiv.Displayer.call(this, 'xiv.XtkDisplayer');
     goog.dom.classes.set(this._element, xiv.XtkDisplayer.ELEMENT_CLASS);
 
@@ -75,7 +77,6 @@ xiv.XtkDisplayer.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.
 
 
 
-
 /**
  * @type {?xiv.XtkPlaneManager}
  * @protected
@@ -88,16 +89,6 @@ xiv.XtkDisplayer.prototype.XtkPlaneManager_ = null;
  * @private
  */    
 xiv.XtkDisplayer.prototype.ViewBox_ = null;
-
-
-
-
-/**
- * @param {xiv.ViewBox}
- */    
-xiv.XtkDisplayer.prototype.setViewBox = function(viewBox) {
-    this.ViewBox_ = viewBox;
-}
 
 
 
@@ -292,12 +283,11 @@ xiv.XtkDisplayer.prototype.isLoaded = function(fileCollection) {
  * A xiv.ViewBox will call on this function to load up
  * an viewable object (String) into the displayer.
  *
- * @param {Array.<string>, string=}
+ * @param {Array.<string>} fileCollection The relevant Slicer files to be loaded.
  */
-xiv.XtkDisplayer.prototype.loadFileCollection = function (fileCollection, opt_onloadPlane) {
+xiv.XtkDisplayer.prototype.loadFileCollection = function (fileCollection) {
     
     var that = this;
-    var viewables = utils.xtk.getViewables(fileCollection);
     var renderablePlanes = (viewables['volumes'].length > 0 || viewables['dicoms'].length > 0) ? ['Sagittal', 'Coronal', 'Transverse', '3D'] : ['3D']; 
     var newObj = {};
     var slicerSettings = {}
@@ -305,7 +295,7 @@ xiv.XtkDisplayer.prototype.loadFileCollection = function (fileCollection, opt_on
     var hasSameFile = /**@type{boolean}*/false;
     var isMatchingAnnotation =  /**@type{boolean}*/false;
 
-
+    console.log("File collection", fileCollection);
 
     //----------------
     // Reset currentViewables_
@@ -330,6 +320,7 @@ xiv.XtkDisplayer.prototype.loadFileCollection = function (fileCollection, opt_on
     // viewables are .mrmls, which are not XtkLoadable (see utils.xtk.getViewables 
     // for further categorization information).
     //----------------
+    var viewables = utils.xtk.getViewables(fileCollection);
     for (var key in viewables){
 
 
@@ -374,13 +365,13 @@ xiv.XtkDisplayer.prototype.loadFileCollection = function (fileCollection, opt_on
 	//
 	
 	goog.array.forEach(viewables['slicer'], function(mrml){
-	    console.log(mrml);
-	    slicerSettingsDict[mrml] = that.getSlicerSettings(mrml);
+	    window.console.log(xiv._Modal.xnatPath_ + mrml);
+	    slicerSettingsDict[mrml] = utils.slicer.getSlicerSettings(mrml);
 	}) 
-	console.log(slicerSettingsDict);
+	window.console.log(slicerSettingsDict);
 	//console.log("returning");
 	//return
-	slicerSettings = this.getSlicerSettings(viewables['slicer'][0]);
+	slicerSettings = utils.slicer.getSlicerSettings(viewables['slicer'][0]);
 
 	
 	//
@@ -437,6 +428,115 @@ xiv.XtkDisplayer.prototype.loadFileCollection = function (fileCollection, opt_on
     //----------------
     this.controllerMenu_ = new utils.xtk.ControllerMenu(this);
     this.controllerMenu_.makeControllerMenu(this.currentViewables_);
+}
+
+
+
+/**
+ *
+ * @type {?Object}
+ */
+xiv.XtkDisplayer.prototype._slicerSettings = null;
+
+
+
+
+/**
+ *
+ * @param {Array.<string>} fileCollection The relevant Slicer files to be loaded.
+ * @param {string=} opt_onloadPlane The plane to prioritize the load on.
+ */
+xiv.XtkDisplayer.prototype.loadSlicer = function (fileCollection) {
+    
+    var that = this;
+    console.log("load slicer");
+    this._slicerSettings = {};
+
+
+    //
+    // Get the Slicer settings from each mrml
+    //
+    goog.array.forEach(fileCollection, function(fileName){
+
+	var basename = utils.string.basename(fileName);
+	var ext = utils.string.getFileExtension(basename).toLowerCase();
+
+
+	if ((ext === 'mrml') && (goog.string.startsWith(basename, '.') !== true)) {
+
+	    //
+	    // Get the Slicer settings for each file
+	    //
+	    
+	    console.log("MRML", ext, basename, fileName);
+	    that._slicerSettings[fileName] = utils.slicer.getSlicerSettings(fileName);
+	    
+
+
+
+	    /*
+	    //
+	    // Apply the slicer settings.
+	    //
+	    this.currentViewables_ = this.applySlicerSettingsToViewables(this.currentViewables_, slicerSettings);
+
+
+	    //
+	    // Cull the viewables based on what's not in the slicer file.
+	    //
+	    culledViewables = utils.xtk.getEmptyViewablesObject();
+	    for (var key in this.currentViewables_) { 
+		goog.array.forEach(this.currentViewables_[key], function(renderable){
+		    renderable.isInSlicerScene ? culledViewables[key].push(renderable) : utils.dom.debug("Renderable not found in slicer file: ", renderable, "filename: ", renderable.file);
+		})
+	    }
+	    this.currentViewables_ = culledViewables;   
+	    */
+	}
+    });
+
+
+
+    
+
+    //
+    // GET THE SCREENSHOTS AS THUMBNAILS
+    //
+    var basename = '';
+    var ext = '';
+    var screenshotName = '';
+    var cleanedSceneName = '';
+    var mrmlFilename = '';
+    goog.array.forEach(fileCollection, function(fileName){
+
+	basename = utils.string.basename(fileName);
+	ext = utils.string.getFileExtension(basename).toLowerCase();
+	screenshotName = basename.split('.')[0].toLowerCase().replace(' ', '');
+
+
+	//
+	// Get pngs and skip and files that start with '.'
+	//
+	if ((ext === 'png') && !(goog.string.startsWith(basename, '.'))) {
+	    for (mrmlFilename in that._slicerSettings){
+		goog.array.forEach(that._slicerSettings[mrmlFilename]['__scenes__'], function(sceneName){
+		    cleanedSceneName = sceneName.split('.')[0].toLowerCase().replace(' ', '');
+		    //window.console.log(screenshotName, cleanedSceneName, cleanedSceneName.indexOf(screenshotName))
+		    if (cleanedSceneName.indexOf(screenshotName) > -1){
+			that._slicerSettings[mrmlFilename][sceneName]['thumbnail'] = fileName;
+		    }
+		})
+	    }
+	}
+    });
+
+    window.console.log("SLICER SETTINGS", that._slicerSettings);
+
+    
+    this.ViewBox_._SlicerViewMenu.reset(that._slicerSettings);
+    this.ViewBox_._SlicerViewMenu.onViewSelected(function(){});
+    this.ViewBox_._SlicerViewMenu.showViewSelectDialog();
+
 }
 
 
@@ -565,139 +665,6 @@ xiv.XtkDisplayer.prototype.getAnnotations = function(annotations) {
     return annotationCollection;
 }
 
-
-
-
-/**
- * Takes a MRML file and the dropped xiv.Thumbnail as argunents. Creates an XML Doc from the file.
- * Extracts wanted scene from MRML file (gets scene name from dropped xiv.Thumbnail).
- * Extracts object information from scene, and creates all objects. Sets the
- * 2D renderers to display the correct volume (or the first loaded, if selected
- * is inaccessible). Adds annotations and sets camera position.
- *
- * @param {String, xiv.Thumbnail}
- */
-xiv.XtkDisplayer.prototype.getSlicerSettings = function(mrmlFile, droppable) {
-    
-    var that = /**@type{xiv.XtkDisplayer}*/ this;
-    var mrml;
-    var sceneNames = /**@type{Array.String}*/[];
-    var currScene;
-    var slicerSettings = utils.xtk.getEmptyViewablesObject();;
-    var selectedVolumeFile = /**@type{String}*/ '';
-    var viewableObjectFile = /**@type{String}*/ '';
-    var cameraInfo = /**@type{Array}*/ [];
-    var annotations =  /**@type{Array.Object}*/ [];
-
-    
-
-    //----------------
-    // Load mrml and extract scene names.
-    //----------------
-    mrml = utils.slicer.loadXMLDoc(mrmlFile);
-    goog.array.forEach(mrml.getElementsByTagName('SceneView'), function(sceneView) { sceneNames.push(sceneView.getAttribute('name'));});
-    currScene = utils.slicer.getScene(mrml, sceneNames[0]);
-
-
-
-    //----------------
-    // Construct viewable objects.
-    //----------------
-    slicerSettings['volumes'] = (utils.slicer.getFileInfo(currScene, 'Volume', 'VolumeArchetypeStorage'));
-    slicerSettings['meshes'] = (utils.slicer.getFileInfo(currScene, 'Model', 'ModelStorage'));
-    slicerSettings['fibers'] = (utils.slicer.getFileInfo(currScene, 'FiberBundle', 'FiberBundleStorage'));
-
-
-
-    //----------------
-    // Cleanup viewable objects
-    //----------------
-    for (var key in slicerSettings){
-	goog.array.forEach(slicerSettings[key], function(slicerSetting) {
-
-
-	    //
-	    // Clean file: Url decoding necessary as file paths in the mrml are url encoded
-	    //
-	    slicerSetting['file'] = utils.string.basename(goog.string.urlDecode(slicerSetting['file']));	
-	    slicerSettingFile = slicerSetting['file'];
-	    
-
-	    //
-	    // Determine the selectedVolume (i.e. the volume to display in 2D planes)
-	    //
-            if (slicerSetting['isSelectedVolume']) { selectedVolumeFile = slicerSettingFile;}
-            if (selectedVolumeFile.length === 0 && slicerSetting['attributes']['colorTable']) {
-		utils.dom.debug('picking the color table');
-		selectedVolumeFile = slicerSettingFile;
-            }
-	});
-    }
-
- 
-
-    //----------------
-    // Default to first volume file if there's no selected volume
-    //----------------
-    selectedVolumeFile = (selectedVolumeFile.length === 0) ? that.currentViewables_['volumes'][0].file : selectedVolumeFile;
-    selectedVolumeFile = utils.string.basename(selectedVolumeFile);
-
-
-
-    //----------------
-    // Set isSelectedVolume to matching file
-    //----------------
-    for (var key in slicerSettings){
-	goog.array.forEach(slicerSettings[key], function(slicerSetting) {
-	    if (slicerSetting.file === selectedVolumeFile) { slicerSetting['isSelectedVolume'] = true }
-	});
-    }
-
-
-
-    //----------------
-    // Add annotations.
-    //----------------
-    slicerSettings['annotations'] = [];
-    annotations = this.getAnnotations(utils.slicer.getAnnotations(currScene));
-    goog.array.forEach(annotations, function(annotation){
-	that.currentViewables_['annotations'].push(annotation['xObject']);
-	slicerSettings['annotations'].push({'isAnnotation': true, 'name': annotation['xObject'].name , 'attributes' : annotation['attributes']})
-    })
-
-
-
-    //----------------
-    // Set up camera.
-    //----------------
-    slicerSettings['camera'] = utils.slicer.getCamera(currScene);
-    //console.log("CAMERA", currScene, slicerSettings['camera']);
-    this.XtkPlaneManager_.setCameraSettings('3D', {'position':  slicerSettings['camera'][0], 'up':  slicerSettings['camera'][1]});
- 
-
-
-
-    //----------------
-    // Background color
-    //----------------
-    slicerSettings['background-color'] = utils.slicer.getBackgroundColor(currScene);
-    //console.log("BG COLOR", slicerSettings['background-color']);
-    this.XtkPlaneManager_.setBackgroundColor('3D', slicerSettings['background-color']);
-
- 
-    //----------------
-    // Layout
-    //----------------
-    slicerSettings['layout'] = utils.slicer.getLayout(currScene);
-    //console.log("BG COLOR", slicerSettings['background-color']);
-    //this.XtkPlaneManager_.setBackgroundColor('3D', slicerSettings['background-color');  
-
-
-    //----------------
-    // Return slicerSettings
-    //----------------
-    return slicerSettings
-}
 
 
 

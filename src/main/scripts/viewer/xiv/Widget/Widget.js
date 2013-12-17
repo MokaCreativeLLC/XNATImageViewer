@@ -30,7 +30,15 @@ goog.require('utils.style');
 goog.provide('xiv.Widget');
 xiv.Widget = function (id, opt_parent) {
     var opt_parent = opt_parent ? opt_parent : document.body;
-    this._element = utils.dom.makeElement("div", opt_parent, id);
+
+
+    //
+    // Anything that already inherited a ._element property
+    // from another class should be considered.  We don't 
+    // create a new element if the 'this._element' property 
+    // already exists.
+    //
+    this._element = (this._element) ? this._element : utils.dom.makeElement("div", opt_parent, id);
 }
 
 goog.exportSymbol('xiv.Widget', xiv.Widget);

@@ -115,9 +115,7 @@ xiv.ThumbnailManager.prototype.initDragDrop = function(){
     this.thumbnailDragDropGroup.createDragElement = function(sourceEl) {
 	var originalThumbnail = goog.dom.getElement(sourceEl.getAttribute('thumbnailid'));
 	var Thumb = that.getThumbnailByElement(originalThumbnail);
-	if (!Thumb) {
-	    return;
-	}
+	if (!Thumb) { return;}
 	Thumb.setActive(true);
 	var dragEl = originalThumbnail.cloneNode(true);
 	dragEl.setAttribute('id', 'THUMBNAIL_DRAGGER');
@@ -155,7 +153,7 @@ xiv.ThumbnailManager.prototype.initDragDrop = function(){
 	// Get the origin thumbnail Element, from which the cloned xiv.Thumbnail 
         // came.  This is conducted through a class query.
 	//
-	var dragThumbnail = goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, xiv.Thumbnail.CSS_CLASS_PREFIX);
+	var dragThumbnail = goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, utils.ui.Thumbnail.CSS_CLASS_PREFIX);
 	var originalThumbnail = goog.dom.getElement(dragThumbnail.getAttribute('thumbnailid'))
 	
 	//
@@ -202,8 +200,8 @@ xiv.ThumbnailManager.prototype.initDragDrop = function(){
 	// Get the origin thumbnail Element, from which the cloned xiv.Thumbnail 
         // came.  This is conducted through a class query.
 	//
-	var dragThumbnail = goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, xiv.Thumbnail.CSS_CLASS_PREFIX);
-
+	var dragThumbnail = goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, utils.ui.Thumbnail.CSS_CLASS_PREFIX);
+	console.log("DRAG THUMBNAIL", dragThumbnail, event.dragSourceItem.currentDragElement_);
 
 	//
 	// The dragger element
@@ -336,9 +334,10 @@ xiv.ThumbnailManager.prototype.add = function(thumbnail){
 xiv.ThumbnailManager.prototype.addDragDropSource = function(thumbnail){
     //var thumbElt = goog.dom.getAncestorByClass(thumbnail.getElement(), xiv.Thumbnail.CSS_CLASS_PREFIX);
     var thumbElt = thumbnail._hoverClone;
-    //console.log("HVOER CLONE", thumbElt);
+    //window.console.log("HVOER CLONE", thumbElt, thumbElt);
     if (thumbElt) {
-	this.thumbnailDragDropGroup.addItem(thumbElt, thumbElt.firstChild.nodeValue);
+	//this.thumbnailDragDropGroup.addItem(thumbElt, thumbElt.firstChild.nodeValue);
+	this.thumbnailDragDropGroup.addItem(thumbElt);
     }
 }
 
@@ -425,7 +424,9 @@ xiv.ThumbnailManager.prototype.addClickCallback = function(callback) {
  */
 xiv.ThumbnailManager.prototype.getThumbnailByElement = function(element) {
     for (var i=0, len = this.thumbs_.length; i < len; i++) {
+	//console.log("HERE");
 	if (goog.dom.getAncestorByClass(element, xiv.Thumbnail.CSS_CLASS_PREFIX) == this.thumbs_[i]._element) {
+	    //console.log("HERE!");
 	    return this.thumbs_[i];
 	}	
     }
@@ -449,7 +450,7 @@ xiv.ThumbnailManager.prototype.makeThumbnail = function(parent, properties, styl
     // Create new xiv.Thumbnail.
     //------------------
     var thumbnail = new xiv.Thumbnail(properties);
-    thumbnail.setElementParentNode(parent);
+    parent.appendChild(thumbnail._element);
    
 
 
@@ -475,7 +476,7 @@ xiv.ThumbnailManager.prototype.makeThumbnail = function(parent, properties, styl
 	    // Run click callbacks
 	    //
 	    goog.array.forEach(that.clickCallbacks_, function(callback){
-		console.log("click callback");
+		window.console.log("click callback");
 		callback(thumbnail)
 	    })
 	});

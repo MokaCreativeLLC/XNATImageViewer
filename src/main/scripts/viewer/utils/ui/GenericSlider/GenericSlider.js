@@ -198,6 +198,35 @@ utils.ui.GenericSlider.prototype.slideCallbacks_ = [];
 
 
 
+
+/**
+ * @return {Array.<function>}
+ */	
+utils.ui.GenericSlider.prototype.mouseWheelCallbacks_ = [];
+
+
+/**
+ * Adds a 'callback' method to the slide event of the
+ * slider.
+ *
+ * @param {!function, Object=}
+ */	
+utils.ui.GenericSlider.prototype.addMousewheelCallback = function (callback, opt_args) {
+    var that = this;
+    this.mouseWheelCallbacks_.push( function(event){ callback(that, opt_args, event)})
+}
+
+
+/**
+ * Clears the slide events of the slider.
+ */	
+utils.ui.GenericSlider.prototype.clearMousewheelCallbacks = function () {
+    this.mouseWheelCallbacks_ = [];
+}
+
+
+
+
 /**
  * @private
  * @type {boolean}
@@ -217,21 +246,35 @@ utils.ui.GenericSlider.prototype.suspendSlideCallbacks = function(suspend){
 
 
 
+/**
+ * @param {?goog.events.MouseWheelHandler}
+ */ 
+utils.ui.GenericSlider.prototype._MouseWheelHandler = null;
+
+
 
 /**
+ * Binds the mouse wheel scroll events appropriated for the slider through
+ * the provided elements.
+ *
  * @expose
- * @param {!Element}
+ * @param {!Element} element The element to listen for the mousewheel event that triggers the slider to move.
+ * @param {opt_callback?} opt_callback (Optional) The callback that occurs as the mousewhee scrolls.
  */
-utils.ui.GenericSlider.prototype.bindToMouseWheel = function (element) {
+utils.ui.GenericSlider.prototype.bindToMouseWheel = function (element, opt_callback) {
 
     var that = this;
-    var mwh = new goog.events.MouseWheelHandler(element);
-    
-    mwh.addEventListener( 
-	goog.events.MouseWheelHandler.EventType.MOUSEWHEEL, function(e) { 
-	    that.setValue(Math.round(that.getValue() + e.deltaY / 3));
-	    e.preventDefault();		
-	});		
+    //var mwh = new goog.events.MouseWheelHandler(element);
+    this._MouseWheelHandler = new goog.events.MouseWheelHandler(element);
+
+    if (opt_callback){
+	this.mouseWheelCallbacks_.push(opt_callback);
+    }
+    this._MouseWheelHandler.addEventListener(goog.events.MouseWheelHandler.EventType.MOUSEWHEEL, function(e) { 
+	that.setValue(Math.round(that.getValue() + e.deltaY / 3));
+	goog.array.forEach(that.mouseWheelCallbacks_, function(callback){ callback() })
+	e.preventDefault();	
+    });		
 }
 
 

@@ -321,6 +321,20 @@ utils.ui.ScrollableContainer.prototype.scrollTo = function(val) {
 
 
 /**
+ * Binds the mouse wheel scroll events appropriated for the slider through
+ * the provided elements.
+ *
+ * @param {!Element} element The element to listen for the mousewheel event that triggers the slider to move.
+ * @param {opt_callback?} opt_callback (Optional) The callback that occurs as the mousewhee scrolls.
+ */
+utils.ui.ScrollableContainer.prototype.bindToMouseWheel = function(element, opt_callback) {
+    this._Slider.bindToMouseWheel(element, opt_callback);
+}
+
+
+
+
+/**
  * Checks if a given zippy exists within the contents.
  *
  * @param {!string}
@@ -607,7 +621,7 @@ utils.ui.ScrollableContainer.prototype.addContents = function (contents, opt_par
     } else if (goog.isObject(contents)){
 	for (var key in contents) {
 	    //
-	    // NOTE: The below conditional is oncase you want to put 
+	    // NOTE: The below conditional is incase you want to put 
 	    // the contained object in the 
             // parent folder.  This is because
 	    // each tree level has to be of the same type.
