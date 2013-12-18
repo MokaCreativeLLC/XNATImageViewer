@@ -34,14 +34,44 @@
 .xiv-modal-closebutton {
     position: absolute; 
     cursor: pointer;
+    top: 10px;
+    left: 100%;
+    margin-left: -20px;
     width: 10px;
     height: 10px;
     z-index: 103;
 }
 
 
+.xiv-modal-fullscreenbutton {
+    position: absolute; 
+    cursor: pointer;
+    top: 29px;
+    left: 100%;
+    margin-left: -22px;
+    width: 13px;
+    height: 13px;
+    z-index: 103;
+}
+
+
+.xiv-modal-popupbutton {
+    position: absolute; 
+    cursor: pointer;
+    top: 52px;
+    left: 100%;
+    margin-left: -22px;
+    width: 15px;
+    height: 15px;
+    z-index: 103;
+}
+
+
 .xiv-modal-scrollgallery {
+    position: absolute;
     top: 30px;
+    left: 0px;
+    width: 180px;
 }
 
 
@@ -49,19 +79,21 @@
 
 .xiv-modal-columnmenu {
     position: absolute;
-    text-align: right;
-    display: inline-block;
     bottom: 0px;
+    top: 50%;
+    margin-top: -20px;
+    left: 100%;
+    margin-left: -30px;
 }
 
 
 
 .xiv-modal-rowmenu {
     position: absolute;
-    text-align: right;
-    display: inline-block;
-    bottom: 0px;
-    vertical-align: middle;
+    top: 100%;
+    margin-top: -30px;
+    left: 50%;
+    margin-left: 60px;
 }
 
 
