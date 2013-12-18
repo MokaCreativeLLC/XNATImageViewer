@@ -6,44 +6,52 @@
  * Google closure includes
  */
 goog.require('goog.array');
+goog.require('goog.dom');
 
 
 /**
  * utils includes
  */
 goog.require('utils.dom');
-goog.require('utils.ui.Thumbnail');
-
-/**
- * viewer-widget includes
- */
-goog.require('xiv');
-goog.require('xiv.Widget');
-goog.require('xiv.ViewBox');
-
+goog.require('utils.style');
+goog.require('utils.ui.ScrollableThumbnailGallery');
 
 
 
 
 /**
  * 
- * @param {Object=}
  * @constructor
+ * @param {xiv.ViewBox} ViewBox The ViewBox for the SlicerViewMenu to attach to.
  * @extends {xiv.Widget}
  */
 goog.provide('xiv.SlicerViewMenu');
-xiv.SlicerViewMenu = function () {
+xiv.SlicerViewMenu = function (ViewBox) {
 
-    xiv.Displayer.call(this, 'xiv.SlicerViewMenu');
+    this.ViewBox_ = ViewBox;
+    xiv.Widget.call(this, 'xiv.SlicerViewMenu');
     goog.dom.classes.set(this._element, xiv.SlicerViewMenu.ELEMENT_CLASS);
+
+    this.ViewBox_._element.appendChild(this._element);
+
     this.Dialog_ = utils.dom.makeElement('div', this._element, 'Dialog');
     goog.dom.classes.set(this.Dialog_, xiv.SlicerViewMenu.DIALOG_CLASS);
     this.Dialog_.style.visibility = 'hidden';
 
 
-    this.ThumbnailGallery_ = new utils.ui.ScrollableContainer();
-    
+    this.ThumbnailGallery_ = new utils.ui.ScrollableThumbnailGallery();
     this.Dialog_.appendChild(this.ThumbnailGallery_._element);
+    this.DialogText_ = utils.dom.makeElement('div', this.Dialog_, 'DialogText');
+    this.DialogText_.innerHTML = '<b> Select View <b>';
+    goog.dom.classes.add(this.DialogText_, xiv.SlicerViewMenu.DIALOGTEXT_CLASS);
+
+
+    goog.dom.classes.add(this.ThumbnailGallery_._element, xiv.SlicerViewMenu.THUMBNAILGALLERY_CLASS);
+
+    this.ThumbnailGallery_.addThumbnailClass(xiv.SlicerViewMenu.THUMBNAIL_CLASS);
+    this.ThumbnailGallery_.addThumbnailImageClass(xiv.SlicerViewMenu.THUMBNAIL_IMAGE_CLASS);
+    this.ThumbnailGallery_.addThumbnailTextClass(xiv.SlicerViewMenu.THUMBNAIL_TEXT_CLASS);
+ 
 }
 goog.inherits(xiv.SlicerViewMenu, xiv.Widget);
 
@@ -53,6 +61,7 @@ goog.inherits(xiv.SlicerViewMenu, xiv.Widget);
 xiv.SlicerViewMenu.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-slicerviewmenu');
 xiv.SlicerViewMenu.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.SlicerViewMenu.CSS_CLASS_PREFIX, '');
 xiv.SlicerViewMenu.DIALOG_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.SlicerViewMenu.CSS_CLASS_PREFIX, 'dialog');
+xiv.SlicerViewMenu.DIALOGTEXT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.SlicerViewMenu.CSS_CLASS_PREFIX, 'dialog-text');
 xiv.SlicerViewMenu.THUMBNAIL_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.SlicerViewMenu.CSS_CLASS_PREFIX, 'thumbnail');
 xiv.SlicerViewMenu.THUMBNAIL_IMAGE_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.SlicerViewMenu.CSS_CLASS_PREFIX, 'thumbnail-image');
 xiv.SlicerViewMenu.THUMBNAIL_TEXT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.SlicerViewMenu.CSS_CLASS_PREFIX, 'thumbnail-displaytext');
@@ -65,6 +74,15 @@ xiv.SlicerViewMenu.THUMBNAILGALLERY_CLASS = /**@type {string} @const*/ goog.getC
 * @param {Object}
 */
 xiv.SlicerViewMenu.prototype._slicerSettings = {}
+
+
+
+/**
+* @type {xiv.ViewBox}
+* @private
+*/
+xiv.SlicerViewMenu.prototype.ViewBox_ = {}
+
 
 
 
@@ -88,55 +106,33 @@ xiv.SlicerViewMenu.prototype.Dialog_ = null;
 * @param {Object}
 */
 xiv.SlicerViewMenu.prototype.reset = function (slicerSettings) {
-    var that = this;
     var scenes = [];
-    var thumbImage = '';
-    var contents = {};
-    var mrmlBase
-
-
-
+    var mrmlBase = '';
+    var displayText = '';
 
     this._slicerSettings = slicerSettings;
-    
+
     for (var mrmlFile in this._slicerSettings){
-
 	mrmlBase = utils.string.basename(mrmlFile);
-	contents[mrmlBase] = [];
+	scenes = this._slicerSettings[mrmlFile]['__scenes__'];
 
-	scenes = that._slicerSettings[mrmlFile]['__scenes__'];
 	goog.array.forEach(scenes, function(sceneName){
-	    console.log(sceneName);
-	    currThumbnail = new utils.ui.Thumbnail()
-	    //currThumbnail.setImage(this._properties['thumbnailUrl']);
-
-
-	    goog.dom.classes.add(currThumbnail._element, xiv.SlicerViewMenu.THUMBNAIL_CLASS)
-	    
-	    goog.array.forEach(goog.dom.getChildren(currThumbnail._element), function(child){
-		
-		//thumbImage = goog.dom.getAncestorByClass(utils.ui.Thumbnail.IMAGE_CLASS);
-		if (child.getAttribute('class').indexOf(utils.ui.Thumbnail.IMAGE_CLASS) > -1){ 
-		    goog.dom.classes.add(child, xiv.SlicerViewMenu.THUMBNAIL_IMAGE_CLASS);
-		}
-		else if (child.getAttribute('class').indexOf(utils.ui.Thumbnail.TEXT_CLASS) > -1){ 
-		    goog.dom.classes.add(child, xiv.SlicerViewMenu.THUMBNAIL_TEXT_CLASS);
-		}
-
-	    })
-
-
-	    currThumbnail.setImage(that._slicerSettings[mrmlFile][sceneName]['thumbnail']);
-	    currThumbnail.setDisplayText("<b><font size = '2'>" + sceneName + "</font></b><br>");
-	    contents[mrmlBase].push(currThumbnail._element);
-	    
-	})	
+	    displayText = "<b><font size = '2'>" + sceneName + "</font></b><br>";
+	    var thumbnail = this.ThumbnailGallery_.makeAddThumbnail(this._slicerSettings[mrmlFile][sceneName]['thumbnail'], 
+						    displayText, 
+						    mrmlBase);
+	    thumbnail.setHoverCloneParent(thumbnail._element)
+	}, this)	
     }
 
+    
+    //var viewBoxAbsPos = utils.style.absolutePosition(this.ViewBox_._element);
+    var viewBoxDims = utils.style.dims(this.ViewBox_._element);
+    utils.style.setStyle(this.Dialog_, {
+	'visibility': 'visible'
+    })
 
-    this.ThumbnailGallery_.addContents(contents);
-    goog.dom.classes.add(this.ThumbnailGallery_._element, xiv.SlicerViewMenu.THUMBNAILGALLERY_CLASS);
-    this.Dialog_.style.visibility = 'visible';
+    //console.log(this.thu
 }
 
 
@@ -164,5 +160,4 @@ xiv.SlicerViewMenu.prototype.showViewSelectDialog = function() {
 * @param {Object=}
 */
 xiv.SlicerViewMenu.prototype.updateStyle = function (opt_args) {
-    var that = this;
 }

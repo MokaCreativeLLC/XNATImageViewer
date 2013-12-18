@@ -47,7 +47,7 @@ xiv.Thumbnail = function (properties) {
     goog.dom.classes.add(this._element, xiv.Thumbnail.CSS_CLASS_PREFIX);
     //goog.dom.classes.add(this._hoverClone, xiv.Thumbnail.CSS_CLASS_PREFIX);
 
-    
+
 
     //------------------
     // Properties object

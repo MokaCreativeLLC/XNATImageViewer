@@ -418,11 +418,12 @@ utils.style.setStyle = function (elt, cssObj) {
  * Applies a class to an element if it is being
  * hovered on. 
  *
- * @param {!Element, !string, function=}
+ * @param {!Element} elt
+ * @param {!String} className
+ * @param {function=} opt_customMethod The custom 
+ * @param {Object=} opt_customMethodBinder The binding object to apply to the opt_customMethod argument.
  */	
-utils.style.setHoverClass = function(elt, className, opt_custom_method) {
-
-    var that = this;
+utils.style.setHoverClass = function(elt, className, opt_customMethod, opt_customMethodBinder) {
 
     // Mouseover / mouseout
     var applyHover = function(){ goog.dom.classes.add(elt, className);}
@@ -431,8 +432,12 @@ utils.style.setHoverClass = function(elt, className, opt_custom_method) {
     goog.events.listen(elt, goog.events.EventType.MOUSEOUT, removeHover);
 
 
-    if (opt_custom_method) {
-	opt_custom_method(applyHover, removeHover);	
+    if (opt_customMethod) {
+	// Apply binder if needed
+	opt_customMethod =  (opt_customMethodBinder !== undefined) ?
+	    opt_customMethod.bind(opt_customMethodBinder) : opt_customMethod;
+	// Run custom method,
+	opt_customMethod(applyHover, removeHover);	
     }  
 }
 

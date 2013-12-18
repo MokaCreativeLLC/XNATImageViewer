@@ -31,6 +31,9 @@ goog.require('xiv.Thumbnail');
 goog.provide('xiv.ThumbnailManager');
 xiv.ThumbnailManager = function () {
     this.initDragDrop();
+    this.dropCallbacks_ = [];
+    this.clickCallbacks_ = [];
+    this.thumbs_ = [];
 }
 goog.exportSymbol('xiv.ThumbnailManager', xiv.ThumbnailManager);
 
@@ -38,28 +41,28 @@ goog.exportSymbol('xiv.ThumbnailManager', xiv.ThumbnailManager);
 
 
 /**
- * @type {Array.<function>}
+ * @type {!Array.<function>}
  * @private
  */
-xiv.ThumbnailManager.prototype.dropCallbacks_ = [];
+xiv.ThumbnailManager.prototype.dropCallbacks_ = null;
 
 
 
 
 /**
- * @type {Array.<function>}
+ * @type {!Array.<function>}
  * @private
  */
-xiv.ThumbnailManager.prototype.clickCallbacks_ = [];
+xiv.ThumbnailManager.prototype.clickCallbacks_ = null;
 
 
 
 
 /**
- * @type {Array.<xiv.Thumbnail>}
+ * @type {!Array.<xiv.Thumbnail>}
  * @private
  */
-xiv.ThumbnailManager.prototype.thumbs_ = [];
+xiv.ThumbnailManager.prototype.thumbs_ = null;
 
 
 
@@ -438,50 +441,23 @@ xiv.ThumbnailManager.prototype.getThumbnailByElement = function(element) {
 /**
  * Returns a newly created xiv.Thumbnail object. 
  *
- * @param {Element, Object, Object=, boolean=}
+ * @param {!Element}
+ * @param {boolean=}
  * @returns {xiv.Thumbnail}
  */
-xiv.ThumbnailManager.prototype.makeThumbnail = function(parent, properties, style, addToManager) {
-    var that = this;
+xiv.ThumbnailManager.prototype.makeXivThumbnail = function(properties, opt_addToManager) {
 
-
-
-    //------------------
-    // Create new xiv.Thumbnail.
-    //------------------
     var thumbnail = new xiv.Thumbnail(properties);
-    parent.appendChild(thumbnail._element);
-   
 
-
-    //------------------
-    // Set the style of the xiv.Thumbnail.
-    //------------------
-    thumbnail.updateStyle(style);
-
-
-
-    //------------------
-    // Add the xiv.Thumbnail to the Manager (this class).
-    //------------------
-    if (addToManager) { 
+    if ((opt_addToManager === undefined) || (opt_addToManager === true)) { 
 	this.add(thumbnail);
-	
-	//
 	// Add click listener
-	//
 	goog.events.listen(thumbnail._hoverClone, goog.events.EventType.CLICK, function(){
-
-	    //
 	    // Run click callbacks
-	    //
-	    goog.array.forEach(that.clickCallbacks_, function(callback){
-		window.console.log("click callback");
+	    goog.array.forEach(this.clickCallbacks_, function(callback){
 		callback(thumbnail)
 	    })
-	});
+	}.bind(this))
     }
-
-
     return thumbnail;
 }

@@ -64,6 +64,7 @@ xiv.XtkDisplayer = function(ViewBox) {
 
     this.XtkPlaneManager_ = new xiv.XtkPlaneManager(this);
     this.onloadCallbacks_ = [];
+    this.preloadCallbacks_ = [];
 
 }
 goog.inherits(xiv.XtkDisplayer, xiv.Displayer);
@@ -128,9 +129,9 @@ xiv.XtkDisplayer.prototype.getViewPlaneInteractors = function() {
 
 /**
  * @private
- * @type {Array.function}
+ * @type {!Array.function}
  */ 
-xiv.XtkDisplayer.prototype.preloadCallbacks_ = [];
+xiv.XtkDisplayer.prototype.preloadCallbacks_ = null;
 
 
 

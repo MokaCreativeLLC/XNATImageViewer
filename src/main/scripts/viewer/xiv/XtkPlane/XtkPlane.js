@@ -184,9 +184,9 @@ xiv.XtkPlane.prototype.getId = function() {
 
 /**
  * @private
- * @type {Array.function}
+ * @type {!Array.function}
  */
-xiv.XtkPlane.prototype.onloadCallbacks_ = [];
+xiv.XtkPlane.prototype.onloadCallbacks_ = null;
 
 
 

@@ -4,7 +4,7 @@ goog.addDependency('../../../xiv/Widget/Widget.js', ['xiv.Widget'], [ 'utils.sty
 
 
 goog.addDependency('../../../xiv/Modal/Modal.js', ['xiv.Modal'], [
-'utils.ui.ScrollableContainer',
+'utils.ui.ScrollableThumbnailGallery',
 'utils.xnat',
 'utils.dom',
 'utils.style',

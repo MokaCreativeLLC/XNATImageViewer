@@ -76,6 +76,12 @@ utils.ui.Thumbnail = function (opt_args) {
     goog.dom.classes.set(this._displayText, utils.ui.Thumbnail.TEXT_CLASS);
 
 
+
+    this.mouseoverCallbacks_ = [];
+    this.mouseoutCallbacks_ = [];
+
+
+
     this._hoverCloneParent = document.body;
     this.resetHoverClone_();
     
@@ -146,7 +152,7 @@ utils.ui.Thumbnail.prototype._hoverClone = null;
 * @type {Array.<function>}
 * @private
 */
-utils.ui.Thumbnail.prototype.mouseoverCallbacks_ = [];
+utils.ui.Thumbnail.prototype.mouseoverCallbacks_ = null;
 
 
 
@@ -154,7 +160,7 @@ utils.ui.Thumbnail.prototype.mouseoverCallbacks_ = [];
 * @type {Array.<function>}
 * @private
 */
-utils.ui.Thumbnail.prototype.mouseoutCallbacks_ = [];
+utils.ui.Thumbnail.prototype.mouseoutCallbacks_ = null;
 
 
 
@@ -176,7 +182,7 @@ utils.ui.Thumbnail.prototype.isActive = function() {
 
 
 /**
- * @type {!String}
+ * @param {!String}
  * @protected
  */	
 utils.ui.Thumbnail.prototype.setImage = function(url){
@@ -187,7 +193,7 @@ utils.ui.Thumbnail.prototype.setImage = function(url){
 
 
 /**
- * @type {!String}
+ * @param {!String}
  * @protected
  */	
 utils.ui.Thumbnail.prototype.setDisplayText = function(text){
@@ -196,6 +202,13 @@ utils.ui.Thumbnail.prototype.setDisplayText = function(text){
 };
 
 
+
+/**
+ * @protected
+ */	
+utils.ui.Thumbnail.prototype.update = function(){
+    this.resetHoverClone_();
+};
 
 
 
@@ -327,23 +340,46 @@ utils.ui.Thumbnail.prototype.setHovered = function(hovered) {
 
     var that = this;
     if (hovered){
-
-	var eltAbsPos = utils.style.absolutePosition(this._element);
-	var imgClone = goog.dom.getElementByClass(utils.ui.Thumbnail.IMAGE_CLASS, this._hoverClone)
-	var textClone = goog.dom.getElementByClass(utils.ui.Thumbnail.TEXT_CLASS, this._hoverClone);
-
-
 	if (this._hoverClone.style.visibility != 'visible') {
+
+	    //
+	    // We get the absolute position of the thumbnail._element
+	    // if the _hoverClone parent is NOT the thumbnail._element (i.e. the document body).
+	    //
+	    var thumbnailDims = {};
+	    if (this._hoverClone.parentNode !== this._element){
+		thumbnailDims = utils.style.absolutePosition(this._element);
+		
+	    } else {
+		//console.log(this._element.style.opacity);
+		//console.log(this._element.style.zIndex);
+		this._element.style.visibility = 'hidden';
+		thumbnailDims['left'] = 0;
+		thumbnailDims['top'] = 0;
+	    }
+	    var imgClone = goog.dom.getElementByClass(utils.ui.Thumbnail.IMAGE_CLASS, this._hoverClone)
+	    var textClone = goog.dom.getElementByClass(utils.ui.Thumbnail.TEXT_CLASS, this._hoverClone);
+	    var cloneWidth = 0;
+
 	    goog.dom.classes.add(that._hoverClone, utils.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS);			
 	    goog.dom.classes.add(that._hoverClone.childNodes[1], utils.ui.Thumbnail.TEXT_MOUSEOVER_CLASS);		
 	    goog.dom.classes.add(that._hoverClone.childNodes[0], utils.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS);
 
 	    this._hoverClone.style.visibility = 'visible';
+	    cloneWidth = imgClone.scrollWidth + textClone.scrollWidth + 25;
+
+	    //
+	    // Set the clone width to something wider than the original thumbnail width
+	    // only if the the cloneWidth is calculated to be larger (text spillover)
+	    cloneWidth = (cloneWidth > this._element.clientWidth) ? cloneWidth : this._element.clientWidth;
+	    
 	    utils.style.setStyle(this._hoverClone, {
 		'position': 'absolute',
-		'top': eltAbsPos['top'], 
-		'left': eltAbsPos['left'],
-		'width':  imgClone.scrollWidth + textClone.scrollWidth + 25
+		'top': thumbnailDims['top'], 
+		'left': thumbnailDims['left'],
+		'width':  cloneWidth,
+		'opacity': 1,
+		//'z-index': 10000,
 	    });
 	}
 
@@ -354,11 +390,14 @@ utils.ui.Thumbnail.prototype.setHovered = function(hovered) {
     } else {
 	if (this._hoverClone){
 	    this._hoverClone.style.visibility = 'hidden';
+	    this._element.style.visibility = 'visible';
 	}
 
-	goog.array.forEach(that.mouseoutCallbacks_, function(callback){
-	    callback(that);
-	})
+	if (this.mouseoutCallbacks_ !== null) {
+	    goog.array.forEach(this.mouseoutCallbacks_, function(callback){
+		callback(that);
+	    })
+	}
     }
 }
 

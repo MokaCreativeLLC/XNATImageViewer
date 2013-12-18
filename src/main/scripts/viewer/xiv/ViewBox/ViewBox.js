@@ -97,7 +97,7 @@ xiv.ViewBox = function (opt_args) {
     //------------------
     // View Box Tabs.
     //------------------    	
-    this._SlicerViewMenu = new xiv.SlicerViewMenu();
+    this._SlicerViewMenu = new xiv.SlicerViewMenu(this);
 
 
 
@@ -109,6 +109,14 @@ xiv.ViewBox = function (opt_args) {
 
     this.updateStyle();
     this.setChildrenVisible(false);
+
+
+    this.displayableData_ = {};
+    this.mouseoutFadeables_ = [];
+
+
+
+
 }
 goog.inherits(xiv.ViewBox, xiv.Widget);
 goog.inherits(xiv.ViewBox, goog.fx.DragDrop);
@@ -177,7 +185,7 @@ xiv.ViewBox.prototype.Displayer_ = null;
  * @type {object}
  * @private
  */
-xiv.ViewBox.prototype.displayableData_ = {};
+xiv.ViewBox.prototype.displayableData_ = null;
 
 
 
@@ -199,7 +207,7 @@ xiv.ViewBox.prototype.loadFramework_ = 'XTK';
  * @type {Array.Object}
  * @private
  */
-xiv.ViewBox.prototype.mouseoutFadeables_ = [];
+xiv.ViewBox.prototype.mouseoutFadeables_ = null;
 
 
 

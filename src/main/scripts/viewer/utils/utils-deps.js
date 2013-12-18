@@ -46,8 +46,8 @@ goog.addDependency('../../../utils/ui/GenericSlider/GenericSlider.js', ['utils.u
 
 
 goog.addDependency('../../../utils/ui/ScrollableContainer/ScrollableContainer.js', ['utils.ui.ScrollableContainer'], [
+'goog.string',
 'goog.dom', 
-'goog.events', 
 'goog.ui.AnimatedZippy', 
 'utils.dom', 
 'utils.ui.GenericSlider'
@@ -60,6 +60,17 @@ goog.addDependency('../../../utils/ui/Thumbnail/Thumbnail.js', ['utils.ui.Thumbn
 'goog.events',
 'utils.dom',
 'utils.style',
+]);
+
+
+goog.addDependency('../../../utils/ui/ScrollableThumbnailGallery/ScrollableThumbnailGallery.js', ['utils.ui.ScrollableThumbnailGallery'], [
+'goog.dom',
+'goog.array',
+'goog.events',
+'utils.dom',
+'utils.style',
+'utils.ui.Thumbnail',
+'utils.ui.ScrollableContainer'
 ]);
 
 

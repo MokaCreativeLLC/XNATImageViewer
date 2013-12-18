@@ -2,7 +2,7 @@ goog.require('xiv');
 goog.require('X.loader');
 goog.require('X.parserIMA');
 
-
+goog.require('goog.dom.fullscreen');
 
 ///////////////////////////////////////////////
 //
@@ -25,6 +25,9 @@ goog.require('X.parserIMA');
  * and brings up the modal accordingly.
  */
 startViewer = function (serverRoot, dataPath) {
+
+
+
 
 
 
@@ -72,8 +75,13 @@ startViewer = function (serverRoot, dataPath) {
     
 
 
+
     //------------------
     // Set the global Xnat URI
     //------------------
     modal.setXnatPathAndLoadThumbnails(dataPath);
+
+
+
+
 };

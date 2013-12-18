@@ -1,3 +1,4 @@
+
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
@@ -53,6 +54,7 @@ xiv.ViewLayoutManager = function() {
     //------------------
     // Define the viewLayouts
     //------------------
+    this.viewLayouts_ = {};
     this.viewLayouts_['sagittal'] = (new xiv.ViewLayout('Sagittal'));
     this.viewLayouts_['coronal'] = (new xiv.ViewLayout('Coronal'));
     this.viewLayouts_['transverse'] = (new xiv.ViewLayout('Transverse'));
@@ -89,9 +91,9 @@ goog.exportSymbol('xiv.ViewLayoutManager', xiv.ViewLayoutManager);
 
 /**
 * @private
-* @type {Object.<string, xiv.ViewLayout>
+* @type {!Object.<string, xiv.ViewLayout>
 */ 
-xiv.ViewLayoutManager.prototype.viewLayouts_ = {};  
+xiv.ViewLayoutManager.prototype.viewLayouts_ = null;  
 
 
 
@@ -107,18 +109,18 @@ xiv.ViewLayoutManager.prototype.animateViewLayoutChange_ = true;
 
 /**
 * @private
-* @type {Array.<Element>}
+* @type {!Array.<Element>}
 */ 
-xiv.ViewLayoutManager.prototype.visiblePlanes_ = [];
+xiv.ViewLayoutManager.prototype.visiblePlanes_ = null;
 
 
 
 
 /**
 * @private
-* @type {Array.<Element>}
+* @type {!Array.<Element>}
 */ 
-xiv.ViewLayoutManager.prototype.visibleInteractors_ = [];
+xiv.ViewLayoutManager.prototype.visibleInteractors_ = null;
 
 
 

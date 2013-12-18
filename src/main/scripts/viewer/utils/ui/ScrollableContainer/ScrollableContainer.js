@@ -6,6 +6,7 @@
  * Google closure indcludes
  */
 goog.require('goog.ui.AnimatedZippy');
+goog.require('goog.string');
 
 /**
  * utils indcludes
@@ -45,7 +46,7 @@ utils.ui.ScrollableContainer = function (opt_args) {
     //------------------
     // Set Slider UI and callbacks
     //------------------
-    this._Slider.addSlideCallback(that.mapSliderToContents, that);  
+    this._Slider.addSlideCallback(that.mapSliderToContents.bind(this));  
     this._Slider.bindToMouseWheel(that._element);
 
     
@@ -133,10 +134,10 @@ utils.ui.ScrollableContainer.prototype._Slider = null;
 
 
 /**
- * @type {Object}
+ * @type {?Object}
  * @private
  */	
-utils.ui.ScrollableContainer.prototype.scrollables_ = {};
+utils.ui.ScrollableContainer.prototype.scrollables_ = null;
 
 
 
@@ -147,30 +148,27 @@ utils.ui.ScrollableContainer.prototype.scrollables_ = {};
  *
  * @type {function(utils.ui.GenericSlider, utils.ui.ScrollableContainer)}
  */
-utils.ui.ScrollableContainer.prototype.mapSliderToContents = function (Slider, that) {
-    that = that ? that : this;
-    Slider = Slider ? Slider: this._Slider;
-
+utils.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 
 
     //------------------
     // Get the widget height
     //------------------
-    var widgetHeight = utils.style.dims(that._element, 'height');
+    var widgetHeight = utils.style.dims(this._element, 'height');
 
 
 
     //------------------
     // Get the scroll area height
     //------------------
-    var scrollAreaHeight = utils.convert.toInt(utils.style.getComputedStyle(that.scrollArea_, 'height'));
+    var scrollAreaHeight = utils.convert.toInt(utils.style.getComputedStyle(this.scrollArea_, 'height'));
 
 
 
     //------------------
     // Get the Slider range (a function of the height of widget);
     //------------------
-    var beforeRange = [Slider.getMinimum(), Slider.getMaximum()];
+    var beforeRange = [this._Slider.getMinimum(), this._Slider.getMaximum()];
 
 
 
@@ -184,7 +182,7 @@ utils.ui.ScrollableContainer.prototype.mapSliderToContents = function (Slider, t
     //------------------
     // Get the slider thumnail for resizing
     //------------------
-    var sliderThumb = Slider.getThumb();
+    var sliderThumb = this._Slider.getThumb();
 
 
 
@@ -210,17 +208,17 @@ utils.ui.ScrollableContainer.prototype.mapSliderToContents = function (Slider, t
 	//
 	// Enable the slider
 	//
-	Slider.setEnabled(true);
+	this._Slider.setEnabled(true);
 	
 
 	//
 	// Move the scroll area to the top (as the slider's thumbnail
 	// is at the top).
 	//
-	var sendVal = Math.abs(Slider.getValue() - 100);
+	var sendVal = Math.abs(this._Slider.getValue() - 100);
 	var remap = utils.convert.remap1D(sendVal, beforeRange, afterRange);
 	var t = remap.newVal;
-	utils.style.setStyle( that.scrollArea_, {'top': -t});	
+	utils.style.setStyle( this.scrollArea_, {'top': -t});	
 
 
 
@@ -230,8 +228,8 @@ utils.ui.ScrollableContainer.prototype.mapSliderToContents = function (Slider, t
     }
     else {
 	utils.style.setStyle(sliderThumb, { 'opacity': 0});
-	Slider.setEnabled(false);
-	Slider.setValue(100);
+	this._Slider.setEnabled(false);
+	this._Slider.setValue(100);
     }	
 }
 
@@ -325,7 +323,7 @@ utils.ui.ScrollableContainer.prototype.scrollTo = function(val) {
  * the provided elements.
  *
  * @param {!Element} element The element to listen for the mousewheel event that triggers the slider to move.
- * @param {opt_callback?} opt_callback (Optional) The callback that occurs as the mousewhee scrolls.
+ * @param {function=} opt_callback (Optional) The callback that occurs as the mousewheel scrolls.
  */
 utils.ui.ScrollableContainer.prototype.bindToMouseWheel = function(element, opt_callback) {
     this._Slider.bindToMouseWheel(element, opt_callback);
@@ -405,7 +403,7 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
     // Set the zippy label.
     //------------------
     headerLabel = utils.dom.makeElement("div", header, "ZippyHeaderLabel_" + zKey);
-    headerLabel.innerHTML = zKey;
+    headerLabel.innerHTML = goog.string.toTitleCase(zKey);
     this.scrollables_[zKey]['headerLabel'] = headerLabel;
     
 
@@ -455,7 +453,7 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
 	// Create a map that allows the slider to move
 	// the contents in proportion to the slider.
 	//
-	that.mapSliderToContents(that._Slider, that);		
+	this.mapSliderToContents(this._Slider, this);		
 	
 
 	//
@@ -468,7 +466,7 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
 	    expandIcon.innerHTML =  "+";
 	    utils.style.setStyle(expandIcon, { 'margin-left': '-1.1em' })				
 	}
-    });
+    }.bind(this));
     
     
     
@@ -556,10 +554,6 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
  * @param {!Element|!Objects|!Array, Element=, String=}
  */
 utils.ui.ScrollableContainer.prototype.addContents = function (contents, opt_parent, opt_parentKey) {
-    var that = this;
-    var expanded = true;
-
-
 
     //------------------
     // Set the parent element to the 'scrollArea' (main contents div)
@@ -574,49 +568,38 @@ utils.ui.ScrollableContainer.prototype.addContents = function (contents, opt_par
     //------------------
     if (goog.dom.isElement(contents)) {
 
-
-	//
+	// All contents need to be relatively positioned.
+	utils.style.setStyle(contents, {'position': 'relative'});
+	
 	// Add element to the parent Element
-	//
 	goog.dom.appendChild(opt_parent, contents);
 
-
-	//
 	// When there's no zippy parent folder, we set the hieght
 	// of the main _element to the scroll area.
-	//
-	if (utils.style.dims(that._element, 'height') === 0 && opt_parent === that.scrollArea_){
-	    utils.style.setStyle(that._element, {'height': utils.style.dims(that.scrollArea_, 'height')});
+	if (utils.style.dims(this._element, 'height') === 0 && opt_parent === this.scrollArea_){
+	    utils.style.setStyle(this._element, {'height': utils.style.dims(this.scrollArea_, 'height')});
 	}
 
-
-	//
 	// Allows user to move the contents when sliding the slider.
-	//
-	that.mapSliderToContents(that._Slider, that);
+	this.mapSliderToContents(this._Slider, this);
 
-
-	//
 	// Do we expand the zippy?
-	//
 	//this.expandZippy(opt_parentKey);
     	
 
 
     //------------------
-    // For 'contents'  arrays, call this function again, but
-    // with each array element.
+    // For 'contents'  arrays...
     //------------------
     } else if (goog.isArray(contents)){
 	for (var i=0, len = contents.length; i < len; i++) {
-	    that.addContents(contents[i], opt_parent, opt_parentKey);
+	    this.addContents(contents[i], opt_parent, opt_parentKey);
 	}
     	
 
 
     //------------------
-    // For 'contents' objects, loop through objects and recurse
-    // accordingly.
+    // For 'contents' objects...
     //------------------
     } else if (goog.isObject(contents)){
 	for (var key in contents) {

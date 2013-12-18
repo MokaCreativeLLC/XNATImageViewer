@@ -60,10 +60,10 @@ xiv.ViewBoxManager.prototype.Modal_  = null;
 
 
 /**
- * @type {Array.<function>}
+ * @type {!Array.<function>}
  * @private
  */
-xiv.ViewBoxManager.prototype.viewersChangedCallbacks_ = [];
+xiv.ViewBoxManager.prototype.viewersChangedCallbacks_ = null;
 
 
 

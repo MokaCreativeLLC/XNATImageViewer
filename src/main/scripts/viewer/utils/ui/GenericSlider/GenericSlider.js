@@ -78,10 +78,12 @@ utils.ui.GenericSlider = function (opt_args) {
     //------------------
     utils.ui.GenericSlider.superClass_.addEventListener.call(this, goog.ui.Component.EventType.CHANGE, function (e) {
 	utils.dom.stopPropagation(e);
-	goog.array.forEach(that.slideCallbacks_, function(callback){ 
-	    if (!that.suspendSlideCallbacks_) { callback(e); } 
-	})
-    });	    
+	if (this.slideCallbacks_ !== null){
+	    goog.array.forEach(this.slideCallbacks_, function(callback){ 
+		if (!this.suspendSlideCallbacks_) { callback(e); } 
+	    }, this)
+	}
+    }, this);	    
 
 
 
@@ -176,8 +178,10 @@ utils.ui.GenericSlider.prototype.getThumb = function () {
  * @param {!function, Object=}
  */	
 utils.ui.GenericSlider.prototype.addSlideCallback = function (callback, opt_args) {
-    var that = this;
-    this.slideCallbacks_.push( function(event){ callback(that, opt_args, event)})
+    if (this.slideCallbacks_ === null) {
+	this.clearSlideCallbacks();
+    }
+    this.slideCallbacks_.push( function(event){ callback(this, opt_args, event)})
 }
 
 
@@ -192,17 +196,17 @@ utils.ui.GenericSlider.prototype.clearSlideCallbacks = function () {
 
 
 /**
- * @return {Array.<function>}
+ * @return {!Array.<function>}
  */	
-utils.ui.GenericSlider.prototype.slideCallbacks_ = [];
+utils.ui.GenericSlider.prototype.slideCallbacks_ = null;
 
 
 
 
 /**
- * @return {Array.<function>}
+ * @return {!Array.<function>}
  */	
-utils.ui.GenericSlider.prototype.mouseWheelCallbacks_ = [];
+utils.ui.GenericSlider.prototype.mouseWheelCallbacks_ = null;
 
 
 /**
@@ -211,9 +215,11 @@ utils.ui.GenericSlider.prototype.mouseWheelCallbacks_ = [];
  *
  * @param {!function, Object=}
  */	
-utils.ui.GenericSlider.prototype.addMousewheelCallback = function (callback, opt_args) {
-    var that = this;
-    this.mouseWheelCallbacks_.push( function(event){ callback(that, opt_args, event)})
+utils.ui.GenericSlider.prototype.addMousewheelCallback = function (callback) {
+    if (this.mouseWheelCallbacks_ === null) {
+	this.clearMousewheelCallbacks();
+    }
+    this.mouseWheelCallbacks_.push( function(event){ callback(this, event)})
 }
 
 
@@ -247,9 +253,24 @@ utils.ui.GenericSlider.prototype.suspendSlideCallbacks = function(suspend){
 
 
 /**
- * @param {?goog.events.MouseWheelHandler}
+ * @param {Array.<goog.events.MouseWheelHandler>}
  */ 
-utils.ui.GenericSlider.prototype._MouseWheelHandler = null;
+utils.ui.GenericSlider.prototype._MouseWheelHandlers = null;
+
+
+
+/**
+ * @expose
+ * @private
+ */
+utils.ui.GenericSlider.prototype.onMouseWheelScroll_ = function (event) {
+    this.setValue(Math.round(this.getValue() + event.deltaY / 3));
+    goog.array.forEach(this.mouseWheelCallbacks_, function(callback){ 
+	callback() 
+    })
+    event.preventDefault();
+}
+
 
 
 
@@ -259,22 +280,18 @@ utils.ui.GenericSlider.prototype._MouseWheelHandler = null;
  *
  * @expose
  * @param {!Element} element The element to listen for the mousewheel event that triggers the slider to move.
- * @param {opt_callback?} opt_callback (Optional) The callback that occurs as the mousewhee scrolls.
+ * @param {function=} opt_callback (Optional) The callback that occurs as the mousewheel scrolls.
  */
 utils.ui.GenericSlider.prototype.bindToMouseWheel = function (element, opt_callback) {
-
-    var that = this;
-    //var mwh = new goog.events.MouseWheelHandler(element);
-    this._MouseWheelHandler = new goog.events.MouseWheelHandler(element);
-
-    if (opt_callback){
-	this.mouseWheelCallbacks_.push(opt_callback);
+    var mouseWheelHandler = new goog.events.MouseWheelHandler(element);
+    mouseWheelHandler.addEventListener(goog.events.MouseWheelHandler.EventType.MOUSEWHEEL,  this.onMouseWheelScroll_, false, this);
+    if ((this._MouseWheelHandlers === null) || (this._MouseWheelHandlers.length === 0)) {
+	this._MouseWheelHandlers = [];
     }
-    this._MouseWheelHandler.addEventListener(goog.events.MouseWheelHandler.EventType.MOUSEWHEEL, function(e) { 
-	that.setValue(Math.round(that.getValue() + e.deltaY / 3));
-	goog.array.forEach(that.mouseWheelCallbacks_, function(callback){ callback() })
-	e.preventDefault();	
-    });		
+    if (opt_callback){
+	this.addMousewheelCallback(opt_callback);
+    }
+    this._MouseWheelHandlers.push(mouseWheelHandler);
 }
 
 
@@ -395,27 +412,34 @@ utils.ui.GenericSlider.prototype.updateStyle = function () {
  * @public
  */	
 utils.ui.GenericSlider.prototype.setHoverClass = function(className) {
-    var that = this;
+
+    this.hoverClass_ = className;
+
+    var applyHover = function(){ goog.dom.classes.add(this.thumb_, this.hoverClass_)}.bind(this);
+    var removeHover = function(){ goog.dom.classes.remove(this.thumb_, this.hoverClass_)}.bind(this);
+
+
+    goog.events.listen(this.thumb_, goog.events.EventType.MOUSEOVER, applyHover);
+    goog.events.listen(this.thumb_, goog.events.EventType.MOUSEOUT, removeHover);
+
+
     
-    utils.style.setHoverClass(this.thumb_, className, function(applyHover, removeHover){
-	//
-	// Make a modificaiton when dragging the thumb...
-	//
-	utils.ui.GenericSlider.superClass_.addEventListener.call(that, goog.ui.SliderBase.EventType.DRAG_START, function (e) {
-	    //
-	    // Suspend mouseout listener when dragging,
-	    // because we still want to maintain the hover
-	    // style.
-	    //
-	    goog.events.unlisten(that.thumb_, goog.events.EventType.MOUSEOUT, removeHover);
-	    goog.dom.classes.add(that.thumb_, className);
-	});	  
-	utils.ui.GenericSlider.superClass_.addEventListener.call(that, goog.ui.SliderBase.EventType.DRAG_END, function (e) {
-	    //
-	    // Reapply mouseout listener when done dragging.
-	    //
-	    goog.events.listen(that.thumb_, goog.events.EventType.MOUSEOUT, removeHover);
-	    goog.dom.classes.remove(that.thumb_, className);
-	});	
-    })
+    // Remove hoverListeners when dragging the thumbnail...
+    utils.ui.GenericSlider.superClass_.addEventListener.call(this, goog.ui.SliderBase.EventType.DRAG_START, function (e) {
+	// Suspend mouseout listener when dragging,
+	// because we still want to maintain the hover
+	// style.
+	goog.events.unlisten(this.thumb_, goog.events.EventType.MOUSEOUT, removeHover);
+	goog.dom.classes.add(this.thumb_, this.hoverClass_);
+    }, this);
+
+
+    
+    utils.ui.GenericSlider.superClass_.addEventListener.call(this, goog.ui.SliderBase.EventType.DRAG_END, function (e) {
+	// Reapply mouseout listener when done dragging.
+	goog.events.listen(this.thumb_, goog.events.EventType.MOUSEOUT, removeHover);
+	goog.dom.classes.remove(this.thumb_, this.hoverClass_);
+    }, this);
+    
+
 }
