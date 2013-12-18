@@ -409,7 +409,7 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb, loadFramework) {
 	return;
 	//break;
     default:
-	this.Displayer_.loadFileCollection(thumb._properties.files);
+	this.Displayer_.loadViewables(thumb._properties.files);
     }
 
    

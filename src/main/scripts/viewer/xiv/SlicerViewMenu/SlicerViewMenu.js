@@ -51,6 +51,9 @@ xiv.SlicerViewMenu = function (ViewBox) {
     this.ThumbnailGallery_.addThumbnailClass(xiv.SlicerViewMenu.THUMBNAIL_CLASS);
     this.ThumbnailGallery_.addThumbnailImageClass(xiv.SlicerViewMenu.THUMBNAIL_IMAGE_CLASS);
     this.ThumbnailGallery_.addThumbnailTextClass(xiv.SlicerViewMenu.THUMBNAIL_TEXT_CLASS);
+
+    this.slicerSettings_ = {};
+    this.thumbnailClickCallbacks = [];
  
 }
 goog.inherits(xiv.SlicerViewMenu, xiv.Widget);
@@ -71,17 +74,17 @@ xiv.SlicerViewMenu.THUMBNAILGALLERY_CLASS = /**@type {string} @const*/ goog.getC
 
 
 /**
-* @param {Object}
+* @param {?Object}
 */
-xiv.SlicerViewMenu.prototype._slicerSettings = {}
+xiv.SlicerViewMenu.prototype._slicerSettings = null
 
 
 
 /**
-* @type {xiv.ViewBox}
+* @type {?xiv.ViewBox}
 * @private
 */
-xiv.SlicerViewMenu.prototype.ViewBox_ = {}
+xiv.SlicerViewMenu.prototype.ViewBox_ = null
 
 
 
@@ -94,47 +97,61 @@ xiv.SlicerViewMenu.prototype.ThumbnailGallery_ = null;
 
 
 /**
- * @type {?Elementr}
+ * @type {?Element}
  * @private
  */
 xiv.SlicerViewMenu.prototype.Dialog_ = null;
 
 
 
+/**
+* @param {!Array.<function>}
+*/
+xiv.SlicerViewMenu.prototype.clickCallbacks_ = null;
+
+
+
+
 
 /**
-* @param {Object}
+* @param {!Object}
 */
 xiv.SlicerViewMenu.prototype.reset = function (slicerSettings) {
+
     var scenes = [];
     var mrmlBase = '';
     var displayText = '';
+    var thumbnail;
+    var viewBoxDims = utils.style.dims(this.ViewBox_._element);
 
+
+
+    //----------------
+    // Make thumbnail from Slicer settings.
+    //----------------
     this._slicerSettings = slicerSettings;
-
     for (var mrmlFile in this._slicerSettings){
 	mrmlBase = utils.string.basename(mrmlFile);
 	scenes = this._slicerSettings[mrmlFile]['__scenes__'];
-
 	goog.array.forEach(scenes, function(sceneName){
 	    displayText = "<b><font size = '2'>" + sceneName + "</font></b><br>";
-	    var thumbnail = this.ThumbnailGallery_.makeAddThumbnail(this._slicerSettings[mrmlFile][sceneName]['thumbnail'], 
-						    displayText, 
-						    mrmlBase);
-	    thumbnail.setHoverCloneParent(thumbnail._element)
-	}, this)	
+	    thumbnail = this.ThumbnailGallery_.makeAddThumbnail(this._slicerSettings[mrmlFile][sceneName]['thumbnail'], 
+								displayText, mrmlBase);
+
+	    // Set the hover clone to the thumbnail element to avoid
+	    // having the hover clone spill over.
+	    thumbnail.setHoverCloneParent(thumbnail._element);
+	    
+	    thumbnail._MRML_ = mrmlFile;
+	    thumbnail._SCENE_ = sceneName;
+
+	    this.setThumbnailClickListener_(thumbnail);
+	}.bind(this))	
     }
 
     
-    //var viewBoxAbsPos = utils.style.absolutePosition(this.ViewBox_._element);
-    var viewBoxDims = utils.style.dims(this.ViewBox_._element);
-    utils.style.setStyle(this.Dialog_, {
-	'visibility': 'visible'
-    })
-
-    //console.log(this.thu
+    
 }
-
 
 
 
@@ -142,7 +159,27 @@ xiv.SlicerViewMenu.prototype.reset = function (slicerSettings) {
 * @param {function}
 */
 xiv.SlicerViewMenu.prototype.onViewSelected = function (callback) {
-    
+    if (!this.thumbnailClickCallbacks_) {
+	this.thumbnailClickCallbacks_ = [];
+    }
+    this.thumbnailClickCallbacks_.push(callback);
+}
+
+
+
+/**
+* @param {!thumbnail}
+* @private
+*/
+xiv.SlicerViewMenu.prototype.setThumbnailClickListener_ = function (thumbnail) {
+    goog.events.listen(thumbnail._hoverClone, goog.events.EventType.CLICK, function(){
+	// Run click callbacks
+	// window.console.log("CLICK", this._slicerSettings[thumbnail._MRML_][thumbnail._SCENE_]);
+	if (this.thumbnailClickCallbacks_) {
+	    goog.array.forEach(this.thumbnailClickCallbacks_, 
+			       function(callback){ callback(this._slicerSettings[thumbnail._MRML_][thumbnail._SCENE_]) }.bind(this));
+	}
+    }.bind(this))
 }
 
 
@@ -151,7 +188,17 @@ xiv.SlicerViewMenu.prototype.onViewSelected = function (callback) {
 * @param {function}
 */
 xiv.SlicerViewMenu.prototype.showViewSelectDialog = function() {
-    
+    utils.style.setStyle(this.Dialog_, {'visibility': 'visible' });
+    //utils.fx.fadeIn(this.Dialog_, xiv.ANIM_FAST);
+}
+
+
+/**
+* @param {function}
+*/
+xiv.SlicerViewMenu.prototype.hideViewSelectDialog = function() {
+    utils.style.setStyle(this.Dialog_, {'visibility': 'hidden' });
+    //utils.fx.fadeIn(this.Dialog_, xiv.ANIM_FAST);
 }
 
 

@@ -286,17 +286,20 @@ xiv.XtkDisplayer.prototype.isLoaded = function(fileCollection) {
  *
  * @param {Array.<string>} fileCollection The relevant Slicer files to be loaded.
  */
-xiv.XtkDisplayer.prototype.loadFileCollection = function (fileCollection) {
-    
+xiv.XtkDisplayer.prototype.loadViewables = function (viewables) {
+
+
+    //console.log(fileCollection);
     var that = this;
+    var viewables = goog.isArray(viewables) ? utils.xtk.getViewables(viewables) : viewables;
     var renderablePlanes = (viewables['volumes'].length > 0 || viewables['dicoms'].length > 0) ? ['Sagittal', 'Coronal', 'Transverse', '3D'] : ['3D']; 
     var newObj = {};
     var slicerSettings = {}
     var culledViewables = {};
     var hasSameFile = /**@type{boolean}*/false;
     var isMatchingAnnotation =  /**@type{boolean}*/false;
-
-    console.log("File collection", fileCollection);
+    var viewableFile ='';
+   
 
     //----------------
     // Reset currentViewables_
@@ -321,7 +324,16 @@ xiv.XtkDisplayer.prototype.loadFileCollection = function (fileCollection) {
     // viewables are .mrmls, which are not XtkLoadable (see utils.xtk.getViewables 
     // for further categorization information).
     //----------------
-    var viewables = utils.xtk.getViewables(fileCollection);
+    
+
+    var makeViewable = function(viewableFile){
+	viewableFile =  (viewableFile.indexOf(' ') > -1) ? goog.string.urlEncode(viewableFile) : viewableFile;
+	newObj = utils.xtk.createXObject(decodeURIComponent(viewableFile));	 
+	this.currentViewables_[key].push(newObj);
+    }.bind(this)
+
+
+
     for (var key in viewables){
 
 
@@ -329,11 +341,11 @@ xiv.XtkDisplayer.prototype.loadFileCollection = function (fileCollection) {
 	// Cycle through the individual 'viewable' files and
 	// convert them to XObjects
 	//
-	if ((key !== 'slicer' && key !== 'dicoms' && key !== 'images') && viewables[key].length > 0){
-	    goog.array.forEach(viewables[key], function(viewableFile){
-		viewableFile = (viewableFile.indexOf(' ') > -1) ? goog.string.urlEncode(viewableFile) : viewableFile;
-		newObj = utils.xtk.createXObject(decodeURIComponent(viewableFile));	 
-		that.currentViewables_[key].push(newObj);
+	//if ((key !== 'slicer' && key !== 'dicoms' && key !== 'images' && key !== 'fibers' && key !== 'annotations') && viewables[key].length > 0){
+	if ((key === 'volumes' || key === 'meshes') && viewables[key].length > 0){
+	    goog.array.forEach(viewables[key], function(subViewable){
+		//console.log(key, xiv._Modal.xnatPath_, subViewable);
+		makeViewable(subViewable['file']);
 	    })
 
 
@@ -357,6 +369,7 @@ xiv.XtkDisplayer.prototype.loadFileCollection = function (fileCollection) {
     //----------------
     // Apply Slicer settings, if a Slicer file.
     //----------------
+    /*
     if (viewables['slicer'].length) { 
 
 
@@ -392,15 +405,15 @@ xiv.XtkDisplayer.prototype.loadFileCollection = function (fileCollection) {
 	}
 	this.currentViewables_ = culledViewables;
     };
+    */
 
-
-
+    console.log(this.currentViewables_)
     //----------------
     // Cycle through any volumes 
     // If none of them have the proeprty 'isSelectedVolume',
     // then we set the first one to be selected.
     //---------------
-    if (that.currentViewables_['volumes'].length) { 
+    if (this.currentViewables_['volumes'].length) { 
 	var selectedVolumeFound = false;
 	goog.array.forEach(that.currentViewables_['volumes'], function(vol){
 	    if (vol.isSelectedVolume){
@@ -533,9 +546,38 @@ xiv.XtkDisplayer.prototype.loadSlicer = function (fileCollection) {
 
     window.console.log("SLICER SETTINGS", that._slicerSettings);
 
+    var viewableArr = [];
+    var updatedUrl = '';
+
+    for (var mrmlFilename in this._slicerSettings){
+	for (var scene in this._slicerSettings[mrmlFilename]){
+	    console.log(this._slicerSettings[mrmlFilename][scene]);
+	    //if (goog.isArr
+	    for (var prop in this._slicerSettings[mrmlFilename][scene]){
+
+		viewableArr = this._slicerSettings[mrmlFilename][scene][prop];
+		//console.log(viewable)
+		
+		if (goog.isArray(viewableArr)){
+		    
+		    goog.array.forEach(viewableArr, function(viewable){
+			if (viewable['file']) {
+			    updatedUrl = utils.string.dirname(mrmlFilename) + '/' + goog.string.remove(viewable['file'], './');
+			    console.log(updatedUrl);
+			    viewable['file'] =  updatedUrl;
+			}
+		    })
+		}
+	    }
+	}	
+    }
     
     this.ViewBox_._SlicerViewMenu.reset(that._slicerSettings);
-    this.ViewBox_._SlicerViewMenu.onViewSelected(function(){});
+    this.ViewBox_._SlicerViewMenu.onViewSelected(function(slicerSetting){
+	console.log(slicerSetting);
+	this.ViewBox_._SlicerViewMenu.hideViewSelectDialog();
+	this.loadViewables(slicerSetting);
+    }.bind(this));
     this.ViewBox_._SlicerViewMenu.showViewSelectDialog();
 
 }

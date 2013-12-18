@@ -164,40 +164,40 @@ utils.ui.ScrollableThumbnailGallery.prototype.makeAddThumbnail = function(thumbn
 */
 utils.ui.ScrollableThumbnailGallery.prototype.hoverScroll = function(){
     
-
     var elementMouseIsOver = document.elementFromPoint(event.clientX, event.clientY);
-    var originalThumbnailId  = goog.dom.getAncestorByClass(elementMouseIsOver, utils.ui.Thumbnail.CSS_CLASS_PREFIX).getAttribute('thumbnailid');
+    var originalThumbnail =  goog.dom.getAncestorByClass(elementMouseIsOver, utils.ui.Thumbnail.CSS_CLASS_PREFIX);
+    if (!originalThumbnail) { return };
+    var originalThumbnailId  = originalThumbnail.getAttribute('thumbnailid');
 
     if (originalThumbnailId === null) {
-
 	for (var thumbID in this.Thumbnails_) {
-	    this.Thumbnails_[thumbID].setHovered(false);
+	    this.Thumbnails_[thumbID]._onMouseOut();
 	}
-	originalThumbnailId  = goog.dom.getAncestorByClass(elementMouseIsOver, utils.ui.Thumbnail.CSS_CLASS_PREFIX).id;
+	originalThumbnailId = goog.dom.getAncestorByClass(elementMouseIsOver, utils.ui.Thumbnail.CSS_CLASS_PREFIX).id;
 
-	//
 	// Unhover and exit if we're not over a thumbnail, 
-	//
 	if (originalThumbnailId === null) { 
 	    this.currMousewheelThumbnail_.setHovered(false); 
 	    return;
 	}
-
-
     }
     
-    //console.log(originalThumbnailId, this.Thumbnails_);
+
+
+    if (this.currMousewheelThumbnail_ && (this.currMousewheelThumbnail_ !== this.Thumbnails_[originalThumbnailId])){
+	this.currMousewheelThumbnail_._onMouseOut(); 
+    } 
     this.currMousewheelThumbnail_ = this.Thumbnails_[originalThumbnailId];
-    this.currMousewheelThumbnail_.setHovered(true);    
-    //
-    // Make the hoverClone's position match the original element's
-    //
+    this.currMousewheelThumbnail_._onMouseOver();    
     
-    var eltPos = {'left': 0, 'top': 0};
-    if (this.currMousewheelThumbnail_._hoverClone.parentNode !== this.currMousewheelThumbnail_._element){
-	eltPos = utils.style.absolutePosition(this.currMousewheelThumbnail_._element);
-    }
-    
+  
+    // Return out if the _hoverClone is the element.
+    // We don't need to reposition it.
+    if (this.currMousewheelThumbnail_._hoverClone === this.currMousewheelThumbnail_._element) { return };
+
+
+    // Set position otherwise
+    var eltPos = utils.style.absolutePosition(this.currMousewheelThumbnail_._element);
     utils.style.setStyle(this.currMousewheelThumbnail_._hoverClone, {
 	'position': 'absolute',
 	'top': eltPos['top'], 
