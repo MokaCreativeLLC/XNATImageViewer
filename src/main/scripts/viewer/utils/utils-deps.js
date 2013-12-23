@@ -63,7 +63,7 @@ goog.addDependency('../../../utils/ui/Thumbnail/Thumbnail.js', ['utils.ui.Thumbn
 ]);
 
 
-goog.addDependency('../../../utils/ui/ScrollableThumbnailGallery/ScrollableThumbnailGallery.js', ['utils.ui.ScrollableThumbnailGallery'], [
+goog.addDependency('../../../utils/ui/ScrollableContainer/ThumbnailGallery/ThumbnailGallery.js', ['utils.ui.ScrollableContainer.ThumbnailGallery'], [
 'goog.dom',
 'goog.array',
 'goog.events',

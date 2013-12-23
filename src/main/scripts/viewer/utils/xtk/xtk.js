@@ -16,7 +16,10 @@ goog.require('X.sphere');
  */
 goog.require('utils.slicer');
 
-
+/**
+ * Closure includes
+ */
+goog.require('goog.string');
 
 
 /**
@@ -134,18 +137,23 @@ utils.xtk.generateXtkObjectFromExtension = function(ext) {
  * and applying the relevant parameters to that
  * sphere (center, name, color, radius, etc.).
  * 
- * @param {Array.<number>, string, Object=}
+ * @param {Object} annotationObj The annotation object with the relevant properties.
+ * @param {number=} opt_radius The optional radius of the annotation object (default is 3).
  * @return {X.sphere}
  */
-utils.xtk.makeAnnotation = function(center, name, opt_args) {
-    var point = new X.sphere();
-    point.center = center;
-    point.name = name;
-    point.radius = (opt_args && opt_args['radius'] != undefined) ? parseInt(opt_args['radius'], 10) : 3;
-    point.opacity = (opt_args && opt_args['opacity'] != undefined) ? parseFloat(opt_args['opacity'], 10) : 1;
-    point.visible = (opt_args && opt_args['visiblity'] != undefined) ? opt_args['visiblity'] : true;
-    point.color = (opt_args && opt_args['color'] != undefined) ? opt_args['color'] : [1,0,0];
-    return point;
+utils.xtk.makeAnnotation = function(annotationObj, opt_radius) {
+
+    var annotation = new X.sphere();
+    annotation.center = annotationObj['location'];
+    annotation.caption = annotationObj['name'];
+    annotation.name = annotationObj['name'];
+    annotation.radius = (opt_radius === undefined) ? 3 : opt_radius;
+    window.console.log(annotationObj['opacity'], annotationObj['visible']);
+    annotation.opacity = annotationObj['opacity'];
+    annotation.visible = annotationObj['visible'];
+    annotation.color = annotationObj['color'];
+    window.console.log("\n\n\n\t\tANNOT", annotation);
+    return annotation;
 };
 
 
@@ -321,8 +329,47 @@ utils.xtk.getViewables = function(fileCollection) {
 utils.xtk.createXObject = function(fileCollection) {
     var ext = (goog.isArray(fileCollection)) ? utils.string.getFileExtension(fileCollection[0]) : utils.string.getFileExtension(fileCollection);
     var obj = this.generateXtkObjectFromExtension(ext);  
-    //console.log("FIRST", obj);  
+    
+	
+    var urlEncode = function(url){
+	var dirname = utils.string.dirname(url);
+	var basename = utils.string.basename(url);
+
+	//console.log("\n\n*********RETN", dirname ,  basename);
+	//
+	// Four doubly encododed basenames
+	//
+	if ((basename.indexOf('%') > -1) || (basename.indexOf(' ') > -1)){
+	    basename = goog.string.urlEncode(basename);
+	}
+
+	//console.log("\n\n*********RETN", dirname ,   basename);
+	return dirname + '/' + basename
+    }
+
+    //
+    // URL decode
+    //
+    if (goog.isArray(fileCollection)){
+	var newFileCollection;
+	goog.array.forEach(fileCollection, function(fileName){
+	    newFileCollection.push(urlEncode(fileName));
+	})
+	fileCollection = newFileCollection;
+	
+    } else {
+	fileCollection = urlEncode(fileCollection)
+    }
+
+
+    console.log("FIRST", fileCollection, obj);  
+
+
+
     obj.file = fileCollection;
+
+
+
     //console.log(obj);
     //return
     return obj;
@@ -337,18 +384,26 @@ utils.xtk.createXObject = function(fileCollection) {
 
 
 /**
- * Adds various display/visibility attributes to 
+ * Adds various display/visibility properties to 
  * a given XTK object.
  *
- * @param {!X.Object, !Object}
+ * @param {!X.Object} xObj
+ * @param {!Object} properties
  */
-utils.xtk.addAttributesToXObject = function(xObj, attributes) {
+utils.xtk.setProperties = function(xObj, properties) {
+
+    window.console.log("SET PROPERTIES", xObj, properties, xObj.file);
+
+    if (!properties) {
+	return;
+    }
+
 
     //--------------------
     // Color -- volumes: .maxColor, meshes: .color
     //--------------------
-    if (attributes['color']) {
-        xObj.color = attributes['color'];
+    if (properties['color']) {
+        xObj.color = properties['color'];
     }
     
 
@@ -356,40 +411,62 @@ utils.xtk.addAttributesToXObject = function(xObj, attributes) {
     //--------------------
     // Color table (if it exists).
     //--------------------
-    if (attributes['colorTable']) {
-        xObj.labelmap.file = file;
-        xObj.labelmap.colortable.file = attributes['colorTable'];
+    if (properties['colorTable']) {
+        xObj.labelmap.file = xObj.file;
+        xObj.labelmap.colortable.file = properties['colorTable'];
     }
     
+
+    if (properties['fiberDisplay']){
+	goog.array.forEach(properties['fiberDisplay'], function(fiberDisplay){
+	    if (fiberDisplay['colorTable']) {
+		//xObj.labelmap.file = xObj.file;
+		//xObj.labelmap.colortable.file = fiberDisplay['colorTable'];
+
+		console.log("COLOR TABLE SET", xObj.colortable, fiberDisplay['colorTable']);
+		xObj.colortable.file = fiberDisplay['colorTable'];
+	    }
+	})
+    }
 
 
     //--------------------
     // Opacity
     //--------------------
-    if (attributes['opacity'])
-        xObj.opacity = parseFloat(attributes['opacity'], 10);
-    
+    if (properties['opacity']) {
+	window.console.log("\n\n********OPACITY\n\n", xObj, properties['opacity'])
+        xObj.opacity = parseFloat(properties['opacity'], 10);
+    }
 
 
     //--------------------
     // Visibility.
     //--------------------
-    if (attributes['visibility'])
-        xObj.visible = attributes['visibility'] === 'true';
+    if (properties['visibility'] && (properties['visibility'] === 'true' || properties['visibility'] === true)) {
+        xObj.visible = true;
+    } else {
+	xObj.visible = false;
+    }
+
+    console.log("MAKING ALL OBJECTS VISIBLE!!!");
+    xObj.visible = true;
     
 
 
     //--------------------
     // Center.
     //--------------------
-    if (attributes['center']) {
-        xObj.center =  attributes['center'];
+    if (properties['origin']) {
+        xObj.center =  properties['origin'];
+        xObj.origin =  properties['origin'];
         
+
+	console.log("ORIGIN", properties['origin'])
 	//
 	// Apply any transforms that come about from it.
 	//
-	if (attributes['transform']){
-            xObj.transform.matrix = new Float32Array(utils.convert.toFloatArray(attributes['transform']));
+	if (properties['transform']){
+            xObj.transform.matrix = new Float32Array(utils.convert.toFloatArray(properties['transform']));
 	}
     }
 }

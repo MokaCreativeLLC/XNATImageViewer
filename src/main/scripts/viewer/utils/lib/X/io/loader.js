@@ -206,7 +206,7 @@ X.loader.prototype.load = function(container, object) {
   // check the file format which returns the filepath, extension and the parser
   var _checkresult = this.checkFileFormat(container);
   var filepath = _checkresult[0];
-
+    window.console.log(filepath);
   if (container._filedata != null) {
 
     // we have raw file data attached and therefor can skip the loading
@@ -380,6 +380,7 @@ X.loader.extensions = {
   'MGH': [X.parserMGZ, false],
   'MGZ': [X.parserMGZ, true],
   'TXT': [X.parserLUT, null],
+  'CTBL': [X.parserLUT, null],
   'LUT': [X.parserLUT, null],
   'PNG': [X.parserIMAGE, 'png'], // here we use the arraybuffer
   // response type

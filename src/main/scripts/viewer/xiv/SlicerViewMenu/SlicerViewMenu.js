@@ -14,7 +14,8 @@ goog.require('goog.dom');
  */
 goog.require('utils.dom');
 goog.require('utils.style');
-goog.require('utils.ui.ScrollableThumbnailGallery');
+goog.require('utils.fx');
+goog.require('utils.ui.ScrollableContainer.ThumbnailGallery');
 
 
 
@@ -26,45 +27,60 @@ goog.require('utils.ui.ScrollableThumbnailGallery');
  * @extends {xiv.Widget}
  */
 goog.provide('xiv.SlicerViewMenu');
-xiv.SlicerViewMenu = function (ViewBox) {
+xiv.SlicerViewMenu = function () {
 
-    this.ViewBox_ = ViewBox;
+    //------------------
+    // Call parent
+    //------------------ 
     xiv.Widget.call(this, 'xiv.SlicerViewMenu');
     goog.dom.classes.set(this._element, xiv.SlicerViewMenu.ELEMENT_CLASS);
-
-    this.ViewBox_._element.appendChild(this._element);
-
-    this.Dialog_ = utils.dom.makeElement('div', this._element, 'Dialog');
-    goog.dom.classes.set(this.Dialog_, xiv.SlicerViewMenu.DIALOG_CLASS);
-    this.Dialog_.style.visibility = 'hidden';
+    // Hide the element.
+    utils.fx.fadeOut(this._element, 0);
 
 
-    this.ThumbnailGallery_ = new utils.ui.ScrollableThumbnailGallery();
-    this.Dialog_.appendChild(this.ThumbnailGallery_._element);
-    this.DialogText_ = utils.dom.makeElement('div', this.Dialog_, 'DialogText');
-    this.DialogText_.innerHTML = '<b> Select View <b>';
-    goog.dom.classes.add(this.DialogText_, xiv.SlicerViewMenu.DIALOGTEXT_CLASS);
+
+    //------------------
+    // Reset array and object properties
+    //------------------ 
+    this.slicerSettings_ = {};
+    this.thumbnailClickCallbacks = []; 
 
 
+
+    //------------------
+    // Thumbnail Gallery.
+    //------------------ 
+    this.ThumbnailGallery_ = new utils.ui.ScrollableContainer.ThumbnailGallery();
+    this._element.appendChild(this.ThumbnailGallery_._element);
+
+
+
+    //------------------
+    // DialogText
+    //------------------ 
+    this.headerText_ = utils.dom.makeElement('div', this._element, 'DialogText');
+    this.headerText_.innerHTML = '<b> Select View <b>';
+    goog.dom.classes.add(this.headerText_, xiv.SlicerViewMenu.HEADERTEXT_CLASS);
+
+
+
+    //------------------
+    // Set classes
+    //------------------ 
     goog.dom.classes.add(this.ThumbnailGallery_._element, xiv.SlicerViewMenu.THUMBNAILGALLERY_CLASS);
-
     this.ThumbnailGallery_.addThumbnailClass(xiv.SlicerViewMenu.THUMBNAIL_CLASS);
     this.ThumbnailGallery_.addThumbnailImageClass(xiv.SlicerViewMenu.THUMBNAIL_IMAGE_CLASS);
     this.ThumbnailGallery_.addThumbnailTextClass(xiv.SlicerViewMenu.THUMBNAIL_TEXT_CLASS);
-
-    this.slicerSettings_ = {};
-    this.thumbnailClickCallbacks = [];
- 
 }
 goog.inherits(xiv.SlicerViewMenu, xiv.Widget);
+goog.exportSymbol('xiv.SlicerViewMenu', xiv.SlicerViewMenu);
 
 
 
 
 xiv.SlicerViewMenu.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-slicerviewmenu');
 xiv.SlicerViewMenu.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.SlicerViewMenu.CSS_CLASS_PREFIX, '');
-xiv.SlicerViewMenu.DIALOG_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.SlicerViewMenu.CSS_CLASS_PREFIX, 'dialog');
-xiv.SlicerViewMenu.DIALOGTEXT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.SlicerViewMenu.CSS_CLASS_PREFIX, 'dialog-text');
+xiv.SlicerViewMenu.HEADERTEXT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.SlicerViewMenu.CSS_CLASS_PREFIX, 'headertext');
 xiv.SlicerViewMenu.THUMBNAIL_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.SlicerViewMenu.CSS_CLASS_PREFIX, 'thumbnail');
 xiv.SlicerViewMenu.THUMBNAIL_IMAGE_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.SlicerViewMenu.CSS_CLASS_PREFIX, 'thumbnail-image');
 xiv.SlicerViewMenu.THUMBNAIL_TEXT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.SlicerViewMenu.CSS_CLASS_PREFIX, 'thumbnail-displaytext');
@@ -76,7 +92,7 @@ xiv.SlicerViewMenu.THUMBNAILGALLERY_CLASS = /**@type {string} @const*/ goog.getC
 /**
 * @param {?Object}
 */
-xiv.SlicerViewMenu.prototype._slicerSettings = null
+xiv.SlicerViewMenu.prototype._slicerSettings = null;
 
 
 
@@ -84,28 +100,32 @@ xiv.SlicerViewMenu.prototype._slicerSettings = null
 * @type {?xiv.ViewBox}
 * @private
 */
-xiv.SlicerViewMenu.prototype.ViewBox_ = null
+xiv.SlicerViewMenu.prototype.ViewBox_ = null;
 
 
 
 
 /**
- * @type {?utils.ui.ScrollableContainer}
+ * @type {?utils.ui.ScrollableContainer.ThumbnailGallery}
  * @private
  */
 xiv.SlicerViewMenu.prototype.ThumbnailGallery_ = null;
 
 
+
 /**
- * @type {?Element}
- * @private
+ * @return {?utils.ui.ScrollableContainer.ThumbnailGallery}
  */
-xiv.SlicerViewMenu.prototype.Dialog_ = null;
+xiv.SlicerViewMenu.prototype.getThumbnailGallery = function(){
+    return this.ThumbnailGallery_;
+};
+
+
 
 
 
 /**
-* @param {!Array.<function>}
+* @param {?Array.<function>}
 */
 xiv.SlicerViewMenu.prototype.clickCallbacks_ = null;
 
@@ -122,8 +142,6 @@ xiv.SlicerViewMenu.prototype.reset = function (slicerSettings) {
     var mrmlBase = '';
     var displayText = '';
     var thumbnail;
-    var viewBoxDims = utils.style.dims(this.ViewBox_._element);
-
 
 
     //----------------
@@ -134,17 +152,20 @@ xiv.SlicerViewMenu.prototype.reset = function (slicerSettings) {
 	mrmlBase = utils.string.basename(mrmlFile);
 	scenes = this._slicerSettings[mrmlFile]['__scenes__'];
 	goog.array.forEach(scenes, function(sceneName){
+	    // Make the thumbnail
 	    displayText = "<b><font size = '2'>" + sceneName + "</font></b><br>";
-	    thumbnail = this.ThumbnailGallery_.makeAddThumbnail(this._slicerSettings[mrmlFile][sceneName]['thumbnail'], 
-								displayText, mrmlBase);
+	    thumbnail = this.ThumbnailGallery_.makeAddThumbnail(this._slicerSettings[mrmlFile][sceneName]['thumbnail'], displayText, mrmlBase);
 
 	    // Set the hover clone to the thumbnail element to avoid
 	    // having the hover clone spill over.
 	    thumbnail.setHoverCloneParent(thumbnail._element);
 	    
+	    // Add custom parameters for the thumbnail, 
+	    // used for retrieving scene info.
 	    thumbnail._MRML_ = mrmlFile;
 	    thumbnail._SCENE_ = sceneName;
 
+	    // Set the click listener for the thumbnail.
 	    this.setThumbnailClickListener_(thumbnail);
 	}.bind(this))	
     }
@@ -156,7 +177,7 @@ xiv.SlicerViewMenu.prototype.reset = function (slicerSettings) {
 
 
 /**
-* @param {function}
+* @param {!function}
 */
 xiv.SlicerViewMenu.prototype.onViewSelected = function (callback) {
     if (!this.thumbnailClickCallbacks_) {
@@ -185,20 +206,18 @@ xiv.SlicerViewMenu.prototype.setThumbnailClickListener_ = function (thumbnail) {
 
 
 /**
-* @param {function}
 */
 xiv.SlicerViewMenu.prototype.showViewSelectDialog = function() {
-    utils.style.setStyle(this.Dialog_, {'visibility': 'visible' });
-    //utils.fx.fadeIn(this.Dialog_, xiv.ANIM_FAST);
+    utils.fx.fadeIn(this._element, xiv.ANIM_SLOW);
 }
 
 
+
 /**
-* @param {function}
 */
 xiv.SlicerViewMenu.prototype.hideViewSelectDialog = function() {
-    utils.style.setStyle(this.Dialog_, {'visibility': 'hidden' });
-    //utils.fx.fadeIn(this.Dialog_, xiv.ANIM_FAST);
+    utils.fx.fadeOut(this._element, xiv.ANIM_MED);
+    goog.dom.removeNode(this._element);
 }
 
 

@@ -206,10 +206,14 @@ utils.convert.toInt = function (val) {
 
 
 /**
-* @param {!string}
+* @param {string}
 * @return {Array.number}
 */
 utils.convert.toFloatArray = function (str) {
+
+    if (!str) {
+	return;
+    }
     var numArr = [];
     str = str.split(' ');
     goog.array.forEach(str, function(num, i) { numArr[i] = parseFloat(num, 10)});

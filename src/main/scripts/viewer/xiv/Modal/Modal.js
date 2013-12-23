@@ -11,7 +11,7 @@ goog.require('goog.window');
 /**
  * utils includes
  */
-goog.require('utils.ui.ScrollableThumbnailGallery');
+goog.require('utils.ui.ScrollableContainer.ThumbnailGallery');
 goog.require('utils.xnat');
 goog.require('utils.dom');
 goog.require('utils.style');
@@ -136,7 +136,7 @@ xiv.Modal = function () {
     //------------------
     // Thumb gallery
     //------------------
-    this.ThumbnailGallery_ = new utils.ui.ScrollableThumbnailGallery();
+    this.ThumbnailGallery_ = new utils.ui.ScrollableContainer.ThumbnailGallery();
     this._modal.appendChild(this.ThumbnailGallery_._element);
     goog.dom.classes.add(this.ThumbnailGallery_._element, xiv.Modal.THUMBNAILGALLERY_CLASS);
 
@@ -281,7 +281,7 @@ xiv.Modal.prototype.popupButton_ = null;
 
 
 /**
- * @type {?utils.ui.ScrollableThumbnailGallery}
+ * @type {?utils.ui.ScrollableContainer.ThumbnailGallery}
  * @private
  */
 xiv.Modal.prototype.ThumbnailGallery_ = null;

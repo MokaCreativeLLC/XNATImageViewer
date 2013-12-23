@@ -172,7 +172,7 @@ xiv.ViewBoxTabs.prototype.addTabs = function(tabTitles) {
  */
 xiv.ViewBoxTabs.prototype.reset = function(opt_tabtitle) {
 
-
+    console.log("RESET");
     //------------------
     // Remove all if no title specified.
     //------------------
@@ -221,7 +221,8 @@ xiv.ViewBoxTabs.prototype.reset = function(opt_tabtitle) {
 xiv.ViewBoxTabs.prototype.iconSrc_ = {
     'Info':  'Icons/InfoIcon.png',
     '3D Menu' : 'Icons/3DMenu.png',
-    '2D Menu' : 'Icons/2DMenu.png'
+    '2D Menu' : 'Icons/2DMenu.png',
+    'Slicer Views': 'Icons/SlicerViews.png',
 }
 
 
@@ -568,18 +569,12 @@ xiv.ViewBoxTabs.prototype.updateStyle = function (opt_args) {
  * of a tab page.  The contents is always a utils.ui.ScrollableContainer, which
  * can accept either Objects of Elements as part of its input method.
  *
- * @param {!string, !Object|!Element} 
+ * @param {!string} tabName The name of the tab.
+ * @param {!Object|!Element|!utils.ui.ScrollableContainer} contents The contents.
  */
 xiv.ViewBoxTabs.prototype.setTabContents = function (tabName, contents) {
-
-    //------------------
-    // Get the tab page based on the 'tabName' argument.
-    //------------------
+  
     var tabPage = this.getTabPage(tabName);
-
-    /**
-     * @type {?utils.ui.ScrollableContainer}
-     */
     var scrollableContainer = undefined;
 
 
@@ -592,12 +587,20 @@ xiv.ViewBoxTabs.prototype.setTabContents = function (tabName, contents) {
 	tabPage = this.getTabPage(tabName);
     }
 
-
+    
 
     //------------------
-    // Make a scrollable container.
+    // Make or use existing scrollable container...
     //------------------
-    scrollableContainer = new utils.ui.ScrollableContainer({ 'parent': tabPage });
+    if (contents instanceof utils.ui.ScrollableContainer) {
+	console.log("ITS A SCROLLABLE CONTAINER");
+	scrollableContainer = contents;
+	tabPage.appendChild(scrollableContainer._element);
+    }
+    else {
+	scrollableContainer = new utils.ui.ScrollableContainer({ 'parent': tabPage });
+	scrollableContainer.addContents(contents);
+    }
 
 
 
@@ -605,11 +608,4 @@ xiv.ViewBoxTabs.prototype.setTabContents = function (tabName, contents) {
     // Set the scrollable container class.
     //------------------
     goog.dom.classes.add(scrollableContainer._element, xiv.ViewBoxTabs.SCROLLGALLERY_CLASS);
-
-
-
-    //------------------
-    // Add contents to the scrollable container.
-    //------------------
-    scrollableContainer.addContents(contents);
 }

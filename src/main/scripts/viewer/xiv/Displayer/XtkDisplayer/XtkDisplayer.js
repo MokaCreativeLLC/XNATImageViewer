@@ -55,16 +55,81 @@ goog.require('xiv.Thumbnail');
  */
 goog.provide('xiv.XtkDisplayer');
 xiv.XtkDisplayer = function(ViewBox) {
- 
-    var that = this;
 
-    that.ViewBox_ = ViewBox;
+    //------------------
+    // Call parents, set class
+    //------------------  
     xiv.Displayer.call(this, 'xiv.XtkDisplayer');
     goog.dom.classes.set(this._element, xiv.XtkDisplayer.ELEMENT_CLASS);
 
-    this.XtkPlaneManager_ = new xiv.XtkPlaneManager(this);
+
+
+    //------------------
+    // Reset property arrays and objects
+    //------------------  
     this.onloadCallbacks_ = [];
     this.preloadCallbacks_ = [];
+
+
+
+    //------------------
+    // ViewBox
+    //------------------  
+    this.ViewBox_ = ViewBox;
+
+
+
+    //------------------
+    // XtkPlaneManager
+    //------------------  
+    this.XtkPlaneManager_ = new xiv.XtkPlaneManager(this);
+
+
+
+    //------------------
+    // Set the initial onload callbacks.
+    //------------------  
+    this.onloadCallbacks_.push(function(){
+	this.ControllerMenu_ = new utils.xtk.ControllerMenu(this);
+	this.ControllerMenu_.makeControllerMenu(this.currentViewables_);
+	
+	
+	//
+	// Sync all of the relevant controllerMenu
+	// properties to the X.Object properties.
+	//
+	var menuMap = this.ControllerMenu_.getMenuMap();
+	for (var key in menuMap) {
+	    switch(key){
+
+		// Skip the "Master" level controls.
+	    case 'Annotations':
+	    case 'Fibers':
+	    case 'Volumes':
+	    case 'Meshes':
+		break;
+	    default:
+		var xObj = menuMap[key]['xtkObj'];
+		// Sync opacity
+		//window.console.log(xObj, xObj.opacity);
+		//window.console.log(menuMap[key]['opacity']);
+		if (menuMap[key]['opacity'].setValue){
+		    menuMap[key]['opacity'].setValue(parseFloat(xObj.opacity));
+		} else if (menuMap[key]['opacity']['slider'] && menuMap[key]['opacity']['slider'].setValue) {
+		    menuMap[key]['opacity']['slider'].setValue(parseFloat(xObj.opacity));
+		}
+		
+		// Sync visibility
+		menuMap[key]['visible'].checked = xObj.visible;
+	    }
+	    
+	}
+	
+	
+
+    }.bind(this))
+
+
 
 }
 goog.inherits(xiv.XtkDisplayer, xiv.Displayer);
@@ -75,6 +140,7 @@ goog.exportSymbol('xiv.XtkDisplayer', xiv.XtkDisplayer);
 
 xiv.XtkDisplayer.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-displayer');
 xiv.XtkDisplayer.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.XtkDisplayer.CSS_CLASS_PREFIX, '');
+
 
 
 
@@ -94,7 +160,7 @@ xiv.XtkDisplayer.prototype.ViewBox_ = null;
 
 
 /**
- * @param {xiv.ViewBox}
+ * @return {xiv.ViewBox}
  */    
 xiv.XtkDisplayer.prototype.getViewBox = function() {
     return this.ViewBox_;
@@ -203,9 +269,9 @@ xiv.XtkDisplayer.prototype.resetCurrViewables = function () {
 
 /**
  * @private
- * @type {Object}
+ * @type {!Object}
  */ 
-xiv.XtkDisplayer.prototype.controllerMenu_ = {};
+xiv.XtkDisplayer.prototype.ControllerMenu_ = null;
 
 
 
@@ -214,7 +280,7 @@ xiv.XtkDisplayer.prototype.controllerMenu_ = {};
  * @return {Object}
  */ 
 xiv.XtkDisplayer.prototype.getControllerMenu = function(){
-    return this.controllerMenu_.getMenu();
+    return this.ControllerMenu_.getMenu();
 };
 
 
@@ -250,23 +316,18 @@ xiv.XtkDisplayer.prototype.isLoaded = function(fileCollection) {
 
 	for (var j = 0; j < currentViewablesLen; j++) {
 
-
-	    //
 	    // Check for non-DICOM filetypes
 	    //
 	    // NOTE: The collection array may be the same as the xtkObject.file
 	    // collection (xtkObject.file is either an array or a string)
-	    //
 	    if (this.currentViewables_[j].file == fileCollection) {
 		return true;
 
 
-	    //
 	    // Check for DICOM filetypes
 	    //
             // NOTE: DICOM are a special case...you have to do some
             // string comparisons that aren't straightforward
-            //
 	    } else if (ext === 'dcm' || ext === 'dicom') {
 		if (this.currentViewables_[j].file[0].indexOf(fileName.slice(0,-9)) > -1){
                     return true;		
@@ -281,24 +342,68 @@ xiv.XtkDisplayer.prototype.isLoaded = function(fileCollection) {
 
 
 /**
+ * @param {!string | !Array.<string>}
+ * @return {?X.Object}
+ */
+xiv.XtkDisplayer.prototype.makeXObject = function(viewable){
+    if (!goog.isArray(viewable)){
+	var viewable =  (viewable.indexOf(' ') > -1) ? goog.string.urlEncode(viewable) : viewable;
+	viewable = decodeURIComponent(viewable);	 
+    }
+    return utils.xtk.createXObject(viewable);
+}
+
+
+
+
+
+/**
+ *
+ *
+ */
+xiv.XtkDisplayer.prototype.determineSelectedVolume = function(){
+    if (this.currentViewables_['volumes'] || this.currentViewables_['dicoms']) { 
+	var selectedVolumeFound = false;
+
+	// Search volumes
+	goog.array.forEach(this.currentViewables_['volumes'], function(vol){
+	    if (vol.isSelectedVolume){
+		selectedVolumeFound = true;
+	    }
+	}.bind(this))
+
+	// Search dicoms
+	goog.array.forEach(this.currentViewables_['dicoms'], function(dicomSet){
+	    if (dicomSet.isSelectedVolume){
+		selectedVolumeFound = true;
+	    }
+	}.bind(this))
+
+	// If none, prioritize the dicoms first, the volumes[0]
+	if (!selectedVolumeFound){
+	    if (this.currentViewables_['dicoms'] && this.currentViewables_['dicoms'].length > 0){
+		this.currentViewables_['dicoms'][0].isSelectedVolume = true
+	    } else {
+		this.currentViewables_['volumes'][0].isSelectedVolume = true;
+	    }
+	}
+    }
+}
+
+
+
+/**
  * A xiv.ViewBox will call on this function to load up
  * an viewable object (String) into the displayer.
  *
- * @param {Array.<string>} fileCollection The relevant Slicer files to be loaded.
+ * @param {!Array.<string> | !Object} viewables The relevant Slicer files to be loaded.
  */
 xiv.XtkDisplayer.prototype.loadViewables = function (viewables) {
 
-
-    //console.log(fileCollection);
     var that = this;
     var viewables = goog.isArray(viewables) ? utils.xtk.getViewables(viewables) : viewables;
     var renderablePlanes = (viewables['volumes'].length > 0 || viewables['dicoms'].length > 0) ? ['Sagittal', 'Coronal', 'Transverse', '3D'] : ['3D']; 
-    var newObj = {};
-    var slicerSettings = {}
-    var culledViewables = {};
-    var hasSameFile = /**@type{boolean}*/false;
-    var isMatchingAnnotation =  /**@type{boolean}*/false;
-    var viewableFile ='';
+
    
 
     //----------------
@@ -313,54 +418,30 @@ xiv.XtkDisplayer.prototype.loadViewables = function (viewables) {
     //----------------
     goog.array.forEach(this.preloadCallbacks_, function(callback){ callback() })
 
-
-
-    //----------------
-    // Convert viewables into xObjects, then save into this.currentViewables_
-    //
-    // NOTE: Need to differentiate DICOM sets, and viewables that fall under
-    // the category of 'slicer', from single viewable 
-    // files.  DICOM sets will get loaded as a list of files, and 'slicer' 
-    // viewables are .mrmls, which are not XtkLoadable (see utils.xtk.getViewables 
-    // for further categorization information).
-    //----------------
-    
-
-    var makeViewable = function(viewableFile){
-	viewableFile =  (viewableFile.indexOf(' ') > -1) ? goog.string.urlEncode(viewableFile) : viewableFile;
-	newObj = utils.xtk.createXObject(decodeURIComponent(viewableFile));	 
-	this.currentViewables_[key].push(newObj);
-    }.bind(this)
-
-
+   
 
     for (var key in viewables){
+	switch (key){
+	case 'volumes':
+	case 'fibers':
+	case 'meshes':
 
+	    if (!viewables[key]) break;
+	    goog.array.forEach(viewables[key], function(volOrFiberOrMesh){
+		var xObject = this.makeXObject(volOrFiberOrMesh['file']);
+		utils.xtk.setProperties(xObject, volOrFiberOrMesh['properties']); 
+		this.currentViewables_[key].push(xObject);
+	    }.bind(this))
+	    break;
 
-	//
-	// Cycle through the individual 'viewable' files and
-	// convert them to XObjects
-	//
-	//if ((key !== 'slicer' && key !== 'dicoms' && key !== 'images' && key !== 'fibers' && key !== 'annotations') && viewables[key].length > 0){
-	if ((key === 'volumes' || key === 'meshes') && viewables[key].length > 0){
-	    goog.array.forEach(viewables[key], function(subViewable){
-		//console.log(key, xiv._Modal.xnatPath_, subViewable);
-		makeViewable(subViewable['file']);
-	    })
-
-
-
-	//
-	// For dicom sets, apply the whole file set to load
-	// as an XObject.
-	//
-	} else if ((key === 'dicoms' || key === 'images') && viewables[key].length > 0){
-	    console.log("DICOMS KEY");
-	    newObj = utils.xtk.createXObject(viewables[key]);
-	    newObj.isSelectedVolume = true; // Critical for 2D Rendering.
-	    that.currentViewables_[key].push(newObj);
-	    //console.log(newObj);
-
+	case 'dicoms':
+	    this.currentViewables_[key].push(this.makeXObject(viewables[key]));
+	    break;
+	case 'annotations':
+	     goog.array.forEach(viewables[key], function(annotationObj){
+		 this.currentViewables_[key].push(utils.xtk.makeAnnotation(annotationObj))
+	     }.bind(this))
+	    break;
 	}
     }
 
@@ -369,6 +450,7 @@ xiv.XtkDisplayer.prototype.loadViewables = function (viewables) {
     //----------------
     // Apply Slicer settings, if a Slicer file.
     //----------------
+    
     /*
     if (viewables['slicer'].length) { 
 
@@ -407,41 +489,23 @@ xiv.XtkDisplayer.prototype.loadViewables = function (viewables) {
     };
     */
 
-    console.log(this.currentViewables_)
+    
     //----------------
-    // Cycle through any volumes 
-    // If none of them have the proeprty 'isSelectedVolume',
-    // then we set the first one to be selected.
+    // Find the selected volume
     //---------------
-    if (this.currentViewables_['volumes'].length) { 
-	var selectedVolumeFound = false;
-	goog.array.forEach(that.currentViewables_['volumes'], function(vol){
-	    if (vol.isSelectedVolume){
-		selectedVolumeFound = true;
-	    }
-	})
+    this.determineSelectedVolume();
 
-	if (!selectedVolumeFound){
-	    that.currentViewables_['volumes'][0].isSelectedVolume = true;
-	}
-    };
-
-
+   
 
     //----------------
     // Load renderables as single array of currentViewables_
     //----------------
-    var renderables = utils.convert.objectToArray(this.currentViewables_);
     this.XtkPlaneManager_.onAllRendered(this.onloadCallbacks_);
-    this.XtkPlaneManager_.loadInRenderers(renderables)
- 
 
-
-    //----------------
-    // Generate controller menu.
-    //----------------
-    this.controllerMenu_ = new utils.xtk.ControllerMenu(this);
-    this.controllerMenu_.makeControllerMenu(this.currentViewables_);
+    window.console.log("EXITING");
+    window.console.log("this._currentViewables", this.currentViewables_);
+    window.console.log("CONVERTED", utils.convert.objectToArray(this.currentViewables_));
+    this.XtkPlaneManager_.loadInRenderers(utils.convert.objectToArray(this.currentViewables_))
 }
 
 
@@ -546,25 +610,38 @@ xiv.XtkDisplayer.prototype.loadSlicer = function (fileCollection) {
 
     window.console.log("SLICER SETTINGS", that._slicerSettings);
 
-    var viewableArr = [];
-    var updatedUrl = '';
 
+
+    //
+    // Update the urls of the files to be
+    // to the accurate relative path.  (Since the
+    // urls were read from the mrml, they start relative to 
+    // the slicer file path).
+    //
+    var viewableArr = [];
+    var updateUrl = function(mrml, url) { 
+	var firstUrl = utils.string.dirname(mrml) + '/' + goog.string.remove(url, './');
+
+	return firstUrl
+    };
+
+    
     for (var mrmlFilename in this._slicerSettings){
 	for (var scene in this._slicerSettings[mrmlFilename]){
-	    console.log(this._slicerSettings[mrmlFilename][scene]);
-	    //if (goog.isArr
 	    for (var prop in this._slicerSettings[mrmlFilename][scene]){
-
 		viewableArr = this._slicerSettings[mrmlFilename][scene][prop];
-		//console.log(viewable)
-		
 		if (goog.isArray(viewableArr)){
-		    
 		    goog.array.forEach(viewableArr, function(viewable){
 			if (viewable['file']) {
-			    updatedUrl = utils.string.dirname(mrmlFilename) + '/' + goog.string.remove(viewable['file'], './');
-			    console.log(updatedUrl);
-			    viewable['file'] =  updatedUrl;
+			    viewable['file'] =  updateUrl(mrmlFilename, viewable['file']);
+			} 
+			if (viewable['properties'] && viewable['properties']['fiberDisplay']) {
+
+			    goog.array.forEach(viewable['properties']['fiberDisplay'], function(fiberDisplay){
+				if (fiberDisplay['colorTable']) {
+				    fiberDisplay['colorTable'] =  updateUrl(mrmlFilename, fiberDisplay['colorTable']);
+				}
+			    })   
 			}
 		    })
 		}
@@ -574,8 +651,14 @@ xiv.XtkDisplayer.prototype.loadSlicer = function (fileCollection) {
     
     this.ViewBox_._SlicerViewMenu.reset(that._slicerSettings);
     this.ViewBox_._SlicerViewMenu.onViewSelected(function(slicerSetting){
-	console.log(slicerSetting);
+	window.console.log("LOADING THIS GUY", slicerSetting);
+
+
+
 	this.ViewBox_._SlicerViewMenu.hideViewSelectDialog();
+
+	this.XtkPlaneManager_.setCamera('3D', slicerSetting['camera']);
+	
 	this.loadViewables(slicerSetting);
     }.bind(this));
     this.ViewBox_._SlicerViewMenu.showViewSelectDialog();
@@ -627,7 +710,7 @@ xiv.XtkDisplayer.prototype.applySlicerSettingsToViewables = function(viewables, 
 		    //
 		    // Apply the color table to the viewable (if exists).
 		    //
-		    if (slicerSetting['attributes']['colorTable']) {
+		    if (slicerSetting['properties']['colorTable']) {
 			xObject.labelmap.file = goog.string.urlDecode(xObject.file);
 			utils.dom.debug(slicerSetting);
 			xObject.labelmap.colortable.file = slicerSetting['colorTable'];
@@ -635,15 +718,11 @@ xiv.XtkDisplayer.prototype.applySlicerSettingsToViewables = function(viewables, 
 
 
 		    //
-		    // Apply the generic attributes (color, opacity, visibility).
+		    // Apply the generic properties (color, opacity, visibility).
 		    // This generally applies to meshes and annotations or anything
 		    // with these three qualitiees.
 		    //
-		    utils.xtk.addAttributesToXObject(xObject, {
-			'color' : utils.convert.toFloatArray(slicerSetting['attributes']['color']),
-			'opacity' : parseFloat(slicerSetting['attributes']['opacity'], 10),
-			'visiblity' : slicerSetting['attributes']['visibility'] === 'true',
-		    }); 
+
 
 	
 		    //
@@ -659,55 +738,6 @@ xiv.XtkDisplayer.prototype.applySlicerSettingsToViewables = function(viewables, 
     return viewables;
 
 }
-
-
-
-
-
-/**
-* Reads in an array containing information
-* about annotations (via XtkUtils). Then adds this to
-* currentViewables.
-*
-* @type {function(Array)}
-*/
-xiv.XtkDisplayer.prototype.getAnnotations = function(annotations) {
-
-    var that = /**@type{xiv.XtkDisplayer}*/ this;
-    var center = /**@type{Array.{number}}*/ [];
-    var annotationPt = /**@type{X.sphere | undefined}*/ undefined;
-    var attributes = /**@type{Object}*/ {};
-    var annotationCollection = /**@type{Array.{X.sphere}}*/ [];
-    
-    
-
-    //----------------
-    // Cycle through every pair to generate an annotation.
-    //----------------
-    goog.array.forEach(annotations, function(annotation) {
-
-
-	//
-	// Get coordinates.  Input is a string (e.g. '0.5 0.5 0.5')
-	//
-        center = utils.convert.toFloatArray(annotation[0].getAttribute('ctrlPtsCoord'));
-
-
-	//
-	// Create sphere w/ caption.
-	//
-	annotationPt = utils.xtk.makeAnnotation(center, annotation[0].getAttribute('name'));
-	attributes = {
-	    'opacity' : annotation[1].getAttribute('opacity'), 
-	    'visibility' : annotation[1].getAttribute('visibility') == 'true', 
-	    'color' : annotation[1].getAttribute('color')
-	}
-	annotationCollection.push({'xObject':annotationPt, 'attributes':attributes});
-    });
-
-    return annotationCollection;
-}
-
 
 
 

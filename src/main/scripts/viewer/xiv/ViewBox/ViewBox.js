@@ -46,19 +46,33 @@ goog.require('xiv.SlicerViewMenu');
  * @constructor
  * 
  * @extends {xiv.Widget}
+ * @param {Object=}
  * @extents {goog.fx.DragDrop}
  */
 goog.provide('xiv.ViewBox');
 xiv.ViewBox = function (opt_args) {
-    
-    var that = this;
 
+    //------------------
+    // Call parents, set class
+    //------------------  
     xiv.Widget.call(this, 'xiv.ViewBox');
     goog.fx.DragDrop.call(this, this._element, undefined);	
     goog.dom.classes.set(this._element, xiv.ViewBox.ELEMENT_CLASS);
   
 
 
+    //------------------
+    // Reset property arrays and objects
+    //------------------  
+    this.doNotHide_ = [];
+    this.displayableData_ = {};
+    this.mouseoutFadeables_ = [];
+
+
+
+    //------------------
+    // Init displayer
+    //------------------
     this.initDisplayer();
 
 
@@ -86,6 +100,7 @@ xiv.ViewBox = function (opt_args) {
     this.ContentDivider_.setElementParentNode(this._element);
  
 
+
     //------------------
     // View Box Tabs.
     //------------------    	
@@ -95,9 +110,11 @@ xiv.ViewBox = function (opt_args) {
 
 
     //------------------
-    // View Box Tabs.
+    // Slicer View Menu
     //------------------    	
     this._SlicerViewMenu = new xiv.SlicerViewMenu(this);
+    this._element.appendChild(this._SlicerViewMenu._element);
+    this.doNotHide(this._SlicerViewMenu._element);
 
 
 
@@ -107,20 +124,18 @@ xiv.ViewBox = function (opt_args) {
     //------------------
     this.linkContentDividerToViewBox();
 
+
+
+    //------------------
+    // Stype updates
+    //------------------ 
+    this.hideChildElements_();
     this.updateStyle();
-    this.setChildrenVisible(false);
-
-
-    this.displayableData_ = {};
-    this.mouseoutFadeables_ = [];
-
-
-
-
 }
 goog.inherits(xiv.ViewBox, xiv.Widget);
 goog.inherits(xiv.ViewBox, goog.fx.DragDrop);
 goog.exportSymbol('xiv.ViewBox', xiv.ViewBox);
+
 
 
 
@@ -132,6 +147,7 @@ xiv.ViewBox.DRAGGING_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.View
 
 
 
+
 /**
  * @type {?xiv.ViewLayoutManager}
  * @protected
@@ -140,10 +156,12 @@ xiv.ViewBox.prototype.ViewLayoutManager_ = null;
 
 
 
+
 /**
  * @type {?xiv.SlicerViewMenu}
  */
 xiv.ViewBox.prototype._SlicerViewMenu = null;
+
 
 
 
@@ -182,20 +200,36 @@ xiv.ViewBox.prototype.Displayer_ = null;
 
 
 /**
- * @type {object}
+ * @type {?Object}
  * @private
  */
 xiv.ViewBox.prototype.displayableData_ = null;
 
 
 
+/**
+ * @type {?xiv.Thumbnail}
+ * @private
+ */
+xiv.ViewBox.prototype.currentThumbnail_ = null;
+
+
+
 
 /**
- * @type {String}
+ * @type {?Array.<Element>}
+ * @private
+ */
+xiv.ViewBox.prototype.doNotHide_ = null;
+
+
+
+
+/**
+ * @type {!String}
  * @private
  */
 xiv.ViewBox.prototype.loadFramework_ = 'XTK';
-
 
 
 
@@ -204,7 +238,7 @@ xiv.ViewBox.prototype.loadFramework_ = 'XTK';
  * Tracks what can and can't be faded when the 
  * mouse moves out of the zone of the xiv.ViewBox.
  *
- * @type {Array.Object}
+ * @type {?Array.Object}
  * @private
  */
 xiv.ViewBox.prototype.mouseoutFadeables_ = null;
@@ -216,7 +250,7 @@ xiv.ViewBox.prototype.mouseoutFadeables_ = null;
  * Adds an element or object to be faded when
  * the mouseout event occurs over the xiv.ViewBox.
  *
- * @type {function(Object)}
+ * @param {!Object}
  */
 xiv.ViewBox.prototype.addMouseoutFadeable = function(fadeable) {
     this.mouseoutFadeables_.push(fadeable)
@@ -224,22 +258,21 @@ xiv.ViewBox.prototype.addMouseoutFadeable = function(fadeable) {
 
 
 
-
 /**
- * @type {string}
- * @private
+ * @param {!Element}
  */
-xiv.ViewBox.prototype.currentThumbnail_ = undefined;
+xiv.ViewBox.prototype.doNotHide = function(elt){
+    this.doNotHide_.push(elt);
+};
 
 
 
 
 /**
- * @type {function(string)}
- * @param {string}
+ * @param {!xiv.Thumbnail}
  * @private
  */	
-xiv.ViewBox.prototype.setThumbnail = function(t) {		
+xiv.ViewBox.prototype.setThumbnail_ = function(t) {		
     this.currentThumbnail_ = t;				
 }
 
@@ -247,7 +280,7 @@ xiv.ViewBox.prototype.setThumbnail = function(t) {
 
 
 /**
- * @return {string}
+ * @return {!xiv.Thumbnail}
  */	
 xiv.ViewBox.prototype.getThumbnail = function() {
     return this.currentThumbnail_;
@@ -270,16 +303,30 @@ xiv.ViewBox.prototype.setViewLayout = function(viewPlane) {
 
 
 /**
- * Allow all child elements of the xiv.ViewBox to be visible.
+ * Show child elements of the xiv.ViewBox. 
  *
- * @type {function(!boolean)}
  * @private
  */
-xiv.ViewBox.prototype.setChildrenVisible = function(bool) {
+xiv.ViewBox.prototype.showChildElements_ = function() {
     goog.array.forEach(this._element.childNodes, function(childElt){
-	if (!bool) { goog.dom.classes.add(childElt, xiv.ViewBox.HIDDEN_CLASS);}
-	else { goog.dom.classes.remove(childElt, xiv.ViewBox.HIDDEN_CLASS);}
-    })
+	goog.dom.classes.remove(childElt, xiv.ViewBox.HIDDEN_CLASS);
+    }.bind(this))
+}
+
+
+
+
+/**
+ * Hide child elements of the xiv.ViewBox.  
+ *
+ * @private
+ */
+xiv.ViewBox.prototype.hideChildElements_ = function() {
+    goog.array.forEach(this._element.childNodes, function(childElt){
+	if (this.doNotHide_ && (this.doNotHide_.length > 0) && (this.doNotHide_.indexOf(childElt) === -1)) {
+	    goog.dom.classes.add(childElt, xiv.ViewBox.HIDDEN_CLASS);
+	}
+    }.bind(this))
 }
 
 
@@ -293,9 +340,7 @@ xiv.ViewBox.prototype.setChildrenVisible = function(bool) {
  * @type {function()}
  */
 xiv.ViewBox.prototype.initDisplayer = function(){
-    var that = this;
-
-
+  
 
     //------------------
     // Retrieve the loadFramework.
@@ -310,12 +355,13 @@ xiv.ViewBox.prototype.initDisplayer = function(){
     // Onload callbacks
     //------------------
     this.Displayer_.onOnload(function(){
-	if (that._element.hasAttribute('originalbordercolor')){
-	    that._element.style.borderColor = that._element.getAttribute('originalbordercolor');
+	if (this._element.hasAttribute('originalbordercolor')){
+	    this._element.style.borderColor = this._element.getAttribute('originalbordercolor');
 	}
 	//that._ViewLayoutMenu.setViewLayout('Four-up');
-	that.setChildrenVisible(true);	
-    })
+	this.showChildElements_();
+	this.loadTabs();
+    }.bind(this))
 }
 
 
@@ -327,7 +373,8 @@ xiv.ViewBox.prototype.initDisplayer = function(){
  * xiv.ViewLayoutManager, xiv.Displayer, xiv.ViewLayoutMenu, xiv.ViewBoxTabs, 
  * etc.
  *
- * @param {!xiv.Thumbnail, string=}
+ * @param {!xiv.Thumbnail}
+ * @param {!string=}
  */
 xiv.ViewBox.prototype.loadThumbnail = function (thumb, loadFramework) {
 
@@ -362,7 +409,7 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb, loadFramework) {
     this.ViewLayoutManager_.setViewPlanes(this.Displayer_.getViewPlaneElements(), this.Displayer_.getViewPlaneInteractors());
     this.ViewLayoutManager_.animateViewLayoutChange(false);
     this.ViewLayoutManager_.setViewLayout('none');
-    this.setChildrenVisible(false);
+    this.hideChildElements_();
 
 
 
@@ -376,7 +423,7 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb, loadFramework) {
     //------------------
     // Track the thumbnail internally.
     //------------------
-    this.setThumbnail(thumb);
+    this.setThumbnail_(thumb);
 
 
 
@@ -406,8 +453,8 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb, loadFramework) {
 
     case 'slicer':
 	this.Displayer_.loadSlicer(thumb._properties.files);
-	return;
-	//break;
+	//return;
+	break;
     default:
 	this.Displayer_.loadViewables(thumb._properties.files);
     }
@@ -419,8 +466,16 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb, loadFramework) {
     // 	that.ViewBox_._ViewLayoutMenu.setViewLayout(slicerSettings['layout']);			  
     //})
     
+}
+ 
 
 
+/**
+ *
+ * @param {!xiv.Thumbnail}
+ * @param {!string=}
+ */
+xiv.ViewBox.prototype.loadTabs = function (thumb, loadFramework) {   
     //------------------
     // Clear existing tabs.
     //------------------
@@ -436,14 +491,22 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb, loadFramework) {
 
 
     //------------------
+    // Slicer View Tab.
+    //------------------
+    if (this.currentThumbnail_._properties['category'] == 'Slicer') {
+	this.ViewBoxTabs_.setTabContents('Slicer Views', this._SlicerViewMenu.getThumbnailGallery());
+    }
+
+
+
+    //------------------
     // Controller Menu into Tabs
     //------------------
     var controllerMenu = this.Displayer_.getControllerMenu();    
     for (var key in controllerMenu){
-	//
 	// Only input object that have contents in them.
-	//
 	if (Object.keys(controllerMenu[key]).length !== 0){
+	    console.log('View Box Tab contents', controllerMenu[key]);
 	    this.ViewBoxTabs_.setTabContents(key, controllerMenu[key]);
 	}   
     }
@@ -509,9 +572,7 @@ xiv.ViewBox.prototype.setViewLayoutMenuCallbacks = function () {
     // update the displayer style.
     //------------------
     this.ViewLayoutManager_.onViewLayoutChanged(function(){ 
-
 	that.Displayer_.updateStyle()
-	
     });
 
 
@@ -654,9 +715,7 @@ xiv.ViewBox.prototype.setHoverEvents = function () {
     //------------------
     var mouseOut = function() {
 
-	//
 	// Fade out all but keepers.
-	//
 	goog.array.forEach(that._element.childNodes, function (node) {
 	    var isKeeper = false;
 	    goog.array.forEach(keeperClasses, function (keeperClass){
@@ -665,9 +724,7 @@ xiv.ViewBox.prototype.setHoverEvents = function () {
 	    if (!isKeeper) { utils.fx.fadeOut(node, 0);}
 	});
 	
-	//
 	// Other fadeadble classes
-	//
 	goog.array.forEach(otherFadeClasses, function(otherFadeClass){
 	    goog.array.forEach(that._element.getElementsByClassName(otherFadeClass), function (node) {
 		utils.fx.fadeOut(node, 0);
@@ -682,16 +739,12 @@ xiv.ViewBox.prototype.setHoverEvents = function () {
     //------------------
     var mouseOver = function() {
 
-	//
 	// Fade in all direct childNodes.
-	//
 	goog.array.forEach(that._element.childNodes, function (node) { 
 	    utils.fx.fadeIn(node, 0);
 	})
 
-	//
 	// Fade in all 'otherFadeClasses'
-	//
 	goog.array.forEach(otherFadeClasses, function(otherFadeClass){
 	    goog.array.forEach(that._element.getElementsByClassName(otherFadeClass), function (node) {
 		utils.fx.fadeIn(node, 0);

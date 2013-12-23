@@ -55,6 +55,7 @@ xiv.XtkPlaneManager = function(xtkDisplayer) {
 
 
     this.allRenderedCallbacks_ = [];
+    this.cameraSettings_ = {};
 }
 goog.exportSymbol('xiv.XtkPlaneManager', xiv.XtkPlaneManager);
 
@@ -108,10 +109,10 @@ xiv.XtkPlaneManager.prototype.applyGenericCameraSettings = true;
 
 
 /**
- * @type {Object.<string, Obj.<string, Array.<number>>>}
+ * @type {!Object.<string, Obj.<string, Array.<number>>>}
  * @private
  */
-xiv.XtkPlaneManager.prototype.cameraSettings_ = {}
+xiv.XtkPlaneManager.prototype.cameraSettings_ = null
 
 
 
@@ -188,8 +189,9 @@ xiv.XtkPlaneManager.prototype.onAllRendered = function(callbacks){
  * @param {!Object.<string, Array.<number>>} args The arguments to apply to the planeName.
  * @public
  */
-xiv.XtkPlaneManager.prototype.setCameraSettings = function (planeName, args) {
-    this.cameraSettings_[this.anatomicalToId(planeName)] = {'position' : args['position'], 'up' : args['up']};
+xiv.XtkPlaneManager.prototype.setCamera = function (planeName, args) {
+    console.log('setCamera: ', planeName, args);
+    this.cameraSettings_[this.anatomicalToId(planeName)] = args;
 }
 
 
@@ -376,7 +378,7 @@ xiv.XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, c
 	if (callback) { callback(renderables, xtkPlane); }
     })
 
-    //return;
+
 
     //------------------
     // Add the renderables to the renderer.
@@ -385,7 +387,7 @@ xiv.XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, c
 	xtkPlane.addToRenderer(renderable);
     })
 
-    //return;
+
 
     //------------------
     // Reset the slider.
@@ -397,9 +399,12 @@ xiv.XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, c
     //------------------
     // Reset the camera.
     //------------------
-    if (this.cameraSettings_[xtkPlane.id_]){
+    if (this.cameraSettings_[xtkPlane.id_] !== undefined){
+
+	window.console.log("SETTING CAMERA", this.cameraSettings_[xtkPlane.id_]);
 	xtkPlane.Renderer_.camera.position =  this.cameraSettings_[xtkPlane.id_]['position'];
 	xtkPlane.Renderer_.camera.up =  this.cameraSettings_[xtkPlane.id_]['up'];
+
     } else {
 	if (xtkPlane.id_ === 'v' && this.applyGenericCameraSettings){
 	    xtkPlane.Renderer_.camera.position =  [-200, 200, 200];
@@ -429,7 +434,7 @@ xiv.XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, c
  */
 xiv.XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs, opt_onloadPlane) {
 
-    utils.dom.debug("loadInRenderers", renderables);
+    window.console.log("loadInRenderers", renderables);
     var that = this;
     var renderCount = 0; 
     var xtkPlanes = [];
@@ -501,10 +506,6 @@ xiv.XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs
 		renderCount++;
 		if (renderCount === culledViewPlanes.length) {
 		    utils.dom.debug("All View Planes rendered...", that.allRenderedCallbacks_);
-
-
-
-
 
 		    goog.array.forEach(that.allRenderedCallbacks_, function(callback){
 			callback();

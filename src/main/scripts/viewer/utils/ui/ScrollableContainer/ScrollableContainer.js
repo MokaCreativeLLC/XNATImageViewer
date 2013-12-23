@@ -29,10 +29,9 @@ goog.require('utils.ui.GenericSlider');
  */
 goog.provide('utils.ui.ScrollableContainer');
 utils.ui.ScrollableContainer = function (opt_args) {
-    var that = this;    
+   
     var parent = opt_args && opt_args['parent'] ? opt_args['parent'] : document.body;
     
-   
 
     //------------------
     // Initialize the elements.
@@ -46,8 +45,8 @@ utils.ui.ScrollableContainer = function (opt_args) {
     //------------------
     // Set Slider UI and callbacks
     //------------------
-    this._Slider.addSlideCallback(that.mapSliderToContents.bind(this));  
-    this._Slider.bindToMouseWheel(that._element);
+    this._Slider.addSlideCallback(this.mapSliderToContents.bind(this));  
+    this._Slider.bindToMouseWheel(this._element);
 
     
 
@@ -150,38 +149,10 @@ utils.ui.ScrollableContainer.prototype.scrollables_ = null;
  */
 utils.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 
-
-    //------------------
-    // Get the widget height
-    //------------------
     var widgetHeight = utils.style.dims(this._element, 'height');
-
-
-
-    //------------------
-    // Get the scroll area height
-    //------------------
     var scrollAreaHeight = utils.convert.toInt(utils.style.getComputedStyle(this.scrollArea_, 'height'));
-
-
-
-    //------------------
-    // Get the Slider range (a function of the height of widget);
-    //------------------
     var beforeRange = [this._Slider.getMinimum(), this._Slider.getMaximum()];
-
-
-
-    //------------------
-    // Get the new Slider range
-    //------------------
     var afterRange = [0, scrollAreaHeight - widgetHeight];
-
-
-
-    //------------------
-    // Get the slider thumnail for resizing
-    //------------------
     var sliderThumb = this._Slider.getThumb();
 
 
@@ -194,27 +165,20 @@ utils.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
     //------------------
     if (widgetHeight < scrollAreaHeight) {
 
-	//
 	// The slider thumbnail's height is a function of
 	// how much scroll area is hidden.  Want to make sure the height
 	// is proportional to the contents.
-	//
 	utils.style.setStyle(sliderThumb, {
 	    'opacity': 1,
 	    'height': widgetHeight * (widgetHeight / scrollAreaHeight)
 	});
-	
 
-	//
 	// Enable the slider
-	//
 	this._Slider.setEnabled(true);
 	
 
-	//
 	// Move the scroll area to the top (as the slider's thumbnail
 	// is at the top).
-	//
 	var sendVal = Math.abs(this._Slider.getValue() - 100);
 	var remap = utils.convert.remap1D(sendVal, beforeRange, afterRange);
 	var t = remap.newVal;

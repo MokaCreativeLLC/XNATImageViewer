@@ -160,9 +160,6 @@ utils.xtk.ControllerMenu.prototype.getMenu = function(){
  * @param {Object.<string, Array.<X.object>>}
  */
 utils.xtk.ControllerMenu.prototype.makeControllerMenu = function(viewables) {
-    var that = this;    
-
-
 
     //------------------
     // DICOMS
@@ -260,12 +257,11 @@ utils.xtk.ControllerMenu.prototype.insertInMenu = function(menuObject, folderArr
  * Creates a buttonRow that allows the user to toggle the
  * visibility of an xtkObject in the viewer.
  *
- * @param {!string, Element=}
+ * @param {!string} fileName
+ * @param {Element=} opt_parentbutton
  * @private
  */
 utils.xtk.ControllerMenu.prototype.makeVisible_ = function(fileName, opt_parentbutton){
-    var that = this;
-
 
 
     //------------------
@@ -273,8 +269,8 @@ utils.xtk.ControllerMenu.prototype.makeVisible_ = function(fileName, opt_parentb
     // set the visibility of the object.
     //------------------
     var callback = function(button) {
-	that.menuMap_[button.getAttribute('file')]['xtkObj'].visible = that.menuMap_[button.getAttribute('file')]['visible'].checked;		
-    }
+	this.menuMap_[button.getAttribute('file')]['xtkObj'].visible = this.menuMap_[button.getAttribute('file')]['visible'].checked;
+    }.bind(this)
 
 
 
@@ -306,18 +302,17 @@ utils.xtk.ControllerMenu.prototype.makeVisible_ = function(fileName, opt_parentb
  * @private
  */
 utils.xtk.ControllerMenu.prototype.makeThreshold_ = function(fileName){
-    var that = this;
-    var sliderRow, slider, xtkObj;
 
+    var sliderRow, slider, xtkObj;
 
 
     //------------------
     // Define the 'slide' callback: threshold adjust.
     //------------------
     var callback = function(slider){
-        that.menuMap_[slider.file]['xtkObj'].lowerThreshold = slider.getValue();
-        that.menuMap_[slider.file]['xtkObj'].upperThreshold = slider.getValue() + slider.getExtent();
-    }
+        this.menuMap_[slider.file]['xtkObj'].lowerThreshold = slider.getValue();
+        this.menuMap_[slider.file]['xtkObj'].upperThreshold = slider.getValue() + slider.getExtent();
+    }.bind(this)
 
     sliderRow =  this.makeSliderRow('Threshold', callback, fileName, {'type' : 'twothumb'});
     slider = sliderRow['slider']['slider'];
@@ -351,10 +346,9 @@ utils.xtk.ControllerMenu.prototype.makeThreshold_ = function(fileName){
  * @private
  */
 utils.xtk.ControllerMenu.prototype.makeVolumeRendering_ = function(fileName){
-    var that = this;
     var callback = function(button){
-        that.menuMap_[button.getAttribute('file')]['xtkObj'].volumeRendering = button.checked;
-    }
+        this.menuMap_[button.getAttribute('file')]['xtkObj'].volumeRendering = button.checked;
+    }.bind(this)
     return this.makeButtonRow("Volume Rendering", callback, fileName)
 }
 
@@ -370,9 +364,8 @@ utils.xtk.ControllerMenu.prototype.makeVolumeRendering_ = function(fileName){
  * @private
  */
 utils.xtk.ControllerMenu.prototype.makeToggleButton2D_ = function(fileName, category){
-    var that = this;
-    var notTheSameButton, sameCategory;
 
+    var notTheSameButton, sameCategory;
 
 
     //------------------
@@ -384,16 +377,16 @@ utils.xtk.ControllerMenu.prototype.makeToggleButton2D_ = function(fileName, cate
 	// Set the pertaining XtkObject.isSelected parameter to 'true'
 	// otherwise it wont load in the XtkPlane.
 	//
-	that.menuMap_[button.id]['xtkObj'].isSelectedVolume = true;
+	this.menuMap_[button.id]['xtkObj'].isSelectedVolume = true;
 
 	//
 	// Add the xtkObject to renderers.
 	//
-	that.XtkDisplayer_.set2DRenderObject(button.id);
+	this.XtkDisplayer_.set2DRenderObject(button.id);
 
 	//
 	// Loop through all radio buttons, untoggling all but
-	// the one that was just clicked.
+	// the one this was just clicked.
 	//
 	goog.array.forEach(goog.dom.getElementsByClass(utils.xtk.ControllerMenu.RADIO_BUTTON_CLASS), function(otherButton){
 	    theSameButton = (otherButton === button);
@@ -404,10 +397,10 @@ utils.xtk.ControllerMenu.prototype.makeToggleButton2D_ = function(fileName, cate
 	    //
 	    if (!theSameButton && sameCategory) {
 		otherButton.checked =  false;
-		that.menuMap_[otherButton.id]['xtkObj'].isSelectedVolume = otherButton.checked;
+		this.menuMap_[otherButton.id]['xtkObj'].isSelectedVolume = otherButton.checked;
 	    }
-	})
-    }
+	}.bind(this))
+    }.bind(this)
 
 
 
@@ -490,16 +483,14 @@ utils.xtk.ControllerMenu.prototype.makeMasterOpacity_ = function(){
  * @private
  */
 utils.xtk.ControllerMenu.prototype.makeOpacity_ = function(fileName, opt_parentslider){
-    var that = this;
-
-
+ 
 
     //------------------
     // Define the slide callback.
     //------------------
-    var callback = function(slider){
-	that.menuMap_[slider.file]['xtkObj'].opacity = that.menuMap_[slider.file]['opacity'].getValue();
-    }
+    var callback = function(slider){	
+	this.menuMap_[slider.file]['xtkObj'].opacity = this.menuMap_[slider.file]['opacity'].getValue();
+    }.bind(this)
 
 
 
@@ -527,7 +518,8 @@ utils.xtk.ControllerMenu.prototype.makeOpacity_ = function(fileName, opt_parents
  * Makes a menu row containing an array of elements.
  *
  * @private
- * @param {Array.<Element>, Array=}
+ * @param {Array.<Element>} eltArr
+ * @param { Array=} opt_lefts
  * @return {Element}
  */
 utils.xtk.ControllerMenu.prototype.makeRow = function (eltArr, opt_lefts) {
@@ -545,6 +537,7 @@ utils.xtk.ControllerMenu.prototype.makeRow = function (eltArr, opt_lefts) {
 	    'position': 'absolute',
 	    'left': ((100 / eltArr.length) * i).toString() + '%',
 	})
+	//console.log(row, elt);
 	goog.dom.append(row, elt);
     })
 
@@ -574,10 +567,10 @@ utils.xtk.ControllerMenu.prototype.makeRow = function (eltArr, opt_lefts) {
  * @return {Element}
  */
 utils.xtk.ControllerMenu.prototype.makeStandardVisibilityControls3D = function(folderName3D, xtkObjects){
-    var that = this;
+ 
     var fileName = '';
-    var displayAll = that.makeDisplayAll_();
-    var masterOpacity = that.makeMasterOpacity_();
+    var displayAll = this.makeDisplayAll_();
+    var masterOpacity = this.makeMasterOpacity_();
     var opacity, visible;
     
 
@@ -589,7 +582,7 @@ utils.xtk.ControllerMenu.prototype.makeStandardVisibilityControls3D = function(f
     this.menuMap_[folderName3D] = {};
     this.menuMap_[folderName3D]['display all'] = displayAll['button'];
     this.menuMap_[folderName3D]['master opacity'] = masterOpacity['slider']['slider']; 
-    this.insertInMenu(this.menu3D_, [folderName3D], that.makeRow([displayAll['label'], displayAll['button'], masterOpacity['label'], masterOpacity['slider']['element'],  masterOpacity['value']], that.visibilityRowSpacing));
+    this.insertInMenu(this.menu3D_, [folderName3D], this.makeRow([displayAll['label'], displayAll['button'], masterOpacity['label'], masterOpacity['slider']['element'],  masterOpacity['value']], this.visibilityRowSpacing));
 
 
 
@@ -600,21 +593,26 @@ utils.xtk.ControllerMenu.prototype.makeStandardVisibilityControls3D = function(f
     goog.array.forEach(xtkObjects, function(xtkObject, i){
 	fileName =  utils.string.basename(goog.isArray(xtkObject.file) ? xtkObject.file[0] : xtkObject.file);
 
+	// Special case for annotations
+	fileName = xtkObject.caption ? xtkObject.caption : fileName;
+
 	//
 	// Putting this first because we need the xObject
 	// for 2D toggle defining.
 	//
-	that.menuMap_[fileName] = {};
-	that.menuMap_[fileName]['xtkObj'] = xtkObject;
+	this.menuMap_[fileName] = {};
+	this.menuMap_[fileName]['xtkObj'] = xtkObject;
 
-	visible = that.makeVisible_(fileName, displayAll['button'], displayAll['button']);
-	that.menuMap_[fileName]['visible'] = visible['button'];
+	visible = this.makeVisible_(fileName, displayAll['button'], displayAll['button']);
+	this.menuMap_[fileName]['visible'] = visible['button'];
 
-	opacity = that.makeOpacity_(fileName, masterOpacity['slider']['slider']);
-	that.menuMap_[fileName]['opacity'] = opacity['slider']['slider'];
-	that.insertInMenu(that.menu3D_, [folderName3D, fileName], that.makeRow([visible['label'], visible['button'], opacity['label'], opacity['slider']['element'], opacity['value']], that.visibilityRowSpacing));
+	opacity = this.makeOpacity_(fileName, masterOpacity['slider']['slider']);
+	this.menuMap_[fileName]['opacity'] = opacity['slider']['slider'];
+	this.insertInMenu(this.menu3D_, [folderName3D, fileName], this.makeRow([visible['label'], visible['button'], 
+										opacity['label'], opacity['slider']['element'], opacity['value']], 
+									       this.visibilityRowSpacing));
 
-    })
+    }.bind(this))
 }
 
 
@@ -629,7 +627,7 @@ utils.xtk.ControllerMenu.prototype.makeStandardVisibilityControls3D = function(f
  * @param {Array.<X.Object>}
  */ 
 utils.xtk.ControllerMenu.prototype.addVolumes = function(xtkObjects){
-    var that = this;
+ 
     var fileName = '';
     var folderName3D = 'Volumes';
     var folderName2D = 'Volumes';
@@ -657,26 +655,26 @@ utils.xtk.ControllerMenu.prototype.addVolumes = function(xtkObjects){
 	// Putting this first because we need the xObject
 	// for 2D toggle defining.
 	//
-	if (!that.menuMap_[fileName]) { 
-	    that.menuMap_[fileName] = {};
-	    that.menuMap_[fileName]['xtkObj'] = xtkObject;
+	if (!this.menuMap_[fileName]) { 
+	    this.menuMap_[fileName] = {};
+	    this.menuMap_[fileName]['xtkObj'] = xtkObject;
 	}
 
-	threshold = that.makeThreshold_(fileName);
-	volumeRendering = that.makeVolumeRendering_(fileName);
-	toggle2d = that.makeToggleButton2D_(fileName);
+	threshold = this.makeThreshold_(fileName);
+	volumeRendering = this.makeVolumeRendering_(fileName);
+	toggle2d = this.makeToggleButton2D_(fileName);
 
-	that.menuMap_[fileName]['threshold'] = threshold['slider']['slider'];
-	that.menuMap_[fileName]['volume rendering'] = volumeRendering['button'];
-	that.menuMap_[fileName]['toggle2d'] = toggle2d['button']; 
+	this.menuMap_[fileName]['threshold'] = threshold['slider']['slider'];
+	this.menuMap_[fileName]['volume rendering'] = volumeRendering['button'];
+	this.menuMap_[fileName]['toggle2d'] = toggle2d['button']; 
 
-	that.insertInMenu(that.menu3D_, [folderName3D, fileName], that.makeRow([volumeRendering['label'], 
+	this.insertInMenu(this.menu3D_, [folderName3D, fileName], this.makeRow([volumeRendering['label'], 
 										volumeRendering['button'], 
 										threshold['label'], 
 										threshold['slider']['element'], 
-										threshold['value']], that.visibilityRowSpacing ));	
-	that.insertInMenu(that.menu2D_, [folderName2D], that.makeRow([toggle2d['button'] , toggle2d['label']], ['10px', '8%']));	
-    })
+										threshold['value']], this.visibilityRowSpacing ));	
+	this.insertInMenu(this.menu2D_, [folderName2D], this.makeRow([toggle2d['button'] , toggle2d['label']], ['10px', '8%']));	
+    }.bind(this))
 }
 
 
@@ -690,7 +688,7 @@ utils.xtk.ControllerMenu.prototype.addVolumes = function(xtkObjects){
  * @param {Array.<X.Object>}
  */ 
 utils.xtk.ControllerMenu.prototype.addMeshes = function(xtkObjects){
-    var that = this;
+ 
     var folderName3D = 'Meshes';
 
 
@@ -713,7 +711,7 @@ utils.xtk.ControllerMenu.prototype.addMeshes = function(xtkObjects){
  * @param {Array.<X.Object>}
  */ 
 utils.xtk.ControllerMenu.prototype.addDicoms = function(xtkObjects){
-    var that = this;
+   
     var folderName3D = 'DICOM';
     
 
@@ -737,23 +735,23 @@ utils.xtk.ControllerMenu.prototype.addDicoms = function(xtkObjects){
 	// Putting this first because we need the xObject
 	// for 2D toggle defining.
 	//
-	if (!that.menuMap_[fileName]) { 
-	    that.menuMap_[fileName] = {};
-	    that.menuMap_[fileName]['xtkObj'] = xtkObject;
+	if (!this.menuMap_[fileName]) { 
+	    this.menuMap_[fileName] = {};
+	    this.menuMap_[fileName]['xtkObj'] = xtkObject;
 	}
 
-	threshold = that.makeThreshold_(fileName);
-	volumeRendering = that.makeVolumeRendering_(fileName);
+	threshold = this.makeThreshold_(fileName);
+	volumeRendering = this.makeVolumeRendering_(fileName);
 
-	that.menuMap_[fileName]['threshold'] = threshold['slider']['slider'];
-	that.menuMap_[fileName]['volume rendering'] = volumeRendering['button'];
+	this.menuMap_[fileName]['threshold'] = threshold['slider']['slider'];
+	this.menuMap_[fileName]['volume rendering'] = volumeRendering['button'];
 
-	that.insertInMenu(that.menu3D_, [folderName3D, fileName], that.makeRow([volumeRendering['label'], 
+	this.insertInMenu(this.menu3D_, [folderName3D, fileName], this.makeRow([volumeRendering['label'], 
 										volumeRendering['button'], 
 										threshold['label'], 
 										threshold['slider']['element'], 
-										threshold['value']], that.visibilityRowSpacing ));		
-    })
+										threshold['value']], this.visibilityRowSpacing ));		
+    }.bind(this))
 }
 
 
@@ -767,15 +765,8 @@ utils.xtk.ControllerMenu.prototype.addDicoms = function(xtkObjects){
  * @param {Array.<X.Object>}
  */ 
 utils.xtk.ControllerMenu.prototype.addAnnotations = function(xtkObjects){
-    var that = this;
+   
     var folderName3D = 'Annotations';
-
-
-
-    //------------------
-    // First, construct the 'standard' visibility 
-    // controllers.
-    //------------------
     this.makeStandardVisibilityControls3D(folderName3D, xtkObjects);
 }
 
@@ -789,11 +780,11 @@ utils.xtk.ControllerMenu.prototype.addAnnotations = function(xtkObjects){
  * @param {Array.<X.object>}
  */
 utils.xtk.ControllerMenu.prototype.addFiber = function(xtkObjects){
-    var that = this;
+    
     var fileName = '';
     var folderName3D = 'Fibers';
-    var displayAll = that.makeDisplayAll_();
-    var masterOpacity = that.makeMasterOpacity_();
+    var displayAll = this.makeDisplayAll_();
+    var masterOpacity = this.makeMasterOpacity_();
     var opacity, visible;
 
 
@@ -805,8 +796,8 @@ utils.xtk.ControllerMenu.prototype.addFiber = function(xtkObjects){
     this.menuMap_[folderName3D] = {};
     this.menuMap_[folderName3D]['display all'] = displayAll['button'];
     this.menuMap_[folderName3D]['master opacity'] = masterOpacity['slider']; 
-    this.insertInMenu(this.menu3D_, [folderName3D], that.makeRow([displayAll['label'], displayAll['button']], ['0%','30%']));
-    this.insertInMenu(this.menu3D_, [folderName3D], that.makeRow([  masterOpacity['label'], masterOpacity['slider'],  masterOpacity['value']], ['0%','30%','62%']));
+
+    this.insertInMenu(this.menu3D_, [folderName3D], this.makeRow([displayAll['label'], displayAll['button'], masterOpacity['label'], masterOpacity['slider']['element'],  masterOpacity['value']], this.visibilityRowSpacing));
 
 
 
@@ -816,21 +807,22 @@ utils.xtk.ControllerMenu.prototype.addFiber = function(xtkObjects){
     goog.array.forEach(xtkObjects, function(xtkObject, i){
 	fileName =  utils.string.basename(goog.isArray(xtkObject.file) ? xtkObject.file[0] : xtkObject.file);
 
-	opacity = that.makeOpacity_(fileName, masterOpacity['slider']);
-	visible = that.makeVisible_(fileName, displayAll['button']);
+	opacity = this.makeOpacity_(fileName, masterOpacity['slider']);
+	visible = this.makeVisible_(fileName, displayAll['button']);
 
 
-	that.menuMap_[fileName] = {};
-	that.menuMap_[fileName]['xtkObj'] = xtkObject;
-	that.menuMap_[fileName]['opacity'] = opacity['slider'];
-	that.menuMap_[fileName]['visible'] = visible['button'];
+	this.menuMap_[fileName] = {};
+	this.menuMap_[fileName]['xtkObj'] = xtkObject;
+	this.menuMap_[fileName]['opacity'] = opacity['slider'];
+	this.menuMap_[fileName]['visible'] = visible['button'];
 
 	//
 	// Visible and opacity are the same row.
 	//
-	that.insertInMenu(that.menu3D_, [folderName3D, fileName], that.makeRow([visible['label'], visible['button']], ['0%','30%']));
-	that.insertInMenu(that.menu3D_, [folderName3D, fileName], that.makeRow([opacity['label'], opacity['slider'], opacity['value']], ['0%','30%','62%']));
-    })
+	this.insertInMenu(this.menu3D_, [folderName3D, fileName], this.makeRow([visible['label'], visible['button'], 
+										opacity['label'], opacity['slider']['element'], opacity['value']], 
+									        this.visibilityRowSpacing));
+    }.bind(this))
 }
 
 
@@ -853,7 +845,8 @@ utils.xtk.ControllerMenu.prototype.getParent = function(elt){
 /**
  * Makes a controller label element.
  *
- * @param {!String, Element=}
+ * @param {!String} labelTitle
+ * @param {Element=} opt_parent
  * @return {Element}
  */
 utils.xtk.ControllerMenu.prototype.makeLabel = function(labelTitle, opt_parent){
@@ -888,6 +881,7 @@ utils.xtk.ControllerMenu.prototype.makeNumberDisplay = function(opt_parent){
  * @return {Element}
  */
 utils.xtk.ControllerMenu.prototype.makeSliderRow = function(labelTitle, callback, fileAttr, opt_args) {
+
     var slider, sliderElt, sliderPackage, label, value;
 
 
@@ -923,15 +917,26 @@ utils.xtk.ControllerMenu.prototype.makeSliderRow = function(labelTitle, callback
     //------------------
     // Set callbacks.
     //------------------
-    goog.events.listen(slider, goog.ui.Component.EventType.CHANGE, function(event) {
+    var slideCallback = function(event) {
+	//window.console.log("HERE");
 	if (opt_args && opt_args['type'] === 'twothumb') { 
 	    value.innerHTML = "s: " + slider.getValue() + " e: " + (slider.getValue() + slider.getExtent());
 	} else {
 	    value.innerHTML = slider.getValue().toFixed(2);
 	}
-
         callback(slider);
-    });
+    }
+
+
+    //
+    // Need to differentiate between callbacks from the two thumb slider
+    // and the slider
+    //
+    if (slider.addSlideCallback){
+	slider.addSlideCallback(slideCallback)
+    } else {
+	goog.events.listen(slider, goog.ui.Component.EventType.CHANGE, slideCallback);
+    }
 
     return { 'slider': sliderPackage, 'value': value,'label': label}
 }
@@ -1050,12 +1055,11 @@ utils.xtk.ControllerMenu.prototype.makeSlider = function(opt_parent, opt_args) {
  * refer to goog.ui.TwoThumb slider for this, as opposed to a
  * sibling class of utils.ui.GenericSlider.
  *
- * @param {Element=, Object=}
+ * @param {Element=} opt_parent
+ * @param {Object=} opt_args
  * @return {Element}
  */
 utils.xtk.ControllerMenu.prototype.makeTwoThumbSlider = function(opt_parent, opt_args) {
-    var that = this;
-
 
 
     //------------------
