@@ -538,18 +538,24 @@ xiv.ViewLayoutManager.prototype.implementViewLayout = function() {
     // (basically for changing slider colors)
     //
     if (that.visiblePlanes_.length === 1){
-	goog.array.forEach(that.onOneViewPlaneVisibleCallbacks_, function(callback){ callback(that.visiblePlanes_[0]); });
+	goog.array.forEach(that.onOneViewPlaneVisibleCallbacks_, function(callback){ 
+	    callback(that.visiblePlanes_[0]); 
+	    that.applyBackground_();
+	});
 
 	
     //
     // Run callbacks when multiple panels are visible.
     //
     } else{
-	goog.array.forEach(that.onMultipleViewPlanesVisibleCallbacks_, function(callback){ callback(that.visiblePlanes_)});
+	goog.array.forEach(that.onMultipleViewPlanesVisibleCallbacks_, function(callback){ 
+	    callback(that.visiblePlanes_);
+	    that.applyBackground_();
+	});
     }
     
 
-
+    
 }
 
 
@@ -567,12 +573,10 @@ xiv.ViewLayoutManager.prototype.implementViewLayout = function() {
  * animation is fully complete, then we call on 'implementxiv.ViewLayout.'
  * (It is also called when we have a 0-length animation time).
  *
- * @param {!xiv.ViewLayout, function}
+ * @param {!string} viewLayout
+ * @param {function} callback
  */ 
 xiv.ViewLayoutManager.prototype.setViewLayout = function(viewLayout, callback) {
-
-    var that = this;
-
 
     this.visiblePlanes_ = [];
     this.visibleInteractors_ = [];
@@ -586,23 +590,23 @@ xiv.ViewLayoutManager.prototype.setViewLayout = function(viewLayout, callback) {
     //------------------
     this.loopAll(function(viewPlaneElement, i, plane, interactor){    
 	var tempElt = utils.dom.makeElement("div", viewPlaneElement.parentNode, "tempEltForAnim");
-	goog.dom.classes.set(tempElt, that.currViewLayout_.cssSheets[plane]);
+	goog.dom.classes.set(tempElt, this.currViewLayout_.cssSheets[plane]);
 	if (utils.style.getComputedStyle(tempElt, ['visibility'])['visibility'] === 'visible') {  
-	    that.visiblePlanes_.push(viewPlaneElement); 
+	    this.visiblePlanes_.push(viewPlaneElement); 
 	    if (interactor) {
-		that.visibleInteractors_.push(that.viewPlaneInteractors_[viewPlaneElement.getAttribute('plane')]); 
+		this.visibleInteractors_.push(this.viewPlaneInteractors_[viewPlaneElement.getAttribute('plane')]); 
 	    }
 	}
 	viewPlaneElement.parentNode.removeChild(tempElt);
 	delete tempElt;
-    })
+    }.bind(this))
 
 
     
     //------------------
     // Reset the default multi-view if another one is selected.
     //------------------
-    if (that.visiblePlanes_.length > 1){
+    if (this.visiblePlanes_.length > 1){
 	this._defaultMultiView = this.currViewLayout_;
     }
 
@@ -613,9 +617,9 @@ xiv.ViewLayoutManager.prototype.setViewLayout = function(viewLayout, callback) {
     //------------------
     if (this.animateViewLayoutChange_) {
 
-	var animatableElts = /**@type{Array.<Element>}*/ [];
-	var startDims = /**@type{Array.<Object.<string, string|number>>}*/ [];
-	var endDims = /**@type{Array.<Object.<string, string|number>>}*/ [];
+	this.animatableElts = [];
+	this.startDims = [];
+	this.endDims = [];
 	
 
 	//
@@ -627,43 +631,33 @@ xiv.ViewLayoutManager.prototype.setViewLayout = function(viewLayout, callback) {
 	    //
 	    // Calculate the dim changes for the ViewPlane
 	    //
-	    var tempDims = utils.style.determineStartEndDimsCSS(viewPlaneElement, that.currViewLayout_.cssSheets[plane], function(asIsViewPlane, toBeViewPlane){
+	    var tempDims = utils.style.determineStartEndDimsCSS(viewPlaneElement, this.currViewLayout_.cssSheets[plane], function(asIsViewPlane, toBeViewPlane){
 
 
 		//
 		// Add the default CSS to the invisible
 		// planes.
 		//
-		if (that.visiblePlanes_.length === 1 && that.visiblePlanes_[0] !== asIsViewPlane) {
-		    goog.dom.classes.add(toBeViewPlane, that._defaultMultiView.cssSheets[plane]);
+		if (this.visiblePlanes_.length === 1 && 
+		    this.visiblePlanes_[0] !== asIsViewPlane) {
+		    goog.dom.classes.add(toBeViewPlane, this._defaultMultiView.cssSheets[plane]);
 
 
 		//
 		// Bring up the z-index of the visible plane so that it 
 		// can animate coherently.
 		//
-		} else if (that.visiblePlanes_.length === 1 && that.visiblePlanes_[0] === asIsViewPlane) {
+		} else if (this.visiblePlanes_.length === 1 && 
+			   this.visiblePlanes_[0] === asIsViewPlane) {
 		    asIsViewPlane.style.zIndex = 10000;
 		}
-	    })
-
-
-	    //
-	    // Apply the background color
-	    //
-	    
-	    if (viewPlaneElement.getAttribute('originalbackgroundcolor')) {
-		tempDims['end'].background =  viewPlaneElement.getAttribute('originalbackgroundcolor');
-	    }
-	    
+	    }.bind(this))
 
 
 
-
-
-	    animatableElts.push(viewPlaneElement);
-	    startDims.push(tempDims['start']);
-	    endDims.push(tempDims['end']);
+	    this.animatableElts.push(viewPlaneElement);
+	    this.startDims.push(tempDims['start']);
+	    this.endDims.push(tempDims['end']);
 
 
             //
@@ -671,7 +665,7 @@ xiv.ViewLayoutManager.prototype.setViewLayout = function(viewLayout, callback) {
 	    // interactor (i.e., the Slider).
             //
 	    if (interactor) {
-		var tempInteractorDims = utils.style.determineStartEndDimsCSS(interactor, that.currViewLayout_.cssSheetsInteractor[plane], function(asIsInteractor, toBeInteractor){
+		var tempInteractorDims = utils.style.determineStartEndDimsCSS(interactor, this.currViewLayout_.cssSheetsInteractor[plane], function(asIsInteractor, toBeInteractor){
 
 		    //
 		    // Calculate Slider track color changes.
@@ -682,18 +676,15 @@ xiv.ViewLayoutManager.prototype.setViewLayout = function(viewLayout, callback) {
 		    var track = goog.dom.getElementByClass(xiv.XtkPlane.SLIDER_TRACK_CLASS, interactor);		    
 		    var singleSlider = [80, 80, 80];
 		    var multSlider = (plane === 'x') ? [255,0,0] : (plane === 'y') ? [0,255,0] : [0,0,255];
-		    var currColor = utils.style.getComputedStyle(track, ['background-color'])['background-color'];
-		    var toBeColor = (that.visiblePlanes_.length <= 1) ? singleSlider : multSlider;
-		    animatableElts.push(track);
-		    startDims.push({'background-color':currColor});
-		    endDims.push({'background-color': toBeColor});
+		    //this.animatableElts.push(track);
+
 		    
 
 		    //
 		    // If the visible interactor is the current interactor,
                     // bring it to the front.
 		    //
-		    if (that.visibleInteractors_[0] === asIsInteractor) {
+		    if (this.visibleInteractors_[0] === asIsInteractor) {
 			asIsInteractor.style.zIndex = 20001;
 		    
 
@@ -701,37 +692,31 @@ xiv.ViewLayoutManager.prototype.setViewLayout = function(viewLayout, callback) {
 	            // Otherwise, apply the default styling...
 		    //
 		    } else {
-			goog.dom.classes.add(toBeInteractor, that._defaultMultiView.cssSheetsInteractor[plane]);
+			goog.dom.classes.add(toBeInteractor, this._defaultMultiView.cssSheetsInteractor[plane]);
 		    }
-		})
-		animatableElts.push(interactor);
-		startDims.push(tempInteractorDims['start']);
-		endDims.push(tempInteractorDims['end']);
+		}.bind(this))
+
+		this.animatableElts.push(interactor);
+		this.startDims.push(tempInteractorDims['start']);
+		this.endDims.push(tempInteractorDims['end']);
 	    }
-	})
-	
+	}.bind(this))
 	
 
-	
 
 	//
 	// Run a parallel animation of the dim changes
 	//
-	utils.fx.parallelAnimate(animatableElts, 
-				 startDims, endDims, 400, 
-				 undefined,
-				 function() { goog.array.forEach(that.onViewLayoutAnimateCallbacks_, function(callback){ callback() })}, 
+	utils.fx.parallelAnimate(this.animatableElts, this.startDims, this.endDims, 400, undefined,
+				 function() { 
+				     goog.array.forEach(this.onViewLayoutAnimateCallbacks_, function(callback){ 
+					 callback(); 
+				     });
+				 }.bind(this), 
 				 function(){ 
-				     that.implementViewLayout()
-				     //
-				     // Apply the background color
-				     //
-				     that.loopAll(function(viewPlaneElement){
-					 if (viewPlaneElement.getAttribute('originalbackgroundcolor')) {
-					     viewPlaneElement.style.background =  viewPlaneElement.getAttribute('originalbackgroundcolor');
-					 }
-				     })
-				 });
+				     this.implementViewLayout();
+				     
+				 }.bind(this));
 
 
 
@@ -746,6 +731,30 @@ xiv.ViewLayoutManager.prototype.setViewLayout = function(viewLayout, callback) {
 
 
 
+/**
+ * @type {!Array.<string>}
+ * @private
+ */
+xiv.ViewLayoutManager.prototype.backgroundColor3d_ = ['rgba(0,0,0,0)', 'rgba(0,0,0,0)'];
+
+
+/**
+ * @param {!Array.<stringr>} colors
+ */
+xiv.ViewLayoutManager.prototype.set3DBackgroundColor = function(colors){
+    this.backgroundColor3d_ = colors;
+}
+
+
+
+/**
+ * 
+ */
+xiv.ViewLayoutManager.prototype.applyBackground_ = function(){
+    this.planeV_.style.background = 'linear-gradient(' + this.backgroundColor3d_[1] + ',' + this.backgroundColor3d_[0] + ')';
+}
+
+
 
 
 /**
@@ -754,50 +763,30 @@ xiv.ViewLayoutManager.prototype.setViewLayout = function(viewLayout, callback) {
  * @param {function}
  */
 xiv.ViewLayoutManager.prototype.setPlanesDoubleClicked = function(callback){
-    var that = this;
+    
     var anatomicalPlane;
     var newViewLayout;
-
-
+    var planeDoubleClick;
 
     //------------------
     // Loop through all of the planes...
     //------------------
     goog.array.forEach(this.planesAll_, function(planeElt){
 
-	var planeDoubleClick = function(event) {
-
-	    //
-	    // Acquire the anatomical plane string from the clicked
-	    // ViewPlane element.
-	    //
+	planeDoubleClick = function(event) {
 	    anatomicalPlane = event.currentTarget.getAttribute('anatomicalplane');
+	    newViewLayout = this.viewLayouts_[anatomicalPlane];
 
-
-	    //
-	    // Acqure the xiv.ViewLayout from double-clicking on the clicked
-	    // anatomical xiv.ViewLayout.
-	    //
-	    newViewLayout = that.viewLayouts_[anatomicalPlane];
-
-
-	    //
 	    // If you double click on the same view scheme, revert
 	    // back to multi-view.
-	    //
-	    if (newViewLayout === that.currViewLayout_) { newViewLayout = that._defaultMultiView }
+	    if (newViewLayout === this.currViewLayout_) { newViewLayout = this._defaultMultiView }
 
-
-	    //
 	    // Run any necessary callbacks after click (might pertain to coloring
 	    // sliders, etc.).
-	    //
-	    goog.array.forEach(that.planeDoubleClickedCallback_, function(callback){ callback(newViewLayout.title) })
+	    goog.array.forEach(this.planeDoubleClickedCallback_, function(callback){ callback(newViewLayout.title) })
 	    
 	}
-
-
 	goog.events.removeAll(planeElt);
 	goog.events.listen(planeElt, goog.events.EventType.DBLCLICK, planeDoubleClick)
-    })     
+    }.bind(this))     
 }

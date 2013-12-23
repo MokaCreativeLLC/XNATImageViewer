@@ -248,3 +248,19 @@ utils.convert.rgbToArray = function (rgbStr) {
 
     return arr;
 }
+
+
+/**
+* @param {Array.<number>} numArr
+* @param {number=} opt_multiplier
+* @return {!string}
+*/
+utils.convert.arrayToRgb = function (numArr, opt_multiplier) {
+    var str = 'rgb('
+    var opt_multiplier = (opt_multiplier === undefined) ? 1 : opt_multiplier;
+    goog.array.forEach(numArr, function(num){
+	str += parseInt(num * opt_multiplier, 10).toString() + ','
+    })
+    str = str.substring(0, str.length -1) + ')';
+    return str;
+}

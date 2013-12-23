@@ -302,36 +302,21 @@ xiv.ViewLayoutMenu.prototype.clearCallbacks = function() {
  * the appropriate methods when a viewLayout is set. 
  * This is called when the user interacts with the menu.
  *
- * @param {!String}
+ * @param {!String} viewLayout
  */
 xiv.ViewLayoutMenu.prototype.setViewLayout = function(viewLayout) {
-    var that = this;
-
-    
     for (var i=0, len = this.menuItems_.length; i < len; i++){
-
-	//------------------
-	// Match the viewLayout string with the menuItem.
-	//------------------
 	if (this.menuItems_[i].getId().toLowerCase() === viewLayout.toLowerCase()) {
 
-	    //
 	    // Record the view layouts, previous and current.
-	    //
-	    that.prevViewLayout_ = that.currViewLayout_ ? that.currViewLayout_ : viewLayout;
-	    that.currViewLayout_ = viewLayout;
+	    this.prevViewLayout_ = this.currViewLayout_ ? this.currViewLayout_ : viewLayout;
+	    this.currViewLayout_ = viewLayout;
 
-
-	    //
 	    // Highlight / unhighlight the relevant menu items.
-	    //
 	    this.setHighlightedIndex(i);
 
-
-	    //
 	    // Run callbacks.
-	    //
-	    goog.array.forEach(that.selectMenuItemCallbacks_, function(callback){ callback(viewLayout)})
+	    goog.array.forEach(this.selectMenuItemCallbacks_, function(callback){ callback(viewLayout)})
 	    break;
 	}
     }

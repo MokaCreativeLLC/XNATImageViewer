@@ -603,8 +603,11 @@ utils.slicer.getVolumes = function(scene) {
         node['properties'] = utils.slicer.getBasicDisplayProperties(scene, sceneElement);
 	node['properties']['colorTable'] = utils.slicer.getColorTableFile(scene, node['properties']['displayNode']);
 	node['properties']['isSelectedVolume'] =  (selectedVolumeID !== sceneElement.getAttribute('id')) ? false : true;
-	node['properties']['upperThreshold'] =  parseInt(node['properties']['displayNode'].getAttribute('upperThreshold'), 10);
-	node['properties']['lowerThreshold'] =  parseInt(node['properties']['displayNode'].getAttribute('lowerThreshold'), 10);
+
+	if (node['properties']['displayNode']){
+	    node['properties']['upperThreshold'] =  parseInt(node['properties']['displayNode'].getAttribute('upperThreshold'), 10);
+	    node['properties']['lowerThreshold'] =  parseInt(node['properties']['displayNode'].getAttribute('lowerThreshold'), 10);
+	} 
 
 	// Volume visible is a bit unique:
 	// Slicer sets the visible by slice.

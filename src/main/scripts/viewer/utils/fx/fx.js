@@ -254,6 +254,7 @@ utils.fx.parallelAnimate  = function (elts, startDims, endDims, duration, opt_on
     // Apply animation states and add to queue.
     //------------------
     goog.array.forEach(elts, function(elt, i) {
+	//window.console.log(elt, i, startDims[i], endDims[i]);
 	var anims = utils.fx.getAnimationsFromDimChange(elt, startDims[i], endDims[i], duration);
 	for (var key in anims) { 
 	    animQueue.add(anims[key]) 

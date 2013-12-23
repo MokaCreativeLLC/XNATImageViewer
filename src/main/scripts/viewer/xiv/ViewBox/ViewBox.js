@@ -346,7 +346,9 @@ xiv.ViewBox.prototype.initDisplayer = function(){
     // Retrieve the loadFramework.
     //------------------
     switch (this.loadFramework_){
-    case 'XTK': this.Displayer_ = new xiv.XtkDisplayer(this)
+    case 'XTK': 
+	this.Displayer_ = new xiv.XtkDisplayer(this);
+	break;
     }
     this.Displayer_.setElementParentNode(this._element);
 
@@ -358,7 +360,8 @@ xiv.ViewBox.prototype.initDisplayer = function(){
 	if (this._element.hasAttribute('originalbordercolor')){
 	    this._element.style.borderColor = this._element.getAttribute('originalbordercolor');
 	}
-	//that._ViewLayoutMenu.setViewLayout('Four-up');
+	this._ViewLayoutMenu.setViewLayout(this.Displayer_.getViewLayout());
+	
 	this.showChildElements_();
 	this.loadTabs();
     }.bind(this))
@@ -534,36 +537,36 @@ xiv.ViewBox.prototype.loadTabs = function (thumb, loadFramework) {
  * user interacts with the xiv.ViewLayout menu.  Specifically,
  * the xiv.ViewLayoutManager.
  *
- * @type {function()}
  * @private
  */
 xiv.ViewBox.prototype.setViewLayoutMenuCallbacks = function () {
-    var that = this;
-
 
 
     //------------------
     // When a menu Item is clicked.
     //------------------
     this._ViewLayoutMenu.onMenuItemClicked( function() {
-	that.ViewLayoutManager_.setViewLayout(that._ViewLayoutMenu.getSelectedViewLayout());
-	//that.updateStyle();
-	
-    });
+	this.ViewLayoutManager_.set3DBackgroundColor(this.Displayer_.getBackgroundColors());
+	this.ViewLayoutManager_.setViewLayout(this._ViewLayoutMenu.getSelectedViewLayout());
+    }.bind(this));
 
 
 
     //------------------
     // Callback when all panels are visible
     //------------------
-    this.ViewLayoutManager_.onMultipleViewPlanesVisible(function(visiblePanels){ that.Displayer_.XtkPlaneManager_.colorSliders();})
+    this.ViewLayoutManager_.onMultipleViewPlanesVisible(function(visiblePanels){ 
+	this.Displayer_.XtkPlaneManager_.colorSliders();
+    }.bind(this))
 
 
 
     //------------------
     // Callback when one panel is visible
     //------------------
-    this.ViewLayoutManager_.onOneViewPlaneVisible(function(visiblePanel){ that.Displayer_.XtkPlaneManager_.uncolorSliders();})
+    this.ViewLayoutManager_.onOneViewPlaneVisible(function(visiblePanel){ 
+	this.Displayer_.XtkPlaneManager_.uncolorSliders();
+    }.bind(this))
 
 
 
@@ -572,8 +575,8 @@ xiv.ViewBox.prototype.setViewLayoutMenuCallbacks = function () {
     // update the displayer style.
     //------------------
     this.ViewLayoutManager_.onViewLayoutChanged(function(){ 
-	that.Displayer_.updateStyle()
-    });
+	this.Displayer_.updateStyle()
+    }.bind(this));
 
 
 
@@ -581,7 +584,9 @@ xiv.ViewBox.prototype.setViewLayoutMenuCallbacks = function () {
     // For when the view scheme animates, 
     // update the xiv.Displayer style.
     //------------------
-    this.ViewLayoutManager_.onViewLayoutAnimate(function(){ that.Displayer_.updateStyle()});
+    this.ViewLayoutManager_.onViewLayoutAnimate(function(){ 
+	this.Displayer_.updateStyle()
+    }.bind(this));
 
 
 
@@ -589,10 +594,10 @@ xiv.ViewBox.prototype.setViewLayoutMenuCallbacks = function () {
     // Callback when a plane is double clicked.
     //------------------
     this.ViewLayoutManager_.onPlaneDoubleClicked(function(anatomicalPlane){ 
-	that._ViewLayoutMenu.setViewLayout(anatomicalPlane);
-	that.Displayer_.updateStyle()
+	this._ViewLayoutMenu.setViewLayout(anatomicalPlane);
+	this.Displayer_.updateStyle()
 
-    });
+    }.bind(this));
 }
 
 
@@ -648,10 +653,6 @@ xiv.ViewBox.prototype.linkContentDividerToViewBox = function () {
     this.ContentDivider_.addDragEndCallback(function() {
 	that.updateStyle();
     })
-
-
-    //this.ContentDivider_.addDragStartCallback(function() {})
-
 
 
     //------------------
@@ -824,12 +825,7 @@ xiv.ViewBox.prototype.updateStyle = function (opt_args) {
 	    utils.style.setStyle(this.ContentDivider_._element, {
 		'top': xiv.prototype.minContentDividerTop(widgetDims['height']) - 1
 	    });
-	    
-	    //utils.dom.debug("CONTAINMENT: ", this._element, this.ContentDivider_._containment, {
-	    //	'top': t, 
-	    //	'height': h, 
-	    //	'width': widgetDims['width']
-	    //})
+
 
 	    utils.style.setStyle(this.ContentDivider_._containment, {
 		'top': t, 

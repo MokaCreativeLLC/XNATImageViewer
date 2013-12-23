@@ -69,6 +69,7 @@ xiv.XtkDisplayer = function(ViewBox) {
     //------------------  
     this.currentViewables_ = {};
     this.currentViewablesSettings_ = {};
+    this.currentSlicerSettings_ = {};
     this.onloadCallbacks_ = [];
     this.preloadCallbacks_ = [];
 
@@ -170,7 +171,7 @@ xiv.XtkDisplayer.prototype.preloadCallbacks_ = null;
 
 
 /**
- * @param {function}
+ * @param {function} callback The callback to track.
  */ 
 xiv.XtkDisplayer.prototype.addPreloadCallback = function(callback){
     this.preloadCallbacks_.push(callback);
@@ -220,6 +221,12 @@ xiv.XtkDisplayer.prototype.currentViewables_ = null;
  */ 
 xiv.XtkDisplayer.prototype.currentViewablesSettings_ = null;
 
+
+/**
+ * @type {?Object}
+ * @private
+ */ 
+xiv.XtkDisplayer.prototype.currentSlicerSettings_ = null;
 
 
 
@@ -274,7 +281,7 @@ xiv.XtkDisplayer.prototype.syncControllerMenuToViewables_ = function(){
     for (var key in menuMap) {
 	switch(key){
 
-	    // Skip the "Master" level controls.
+	// Skip the "Master" level controls.
 	case 'Annotations':
 	case 'Fibers':
 	case 'Volumes':
@@ -282,27 +289,29 @@ xiv.XtkDisplayer.prototype.syncControllerMenuToViewables_ = function(){
 	    break;
 	default:
 	    var xObj = menuMap[key]['xtkObj'];
+
+	    //
+	    // Sync opacity
+	    //
 	    if (menuMap[key]['opacity'].setValue){
 		menuMap[key]['opacity'].setValue(parseFloat(xObj.opacity));
 	    } else if (menuMap[key]['opacity']['slider'] && menuMap[key]['opacity']['slider'].setValue) {
 		menuMap[key]['opacity']['slider'].setValue(parseFloat(xObj.opacity));
 	    }
-	    
-	    window.console.log(menuMap[key])
 
+
+	    // Get matching array index for the settings.
 	    var i = 0; 
 	    for (i = 0, len = viewablesArr.length; i < len; i++) { if (viewablesArr[i] === xObj){ break;}}
-
 
 	    //
 	    // Sync threshold range
 	    //
 	    if (menuMap[key]['threshold']){
 
-		//window.console.log( settingsArr[i]['properties'], menuMap[key]['threshold'], 
-				    //(settingsArr[i]['properties']['lowerThreshold'].toString() === 'NaN'), settingsArr[i]['properties']['lowerThreshold']);
 		var thresholdSlider = menuMap[key]['threshold'];
-		if (settingsArr[i]['properties']['lowerThreshold'].toString() !== 'NaN') {
+		if ((settingsArr[i]['properties']['lowerThreshold'] !== undefined) 
+		    && settingsArr[i]['properties']['lowerThreshold'].toString() !== 'NaN') {
 		    thresholdSlider.setMinimum(settingsArr[i]['properties']['lowerThreshold']);
 		    thresholdSlider.setValue(settingsArr[i]['properties']['lowerThreshold']);
 		    thresholdSlider.setMinExtent(settingsArr[i]['properties']['lowerThreshold']-1);
@@ -311,7 +320,8 @@ xiv.XtkDisplayer.prototype.syncControllerMenuToViewables_ = function(){
 		    thresholdSlider.setValue(0);
 		    thresholdSlider.setMinExtent(0);
 		}
-		if (settingsArr[i]['properties']['upperThreshold'].toString() !== 'NaN') {
+		if ((settingsArr[i]['properties']['upperThreshold'] !== undefined) 
+		    && settingsArr[i]['properties']['upperThreshold'].toString() !== 'NaN') {
 		    thresholdSlider.setMaximum(settingsArr[i]['properties']['upperThreshold']);
 		} else {
 		    thresholdSlider.setMaximum(10);
@@ -334,7 +344,8 @@ xiv.XtkDisplayer.prototype.syncControllerMenuToViewables_ = function(){
  * Determines if the files from file collection are already loaded
  * into the displayer.
  *
- * @param {string|Array.string}
+ * @param {string|Array.string} fileCollection
+ * @return {boolean}
  * @expose
  */
 xiv.XtkDisplayer.prototype.isLoaded = function(fileCollection) {
@@ -347,35 +358,25 @@ xiv.XtkDisplayer.prototype.isLoaded = function(fileCollection) {
     }
 
 
-
+   
     //----------------
     // Loop through the file collection and compare
     // against the currentViewables_ property.
     //----------------    
-    for (var i=0, len = fileCollection.length; i < len; i++) {
-
-	var fileName = fileCollection[i];
-	var ext = utils.xtk.getFileExt(fileName);
-	var currentViewablesLen = this.currentViewables_.length;
-
-	for (var j = 0; j < currentViewablesLen; j++) {
+    var viewablesArr = utils.convert.objectToArray(this.currentViewables_);
+    var fileName = '';
+    var i=0, j=0;
+    for (i=0, len = fileCollection.length; i < len; i++) {
+	fileName = fileCollection[i];
+	for (j = 0, len2 = viewablesArr.length; j < len2; j++) {
 
 	    // Check for non-DICOM filetypes
-	    //
-	    // NOTE: The collection array may be the same as the xtkObject.file
-	    // collection (xtkObject.file is either an array or a string)
-	    if (this.currentViewables_[j].file == fileCollection) {
+	    if (viewablesArr[j].file === fileCollection) {
 		return true;
 
-
 	    // Check for DICOM filetypes
-	    //
-            // NOTE: DICOM are a special case...you have to do some
-            // string comparisons that aren't straightforward
-	    } else if (ext === 'dcm' || ext === 'dicom') {
-		if (this.currentViewables_[j].file[0].indexOf(fileName.slice(0,-9)) > -1){
-                    return true;		
-		}
+	    } else if (viewablesArr.file[0].indexOf(fileName.slice(0,-9)) > -1){
+                return true;		
 	    }
         }
     }
@@ -398,6 +399,36 @@ xiv.XtkDisplayer.prototype.makeXObject = function(viewable){
 }
 
 
+
+/**
+ * @return {!string}
+ */
+xiv.XtkDisplayer.prototype.getViewLayout = function(){
+
+    //window.console.log("LAYOUT", this.currentViewablesSettings_['layout']);
+    if (this.currentSlicerSettings_ && this.currentSlicerSettings_['layout']) {
+	window.console.log("LAYOUT", this.currentViewablesSettings_['layout']);
+	return this.currentSlicerSettings_['layout'];
+    } else {
+	return xiv.DEFAULT_LAYOUT
+    }
+}
+
+
+
+/**
+ * @return {!string}
+ */
+xiv.XtkDisplayer.prototype.getBackgroundColors = function(){
+
+    if (this.currentSlicerSettings_ && this.currentSlicerSettings_['background-color']) {
+	//window.console.log("LAYOUT", this.currentViewablesSettings_['background-colors']);
+	return [utils.convert.arrayToRgb(this.currentSlicerSettings_['background-color'][0], 255), 
+		utils.convert.arrayToRgb(this.currentSlicerSettings_['background-color'][1], 255)]
+    } else {
+	return ['rgba(0,0,0,1)', 'rgba(0,0,0,1)']
+    }
+}
 
 
 
@@ -489,8 +520,8 @@ xiv.XtkDisplayer.prototype.loadViewables = function (viewables) {
     // Load renderables as single array of currentViewables_
     //----------------
     this.XtkPlaneManager_.onAllRendered(this.onloadCallbacks_);
-    window.console.log("EXITING");
-    window.console.log("this._currentViewables", this.currentViewables_);
+    //window.console.log("EXITING");
+    //window.console.log("this._currentViewables", this.currentViewables_);
     //window.console.log("CONVERTED", utils.convert.objectToArray(this.currentViewables_));
     this.XtkPlaneManager_.loadInRenderers(utils.convert.objectToArray(this.currentViewables_))
 }
@@ -615,7 +646,7 @@ xiv.XtkDisplayer.prototype.loadSlicer = function (fileCollection) {
     this.ViewBox_._SlicerViewMenu.reset(this._slicerSettings);
     this.ViewBox_._SlicerViewMenu.onViewSelected(function(slicerSetting){
 	window.console.log("LOADING THIS GUY", slicerSetting);
-
+	this.currentSlicerSettings_ = slicerSetting;
 	this.ViewBox_._SlicerViewMenu.hideViewSelectDialog();
 	this.XtkPlaneManager_.setCamera('3D', slicerSetting['camera']);
 	this.loadViewables(slicerSetting);
