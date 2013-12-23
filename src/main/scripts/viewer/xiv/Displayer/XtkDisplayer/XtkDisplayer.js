@@ -67,6 +67,8 @@ xiv.XtkDisplayer = function(ViewBox) {
     //------------------
     // Reset property arrays and objects
     //------------------  
+    this.currentViewables_ = {};
+    this.currentViewablesSettings_ = {};
     this.onloadCallbacks_ = [];
     this.preloadCallbacks_ = [];
 
@@ -92,44 +94,9 @@ xiv.XtkDisplayer = function(ViewBox) {
     this.onloadCallbacks_.push(function(){
 	this.ControllerMenu_ = new utils.xtk.ControllerMenu(this);
 	this.ControllerMenu_.makeControllerMenu(this.currentViewables_);
-	
-	
-	//
-	// Sync all of the relevant controllerMenu
-	// properties to the X.Object properties.
-	//
-	var menuMap = this.ControllerMenu_.getMenuMap();
-	for (var key in menuMap) {
-	    switch(key){
-
-		// Skip the "Master" level controls.
-	    case 'Annotations':
-	    case 'Fibers':
-	    case 'Volumes':
-	    case 'Meshes':
-		break;
-	    default:
-		var xObj = menuMap[key]['xtkObj'];
-		// Sync opacity
-		//window.console.log(xObj, xObj.opacity);
-		//window.console.log(menuMap[key]['opacity']);
-		if (menuMap[key]['opacity'].setValue){
-		    menuMap[key]['opacity'].setValue(parseFloat(xObj.opacity));
-		} else if (menuMap[key]['opacity']['slider'] && menuMap[key]['opacity']['slider'].setValue) {
-		    menuMap[key]['opacity']['slider'].setValue(parseFloat(xObj.opacity));
-		}
-		
-		// Sync visibility
-		menuMap[key]['visible'].checked = xObj.visible;
-	    }
-	    
-	}
-	
-	
-
+	this.syncControllerMenuToViewables_();
     }.bind(this))
-
-
+	
 
 }
 goog.inherits(xiv.XtkDisplayer, xiv.Displayer);
@@ -241,10 +208,17 @@ xiv.XtkDisplayer.prototype.onOnload = function (callback) {
 
 
 /**
- * @type {Object}
+ * @type {?Object}
  * @private
  */ 
-xiv.XtkDisplayer.prototype.currentViewables_ = {};
+xiv.XtkDisplayer.prototype.currentViewables_ = null;
+
+
+/**
+ * @type {?Object}
+ * @private
+ */ 
+xiv.XtkDisplayer.prototype.currentViewablesSettings_ = null;
 
 
 
@@ -284,6 +258,76 @@ xiv.XtkDisplayer.prototype.getControllerMenu = function(){
 };
 
 
+
+
+/**
+ * Sync all of the relevant controllerMenu
+ * properties to the X.Object properties.
+ *
+ * @private
+ */ 
+xiv.XtkDisplayer.prototype.syncControllerMenuToViewables_ = function(){
+
+    var viewablesArr = utils.convert.objectToArray(this.currentViewables_);
+    var settingsArr = utils.convert.objectToArray(this.currentViewablesSettings_);
+    var menuMap = this.ControllerMenu_.getMenuMap();
+    for (var key in menuMap) {
+	switch(key){
+
+	    // Skip the "Master" level controls.
+	case 'Annotations':
+	case 'Fibers':
+	case 'Volumes':
+	case 'Meshes':
+	    break;
+	default:
+	    var xObj = menuMap[key]['xtkObj'];
+	    if (menuMap[key]['opacity'].setValue){
+		menuMap[key]['opacity'].setValue(parseFloat(xObj.opacity));
+	    } else if (menuMap[key]['opacity']['slider'] && menuMap[key]['opacity']['slider'].setValue) {
+		menuMap[key]['opacity']['slider'].setValue(parseFloat(xObj.opacity));
+	    }
+	    
+	    window.console.log(menuMap[key])
+
+	    var i = 0; 
+	    for (i = 0, len = viewablesArr.length; i < len; i++) { if (viewablesArr[i] === xObj){ break;}}
+
+
+	    //
+	    // Sync threshold range
+	    //
+	    if (menuMap[key]['threshold']){
+
+		//window.console.log( settingsArr[i]['properties'], menuMap[key]['threshold'], 
+				    //(settingsArr[i]['properties']['lowerThreshold'].toString() === 'NaN'), settingsArr[i]['properties']['lowerThreshold']);
+		var thresholdSlider = menuMap[key]['threshold'];
+		if (settingsArr[i]['properties']['lowerThreshold'].toString() !== 'NaN') {
+		    thresholdSlider.setMinimum(settingsArr[i]['properties']['lowerThreshold']);
+		    thresholdSlider.setValue(settingsArr[i]['properties']['lowerThreshold']);
+		    thresholdSlider.setMinExtent(settingsArr[i]['properties']['lowerThreshold']-1);
+		} else {
+		    thresholdSlider.setMinimum(0);
+		    thresholdSlider.setValue(0);
+		    thresholdSlider.setMinExtent(0);
+		}
+		if (settingsArr[i]['properties']['upperThreshold'].toString() !== 'NaN') {
+		    thresholdSlider.setMaximum(settingsArr[i]['properties']['upperThreshold']);
+		} else {
+		    thresholdSlider.setMaximum(10);
+		}
+	    }
+
+
+	    //
+	    // Sync visible
+	    //
+	    xObj.visible = settingsArr[i]['properties']['visible'];
+	    menuMap[key]['visible'].checked = xObj.visible;
+	}
+	
+    }
+}
 
 
 /**
@@ -357,39 +401,6 @@ xiv.XtkDisplayer.prototype.makeXObject = function(viewable){
 
 
 
-/**
- *
- *
- */
-xiv.XtkDisplayer.prototype.determineSelectedVolume = function(){
-    if (this.currentViewables_['volumes'] || this.currentViewables_['dicoms']) { 
-	var selectedVolumeFound = false;
-
-	// Search volumes
-	goog.array.forEach(this.currentViewables_['volumes'], function(vol){
-	    if (vol.isSelectedVolume){
-		selectedVolumeFound = true;
-	    }
-	}.bind(this))
-
-	// Search dicoms
-	goog.array.forEach(this.currentViewables_['dicoms'], function(dicomSet){
-	    if (dicomSet.isSelectedVolume){
-		selectedVolumeFound = true;
-	    }
-	}.bind(this))
-
-	// If none, prioritize the dicoms first, the volumes[0]
-	if (!selectedVolumeFound){
-	    if (this.currentViewables_['dicoms'] && this.currentViewables_['dicoms'].length > 0){
-		this.currentViewables_['dicoms'][0].isSelectedVolume = true
-	    } else {
-		this.currentViewables_['volumes'][0].isSelectedVolume = true;
-	    }
-	}
-    }
-}
-
 
 
 /**
@@ -404,12 +415,8 @@ xiv.XtkDisplayer.prototype.loadViewables = function (viewables) {
     var viewables = goog.isArray(viewables) ? utils.xtk.getViewables(viewables) : viewables;
     var renderablePlanes = (viewables['volumes'].length > 0 || viewables['dicoms'].length > 0) ? ['Sagittal', 'Coronal', 'Transverse', '3D'] : ['3D']; 
 
-   
-
-    //----------------
-    // Reset currentViewables_
-    //----------------
     this.currentViewables_ = utils.xtk.getEmptyViewablesObject();
+    this.currentViewablesSettings_ = utils.xtk.getEmptyViewablesObject(); 
 
     
 
@@ -418,7 +425,6 @@ xiv.XtkDisplayer.prototype.loadViewables = function (viewables) {
     //----------------
     goog.array.forEach(this.preloadCallbacks_, function(callback){ callback() })
 
-   
 
     for (var key in viewables){
 	switch (key){
@@ -430,81 +436,62 @@ xiv.XtkDisplayer.prototype.loadViewables = function (viewables) {
 	    goog.array.forEach(viewables[key], function(volOrFiberOrMesh){
 		var xObject = this.makeXObject(volOrFiberOrMesh['file']);
 		utils.xtk.setProperties(xObject, volOrFiberOrMesh['properties']); 
+
+		// Volumes have some special qualites we have to attend to.
+		if (key === 'volumes'){
+		    xObject['isSelectedVolume'] = volOrFiberOrMesh['properties']['isSelectedVolume'];
+		    if (volOrFiberOrMesh['properties']['lowerThreshold'] !== NaN){
+			xObject.lowerThreshold = volOrFiberOrMesh['properties']['lowerThreshold'];
+		    }
+		    if (volOrFiberOrMesh['properties']['upperThreshold'] !== NaN){
+			xObject.upperThreshold = volOrFiberOrMesh['properties']['upperThreshold'];
+		    }
+		}
+
 		this.currentViewables_[key].push(xObject);
+		this.currentViewablesSettings_[key].push(volOrFiberOrMesh);
+		
 	    }.bind(this))
 	    break;
 
 	case 'dicoms':
 	    this.currentViewables_[key].push(this.makeXObject(viewables[key]));
+	    this.currentViewablesSettings_[key].push(viewables[key]);
 	    break;
 	case 'annotations':
 	     goog.array.forEach(viewables[key], function(annotationObj){
-		 this.currentViewables_[key].push(utils.xtk.makeAnnotation(annotationObj))
+		 this.currentViewables_[key].push(utils.xtk.makeAnnotation(annotationObj));
+		 this.currentViewablesSettings_[key].push({'properties': annotationObj});
 	     }.bind(this))
 	    break;
 	}
     }
 
 
-    
+
     //----------------
-    // Apply Slicer settings, if a Slicer file.
+    // Check for 'isSelectedVolumes' in volumes. 
+    // If none, select the first.
     //----------------
-    
-    /*
-    if (viewables['slicer'].length) { 
-
-
-	slicerSettingsDict = {}
-	//
-	// Get the slicer settings.
-	//
-	
-	goog.array.forEach(viewables['slicer'], function(mrml){
-	    window.console.log(xiv._Modal.xnatPath_ + mrml);
-	    slicerSettingsDict[mrml] = utils.slicer.getSlicerSettings(mrml);
-	}) 
-	window.console.log(slicerSettingsDict);
-	//console.log("returning");
-	//return
-	slicerSettings = utils.slicer.getSlicerSettings(viewables['slicer'][0]);
-
-	
-	//
-	// Apply the slicer settings.
-	//
-	this.currentViewables_ = this.applySlicerSettingsToViewables(this.currentViewables_, slicerSettings);
-
-
-	//
-	// Cull the viewables based on what's not in the slicer file.
-	//
-	culledViewables = utils.xtk.getEmptyViewablesObject();
-	for (var key in this.currentViewables_) { 
-	    goog.array.forEach(this.currentViewables_[key], function(renderable){
-		renderable.isInSlicerScene ? culledViewables[key].push(renderable) : utils.dom.debug("Renderable not found in slicer file: ", renderable, "filename: ", renderable.file);
-	    })
+    var selectedFound = false;
+    for (var i=0, len=this.currentViewables_['volumes']; i<len; i++) {
+	if (this.currentViewables_['volumes'][i]['isSelectedVolume'] === true){
+	    selectedFound = true;
+	    break;
 	}
-	this.currentViewables_ = culledViewables;
-    };
-    */
+    }
+    if (!selectedFound){
+	this.currentViewables_['volumes'][0]['isSelectedVolume'] = true;
+    }
 
-    
-    //----------------
-    // Find the selected volume
-    //---------------
-    this.determineSelectedVolume();
-
-   
 
     //----------------
     // Load renderables as single array of currentViewables_
     //----------------
     this.XtkPlaneManager_.onAllRendered(this.onloadCallbacks_);
-
     window.console.log("EXITING");
     window.console.log("this._currentViewables", this.currentViewables_);
-    window.console.log("CONVERTED", utils.convert.objectToArray(this.currentViewables_));
+    //window.console.log("CONVERTED", utils.convert.objectToArray(this.currentViewables_));
     this.XtkPlaneManager_.loadInRenderers(utils.convert.objectToArray(this.currentViewables_))
 }
 
@@ -525,53 +512,29 @@ xiv.XtkDisplayer.prototype._slicerSettings = null;
  * @param {string=} opt_onloadPlane The plane to prioritize the load on.
  */
 xiv.XtkDisplayer.prototype.loadSlicer = function (fileCollection) {
-    
-    var that = this;
+
     console.log("load slicer");
     this._slicerSettings = {};
 
-
+    
     //
     // Get the Slicer settings from each mrml
     //
+    var basename = '';
+    var ext = '';
     goog.array.forEach(fileCollection, function(fileName){
 
-	var basename = utils.string.basename(fileName);
-	var ext = utils.string.getFileExtension(basename).toLowerCase();
-
+	basename = utils.string.basename(fileName);
+	ext = utils.string.getFileExtension(basename).toLowerCase();
 
 	if ((ext === 'mrml') && (goog.string.startsWith(basename, '.') !== true)) {
 
-	    //
 	    // Get the Slicer settings for each file
-	    //
-	    
 	    console.log("MRML", ext, basename, fileName);
-	    that._slicerSettings[fileName] = utils.slicer.getSlicerSettings(fileName);
+	    this._slicerSettings[fileName] = utils.slicer.getSlicerSettings(fileName);
 	    
-
-
-
-	    /*
-	    //
-	    // Apply the slicer settings.
-	    //
-	    this.currentViewables_ = this.applySlicerSettingsToViewables(this.currentViewables_, slicerSettings);
-
-
-	    //
-	    // Cull the viewables based on what's not in the slicer file.
-	    //
-	    culledViewables = utils.xtk.getEmptyViewablesObject();
-	    for (var key in this.currentViewables_) { 
-		goog.array.forEach(this.currentViewables_[key], function(renderable){
-		    renderable.isInSlicerScene ? culledViewables[key].push(renderable) : utils.dom.debug("Renderable not found in slicer file: ", renderable, "filename: ", renderable.file);
-		})
-	    }
-	    this.currentViewables_ = culledViewables;   
-	    */
 	}
-    });
+    }.bind(this));
 
 
 
@@ -593,22 +556,22 @@ xiv.XtkDisplayer.prototype.loadSlicer = function (fileCollection) {
 
 
 	//
-	// Get pngs and skip and files that start with '.'
+	// Get pngs and skip and files this start with '.'
 	//
 	if ((ext === 'png') && !(goog.string.startsWith(basename, '.'))) {
-	    for (mrmlFilename in that._slicerSettings){
-		goog.array.forEach(that._slicerSettings[mrmlFilename]['__scenes__'], function(sceneName){
+	    for (mrmlFilename in this._slicerSettings){
+		goog.array.forEach(this._slicerSettings[mrmlFilename]['__scenes__'], function(sceneName){
 		    cleanedSceneName = sceneName.split('.')[0].toLowerCase().replace(' ', '');
 		    //window.console.log(screenshotName, cleanedSceneName, cleanedSceneName.indexOf(screenshotName))
 		    if (cleanedSceneName.indexOf(screenshotName) > -1){
-			that._slicerSettings[mrmlFilename][sceneName]['thumbnail'] = fileName;
+			this._slicerSettings[mrmlFilename][sceneName]['thumbnail'] = fileName;
 		    }
-		})
+		}.bind(this))
 	    }
 	}
-    });
+    }.bind(this));
 
-    window.console.log("SLICER SETTINGS", that._slicerSettings);
+    window.console.log("SLICER SETTINGS", this._slicerSettings);
 
 
 
@@ -649,16 +612,12 @@ xiv.XtkDisplayer.prototype.loadSlicer = function (fileCollection) {
 	}	
     }
     
-    this.ViewBox_._SlicerViewMenu.reset(that._slicerSettings);
+    this.ViewBox_._SlicerViewMenu.reset(this._slicerSettings);
     this.ViewBox_._SlicerViewMenu.onViewSelected(function(slicerSetting){
 	window.console.log("LOADING THIS GUY", slicerSetting);
 
-
-
 	this.ViewBox_._SlicerViewMenu.hideViewSelectDialog();
-
 	this.XtkPlaneManager_.setCamera('3D', slicerSetting['camera']);
-	
 	this.loadViewables(slicerSetting);
     }.bind(this));
     this.ViewBox_._SlicerViewMenu.showViewSelectDialog();
@@ -668,93 +627,16 @@ xiv.XtkDisplayer.prototype.loadSlicer = function (fileCollection) {
 
 
 
-/**
- * Reads in an array containing information
- * about annotations (via utils.xtk) and volume selection and the
- * modifies the 'viewables' argument, returning the new array
- *
- * @param {!Object.<string, Array.<X.object>>, !Object.<string, Object>}
- * @return {Object.<string, Array.<X.object>>}
- */
-xiv.XtkDisplayer.prototype.applySlicerSettingsToViewables = function(viewables, slicerSettings) {
-    
-    //----------------
-    // Cycle through viewables
-    //----------------
-    for (var key in viewables){
-	goog.array.forEach(viewables[key], function(xObject){
-	    
-	    //
-	    // Cycle through slicerSettings
-	    //
-	    goog.array.forEach(slicerSettings[key], function(slicerSetting){
-
-
-		//
-		// Find object match by .file property or .name property.  
-		// Remember, we are searching through a list of objects, not strings
-		// so we have to compare their properties to determine if we have 
-		// matching value against the viewables that need settings adjustments.
-		//
-		hasSameFile = ((xObject.file) !== undefined) && (utils.string.basename(goog.string.urlDecode(xObject.file)) === utils.string.basename(goog.string.urlDecode(slicerSetting.file)));
-		isMatchingAnnotation =  slicerSetting['isAnnotation'] && slicerSetting['name'] === xObject.name;
-
-
-		//
-		// Apply settings to object be referring to 
-		// the 'slicerSettings' argument.
-		//
-		if (hasSameFile || isMatchingAnnotation) {
-
-
-		    //
-		    // Apply the color table to the viewable (if exists).
-		    //
-		    if (slicerSetting['properties']['colorTable']) {
-			xObject.labelmap.file = goog.string.urlDecode(xObject.file);
-			utils.dom.debug(slicerSetting);
-			xObject.labelmap.colortable.file = slicerSetting['colorTable'];
-		    }
-
-
-		    //
-		    // Apply the generic properties (color, opacity, visibility).
-		    // This generally applies to meshes and annotations or anything
-		    // with these three qualitiees.
-		    //
-
-
-	
-		    //
-		    // For volumes, determine if the viewable is the 'selected'
-		    // one.
-		    //
-		    xObject.isSelectedVolume = slicerSetting['isSelectedVolume'];
-		    xObject.isInSlicerScene = true;
-		}
-	    })
-	})
-    }
-    return viewables;
-
-}
-
-
-
 
 /**
 * @param {Object=}
 */
 xiv.XtkDisplayer.prototype.updateStyle = function (opt_args) {
-    var that = this;
-
     if (opt_args){
 	var widgetDims = utils.dom.mergeArgs(utils.style.dims(this._element), opt_args);
 	utils.style.setStyle(this._element, widgetDims);
-    }
- 
+    } 
     this.XtkPlaneManager_.updateStyle();
-
 }
 
 
@@ -769,10 +651,7 @@ xiv.XtkDisplayer.prototype.updateStyle = function (opt_args) {
 */
 xiv.XtkDisplayer.prototype.set2DRenderObject = function(fileName) {
 
-    var that = this;
     var xObj = undefined;
-
-
 
     //----------------
     // Get the xObj from curr viewables.
@@ -784,10 +663,9 @@ xiv.XtkDisplayer.prototype.set2DRenderObject = function(fileName) {
     })
 
 
-
     //----------------
     // Load in renderers.
     //----------------
-    that.XtkPlaneManager_.loadInRenderers(xObj, '2D');
+    this.XtkPlaneManager_.loadInRenderers(xObj, '2D');
 }
 

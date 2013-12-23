@@ -384,7 +384,20 @@ xiv.XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, c
     // Add the renderables to the renderer.
     //------------------
     goog.array.forEach(renderables, function(renderable){
-	xtkPlane.addToRenderer(renderable);
+	//console.log(renderable, renderable.isSlectedVolume);
+
+	if (xtkPlane.id_ !== 'v'){
+
+	    // Only render the selected volume in 2D renderers
+	    if ((renderable.isSelectedVolume === undefined) || (renderable.isSelectedVolume === true)){
+		xtkPlane.addToRenderer(renderable);
+	    }
+	}
+	else {
+
+	    // Render everything for the 3D renderer
+	    xtkPlane.addToRenderer(renderable);
+	}
     })
 
 
@@ -402,13 +415,15 @@ xiv.XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, c
     if (this.cameraSettings_[xtkPlane.id_] !== undefined){
 
 	window.console.log("SETTING CAMERA", this.cameraSettings_[xtkPlane.id_]);
-	xtkPlane.Renderer_.camera.position =  this.cameraSettings_[xtkPlane.id_]['position'];
+	xtkPlane.Renderer_.camera.position = this.cameraSettings_[xtkPlane.id_]['position'];
 	xtkPlane.Renderer_.camera.up =  this.cameraSettings_[xtkPlane.id_]['up'];
+	xtkPlane.Renderer_.camera.focus =  this.cameraSettings_[xtkPlane.id_]['focus'];
 
     } else {
 	if (xtkPlane.id_ === 'v' && this.applyGenericCameraSettings){
 	    xtkPlane.Renderer_.camera.position =  [-200, 200, 200];
 	    xtkPlane.Renderer_.camera.up =  [0, 0, 1];
+	    xtkPlane.Renderer_.camera.focus =  [0, 0, 0];
 	}
     }
 

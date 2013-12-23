@@ -324,7 +324,7 @@ utils.xtk.ControllerMenu.prototype.makeThreshold_ = function(fileName){
     // precise way of defining threshold bounds.  Currently the xtkObk.min/max 
     // parameters yield NaN values.
     //------------------
-    var max = 15000;
+    var max = 100000000;
     slider.setMinimum(0);
     slider.setMaximum(max);
     slider.setExtent(max);
@@ -907,9 +907,17 @@ utils.xtk.ControllerMenu.prototype.makeSliderRow = function(labelTitle, callback
     // Make slider value label.
     //------------------
     value = this.makeNumberDisplay(document.body);
+
+ 
     value.innerHTML = (slider.getValue) ? slider.getValue().toFixed(2) : (1).toFixed(2);
     if (opt_args && opt_args['type'] === 'twothumb') { 
-	value.innerHTML = "s: " + slider.getValue() + " e: " + (slider.getValue() + slider.getExtent());
+
+	// Make a slight adjustment to the two thumb value display.
+	utils.style.setStyle(value, {
+	    'margin-top': '-.5em',
+	    'height': '2em'
+	});
+	value.innerHTML = "s: " + slider.getValue() + "<br>e: " + (slider.getValue() + slider.getExtent());
     } 
 
 
@@ -920,7 +928,7 @@ utils.xtk.ControllerMenu.prototype.makeSliderRow = function(labelTitle, callback
     var slideCallback = function(event) {
 	//window.console.log("HERE");
 	if (opt_args && opt_args['type'] === 'twothumb') { 
-	    value.innerHTML = "s: " + slider.getValue() + " e: " + (slider.getValue() + slider.getExtent());
+	    value.innerHTML = "s: " + slider.getValue() + "<br>e: " + (slider.getValue() + slider.getExtent());
 	} else {
 	    value.innerHTML = slider.getValue().toFixed(2);
 	}
@@ -1134,7 +1142,7 @@ utils.xtk.ControllerMenu.prototype.makeTwoThumbSlider = function(opt_parent, opt
 	if (opt_args['minimum'])  {slider.setMaximum(opt_args['minimum'])};
 	if (opt_args['step'])  {slider.setStep(opt_args['step'])} ;
 	if (opt_args['value'])  {slider.setValue(opt_args['value'])};
-	if (opt_args['extent'])  {slider.setValue(opt_args['extent'])};
+	if (opt_args['extent'])  {slider.setExtent(opt_args['extent'])};
     }
     
 
@@ -1165,7 +1173,7 @@ utils.xtk.ControllerMenu.prototype.makeCheckbox = function(opt_parent){
 /**
  * As stated.
  *
- * @param {Element=}
+ * @param {Element=} opt_parent
  * @return {Element}
  */
 utils.xtk.ControllerMenu.prototype.makeRadioButton = function(opt_parent){

@@ -102,32 +102,30 @@ utils.slicer.loadXMLDoc = function(documentName) {
 /**
  * Parses the mrml to determine the camera's parameters.
  *
- * @param {!ActiveXObject | !Document} mrml The mrml document.
- * @return {Array.<Array.<number>>} An 2-length array of 3-length arrays: 1) the position, 2) the up vector of the camera.
+ * @param {!Element} scene The scene element.
+ * @return {Array.<Array.<number>>} An 2-length array of 3-length arrays: 1) the position, 2) the up vector of the camera. 3) The focal point.
  */
-utils.slicer.getCamera = function(mrml) {
-    var pos = mrml.getElementsByTagName('Camera')[0].getAttribute('position').split(' ');
-    var up = mrml.getElementsByTagName('Camera')[0].getAttribute('viewUp').split(' ');
-    for (var i = 0, len = pos.length; i < len; ++i) {
-        pos[i] = parseFloat(pos[i], 10);
-        up[i] = parseFloat(up[i], 10);
-    }
-    return {'position': pos, 'up': up};
+utils.slicer.getCamera = function(scene) {
+    return {
+	'position': utils.convert.toFloatArray(scene.getElementsByTagName('Camera')[0].getAttribute('position')), 
+	'up': utils.convert.toFloatArray(scene.getElementsByTagName('Camera')[0].getAttribute('viewUp')), 
+	'focus': utils.convert.toFloatArray(scene.getElementsByTagName('Camera')[0].getAttribute('focalPoint'))
+    };
 }
 
 
 
 
 /**
- * Parses the mrml to determine the camera's parameters.
+ * Parses the scene to determine the camera's parameters.
  *
- * @param {!ActiveXObject | !Document} mrml The mrml document.
+ * @param {!Element} scene The scene element.
  * @return {Array.<Array.<number>>} An MD array containing rgb values of the background.
  */
-utils.slicer.getBackgroundColor = function(mrml) {
+utils.slicer.getBackgroundColor = function(scene) {
 
-    var bgColor = mrml.getElementsByTagName('View')[0].getAttribute('backgroundColor').split(' ');
-    var bgColor2 = mrml.getElementsByTagName('View')[0].getAttribute('backgroundColor2').split(' ');
+    var bgColor = scene.getElementsByTagName('View')[0].getAttribute('backgroundColor').split(' ');
+    var bgColor2 = scene.getElementsByTagName('View')[0].getAttribute('backgroundColor2').split(' ');
     
     for (var i = 0, len = bgColor.length; i < len; i++) {
         bgColor[i] = parseFloat(bgColor[i], 10);
@@ -151,13 +149,13 @@ utils.slicer.layoutStringMap = {
 
 
 /**
- * Parses the mrml to determine the camera's parameters.
+ * Parses the scene to determine the camera's parameters.
  *
- * @param {!ActiveXObject | !Document} mrml The mrml document.
+ * @param {!Element} scene The scene element.
  * @return {number} The layout string.
  */
-utils.slicer.getLayout = function(mrml) { 
-    var layout = mrml.getElementsByTagName('Layout')[0].getAttribute('currentViewArrangement');
+utils.slicer.getLayout = function(scene) { 
+    var layout = scene.getElementsByTagName('Layout')[0].getAttribute('currentViewArrangement');
     return utils.slicer.layoutStringMap[layout];
 }
 
@@ -167,10 +165,10 @@ utils.slicer.getLayout = function(mrml) {
 /**
  * Creates and returns annotations, which are X.spheres.
  *
- * @param {!Element} mrml The mrml document.
+ * @param {!Element} scene The scene element.
  * @return {Array.<Object>} The annotations as objects.
  */
-utils.slicer.getAnnotations = function(mrml) {
+utils.slicer.getAnnotations = function(scene) {
     var annotations = [];
     var displayNodeRefs;
     var displayNodeTypes = [];
@@ -183,7 +181,7 @@ utils.slicer.getAnnotations = function(mrml) {
     var opacity = '';
 
 
-    goog.array.forEach(mrml.getElementsByTagName('AnnotationFiducials'), function(a) {
+    goog.array.forEach(scene.getElementsByTagName('AnnotationFiducials'), function(a) {
 
 	// Get basic values
 	location = a.getAttribute('ctrlPtsCoord');
@@ -200,7 +198,7 @@ utils.slicer.getAnnotations = function(mrml) {
 
         // Get the point, color, and text values from the nodes.
 	goog.array.forEach(displayNodeTypes, function(displayNodeType, i){
-            goog.array.forEach(mrml.getElementsByTagName(displayNodeType), function(itemDisplay) {
+            goog.array.forEach(scene.getElementsByTagName(displayNodeType), function(itemDisplay) {
 		if ((itemDisplay.getAttribute('id') === displayNodeRefs[i]) && (displayNodeRefs[i].indexOf('Text') > -1)) {
 		    color = itemDisplay.getAttribute('color');   
 		    visible = itemDisplay.getAttribute('visibility');
@@ -254,15 +252,10 @@ utils.slicer.getSceneViews = function(mrml) {
  */
 utils.slicer.getSlicerSettings = function(mrmlFile) {
     
-    var that = /**@type{xiv.XtkDisplayer}*/ this;
     var mrml;
     var slicerSettings = {};
-    var selectedVolumeFile = /**@type{String}*/ '';
-    var viewableObjectFile = /**@type{String}*/ '';
-    var cameraInfo = /**@type{Array}*/ [];
-    var annotations =  /**@type{Array.Object}*/ [];
     var currScene;
-    var volumes;
+
     
 
     //----------------
@@ -271,17 +264,14 @@ utils.slicer.getSlicerSettings = function(mrmlFile) {
     mrml = utils.slicer.loadXMLDoc(mrmlFile);
    
 
-    
-
     //----------------
     // Get SceneViews
     //----------------
     slicerSettings['__scenes__'] = this.getSceneViews(mrml);
-    //console.log(slicerSettings['SceneView']);
- 
+  
 
     //----------------
-    // Get all of the releveant scene aspects
+    // Get all of the relevant scene aspects
     //----------------
     goog.array.forEach(slicerSettings['__scenes__'], function(sceneView) { 
 
@@ -290,151 +280,30 @@ utils.slicer.getSlicerSettings = function(mrmlFile) {
 	// Check reserved property, rename accordingly.
 	sceneView = (sceneView === '__scenes__') ? sceneView.replace('__', '___') : sceneView;
 	
-	
 	slicerSettings[sceneView] = {};
-	slicerSettings[sceneView]['scene'] = {};
 	slicerSettings[sceneView]['scene'] = currScene;
+	slicerSettings[sceneView]['volumes'] = utils.slicer.getVolumes(currScene);
+	slicerSettings[sceneView]['meshes'] = utils.slicer.getMeshes(currScene);
+	slicerSettings[sceneView]['fibers'] = utils.slicer.getFibers(currScene);
 
-	slicerSettings[sceneView]['volumes'] = {};
-	slicerSettings[sceneView]['volumes'] = that.getVolumes(currScene);
-	//slicerSettings[scene]['volumes'] = utils.slicer.getFileInfo(currScene, 'Volume', 'VolumeArchetypeStorage');
-
-	slicerSettings[sceneView]['meshes'] = {};
-	slicerSettings[sceneView]['meshes'] = that.getMeshes(currScene);
-	//slicerSettings[scene]['meshes'] = utils.slicer.getFileInfo(currScene, 'Model', 'ModelStorage');
-
-	slicerSettings[sceneView]['fibers'] = {};
-	slicerSettings[sceneView]['fibers'] = that.getFibers(currScene);
-	//slicerSettings[scene]['fibers'] = utils.slicer.getFileInfo(currScene, 'FiberBundle', 'FiberBundleStorage');
-
-
-	
-	//
-	// Make sure there's a selected volume for every scene.
-	//
-	volumes = slicerSettings[sceneView]['volumes'];
-
-	var selectedFound = false;
-	var selecteds = [];
-	goog.array.forEach(volumes, function(volume){
-	    selectedFound =(volume['isSelectedVolume']) ? true : false;
-	    if (volume['isSelectedVolume']){
-		selecteds.push(volume)
-	    }
-	})
-
-	console.log("SELECTEDS", selecteds);
-	if (!selectedFound){
-	    //if (selectedVolumeFile.length === 0 && slicerSetting['properties']['colorTable']) {
-	    //	utils.dom.debug('picking the color table');
-	    //	selectedVolumeFile = utils.string.basename(slicerSettingFile);
-	    //}
-	}
-
-
-
-	//----------------
 	// Add annotations.
-	//----------------
-	//slicerSettings[sceneView]['annotations'] = utils.slicer.getAnnotations(mrml);
 	slicerSettings[sceneView]['annotations'] = utils.slicer.getAnnotations(currScene);
 
-
-	// FROM XTK DISPLAYER
-/*
-	annotations = this.getAnnotations();
-	goog.array.forEach(annotations, function(annotation){
-	    this.currentViewables_['annotations'].push(annotation['xObject']);
-	    slicerSettings['annotations'].push({'isAnnotation': true, 'name': annotation['xObject'].name , 'properties' : annotation['properties']})
-	}.bind(this))
-*/
-
-
-
-	//----------------
 	// Set up camera.
-	//----------------
 	slicerSettings[sceneView]['camera'] = utils.slicer.getCamera(currScene);
 
-
-	//----------------
 	// Background color
-	//----------------
 	slicerSettings[sceneView]['background-color'] = utils.slicer.getBackgroundColor(currScene);
-	//this.XtkPlaneManager_.setBackgroundColor('3D', slicerSettings['background-color']);
 
-	
-	//----------------
 	// Layout
-	//----------------
 	slicerSettings[sceneView]['layout'] = utils.slicer.getLayout(currScene);
-	slicerSettings[sceneView]['layout'] = slicerSettings['layout'] ? slicerSettings['layout'] : 'Four-Up';
+	slicerSettings[sceneView]['layout'] = slicerSettings[sceneView]['layout'] ? slicerSettings[sceneView]['layout'] : 'Four-Up';
 
 
-    })
+    }.bind(this))
 
 
     console.log("SLICER SETTINGS - ALL", slicerSettings);
-    //----------------
-    // Cleanup viewable objects
-    //----------------
-
-    /*
-    for (var scene in slicerSettings) {
-	if (slicerSettings.hasOwnProperty(scene)) {
- 	    console.log(scene);
-	    console.log(slicerSettings[scene]);           
-	}
-    }
-    */
-
-    //goog.array.forEach(sceneViews, function(scene){
-
-	//for (var setting in slicerSettings[scene]){
-	    
-	    //goog.array.forEach(slicerSettings[scene][setting], function(slicerSetting) {
-
-		//
-		// Determine the selectedVolume (i.e. the volume to display in 2D planes)
-		//
-
-		/*
-		slicerSettingFile = slicerSetting['file'];
-		if (slicerSetting['isSelectedVolume']) { 
-		    selectedVolumeFile = slicerSettingFile;
-		}
-		if (selectedVolumeFile.length === 0 && slicerSetting['properties']['colorTable']) {
-		    utils.dom.debug('picking the color table');
-		    selectedVolumeFile = utils.string.basename(slicerSettingFile);
-		}
-		*/
-	    //});
-	//}
-    //})
-
-
-
-    //----------------
-    // Set isSelectedVolume to matching file
-    //----------------
-    /*
-    for (var key in slicerSettings){
-	goog.array.forEach(slicerSettings[key], function(slicerSetting) {
-	    if ((slicerSetting.file === selectedVolumeFile) && (selectedVolumeFile.length > 0)) { 
-		slicerSetting['isSelectedVolume'] = true; 
-	    }
-	});
-    }
-    */
-
-
-
-
-
-
-    //----------------
-    // Return slicerSettings
-    //----------------
     return slicerSettings
 }
 
@@ -447,7 +316,7 @@ utils.slicer.getSlicerSettings = function(mrmlFile) {
  * get data, by the 'tagName' argument and that convert data 
  * to an object with relevant information.
  *
- * @param {!ActiveXObject | !Document} scene
+ * @param {!Element} scene The scene element.
  * @param {!string} tagName
  * @param {!string} storageNodeType
  * @param {function} 
@@ -568,7 +437,7 @@ utils.slicer.makeDisplayProperties = function(displayNode, sceneNode) {
 	'displayNode' : displayNode,
 	'opacity' : parseFloat(displayNode.getAttribute('opacity'), 10),
 	'color' : utils.convert.toFloatArray(displayNode.getAttribute('color')),
-	'visibility' : displayNode.getAttribute('visibility') === 'true',
+	'visible' : displayNode.getAttribute('visibility') === 'true',
 	'origin' : utils.convert.toFloatArray(sceneNode.getAttribute('origin')),
 	'colorMode': parseInt(displayNode.getAttribute('colorMode'), 10),
 	'ijkToRASDirections': sceneNode.getAttribute('ijkToRASDirections'),
@@ -591,8 +460,6 @@ utils.slicer.getBasicDisplayProperties = function(scene, sceneElement) {
     var nodeList;
     
     goog.array.forEach(utils.slicer.getDisplayNodeTypes(sceneElement), function(displayNodeType){
-	//nodeList = scene.getElementsByTagName(displayNodeType);	
-	//console.log("NODE LIST", displayNodeType, nodeList);
 	goog.array.forEach(scene.getElementsByTagName(displayNodeType), function(node){
 	    displayNodeElements.push(node)
 	})
@@ -651,18 +518,17 @@ utils.slicer.getColorTableFile = function(scene, displayNode) {
 
 
 
+
+
+
 /**
- *
+ * @param {!Element} scene
  */
 utils.slicer.getFibers = function(scene) {
-
 
     var fancyId = '';
     var fancyColorTableStorage;
     var colorTableFile = '';
-    
-
-
     var fiberProperties;
     var fiberNode = {}
 
@@ -724,10 +590,12 @@ utils.slicer.getMeshes = function(scene) {
 
 /**
  *
- * @param {!ActiveXObject | !Document} scene
+ * @param {!Element} scene
  * @return {Array.<Object.<string, string>>}
  */
 utils.slicer.getVolumes = function(scene) {
+
+    var sliceVisible = false;
 
     var selectedVolumeID = scene.getElementsByTagName('Selection')[0].getAttribute('activeVolumeID');
 
@@ -735,15 +603,36 @@ utils.slicer.getVolumes = function(scene) {
         node['properties'] = utils.slicer.getBasicDisplayProperties(scene, sceneElement);
 	node['properties']['colorTable'] = utils.slicer.getColorTableFile(scene, node['properties']['displayNode']);
 	node['properties']['isSelectedVolume'] =  (selectedVolumeID !== sceneElement.getAttribute('id')) ? false : true;
+	node['properties']['upperThreshold'] =  parseInt(node['properties']['displayNode'].getAttribute('upperThreshold'), 10);
+	node['properties']['lowerThreshold'] =  parseInt(node['properties']['displayNode'].getAttribute('lowerThreshold'), 10);
+
+	// Volume visible is a bit unique:
+	// Slicer sets the visible by slice.
+	// Here, we determine the visible in reference to 
+	// the the slices in a given scene.
+	if (node['properties']['isSelectedVolume']) {
+	    sliceVisible = false;
+	    goog.array.forEach(scene.getElementsByTagName('Slice'), function(sliceElement){
+		sliceVisible = sliceElement.getAttribute('sliceVisibility') === 'true' || sliceVisible
+	    })
+	    node['properties']['visible'] = sliceVisible;
+	} else {
+	    node['properties']['visible'] = false;
+	}
+
     }
 
     var volumes = this.getNodeFiles(scene, 'Volume', 'VolumeArchetypeStorage', function(sceneElement, object) {
 	getVolumeProperties(sceneElement, object);
     });
 
-    var volumes2 = this.getNodeFiles(scene, 'DiffusionTensorVolume', 'VolumeArchetypeStorage', function(sceneElement, object) {
-	getVolumeProperties(sceneElement, object);
-    });
 
-    return volumes.concat(volumes2);
+    // NOTE: DiffusionTensorVolumes create rendering issues in XTK. Skipping for now.
+    //
+    //var volumes2 = this.getNodeFiles(scene, 'DiffusionTensorVolume', 'VolumeArchetypeStorage', function(sceneElement, object) {
+    //	getVolumeProperties(sceneElement, object);
+    //});
+    //volumes = volumes.concat(volumes2); 
+
+    return volumes;
 }

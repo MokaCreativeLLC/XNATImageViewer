@@ -434,22 +434,23 @@ utils.xtk.setProperties = function(xObj, properties) {
     // Opacity
     //--------------------
     if (properties['opacity']) {
-	window.console.log("\n\n********OPACITY\n\n", xObj, properties['opacity'])
+	//window.console.log("\n\n********OPACITY\n\n", xObj, properties['opacity'])
         xObj.opacity = parseFloat(properties['opacity'], 10);
     }
 
 
     //--------------------
     // Visibility.
+    //
+    // We basically have to set 
+    // all visibilities to true
+    // and then afterwards reconcile them
+    // with the settings (likely slicer settings)
+    // and then set them to false.
     //--------------------
-    if (properties['visibility'] && (properties['visibility'] === 'true' || properties['visibility'] === true)) {
-        xObj.visible = true;
-    } else {
-	xObj.visible = false;
-    }
-
-    console.log("MAKING ALL OBJECTS VISIBLE!!!");
     xObj.visible = true;
+
+
     
 
 
