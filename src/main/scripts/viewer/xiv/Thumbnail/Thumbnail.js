@@ -36,16 +36,9 @@ goog.require('xiv.Widget');
 goog.provide('xiv.Thumbnail');
 xiv.Thumbnail = function (properties) {
 
-    var that = this;
-    var eltId = '';
-    
     
     utils.ui.Thumbnail.call(this);
-    this._element.setAttribute('id',  'xiv.Thumbnail' + utils.dom.uniqueId());
-    this._hoverClone.setAttribute('id', 'xiv.Thumbnail.hoverClone' + utils.dom.uniqueId());
-    this._hoverClone.setAttribute('thumbnailid', this._element.getAttribute('id'));
     goog.dom.classes.add(this._element, xiv.Thumbnail.CSS_CLASS_PREFIX);
-    //goog.dom.classes.add(this._hoverClone, xiv.Thumbnail.CSS_CLASS_PREFIX);
 
 
 
@@ -86,9 +79,12 @@ xiv.Thumbnail = function (properties) {
 
 
     //------------------
-    // Set setHoverCloneParen
+    // _hoverable
     //------------------
-    this.setHoverCloneParent(xiv._Modal._element);    
+    this.createHoverable()
+    xiv._Modal._element.appendChild(this._hoverable);
+    goog.dom.classes.add(this._hoverable, xiv.Thumbnail.CSS_CLASS_PREFIX);
+       
 }
 goog.inherits(xiv.Thumbnail, utils.ui.Thumbnail);
 goog.exportSymbol('xiv.Thumbnail', xiv.Thumbnail);

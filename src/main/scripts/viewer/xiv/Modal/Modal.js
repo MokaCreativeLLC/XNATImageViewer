@@ -140,10 +140,6 @@ xiv.Modal = function () {
     this._modal.appendChild(this.ThumbnailGallery_._element);
     goog.dom.classes.add(this.ThumbnailGallery_._element, xiv.Modal.THUMBNAILGALLERY_CLASS);
 
-    //this.ThumbnailGallery_.addScrollableContainerClass(xiv.Modal.THUMBNAILGALLERY_CLASS);
-    //this.ThumbnailGallery_.addThumbnailClass(xiv.SlicerViewMenu.THUMBNAIL_CLASS);
-    //this.ThumbnailGallery_.addThumbnailImageClass(xiv.SlicerViewMenu.THUMBNAIL_IMAGE_CLASS);
-    //this.ThumbnailGallery_.addThumbnailTextClass(xiv.SlicerViewMenu.THUMBNAIL_TEXT_CLASS);
 
 
     
@@ -425,8 +421,10 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
 	    //
 	    if (!slicerThumbnailsLoaded) {
 		utils.xnat.getViewables(this.xnatPath_, 'Slicer', function(viewable2){
+
+		    window.console.log("\n\nSLICER VIEWABLE", viewable2);
 		    this.addThumbnailsToThumbnailGallery('Slicer',  [viewable2]);
-		});
+		}.bind(this));
 		slicerThumbnailsLoaded = true;
 	    }
 	}.bind(this));

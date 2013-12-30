@@ -38,6 +38,7 @@ utils.ui.Thumbnail = function (opt_args) {
     // Define the thumbnail element.
     //------------------
     this._element = utils.dom.makeElement('div', parent, "utils.ui.Thumbnail");
+    this._element.setAttribute('thumbnailid', this._element.getAttribute('id'));
 
 
     //------------------
@@ -75,14 +76,6 @@ utils.ui.Thumbnail = function (opt_args) {
     //------------------
     // Set Hover Methods
     //------------------
-    this._hoverCloneParent = document.body;
-    this.resetHoverClone_();
-
-
-
-    //------------------
-    // Set Hover Methods
-    //------------------
     this.setHoverListeners_(true);
 
 
@@ -110,7 +103,7 @@ utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS = /**@type {string} @const*/ goog.getCss
 utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.ELEMENT_CLASS, 'active');
 utils.ui.Thumbnail.IMAGE_ACTIVE_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.IMAGE_CLASS, 'active');
 utils.ui.Thumbnail.TEXT_ACTIVE_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.TEXT_CLASS, 'active');
-utils.ui.Thumbnail.HOVER_CLONE_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.TEXT_CLASS, 'hoverclone');
+utils.ui.Thumbnail.HOVER_CLONE_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.ELEMENT_CLASS, 'hoverclone');
 
 
 
@@ -122,13 +115,6 @@ utils.ui.Thumbnail.HOVER_CLONE_CLASS = /**@type {string} @const*/ goog.getCssNam
  */	
 utils.ui.Thumbnail.prototype._element = null;
 
-
-
-/**
- * @type {Element}
- * @protected
- */	
-utils.ui.Thumbnail.prototype._hoverCloneParent = null;
 
 
 
@@ -152,7 +138,7 @@ utils.ui.Thumbnail.prototype._displayText = null;
  * @type {?Element}
  * @protected
  */	
-utils.ui.Thumbnail.prototype._hoverClone = null;
+utils.ui.Thumbnail.prototype._hoverable = null;
 
 
 /**
@@ -194,8 +180,30 @@ utils.ui.Thumbnail.prototype.isActive = function() {
  */	
 utils.ui.Thumbnail.prototype.setImage = function(url){
     this._image.src = url;
-    this.resetHoverClone_();
+    goog.dom.classes.set(this._image, utils.ui.Thumbnail.IMAGE_CLASS);
 };
+
+
+
+
+/**
+ * @param {!function} callback
+ * @public
+ */	
+utils.ui.Thumbnail.prototype.setOnClick = function(callback){  
+    goog.events.listen(this.getHoverNode(), goog.events.EventType.CLICK, callback);
+};
+
+
+/**
+ * @return {!Element}
+ * @protected
+ */	
+utils.ui.Thumbnail.prototype.getHoverNode = function(){  
+    return this._hoverable ? this._hoverable : this._element
+};
+
+
 
 
 
@@ -205,7 +213,6 @@ utils.ui.Thumbnail.prototype.setImage = function(url){
  */	
 utils.ui.Thumbnail.prototype.setDisplayText = function(text){
     this._displayText.innerHTML = text;
-    this.resetHoverClone_();
 };
 
 
@@ -214,15 +221,16 @@ utils.ui.Thumbnail.prototype.setDisplayText = function(text){
  * @protected
  */	
 utils.ui.Thumbnail.prototype.update = function(){
-    this.resetHoverClone_();
+
 };
+
 
 
 /**
  * @type {!function}
  * @protected
  */	
-utils.ui.Thumbnail.prototype.imageOnload = function(callback){
+utils.ui.Thumbnail.prototype._setImageOnload = function(callback){
     this._image.onload = callback;
 };
 
@@ -250,89 +258,52 @@ utils.ui.Thumbnail.prototype.addMouseoutCallback = function(callback) {
 
 
 /**
- * @type {!Element}
- * @protected
+ * @return {Element}
+ * @public
  */	
-utils.ui.Thumbnail.prototype.setHoverCloneParent = function(parent){
+utils.ui.Thumbnail.prototype.getHoverable = function(){
+    return this._hoverable;
+}
 
-    //------------------
-    // If the hover clone parent isn't the element
-    //------------------
-    if (parent !== this._element) {
-	this._hoverCloneParent = parent;
-	this._hoverCloneParent.appendChild(this._hoverClone);
-
-
-
-    //------------------
-    // If the hover clone is the element, we basically 
-    // set the hover clone to the element.
-    //------------------	
-    } else {
-	if ((this._hoverClone !== this._element) && (parent === this._element)) {
-
-	    console.log("COVER AS PARENT");
-	    this._hoverCloneParent = parent;
-	    goog.dom.removeNode(this._hoverClone);
-	    delete this._hoverClone;
-	    this._hoverClone = this._element;
-	    this.resetHoverClone_();
-	}
-    }
-};
 
 
 
 /**
-* @private
-*/
-utils.ui.Thumbnail.prototype.resetHoverClone_ = function() {
-
-    var that = this;
-
-
-    //------------------
-    // Update the existing hover clone if it exists.
-    //------------------    
-    if ((this._hoverClone !== null) && (this._hoverClone !== this._element)){
-	var newChildren = goog.dom.getChildren(this._element);
-	var prevChildren = goog.dom.getChildren(this._hoverClone);
-	goog.dom.removeChildren(this._hoverClone);
-	goog.array.forEach(newChildren, function(child){
-	    that._hoverClone.appendChild(child.cloneNode(true));
-	})
-	this._hoverClone.setAttribute('class', goog.dom.getElement(this._hoverClone.getAttribute('thumbnailid')).getAttribute('class'));
-    } 
-
-
-
-    //------------------
-    // Create a new hover clone only if it doesn't exist or
-    // it's not equal to _element.
-    //------------------
-    else if (this._hoverClone !== this._element){
-	this._hoverClone = this._element.cloneNode(true);
-	this._hoverClone.style.visibility = 'hidden';
-	this.setHoverListeners_(true, this._hoverClone);
-	this._hoverClone.id = 'HOVERCLONE_' + this._hoverClone.id;
-	goog.dom.classes.add(this._hoverClone, utils.ui.Thumbnail.HOVER_CLONE_CLASS);
+ * @param {Element=} opt_parent The hover element's parent.
+ * @param {Element=} opt_element The hover element to set in case the cloned thumbnail is not desired.
+ * @public
+ */	
+utils.ui.Thumbnail.prototype.removeHoverable = function(opt_parent, opt_element){
+    if (this._hoverable) {
+	if (this._hoverable.parentNode){
+	    this._hoverable = this._hoverable.parentNode.removeChild(this._hoverable);
+	}
+	delete this._hoverable
+	this._hoverable = null;
     }
-
-
-
-    //------------------
-    // Add the .thumbnailid property for retrieval of original
-    // thumbnail (drag and drop)
-    //------------------
-    this._hoverClone.setAttribute('thumbnailid', that._element.id);
-    goog.array.forEach(this._hoverClone.childNodes, function(node){
-	node.setAttribute('thumbnailid', that._element.id);
-    })
-
-
-    this.setHoverCloneParent(this._hoverCloneParent);
 }
 
+
+
+
+/**
+ * @param {Element=} opt_parent The hover element's parent.
+ * @param {Element=} opt_element The hover element to set in case the cloned thumbnail is not desired.
+ * @public
+ */	
+utils.ui.Thumbnail.prototype.createHoverable = function(opt_parent, opt_element){
+
+    this.removeHoverable();
+    this.setHoverListeners_(false);
+    this._hoverable = (opt_element) ? opt_element : this._element.cloneNode(true);
+
+    this._hoverable.setAttribute('id', 'HOVERABLE_' + this._element.getAttribute('id'));
+    this._hoverable.setAttribute('thumbnailid', this._element.getAttribute('id'));
+    this._hoverable.style.visibility = 'hidden';
+    goog.dom.classes.add(this._hoverable, utils.ui.Thumbnail.HOVER_CLONE_CLASS);
+    this.setHoverListeners_(true);
+    if (opt_parent){ opt_parent.appendChild(this._hoverable) }
+}    
 
 
 
@@ -373,31 +344,34 @@ utils.ui.Thumbnail.prototype.setActive = function(active, opt_highlight_bg) {
  */
 utils.ui.Thumbnail.prototype._onMouseOver = function() {
 
+    
+    var hoverNode = this.getHoverNode();
+    
     //------------------
     // Apply classes.
     //------------------
-    goog.dom.classes.add(this._hoverClone, utils.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS);			
-    goog.dom.classes.add(this._hoverClone.childNodes[1], utils.ui.Thumbnail.TEXT_MOUSEOVER_CLASS);		
-    goog.dom.classes.add(this._hoverClone.childNodes[0], utils.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS);
+    goog.dom.classes.add(hoverNode, utils.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS);			
+    goog.dom.classes.add(hoverNode.childNodes[1], utils.ui.Thumbnail.TEXT_MOUSEOVER_CLASS);		
+    goog.dom.classes.add(hoverNode.childNodes[0], utils.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS);
 
 
-    if (this._hoverClone.style.visibility !== 'visible') {
+    if (hoverNode.style.visibility !== 'visible') {
 
 	// We get the absolute position of the thumbnail._element
-	// if the _hoverClone parent is NOT the thumbnail._element (i.e. the document body).
+	// if the _hoverable parent is NOT the thumbnail._element (i.e. the document body).
 	var thumbnailDims = utils.style.absolutePosition(this._element);
-	var imgClone = goog.dom.getElementByClass(utils.ui.Thumbnail.IMAGE_CLASS, this._hoverClone)
-	var textClone = goog.dom.getElementByClass(utils.ui.Thumbnail.TEXT_CLASS, this._hoverClone);
+	var imgClone = goog.dom.getElementByClass(utils.ui.Thumbnail.IMAGE_CLASS, hoverNode)
+	var textClone = goog.dom.getElementByClass(utils.ui.Thumbnail.TEXT_CLASS, hoverNode);
 	var cloneWidth = 0;
 
 
 	// Adjust only if the _hover clone is not the _element.
-	if (this._hoverClone !== this._element) {
+	if (hoverNode !== this._element) {
 	    // Set the clone width to something wider than the original thumbnail width
 	    // only if the the cloneWidth is calculated to be larger (text spillover)
 	    cloneWidth = imgClone.scrollWidth + textClone.scrollWidth + 25;
 	    cloneWidth = (cloneWidth > this._element.clientWidth) ? cloneWidth : this._element.clientWidth;
-	    utils.style.setStyle(this._hoverClone, {
+	    utils.style.setStyle(hoverNode, {
 		'position': 'absolute',
 		'top': thumbnailDims['top'], 
 		'left': thumbnailDims['left'],
@@ -425,11 +399,13 @@ utils.ui.Thumbnail.prototype._onMouseOver = function() {
  */
 utils.ui.Thumbnail.prototype._onMouseOut = function() {
 
-    if (this._hoverClone) { 
-	this._hoverClone.style.visibility = 'hidden';
-	goog.dom.classes.remove(this._hoverClone, utils.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS);			
-	goog.dom.classes.remove(this._hoverClone.childNodes[1], utils.ui.Thumbnail.TEXT_MOUSEOVER_CLASS);		
-	goog.dom.classes.remove(this._hoverClone.childNodes[0], utils.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS);
+    var hoverNode = this.getHoverNode();
+
+    if (hoverNode) { 
+	hoverNode.style.visibility = 'hidden';
+	goog.dom.classes.remove(hoverNode, utils.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS);			
+	goog.dom.classes.remove(hoverNode.childNodes[1], utils.ui.Thumbnail.TEXT_MOUSEOVER_CLASS);		
+	goog.dom.classes.remove(hoverNode.childNodes[0], utils.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS);
 	this._element.style.visibility = 'visible';
     }
 
@@ -445,21 +421,18 @@ utils.ui.Thumbnail.prototype._onMouseOut = function() {
  * Sets the listener events for when the thumbnail is hovered on.
  *
  * @param {boolean} set Whether to apply the event listener or remove it.
- * @param {Element=} opt_hoverable The hoverable to apply the even listener to.
  * @private
  */
-utils.ui.Thumbnail.prototype.setHoverListeners_ = function(set, opt_hoverable) {
-    var that = this;
-    var hoverable = opt_hoverable ? opt_hoverable : this._element
+utils.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
 
-
+    var hoverNode = this.getHoverNode();
     if (set) {
-	goog.events.listen(hoverable, goog.events.EventType.MOUSEOVER, this._onMouseOver.bind(this));
-	goog.events.listen(hoverable, goog.events.EventType.MOUSEOUT, this._onMouseOut.bind(this));
+	goog.events.listen(hoverNode, goog.events.EventType.MOUSEOVER, this._onMouseOver.bind(this));
+	goog.events.listen(hoverNode, goog.events.EventType.MOUSEOUT, this._onMouseOut.bind(this));
 	
     } else {
-	goog.events.unlisten(hoverable, goog.events.EventType.MOUSEOVER, this._onMouseOver.bind(this));
-	goog.events.unlisten(hoverable, goog.events.EventType.MOUSEOUT, this._onMouseOut.bind(this));
+	goog.events.unlisten(hoverNode, goog.events.EventType.MOUSEOVER, this._onMouseOver.bind(this));
+	goog.events.unlisten(hoverNode, goog.events.EventType.MOUSEOUT, this._onMouseOut.bind(this));
     }
 }
 

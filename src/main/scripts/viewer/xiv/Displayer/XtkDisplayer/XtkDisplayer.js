@@ -137,6 +137,15 @@ xiv.XtkDisplayer.prototype.getViewBox = function() {
 
 
 /**
+ * @type {?Object}
+ * @protected
+ */
+xiv.XtkDisplayer.prototype._slicerSettings = null;
+
+
+
+
+/**
  * Returns the ViewPlane elements (not the classes) for
  * animations, and style changes. 
  *
@@ -286,23 +295,31 @@ xiv.XtkDisplayer.prototype.syncControllerMenuToViewables_ = function(){
 	case 'Fibers':
 	case 'Volumes':
 	case 'Meshes':
+        case 'DICOM':
 	    break;
 	default:
+
+	    //window.console.log(viewablesArr, settingsArr);
 	    var xObj = menuMap[key]['xtkObj'];
 
 	    //
 	    // Sync opacity
 	    //
-	    if (menuMap[key]['opacity'].setValue){
-		menuMap[key]['opacity'].setValue(parseFloat(xObj.opacity));
-	    } else if (menuMap[key]['opacity']['slider'] && menuMap[key]['opacity']['slider'].setValue) {
-		menuMap[key]['opacity']['slider'].setValue(parseFloat(xObj.opacity));
+	    if (menuMap[key]['opacity']){
+		if (menuMap[key]['opacity'].setValue){
+		    menuMap[key]['opacity'].setValue(parseFloat(xObj.opacity));
+		} else if (menuMap[key]['opacity']['slider'] && menuMap[key]['opacity']['slider'].setValue) {
+		    menuMap[key]['opacity']['slider'].setValue(parseFloat(xObj.opacity));
+		}
 	    }
-
 
 	    // Get matching array index for the settings.
 	    var i = 0; 
 	    for (i = 0, len = viewablesArr.length; i < len; i++) { if (viewablesArr[i] === xObj){ break;}}
+
+
+	    if (!settingsArr[i]['properties']){break}
+
 
 	    //
 	    // Sync threshold range
@@ -332,8 +349,13 @@ xiv.XtkDisplayer.prototype.syncControllerMenuToViewables_ = function(){
 	    //
 	    // Sync visible
 	    //
-	    xObj.visible = settingsArr[i]['properties']['visible'];
-	    menuMap[key]['visible'].checked = xObj.visible;
+	    if (settingsArr[i] !== undefined){
+		xObj.visible = settingsArr[i]['properties']['visible'];
+		//menuMap[key]['visible'].checked = xObj.visible;
+	    } //else {
+		xObj.visible = true;
+		menuMap[key]['visible'].checked = xObj.visible
+	    //}
 	}
 	
     }
@@ -350,6 +372,11 @@ xiv.XtkDisplayer.prototype.syncControllerMenuToViewables_ = function(){
  */
 xiv.XtkDisplayer.prototype.isLoaded = function(fileCollection) {
 
+    var viewablesArr = utils.convert.objectToArray(this.currentViewables_);
+    var fileName = '';
+    var i=0, j=0;
+
+
     //----------------
     // Convert non-array collections into an array.
     //----------------
@@ -363,9 +390,6 @@ xiv.XtkDisplayer.prototype.isLoaded = function(fileCollection) {
     // Loop through the file collection and compare
     // against the currentViewables_ property.
     //----------------    
-    var viewablesArr = utils.convert.objectToArray(this.currentViewables_);
-    var fileName = '';
-    var i=0, j=0;
     for (i=0, len = fileCollection.length; i < len; i++) {
 	fileName = fileCollection[i];
 	for (j = 0, len2 = viewablesArr.length; j < len2; j++) {
@@ -387,15 +411,20 @@ xiv.XtkDisplayer.prototype.isLoaded = function(fileCollection) {
 
 
 /**
- * @param {!string | !Array.<string>}
+ * @param {!string | !Array.<string>} viewable
+ * @param {Object=} opt_settings
  * @return {?X.Object}
  */
-xiv.XtkDisplayer.prototype.makeXObject = function(viewable){
+xiv.XtkDisplayer.prototype.createXtkObject = function(viewable, opt_properties){
     if (!goog.isArray(viewable)){
 	var viewable =  (viewable.indexOf(' ') > -1) ? goog.string.urlEncode(viewable) : viewable;
 	viewable = decodeURIComponent(viewable);	 
     }
-    return utils.xtk.createXObject(viewable);
+    var v = utils.xtk.createXObject(viewable);
+    if (opt_properties){
+	utils.xtk.setProperties(v, opt_properties); 
+    }
+    return v
 }
 
 
@@ -405,7 +434,6 @@ xiv.XtkDisplayer.prototype.makeXObject = function(viewable){
  */
 xiv.XtkDisplayer.prototype.getViewLayout = function(){
 
-    //window.console.log("LAYOUT", this.currentViewablesSettings_['layout']);
     if (this.currentSlicerSettings_ && this.currentSlicerSettings_['layout']) {
 	window.console.log("LAYOUT", this.currentViewablesSettings_['layout']);
 	return this.currentSlicerSettings_['layout'];
@@ -420,7 +448,6 @@ xiv.XtkDisplayer.prototype.getViewLayout = function(){
  * @return {!string}
  */
 xiv.XtkDisplayer.prototype.getBackgroundColors = function(){
-
     if (this.currentSlicerSettings_ && this.currentSlicerSettings_['background-color']) {
 	//window.console.log("LAYOUT", this.currentViewablesSettings_['background-colors']);
 	return [utils.convert.arrayToRgb(this.currentSlicerSettings_['background-color'][0], 255), 
@@ -442,10 +469,15 @@ xiv.XtkDisplayer.prototype.getBackgroundColors = function(){
  */
 xiv.XtkDisplayer.prototype.loadViewables = function (viewables) {
 
-    var that = this;
     var viewables = goog.isArray(viewables) ? utils.xtk.getViewables(viewables) : viewables;
-    var renderablePlanes = (viewables['volumes'].length > 0 || viewables['dicoms'].length > 0) ? ['Sagittal', 'Coronal', 'Transverse', '3D'] : ['3D']; 
+    var renderablePlanes = (viewables['volumes'].length > 0 || viewables['dicoms'].length > 0) ? 
+	['Sagittal', 'Coronal', 'Transverse', '3D'] : ['3D']; 
 
+
+
+    //----------------
+    // init vars.
+    //----------------
     this.currentViewables_ = utils.xtk.getEmptyViewablesObject();
     this.currentViewablesSettings_ = utils.xtk.getEmptyViewablesObject(); 
 
@@ -457,82 +489,220 @@ xiv.XtkDisplayer.prototype.loadViewables = function (viewables) {
     goog.array.forEach(this.preloadCallbacks_, function(callback){ callback() })
 
 
-    for (var key in viewables){
-	switch (key){
-	case 'volumes':
-	case 'fibers':
-	case 'meshes':
 
-	    if (!viewables[key]) break;
-	    goog.array.forEach(viewables[key], function(volOrFiberOrMesh){
-		var xObject = this.makeXObject(volOrFiberOrMesh['file']);
-		utils.xtk.setProperties(xObject, volOrFiberOrMesh['properties']); 
-
-		// Volumes have some special qualites we have to attend to.
-		if (key === 'volumes'){
-		    xObject['isSelectedVolume'] = volOrFiberOrMesh['properties']['isSelectedVolume'];
-		    if (volOrFiberOrMesh['properties']['lowerThreshold'] !== NaN){
-			xObject.lowerThreshold = volOrFiberOrMesh['properties']['lowerThreshold'];
-		    }
-		    if (volOrFiberOrMesh['properties']['upperThreshold'] !== NaN){
-			xObject.upperThreshold = volOrFiberOrMesh['properties']['upperThreshold'];
-		    }
-		}
-
-		this.currentViewables_[key].push(xObject);
-		this.currentViewablesSettings_[key].push(volOrFiberOrMesh);
-		
-	    }.bind(this))
-	    break;
-
-	case 'dicoms':
-	    this.currentViewables_[key].push(this.makeXObject(viewables[key]));
-	    this.currentViewablesSettings_[key].push(viewables[key]);
-	    break;
-	case 'annotations':
-	     goog.array.forEach(viewables[key], function(annotationObj){
-		 this.currentViewables_[key].push(utils.xtk.makeAnnotation(annotationObj));
-		 this.currentViewablesSettings_[key].push({'properties': annotationObj});
-	     }.bind(this))
-	    break;
-	}
-    }
+    //----------------
+    // Create renderables
+    //----------------
+    this.createXtkObjects_(viewables);
 
 
 
     //----------------
-    // Check for 'isSelectedVolumes' in volumes. 
-    // If none, select the first.
+    // Determine selected volume
     //----------------
-    var selectedFound = false;
-    for (var i=0, len=this.currentViewables_['volumes']; i<len; i++) {
-	if (this.currentViewables_['volumes'][i]['isSelectedVolume'] === true){
-	    selectedFound = true;
-	    break;
-	}
-    }
-    if (!selectedFound){
-	this.currentViewables_['volumes'][0]['isSelectedVolume'] = true;
-    }
+    this.determineSelectedVolume_();
+
 
 
     //----------------
     // Load renderables as single array of currentViewables_
     //----------------
     this.XtkPlaneManager_.onAllRendered(this.onloadCallbacks_);
-    //window.console.log("EXITING");
-    //window.console.log("this._currentViewables", this.currentViewables_);
-    //window.console.log("CONVERTED", utils.convert.objectToArray(this.currentViewables_));
     this.XtkPlaneManager_.loadInRenderers(utils.convert.objectToArray(this.currentViewables_))
 }
 
 
 
 /**
- *
- * @type {?Object}
+ * @param {!Object}
+ * @private
  */
-xiv.XtkDisplayer.prototype._slicerSettings = null;
+xiv.XtkDisplayer.prototype.createXtkObjects_ = function(viewables){
+    for (var key in viewables){
+	switch (key){
+	case 'volumes':
+	case 'fibers':
+	case 'meshes':
+            if (!viewables[key]) break;
+            goog.array.forEach(viewables[key], function(volOrFiberOrMesh){
+		this.storeViewables_(key, 
+				     this.createXtkObject(volOrFiberOrMesh['file'], volOrFiberOrMesh['properties']), 
+				     volOrFiberOrMesh);
+            }.bind(this))
+            break;
+	case 'dicoms':
+	    this.storeViewables_(key, 
+				 this.createXtkObject(viewables[key]), viewables[key]);
+	    break;
+	case 'annotations':
+	    goog.array.forEach(viewables[key], function(annotationObj){
+		this.storeViewables_(key, utils.xtk.makeAnnotation(annotationObj), 
+				     {'properties': annotationObj});
+	    }.bind(this))
+
+	    break;
+	}
+    }
+}
+
+
+
+/**
+ * @param {!string} viewableType
+ * @param {!X.Object} xtkObj
+ * @param {!Object} viewableSettings
+ * @private
+ */
+xiv.XtkDisplayer.prototype.storeViewables_ = function(viewableType, xtkObj, viewableSettings) {
+    this.currentViewables_[viewableType].push(xtkObj);
+    this.currentViewablesSettings_[viewableType].push(viewableSettings);
+}
+
+
+
+/**
+ * Check for 'isSelectedVolumes' in volumes. 
+ * If none, select the first.
+ */
+xiv.XtkDisplayer.prototype.determineSelectedVolume_ = function(){
+    var selectedFound = false;
+    for (var i=0, len=this.currentViewables_['volumes'].length; i<len; i++) {
+	if (this.currentViewables_['volumes'][i]['isSelectedVolume'] === true){
+	    selectedFound = true;
+	    break;
+	}
+    }
+    if (!selectedFound){
+	// First, try setting the first avail. volume.
+	if (this.currentViewables_['volumes'].length) {
+	    this.currentViewables_['volumes'][0]['isSelectedVolume'] = true;
+	} 
+	// Then, try setting the first available dicom
+	else if (this.currentViewables_['dicoms'].length) {
+	    this.currentViewables_['dicoms'][0]['isSelectedVolume'] = true;
+	}	
+    }
+}
+
+
+
+/**
+ * @param {!Array.<string>} fileCollection The relevant Slicer files to be loaded.
+ * @param {!Object} settings The slicer settings.
+ * @private
+ */
+xiv.XtkDisplayer.prototype.getSlicerSettingsPerMrml_ = function(fileCollection, settings){
+    var basename = '';
+    var ext = '';
+    goog.array.forEach(fileCollection, function(fileName){
+	basename = utils.string.basename(fileName);
+	ext = utils.string.getFileExtension(basename).toLowerCase();
+	if ((ext === 'mrml') && (goog.string.startsWith(basename, '.') !== true)) {
+	    // Get the Slicer settings for each file
+	    console.log("MRML", ext, basename, fileName);
+	    settings[fileName] = utils.slicer.getSlicerSettings(fileName);
+	    
+	}
+    }.bind(this));
+}
+
+
+
+
+/**
+ * @param {!Array.<string>} fileCollection The relevant Slicer files to be loaded.
+ * @param {!Object} settings The slicer settings.
+ * @private
+ */
+xiv.XtkDisplayer.prototype.getSlicerSceneThumbnails_ = function(fileCollection, settings){
+    var basename = '';
+    var ext = '';
+    var screenshotName = '';
+    var cleanedSceneName = '';
+    var mrmlFilename = '';
+    goog.array.forEach(fileCollection, function(fileName){
+	basename = utils.string.basename(fileName);
+	ext = utils.string.getFileExtension(basename).toLowerCase();
+	screenshotName = basename.split('.')[0].toLowerCase().replace(' ', '');
+
+	//
+	// Get pngs and skip and files this start with '.'
+	//
+	if ((ext === 'png') && !(goog.string.startsWith(basename, '.'))) {
+	    for (mrmlFilename in settings){
+		goog.array.forEach(settings[mrmlFilename]['__scenes__'], function(sceneName){
+		    cleanedSceneName = sceneName.split('.')[0].toLowerCase().replace(' ', '');
+		    //window.console.log(screenshotName, cleanedSceneName, cleanedSceneName.indexOf(screenshotName))
+		    if (cleanedSceneName.indexOf(screenshotName) > -1){
+			settings[mrmlFilename][sceneName]['thumbnail'] = fileName;
+		    }
+		}.bind(this))
+	    }
+	}
+    }.bind(this));
+}
+
+
+
+
+/**
+ * Update the urls of the files to be
+ * to the accurate relative path.  (Since the
+ * urls were read from the mrml, they start relative to 
+ * the slicer file path).
+ *
+ * @param {!Object} settings
+*/
+xiv.XtkDisplayer.prototype.updateUrls_ = function(settings){
+    var viewableArr = [];
+
+    var updateUrl = function(mrml, url) { 
+	// If there's a '!' in the mrml url, then
+	// we're likely extracting a file from the .mrb.
+	var folderPrefix = (mrml.indexOf('!') === -1) ? utils.string.dirname(mrml) + '/' : mrml.split('!')[0] + '!';
+	var firstUrl = folderPrefix + goog.string.remove(url, './');
+	window.console.log("UPDATE URL", mrml, url, firstUrl);
+	return firstUrl
+    };
+
+    this.loopSettingsViewables(settings, function(mrmlFilename, scene, prop, viewable){
+	if (viewable['file']) {
+	    viewable['file'] =  updateUrl(mrmlFilename, viewable['file']);
+	} 
+	if (viewable['properties'] && viewable['properties']['fiberDisplay']) {
+	    goog.array.forEach(viewable['properties']['fiberDisplay'], function(fiberDisplay){
+		if (fiberDisplay['colorTable']) {
+		    fiberDisplay['colorTable'] =  updateUrl(mrmlFilename, fiberDisplay['colorTable']);
+		}
+	    })   
+	}
+    }.bind(this))
+    
+}
+
+
+
+/**
+ *
+ * @param {!Object} settings
+ * @param {!callback} callback
+ * @public
+*/
+xiv.XtkDisplayer.prototype.loopSettingsViewables = function(settings, callback){
+    var settings = (settings) ? settings : this._slicerSettings;
+    for (var mrmlFilename in settings){
+	for (var scene in settings[mrmlFilename]){
+	    for (var prop in settings[mrmlFilename][scene]){
+		viewableArr = settings[mrmlFilename][scene][prop];
+		if (goog.isArray(viewableArr)){
+		    goog.array.forEach(viewableArr, function(viewable){
+			callback(mrmlFilename, scene, prop, viewable);
+		    })
+		}
+	    }
+	}	
+    }
+}
 
 
 
@@ -540,109 +710,27 @@ xiv.XtkDisplayer.prototype._slicerSettings = null;
 /**
  *
  * @param {Array.<string>} fileCollection The relevant Slicer files to be loaded.
- * @param {string=} opt_onloadPlane The plane to prioritize the load on.
  */
 xiv.XtkDisplayer.prototype.loadSlicer = function (fileCollection) {
 
-    console.log("load slicer");
+    console.log("load slicer", fileCollection);
+
     this._slicerSettings = {};
 
+    this.getSlicerSettingsPerMrml_(fileCollection, this._slicerSettings);
+    this.getSlicerSceneThumbnails_(fileCollection, this._slicerSettings);
+    this.updateUrls_(this._slicerSettings);
     
-    //
-    // Get the Slicer settings from each mrml
-    //
-    var basename = '';
-    var ext = '';
-    goog.array.forEach(fileCollection, function(fileName){
-
-	basename = utils.string.basename(fileName);
-	ext = utils.string.getFileExtension(basename).toLowerCase();
-
-	if ((ext === 'mrml') && (goog.string.startsWith(basename, '.') !== true)) {
-
-	    // Get the Slicer settings for each file
-	    console.log("MRML", ext, basename, fileName);
-	    this._slicerSettings[fileName] = utils.slicer.getSlicerSettings(fileName);
-	    
-	}
-    }.bind(this));
-
-
-
-    
-
-    //
-    // GET THE SCREENSHOTS AS THUMBNAILS
-    //
-    var basename = '';
-    var ext = '';
-    var screenshotName = '';
-    var cleanedSceneName = '';
-    var mrmlFilename = '';
-    goog.array.forEach(fileCollection, function(fileName){
-
-	basename = utils.string.basename(fileName);
-	ext = utils.string.getFileExtension(basename).toLowerCase();
-	screenshotName = basename.split('.')[0].toLowerCase().replace(' ', '');
-
-
-	//
-	// Get pngs and skip and files this start with '.'
-	//
-	if ((ext === 'png') && !(goog.string.startsWith(basename, '.'))) {
-	    for (mrmlFilename in this._slicerSettings){
-		goog.array.forEach(this._slicerSettings[mrmlFilename]['__scenes__'], function(sceneName){
-		    cleanedSceneName = sceneName.split('.')[0].toLowerCase().replace(' ', '');
-		    //window.console.log(screenshotName, cleanedSceneName, cleanedSceneName.indexOf(screenshotName))
-		    if (cleanedSceneName.indexOf(screenshotName) > -1){
-			this._slicerSettings[mrmlFilename][sceneName]['thumbnail'] = fileName;
-		    }
-		}.bind(this))
-	    }
-	}
-    }.bind(this));
-
     window.console.log("SLICER SETTINGS", this._slicerSettings);
+    this.showSlicerViewMenu_();
+}
 
 
 
-    //
-    // Update the urls of the files to be
-    // to the accurate relative path.  (Since the
-    // urls were read from the mrml, they start relative to 
-    // the slicer file path).
-    //
-    var viewableArr = [];
-    var updateUrl = function(mrml, url) { 
-	var firstUrl = utils.string.dirname(mrml) + '/' + goog.string.remove(url, './');
-
-	return firstUrl
-    };
-
-    
-    for (var mrmlFilename in this._slicerSettings){
-	for (var scene in this._slicerSettings[mrmlFilename]){
-	    for (var prop in this._slicerSettings[mrmlFilename][scene]){
-		viewableArr = this._slicerSettings[mrmlFilename][scene][prop];
-		if (goog.isArray(viewableArr)){
-		    goog.array.forEach(viewableArr, function(viewable){
-			if (viewable['file']) {
-			    viewable['file'] =  updateUrl(mrmlFilename, viewable['file']);
-			} 
-			if (viewable['properties'] && viewable['properties']['fiberDisplay']) {
-
-			    goog.array.forEach(viewable['properties']['fiberDisplay'], function(fiberDisplay){
-				if (fiberDisplay['colorTable']) {
-				    fiberDisplay['colorTable'] =  updateUrl(mrmlFilename, fiberDisplay['colorTable']);
-				}
-			    })   
-			}
-		    })
-		}
-	    }
-	}	
-    }
-    
+/**
+ *
+ */
+xiv.XtkDisplayer.prototype.showSlicerViewMenu_ = function(){
     this.ViewBox_._SlicerViewMenu.reset(this._slicerSettings);
     this.ViewBox_._SlicerViewMenu.onViewSelected(function(slicerSetting){
 	window.console.log("LOADING THIS GUY", slicerSetting);

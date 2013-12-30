@@ -335,7 +335,6 @@ utils.xtk.createXObject = function(fileCollection) {
 	var dirname = utils.string.dirname(url);
 	var basename = utils.string.basename(url);
 
-	//console.log("\n\n*********RETN", dirname ,  basename);
 	//
 	// Four doubly encododed basenames
 	//
@@ -351,7 +350,7 @@ utils.xtk.createXObject = function(fileCollection) {
     // URL decode
     //
     if (goog.isArray(fileCollection)){
-	var newFileCollection;
+	var newFileCollection = [];
 	goog.array.forEach(fileCollection, function(fileName){
 	    newFileCollection.push(urlEncode(fileName));
 	})
@@ -450,6 +449,26 @@ utils.xtk.setProperties = function(xObj, properties) {
     //--------------------
     xObj.visible = true;
 
+
+
+    //--------------------
+    // Selected Volume
+    //--------------------
+    if (properties['isSelectedVolume'] !== undefined) {
+	xObj['isSelectedVolume'] = properties['isSelectedVolume'];
+    }
+
+
+
+    //--------------------
+    // Threshold
+    //--------------------
+    if (properties['lowerThreshold'] !== NaN){
+        xObj.lowerThreshold = properties['lowerThreshold'];
+    }
+    if (properties['upperThreshold'] !== NaN){
+        xObj.upperThreshold = properties['upperThreshold'];
+    }
 
     
 

@@ -498,6 +498,7 @@ utils.xnat.getScans = function (url, callback){
  * meatadata of a given Slicer file (.mrb) for loading into the 'Displayer'
  * object. 
  *
+ * @param {!string}
  * @param {!string, !function}
  */
 utils.xnat.getSlicer = function (url, callback){
@@ -511,7 +512,9 @@ utils.xnat.getSlicer = function (url, callback){
     var gottenSlicerFiles = 0;
     var viewableSlicerPackageFiles = [];
     var slicerThumb = ''; 
-    var fileQueryStr = queryFolder + "/" + viewableFile['Name'];
+
+    var fileQueryStr = '';
+
     var viewable = utils.xnat.getEmptyViewableData();
     var imageArr = ['jpeg', 'jpg', 'png', 'gif'];
     var imageFound = false;
@@ -553,7 +556,9 @@ utils.xnat.getSlicer = function (url, callback){
 		    // do not refer to a file).
 		    //
 		    if (r['File Name'][r['File Name'].length-1] != '/') {
-			viewableSlicerPackageFiles.push(fileQueryStr + "!" + r['File Name']);
+			if (r['File Name'].indexOf('__MACOSX') == -1) {
+			    viewableSlicerPackageFiles.push(fileQueryStr + "!" + r['File Name']);
+			}
 		    }   
 
 		})

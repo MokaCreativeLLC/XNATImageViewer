@@ -785,7 +785,7 @@ xiv.ViewLayoutManager.prototype.setPlanesDoubleClicked = function(callback){
 	    // sliders, etc.).
 	    goog.array.forEach(this.planeDoubleClickedCallback_, function(callback){ callback(newViewLayout.title) })
 	    
-	}
+	}.bind(this)
 	goog.events.removeAll(planeElt);
 	goog.events.listen(planeElt, goog.events.EventType.DBLCLICK, planeDoubleClick)
     }.bind(this))     

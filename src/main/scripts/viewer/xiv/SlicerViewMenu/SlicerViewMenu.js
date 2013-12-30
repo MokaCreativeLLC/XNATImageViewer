@@ -154,14 +154,7 @@ xiv.SlicerViewMenu.prototype.reset = function (slicerSettings) {
 	goog.array.forEach(scenes, function(sceneName){
 	    // Make the thumbnail
 	    displayText = "<b><font size = '2'>" + sceneName + "</font></b><br>";
-	    thumbnail = this.ThumbnailGallery_.makeAddThumbnail(this._slicerSettings[mrmlFile][sceneName]['thumbnail'], displayText, mrmlBase);
-
-	    // Set the hover clone to the thumbnail element to avoid
-	    // having the hover clone spill over.
-	    thumbnail.setHoverCloneParent(thumbnail._element);
-	    
-	    // Add custom parameters for the thumbnail, 
-	    // used for retrieving scene info.
+	    thumbnail = this.ThumbnailGallery_.insertThumbnail(this._slicerSettings[mrmlFile][sceneName]['thumbnail'], displayText, mrmlBase);
 	    thumbnail._MRML_ = mrmlFile;
 	    thumbnail._SCENE_ = sceneName;
 
@@ -189,13 +182,12 @@ xiv.SlicerViewMenu.prototype.onViewSelected = function (callback) {
 
 
 /**
-* @param {!thumbnail}
+* @param {!utils.ui.Thumbnail}
 * @private
 */
 xiv.SlicerViewMenu.prototype.setThumbnailClickListener_ = function (thumbnail) {
-    goog.events.listen(thumbnail._hoverClone, goog.events.EventType.CLICK, function(){
+    thumbnail.setOnClick( function(){
 	// Run click callbacks
-	// window.console.log("CLICK", this._slicerSettings[thumbnail._MRML_][thumbnail._SCENE_]);
 	if (this.thumbnailClickCallbacks_) {
 	    goog.array.forEach(this.thumbnailClickCallbacks_, 
 			       function(callback){ callback(this._slicerSettings[thumbnail._MRML_][thumbnail._SCENE_]) }.bind(this));

@@ -455,10 +455,12 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb, loadFramework) {
     switch(thumbCategory) {
 
     case 'slicer':
+	this._SlicerViewMenu._element.style.visibility = 'visible';
 	this.Displayer_.loadSlicer(thumb._properties.files);
 	//return;
 	break;
     default:
+	this._SlicerViewMenu._element.style.visibility = 'hidden';
 	this.Displayer_.loadViewables(thumb._properties.files);
     }
 
