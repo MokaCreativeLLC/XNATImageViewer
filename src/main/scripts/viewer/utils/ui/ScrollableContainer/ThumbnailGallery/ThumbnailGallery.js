@@ -37,7 +37,7 @@ utils.ui.ScrollableContainer.ThumbnailGallery = function (opt_args) {
     // Call parent
     //------------------ 
     utils.ui.ScrollableContainer.call(this);
-    this.element_.setAttribute('id',  "utils.ui.ScrollableContainer.ThumbnailGallery" + utils.dom.uniqueId());
+    this.element.setAttribute('id',  "utils.ui.ScrollableContainer.ThumbnailGallery" + utils.dom.uniqueId());
 
 
 
@@ -195,6 +195,8 @@ utils.ui.ScrollableContainer.ThumbnailGallery.prototype.hoverScroll = function()
 	this.currMousewheelThumbnail_._onMouseOut(); 
     } 
     this.currMousewheelThumbnail_ = this.Thumbnails_[originalThumbnailId];
+
+    if (!this.currMousewheelThumbnail_){ return }
     this.currMousewheelThumbnail_._onMouseOver();    
     
   

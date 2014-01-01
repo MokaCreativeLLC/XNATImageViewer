@@ -382,7 +382,7 @@ xiv.Modal.prototype.addPopupButton_ = function(){
 
     goog.dom.classes.set(this.popupButton_, xiv.Modal.POPUPBUTTON_CLASS);
     this.popupButton_.onclick = function(){
-	window.console.log("OPENING POPUP");
+	//window.console.log("OPENING POPUP");
 	goog.window.popup(xiv.ROOT_URL + '/scripts/viewer/popup.html' + '?' + xiv.DATA_PATH);
 	this.destroy();
 	//goog.window.popup(xiv.ROOT_URL + '/templates/screens/XImgView.vm');
@@ -420,9 +420,50 @@ xiv.Modal.prototype.addThumbnailGallery_ = function(){
  * @private
  */
 xiv.Modal.prototype.addManagers_ = function(){
+
     this.ThumbnailManager_ = new xiv.ThumbnailManager(this);
     this.ViewBoxManager_ = new xiv.ViewBoxManager(this);
+
+
+
+    //------------------
+    // Highlight the ViewBox when hovering over 
+    // its Thumbnail in the Scroll Gallery
+    //------------------
+     this.ThumbnailManager_.onMouseOver = function(Thumbnail){
+	this.ViewBoxManager_.loop(function(ViewBox){
+	    if (ViewBox.Thumbnail === Thumbnail){
+		ViewBox.element.style.borderColor = 'white';
+	    }
+	})	
+    }.bind(this)
+    this.ThumbnailManager_.onMouseOut = function(Thumbnail){;
+	this.ViewBoxManager_.loop(function(ViewBox){
+	    if (ViewBox.Thumbnail === Thumbnail && ViewBox.loadState !== 'loading'){
+		ViewBox.element.style.borderColor = ViewBox.element.getAttribute('originalbordercolor');	
+	    }
+	})
+    }.bind(this)
+
+
+
+
+    //------------------
+    // Highlight the Thumbnail when loading 
+    // it into a ViewBox and after loading.
+    //------------------
+    this.ViewBoxManager_.onThumbnailPreload = function(ViewBox){ 
+	ViewBox.element.style.borderColor = 'white';
+	this.highlightInUseThumbnails();
+    }.bind(this)
+    this.ViewBoxManager_.onThumbnailLoaded = function(ViewBox){
+	ViewBox.element.style.borderColor = ViewBox.element.getAttribute('originalbordercolor');
+	this.highlightInUseThumbnails();
+    }.bind(this)
+
+
 }
+
 
 
 
@@ -554,7 +595,7 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
 	    if (!slicerThumbnailsLoaded) {
 		utils.xnat.getViewables(this.xnatPath_, 'Slicer', function(viewable2){
 
-		    window.console.log("\n\nSLICER VIEWABLE", viewable2);
+		    //window.console.log("\n\nSLICER VIEWABLE", viewable2);
 		    this.addThumbnailsToGallery_('Slicer',  [viewable2]);
 		}.bind(this));
 		slicerThumbnailsLoaded = true;
@@ -590,6 +631,8 @@ xiv.Modal.prototype.addThumbnailsToGallery_ = function (folder, viewableProperti
  * @public
  */
 xiv.Modal.prototype.highlightInUseThumbnails = function () {
+
+    window.console.log("HIGHTLIGHT IN USE THUMBNAILS!");
     //------------------
     // Unhighlight all thumbnails.
     //------------------
@@ -603,7 +646,7 @@ xiv.Modal.prototype.highlightInUseThumbnails = function () {
     // looping through the xiv.ViewBoxes.
     //------------------
     this.ViewBoxManager_.loop(function(ViewBox){  
-	ViewBox.currentThumbnail_ && ViewBox.currentThumbnail_.setActive(true, false);
+	ViewBox.Thumbnail && ViewBox.Thumbnail.setActive(true, false);
     })
 }
 

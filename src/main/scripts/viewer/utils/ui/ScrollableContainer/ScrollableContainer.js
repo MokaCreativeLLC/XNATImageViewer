@@ -33,24 +33,42 @@ utils.ui.ScrollableContainer = function (opt_args) {
     var parent = opt_args && opt_args['parent'] ? opt_args['parent'] : document.body;
     
 
-    //------------------
-    // Initialize the elements.
-    //------------------
     /**
      * @type {!Element}
      * @private
      */
     this.element_ = utils.dom.makeElement("div", parent, "ScrollableContainer");
+
+
+    /**
+     * @type {!Element}
+     * @private
+     */
     this.scrollArea_ = utils.dom.makeElement("div", this.element_, "ScrollArea");
-    this._Slider = new utils.ui.GenericSlider({ 'parent': this.element_, 'orientation' : 'vertical'});
 
 
-    
+    /**
+     * @type {!utils.ui.GenericSlider}
+     * @private
+     */
+    this.Slider_ = new utils.ui.GenericSlider({ 'parent': this.element_, 'orientation' : 'vertical'});
+
+
+
+    /**
+     * @type {!Object}
+     * @private
+     */	
+    this.scrollables_ = {};
+
+
+
+
     //------------------
     // Set Slider UI and callbacks
     //------------------
-    this._Slider.addSlideCallback(this.mapSliderToContents.bind(this));  
-    this._Slider.bindToMouseWheel(this.element_);
+    this.Slider_.addSlideCallback(this.mapSliderToContents.bind(this));  
+    this.Slider_.bindToMouseWheel(this.element_);
 
     
 
@@ -65,18 +83,15 @@ utils.ui.ScrollableContainer = function (opt_args) {
     //------------------
     // Set style - Slider
     //------------------
-    this._Slider.addClassToThumb(utils.ui.ScrollableContainer.SLIDER_THUMB_CLASS);
-    this._Slider.addClassToWidget(utils.ui.ScrollableContainer.SLIDERELEMENT__CLASS);
-    this._Slider.addClassToTrack(utils.ui.ScrollableContainer.SLIDER_TRACK_CLASS);
-    this._Slider.setHoverClass(utils.ui.ScrollableContainer.SLIDER_THUMB_HOVERED_CLASS);
-
-
-
-    //------------------
-    // reset scrollables
-    //------------------
-    this.scrollables_ = {};
-
+    //this.Slider_.addClassToThumb(utils.ui.ScrollableContainer.SLIDER_THUMB_CLASS);
+    //this.Slider_.addClassToWidget(utils.ui.ScrollableContainer.SLIDERELEMENT__CLASS);
+    //this.Slider_.addClassToTrack(utils.ui.ScrollableContainer.SLIDER_TRACK_CLASS);
+    
+    console.log("CLASS ADD", utils.ui.ScrollableContainer.SLIDER_ELEMENT_CLASS);
+    goog.dom.classes.add(this.Slider_.element, utils.ui.ScrollableContainer.SLIDER_ELEMENT_CLASS);
+    goog.dom.classes.add(this.Slider_.thumb, utils.ui.ScrollableContainer.SLIDER_THUMB_CLASS);
+    goog.dom.classes.add(this.Slider_.track, utils.ui.ScrollableContainer.SLIDER_TRACK_CLASS);
+    this.Slider_.setHoverClass(utils.ui.ScrollableContainer.SLIDER_THUMB_HOVERED_CLASS);
 
 
     //------------------
@@ -112,7 +127,7 @@ utils.ui.ScrollableContainer.ZIPPY_ICON_MOUSEOVER_CLASS = /**@type {string} @con
 
 
 /**
- * @return {Element}
+ * @return {!Element}
  * @public
  */
 utils.ui.ScrollableContainer.prototype.__defineGetter__('element', function(){
@@ -121,29 +136,24 @@ utils.ui.ScrollableContainer.prototype.__defineGetter__('element', function(){
 
 
 
-
 /**
- * @type {?Element}
- */	
-utils.ui.ScrollableContainer.prototype.scrollArea_ = null;
-
-
-
-
-/**
- * @type {?utils.ui.GenericSlider}
- * @expose
+ * @return {!Element}
+ * @public
  */
-utils.ui.ScrollableContainer.prototype._Slider = null;
-
+utils.ui.ScrollableContainer.prototype.__defineGetter__('scrollArea', function(){
+    return this.scrollArea_;
+})
 
 
 
 /**
- * @type {?Object}
- * @private
- */	
-utils.ui.ScrollableContainer.prototype.scrollables_ = null;
+ * @return {!utils.ui.GenericSlider}
+ * @public
+ */
+utils.ui.ScrollableContainer.prototype.__defineGetter__('Slider', function(){
+    return this.Slider_;
+})
+
 
 
 
@@ -158,9 +168,9 @@ utils.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 
     var widgetHeight = utils.style.dims(this.element_, 'height');
     var scrollAreaHeight = utils.convert.toInt(utils.style.getComputedStyle(this.scrollArea_, 'height'));
-    var beforeRange = [this._Slider.getMinimum(), this._Slider.getMaximum()];
+    var beforeRange = [this.Slider_.getMinimum(), this.Slider_.getMaximum()];
     var afterRange = [0, scrollAreaHeight - widgetHeight];
-    var sliderThumb = this._Slider.thumb;
+    var sliderThumb = this.Slider_.thumb;
 
 
 
@@ -181,12 +191,12 @@ utils.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 	});
 
 	// Enable the slider
-	this._Slider.setEnabled(true);
+	this.Slider_.setEnabled(true);
 	
 
 	// Move the scroll area to the top (as the slider's thumbnail
 	// is at the top).
-	var sendVal = Math.abs(this._Slider.getValue() - 100);
+	var sendVal = Math.abs(this.Slider_.getValue() - 100);
 	var remap = utils.convert.remap1D(sendVal, beforeRange, afterRange);
 	var t = remap.newVal;
 	utils.style.setStyle( this.scrollArea_, {'top': -t});	
@@ -199,19 +209,9 @@ utils.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
     }
     else {
 	utils.style.setStyle(sliderThumb, { 'opacity': 0});
-	this._Slider.setEnabled(false);
-	this._Slider.setValue(100);
+	this.Slider_.setEnabled(false);
+	this.Slider_.setValue(100);
     }	
-}
-
-
-
-
-/**
- * @return {Element}
- */
-utils.ui.ScrollableContainer.prototype.getScrollArea = function () {
-    return this.scrollArea_;
 }
 
 
@@ -219,7 +219,7 @@ utils.ui.ScrollableContainer.prototype.getScrollArea = function () {
 /**
  * Generic updateStyle method. 
  *
- * @param {Object=}
+ * @param {Object=} opt_args
  */
 utils.ui.ScrollableContainer.prototype.updateStyle = function (opt_args) {
     if (opt_args) { utils.style.setStyle(this.element_, opt_args) }
@@ -231,8 +231,8 @@ utils.ui.ScrollableContainer.prototype.updateStyle = function (opt_args) {
 /**
  * Expand the zippy folder within the contents.
  *
- * @param {!string}
- * @expose
+ * @param {!string} zKey
+ * @public
  */
 utils.ui.ScrollableContainer.prototype.expandZippy = function(zKey) {
     this.scrollables_[zKey]['zippy'].setExpanded(true);
@@ -244,8 +244,8 @@ utils.ui.ScrollableContainer.prototype.expandZippy = function(zKey) {
 /**
  * Expands all zippy folders within the contents.
  *
- * @param {boolean=}
- * @expose
+ * @param {boolean=} expand
+ * @public
  */
 utils.ui.ScrollableContainer.prototype.expandZippys = function(expand) {
     for (zKey in this.scrollables_){
@@ -260,7 +260,8 @@ utils.ui.ScrollableContainer.prototype.expandZippys = function(expand) {
  * Returns the scrollables, which are the categorized contents
  * of a given slider. 
  *
- * @type {function(!number, !number)}
+ * @param {!number} a
+ * @param {!number} b
  */
 utils.ui.ScrollableContainer.prototype.getScrollables = function(a, b) {	
     return this.scrollables_[a][b];	
@@ -273,16 +274,16 @@ utils.ui.ScrollableContainer.prototype.getScrollables = function(a, b) {
  * Allows user to programitcally scroll to a position within
  * the scrollableContainer.
  *
- * @param {!number|!string}
+ * @param {!number|!string} val
  */
 utils.ui.ScrollableContainer.prototype.scrollTo = function(val) {
 
     if (typeof val === 'string'){
 	val = val.toLowerCase();
-	if (val === 'top') {this._Slider.setValue(this._Slider.getMaximum());}
-	else if (val === 'bottom') {this._Slider.setValue(this._Slider.getMinimum());}
+	if (val === 'top') {this.Slider_.setValue(this.Slider_.getMaximum());}
+	else if (val === 'bottom') {this.Slider_.setValue(this.Slider_.getMinimum());}
     } else {
-	this._Slider.setValue(val);
+	this.Slider_.setValue(val);
     }
 }
 
@@ -297,7 +298,7 @@ utils.ui.ScrollableContainer.prototype.scrollTo = function(val) {
  * @param {function=} opt_callback (Optional) The callback that occurs as the mousewheel scrolls.
  */
 utils.ui.ScrollableContainer.prototype.bindToMouseWheel = function(element, opt_callback) {
-    this._Slider.bindToMouseWheel(element, opt_callback);
+    this.Slider_.bindToMouseWheel(element, opt_callback);
 }
 
 
@@ -306,7 +307,7 @@ utils.ui.ScrollableContainer.prototype.bindToMouseWheel = function(element, opt_
 /**
  * Checks if a given zippy exists within the contents.
  *
- * @param {!string}
+ * @param {!string} zKey
  * @return {boolean}
  */
 utils.ui.ScrollableContainer.prototype.zippyExists = function(zKey) {
@@ -319,7 +320,8 @@ utils.ui.ScrollableContainer.prototype.zippyExists = function(zKey) {
 /**
  * Adds a zippy to the contents of the main element.
  *
- * @param {!string, Element=}
+ * @param {!string} zKey
+ * @param {Element=} opt_parent
  * @return {goog.ui.AnimatedZippy}
  */
 utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
@@ -424,7 +426,7 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
 	// Create a map that allows the slider to move
 	// the contents in proportion to the slider.
 	//
-	this.mapSliderToContents(this._Slider, this);		
+	this.mapSliderToContents(this.Slider_, this);		
 	
 
 	//
@@ -552,7 +554,7 @@ utils.ui.ScrollableContainer.prototype.addContents = function (contents, opt_par
 	}
 
 	// Allows user to move the contents when sliding the slider.
-	this.mapSliderToContents(this._Slider, this);
+	this.mapSliderToContents(this.Slider_, this);
 
 	// Do we expand the zippy?
 	//this.expandZippy(opt_parentKey);

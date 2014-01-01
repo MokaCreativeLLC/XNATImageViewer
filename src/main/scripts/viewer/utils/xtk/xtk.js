@@ -361,7 +361,7 @@ utils.xtk.createXObject = function(fileCollection) {
     }
 
 
-    console.log("FIRST", fileCollection, obj);  
+    //console.log("FIRST", fileCollection, obj);  
 
 
 

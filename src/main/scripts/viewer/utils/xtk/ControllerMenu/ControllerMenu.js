@@ -1052,7 +1052,7 @@ utils.xtk.ControllerMenu.prototype.makeSlider = function(opt_parent, opt_args) {
     }
 
 
-    return {'slider': slider, 'element': slider._element};
+    return {'slider': slider, 'element': slider.element};
 }
 
 

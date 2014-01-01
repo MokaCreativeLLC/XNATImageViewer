@@ -66,7 +66,7 @@ utils.ui.Thumbnail = function (opt_args) {
 
 
     /**
-     * @type {Array.<function>}
+     * @type {!Array.<function>}
      * @private
      */
     this.onMouseOver_ = [];
@@ -74,7 +74,7 @@ utils.ui.Thumbnail = function (opt_args) {
 
 
     /**
-     * @type {Array.<function>}
+     * @type {!Array.<function>}
      * @private
      */
     this.onMouseOut_ = [];
@@ -201,6 +201,7 @@ utils.ui.Thumbnail.prototype.__defineSetter__('onClick', function(callback) {
 * @private
 */
 utils.ui.Thumbnail.prototype.__defineSetter__('onMouseOver' , function(callback) {
+    //window.console.log("Thumbnail on mouse over:", callback);
     this.onMouseOver_.push(callback);
 })
 
@@ -363,9 +364,15 @@ utils.ui.Thumbnail.prototype.mouseOver_ = function() {
     //------------------
     // Run callbacks.
     //------------------
-    if (this.mouseverCallbacks_ !== null) {
-	goog.array.forEach(this.onMouseOver_, function(callback){ callback(this)});
-    }
+    //window.console.log("MOSUE OVER", this.onMouseOver_);
+    goog.array.forEach(this.onMouseOver_, function(callback){ 
+
+	//window.console.log('callback', callback);
+	if (callback) {
+	    callback(this)
+	}
+    }.bind(this));
+    
 }
 
 
@@ -387,9 +394,11 @@ utils.ui.Thumbnail.prototype.mouseOut_ = function() {
 	this.element_.style.visibility = 'visible';
     }
 
-    if (this.onMouseOut_ !== null) {
-	goog.array.forEach(this.onMouseOut_, function(callback){ callback(this)});
-    }
+ 
+    goog.array.forEach(this.onMouseOut_, function(callback){ 
+	//window.console.log('callback', callback);
+	callback(this)
+    }.bind(this));
 }
 
 

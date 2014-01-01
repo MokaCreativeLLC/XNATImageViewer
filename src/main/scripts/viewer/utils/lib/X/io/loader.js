@@ -206,7 +206,7 @@ X.loader.prototype.load = function(container, object) {
   // check the file format which returns the filepath, extension and the parser
   var _checkresult = this.checkFileFormat(container);
   var filepath = _checkresult[0];
-    window.console.log(filepath);
+
   if (container._filedata != null) {
 
     // we have raw file data attached and therefor can skip the loading

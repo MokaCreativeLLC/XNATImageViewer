@@ -100,7 +100,7 @@ xiv.Thumbnail.DRAGGING_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Th
 
 
 /**
- * @return {Object} The XNAT-related properties object of the thumbnail.
+ * @return {utils.xnat.properties} The XNAT-related properties object of the thumbnail.
  * @public
  */
 xiv.Thumbnail.prototype.__defineGetter__('xnatProperties', function(){
@@ -114,22 +114,6 @@ goog.exportSymbol('xiv.Thumbnail.prototype.getFiles', xiv.Thumbnail.prototype.ge
 
 
 
-/**
- * Clones the thumbnail to create a draggable element.
- *
- * @param {Element}
- */
-/*
-xiv.Thumbnail.prototype.createDragElement = function(sourceEl) {
-    var elt =  goog.dom.createDom('div', 'foo', 'Custom drag element');
-    utils.style.setStyle(elt, {
-	'color':  "rgba(255,0,0,1)",
-	'background-color':  "rgba(255,200,0,1)",
-	'width':  200,
-	'height':  200
-    });
-};
-*/
 
 
 

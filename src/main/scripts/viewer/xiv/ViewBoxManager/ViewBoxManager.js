@@ -87,9 +87,63 @@ xiv.ViewBoxManager = function (Modal) {
     this.ViewBoxPositions_ = {};
 
 
+
+    /**
+     * @type {!Array.function}
+     * @private
+     */
+    this.onThumbnailLoaded_ = [];
+
+
+    /**
+     * @type {!Array.function}
+     * @private
+     */
+    this.onThumbnailPreload_ = [];
+
+
+    /**
+     * @type {!Array.function}
+     * @private
+     */
+    this.onThumbnailLoadError_ = [];
+
+
 }
 goog.exportSymbol('xiv.ViewBoxManager', xiv.ViewBoxManager);
 
+
+
+/**
+ * Get the associated thumbnail load time for this object.
+ * @param {!function} callback The callback to call when the thumbnail loads.
+ * @public
+ */
+xiv.ViewBoxManager.prototype.__defineSetter__('onThumbnailLoaded', function(callback) {
+    return this.onThumbnailLoaded_.push(callback);
+})
+
+
+
+/**
+ * Get the associated thumbnail load time for this object.
+ * @param {!function} callback The callback to call when the thumbnail loads.
+ * @public
+ */
+xiv.ViewBoxManager.prototype.__defineSetter__('onThumbnailLoadError', function(callback) {
+    return this.onThumbnailLoadError_.push(callback);
+})
+
+
+
+/**
+ * Get the associated thumbnail load time for this object.
+ * @param {!function} callback The callback to call when the thumbnail loads.
+ * @public
+ */
+xiv.ViewBoxManager.prototype.__defineSetter__('onThumbnailPreload', function(callback) {
+    return this.onThumbnailPreload_.push(callback);
+})
 
 
 
@@ -552,8 +606,8 @@ xiv.ViewBoxManager.prototype.makeViewBox = function() {
     //------------------
     // Create xiv.ViewBox
     //------------------
-    var viewBox = new xiv.ViewBox();
-    this.Modal_.modal.appendChild(viewBox.element);
+    var ViewBox = new xiv.ViewBox();
+    this.Modal_.modal.appendChild(ViewBox.element);
 
 
 
@@ -563,7 +617,7 @@ xiv.ViewBoxManager.prototype.makeViewBox = function() {
     var modalWindow = goog.dom.getElementsByClass(xiv.Modal.MODAL_CLASS)[0];
     var dragDropHandle = utils.dom.makeElement("img", modalWindow, "DragAndDropHandle");
     dragDropHandle.src = xiv.ICON_URL + "Icons/Toggle-DragAndDrop.png";
-    dragDropHandle.ViewBoxId = viewBox.element.id; 
+    dragDropHandle.ViewBoxId = ViewBox.element.id; 
 
     //
     // Apply class.
@@ -573,7 +627,7 @@ xiv.ViewBoxManager.prototype.makeViewBox = function() {
     //
     // Add to class property.
     //
-    this.dragDropHandles_[viewBox.element.id] = dragDropHandle;
+    this.dragDropHandles_[ViewBox.element.id] = dragDropHandle;
 
     //
     // Tool tip
@@ -581,7 +635,20 @@ xiv.ViewBoxManager.prototype.makeViewBox = function() {
     dragDropHandle.title = "Drag and drop view box to swap.";
 
 
-    return viewBox;    
+    goog.array.forEach(this.onThumbnailLoaded_, function(callback){
+	ViewBox.onThumbnailLoaded = callback;
+    })
+
+    goog.array.forEach(this.onThumbnailPreload_, function(callback){
+	ViewBox.onThumbnailPreload = callback;
+    })
+
+
+    goog.array.forEach(this.onThumbnailLoadError_, function(callback){
+	ViewBox.onThumbnailLoadError = callback;
+    })
+
+    return ViewBox;    
 }
 
 

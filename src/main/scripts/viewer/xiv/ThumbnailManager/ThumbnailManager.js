@@ -34,6 +34,20 @@ xiv.ThumbnailManager = function () {
     this.dropCallbacks_ = [];
     this.clickCallbacks_ = [];
     this.thumbs_ = [];
+
+
+    /**
+     * @type {!Array.function}
+     * @private
+     */
+    this.onMouseOver_ = [];
+
+
+    /**
+     * @type {!Array.function}
+     * @private
+     */
+    this.onMouseOut_ = [];
 }
 goog.exportSymbol('xiv.ThumbnailManager', xiv.ThumbnailManager);
 
@@ -295,6 +309,25 @@ xiv.ThumbnailManager.prototype.initDragDrop = function(){
 }
 
 
+/**
+* @param {!function} callback
+* @public
+*/
+xiv.ThumbnailManager.prototype.__defineSetter__('onMouseOver', function(callback){
+    this.onMouseOver_.push(callback);
+})
+
+
+
+/**
+* @param {!function} callback
+* @public
+*/
+xiv.ThumbnailManager.prototype.__defineSetter__('onMouseOut', function(callback){
+    this.onMouseOut_.push(callback); 
+})
+
+
 
 
 /**
@@ -302,6 +335,7 @@ xiv.ThumbnailManager.prototype.initDragDrop = function(){
  * dragdropsource group.
  *
  * @param {xiv.Thumbnail}
+ * @public
  */
 xiv.ThumbnailManager.prototype.add = function(thumbnail){
 
@@ -324,25 +358,14 @@ xiv.ThumbnailManager.prototype.add = function(thumbnail){
     // then highlight the view box that the 
     // thumbnail was dropped into when we hover over it.
     //------------------
-    thumbnail.onMouseOver = function(Thumbnail){
-	xiv._Modal.ViewBoxManager.loop(function(ViewBox){
-	    if (ViewBox.currentThumbnail_ === Thumbnail){
-		utils.style.setStyle(ViewBox.element, 
-				     {'border-color':'rgb(255,255,255)'});
-	    }
-	})
-    }
-    //
-    // Do the opposite on mouseout
-    //
-    thumbnail.onMouseOut = function(Thumbnail){
-	xiv._Modal.ViewBoxManager.loop(function(ViewBox){
-	    if (ViewBox.currentThumbnail_ === Thumbnail){
-		utils.style.setStyle(ViewBox.element, 
-				     {'border-color':ViewBox.element.getAttribute('originalbordercolor')});
-	    }
-	})
-    }
+    goog.array.forEach(this.onMouseOver_, function(callback){
+	//window.console.log("MOUSE OVER CALLB", callback);
+	thumbnail.onMouseOver = callback;
+    }.bind(this))
+
+    goog.array.forEach(this.onMouseOut_, function(callback){
+	thumbnail.onMouseOut = callback;
+    }.bind(this))  
 
 }
 

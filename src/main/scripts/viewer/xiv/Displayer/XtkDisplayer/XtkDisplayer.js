@@ -64,38 +64,88 @@ xiv.XtkDisplayer = function(ViewBox) {
 
 
 
-    //------------------
-    // Reset property arrays and objects
-    //------------------  
-    this.currentViewables_ = {};
-    this.currentViewablesSettings_ = {};
-    this.currentSlicerSettings_ = {};
-    this.onloadCallbacks_ = [];
-    this.preloadCallbacks_ = [];
-
-
-
-    //------------------
-    // ViewBox
-    //------------------  
+    /**
+     * @type {!xiv.ViewBox}
+     * @private
+     */   
     this.ViewBox_ = ViewBox;
 
 
 
-    //------------------
-    // XtkPlaneManager
-    //------------------  
+    /**
+     * @type {!xiv.XtkPlaneManager}
+     * @private
+     */
     this.XtkPlaneManager_ = new xiv.XtkPlaneManager(this);
+
+
+
+
+    /**
+     * @type {?Object}
+     * @private
+     */
+    this.slicerSettings_ = null;
+
+
+
+    /**
+     * @private
+     * @type {!Array.function}
+     */ 
+    this.onPreload_ = [];
+
+
+
+    /**
+     * @type {!Array.function}
+     * @private
+     */ 
+    this.onLoaded_ = [];
+
+
+
+    /**
+     * @type {!Object}
+     * @private
+     */ 
+    this.currentViewables_ = {};
+
+
+
+    /**
+     * @type {!Object}
+     * @private
+     */
+    this.currentViewablesSettings_ = {};
+
+
+
+    /**
+     * @type {!Object}
+     * @private
+     */
+    this.currentSlicerSettings_ = {};
+
+
+
+    /**
+     * @private
+     * @type {?Object}
+     */ 
+    this.ControllerMenu_ = null;
+
+
 
 
 
     //------------------
     // Set the initial onload callbacks.
     //------------------  
-    this.onloadCallbacks_.push(function(){
+    this.onLoaded_.push(function(){
 	this.ControllerMenu_ = new utils.xtk.ControllerMenu(this);
 	this.ControllerMenu_.makeControllerMenu(this.currentViewables_);
-	this.syncControllerMenuToViewables_();
+	this.syncControllerMenu_();
     }.bind(this))
 	
 
@@ -112,177 +162,109 @@ xiv.XtkDisplayer.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.
 
 
 
-/**
- * @type {?xiv.XtkPlaneManager}
- * @protected
- */
-xiv.XtkDisplayer.prototype.XtkPlaneManager_ = null;
-
 
 /**
- * @type {?xiv.ViewBox}
- * @private
- */    
-xiv.XtkDisplayer.prototype.ViewBox_ = null;
-
-
-
-/**
- * @return {xiv.ViewBox}
- */    
-xiv.XtkDisplayer.prototype.getViewBox = function() {
-    return this.ViewBox_;
-}
-
-
-
-/**
- * @type {?Object}
- * @protected
- */
-xiv.XtkDisplayer.prototype._slicerSettings = null;
-
-
-
-
-/**
- * Returns the ViewPlane elements (not the classes) for
+ * Gets the ViewPlane elements (not the classes) for
  * animations, and style changes. 
  *
- * @return {Array.Element}
+ * @return {!Array.Element}
+ * @public
  */    
-xiv.XtkDisplayer.prototype.getViewPlaneElements = function() {
+xiv.XtkDisplayer.prototype.__defineGetter__('ViewPlanes', function() {
     return this.XtkPlaneManager_.getXtkPlaneElements();
-}
+})
 
 
 
 /**
- * Returns the ViewPlane interactor elements (not the classes) for
+ * Gets the ViewPlane interactor elements (not the classes) for
  * animations, and style changes. In general, these are the sliders
  * but they could hypothetically be any interactor element.
  *
- * @type {Array.Element}
+ * @type {!Array.Element}
+ * @public
  */    
-xiv.XtkDisplayer.prototype.getViewPlaneInteractors = function() {
+xiv.XtkDisplayer.prototype.__defineGetter__('Interactors', function() {
     return this.XtkPlaneManager_.getXtkPlaneInteractors();
-}
+})
+
 
 
 
 /**
- * @private
- * @type {!Array.function}
+ * @param {function} callback The callback to be applied after loading.
+ * @public
  */ 
-xiv.XtkDisplayer.prototype.preloadCallbacks_ = null;
+xiv.XtkDisplayer.prototype.__defineSetter__('onPreload', function(callback){
+    this.onPreload_.push(callback);
+})
 
 
 
 
 /**
- * @param {function} callback The callback to track.
- */ 
-xiv.XtkDisplayer.prototype.addPreloadCallback = function(callback){
-    this.preloadCallbacks_.push(callback);
-};
-
-
-
-
-/**
- * @return {Array.function}
- */ 
-xiv.XtkDisplayer.prototype.getPreloadCallbacks = function(){
-    return this.preloadCallbacks_;
-};
-
-
-
-/**
- * @type {?Array.function}
- * @private
- */ 
-xiv.XtkDisplayer.prototype.onloadCallbacks_ = null;
-
-
-
-
-/**
-* @type {function()}
-* @expose
+* @param {function} callback The callback to be applied once loaded.
+* @public
 */
-xiv.XtkDisplayer.prototype.onOnload = function (callback) {
-    this.onloadCallbacks_.push(callback)
-}
+xiv.XtkDisplayer.prototype.__defineSetter__('onLoaded', function (callback) {
+    this.onLoaded_.push(callback);
+})
+
 
 
 
 /**
- * @type {?Object}
- * @private
+ * @return {Object} The controller menu to control the properties of the loaded X.Objects.
+ * @public
  */ 
-xiv.XtkDisplayer.prototype.currentViewables_ = null;
-
-
-/**
- * @type {?Object}
- * @private
- */ 
-xiv.XtkDisplayer.prototype.currentViewablesSettings_ = null;
-
-
-/**
- * @type {?Object}
- * @private
- */ 
-xiv.XtkDisplayer.prototype.currentSlicerSettings_ = null;
-
-
-
-/**
- * @expose
- */
-xiv.XtkDisplayer.prototype.getCurrViewables = function () {
-    return this.currentViewables_;
-}
-
-
-
-/**
- * @expose
- */
-xiv.XtkDisplayer.prototype.resetCurrViewables = function () {
-    this.currentViewables_ = {};
-}
-
-
-
-/**
- * @private
- * @type {!Object}
- */ 
-xiv.XtkDisplayer.prototype.ControllerMenu_ = null;
-
-
-
-
-/**
- * @return {Object}
- */ 
-xiv.XtkDisplayer.prototype.getControllerMenu = function(){
+xiv.XtkDisplayer.prototype.__defineGetter__('ControllerMenu',  function(){
     return this.ControllerMenu_.getMenu();
-};
+})
 
 
 
 
 /**
- * Sync all of the relevant controllerMenu
- * properties to the X.Object properties.
+ * @return {!string}  Returns the layout provided by the viewables settings.  If none, defaults to 'xiv.DEFAULT_LAYOUT'.
+ * @public
+ */
+xiv.XtkDisplayer.prototype.__defineGetter__('ViewLayout',  function(){
+    if (this.currentSlicerSettings_ && this.currentSlicerSettings_['layout']) {
+	window.console.log("LAYOUT", this.currentViewablesSettings_['layout']);
+	return this.currentSlicerSettings_['layout'];
+    } else {
+	return xiv.DEFAULT_LAYOUT
+    }
+})
+
+
+
+
+/**
+ * @return {!string} Returns the two background colors as strings.  Two are returned for the purpose of gradients.
+ * @public 
+ */
+xiv.XtkDisplayer.prototype.__defineGetter__('BackgroundColors', function(){
+    if (this.currentSlicerSettings_ && this.currentSlicerSettings_['background-color']) {
+	//window.console.log("LAYOUT", this.currentViewablesSettings_['background-colors']);
+	return [utils.convert.arrayToRgb(this.currentSlicerSettings_['background-color'][0], 255), 
+		utils.convert.arrayToRgb(this.currentSlicerSettings_['background-color'][1], 255)]
+    } else {
+	return ['rgba(0,0,0,1)', 'rgba(0,0,0,1)']
+    }
+})
+
+
+
+
+
+/**
+ * Syncs the relevant ControllerMenu
+ * properties to the X.Objects loaded into the displayer.
  *
  * @private
  */ 
-xiv.XtkDisplayer.prototype.syncControllerMenuToViewables_ = function(){
+xiv.XtkDisplayer.prototype.syncControllerMenu_ = function(){
 
     var viewablesArr = utils.convert.objectToArray(this.currentViewables_);
     var settingsArr = utils.convert.objectToArray(this.currentViewablesSettings_);
@@ -349,13 +331,14 @@ xiv.XtkDisplayer.prototype.syncControllerMenuToViewables_ = function(){
 	    //
 	    // Sync visible
 	    //
+	    //console.log(sett
 	    if (settingsArr[i] !== undefined){
 		xObj.visible = settingsArr[i]['properties']['visible'];
-		//menuMap[key]['visible'].checked = xObj.visible;
-	    } //else {
+		menuMap[key]['visible'].checked = xObj.visible;
+	    } else {
 		xObj.visible = true;
 		menuMap[key]['visible'].checked = xObj.visible
-	    //}
+	    }
 	}
 	
     }
@@ -368,7 +351,7 @@ xiv.XtkDisplayer.prototype.syncControllerMenuToViewables_ = function(){
  *
  * @param {string|Array.string} fileCollection
  * @return {boolean}
- * @expose
+ * @public
  */
 xiv.XtkDisplayer.prototype.isLoaded = function(fileCollection) {
 
@@ -411,52 +394,66 @@ xiv.XtkDisplayer.prototype.isLoaded = function(fileCollection) {
 
 
 /**
- * @param {!string | !Array.<string>} viewable
- * @param {Object=} opt_settings
- * @return {?X.Object}
+ * Creates an X.Object based on the corresponding fileOrFiles argument,
+ * by analyzing its filetype.  Also conducts the necessary urlEndoding
+ * to communicate with the server.
+ * 
+ * @private
+ * @param {!string | !Array.<string>} fileOrFiles The fileName(s) to derive the X.Objects from.
+ * @param {Object=} opt_settings The settings to apply to the X.Objects.
+ * @return {?X.Object} The corresponding X.Object.
  */
-xiv.XtkDisplayer.prototype.createXtkObject = function(viewable, opt_properties){
-    if (!goog.isArray(viewable)){
-	var viewable =  (viewable.indexOf(' ') > -1) ? goog.string.urlEncode(viewable) : viewable;
-	viewable = decodeURIComponent(viewable);	 
+xiv.XtkDisplayer.prototype.makeXtkObject_ = function(fileOrFiles, opt_properties){
+
+    //----------------
+    // Dicom X.Objects require an array of files...
+    //----------------    
+    if (!goog.isArray(fileOrFiles)){
+	var fileOrFiles =  (fileOrFiles.indexOf(' ') > -1) ? goog.string.urlEncode(fileOrFiles) : fileOrFiles;
+	fileOrFiles = decodeURIComponent(fileOrFiles);	 
     }
-    var v = utils.xtk.createXObject(viewable);
+    var xObj = utils.xtk.createXObject(fileOrFiles);
     if (opt_properties){
-	utils.xtk.setProperties(v, opt_properties); 
+	utils.xtk.setProperties(xObj, opt_properties); 
     }
-    return v
+    return xObj;
 }
+
 
 
 
 /**
- * @return {!string}
+ * A xiv.ViewBox will call on this function to load up
+ * a utils.xnat.properties object.
+ *
+ * @param {utils.xnat.properties} xnatProperties The xnat properties to load.
+ * @public
  */
-xiv.XtkDisplayer.prototype.getViewLayout = function(){
+xiv.XtkDisplayer.prototype.load = function (xnatProperties) {
 
-    if (this.currentSlicerSettings_ && this.currentSlicerSettings_['layout']) {
-	window.console.log("LAYOUT", this.currentViewablesSettings_['layout']);
-	return this.currentSlicerSettings_['layout'];
-    } else {
-	return xiv.DEFAULT_LAYOUT
+    switch(xnatProperties['category'].toLowerCase()) {
+
+    case 'slicer':
+	this.loadSlicer_(xnatProperties['files']);
+	break;
+    default:
+	this.loadFiles_(xnatProperties['files']);
     }
 }
+
 
 
 
 /**
- * @return {!string}
+ * A xiv.ViewBox will call on this function to load up
+ * a set of fileUris.
+ *
+ * @param {!Array.<string>} viewables The relevant viewables to be loaded.
+ * @private
  */
-xiv.XtkDisplayer.prototype.getBackgroundColors = function(){
-    if (this.currentSlicerSettings_ && this.currentSlicerSettings_['background-color']) {
-	//window.console.log("LAYOUT", this.currentViewablesSettings_['background-colors']);
-	return [utils.convert.arrayToRgb(this.currentSlicerSettings_['background-color'][0], 255), 
-		utils.convert.arrayToRgb(this.currentSlicerSettings_['background-color'][1], 255)]
-    } else {
-	return ['rgba(0,0,0,1)', 'rgba(0,0,0,1)']
-    }
+xiv.XtkDisplayer.prototype.loadFiles_ = function (fileUris) {
+    this.loadViewables_(utils.xtk.getViewables(fileUris));
 }
-
 
 
 
@@ -465,11 +462,12 @@ xiv.XtkDisplayer.prototype.getBackgroundColors = function(){
  * A xiv.ViewBox will call on this function to load up
  * an viewable object (String) into the displayer.
  *
- * @param {!Array.<string> | !Object} viewables The relevant Slicer files to be loaded.
+ * @param {!utils.xtk.viewables} viewables The relevant viewables to be loaded.
+ * @public
  */
-xiv.XtkDisplayer.prototype.loadViewables = function (viewables) {
+xiv.XtkDisplayer.prototype.loadViewables_ = function (viewables) {
 
-    var viewables = goog.isArray(viewables) ? utils.xtk.getViewables(viewables) : viewables;
+
     var renderablePlanes = (viewables['volumes'].length > 0 || viewables['dicoms'].length > 0) ? 
 	['Sagittal', 'Coronal', 'Transverse', '3D'] : ['3D']; 
 
@@ -486,14 +484,14 @@ xiv.XtkDisplayer.prototype.loadViewables = function (viewables) {
     //----------------
     // Run pre-load callbacks.
     //----------------
-    goog.array.forEach(this.preloadCallbacks_, function(callback){ callback() })
+    goog.array.forEach(this.onPreload_, function(callback){ callback() })
 
 
 
     //----------------
     // Create renderables
     //----------------
-    this.createXtkObjects_(viewables);
+    this.makeXtkObjects_(viewables);
 
 
 
@@ -507,17 +505,21 @@ xiv.XtkDisplayer.prototype.loadViewables = function (viewables) {
     //----------------
     // Load renderables as single array of currentViewables_
     //----------------
-    this.XtkPlaneManager_.onAllRendered(this.onloadCallbacks_);
+    this.XtkPlaneManager_.onAllRendered(this.onLoaded_);
     this.XtkPlaneManager_.loadInRenderers(utils.convert.objectToArray(this.currentViewables_))
 }
 
 
 
 /**
- * @param {!Object}
+ * Makes a set of X.Objects based the viewables argument, storing them in the 
+ * private variable 'this.currentViewables_' and their settings in 
+ * 'this.currentViewablesSettings_'
+ *
+ * @param {!Object} viewables The viewables to derive the X.Objects from.
  * @private
  */
-xiv.XtkDisplayer.prototype.createXtkObjects_ = function(viewables){
+xiv.XtkDisplayer.prototype.makeXtkObjects_ = function(viewables){
     for (var key in viewables){
 	switch (key){
 	case 'volumes':
@@ -526,13 +528,13 @@ xiv.XtkDisplayer.prototype.createXtkObjects_ = function(viewables){
             if (!viewables[key]) break;
             goog.array.forEach(viewables[key], function(volOrFiberOrMesh){
 		this.storeViewables_(key, 
-				     this.createXtkObject(volOrFiberOrMesh['file'], volOrFiberOrMesh['properties']), 
+				     this.makeXtkObject_(volOrFiberOrMesh['file'], volOrFiberOrMesh['properties']), 
 				     volOrFiberOrMesh);
             }.bind(this))
             break;
 	case 'dicoms':
 	    this.storeViewables_(key, 
-				 this.createXtkObject(viewables[key]), viewables[key]);
+				 this.makeXtkObject_(viewables[key]), viewables[key]);
 	    break;
 	case 'annotations':
 	    goog.array.forEach(viewables[key], function(annotationObj){
@@ -548,6 +550,10 @@ xiv.XtkDisplayer.prototype.createXtkObjects_ = function(viewables){
 
 
 /**
+ * Stores the viewables, their corresponding X.Object, and
+ * their corresponding settings into the relevant private 
+ * variables. 
+ *
  * @param {!string} viewableType
  * @param {!X.Object} xtkObj
  * @param {!Object} viewableSettings
@@ -563,6 +569,8 @@ xiv.XtkDisplayer.prototype.storeViewables_ = function(viewableType, xtkObj, view
 /**
  * Check for 'isSelectedVolumes' in volumes. 
  * If none, select the first.
+ * 
+ * @private
  */
 xiv.XtkDisplayer.prototype.determineSelectedVolume_ = function(){
     var selectedFound = false;
@@ -583,6 +591,7 @@ xiv.XtkDisplayer.prototype.determineSelectedVolume_ = function(){
 	}	
     }
 }
+
 
 
 
@@ -652,7 +661,8 @@ xiv.XtkDisplayer.prototype.getSlicerSceneThumbnails_ = function(fileCollection, 
  * the slicer file path).
  *
  * @param {!Object} settings
-*/
+ * @private
+ */
 xiv.XtkDisplayer.prototype.updateUrls_ = function(settings){
     var viewableArr = [];
 
@@ -683,13 +693,13 @@ xiv.XtkDisplayer.prototype.updateUrls_ = function(settings){
 
 
 /**
- *
+ * Loop the 'viewables' aspect of the settings object.
  * @param {!Object} settings
  * @param {!callback} callback
  * @public
 */
 xiv.XtkDisplayer.prototype.loopSettingsViewables = function(settings, callback){
-    var settings = (settings) ? settings : this._slicerSettings;
+    var settings = (settings) ? settings : this.slicerSettings_;
     for (var mrmlFilename in settings){
 	for (var scene in settings[mrmlFilename]){
 	    for (var prop in settings[mrmlFilename][scene]){
@@ -709,51 +719,59 @@ xiv.XtkDisplayer.prototype.loopSettingsViewables = function(settings, callback){
 
 /**
  *
- * @param {Array.<string>} fileCollection The relevant Slicer files to be loaded.
+ * @param {Array.<string>} fileCollection The relevant files in the slicer .mrb to be loaded.
+ * @private
  */
-xiv.XtkDisplayer.prototype.loadSlicer = function (fileCollection) {
+xiv.XtkDisplayer.prototype.loadSlicer_ = function (fileCollection) {
 
     console.log("load slicer", fileCollection);
 
-    this._slicerSettings = {};
+    this.slicerSettings_ = {};
 
-    this.getSlicerSettingsPerMrml_(fileCollection, this._slicerSettings);
-    this.getSlicerSceneThumbnails_(fileCollection, this._slicerSettings);
-    this.updateUrls_(this._slicerSettings);
+    this.getSlicerSettingsPerMrml_(fileCollection, this.slicerSettings_);
+    this.getSlicerSceneThumbnails_(fileCollection, this.slicerSettings_);
+    this.updateUrls_(this.slicerSettings_);
     
-    window.console.log("SLICER SETTINGS", this._slicerSettings);
+    window.console.log("SLICER SETTINGS", this.slicerSettings_);
     this.showSlicerViewMenu_();
 }
 
 
 
+
 /**
- *
+ * Displays the Scene view menu when loading a Slicer .mrb into the 
+ * displayer.
+ * 
+ * @private
  */
 xiv.XtkDisplayer.prototype.showSlicerViewMenu_ = function(){
-    this.ViewBox_.SlicerViewMenu.reset(this._slicerSettings);
+
+    this.ViewBox_.SlicerViewMenu.reset(this.slicerSettings_);
+
     this.ViewBox_.SlicerViewMenu.onViewSelected(function(slicerSetting){
 	window.console.log("LOADING THIS GUY", slicerSetting);
 	this.currentSlicerSettings_ = slicerSetting;
 	this.ViewBox_.SlicerViewMenu.hideViewSelectDialog();
 	this.XtkPlaneManager_.setCamera('3D', slicerSetting['camera']);
-	this.loadViewables(slicerSetting);
+	this.loadViewables_(slicerSetting);
     }.bind(this));
+
     this.ViewBox_.SlicerViewMenu.showViewSelectDialog();
+
 
 }
 
 
 
 
-
 /**
-* @param {Object=}
-*/
+ * @param {Object=} opt_args The style arguments to appply to the displayer.
+ * @public
+ */
 xiv.XtkDisplayer.prototype.updateStyle = function (opt_args) {
     if (opt_args){
-	var widgetDims = utils.dom.mergeArgs(utils.style.dims(this.element), opt_args);
-	utils.style.setStyle(this.element, widgetDims);
+	var widgetDims = utils.dom.mergeArgs(utils.style.dims(this.element), opt_args);	utils.style.setStyle(this.element, widgetDims);
     } 
     this.XtkPlaneManager_.updateStyle();
 }
@@ -766,7 +784,7 @@ xiv.XtkDisplayer.prototype.updateStyle = function (opt_args) {
 * in the 2D menu, where the user can toggle between
 * the volume to be displayed in the 2D renderers.
 *
-* @param {!string}
+* @param {!string} fileName The filename to set the 2D renderers to show.
 */
 xiv.XtkDisplayer.prototype.set2DRenderObject = function(fileName) {
 
@@ -788,3 +806,10 @@ xiv.XtkDisplayer.prototype.set2DRenderObject = function(fileName) {
     this.XtkPlaneManager_.loadInRenderers(xObj, '2D');
 }
 
+
+
+
+goog.exportSymbol('xiv.XtkDisplayer.prototype.isLoaded', xiv.XtkDisplayer.prototype.isLoaded);
+goog.exportSymbol('xiv.XtkDisplayer.prototype.load', xiv.XtkDisplayer.prototype.load);
+goog.exportSymbol('xiv.XtkDisplayer.prototype.loopSettingsViewables', xiv.XtkDisplayer.prototype.loopSettingsViewables);
+goog.exportSymbol('xiv.XtkDisplayer.prototype.updateStyle', xiv.XtkDisplayer.prototype.updateStyle);

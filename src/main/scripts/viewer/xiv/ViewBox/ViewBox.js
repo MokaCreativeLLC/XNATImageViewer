@@ -122,7 +122,7 @@ xiv.ViewBox = function (opt_args) {
      * @type {?xiv.Thumbnail}
      * @private
      */
-    this.currentThumbnail_ = null;
+    this.Thumbnail_ = null;
 
 
 
@@ -142,8 +142,36 @@ xiv.ViewBox = function (opt_args) {
 
 
 
+    /**
+     * @type {!String}
+     * @private
+     */
+    this.loadState_ = 'empty';
 
 
+
+
+    /**
+     * @type {!Array.function}
+     * @private
+     */
+    this.onThumbnailLoaded_ = [];
+
+
+
+    /**
+     * @type {!Array.function}
+     * @private
+     */
+    this.onThumbnailPreload_ = [];
+
+
+
+    /**
+     * @type {!Array.function}
+     * @private
+     */
+    this.onThumbnailLoadError_ = [];
  
 
 
@@ -210,9 +238,21 @@ xiv.ViewBox.DRAGGING_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.View
 
 
 /**
+ * @return {!string} The load state of the viewer.
+ * @public
+ */
+xiv.ViewBox.prototype.__defineGetter__('loadState', function() {
+    return this.loadState_;
+})
+
+
+
+
+/**
  * Get the associated SlicerViewMenu for this object.
  *
  * @return {xiv.SlicerViewMenu} The SlicerViewMenu object of the ViewBox.
+ * @public
  */
 xiv.ViewBox.prototype.__defineGetter__('SlicerViewMenu', function() {
     return this.SlicerViewMenu_;
@@ -223,9 +263,10 @@ xiv.ViewBox.prototype.__defineGetter__('SlicerViewMenu', function() {
 
 /**
  * @return {?xiv.Thumbnail} The current thumbnail associated with the ViewBox.
+ * @public
  */	
-xiv.ViewBox.prototype.__defineGetter__('thumbnail', function(){
-    return this.currentThumbnail_;
+xiv.ViewBox.prototype.__defineGetter__('Thumbnail', function(){
+    return this.Thumbnail_;
 })
 
 
@@ -235,10 +276,50 @@ xiv.ViewBox.prototype.__defineGetter__('thumbnail', function(){
  * Get the associated thumbnail load time for this object.
  *
  * @return {!number} The date (in millseconds) when the last thumbnail was loaded into the ViewBox.
+ * @public
  */
 xiv.ViewBox.prototype.__defineGetter__('thumbnailLoadTime', function() {
     return this.thumbnailLoadTime_;
 })
+
+
+
+
+/**
+ * Get the associated thumbnail load time for this object.
+ * @param {!function} callback The callback to call when the thumbnail loads.
+ * @public
+ */
+xiv.ViewBox.prototype.__defineSetter__('onThumbnailLoaded', function(callback) {
+    return this.onThumbnailLoaded_.push(callback);
+})
+
+
+
+
+/**
+ * Get the associated thumbnail load time for this object.
+ * @param {!function} callback The callback to call when the thumbnail loads.
+ * @public
+ */
+xiv.ViewBox.prototype.__defineSetter__('onThumbnailPreload', function(callback) {
+    return this.onThumbnailPreload_.push(callback);
+})
+
+
+
+
+/**
+ * Get the associated thumbnail load time for this object.
+ * @param {!function} callback The callback to call when the thumbnail loads.
+ * @public
+ */
+xiv.ViewBox.prototype.__defineSetter__('onThumbnailLoadError', function(callback) {
+    return this.onThumbnailLoadError_.push(callback);
+})
+
+
+
 
 
 
@@ -322,14 +403,25 @@ xiv.ViewBox.prototype.initDisplayer_ = function(){
     //------------------
     // Onload callbacks
     //------------------
-    this.Displayer_.onOnload(function(){
+    this.Displayer_.onLoaded = function(){
+	this.loadState_ = 'loaded';
+
 	if (this.element.hasAttribute('originalbordercolor')){
 	    this.element.style.borderColor = this.element.getAttribute('originalbordercolor');
 	}
-	this.ViewLayoutMenu_.setViewLayout(this.Displayer_.getViewLayout());
+	this.ViewLayoutMenu_.setViewLayout(this.Displayer_.ViewLayout);
 	this.showChildElements_();
 	this.loadTabs_();
-    }.bind(this))
+
+
+
+	//
+	// Thumbnail loaded callbacks
+	// 
+	goog.array.forEach(this.onThumbnailLoaded_, function(callback){
+	    callback(this)
+	}.bind(this));
+    }.bind(this)
 }
 
 
@@ -346,11 +438,21 @@ xiv.ViewBox.prototype.initDisplayer_ = function(){
  */
 xiv.ViewBox.prototype.loadThumbnail = function (thumb) {
 
-    //utils.dom.debug("loadThumbnail");
-
     var onloadPlane =  '3D';
     var controllerMenu = undefined;
     
+    this.loadState_ = 'loading';
+
+    //------------------
+    // Track the thumbnail internally.
+    //------------------
+    this.Thumbnail_ = thumb;
+    // Thumbnail preLoaded callbacks 
+    goog.array.forEach(this.onThumbnailPreload_, function(callback){
+	callback(this)
+    }.bind(this));
+
+
 
 
     //------------------
@@ -374,7 +476,7 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb) {
     //------------------
     // Hide children
     //------------------
-    this.ViewLayoutManager_.setViewPlanes(this.Displayer_.getViewPlaneElements(), this.Displayer_.getViewPlaneInteractors());
+    this.ViewLayoutManager_.setViewPlanes(this.Displayer_.ViewPlanes, this.Displayer_.Interactors);
     this.ViewLayoutManager_.animateViewLayoutChange(false);
     this.ViewLayoutManager_.setViewLayout('none');
     this.hideChildElements_();
@@ -385,13 +487,6 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb) {
     // Move content divider to bottom.
     //------------------
     this.ContentDivider_.slideTo(this.ContentDivider_.getLowerLimit(), false);
-
-
-
-    //------------------
-    // Track the thumbnail internally.
-    //------------------
-    this.currentThumbnail_ = thumb;
 
 
 
@@ -411,24 +506,13 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb) {
     
 
     //------------------
-    // Load collection in Xtk.Displayer, prioritizing the 3D viewer
-    // as that is where the progress bar lies.
-    //------------------
-    //console.log(thumb.xnatProperties);
-    var thumbCategory = thumb.xnatProperties['category'].toLowerCase();
+    // Show/hide the slicer view menu depending on the 
+    // Thumbnail's xnatProperties
+    //------------------    
+    this.SlicerViewMenu_.element.style.visibility = (thumb.xnatProperties['category'].toLowerCase() === 'slicer') ? 'visible' : 'hidden';
 
-    switch(thumbCategory) {
 
-    case 'slicer':
-	this.SlicerViewMenu_.element.style.visibility = 'visible';
-	this.Displayer_.loadSlicer(thumb.xnatProperties.files);
-	//return;
-	break;
-    default:
-	this.SlicerViewMenu_.element.style.visibility = 'hidden';
-	this.Displayer_.loadViewables(thumb.xnatProperties.files);
-    }
-    
+    this.Displayer_.load(thumb.xnatProperties);    
 }
  
 
@@ -449,14 +533,14 @@ xiv.ViewBox.prototype.loadTabs_ = function () {
     //------------------
     // Info Tab.
     //------------------
-    this.ViewBoxTabs_.setTabContents('Info', this.Displayer_.makeInfoTabContents(this.currentThumbnail_.xnatProperties));
+    this.ViewBoxTabs_.setTabContents('Info', this.Displayer_.makeInfoTabContents(this.Thumbnail_.xnatProperties));
     
 
 
     //------------------
     // Slicer View Tab.
     //------------------
-    if (this.currentThumbnail_.xnatProperties['category'] == 'Slicer') {
+    if (this.Thumbnail_.xnatProperties['category'] == 'Slicer') {
 	this.ViewBoxTabs_.setTabContents('Slicer Views', this.SlicerViewMenu_.getThumbnailGallery());
     }
 
@@ -465,7 +549,7 @@ xiv.ViewBox.prototype.loadTabs_ = function () {
     //------------------
     // Controller Menu into Tabs
     //------------------
-    var controllerMenu = this.Displayer_.getControllerMenu();    
+    var controllerMenu = this.Displayer_.ControllerMenu;    
     for (var key in controllerMenu){
 	// Only input object that have contents in them.
 	if (Object.keys(controllerMenu[key]).length !== 0){
@@ -481,12 +565,7 @@ xiv.ViewBox.prototype.loadTabs_ = function () {
     //------------------
     this.updateStyle();
 
-    
-
-    //------------------
-    // Highlight in use thumbnails
-    //------------------    
-    xiv._Modal.highlightInUseThumbnails();
+   
 }
 
 
@@ -506,7 +585,7 @@ xiv.ViewBox.prototype.setViewLayoutMenuCallbacks_ = function () {
     // When a menu Item is clicked.
     //------------------
     this.ViewLayoutMenu_.onMenuItemClicked( function() {
-	this.ViewLayoutManager_.set3DBackgroundColor(this.Displayer_.getBackgroundColors());
+	this.ViewLayoutManager_.set3DBackgroundColor(this.Displayer_.BackgroundColors);
 	this.ViewLayoutManager_.setViewLayout(this.ViewLayoutMenu_.getSelectedViewLayout());
     }.bind(this));
 
