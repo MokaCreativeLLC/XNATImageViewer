@@ -45,6 +45,16 @@ goog.exportSymbol('xiv.Widget', xiv.Widget);
 
 
 
+/**
+ * @return {Element}
+ * @public
+ */
+xiv.Widget.prototype.__defineGetter__('element', function(){
+    return this._element;
+})
+
+
+
 
 /**
  * @type {?Element}

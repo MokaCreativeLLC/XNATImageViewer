@@ -48,6 +48,7 @@ startViewer = function (serverRoot, dataPath) {
     //------------------
     // Initialize global parameters
     //------------------
+    xiv.DATA_PATH = /** @const @type {string} */ dataPath;
     xiv.ROOT_URL = /** @const @type {string} */ serverRoot;
     xiv.ICON_URL = /** @const @type {string} */ serverRoot + "/images/viewer/";
 

@@ -144,14 +144,20 @@ xiv.Modal = function () {
     // xiv.Widget init.
     //------------------
     xiv.Widget.call(this, 'xiv.Modal');
-    document.body.appendChild(this._element);
-    goog.dom.classes.set(this._element, xiv.Modal.ELEMENT_CLASS);
+    document.body.appendChild(this.element);
+    goog.dom.classes.set(this.element, xiv.Modal.ELEMENT_CLASS);
+    //
+    //  Apply the appropriate class if in popup mode.
+    //
+    if (XNAT_IMAGE_VIEWER_MODE === 'popup'){
+	goog.dom.classes.add(this.element, xiv.Modal.POPUP_CLASS);
+    }
 
 
     //------------------
     // Fade all out
     //------------------    
-    this._element.style.opacity = 0;
+    this.element.style.opacity = 0;
 
 
 
@@ -161,7 +167,7 @@ xiv.Modal = function () {
     // NOTE: the 'xiv.Modal._element' variable is the background, which is 
     // parent of the 'xiv.Modal.modal_' element.
     //------------------
-    this.modal_ = utils.dom.makeElement("div", this._element, xiv.MODAL_ID);
+    this.modal_ = utils.dom.makeElement("div", this.element, xiv.MODAL_ID);
     goog.dom.classes.set(this.modal_, xiv.Modal.MODAL_CLASS);
     this.modal_.setAttribute('isfullscreen', '0');
 
@@ -219,7 +225,7 @@ xiv.Modal = function () {
     //------------------
     // Fade all out
     //------------------    
-    utils.fx.fadeIn(this._element, xiv.ANIM_MED);
+    utils.fx.fadeIn(this.element, xiv.ANIM_MED);
     
 }
 goog.inherits(xiv.Modal, xiv.Widget);
@@ -229,6 +235,7 @@ goog.exportSymbol('xiv.Modal', xiv.Modal);
 
 xiv.Modal.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-modal');
 xiv.Modal.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Modal.CSS_CLASS_PREFIX, 'background');
+xiv.Modal.POPUP_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Modal.CSS_CLASS_PREFIX, 'popup');
 xiv.Modal.MODAL_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Modal.CSS_CLASS_PREFIX, 'window');
 xiv.Modal.CLOSEBUTTON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Modal.CSS_CLASS_PREFIX, 'closebutton');
 xiv.Modal.FULLSCREENBUTTON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Modal.CSS_CLASS_PREFIX, 'fullscreenbutton');
@@ -301,6 +308,13 @@ xiv.Modal.prototype.addCloseButton_ = function(){
     goog.events.listen(this.closeButton_, goog.events.EventType.MOUSEOUT, function(event) { utils.style.setStyle(this.closeButton_, {'opacity':.5});}.bind(this));
     goog.dom.classes.set(this.closeButton_, xiv.Modal.CLOSEBUTTON_CLASS);
     this.closeButton_.onclick = this.destroy;
+
+    //
+    // Hide the popup if we're already in popup mode.
+    //
+    if (XNAT_IMAGE_VIEWER_MODE === 'popup'){
+	this.closeButton_.style.visibility = 'hidden';
+    }
 }  
 
 
@@ -353,6 +367,7 @@ xiv.Modal.prototype.addFullScreenButton_ = function(){
  */
 xiv.Modal.prototype.addPopupButton_ = function(){
 
+    
     this.popupButton_ = utils.dom.makeElement("img", this.modal_, "popupButton", {'opacity':.5});
     this.popupButton_.title = 'Popup viewer to new window.';
     this.popupButton_.src = xiv.ICON_URL + "popup.png";
@@ -367,8 +382,19 @@ xiv.Modal.prototype.addPopupButton_ = function(){
 
     goog.dom.classes.set(this.popupButton_, xiv.Modal.POPUPBUTTON_CLASS);
     this.popupButton_.onclick = function(){
-	goog.window.popup('Demo.html');
+	window.console.log("OPENING POPUP");
+	goog.window.popup(xiv.ROOT_URL + '/scripts/viewer/popup.html' + '?' + xiv.DATA_PATH);
+	this.destroy();
+	//goog.window.popup(xiv.ROOT_URL + '/templates/screens/XImgView.vm');
     }.bind(this);
+
+
+    //
+    // Hide the popup if we're already in popup mode.
+    //
+    if (XNAT_IMAGE_VIEWER_MODE === 'popup'){
+	this.popupButton_.style.visibility = 'hidden';
+    }
 }
 
 
