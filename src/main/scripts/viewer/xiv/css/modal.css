@@ -1,0 +1,124 @@
+/*
+ * Standard styling for the Modal
+ *
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+
+.xiv-modal-background {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    z-index: 1000;
+    background-color: rgba(0,0,0,.5);
+    display: inline-block;
+    font-family: Helvetica,"Helvetica neue", Arial, sans-serif
+}
+
+
+.xiv-modal-popup {
+    background-color: rgba(0,0,0,1);
+    color: rgba(0,0,0,1);
+}
+
+
+.xiv-modal-window {
+    position: absolute;
+    background-color: rgba(0,0,0,1);
+    border: none;
+    border-radius: 20px;
+    height: 50%;
+    width: 50%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.xiv-modal-closebutton {
+    position: absolute; 
+    cursor: pointer;
+    top: 10px;
+    left: 100%;
+    margin-left: -20px;
+    width: 10px;
+    height: 10px;
+    z-index: 103;
+}
+
+
+.xiv-modal-fullscreenbutton {
+    position: absolute; 
+    cursor: pointer;
+    top: 29px;
+    left: 100%;
+    margin-left: -20px;
+    width: 11px;
+    height: 11px;
+    z-index: 1000;
+}
+
+
+.xiv-modal-popupbutton {
+    position: absolute; 
+    cursor: pointer;
+    top: 50px;
+    left: 100%;
+    margin-left: -21px;
+    width: 12px;
+    height: 12px;
+    z-index: 1000;
+}
+
+
+.xiv-modal-scrollgallery {
+    position: absolute;
+    top: 30px;
+    left: 0px;
+    width: 180px;
+}
+
+
+
+
+.xiv-modal-columnmenu {
+    position: absolute;
+    bottom: 0px;
+    top: 50%;
+    margin-top: -20px;
+    left: 100%;
+    margin-left: -30px;
+}
+
+
+
+.xiv-modal-rowmenu {
+    position: absolute;
+    top: 100%;
+    margin-top: -30px;
+    left: 50%;
+    margin-left: 60px;
+}
+
+
+.xiv-modal-columnmenu-button, .xiv-modal-rowmenu-button {
+    position: absolute;
+    cursor: pointer;
+    z-index: 100;
+}
+
+
+.xiv-modal-columnmenu-button {
+    left: 13px;
+    width: 6px;
+    height: 12px;
+}
+
+
+.xiv-modal-rowmenu-button {
+   top: 13px;
+   width: 12px;
+   height: 6px;
+}

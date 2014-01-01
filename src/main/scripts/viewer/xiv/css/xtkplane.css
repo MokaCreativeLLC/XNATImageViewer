@@ -1,0 +1,128 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+.xiv-xtkplane {
+    position: absolute;
+    height: 50%;
+    width: 50%;
+    top: 0%;
+    left: 0%;
+    overflow: hidden;
+    display: inline;
+    background: #000;
+    z-index: 100;
+}
+
+
+
+.xiv-xtkplane-indexbox {
+    position: absolute;
+    top: 5px;
+    left: 0;
+    width: 100%;
+    margin-left: -8px;
+    color: rgb(255,255,255);
+    font-size: 11px;
+    opacity: .8;
+    text-align: right;
+}
+
+
+
+.xiv-xtkplane-label-north, .xiv-xtkplane-label-south, .xiv-xtkplane-label-east, .xiv-xtkplane-label-west  {
+    position: absolute;
+    font-size: 8px;
+    color: #fff;
+    opacity: 0.5;
+    text-transform: uppercase;
+}
+
+
+
+.xiv-xtkplane-label-north {
+    left: 50%;
+    top: 10%;
+}
+
+
+
+.xiv-xtkplane-label-south = {
+    left: 50%;
+    top: 85%;
+}
+
+
+.xiv-xtkplane-label-east = {
+    left: 10%;
+    top: 50%;
+}
+
+
+.xiv-xtkplane-label-west = {
+    left: 85%;
+    top: 50%;
+}
+
+
+
+
+
+
+.xiv-xtkplane-slider-widget {
+    position: absolute;
+    left: 5%;
+    top: 90%;
+    width: 90%;
+    height: 30px;
+    background: none;
+}
+
+
+
+.xiv-xtkplane-slider-thumb {
+    position: absolute;
+    top: 11px;
+    width: 6px;
+    height: 8px;
+    background: rgb(220,220,220);
+    border: 0px;
+    border-radius: 4px;
+}
+
+
+.xiv-xtkplane-slider-thumb-hovered {
+    box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, .55);
+}
+
+.xiv-xtkplane-slider-track {
+    position: absolute;
+    height: 2px;
+    top: 14px;
+    left: 0;
+    border-radius: 2px;
+    width: 100%;
+    background-color: rgb(80,80,80);
+}
+
+
+
+.xiv-xtkplane-slider-track-x {
+   background: rgb(255,0,0);
+}
+
+
+.xiv-xtkplane-slider-track-y {
+   background: rgb(0,255,0);
+}
+
+
+.xiv-xtkplane-slider-track-z {
+   background: rgb(0,0,255);
+}
+
+
+.xiv-xtkplane-slider-track-v {
+
+}
