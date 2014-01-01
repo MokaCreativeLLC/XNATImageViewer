@@ -52,13 +52,13 @@ utils.ui.ScrollableContainer.ThumbnailGallery = function (opt_args) {
     // Apply the Thumbnail classes by creating a dummy thumbnail.
     //------------------  
     var tempThumb = new utils.ui.Thumbnail();
-    this.thumbnailClasses_ = goog.dom.classes.get(tempThumb._element);
+    this.thumbnailClasses_ = goog.dom.classes.get(tempThumb.element);
     this.thumbnailClasses_.push(utils.ui.ScrollableContainer.ThumbnailGallery.THUMBNAIL_CLASS);
-    this.thumbnailImageClasses_ = goog.dom.classes.get(tempThumb._image);
+    this.thumbnailImageClasses_ = goog.dom.classes.get(tempThumb.image);
     this.thumbnailImageClasses_.push(utils.ui.ScrollableContainer.ThumbnailGallery.THUMBNAIL_IMAGE_CLASS);
-    this.thumbnailTextClasses_ = goog.dom.classes.get(tempThumb._displayText);
+    this.thumbnailTextClasses_ = goog.dom.classes.get(tempThumb.text);
     this.thumbnailTextClasses_.push(utils.ui.ScrollableContainer.ThumbnailGallery.THUMBNAIL_TEXT_CLASS);
-    goog.dom.removeNode(tempThumb._element);
+    goog.dom.removeNode(tempThumb.element);
     delete tempThumb;
 
     
@@ -112,12 +112,12 @@ utils.ui.ScrollableContainer.ThumbnailGallery.prototype.makeThumbnail = function
 
     var thumbnail = new utils.ui.Thumbnail();
     
-    goog.dom.classes.addRemove(thumbnail._element, goog.dom.classes.get(thumbnail._element), this.thumbnailClasses_);
-    goog.dom.classes.addRemove(thumbnail._displayText, goog.dom.classes.get(thumbnail._displayText), this.thumbnailTextClasses_);
-    goog.dom.classes.addRemove(thumbnail._image, goog.dom.classes.get(thumbnail._image), this.thumbnailImageClasses_);
+    goog.dom.classes.addRemove(thumbnail.element, goog.dom.classes.get(thumbnail.element), this.thumbnailClasses_);
+    goog.dom.classes.addRemove(thumbnail.text, goog.dom.classes.get(thumbnail.text), this.thumbnailTextClasses_);
+    goog.dom.classes.addRemove(thumbnail.image, goog.dom.classes.get(thumbnail.image), this.thumbnailImageClasses_);
 
     thumbnail.setImage(thumbnailUrl);
-    thumbnail.setDisplayText(displayText);
+    thumbnail.setText(displayText);
 
     return thumbnail;
         
@@ -137,13 +137,13 @@ utils.ui.ScrollableContainer.ThumbnailGallery.prototype.addThumbnail = function(
 
     var boundHoverScroll = this.hoverScroll.bind(this);
     // Bind clone to mouse wheel.
-    this.bindToMouseWheel(thumbnail.getHoverNode(), boundHoverScroll);
+    this.bindToMouseWheel(thumbnail.hoverNode, boundHoverScroll);
 
     // Track thumbnail.
-    this.Thumbnails_[thumbnail._element.id] = thumbnail;
+    this.Thumbnails_[thumbnail.element.id] = thumbnail;
     
     // Add contents to the ScrollableContainer.
-    contents[opt_folder] = thumbnail._element
+    contents[opt_folder] = thumbnail.element
     this.addContents(contents);
 }
 
@@ -198,14 +198,14 @@ utils.ui.ScrollableContainer.ThumbnailGallery.prototype.hoverScroll = function()
     this.currMousewheelThumbnail_._onMouseOver();    
     
   
-    // Return out if the getHoverNode() is the element.
+    // Return out if the hoverNode is the element.
     // We don't need to reposition it.
-    if (this.currMousewheelThumbnail_.getHoverNode() === this.currMousewheelThumbnail_._element) { return };
+    if (this.currMousewheelThumbnail_.hoverNode === this.currMousewheelThumbnail_.element) { return };
 
 
     // Set position otherwise
-    var eltPos = utils.style.absolutePosition(this.currMousewheelThumbnail_._element);
-    utils.style.setStyle(this.currMousewheelThumbnail_.getHoverNode(), {
+    var eltPos = utils.style.absolutePosition(this.currMousewheelThumbnail_.element);
+    utils.style.setStyle(this.currMousewheelThumbnail_.hoverNode, {
 	'position': 'absolute',
 	'top': eltPos['top'], 
 	'left': eltPos['left'],
@@ -229,21 +229,21 @@ utils.ui.ScrollableContainer.ThumbnailGallery.prototype.setThumbnailClasses_ = f
 	switch(nodeCategory){
 	case 'thumbnail':
 	    classes = this.thumbnailClasses_;
-	    element = this.Thumbnails_[thumbID]._element;
+	    element = this.Thumbnails_[thumbID].element;
 	    break;
 	case 'image':
 	    classes = this.thumbnailImageClasses_;
-	    element = this.Thumbnails_[thumbID]._image;
+	    element = this.Thumbnails_[thumbID].image;
 	    break;
 	case 'text':
 	    classes = this.thumbnailTextClasses_;
-	    element = this.Thumbnails_[thumbID]._displayText;
+	    element = this.Thumbnails_[thumbID].text;
 	    break;   
 	default:
 	    break;
 	}
     	goog.dom.classes.addRemove(element,  goog.dom.classes.get(element), classes);
-	this.Thumbnails_[thumbID].update();
+	
     }
 }
 
@@ -289,6 +289,6 @@ utils.ui.ScrollableContainer.ThumbnailGallery.prototype.addThumbnailTextClass = 
 */
 utils.ui.ScrollableContainer.ThumbnailGallery.prototype.updateStyle = function (opt_args) {
    if (opt_args) {
-       utils.style.setStyle(this._element, opt_args);
+       utils.style.setStyle(this.element, opt_args);
    }
 }

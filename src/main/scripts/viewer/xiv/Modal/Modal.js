@@ -34,7 +34,7 @@ goog.require('xiv.ViewBoxManager');
  * oversees the xiv.ViewBoxManager and xiv.ThumbnailManager classes and 
  * the actual modal window.  It should be noted that
  * the 'xiv.Modal._element' variable is the background, which is the
- * parent of the 'xiv.Modal._modal' element.
+ * parent of the 'xiv.Modal.modal_' element.
  *
  * @constructor
  * @extends {xiv.Widget}
@@ -42,13 +42,101 @@ goog.require('xiv.ViewBoxManager');
 
 goog.provide('xiv.Modal');
 xiv.Modal = function () {
-    var that = this;
 
-
-    //------------------
-    // SEt the global modal object
-    //------------------
+    
+    
     xiv._Modal = this;
+
+
+
+    /**
+     * @type {String}
+     * @private
+     */
+    this.xnatPath_ = '';
+
+
+
+
+    /**
+     * @type {?Element}
+     * @private
+     */	
+    this.modal_ = null;
+
+
+
+
+    /**
+     * @type {?Element}
+     * @private
+     */	
+    this.closeButton_ = null;
+
+
+
+
+    /**
+     * @type {?Element}
+     * @private
+     */	
+    this.fullScreenButton_ = null;
+
+
+
+
+    /**
+     * @type {?Element}
+     * @private
+     */	
+    this.popupButton_ = null;
+
+
+
+
+    /**
+     * @type {?utils.ui.ScrollableContainer.ThumbnailGallery}
+     * @private
+     */
+    this.ThumbnailGallery_ = null;
+
+
+
+
+    /**
+     * @type {?xiv.ThumbnailManager}
+     * @private
+     */
+    this.ThumbnailManager_ = null;
+
+
+
+
+    /**
+     * @type {?xiv.ViewBoxManager}
+     * @private
+     */	
+    this.ViewBoxManager_ = null;
+
+
+
+
+    /**
+     * @type {?Element}
+     * @private
+     */
+    this.columnMenu_ = null;
+
+
+
+
+    /**
+     * @type {?Element}
+     * @private
+     */
+    this.rowMenu_ = null;
+
+
 
 
 
@@ -67,87 +155,15 @@ xiv.Modal = function () {
 
 
 
-
     //------------------
     // Define modal window.
     //
     // NOTE: the 'xiv.Modal._element' variable is the background, which is 
-    // parent of the 'xiv.Modal._modal' element.
+    // parent of the 'xiv.Modal.modal_' element.
     //------------------
-    this._modal = utils.dom.makeElement("div", this._element, xiv.MODAL_ID);
-    goog.dom.classes.set(this._modal, xiv.Modal.MODAL_CLASS);
-    this._modal.setAttribute('isfullscreen', '0');
-
-	
-
-    //------------------
-    // Define close button.
-    //------------------
-    this.closeButton_ = utils.dom.makeElement("img", this._modal, "closeButton", {'opacity':.5});
-    this.closeButton_.title = 'Close the Image Viewer'
-    this.closeButton_.src = xiv.ICON_URL + "closeX.png";
-    goog.events.listen(this.closeButton_, goog.events.EventType.MOUSEOVER, function(event) { utils.style.setStyle(this.closeButton_, {'opacity':1});}.bind(this));
-    goog.events.listen(this.closeButton_, goog.events.EventType.MOUSEOUT, function(event) { utils.style.setStyle(this.closeButton_, {'opacity':.5});}.bind(this));
-    goog.dom.classes.set(this.closeButton_, xiv.Modal.CLOSEBUTTON_CLASS);
-    this.closeButton_.onclick = this.destroy;
-    
-
-
-    //------------------
-    // Define full screen button
-    //------------------
-    this.fullScreenButton_ = utils.dom.makeElement("img", this._modal, "fullScreenButton", {'opacity':.5});
-    this.fullScreenButton_.title = 'Enter full screen mode';
-    this.fullScreenButton_.src = xiv.ICON_URL + "fullScreen.png";
-    goog.events.listen(this.fullScreenButton_, goog.events.EventType.MOUSEOVER, function(event) { utils.style.setStyle(this.fullScreenButton_, {'opacity':1})}.bind(this));
-    goog.events.listen(this.fullScreenButton_, goog.events.EventType.MOUSEOUT, function(event) { utils.style.setStyle(this.fullScreenButton_, {'opacity':.5})}.bind(this));
-    goog.dom.classes.set(this.fullScreenButton_, xiv.Modal.FULLSCREENBUTTON_CLASS);
-    this.fullScreenButton_.onclick = function(){
-	if (this._modal.getAttribute('isfullscreen') === '0'){
-	    goog.dom.fullscreen.requestFullScreen(this._modal); 
-	    this._modal.setAttribute('isfullscreen', '1');
-	    this.fullScreenButton_.src = xiv.ICON_URL + "fullScreen-reverse.png";
-	    this.fullScreenButton_.title = 'Exit full screen mode';
-	} else {
-	    goog.dom.fullscreen.exitFullScreen();
-	    this._modal.setAttribute('isfullscreen', '0');
-	    this.fullScreenButton_.src = xiv.ICON_URL + "fullScreen.png";
-	    this.fullScreenButton_.title = 'Enter full screen mode';
-	}
-    }.bind(this);
-
-
-
-    //------------------
-    // Define popup
-    //------------------
-    this.popupButton_ = utils.dom.makeElement("img", this._modal, "popupButton", {'opacity':.5});
-    this.popupButton_.title = 'Popup viewer to new window.';
-    this.popupButton_.src = xiv.ICON_URL + "popup.png";
-    goog.events.listen(this.popupButton_, goog.events.EventType.MOUSEOVER, function(event) { utils.style.setStyle(this.popupButton_, {'opacity':1})}.bind(this));
-    goog.events.listen(this.popupButton_, goog.events.EventType.MOUSEOUT, function(event) { utils.style.setStyle(this.popupButton_, {'opacity':.5})}.bind(this));
-    goog.dom.classes.set(this.popupButton_, xiv.Modal.POPUPBUTTON_CLASS);
-    this.popupButton_.onclick = function(){
-	goog.window.popup('Demo.html');
-    }.bind(this);
-
-
-
-    //------------------
-    // Thumb gallery
-    //------------------
-    this.ThumbnailGallery_ = new utils.ui.ScrollableContainer.ThumbnailGallery();
-    this._modal.appendChild(this.ThumbnailGallery_._element);
-    goog.dom.classes.add(this.ThumbnailGallery_._element, xiv.Modal.THUMBNAILGALLERY_CLASS);
-
-
-
-    
-    //------------------
-    // Managers
-    //------------------
-    this._ThumbnailManager = new xiv.ThumbnailManager(this);
-    this._ViewBoxManager = new xiv.ViewBoxManager(this);
+    this.modal_ = utils.dom.makeElement("div", this._element, xiv.MODAL_ID);
+    goog.dom.classes.set(this.modal_, xiv.Modal.MODAL_CLASS);
+    this.modal_.setAttribute('isfullscreen', '0');
 
 
 
@@ -159,54 +175,44 @@ xiv.Modal = function () {
 
 
     //------------------
-    // Don't propagate when clicking on modal
+    // Prevent propagation when clicking on modal
     //------------------
-    this._modal.onclick = function (event) { utils.dom.stopPropagation(event);  }
- 
-
-
-    //------------------
-    // Add Row and Column Menus
-    //------------------
-    that.addRowMenu_();
-    that.addColumnMenu_();
-   
-
-
-    //------------------    
-    // xiv.Thumbnail DragDrop callbacks
-    //------------------
-    this._ThumbnailManager.addDropCallback(function(viewBoxElement, thumbnailElement) {
-	var _ViewBox = that._ViewBoxManager.getViewBoxByElement(viewBoxElement);
-	var _Thumb = that._ThumbnailManager.getThumbnailByElement(thumbnailElement);
-	_ViewBox.loadThumbnail(_Thumb);
-    }); 
-    this._ThumbnailManager.addClickCallback(function(_Thumb) {
-	that._ViewBoxManager.getFirstEmpty().loadThumbnail(_Thumb);
-    });
-
+    this.modal_.onclick = function (event) { utils.dom.stopPropagation(event);  }
+	
 
 
     //------------------
-    //	ViewBox changed callback
+    // All all interactive objects/classes.
     //------------------
-    that._ViewBoxManager.addViewBoxesChangedCallback(function() {
-	that._ThumbnailManager.addDragDropTargets(that._ViewBoxManager.getViewBoxElements());
-    })
+    this.addCloseButton_();
+    this.addFullScreenButton_();
+    this.addPopupButton_();
+    this.addThumbnailGallery_();
+    this.addManagers_();
+    this.addRowMenu_();
+    this.addColumnMenu_();
+    
+
+
+    //------------------
+    // Callbacks
+    //------------------
+    this.setThumbnailCallbacks_();
+    this.setViewBoxCallbacks_();
 
 
 
     //------------------
     // Insert default columns on loadup
     //------------------
-    that._ViewBoxManager.insertColumn(false);
+    this.ViewBoxManager_.insertColumn(false);
     
     
 
     //------------------
     // Update style
     //------------------
-    that.updateStyle();
+    this.updateStyle();
     
 
 
@@ -235,91 +241,46 @@ xiv.Modal.ROWMENU_BUTTON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.
 
 
 
-
 /**
- * @type {String}
- * @private
+ * Get the associated modal for this object.
+ *
+ * @return {Element} The modal element of the Modal.js object.
  */
-xiv.Modal.prototype.xnatPath_ = '';
-
-
-
-
-/**
- * @type {?Element}
- * @expose
- */	
-xiv.Modal.prototype._modal = null;
-
+xiv.Modal.prototype.__defineGetter__('modal', function() {
+  return this.modal_;
+});
 
 
 
 /**
- * @type {?Element}
- * @private
- */	
-xiv.Modal.prototype.closeButton_ = null;
-
-
-/**
- * @type {?Element}
- * @private
- */	
-xiv.Modal.prototype.fullScreenButton_ = null;
-
-
-/**
- * @type {?Element}
- * @private
- */	
-xiv.Modal.prototype.popupButton_ = null;
-
-
-
-/**
- * @type {?utils.ui.ScrollableContainer.ThumbnailGallery}
- * @private
+ * Get the associated xiv.ViewBoxManager for this object.
+ *
+ * @return {xiv.ViewBoxManager} The xiv.ViewBoxManager for this object.
  */
-xiv.Modal.prototype.ThumbnailGallery_ = null;
+xiv.Modal.prototype.__defineGetter__('ViewBoxManager', function() {
+  return this.ViewBoxManager_;
+});
 
 
 
 
 /**
- * @type {?xiv.ThumbnailManager}
- * @expose
+ * Get the associated xiv.ThumbnailManager for this object.
+ *
+ * @return {xiv.ThumbnailManager} The xiv.ThumbnailManager for this object.
  */
-xiv.Modal.prototype._ThumbnailManager = null;
+xiv.Modal.prototype.__defineGetter__('ThumbnailManager', function() {
+  return this.ThumbnailManager_;
+});
 
 
-
-
-/**
- * @type {?xiv.ViewBoxManager}
- * @expose
- */	
-xiv.Modal.prototype._ViewBoxManager = null;
-
-
-
-/**
-* @type {?Element}
-*/
-xiv.Modal.prototype.columnMenu_ = null;
-
-
-
-
-/**
-* @type {?Element}
-*/
-xiv.Modal.prototype.rowMenu_ = null;
 
 
 
 
 /**
  * @return {!string}
+ * @public
  */
 xiv.Modal.prototype.getXnatPath = function() { 
     return this.xnatPath_;
@@ -329,11 +290,156 @@ xiv.Modal.prototype.getXnatPath = function() {
 
 
 /**
+ * As stated.
+ * @private
+ */
+xiv.Modal.prototype.addCloseButton_ = function(){
+    this.closeButton_ = utils.dom.makeElement("img", this.modal_, "closeButton", {'opacity':.5});
+    this.closeButton_.title = 'Close the Image Viewer'
+    this.closeButton_.src = xiv.ICON_URL + "closeX.png";
+    goog.events.listen(this.closeButton_, goog.events.EventType.MOUSEOVER, function(event) { utils.style.setStyle(this.closeButton_, {'opacity':1});}.bind(this));
+    goog.events.listen(this.closeButton_, goog.events.EventType.MOUSEOUT, function(event) { utils.style.setStyle(this.closeButton_, {'opacity':.5});}.bind(this));
+    goog.dom.classes.set(this.closeButton_, xiv.Modal.CLOSEBUTTON_CLASS);
+    this.closeButton_.onclick = this.destroy;
+}  
+
+
+
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.Modal.prototype.addFullScreenButton_ = function(){
+    this.fullScreenButton_ = utils.dom.makeElement("img", this.modal_, "fullScreenButton", {'opacity':.5});
+    this.fullScreenButton_.title = 'Enter full screen mode';
+    this.fullScreenButton_.src = xiv.ICON_URL + "fullScreen.png";
+
+
+    goog.events.listen(this.fullScreenButton_, 
+		       goog.events.EventType.MOUSEOVER, 
+		       function(event) { utils.style.setStyle(this.fullScreenButton_, {'opacity':1})}.bind(this));
+
+
+    goog.events.listen(this.fullScreenButton_, 
+		       goog.events.EventType.MOUSEOUT, 
+		       function(event) { utils.style.setStyle(this.fullScreenButton_, {'opacity':.5})}.bind(this));
+
+
+    goog.dom.classes.set(this.fullScreenButton_, xiv.Modal.FULLSCREENBUTTON_CLASS);
+
+
+    this.fullScreenButton_.onclick = function(){
+	if (this.modal_.getAttribute('isfullscreen') === '0'){
+	    goog.dom.fullscreen.requestFullScreen(this.modal_); 
+	    this.modal_.setAttribute('isfullscreen', '1');
+	    this.fullScreenButton_.src = xiv.ICON_URL + "fullScreen-reverse.png";
+	    this.fullScreenButton_.title = 'Exit full screen mode';
+	} else {
+	    goog.dom.fullscreen.exitFullScreen();
+	    this.modal_.setAttribute('isfullscreen', '0');
+	    this.fullScreenButton_.src = xiv.ICON_URL + "fullScreen.png";
+	    this.fullScreenButton_.title = 'Enter full screen mode';
+	}
+    }.bind(this);
+}
+
+
+
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.Modal.prototype.addPopupButton_ = function(){
+
+    this.popupButton_ = utils.dom.makeElement("img", this.modal_, "popupButton", {'opacity':.5});
+    this.popupButton_.title = 'Popup viewer to new window.';
+    this.popupButton_.src = xiv.ICON_URL + "popup.png";
+
+    goog.events.listen(this.popupButton_, 
+		       goog.events.EventType.MOUSEOVER, 
+		       function(event) { utils.style.setStyle(this.popupButton_, {'opacity':1})}.bind(this));
+
+    goog.events.listen(this.popupButton_, 
+		       goog.events.EventType.MOUSEOUT, 
+		       function(event) { utils.style.setStyle(this.popupButton_, {'opacity':.5})}.bind(this));
+
+    goog.dom.classes.set(this.popupButton_, xiv.Modal.POPUPBUTTON_CLASS);
+    this.popupButton_.onclick = function(){
+	goog.window.popup('Demo.html');
+    }.bind(this);
+}
+
+
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.Modal.prototype.addThumbnailGallery_ = function(){
+    //------------------
+    // Thumb gallery
+    //------------------
+    this.ThumbnailGallery_ = new utils.ui.ScrollableContainer.ThumbnailGallery();
+    this.modal_.appendChild(this.ThumbnailGallery_._element);
+    goog.dom.classes.add(this.ThumbnailGallery_._element, xiv.Modal.THUMBNAILGALLERY_CLASS);
+
+}
+
+    
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.Modal.prototype.addManagers_ = function(){
+    this.ThumbnailManager_ = new xiv.ThumbnailManager(this);
+    this.ViewBoxManager_ = new xiv.ViewBoxManager(this);
+}
+
+
+
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.Modal.prototype.setThumbnailCallbacks_ = function(){
+    this.ThumbnailManager_.addDropCallback(function(viewBoxElement, thumbnailElement) {
+	var _ViewBox = this.ViewBoxManager_.getViewBoxByElement(viewBoxElement);
+	var _Thumb = this.ThumbnailManager_.getThumbnailByElement(thumbnailElement);
+	_ViewBox.loadThumbnail(_Thumb);
+    }.bind(this)); 
+
+    this.ThumbnailManager_.addClickCallback(function(_Thumb) {
+	this.ViewBoxManager_.getFirstEmpty().loadThumbnail(_Thumb);
+    }.bind(this));
+}
+
+
+
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.Modal.prototype.setViewBoxCallbacks_ = function(){
+    this.ViewBoxManager_.onViewBoxesChanged(function() {
+	this.ThumbnailManager_.addDragDropTargets(this.ViewBoxManager_.getViewBoxElements());
+    }.bind(this))
+}
+
+
+
+
+
+/**
  * Sets the governing XNAT Path from which all file IO occurs.
  * As of now, this XNAT Path must be at the 'experiment level.'
  *
- * @param {!string}
- * @expose
+ * @param {!string} path The XNAT to set for querying.
+ * @public
  */
 xiv.Modal.prototype.setXnatPath = function(path) {
 
@@ -355,8 +461,8 @@ xiv.Modal.prototype.setXnatPath = function(path) {
  * Calls on the internal 'setXnatPath' method to define
  * the private var 'xnatPath_'.
  *
- * @param {!string}
- * @expose
+ * @param {!string} path The XNAT to set for querying.
+ * @public
  */
 xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
 
@@ -394,10 +500,10 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
 	// Make thumbnails from the data.
 	//
 	goog.array.forEach(XNAT_IMAGE_VIEWER_DEMO_SCANS, function(demoScan){
-	    this.addThumbnailsToThumbnailGallery('scans',  [demoScan]);
+	    this.addThumbnailsToGallery_('scans',  [demoScan]);
 	}.bind(this))
 	goog.array.forEach(XNAT_IMAGE_VIEWER_DEMO_SLICER, function(demoSlicer){
-	    this.addThumbnailsToThumbnailGallery('Slicer',  [demoSlicer]);
+	    this.addThumbnailsToGallery_('Slicer',  [demoSlicer]);
 	}.bind(this))
 
     }
@@ -415,7 +521,7 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
 	    //
 	    // Add Scans xiv.Thumbnails to the xiv.ThumbnailGallery.
 	    //
-	    this.addThumbnailsToThumbnailGallery('scans',  [viewable]);
+	    this.addThumbnailsToGallery_('scans',  [viewable]);
 	    //
 	    // Attempt to load Slicer thumbnails after the Scan thumbnails.
 	    //
@@ -423,7 +529,7 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
 		utils.xnat.getViewables(this.xnatPath_, 'Slicer', function(viewable2){
 
 		    window.console.log("\n\nSLICER VIEWABLE", viewable2);
-		    this.addThumbnailsToThumbnailGallery('Slicer',  [viewable2]);
+		    this.addThumbnailsToGallery_('Slicer',  [viewable2]);
 		}.bind(this));
 		slicerThumbnailsLoaded = true;
 	    }
@@ -438,15 +544,13 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
  * Creates xiv.Thumbnails to feed into the scroll gallery zippys.
  *
  * @param {!string} folder The folder which the thumbnais belong to in the zippy headers of the ThumbnailGallery.
- * @param {!Array.<Object>} viewablePropertiesArray The viewables properties to convert to thumbnails.
+ * @param {!Array.<utils.xnat.properties>} viewablePropertiesArray The viewables properties to convert to thumbnails.
  * @private
  */
-xiv.Modal.prototype.addThumbnailsToThumbnailGallery = function (folder, viewablePropertiesArray) {
-
+xiv.Modal.prototype.addThumbnailsToGallery_ = function (folder, viewablePropertiesArray) {
     goog.array.forEach(viewablePropertiesArray, function(viewableProperties) { 
-	thumbnail = this._ThumbnailManager.makeXivThumbnail(viewableProperties);	
+	var thumbnail = this.ThumbnailManager_.makeXivThumbnail(viewableProperties);	
 	this.ThumbnailGallery_.addThumbnail(thumbnail, folder.toString()); 
-
     }.bind(this))	
 }
 
@@ -454,7 +558,7 @@ xiv.Modal.prototype.addThumbnailsToThumbnailGallery = function (folder, viewable
 
 
 /**
- * Highlights all thumgnails that are being viewed 
+ * Highlights all thumbnails that are being viewed 
  * a xiv.ViewBox.
  *
  * @public
@@ -463,7 +567,7 @@ xiv.Modal.prototype.highlightInUseThumbnails = function () {
     //------------------
     // Unhighlight all thumbnails.
     //------------------
-    this._ThumbnailManager.loop(function(Thumbnail){  
+    this.ThumbnailManager_.loop(function(Thumbnail){  
 	Thumbnail.setActive(false, false);
     })
 
@@ -472,8 +576,8 @@ xiv.Modal.prototype.highlightInUseThumbnails = function () {
     // Highight only in use thumbnails by 
     // looping through the xiv.ViewBoxes.
     //------------------
-    this._ViewBoxManager.loop(function(ViewBox){  
-	xiv.ViewBox.currentThumbnail_ && ViewBox.currentThumbnail_.setActive(true, false);
+    this.ViewBoxManager_.loop(function(ViewBox){  
+	ViewBox.currentThumbnail_ && ViewBox.currentThumbnail_.setActive(true, false);
     })
 }
 
@@ -483,9 +587,12 @@ xiv.Modal.prototype.highlightInUseThumbnails = function () {
 /**
  * Makes the buttons for Row / Column insertion and removal. 
  *
- * @param {!Element, !string, !Object.<string,number|string>}
+ * @param {!Element} parent The parent of the row/column button.
+ * @param {!string} className The classname of the row/column button.
+ * @param {!Object.<string,number|string>} args The style args for the row/column button.
+ * @private
  */
-xiv.Modal.prototype.makeRowColButton = function(parent, className, args) {
+xiv.Modal.prototype.makeRowColButton_ = function(parent, className, args) {
 
     //------------------
     // Make the Button element
@@ -526,16 +633,16 @@ xiv.Modal.prototype.makeRowColButton = function(parent, className, args) {
 
 /**
  * Adds the 'addColumn' menu to the modal window.
+ *
+ * @private
  */
 xiv.Modal.prototype.addColumnMenu_ = function () {
-    var that = this;
-
 
 
     //------------------
     // Make columnMenu element, add class.
     //------------------
-    this.columnMenu_ = utils.dom.makeElement("div", this._modal, "ColumnMenu_");
+    this.columnMenu_ = utils.dom.makeElement("div", this.modal_, "ColumnMenu_");
     goog.dom.classes.add(this.columnMenu_, xiv.Modal.COLUMNMENU_CLASS);
     
 
@@ -543,13 +650,12 @@ xiv.Modal.prototype.addColumnMenu_ = function () {
     //------------------
     // Make 'insertColumn' button
     //------------------
-    this.makeRowColButton(that.columnMenu_, xiv.Modal.COLUMNMENU_BUTTON_CLASS, {
+    this.makeRowColButton_(this.columnMenu_, xiv.Modal.COLUMNMENU_BUTTON_CLASS, {
 	'id' : "InsertColumnButton", 
 	'src':  xiv.ICON_URL + "Arrows/insertColumn.png",
 	'style': {'top': 0},
 	'title': "Insert Column",
-	'onclick': function () { that._ViewBoxManager.insertColumn(); 
-	}	
+	'onclick': function () { this.ViewBoxManager_.insertColumn()}.bind(this)	
     });
 
 
@@ -557,13 +663,12 @@ xiv.Modal.prototype.addColumnMenu_ = function () {
     //------------------
     // Make 'removeColumn' button
     //------------------
-    this.makeRowColButton(that.columnMenu_, xiv.Modal.COLUMNMENU_BUTTON_CLASS, {
+    this.makeRowColButton_(this.columnMenu_, xiv.Modal.COLUMNMENU_BUTTON_CLASS, {
 	'id' : "RemoveColumnButton", 
 	'src':  xiv.ICON_URL + "/Arrows/removeColumn.png",
 	'style': {'top': 22},
 	'title': "Remove Column",
-	'onclick': function () { that._ViewBoxManager.removeColumn();  
-	}	
+	'onclick': function () { this.ViewBoxManager_.removeColumn()}.bind(this)	
     });
 }
 
@@ -572,16 +677,16 @@ xiv.Modal.prototype.addColumnMenu_ = function () {
 
 /**
  * Adds the 'addRow' menu to the modal window.
+ *
+ * @private
  */
 xiv.Modal.prototype.addRowMenu_ = function () {
-    var that = this;
-
 
 
     //------------------
     // Make rowMenu element, add class.
     //------------------
-    this.rowMenu_ = utils.dom.makeElement("div", this._modal, "RowMenu_");
+    this.rowMenu_ = utils.dom.makeElement("div", this.modal_, "RowMenu_");
     goog.dom.classes.add(this.rowMenu_, xiv.Modal.ROWMENU_CLASS);
 
 
@@ -589,13 +694,12 @@ xiv.Modal.prototype.addRowMenu_ = function () {
     //------------------
     // Make 'insertRow' button
     //------------------
-    this.makeRowColButton(that.rowMenu_, xiv.Modal.ROWMENU_BUTTON_CLASS, {
+    this.makeRowColButton_(this.rowMenu_, xiv.Modal.ROWMENU_BUTTON_CLASS, {
 	'id' : "InsertRowButton", 
 	'src':  xiv.ICON_URL + "Arrows/insertRow.png",
 	'style': {'left': 0},
 	'title': "Insert Row",
-	'onclick': function () { that._ViewBoxManager.insertRow(); 
-	}	
+	'onclick': function () { this.ViewBoxManager_.insertRow()}.bind(this)	
     });
 
 
@@ -603,13 +707,12 @@ xiv.Modal.prototype.addRowMenu_ = function () {
     //------------------
     // Make 'removeRow' button
     //------------------
-    this.makeRowColButton(that.rowMenu_, xiv.Modal.ROWMENU_BUTTON_CLASS, {
+    this.makeRowColButton_(this.rowMenu_, xiv.Modal.ROWMENU_BUTTON_CLASS, {
 	'id' : "RemoveRowButton", 
 	'src':  xiv.ICON_URL + "Arrows/removeRow.png",
 	'style': {'left': 22},
 	'title': "Remove Row",
-	'onclick': function () { that._ViewBoxManager.removeRow();  
-	}	
+	'onclick': function () { this.ViewBoxManager_.removeRow()}.bind(this)	
     });
 };
 
@@ -622,11 +725,11 @@ xiv.Modal.prototype.addRowMenu_ = function () {
  * Used when a row or column is inserted.  The modal animates itself
  * on its resize.
  *
- * @param {function=}
+ * @param {function=} opt_callback The callback for AFTER the modal is animated.
+ * @public
  */
 xiv.Modal.prototype.animateModal  = function (opt_callback) {
 
-    var that = this;
     var modalDims = this.calculateModalDims_();
     var animQueue = new goog.fx.AnimationParallelQueue();
 
@@ -657,12 +760,9 @@ xiv.Modal.prototype.animateModal  = function (opt_callback) {
     // Set and add the xiv.Modal's animation methods
     // to the animation queue.
     //------------------
-    var modalResize = resize(this._modal, modalDims.width, modalDims.height, xiv.ANIM_MED)
+    var modalResize = resize(this.modal_, modalDims.width, modalDims.height, xiv.ANIM_MED)
     animQueue.add(modalResize);
-    animQueue.add(slide(this._modal, modalDims.left, modalDims.top, xiv.ANIM_MED));
-
-
-
+    animQueue.add(slide(this.modal_, modalDims.left, modalDims.top, xiv.ANIM_MED));
 
 
 
@@ -670,22 +770,21 @@ xiv.Modal.prototype.animateModal  = function (opt_callback) {
     // Set and add the xiv.ViewBox's animation methods
     // to the animation queue.
     //------------------
-    this._ViewBoxManager.loop( function(ViewBox, i, j) { 
+    this.ViewBoxManager_.loop( function(ViewBox, i, j) { 
 	animQueue.add(slide(ViewBox._element, modalDims.ViewBox.lefts[i][j], modalDims.ViewBox.tops[i][j], xiv.ANIM_MED));	
 	animQueue.add(resize(ViewBox._element, modalDims.ViewBox.width, modalDims.ViewBox.height, xiv.ANIM_MED));	
     })
 	
      
 
-
     //------------------
     // Call 'updateStyle' on every animation frame.
     //------------------
     goog.events.listen(modalResize, 'animate', function() {
-	that._ViewBoxManager.loop( function(ViewBox, i, j) { 
+	this.ViewBoxManager_.loop( function(ViewBox, i, j) { 
 	    ViewBox.updateStyle();
 	})
-    })
+    }.bind(this))
 
 
 
@@ -697,11 +796,11 @@ xiv.Modal.prototype.animateModal  = function (opt_callback) {
 	//
 	// Update style.
 	//
-	that.updateStyle();
+	this.updateStyle();
 	//
 	// Fade in new viewers.
 	//
-	that._ViewBoxManager.loop( function(ViewBox, i, j) { 
+	this.ViewBoxManager_.loop( function(ViewBox, i, j) { 
 	    if (ViewBox._element.style.opacity == 0) {
 		utils.fx.fadeIn(ViewBox._element, xiv.ANIM_FAST);
 	    }
@@ -710,7 +809,7 @@ xiv.Modal.prototype.animateModal  = function (opt_callback) {
 	// Run callback
 	//
 	if (opt_callback) { opt_callback() };
-    })
+    }.bind(this))
 
 
 
@@ -727,11 +826,10 @@ xiv.Modal.prototype.animateModal  = function (opt_callback) {
  * Fades out then deletes the modal and all of its
  * child elements.
  *
- * @param {number=}
+ * @param {number=} fadeOut The amount of desired time to fade out the modal.
+ * @public
  */
 xiv.Modal.prototype.destroy = function (fadeOut) {
-    var that = this;
-
 
     //------------------
     // Get the modal's root element by class
@@ -774,14 +872,16 @@ xiv.Modal.prototype.destroy = function (fadeOut) {
  */
 xiv.Modal.prototype.calculateModalDims_ = function () {
     
-    var that = this;
+  
     var ScrollableContainerLeft = 0;
     var maxModalWidth = Math.round(window.innerWidth * xiv.MAX_MODAL_HEIGHT_PERCENTAGE);
     
     
     
     //**************************************************************
+    //
     // Generate a prelimiary width...
+    //
     //**************************************************************
     
     //------------------
@@ -794,16 +894,16 @@ xiv.Modal.prototype.calculateModalDims_ = function () {
     //------------------
     //	Get the number of scan viewers
     //------------------
-    var viewers = this._ViewBoxManager.getViewBoxes();
-    var ViewBoxColumns = this._ViewBoxManager.numCols();
-    var ViewBoxRows = this._ViewBoxManager.numRows();
+    var viewers = this.ViewBoxManager_.getViewBoxes();
+    var ViewBoxColumns = this.ViewBoxManager_.totalColumns();
+    var ViewBoxRows = this.ViewBoxManager_.totalRows();
     
     
 
     //------------------
     // Determine the minimum modal width
     //------------------
-    var minModalWidth = utils.style.dims(that.ThumbnailGallery_._element, 'width') + 
+    var minModalWidth = utils.style.dims(this.ThumbnailGallery_._element, 'width') + 
 	xiv.MIN_VIEWER_WIDTH * ViewBoxColumns + 
 	xiv.VIEWER_VERTICAL_MARGIN * ViewBoxColumns + 
 	xiv.EXPAND_BUTTON_WIDTH;
@@ -821,7 +921,7 @@ xiv.Modal.prototype.calculateModalDims_ = function () {
     //------------------
     // Determine the modal width
     //------------------
-    var modalWidth = utils.style.dims(that.ThumbnailGallery_._element, 'width') + 
+    var modalWidth = utils.style.dims(this.ThumbnailGallery_._element, 'width') + 
 	ViewBoxWidth  * ViewBoxColumns + 
 	xiv.VIEWER_VERTICAL_MARGIN * ViewBoxColumns + 
 	xiv.EXPAND_BUTTON_WIDTH;
@@ -837,7 +937,7 @@ xiv.Modal.prototype.calculateModalDims_ = function () {
     // If the modal is too wide, scale it down
     //-------------------------
     if (modalWidth > maxModalWidth) {	
-	var thumbGalleryWidth = utils.convert.toInt((utils.style.getComputedStyle(that.ThumbnailGallery_._element, 'width')));
+	var thumbGalleryWidth = utils.convert.toInt((utils.style.getComputedStyle(this.ThumbnailGallery_._element, 'width')));
 	ViewBoxWidth = (maxModalWidth - thumbGalleryWidth - xiv.EXPAND_BUTTON_WIDTH)/ViewBoxColumns - xiv.VIEWER_VERTICAL_MARGIN ;
 	ViewBoxHeight = ViewBoxWidth / xiv.VIEWER_DIM_RATIO;
 	modalWidth = maxModalWidth;
@@ -875,7 +975,7 @@ xiv.Modal.prototype.calculateModalDims_ = function () {
     var ScrollableContainerDims = utils.style.dims(this.ThumbnailGallery_._element)
     var viewerStart = ScrollableContainerDims.width +  ScrollableContainerDims['left'] + xiv.VIEWER_VERTICAL_MARGIN;
 
-    that._ViewBoxManager.loop( function(ViewBox, i, j) { 
+    this.ViewBoxManager_.loop( function(ViewBox, i, j) { 
 	
 	l = viewerStart + j * (ViewBoxWidth + xiv.VIEWER_VERTICAL_MARGIN);
 	if (j==0 || !ViewBoxLefts[i]) {
@@ -949,19 +1049,17 @@ xiv.Modal.prototype.calculateModalDims_ = function () {
  * xiv.Modal element change its dimensions.
  *
  * @param {Object.<string, string | number>=}
+ * @public
  */
 xiv.Modal.prototype.updateStyle = function (opt_args) {	
-
-    var that = this;
-    
 
     //-------------------------	
     // xiv.Modal 
     //-------------------------	
     modalDims = this.calculateModalDims_();
     //window.console.log(modalDims);
-    utils.style.setStyle( this._modal, modalDims);
-    if (opt_args) {  utils.style.setStyle( this._modal, opt_args); }	
+    utils.style.setStyle( this.modal_, modalDims);
+    if (opt_args) {  utils.style.setStyle( this.modal_, opt_args); }	
     
 
 
@@ -975,8 +1073,8 @@ xiv.Modal.prototype.updateStyle = function (opt_args) {
     //-------------------------	
     // xiv.ViewBoxes	
     //-------------------------	
-    if (that._ViewBoxManager) {
-	that._ViewBoxManager.loop( function(ViewBox, i, j) { 
+    if (this.ViewBoxManager_) {
+	this.ViewBoxManager_.loop( function(ViewBox, i, j) { 
 	    ViewBox.updateStyle({
 		'height': modalDims['ViewBox']['height'],
 		'width': modalDims['ViewBox']['width'],
@@ -984,8 +1082,8 @@ xiv.Modal.prototype.updateStyle = function (opt_args) {
 		'top': modalDims['ViewBox']['tops'][i][j]
 	    });	
 
-	    that._ViewBoxManager.updateDragDropHandles();
-	}); 		
+	    this.ViewBoxManager_.updateDragDropHandles();
+	}.bind(this)); 		
     }	
     
 
@@ -996,3 +1094,13 @@ xiv.Modal.prototype.updateStyle = function (opt_args) {
     this.highlightInUseThumbnails();
 	
 }
+
+
+
+goog.exportSymbol('xiv.Modal.prototype.getXnatPath', xiv.Modal.prototype.getXnatPath);
+goog.exportSymbol('xiv.Modal.prototype.setXnatPath', xiv.Modal.prototype.setXnatPath);
+goog.exportSymbol('xiv.Modal.prototype.setXnatPathAndLoadThumbnails', xiv.Modal.prototype.setXnatPathAndLoadThumbnails);
+goog.exportSymbol('xiv.Modal.prototype.highlightInUseThumbnails', xiv.Modal.prototype.highlightInUseThumbnails);
+goog.exportSymbol('xiv.Modal.prototype.animateModal', xiv.Modal.prototype.animateModal);
+goog.exportSymbol('xiv.Modal.prototype.destroy', xiv.Modal.prototype.destroy);
+goog.exportSymbol('xiv.Modal.prototype.updateStyle', xiv.Modal.prototype.updateStyle);

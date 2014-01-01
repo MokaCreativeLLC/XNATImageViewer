@@ -36,14 +36,57 @@ goog.require('xiv.ViewBox');
  * the xiv.ViewBox locations within the modal using a multi-dimenesional
  * array.
  *
- * @param {xiv.Modal}
+ * @param {xiv.Modal} Modal The xiv.Modal object that holds the xiv.ViewBox objects.
  * @constructor
  */
 goog.provide('xiv.ViewBoxManager');
 xiv.ViewBoxManager = function (Modal) {
+
+    /**
+     * @type {xiv.Modal}
+     * @private
+     */
     this.Modal_  = Modal;
-    this.viewersChangedCallbacks_ = [];
-    this.ViewBoxes_ = [[]];
+
+
+    /**
+     * @type {Array.<function>}
+     * @private
+     */
+    this.onViewBoxesChangedCallbacks_ = [];
+
+
+
+    /**
+     * @type {?goog.fx.DragDropGroup}
+     * @private
+     */
+    this.dragDropGroup_ = null;
+
+
+
+    /**
+     * @type {Object.<string, Element>}
+     * @private
+     */
+    this.dragDropHandles_ = {};
+
+
+
+    /**
+     * @type {Array.<Array.<xiv.ViewBox>>}
+     * @private
+     */
+    this.ViewBoxes_ = [[]]; 
+
+
+    /**
+     * @type {Object.<string, Object.<string, number>>}
+     * @private
+     */
+    this.ViewBoxPositions_ = {};
+
+
 }
 goog.exportSymbol('xiv.ViewBoxManager', xiv.ViewBoxManager);
 
@@ -51,59 +94,26 @@ goog.exportSymbol('xiv.ViewBoxManager', xiv.ViewBoxManager);
 
 
 /**
- * @type {?xiv.Modal}
- * @private
+ * Maintains a callback array for when the number of xiv.ViewBoxes
+ * change within the xiv.Modal.
+ *
+ * @param {!function} callback The callback function to store.
+ * @public
  */
-xiv.ViewBoxManager.prototype.Modal_  = null;
-
-
-
-
-/**
- * @type {!Array.<function>}
- * @private
- */
-xiv.ViewBoxManager.prototype.viewersChangedCallbacks_ = null;
-
-
-
-
-/**
- * @type {?goog.fx.DragDropGroup}
- * @private
- */
-xiv.ViewBoxManager.prototype.dragDropGroup = null;
-
-
-
-
-/**
- * @type {Object.<string, Element>}
- * @private
- */
-xiv.ViewBoxManager.prototype.dragDropHandles = {};
-
-
-
-
-/**
- * @type {function()}
- * @private
- */
-xiv.ViewBoxManager.prototype.runViewBoxesChangedCallbacks = function() {
-    if (this.viewersChangedCallbacks_.length > 0) {	
-	goog.array.forEach(this.viewersChangedCallbacks_, function(a) { a();});
-    }	
+xiv.ViewBoxManager.prototype.onViewBoxesChanged = function(callback) {
+    this.onViewBoxesChangedCallbacks_.push(callback);
 }
 
 
 
-
 /**
-* @private
-* @type {?Array.<Array.<xiv.ViewBox>>}
-*/
-xiv.ViewBoxManager.prototype.ViewBoxes_ = null;
+ * @private
+ */
+xiv.ViewBoxManager.prototype.onViewBoxesChanged_ = function() {
+    if (this.onViewBoxesChangedCallbacks_) {	
+	goog.array.forEach(this.onViewBoxesChangedCallbacks_, function(callback) { callback();});
+    }	
+}
 
 
 
@@ -113,50 +123,32 @@ xiv.ViewBoxManager.prototype.ViewBoxes_ = null;
 * 'viewers' array performing the user-specified 'callback' 
 * operation on every viewer.  
 *
-* @param {function} callback 
+* @param {function} callback The callback function to apply when running the loop.
 * @return {Object | Array.<Object>}
+* @public
 */
 xiv.ViewBoxManager.prototype.loop = function(callback) {
     var returnVals = [];
+    var i = 0, j = 0;
+    var retVal;
     
 
     //------------------
     // Conduct the mult-dimensional loop...
     //------------------
-    for (var i=0, len = this.ViewBoxes_.length; i < len; i++) {
-	for (var j=0, len2 = this.ViewBoxes_[i].length; j < len2; j++) {
+    for (i=0, len = this.ViewBoxes_.length; i < len; i++) {
+	for (j=0, len2 = this.ViewBoxes_[i].length; j < len2; j++) {
+
+	    retVal = callback(this.ViewBoxes_[i][j], i, j);
 
 	    //
-	    // Apply callback to current viewer, providing
-	    // the viewer arguments and the array location
-	    // of the viewer to the callback.
+	    // Accumulate return values if necessary.
 	    //
-	    var r = callback(this.ViewBoxes_[i][j], i, j);
-
-	    //
-	    // Accumulate the return values specified
-	    // in the 'callback' operation.
-	    //
-	    if (r) {
-		returnVals.push(r);
-	    }
+	    if (retVal) { returnVals.push(retVal); }
 	}
     }
     
-
-
-    //------------------
-    // Construct the return object either
-    // as an array or as a single entity.
-    //------------------
-    if (returnVals.length > 0) {
-	if (returnVals.length === 1) {
-	    return returnVals[0]
-	} else {
-	    return returnVals;
-	}
-    }		
-    
+    return (returnVals.length === 1) ? returnVals[0] : returnVals;
 }
 
 
@@ -166,8 +158,9 @@ xiv.ViewBoxManager.prototype.loop = function(callback) {
  * Returns the number of xiv.ViewBox columns.
  *
  * @return {number}
+ * @public
  */
-xiv.ViewBoxManager.prototype.numCols = function() {
+xiv.ViewBoxManager.prototype.totalColumns = function() {
     return this.ViewBoxes_[0].length;
 }
 
@@ -178,8 +171,9 @@ xiv.ViewBoxManager.prototype.numCols = function() {
  * Returns the number of xiv.ViewBox rows.
  *
  * @return {number}
+ * @public
  */
-xiv.ViewBoxManager.prototype.numRows = function() {
+xiv.ViewBoxManager.prototype.totalRows = function() {
     return this.ViewBoxes_.length;
 }
 
@@ -192,7 +186,8 @@ xiv.ViewBoxManager.prototype.numRows = function() {
  * rows of xiv.ViewBoxes, this will insert a two xiv.ViewBox length
  * column to the right.
  *
- * @param {boolean=}
+ * @param {boolean=} opt_animate Allows the user to animate the column insertion.
+ * @public
  */
 xiv.ViewBoxManager.prototype.insertColumn = function(opt_animate) {
 
@@ -235,14 +230,14 @@ xiv.ViewBoxManager.prototype.insertColumn = function(opt_animate) {
     //------------------
     // Run the appropriate updates.
     //------------------
-    this.updateModal(newColumn, opt_animate);
+    this.updateModal_(newColumn, opt_animate);
 
 
 
     //------------------
     // Reset DragDropGroup
     //------------------
-    this.resetDragDropGroup();
+    this.resetDragDropGroup_();
 }
 
 
@@ -250,11 +245,12 @@ xiv.ViewBoxManager.prototype.insertColumn = function(opt_animate) {
 /**
  * Removes a column of xiv.ViewBoxes from the xiv.Modal.
  *
- * @param {boolean=}
+ * @param {boolean=} opt_animate Allows the user to animate the column removal.
+ * @public
  */
 xiv.ViewBoxManager.prototype.removeColumn = function(opt_animate) {
 
-    var that = this;
+
 
     //------------------
     // Animate remove if opt_animate argument not provided.
@@ -275,7 +271,7 @@ xiv.ViewBoxManager.prototype.removeColumn = function(opt_animate) {
 	    //
 	    // Remove the drag drop handles
 	    // 
-	    var dragDropHandle = that.dragDropHandles[ViewBox[rowLen]._element.id];
+	    var dragDropHandle = this.dragDropHandles_[ViewBox[rowLen]._element.id];
 	    dragDropHandle.parentNode.removeChild(dragDropHandle);
 	    delete dragDropHandle;
 
@@ -284,7 +280,7 @@ xiv.ViewBoxManager.prototype.removeColumn = function(opt_animate) {
 	    //
 	    ViewBox[rowLen]._element.parentNode.removeChild(ViewBox[rowLen]._element);
 	    ViewBox.splice(rowLen, 1);		
-	})
+	}.bind(this))
     }
 
 
@@ -292,14 +288,14 @@ xiv.ViewBoxManager.prototype.removeColumn = function(opt_animate) {
     //------------------
     // Run the appropriate updates.
     //------------------
-    this.updateModal(null, opt_animate);
+    this.updateModal_(null, opt_animate);
 
 
 
     //------------------
     // Reset DragDropGroup
     //------------------
-    this.resetDragDropGroup();
+    this.resetDragDropGroup_();
 }
 
 
@@ -311,7 +307,8 @@ xiv.ViewBoxManager.prototype.removeColumn = function(opt_animate) {
  * columns of xiv.ViewBoxes, this will insert a two xiv.ViewBox length
  * row at the bottom.
  *
- * @param {boolean=}
+ * @param {boolean=} opt_animate Allows the user to animate the row insertion.
+ * @public
  */
 xiv.ViewBoxManager.prototype.insertRow = function(opt_animate) {
 
@@ -338,14 +335,14 @@ xiv.ViewBoxManager.prototype.insertRow = function(opt_animate) {
     //------------------
     // Run the appropriate updates.
     //------------------
-    this.updateModal(newSet, opt_animate);
+    this.updateModal_(newSet, opt_animate);
 
 
 
     //------------------
     // Reset DragDropGroup
     //------------------
-    this.resetDragDropGroup();
+    this.resetDragDropGroup_();
 }
 
 
@@ -354,11 +351,11 @@ xiv.ViewBoxManager.prototype.insertRow = function(opt_animate) {
 /**
  * Removes a row of xiv.ViewBoxes from the xiv.Modal.
  *
- * @param {boolean=}
+ * @param {boolean=} opt_animate Allows the user to animate the row removal.
+ * @public
  */
 xiv.ViewBoxManager.prototype.removeRow = function(opt_animate) {
 
-    var that = this;
 
     //------------------
     // Animate remove if opt_animate argument not provided.
@@ -379,10 +376,10 @@ xiv.ViewBoxManager.prototype.removeRow = function(opt_animate) {
 	    //
 	    // Remove the drag drop handles
 	    // 
-	    var dragDropHandle = that.dragDropHandles[currDelViewBox._element.id];
+	    var dragDropHandle = this.dragDropHandles_[currDelViewBox._element.id];
 	    dragDropHandle.parentNode.removeChild(dragDropHandle);
 	    delete dragDropHandle;
-	})
+	}.bind(this))
 	this.ViewBoxes_.splice(this.ViewBoxes_.length -1, 1);
     }
 
@@ -391,14 +388,14 @@ xiv.ViewBoxManager.prototype.removeRow = function(opt_animate) {
     //------------------
     // Run the appropriate updates.
     //------------------
-    this.updateModal(null, opt_animate);
+    this.updateModal_(null, opt_animate);
 
 
 
     //------------------
     // Reset DragDropGroup
     //------------------
-    this.resetDragDropGroup();
+    this.resetDragDropGroup_();
 }
 
 
@@ -409,9 +406,11 @@ xiv.ViewBoxManager.prototype.removeRow = function(opt_animate) {
  * Updates the xiv.Modal dimensions, fades out the newly added
  * viewers, then fades them back in.
  *
- * @param {?Array.<xiv.ViewBox>, boolean=}
+ * @param {?Array.<xiv.ViewBox>} newViewBoxSet The viewboxes to update (defaults to stored if null).
+ * @param {boolean=} opt_animate Allows the user to animate the updating of the modal.
+ * @private
  */
-xiv.ViewBoxManager.prototype.updateModal = function(newViewBoxSet, opt_animate) {
+xiv.ViewBoxManager.prototype.updateModal_ = function(newViewBoxSet, opt_animate) {
 
     //------------------
     // If we are to animate, first fade out the xiv.ViewBoxes in the newxiv.ViewBox set.
@@ -446,7 +445,7 @@ xiv.ViewBoxManager.prototype.updateModal = function(newViewBoxSet, opt_animate) 
     // Run the appropriate updates (this is where
     // the new viewboxes will fade back in).
     //------------------
-    this.runViewBoxesChangedCallbacks();
+    this.onViewBoxesChanged_();
 }
 
 
@@ -457,8 +456,9 @@ xiv.ViewBoxManager.prototype.updateModal = function(newViewBoxSet, opt_animate) 
  * if its 'element' object matches with the 'element'
  * argument.
  *
- * @param {!Element}
+ * @param {!Element} element The xiv.ViewBox element to retrieve the xiv.ViewBox object from.
  * @return {xiv.ViewBox}
+ * @public
  */
 xiv.ViewBoxManager.prototype.getViewBoxByElement = function(element) {
     for (var i=0, len = this.ViewBoxes_.length; i < len; i++) {
@@ -477,8 +477,10 @@ xiv.ViewBoxManager.prototype.getViewBoxByElement = function(element) {
  * Returns the xiv.ViewBox element at the specified 
  * row and column.
  *
- * @param {!number, !number}
+ * @param {!number} row The row of the desired ViewBox.
+ * @param {!number} col The column of the desired ViewBox.
  * @return {Element}
+ * @public
  */
 xiv.ViewBoxManager.prototype.getViewBoxElement = function(row, col) {
     return this.ViewBoxes_[row][col]._element
@@ -491,8 +493,10 @@ xiv.ViewBoxManager.prototype.getViewBoxElement = function(row, col) {
  * Returns the xiv.ViewBox object at the specified 
  * row and column.
  *
- * @param {!number, !number}
+ * @param {!number} row The row of the desired ViewBox.
+ * @param {!number} col The column of the desired ViewBox. * @param {!number, !number}
  * @return {xiv.ViewBox}
+ * @public
  */
 xiv.ViewBoxManager.prototype.getViewBox = function(row, col) {
     return this.ViewBoxes_[row][col];
@@ -507,6 +511,7 @@ xiv.ViewBoxManager.prototype.getViewBox = function(row, col) {
  * instead of an md-array.
  *
  * @return {Array.<xiv.ViewBox>}
+ * @public
  */
 xiv.ViewBoxManager.prototype.getViewBoxes = function() {
     var ws = this.loop (function(ViewBox) { 
@@ -523,6 +528,7 @@ xiv.ViewBoxManager.prototype.getViewBoxes = function() {
  * instead of an md-array.
  *
  * @return {Array.<Element>}
+ * @public
  */
 xiv.ViewBoxManager.prototype.getViewBoxElements = function() {
     var ws = this.loop (function(ViewBox) { 
@@ -539,6 +545,7 @@ xiv.ViewBoxManager.prototype.getViewBoxElements = function() {
  * Makes a xiv.ViewBox.
  *
  * @return {xiv.ViewBox}
+ * @public
  */
 xiv.ViewBoxManager.prototype.makeViewBox = function() {
 
@@ -546,7 +553,7 @@ xiv.ViewBoxManager.prototype.makeViewBox = function() {
     // Create xiv.ViewBox
     //------------------
     var viewBox = new xiv.ViewBox();
-    this.Modal_._modal.appendChild(viewBox._element);
+    this.Modal_.modal.appendChild(viewBox._element);
 
 
 
@@ -566,7 +573,7 @@ xiv.ViewBoxManager.prototype.makeViewBox = function() {
     //
     // Add to class property.
     //
-    this.dragDropHandles[viewBox._element.id] = dragDropHandle;
+    this.dragDropHandles_[viewBox._element.id] = dragDropHandle;
 
     //
     // Tool tip
@@ -584,7 +591,9 @@ xiv.ViewBoxManager.prototype.makeViewBox = function() {
  * Swaps one xiv.ViewBox with another based on the class, 
  * the element of the ID.
  *
- * @param {xiv.ViewBox|Element|string, xiv.ViewBox|Element|string} v1,v2: xiv.ViewBox Class, xiv.ViewBox.element_, or xiv.ViewBox ID
+ * @param {xiv.ViewBox|Element|string} v1 xiv.ViewBox Class, xiv.ViewBox.element_, or xiv.ViewBox ID
+ * @param {xiv.ViewBox|Element|string, v2 xiv.ViewBox Class, xiv.ViewBox.element_, or xiv.ViewBox ID
+ * @public
  */
 xiv.ViewBoxManager.prototype.swap = function(v1, v2) {
 
@@ -632,6 +641,7 @@ xiv.ViewBoxManager.prototype.swap = function(v1, v2) {
  * a modal.
  *
  * @return {number}
+ * @public
  */
 xiv.ViewBoxManager.prototype.numViewBoxes = function() {
     return this.ViewBoxes_.length * this.ViewBoxes_[0].length;	 
@@ -640,25 +650,14 @@ xiv.ViewBoxManager.prototype.numViewBoxes = function() {
 
 
 
-/**
- * Maintains a callback array for when the number of xiv.ViewBoxes
- * change within the xiv.Modal.
- *
- * @param {function}
- */
-xiv.ViewBoxManager.prototype.addViewBoxesChangedCallback = function(callback) {
-    this.viewersChangedCallbacks_.push(callback);
-}
-
-
-
 
 /**
  * Returns the xiv.ViewBox after the xiv.ViewBox provided in the argument,
  * using a left-to-right, top-to-bottom scheme.
  *
- * @param {!xiv.ViewBox}
+ * @param {!xiv.ViewBox} currViewBox The xiv.ViewBox to reference after.
  * @return {!xiv.ViewBox}
+ * @public
  */
 xiv.ViewBoxManager.prototype.getViewBoxAfter = function (currViewBox) {
     
@@ -698,8 +697,8 @@ xiv.ViewBoxManager.prototype.getViewBoxAfter = function (currViewBox) {
 /**
  * Gets the first xiv.ViewBox without any viewable contents.
  *  
- *
  * @return {xiv.ViewBox}
+ * @public
  */
 xiv.ViewBoxManager.prototype.getFirstEmpty = function() {
 
@@ -708,30 +707,32 @@ xiv.ViewBoxManager.prototype.getFirstEmpty = function() {
     //------------------
     var ViewBoxesByLoad = {};
     var loadTimes = [];
-    var w = this.loop(function(ViewBox){
+    var loaderViewBox = this.loop(function(ViewBox){
 	
-	if (!ViewBox.getThumbnail()) {
+	if (!ViewBox.thumbnail) {
 	    return ViewBox;
 	}
 	else{
-	    ViewBoxesByLoad[ViewBox._thumbnailLoadTime] = ViewBox;
-	    loadTimes.push(ViewBox._thumbnailLoadTime);
+	    ViewBoxesByLoad[ViewBox.thumbnailLoadTime] = ViewBox;
+	    loadTimes.push(ViewBox.thumbnailLoadTime);
 	}
-    })
-    if (w) {
-	return (w instanceof Array) ? w[0] : w;
-    }
+    }.bind(this))
 
 
 
     //------------------
-    // If there are no empty xiv.ViewBoxes,
-    // then choose the one where the thumbnail was
-    // loaded the farthest time ago.
+    // If no empty, return ViewBox which as first 
+    // loaded...
     //------------------
-    else {
+    if (goog.isArray(loaderViewBox) && (loaderViewBox.length > 0)){
+	return loaderViewBox[0];
+
+    } else if (goog.isArray(loaderViewBox) && (loaderViewBox.length == 0)){
 	loadTimes.sort();
 	return ViewBoxesByLoad[loadTimes[0]];
+	
+    } else {
+	return loaderViewBox;
     }
 }
 
@@ -741,11 +742,14 @@ xiv.ViewBoxManager.prototype.getFirstEmpty = function() {
 /**
  * Animates a position swap between two view boxes.
  *
- * @param {xiv.ViewBox, xiv.ViewBox, Object.<string, string>, ?boolean}
+ * @param {!xiv.ViewBox} ViewBoxElementA The first xiv.ViewBox element to swap.
+ * @param {!xiv.ViewBox} ViewBoxElementB The second xiv.ViewBox element to swap.
+ * @param {!Object.<string, string>} ViewBoxPositions The ViewBox positions to reference.
+ * @param {boolean=} opt_animate Whether to animate the swap.
+ * @private
  */
-xiv.ViewBoxManager.prototype.animateSwap = function(ViewBoxElementA, ViewBoxElementB, ViewBoxPositions, opt_animated) {
+xiv.ViewBoxManager.prototype.animateSwap_ = function(ViewBoxElementA, ViewBoxElementB, ViewBoxPositions, opt_animated) {
 
-    var that = this;
     var animLen = (opt_animated === false) ? 0 : xiv.ANIM_MED;
     var animQueue = new goog.fx.AnimationParallelQueue();
     var ViewBoxADims = ViewBoxPositions[ViewBoxElementA.id]['relative'];
@@ -765,7 +769,7 @@ xiv.ViewBoxManager.prototype.animateSwap = function(ViewBoxElementA, ViewBoxElem
     //------------------
     // Add animations to queue.
     //------------------
-    animQueue.add(slide(ViewBoxElementA, ViewBoxBDims['left'], ViewBoxBDims['top'], ANIM_MED));
+    animQueue.add(slide(ViewBoxElementA, ViewBoxBDims['left'], ViewBoxBDims['top'], xiv.ANIM_MED));
     animQueue.add(slide(ViewBoxElementB, ViewBoxADims['left'], ViewBoxADims['top'], xiv.ANIM_MED));
 
 
@@ -775,8 +779,8 @@ xiv.ViewBoxManager.prototype.animateSwap = function(ViewBoxElementA, ViewBoxElem
     // within the xiv.ViewBox tracking property.
     //------------------
     goog.events.listen(animQueue, 'end', function() {
-	that.updateDragDropHandles();
-    })
+	this.updateDragDropHandles();
+    }.bind(this))
 
 
 
@@ -794,19 +798,21 @@ xiv.ViewBoxManager.prototype.animateSwap = function(ViewBoxElementA, ViewBoxElem
  * Initializes and/or resets the DragDrop swapping of xiv.ViewBoxes.
  * This needs to be called every time a xiv.ViewBox is added or 
  * removed from the MODAL.
+ *
+ * @private
  */
-xiv.ViewBoxManager.prototype.resetDragDropGroup = function() {
+xiv.ViewBoxManager.prototype.resetDragDropGroup_ = function() {
     
-    var that = this;
-    var ViewBoxPositions = /**@type {<Object.<string, Object>}*/{};
+
+    
 
     //------------------
     // Clear the dragDrop groups and delete.
     //------------------
-    if (this.dragDropGroup) {
-	this.dragDropGroup.removeItems();
+    if (this.dragDropGroup_) {
+	this.dragDropGroup_.removeItems();
 	this.dragDropTargets.removeItems();
-	delete this.dragDropGroup;
+	delete this.dragDropGroup_;
 	delete this.dragDropTargets;
     }
 
@@ -817,198 +823,234 @@ xiv.ViewBoxManager.prototype.resetDragDropGroup = function() {
     // for the draggers (the handle) and 
     // the targets (the xiv.ViewBox._elements).
     //------------------
-    this.dragDropGroup = new goog.fx.DragDropGroup();
+    this.dragDropGroup_ = new goog.fx.DragDropGroup();
     this.dragDropTargets = new goog.fx.DragDropGroup();
 
 
 
     //------------------
-    // Add the items to the dragDropGroups.
+    // Add the items to the dragDropGroup_s.
     //------------------
     this.loop(function(ViewBox) {
-	that.dragDropGroup.addItem(that.dragDropHandles[ViewBox._element.id]);
-	that.dragDropTargets.addItem(ViewBox._element);
-    })
+	this.dragDropGroup_.addItem(this.dragDropHandles_[ViewBox._element.id]);
+	this.dragDropTargets.addItem(ViewBox._element);
+    }.bind(this))
 
 
 
     //------------------
     // Set the target of the 
-    // dragDropGroup (the handles) 
+    // dragDropGroup_ (the handles) 
     // to the targets (the xiv.ViewBox elements).
     //------------------   
-    this.dragDropGroup.addTarget(this.dragDropTargets);
+    this.dragDropGroup_.addTarget(this.dragDropTargets);
 
 
 
     //------------------
     // Init both drag drop groups.
     //------------------   
-    this.dragDropGroup.init();
+    this.dragDropGroup_.init();
     this.dragDropTargets.init();
 
 
 
     //------------------
-    // Function to create drag clone.
-    //------------------
-    var makeDragClone = function(ViewBoxElement, opt_parent) {
-	var dragElement = ViewBoxElement.cloneNode(false);
-	goog.dom.classes.set(dragElement, ViewBox.DRAGGING_CLASS);
-	opt_parent && opt_parent.appendChild(dragElement);
-	return dragElement;
-    };
-
-
-
-    //------------------
-    // google.fx.dragDropGroup inherited function
+    // google.fx.dragDropGroup_ inherited function
     // to create a dragElement (a childless clone 
     // of the xiv.ViewBox._element).
     //------------------
-    this.dragDropGroup.createDragElement = function(sourceElt) {
-	var dragElement = makeDragClone(goog.dom.getElement(sourceElt.ViewBoxId));
+    this.dragDropGroup_.createDragElement = function(sourceElt) {
+	var dragElement = this.makeDragClone_(goog.dom.getElement(sourceElt.ViewBoxId));
 	return dragElement;
-    };
+    }.bind(this);
 
-
-
-    //------------------
-    // Define DRAG START function
-    //
-    // We record the xiv.ViewBox positions.
-    //------------------
-    var dragStart = function(event) {
-	that.loop(function(ViewBox){
-	    ViewBoxPositions[ViewBox._element.id] = {
-		'absolute': utils.style.absolutePosition(ViewBox._element),
-		'relative': utils.style.dims(ViewBox._element)
-	    }
-	    that.dragDropHandles[ViewBox._element.id].style.visibility = 'hidden';
-	})
-    }
-
-
-
-    //------------------
-    // Define DRAG OVER function.
-    //------------------
-    var dragOver = function(event) {
-
-	if (event.dropTargetItem.element.id !== event.dragSourceItem.currentDragElement_.ViewBoxId) {
-	    var ViewBoxElementA = goog.dom.getElement(event.dragSourceItem.currentDragElement_.ViewBoxId);
-	    var ViewBoxElementB = goog.dom.getElement(event.dropTargetItem.element.id);
-
-	    that.swap(ViewBoxElementA, ViewBoxElementB);
-	    
-	    that.animateSwap(ViewBoxElementA, ViewBoxElementB, ViewBoxPositions);
-
-	    //
-	    // We have to update ViewBoxPositions as it
-	    // does not update after the swap.
-	    //
-	    var valA = ViewBoxPositions[ViewBoxElementA.id];
-	    var valB = ViewBoxPositions[ViewBoxElementB.id];
-	    ViewBoxPositions[ViewBoxElementA.id] = valB;
-	    ViewBoxPositions[ViewBoxElementB.id] = valA;
-	    
-	}
-    }
-
-
-
-
-    //------------------
-    // Define DRAG END function.
-    //
-    // NOTE: goog.fx.dragDropGroup will delete the original dragger
-    // so we have to clone it to reanimate it back 
-    // into place.
-    //------------------
-    var dragEnd = function(event) {
-
-	var originalViewBox = goog.dom.getElement(event.dragSourceItem.currentDragElement_.ViewBoxId);
-	var originalViewBoxDims = utils.style.absolutePosition(originalViewBox);
-	var dragger = event.dragSourceItem.parent_.dragEl_;
-	var animQueue = new goog.fx.AnimationParallelQueue();	
-
-	//
-	// We have to clone the dragger as goog.fx.dragDropGroup
-	// will delete the original dragger.
-	//
-	var draggerClone = makeDragClone(dragger, document.body);
-	// Set the draggerClone parent to the modal parent
-	// to avoid any weird positioning issues.
-	XV._modal.parentNode.appendChild(draggerClone);
-	var draggerViewBoxDims = utils.style.absolutePosition(dragger);
-	utils.style.setStyle(draggerClone, {
-	    'top': draggerViewBoxDims['top'], 
-	    'left': draggerViewBoxDims['left'],
-	    'z-index': 10000
-	});
-
-
-	//
-	// Define the slide animation.
-	//
-	function slide(el, a, b, duration) {
-	    return new goog.fx.dom.Slide(el, [el.offsetLeft, el.offsetTop], [a,b], 
-					 duration, goog.fx.easing.easeOut);
-	}
-
-	//
-	// Add the slide animation to the 
-	// animQueue.
-	//
-	animQueue.add(slide(draggerClone, 
-			    originalViewBoxDims['left'], 
-			    originalViewBoxDims['top'], 
-			    xiv.ANIM_FAST));
-
-	//
-	// When animation finishes, delete
-	// the draggerClone.
-	//
-	goog.events.listen(animQueue, 'end', function() {
-	    draggerClone.parentNode.removeChild(draggerClone); 
-	    delete draggerClone;
-	})
-	
-	//
-	// Play animation
-	//
-	animQueue.play();
-
-	//
-	// Show dragDropHandles
-	//
-	that.loop(function(ViewBox){
-	    that.dragDropHandles[ViewBox._element.id].style.visibility = 'visible';	
-	})
-    }
 
 
 
     //------------------
     // Listen for drag events.
     //------------------
-    goog.events.listen(this.dragDropGroup, 'dragstart', dragStart);
-    goog.events.listen(this.dragDropGroup, 'dragover', dragOver);
-    goog.events.listen(this.dragDropGroup, 'dragend', dragEnd);
+    goog.events.listen(this.dragDropGroup_, 'dragstart', this.dragStart_.bind(this));
+    goog.events.listen(this.dragDropGroup_, 'dragover', this.dragOver_.bind(this));
+    goog.events.listen(this.dragDropGroup_, 'dragend', this.dragEnd_.bind(this));
+}
+
+
+
+
+/**
+* Define DRAG START function
+* We record the xiv.ViewBox positions.
+*
+* @param {!Event}
+* @private
+*/
+xiv.ViewBoxManager.prototype.dragStart_ = function(event) {
+    
+    this.ViewBoxPositions_ = /**@type {<Object.<string, Object>}*/{};
+    this.loop(function(ViewBox){
+	this.ViewBoxPositions_[ViewBox._element.id] = {
+	    'absolute': utils.style.absolutePosition(ViewBox._element),
+	    'relative': utils.style.dims(ViewBox._element)
+	}
+	this.dragDropHandles_[ViewBox._element.id].style.visibility = 'hidden';
+    }.bind(this))
+}
+
+
+
+
+
+
+
+/**
+ * Function to create drag clone.
+ *
+ * @param {!Event}
+ * @private
+ */
+xiv.ViewBoxManager.prototype.makeDragClone_ = function(ViewBoxElement, opt_parent) {
+    var dragElement = ViewBoxElement.cloneNode(false);
+    goog.dom.classes.set(dragElement, xiv.ViewBox.DRAGGING_CLASS);
+    opt_parent && opt_parent.appendChild(dragElement);
+    return dragElement;
+}.bind(this);
+
+
+
+
+
+/**
+ * Updates the position of the dragDropHandles_.
+ *
+ * @public
+ */
+xiv.ViewBoxManager.prototype.updateDragDropHandles = function() {
+    this.loop(function(ViewBox){
+	var ViewBoxDims = utils.style.dims(ViewBox._element);
+	var dragDropHandle = this.dragDropHandles_[ViewBox._element.id];
+	utils.style.setStyle(dragDropHandle, {'left': ViewBoxDims['left'], 'top': ViewBoxDims['top']});
+    }.bind(this))
+}
+
+
+/**
+ * Define DRAG OVER function.
+ *
+ * @param {!Event}
+ * @private
+ */
+xiv.ViewBoxManager.prototype.dragOver_ = function(event) {
+
+    if (event.dropTargetItem.element.id !== event.dragSourceItem.currentDragElement_.ViewBoxId) {
+	var ViewBoxElementA = goog.dom.getElement(event.dragSourceItem.currentDragElement_.ViewBoxId);
+	var ViewBoxElementB = goog.dom.getElement(event.dropTargetItem.element.id);
+
+	this.swap(ViewBoxElementA, ViewBoxElementB);
+	
+	this.animateSwap_(ViewBoxElementA, ViewBoxElementB, this.ViewBoxPositions_);
+
+	//
+	// We have to update ViewBoxPositions as it
+	// does not update after the swap.
+	//
+	var valA = this.ViewBoxPositions_[ViewBoxElementA.id];
+	var valB = this.ViewBoxPositions_[ViewBoxElementB.id];
+	this.ViewBoxPositions_[ViewBoxElementA.id] = valB;
+	this.ViewBoxPositions_[ViewBoxElementB.id] = valA;
+	
+    }
 }
 
 
 
 /**
- * Updates the position of the dragDropHandles.
+ * DRAG END function.
+ * NOTE: goog.fx.dragDropGroup will delete the original dragger
+ * so we have to clone it to reanimate it back 
+ * into place.
+ *
+ * @param {!Event}
+ * @private
  */
-xiv.ViewBoxManager.prototype.updateDragDropHandles = function() {
+xiv.ViewBoxManager.prototype.dragEnd_ = function(event) {
 
-    var that = this;
+    var originalViewBox = goog.dom.getElement(event.dragSourceItem.currentDragElement_.ViewBoxId);
+    var originalViewBoxDims = utils.style.absolutePosition(originalViewBox);
+    var dragger = event.dragSourceItem.parent_.dragEl_;
+    var animQueue = new goog.fx.AnimationParallelQueue();	
 
-    this.loop(function(ViewBox){
-	var ViewBoxDims = utils.style.dims(ViewBox._element);
-	var dragDropHandle = that.dragDropHandles[ViewBox._element.id];
-	utils.style.setStyle(dragDropHandle, {'left': ViewBoxDims['left'], 'top': ViewBoxDims['top']});
+    //
+    // We have to clone the dragger as goog.fx.dragDropGroup
+    // will delete the original dragger.
+    //
+    var draggerClone = this.makeDragClone_(dragger, document.body);
+    // Set the draggerClone parent to the modal parent
+    // to avoid any weird positioning issues.
+    this.Modal_.modal.parentNode.appendChild(draggerClone);
+    var draggerViewBoxDims = utils.style.absolutePosition(dragger);
+    utils.style.setStyle(draggerClone, {
+	'top': draggerViewBoxDims['top'], 
+	'left': draggerViewBoxDims['left'],
+	'z-index': 10000
+    });
+
+
+    //
+    // Define the slide animation.
+    //
+    function slide(el, a, b, duration) {
+	return new goog.fx.dom.Slide(el, [el.offsetLeft, el.offsetTop], [a,b], 
+				     duration, goog.fx.easing.easeOut);
+    }
+
+    //
+    // Add the slide animation to the 
+    // animQueue.
+    //
+    animQueue.add(slide(draggerClone, 
+			originalViewBoxDims['left'], 
+			originalViewBoxDims['top'], 
+			xiv.ANIM_FAST));
+
+    //
+    // When animation finishes, delete
+    // the draggerClone.
+    //
+    goog.events.listen(animQueue, 'end', function() {
+	draggerClone.parentNode.removeChild(draggerClone); 
+	delete draggerClone;
     })
+    
+    //
+    // Play animation
+    //
+    animQueue.play();
+
+    //
+    // Show dragDropHandles_
+    //
+    this.loop(function(ViewBox){
+	this.dragDropHandles_[ViewBox._element.id].style.visibility = 'visible';	
+    }.bind(this))
 }
+
+
+
+goog.exportSymbol('xiv.ViewBoxManager.prototype.onViewBoxesChanged', xiv.ViewBoxManager.prototype.onViewBoxesChanged);
+goog.exportSymbol('xiv.ViewBoxManager.prototype.loop', xiv.ViewBoxManager.prototype.loop);
+goog.exportSymbol('xiv.ViewBoxManager.prototype.totalColumns', xiv.ViewBoxManager.prototype.totalColumns);
+goog.exportSymbol('xiv.ViewBoxManager.prototype.totalRows', xiv.ViewBoxManager.prototype.totalRows);
+goog.exportSymbol('xiv.ViewBoxManager.prototype.insertColumn', xiv.ViewBoxManager.prototype.insertColumn);
+goog.exportSymbol('xiv.ViewBoxManager.prototype.removeColumn', xiv.ViewBoxManager.prototype.removeColumn);
+goog.exportSymbol('xiv.ViewBoxManager.prototype.insertRow', xiv.ViewBoxManager.prototype.insertRow);
+goog.exportSymbol('xiv.ViewBoxManager.prototype.removeRow', xiv.ViewBoxManager.prototype.removeRow);
+goog.exportSymbol('xiv.ViewBoxManager.prototype.getViewBoxByElement', xiv.ViewBoxManager.prototype.getViewBoxByElement);
+goog.exportSymbol('xiv.ViewBoxManager.prototype.getViewBoxElement', xiv.ViewBoxManager.prototype.getViewBoxElement);
+goog.exportSymbol('xiv.ViewBoxManager.prototype.getViewBoxes', xiv.ViewBoxManager.prototype.getViewBoxes);
+goog.exportSymbol('xiv.ViewBoxManager.prototype.getViewBoxElements', xiv.ViewBoxManager.prototype.getViewBoxElements);
+goog.exportSymbol('xiv.ViewBoxManager.prototype.makeViewBox', xiv.ViewBoxManager.prototype.makeViewBox);
+goog.exportSymbol('xiv.ViewBoxManager.prototype.swap', xiv.ViewBoxManager.prototype.swap);
+goog.exportSymbol('xiv.ViewBoxManager.prototype.numViewBoxes', xiv.ViewBoxManager.prototype.numViewBoxes);
+

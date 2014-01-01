@@ -318,7 +318,7 @@ xiv.XtkDisplayer.prototype.syncControllerMenuToViewables_ = function(){
 	    for (i = 0, len = viewablesArr.length; i < len; i++) { if (viewablesArr[i] === xObj){ break;}}
 
 
-	    if (!settingsArr[i]['properties']){break}
+	    if ((!settingsArr[i]) || (!settingsArr[i]['properties'])){break}
 
 
 	    //
@@ -731,15 +731,15 @@ xiv.XtkDisplayer.prototype.loadSlicer = function (fileCollection) {
  *
  */
 xiv.XtkDisplayer.prototype.showSlicerViewMenu_ = function(){
-    this.ViewBox_._SlicerViewMenu.reset(this._slicerSettings);
-    this.ViewBox_._SlicerViewMenu.onViewSelected(function(slicerSetting){
+    this.ViewBox_.SlicerViewMenu.reset(this._slicerSettings);
+    this.ViewBox_.SlicerViewMenu.onViewSelected(function(slicerSetting){
 	window.console.log("LOADING THIS GUY", slicerSetting);
 	this.currentSlicerSettings_ = slicerSetting;
-	this.ViewBox_._SlicerViewMenu.hideViewSelectDialog();
+	this.ViewBox_.SlicerViewMenu.hideViewSelectDialog();
 	this.XtkPlaneManager_.setCamera('3D', slicerSetting['camera']);
 	this.loadViewables(slicerSetting);
     }.bind(this));
-    this.ViewBox_._SlicerViewMenu.showViewSelectDialog();
+    this.ViewBox_.SlicerViewMenu.showViewSelectDialog();
 
 }
 

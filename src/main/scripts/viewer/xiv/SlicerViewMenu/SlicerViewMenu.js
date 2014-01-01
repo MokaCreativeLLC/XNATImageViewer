@@ -186,13 +186,13 @@ xiv.SlicerViewMenu.prototype.onViewSelected = function (callback) {
 * @private
 */
 xiv.SlicerViewMenu.prototype.setThumbnailClickListener_ = function (thumbnail) {
-    thumbnail.setOnClick( function(){
+    thumbnail.onClick = function(){
 	// Run click callbacks
 	if (this.thumbnailClickCallbacks_) {
 	    goog.array.forEach(this.thumbnailClickCallbacks_, 
 			       function(callback){ callback(this._slicerSettings[thumbnail._MRML_][thumbnail._SCENE_]) }.bind(this));
 	}
-    }.bind(this))
+    }.bind(this)
 }
 
 

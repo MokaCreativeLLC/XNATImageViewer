@@ -33,7 +33,7 @@ startViewer = function (serverRoot, dataPath) {
     // CUSTOM XTK parsers
     //------------------    
     X.loader.extensions['IMA'] = [X.parserIMA, null];
-
+    window.console.log("LOADER EXTENSIONS", X.loader.extensions);
 
 
     //------------------

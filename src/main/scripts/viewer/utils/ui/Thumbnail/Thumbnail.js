@@ -22,55 +22,79 @@ goog.require('utils.style');
 
 
 /**
- * utils.ui.Thumbnail is the parent class of Slicer and Dicom thumbnails.
+ * utils.ui.Thumbnail is the a generic class for creating thumbnails.
  *
  * @constructor
- * @param {opt_args}
+ * @param {Object=} opt_args The arguments to define the Thubnail.
  */
 goog.provide('utils.ui.Thumbnail');
 utils.ui.Thumbnail = function (opt_args) {
 
-    var that = this;
     var parent = opt_args && opt_args['parent'] ? opt_args['parent'] : document.body;
 
 
-    //------------------
-    // Define the thumbnail element.
-    //------------------
-    this._element = utils.dom.makeElement('div', parent, "utils.ui.Thumbnail");
-    this._element.setAttribute('thumbnailid', this._element.getAttribute('id'));
+    /**
+     * @type {!Element}
+     * @private
+     */	
+    this.element_ = utils.dom.makeElement('div', parent, "utils.ui.Thumbnail");
+    this.element_.setAttribute('thumbnailid', this.element_.getAttribute('id'));
 
 
-    //------------------
-    // Image
-    //------------------
-    this._image = new Image();
-    this._element.appendChild(this._image)
+    /**
+     * @type {!Image}
+     * @private
+     */	
+    this.image_ = new Image();
+    this.element_.appendChild(this.image_)
 
-    
-    
-    //------------------
-    // Add displayText element
-    //------------------
-    this._displayText = utils.dom.makeElement("div", this._element, "DisplayText");
+
+
+    /**
+     * @type {!Element}
+     * @private
+     */	
+    this.text_ = utils.dom.makeElement("div", this.element_, "DisplayText");
+
+
+
+    /**
+     * @type {?Element}
+     * @private
+     */	
+    this.hoverable_ = null;
+
+
+    /**
+     * @type {Array.<function>}
+     * @private
+     */
+    this.onMouseOver_ = [];
+
+
+
+    /**
+     * @type {Array.<function>}
+     * @private
+     */
+    this.onMouseOut_ = [];
+
+
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    this.isActive_ = false;
 
 
 
     //------------------
     // Set Styles
     //------------------
-    goog.dom.classes.set(this._element, utils.ui.Thumbnail.ELEMENT_CLASS);
-    goog.dom.classes.set(this._image, utils.ui.Thumbnail.IMAGE_CLASS);
-    goog.dom.classes.set(this._displayText, utils.ui.Thumbnail.TEXT_CLASS);
-
-
-
-    //------------------
-    // Reset callbacks.
-    //------------------
-    this.mouseoverCallbacks_ = [];
-    this.mouseoutCallbacks_ = [];
-
+    goog.dom.classes.set(this.element_, utils.ui.Thumbnail.ELEMENT_CLASS);
+    goog.dom.classes.set(this.image_, utils.ui.Thumbnail.IMAGECLASS);
+    goog.dom.classes.set(this.text_, utils.ui.Thumbnail.TEXT_CLASS);
 
 
     //------------------
@@ -83,7 +107,7 @@ utils.ui.Thumbnail = function (opt_args) {
     //------------------
     // Call defaults
     //------------------
-    this._onMouseOut();
+    this.mouseOut_();
     
 }
 goog.exportSymbol('utils.ui.Thumbnail', utils.ui.Thumbnail);
@@ -108,178 +132,127 @@ utils.ui.Thumbnail.HOVER_CLONE_CLASS = /**@type {string} @const*/ goog.getCssNam
 
 
 
-
 /**
- * @type {?Element}
- * @protected
- */	
-utils.ui.Thumbnail.prototype._element = null;
+ * @return {Element} The thumbnail div (the entire element).
+ * @public
+ */
+utils.ui.Thumbnail.prototype.__defineGetter__('element', function() {
+    return this.element_;	
+})
 
-
-
-
-/**
- * @type {?Image}
- * @protected
- */	
-utils.ui.Thumbnail.prototype._image = null;
 
 
 
 /**
- * @type {?Element}
- * @protected
- */	
-utils.ui.Thumbnail.prototype._displayText = null;
+ * @return {Element} The thumbnail image.
+ * @public
+ */
+utils.ui.Thumbnail.prototype.__defineGetter__('image', function() {
+    return this.image_;	
+})
 
-
-
-/**
- * @type {?Element}
- * @protected
- */	
-utils.ui.Thumbnail.prototype._hoverable = null;
-
-
-/**
-* @type {Array.<function>}
-* @private
-*/
-utils.ui.Thumbnail.prototype.mouseoverCallbacks_ = null;
 
 
 
 /**
-* @type {Array.<function>}
-* @private
-*/
-utils.ui.Thumbnail.prototype.mouseoutCallbacks_ = null;
+ * @return {Element} The thumbnail text.
+ * @public
+ */
+utils.ui.Thumbnail.prototype.__defineGetter__('text', function() {
+    return this.text_;	
+})
 
 
 
 /**
-* @type {boolean}
-* @private
-*/
-utils.ui.Thumbnail.prototype.isActive_ = false;
+ * @return {Element} The thumbnail text.
+ * @public
+ */
+utils.ui.Thumbnail.prototype.__defineGetter__('hoverNode', function() {
+    return this.hoverable_ ? this.hoverable_ : this.element_;	
+})
+
 
 
 
 /**
-* @return {boolean}
-*/
-utils.ui.Thumbnail.prototype.isActive = function() {
+ * @return {boolean} The 'active' state of the thumbnail (this is defined and set by the user).
+ * @public
+ */
+utils.ui.Thumbnail.prototype.__defineGetter__('isActive', function() {
     return this.isActive_;	
-}
+})
 
 
 
 /**
- * @param {!String}
- * @protected
+ * @param {!function} callback The callback for the specified event.
+ * @public
+ */	
+utils.ui.Thumbnail.prototype.__defineSetter__('onClick', function(callback) {
+    goog.events.listen(this.hoverNode, goog.events.EventType.CLICK, callback);	
+})
+
+
+
+
+/**
+* @param {!function} callback The callback for the specified event.
+* @private
+*/
+utils.ui.Thumbnail.prototype.__defineSetter__('onMouseOver' , function(callback) {
+    this.onMouseOver_.push(callback);
+})
+
+
+
+
+/**
+* @param {!function} callback The callback for the specified event.
+* @private
+*/
+utils.ui.Thumbnail.prototype.__defineSetter__('onMouseOut' , function(callback) {
+    this.onMouseOut_.push(callback);
+})
+
+
+
+
+/**
+ * @param {!String} url The image src.
+ * @public
  */	
 utils.ui.Thumbnail.prototype.setImage = function(url){
-    this._image.src = url;
-    goog.dom.classes.set(this._image, utils.ui.Thumbnail.IMAGE_CLASS);
+    this.image_.src = url;
+    goog.dom.classes.set(this.image_, utils.ui.Thumbnail.IMAGE_CLASS);
 };
-
-
-
-
-/**
- * @param {!function} callback
- * @public
- */	
-utils.ui.Thumbnail.prototype.setOnClick = function(callback){  
-    goog.events.listen(this.getHoverNode(), goog.events.EventType.CLICK, callback);
-};
-
-
-/**
- * @return {!Element}
- * @protected
- */	
-utils.ui.Thumbnail.prototype.getHoverNode = function(){  
-    return this._hoverable ? this._hoverable : this._element
-};
-
 
 
 
 
 /**
  * @param {!String}
- * @protected
- */	
-utils.ui.Thumbnail.prototype.setDisplayText = function(text){
-    this._displayText.innerHTML = text;
-};
-
-
-
-/**
- * @protected
- */	
-utils.ui.Thumbnail.prototype.update = function(){
-
-};
-
-
-
-/**
- * @type {!function}
- * @protected
- */	
-utils.ui.Thumbnail.prototype._setImageOnload = function(callback){
-    this._image.onload = callback;
-};
-
-
-
-/**
-* @param {!function}
-* @private
-*/
-utils.ui.Thumbnail.prototype.addMouseoverCallback = function(callback) {
-    this.mouseoverCallbacks_.push(callback);
-}
-
-
-
-
-/**
-* @param {!function}
-* @private
-*/
-utils.ui.Thumbnail.prototype.addMouseoutCallback = function(callback) {
-    this.mouseoutCallbacks_.push(callback);
-}
-
-
-
-/**
- * @return {Element}
  * @public
  */	
-utils.ui.Thumbnail.prototype.getHoverable = function(){
-    return this._hoverable;
-}
+utils.ui.Thumbnail.prototype.setText = function(text){
+    this.text_.innerHTML = text;
+};
 
 
 
 
 /**
  * @param {Element=} opt_parent The hover element's parent.
- * @param {Element=} opt_element The hover element to set in case the cloned thumbnail is not desired.
+ * @param {Element=} optelement_ The hover element to set in case the cloned thumbnail is not desired.
  * @public
  */	
 utils.ui.Thumbnail.prototype.removeHoverable = function(opt_parent, opt_element){
-    if (this._hoverable) {
-	if (this._hoverable.parentNode){
-	    this._hoverable = this._hoverable.parentNode.removeChild(this._hoverable);
+    if (this.hoverable_) {
+	if (this.hoverable_.parentNode){
+	    this.hoverable_ = this.hoverable_.parentNode.removeChild(this.hoverable_);
 	}
-	delete this._hoverable
-	this._hoverable = null;
+	delete this.hoverable_
+	this.hoverable_ = null;
     }
 }
 
@@ -295,15 +268,16 @@ utils.ui.Thumbnail.prototype.createHoverable = function(opt_parent, opt_element)
 
     this.removeHoverable();
     this.setHoverListeners_(false);
-    this._hoverable = (opt_element) ? opt_element : this._element.cloneNode(true);
+    this.hoverable_ = (opt_element) ? opt_element : this.element_.cloneNode(true);
 
-    this._hoverable.setAttribute('id', 'HOVERABLE_' + this._element.getAttribute('id'));
-    this._hoverable.setAttribute('thumbnailid', this._element.getAttribute('id'));
-    this._hoverable.style.visibility = 'hidden';
-    goog.dom.classes.add(this._hoverable, utils.ui.Thumbnail.HOVER_CLONE_CLASS);
+    this.hoverable_.setAttribute('id', 'HOVERABLE' + this.element_.getAttribute('id'));
+    this.hoverable_.setAttribute('thumbnailid', this.element_.getAttribute('id'));
+    this.hoverable_.style.visibility = 'hidden';
+    goog.dom.classes.add(this.hoverable_, utils.ui.Thumbnail.HOVER_CLONE_CLASS);
     this.setHoverListeners_(true);
-    if (opt_parent){ opt_parent.appendChild(this._hoverable) }
+    if (opt_parent){ opt_parent.appendChild(this.hoverable_) }
 }    
+
 
 
 
@@ -314,25 +288,27 @@ utils.ui.Thumbnail.prototype.createHoverable = function(opt_parent, opt_element)
  * @param {boolean, boolean=} active Active state, opt_highlight_bg 
  * whether or not to highlight the background (false if it pertains
  * to thumbnails that have been dropped in a viewer).
+ * @public
  */
 utils.ui.Thumbnail.prototype.setActive = function(active, opt_highlight_bg) {
 
     //utils.dom.debug("setActive", active, opt_highlight_bg);
-    var that = this
+
     this.isActive_ = active;
     if (this.isActive_){
-	if (opt_highlight_bg !== false) { goog.dom.classes.add(that._element, utils.ui.Thumbnail.ELEMENT_HIGHLIGHT_CLASS); }
-	goog.dom.classes.add(that._element, utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS);
-	goog.dom.classes.add(that._displayText, utils.ui.Thumbnail.TEXT_ACTIVE_CLASS);		
-	goog.dom.classes.add(that._image, utils.ui.Thumbnail.IMAGE_ACTIVE_CLASS);		
+	if (opt_highlight_bg !== false) { goog.dom.classes.add(this.element_, utils.ui.Thumbnail.ELEMENT_HIGHLIGHT_CLASS); }
+	goog.dom.classes.add(this.element_, utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS);
+	goog.dom.classes.add(this.text_, utils.ui.Thumbnail.TEXT_ACTIVE_CLASS);		
+	goog.dom.classes.add(this.image_, utils.ui.Thumbnail.IMAGE_ACTIVE_CLASS);		
 	
     } else {
-	goog.dom.classes.remove(that._element, utils.ui.Thumbnail.ELEMENT_HIGHLIGHT_CLASS);
-	goog.dom.classes.remove(that._element, utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS);			
-	goog.dom.classes.remove(that._displayText, utils.ui.Thumbnail.TEXT_ACTIVE_CLASS);		
-	goog.dom.classes.remove(that._image, utils.ui.Thumbnail.IMAGE_ACTIVE_CLASS);
+	goog.dom.classes.remove(this.element_, utils.ui.Thumbnail.ELEMENT_HIGHLIGHT_CLASS);
+	goog.dom.classes.remove(this.element_, utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS);			
+	goog.dom.classes.remove(this.text_, utils.ui.Thumbnail.TEXT_ACTIVE_CLASS);		
+	goog.dom.classes.remove(this.image_, utils.ui.Thumbnail.IMAGE_ACTIVE_CLASS);
     }
 }
+
 
 
 
@@ -342,10 +318,10 @@ utils.ui.Thumbnail.prototype.setActive = function(active, opt_highlight_bg) {
  *
  * @private
  */
-utils.ui.Thumbnail.prototype._onMouseOver = function() {
+utils.ui.Thumbnail.prototype.mouseOver_ = function() {
 
     
-    var hoverNode = this.getHoverNode();
+    var hoverNode = this.hoverNode;
     
     //------------------
     // Apply classes.
@@ -357,20 +333,22 @@ utils.ui.Thumbnail.prototype._onMouseOver = function() {
 
     if (hoverNode.style.visibility !== 'visible') {
 
-	// We get the absolute position of the thumbnail._element
-	// if the _hoverable parent is NOT the thumbnail._element (i.e. the document body).
-	var thumbnailDims = utils.style.absolutePosition(this._element);
+	//
+	// Find the common ancestor
+	//
+	var commonAncestor = goog.dom.findCommonAncestor(this.element_, hoverNode);
+	var thumbnailDims = utils.style.getPositionRelativeToAncestor(this.element_, commonAncestor);
 	var imgClone = goog.dom.getElementByClass(utils.ui.Thumbnail.IMAGE_CLASS, hoverNode)
 	var textClone = goog.dom.getElementByClass(utils.ui.Thumbnail.TEXT_CLASS, hoverNode);
 	var cloneWidth = 0;
 
 
-	// Adjust only if the _hover clone is not the _element.
-	if (hoverNode !== this._element) {
+	// Adjust only if the _hover clone is not the element_.
+	if (hoverNode !== this.element_) {
 	    // Set the clone width to something wider than the original thumbnail width
 	    // only if the the cloneWidth is calculated to be larger (text spillover)
 	    cloneWidth = imgClone.scrollWidth + textClone.scrollWidth + 25;
-	    cloneWidth = (cloneWidth > this._element.clientWidth) ? cloneWidth : this._element.clientWidth;
+	    cloneWidth = (cloneWidth > this.element_.clientWidth) ? cloneWidth : this.element_.clientWidth;
 	    utils.style.setStyle(hoverNode, {
 		'position': 'absolute',
 		'top': thumbnailDims['top'], 
@@ -386,7 +364,7 @@ utils.ui.Thumbnail.prototype._onMouseOver = function() {
     // Run callbacks.
     //------------------
     if (this.mouseverCallbacks_ !== null) {
-	goog.array.forEach(this.mouseoverCallbacks_, function(callback){ callback(this)});
+	goog.array.forEach(this.onMouseOver_, function(callback){ callback(this)});
     }
 }
 
@@ -397,20 +375,20 @@ utils.ui.Thumbnail.prototype._onMouseOver = function() {
  *
  * @private
  */
-utils.ui.Thumbnail.prototype._onMouseOut = function() {
+utils.ui.Thumbnail.prototype.mouseOut_ = function() {
 
-    var hoverNode = this.getHoverNode();
+    var hoverNode = this.hoverNode;
 
     if (hoverNode) { 
 	hoverNode.style.visibility = 'hidden';
 	goog.dom.classes.remove(hoverNode, utils.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS);			
 	goog.dom.classes.remove(hoverNode.childNodes[1], utils.ui.Thumbnail.TEXT_MOUSEOVER_CLASS);		
 	goog.dom.classes.remove(hoverNode.childNodes[0], utils.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS);
-	this._element.style.visibility = 'visible';
+	this.element_.style.visibility = 'visible';
     }
 
-    if (this.mouseoutCallbacks_ !== null) {
-	goog.array.forEach(this.mouseoutCallbacks_, function(callback){ callback(this)});
+    if (this.onMouseOut_ !== null) {
+	goog.array.forEach(this.onMouseOut_, function(callback){ callback(this)});
     }
 }
 
@@ -425,14 +403,14 @@ utils.ui.Thumbnail.prototype._onMouseOut = function() {
  */
 utils.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
 
-    var hoverNode = this.getHoverNode();
+    var hoverNode = this.hoverNode;
     if (set) {
-	goog.events.listen(hoverNode, goog.events.EventType.MOUSEOVER, this._onMouseOver.bind(this));
-	goog.events.listen(hoverNode, goog.events.EventType.MOUSEOUT, this._onMouseOut.bind(this));
+	goog.events.listen(hoverNode, goog.events.EventType.MOUSEOVER, this.mouseOver_.bind(this));
+	goog.events.listen(hoverNode, goog.events.EventType.MOUSEOUT, this.mouseOut_.bind(this));
 	
     } else {
-	goog.events.unlisten(hoverNode, goog.events.EventType.MOUSEOVER, this._onMouseOver.bind(this));
-	goog.events.unlisten(hoverNode, goog.events.EventType.MOUSEOUT, this._onMouseOut.bind(this));
+	goog.events.unlisten(hoverNode, goog.events.EventType.MOUSEOVER, this.mouseOver_.bind(this));
+	goog.events.unlisten(hoverNode, goog.events.EventType.MOUSEOUT, this.mouseOut_.bind(this));
     }
 }
 
@@ -440,10 +418,19 @@ utils.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
 
 
 /**
- * 
+ * @public
  */
 utils.ui.Thumbnail.prototype.updateStyle = function (opt_args) {
-    if (opt_args && this._element) {
-	utils.style.setStyle(this._element, opt_args);
+    if (opt_args && this.element_) {
+	utils.style.setStyle(this.element_, opt_args);
     }
 }
+
+
+
+goog.exportSymbol('utils.ui.Thumbnail.prototype.setImage', utils.ui.Thumbnail.prototype.setImage);
+goog.exportSymbol('utils.ui.Thumbnail.prototype.setText', utils.ui.Thumbnail.prototype.setText);
+goog.exportSymbol('utils.ui.Thumbnail.prototype.removeHoverable', utils.ui.Thumbnail.prototype.removeHoverable);
+goog.exportSymbol('utils.ui.Thumbnail.prototype.createHoverable', utils.ui.Thumbnail.prototype.createHoverable);
+goog.exportSymbol('utils.ui.Thumbnail.prototype.setActive', utils.ui.Thumbnail.prototype.setActive);
+goog.exportSymbol('utils.ui.Thumbnail.prototype.updateStyle', utils.ui.Thumbnail.prototype.updateStyle);

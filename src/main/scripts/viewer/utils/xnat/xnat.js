@@ -3,6 +3,7 @@
  * @author herrickr@mir.wustl.edu (Rick Herrick)
  */
 
+
 /**
  * Google closure indcludes
  */
@@ -12,21 +13,12 @@ goog.require('goog.net.XhrIo');
 goog.require('goog.dom.xml');
 goog.require('goog.array');
 
-/**
- * Custom XTK indcludes
- */
-//goog.require('X.parserIMA');
 
 /**
  * utils indcludes
  */
 goog.require('utils.dom');
 goog.require('utils.array');
-
-/**
- * viewer-widget includes
- */
-
 
 
 
@@ -47,42 +39,35 @@ goog.exportSymbol('utils.xnat', utils.xnat)
 
 
 
+/**
+ * @constructor
+ */
+goog.provide("utils.xnat.properties");
+utils.xnat.properties = function(){ 
+    this['category'] =  'dicom';
+    this['files'] = ['testfile.text'];
+    this['thumbnailUrl'] = 'image.jpeg';
+    this['sessionInfo'] = {
+        "SessionID": {'label': "Session ID", 'value': ['EMPTY EXPT']},
+        "Accession #": {'label':"Accession #", 'value': ['Empty Accession']},
+        "Scanner" : {'label':"Scanner", 'value': ["SIEMENS Sonata"]},
+        "Format" : {'label':"Format", 'value': ["DICOM"]},
+        "Age" : {'label':"Age", 'value': ["--"]},
+        "Gender": {'label':"Gender", 'value': ["--"]},
+        "Handedness": {'label':"Handedness", 'value': ["--"]},
+        "AcqDate" : {'label':"Acq.Date", 'value': ["09-14-2007"]},
+        "Scan" : {'label':"Scan", 'value': ['Empty Scan']},
+        "type" : {'label':"type", 'value': ["MPRAGE"]}
+    }
+    
+};
+goog.exportSymbol('utils.xnat.properties', utils.xnat.properties)
+
 
 /**
- * @const {String}
+ * @const {string}
  */
 utils.xnat.JPEG_CONVERT_SUFFIX = '?format=image/jpeg';
-
-
-
-
-
-/**
- * Returns a placeholder object containing the relevant key-value pairings
- * for displaying metadata over a specific 'Viewable', which could be a scan
- * or a slicer file.
- *
- * @return {Object.<string, Array.<string> | string, | Object.<string, string>>}
- */
-utils.xnat.getEmptyViewableData = function(){
-    return {
-        'category' : 'dicom',
-        'files':['testfile.text'],
-        'thumbnailUrl':'image.jpeg',
-        'sessionInfo': {
-            "SessionID": {'label': "Session ID", 'value': ['EMPTY EXPT']},
-            "Accession #": {'label':"Accession #", 'value': ['Empty Accession']},
-            "Scanner" : {'label':"Scanner", 'value': ["SIEMENS Sonata"]},
-            "Format" : {'label':"Format", 'value': ["DICOM"]},
-            "Age" : {'label':"Age", 'value': ["--"]},
-            "Gender": {'label':"Gender", 'value': ["--"]},
-            "Handedness": {'label':"Handedness", 'value': ["--"]},
-            "AcqDate" : {'label':"Acq.Date", 'value': ["09-14-2007"]},
-            "Scan" : {'label':"Scan", 'value': ['Empty Scan']},
-            "type" : {'label':"type", 'value': ["MPRAGE"]}
-        }
-    };
-};
 
 
 
@@ -382,10 +367,10 @@ utils.xnat.getScans = function (url, callback){
     var queryFolder = url + "/" + viewableFolder;
     var pathObj = utils.xnat.getXnatPathObject(url);
     var gottenScans = 0;
-    var viewableCollection = [];
+    var propertiesCollection = [];
     var fileQueryUrl = '';
     var scanFileArr = [];
-    var viewable = utils.xnat.getEmptyViewableData();
+    var scanProperties;
     var imgInd = 0;
     var thumbImg = '';
 
@@ -434,16 +419,16 @@ utils.xnat.getScans = function (url, callback){
 		// Populate medatadata object pertaining to
 		// the scan. See keys below...
 		//
-		viewable = utils.xnat.getEmptyViewableData();
+		scanProperties = new utils.xnat.properties();
 		for (key in pathObj){
 		    if (pathObj[key] !== 'undefined'){
-			viewable['sessionInfo'][key] = pathObj[key]; 
+			scanProperties['sessionInfo'][key] = pathObj[key]; 
 		    }
 		}
-		viewable['files'] = scanFileArr;
-		viewable['sessionInfo']['SessionID']['value'] = [pathObj['experiments']];
-		viewable['sessionInfo']['Accession #']['value'] = [pathObj['projects']];
-		viewable['sessionInfo']['Scan']['value'] =  [scans['ID']];
+		scanProperties['files'] = scanFileArr;
+		scanProperties['sessionInfo']['SessionID']['value'] = [pathObj['experiments']];
+		scanProperties['sessionInfo']['Accession #']['value'] = [pathObj['projects']];
+		scanProperties['sessionInfo']['Scan']['value'] =  [scans['ID']];
 				
 
 		//
@@ -459,7 +444,7 @@ utils.xnat.getScans = function (url, callback){
 		//
 		// Define the thumbnailImage URI
 		//
-		viewable['thumbnailUrl'] = goog.string.endsWith(thumbImg , 
+		scanProperties['thumbnailUrl'] = goog.string.endsWith(thumbImg , 
 								utils.xnat.JPEG_CONVERT_SUFFIX) ? 
 		    thumbImg : thumbImg + utils.xnat.JPEG_CONVERT_SUFFIX;
 
@@ -467,20 +452,20 @@ utils.xnat.getScans = function (url, callback){
 		//
 		// Add to collection
 		//
-		viewableCollection.push(viewable);
+		propertiesCollection.push(scanProperties);
 		gottenScans++;
 
 
 		//
 		// SORT THUMBNAILS BY NAME (NATURAL SORT)
 		//
-		// Sort all viewables once they're collected
+		// Sort all scanPropertiess once they're collected
 		// before sending back, then run the callback.
 		//
 		if (gottenScans === scanJson.length){
-		    viewableCollection = utils.xnat.sortViewableCollection(viewableCollection, ['sessionInfo', 'Scan', 'value', 0]);
-		    goog.array.forEach(viewableCollection, function(viewable){
-			callback(viewable);
+		    propertiesCollection = utils.xnat.sortPropertiesCollection(propertiesCollection, ['sessionInfo', 'Scan', 'value', 0]);
+		    goog.array.forEach(propertiesCollection, function(scanProperties){
+			callback(scanProperties);
 		    })
 		}
 	    })	
@@ -508,14 +493,14 @@ utils.xnat.getSlicer = function (url, callback){
     var queryFolder = url + "/resources/" + viewableFolder + "/files";
     var pathObj = utils.xnat.getXnatPathObject(url);
     var readableFiles = ['.mrml', '.nrrd']; 
-    var viewableCollection = [];
+    var propertiesCollection = [];
+    var slicerProperties;
     var gottenSlicerFiles = 0;
     var viewableSlicerPackageFiles = [];
     var slicerThumb = ''; 
 
     var fileQueryStr = '';
 
-    var viewable = utils.xnat.getEmptyViewableData();
     var imageArr = ['jpeg', 'jpg', 'png', 'gif'];
     var imageFound = false;
     var ext = '';
@@ -568,20 +553,20 @@ utils.xnat.getSlicer = function (url, callback){
 		// Populate medatadata object.  See keys
 		// below for specificity.
 		//
-		viewable = utils.xnat.getEmptyViewableData();
+		slicerProperties = new utils.xnat.properties();
 		for (key in viewableFile){
-		    viewable[key] = viewableFile[key];
+		    slicerProperties[key] = viewableFile[key];
 		}
 		for (key in pathObj){
 		    if (pathObj[key] !== 'undefined'){
-			viewable['sessionInfo'][key] = pathObj[key]; 
+			slicerProperties['sessionInfo'][key] = pathObj[key]; 
 		    }
 		}
-		viewable['files'] = viewableSlicerPackageFiles;
-		viewable['category'] = 'Slicer';
-		viewable['sessionInfo']['SessionID']['value'] = [pathObj['experiments']];
-		viewable['sessionInfo']['Format']['value'] = ['.mrb'];
-		viewable['sessionInfo']['Accession #']['value'] = [pathObj['projects']];
+		slicerProperties['files'] = viewableSlicerPackageFiles;
+		slicerProperties['category'] = 'Slicer';
+		slicerProperties['sessionInfo']['SessionID']['value'] = [pathObj['experiments']];
+		slicerProperties['sessionInfo']['Format']['value'] = ['.mrb'];
+		slicerProperties['sessionInfo']['Accession #']['value'] = [pathObj['projects']];
 
 
 		//
@@ -591,18 +576,18 @@ utils.xnat.getSlicer = function (url, callback){
 		// Select the first one.
 		//
 		imageFound = false;
-		goog.array.forEach(viewable['files'], function(fileName){
+		goog.array.forEach(slicerProperties['files'], function(fileName){
 		    ext = utils.string.getFileExtension(fileName);
 		    goog.array.forEach(imageArr, function(imageType){
 			if (ext === imageType && !imageFound){
-			    viewable['thumbnailUrl'] = fileName; 
+			    slicerProperties['thumbnailUrl'] = fileName; 
 			    imageFound = true;
 			}
 		    })
 		})
 	
 
-		viewableCollection.push(viewable);
+		propertiesCollection.push(slicerProperties);
 		gottenSlicerFiles++;
 
 
@@ -612,9 +597,9 @@ utils.xnat.getSlicer = function (url, callback){
 		// before sending back, then run the callback.
 		//
 		if (gottenSlicerFiles === slicerJson.length){
-		    viewableCollection = utils.xnat.sortViewableCollection(viewableCollection, ['Name']);
-		    goog.array.forEach(viewableCollection, function(viewable){
-			callback(viewable);
+		    propertiesCollection = utils.xnat.sortPropertiesCollection(propertiesCollection, ['Name']);
+		    goog.array.forEach(propertiesCollection, function(slicerProperties){
+			callback(slicerProperties);
 		    })
 		}
 	    });
@@ -630,10 +615,11 @@ utils.xnat.getSlicer = function (url, callback){
  * Sorts the viewable collection, which is an array of XNAT derived JSONS
  * customized (added to) for the purposes of the Image viewer.
  *
- * @param {!Array.<Object>} viewableCollection the collection to sort. 
+ * @param {!Array.<Object>} propertiesCollection the collection to sort. 
  * @param {!Array.<String>} keyDepthArr The key depth array indicating the sorting criteria.
+ * @public
  */
-utils.xnat.sortViewableCollection = function (viewableCollection, keyDepthArr){
+utils.xnat.sortPropertiesCollection = function (propertiesCollection, keyDepthArr){
 
     var sorterKeys = [];
     var sorterObj = {};
@@ -643,7 +629,7 @@ utils.xnat.sortViewableCollection = function (viewableCollection, keyDepthArr){
     //
     // Update sorting data types.
     //
-    goog.array.forEach(viewableCollection, function(viewable){
+    goog.array.forEach(propertiesCollection, function(viewable){
 	sorterKey = viewable;
 	goog.array.forEach(keyDepthArr, function(key){
 	    sorterKey = sorterKey[key];

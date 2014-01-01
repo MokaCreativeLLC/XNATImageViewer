@@ -324,23 +324,25 @@ xiv.ThumbnailManager.prototype.add = function(thumbnail){
     // then highlight the view box that the 
     // thumbnail was dropped into when we hover over it.
     //------------------
-    thumbnail.addMouseoverCallback(function(Thumbnail){
-	xiv._Modal._ViewBoxManager.loop(function(ViewBox){
+    thumbnail.onMouseOver = function(Thumbnail){
+	xiv._Modal.ViewBoxManager.loop(function(ViewBox){
 	    if (ViewBox.currentThumbnail_ === Thumbnail){
-		utils.style.setStyle(ViewBox._element, {'border-color':'rgb(255,255,255)'});
+		utils.style.setStyle(ViewBox._element, 
+				     {'border-color':'rgb(255,255,255)'});
 	    }
 	})
-    })
+    }
     //
     // Do the opposite on mouseout
     //
-    thumbnail.addMouseoutCallback(function(Thumbnail){
-	xiv._Modal._ViewBoxManager.loop(function(ViewBox){
+    thumbnail.onMouseOut = function(Thumbnail){
+	xiv._Modal.ViewBoxManager.loop(function(ViewBox){
 	    if (ViewBox.currentThumbnail_ === Thumbnail){
-		utils.style.setStyle(ViewBox._element, {'border-color':ViewBox._element.getAttribute('originalbordercolor')});
+		utils.style.setStyle(ViewBox._element, 
+				     {'border-color':ViewBox._element.getAttribute('originalbordercolor')});
 	    }
 	})
-    })
+    }
 
 }
 
@@ -355,7 +357,7 @@ xiv.ThumbnailManager.prototype.add = function(thumbnail){
  * @param {xiv.Thumbnail}
  */
 xiv.ThumbnailManager.prototype.addDragDropSource = function(thumbnail){
-    var thumbElt = thumbnail.getHoverNode();
+    var thumbElt = thumbnail.hoverNode;
     if (thumbElt) {
 	this.thumbnailDragDropGroup_.addItem(thumbElt);
     }
@@ -454,19 +456,20 @@ xiv.ThumbnailManager.prototype.getThumbnailByElement = function(element) {
 /**
  * Returns a newly created xiv.Thumbnail object. 
  *
- * @param {!Element}
- * @param {boolean=}
+ * @param {utils.xnat.properties} xnatProperties
+ * @param {boolean=} opt_addToManager
  * @returns {xiv.Thumbnail}
+ * @public
  */
-xiv.ThumbnailManager.prototype.makeXivThumbnail = function(properties, opt_addToManager) {
-    var thumbnail = new xiv.Thumbnail(properties);
+xiv.ThumbnailManager.prototype.makeXivThumbnail = function(xnatProperties, opt_addToManager) {
+    var thumbnail = new xiv.Thumbnail(xnatProperties);
     if ((opt_addToManager === undefined) || (opt_addToManager === true)) { 
 	this.add(thumbnail);
-	thumbnail.setOnClick(function(){
+	thumbnail.onClick = function(){
 	    goog.array.forEach(this.clickCallbacks_, function(callback){
 		callback(thumbnail)
 	    })
-	}.bind(this))
+	}.bind(this)
     }
     return thumbnail;
 }

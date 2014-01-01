@@ -494,3 +494,32 @@ utils.style.determineStartEndDimsCSS = function(elt, toBeClass, opt_adjustcallba
     //------------------
     return {'start': startDim, 'end': endDim};
 }
+
+
+
+
+/**
+ * Gets the pixel position of an element relative to the provided
+ * ancestor, using recursion.
+ *
+ * @param {!Element} element
+ * @param {!Element} ancestor
+ * @return {!Object<string, number>} The position of the element.
+ */
+utils.style.getPositionRelativeToAncestor = function(element, ancestor) {
+    var currLeft = 0;
+    var currTop = 0;
+
+    if (element.offsetParent) {
+
+	var parent = element;
+	while (parent !== ancestor){
+	    currLeft += parent.offsetLeft;
+	    currTop += parent.offsetTop;
+	    parent = parent.offsetParent;
+	}
+	//do {
+	//} while (obj != obj.offsetParent);
+	return {'left': currLeft, 'top': currTop};
+    }
+}
