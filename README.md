@@ -10,7 +10,7 @@ Features
 
 Demo
 --------------
-Click [here](https://rawgithub.com/MokaCreativeLLC/XNATImageViewer/master/demo/html/XNATImageViewerDemo.html)!
+Click [here](http://mokacreativellc.github.io/XNATImageViewer/Demo.html).
 
 
 
