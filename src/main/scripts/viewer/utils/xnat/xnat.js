@@ -41,13 +41,14 @@ goog.exportSymbol('utils.xnat', utils.xnat)
 
 /**
  * @constructor
+ * @dict
  */
 goog.provide("utils.xnat.properties");
 utils.xnat.properties = function(){ 
     this['category'] =  'dicom';
     this['files'] = ['testfile.text'];
     this['thumbnailUrl'] = 'image.jpeg';
-    this['sessionInfo'] = {
+    this['sessionInfo'] = /**@dict*/ {
         "SessionID": {'label': "Session ID", 'value': ['EMPTY EXPT']},
         "Accession #": {'label':"Accession #", 'value': ['Empty Accession']},
         "Scanner" : {'label':"Scanner", 'value': ["SIEMENS Sonata"]},
@@ -61,13 +62,37 @@ utils.xnat.properties = function(){
     }
     
 };
-goog.exportSymbol('utils.xnat.properties', utils.xnat.properties)
+goog.exportSymbol('utils.xnat.properties', utils.xnat.properties);
+
+
 
 
 /**
  * @const {string}
+ * @public
  */
 utils.xnat.JPEG_CONVERT_SUFFIX = '?format=image/jpeg';
+
+
+
+
+
+/**
+ * Enum for tri-state values.
+ * @enum {string}
+ * @public
+ */
+utils.xnat.folderAbbrev = {
+    projects: 'proj',
+    subjects: 'subj',
+    experiments: 'expt',
+    scans: 'scans'
+};
+
+
+
+goog.exportSymbol('utils.xnat.folderAbbrev', utils.xnat.folderAbbrev);
+
 
 
 
@@ -78,8 +103,9 @@ utils.xnat.JPEG_CONVERT_SUFFIX = '?format=image/jpeg';
  * Google closure library 'XhrIo' to handle communication with
  * the XNAT server.
  *
- * @param {!string, !function}
- * @expose
+ * @param {!string} url
+ * @param {!function} callback
+ * @public
  */
 utils.xnat.jsonGet = function(url, callback){
     //utils.dom.debug("utils.xnat - jsonGet: ", url);
@@ -169,20 +195,21 @@ utils.xnat.splitUrl = function(url, splitString){
 
 /**
  * Constructs an XNAT Uri stopping at the desired 'level'.
- * Calls on the internal 'getXnatPathObject' method to split
+ * Calls on the internal 'getPathObject' method to split
  * the uri into it's various level components.  From then, it builds
  * the return string.
  *
- * @param {!string, !string}
+ * @param {!string} url
+ * @param {!string} level
  * @return {string}
- * @expose
+ * @public
  */
 utils.xnat.getXnatPathByLevel = function(url, level){
     
     //------------------
     // Splits the url into its various level components.
     //------------------
-    var pathObj = utils.xnat.getXnatPathObject(url)
+    var pathObj = utils.xnat.getPathObject(url)
 
 
 
@@ -231,11 +258,11 @@ utils.xnat.getXnatPathByLevel = function(url, level){
  * Split's the 'url' argument into various XNAT level
  * folders.
  *
- * @param {!string}
+ * @param {!string} url
  * @return {string}
  * @expose
  */
-utils.xnat.getXnatPathObject = function(url){
+utils.xnat.getPathObject = function(url){
     var pathObj =  {
 	'prefix': "",
 	'projects':undefined,
@@ -365,7 +392,7 @@ utils.xnat.getScans = function (url, callback){
     var that = this;
     var viewableFolder = 'scans';
     var queryFolder = url + "/" + viewableFolder;
-    var pathObj = utils.xnat.getXnatPathObject(url);
+    var pathObj = utils.xnat.getPathObject(url);
     var gottenScans = 0;
     var propertiesCollection = [];
     var fileQueryUrl = '';
@@ -491,7 +518,7 @@ utils.xnat.getSlicer = function (url, callback){
     var that = this;
     var viewableFolder = 'Slicer';
     var queryFolder = url + "/resources/" + viewableFolder + "/files";
-    var pathObj = utils.xnat.getXnatPathObject(url);
+    var pathObj = utils.xnat.getPathObject(url);
     var readableFiles = ['.mrml', '.nrrd']; 
     var propertiesCollection = [];
     var slicerProperties;

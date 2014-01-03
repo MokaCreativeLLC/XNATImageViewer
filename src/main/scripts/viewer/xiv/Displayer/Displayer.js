@@ -45,6 +45,14 @@ goog.require('xiv');
 goog.provide('xiv.Displayer');
 xiv.Displayer = function () {
     xiv.Widget.call(this, 'xiv.Displayer');
+
+
+    /**
+     * @private
+     * @type {?utils.xnat.properties} 
+     */ 
+    this.xnatProperties_ = null;
+
 }
 goog.inherits(xiv.Displayer, xiv.Widget);
 goog.exportSymbol('xiv.Displayer', xiv.Displayer);
@@ -54,10 +62,21 @@ goog.exportSymbol('xiv.Displayer', xiv.Displayer);
 
 xiv.Displayer.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-displayer');
 xiv.Displayer.TABCONTENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Displayer.CSS_CLASS_PREFIX, 'tabcontent');
-xiv.Displayer.TABCONTENT_INFO_CLASS = /**@const*/ goog.getCssName(xiv.Displayer.TABCONTENT_CLASS, 'info');
-xiv.Displayer.TABCONTENT_INFO_LABEL_CLASS = /**@const*/ goog.getCssName(xiv.Displayer.TABCONTENT_INFO_CLASS, 'label');
-xiv.Displayer.TABCONTENT_INFO_VALUE_CLASS = /**@const*/ goog.getCssName(xiv.Displayer.TABCONTENT_INFO_CLASS, 'value');
-xiv.Displayer.TABCONTENT_INFO_HIGHIMPORTANCE_CLASS = /**@const*/ goog.getCssName(xiv.Displayer.TABCONTENT_INFO_CLASS, 'highimportance');
+xiv.Displayer.TABCONTENT_INFO_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Displayer.TABCONTENT_CLASS, 'info');
+xiv.Displayer.TABCONTENT_INFO_LABEL_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Displayer.TABCONTENT_INFO_CLASS, 'label');
+xiv.Displayer.TABCONTENT_INFO_VALUE_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Displayer.TABCONTENT_INFO_CLASS, 'value');
+xiv.Displayer.TABCONTENT_INFO_HIGHIMPORTANCE_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Displayer.TABCONTENT_INFO_CLASS, 'highimportance');
+
+
+
+/**  
+ * @return {!utils.xnat.properties} The utils.xnat.properties object associated with the Displayer.
+ * @public
+ */
+xiv.Displayer.prototype.__defineGetter__('xnatProperties', function () {
+    return this.xnatProperties_;
+})
+
 
 
 
@@ -67,12 +86,29 @@ xiv.Displayer.TABCONTENT_INFO_HIGHIMPORTANCE_CLASS = /**@const*/ goog.getCssName
  * argument Object to create Dicom-informational tabs
  * or Slicer-informational tabs.
  *
- * @param {!Object}
- * @return {Element}
+ * @param {!utils.xnat.properties} xnatProperties
+ * @return {!Element}
+ * @public
  */
-xiv.Displayer.prototype.makeInfoTabContents = function (data) {	
-    return (data['category'].toLowerCase() === 'slicer') ? this.makeSlicerTab(data) : this.makeDicomTab(data);
+xiv.Displayer.prototype.makeInfoTabContents = function (xnatProperties) {	
+    return (xnatProperties['category'].toLowerCase() === 'slicer') ? 
+	this.makeSlicerTab(xnatProperties) : this.makeDicomTab(xnatProperties);
 }
+
+
+
+
+/**  
+ * Loads the xnatProperties accordingly.
+ *
+ * @param {!utils.xnat.properties} xnatProperties The xnat properties to load.
+ * @public
+ */
+xiv.Displayer.prototype.load = function (xnatProperties) {
+    window.console.log("PARENT XNAT PROPERTIES!", xnatProperties);
+    this.xnatProperties_ = xnatProperties;
+}
+
 
 
 

@@ -15,7 +15,7 @@ goog.require('goog.dom');
 goog.require('utils.dom');
 goog.require('utils.style');
 goog.require('utils.fx');
-goog.require('utils.ui.ScrollableContainer.ThumbnailGallery');
+goog.require('utils.ui.ThumbnailGallery');
 
 
 
@@ -50,8 +50,8 @@ xiv.SlicerViewMenu = function () {
     //------------------
     // Thumbnail Gallery.
     //------------------ 
-    this.ThumbnailGallery_ = new utils.ui.ScrollableContainer.ThumbnailGallery();
-    this.element.appendChild(this.ThumbnailGallery_.element);
+    this.ThumbnailGallery_ = new utils.ui.ThumbnailGallery();
+    this.element.appendChild(this.ThumbnailGallery_.getElement());
 
 
 
@@ -67,7 +67,7 @@ xiv.SlicerViewMenu = function () {
     //------------------
     // Set classes
     //------------------ 
-    goog.dom.classes.add(this.ThumbnailGallery_.element, xiv.SlicerViewMenu.THUMBNAILGALLERY_CLASS);
+    goog.dom.classes.add(this.ThumbnailGallery_.getElement(), xiv.SlicerViewMenu.THUMBNAILGALLERY_CLASS);
     this.ThumbnailGallery_.addThumbnailClass(xiv.SlicerViewMenu.THUMBNAIL_CLASS);
     this.ThumbnailGallery_.addThumbnailImageClass(xiv.SlicerViewMenu.THUMBNAIL_IMAGE_CLASS);
     this.ThumbnailGallery_.addThumbnailTextClass(xiv.SlicerViewMenu.THUMBNAIL_TEXT_CLASS);
@@ -106,7 +106,7 @@ xiv.SlicerViewMenu.prototype.ViewBox_ = null;
 
 
 /**
- * @type {?utils.ui.ScrollableContainer.ThumbnailGallery}
+ * @type {?utils.ui.ThumbnailGallery}
  * @private
  */
 xiv.SlicerViewMenu.prototype.ThumbnailGallery_ = null;
@@ -114,7 +114,7 @@ xiv.SlicerViewMenu.prototype.ThumbnailGallery_ = null;
 
 
 /**
- * @return {?utils.ui.ScrollableContainer.ThumbnailGallery}
+ * @return {?utils.ui.ThumbnailGallery}
  */
 xiv.SlicerViewMenu.prototype.getThumbnailGallery = function(){
     return this.ThumbnailGallery_;

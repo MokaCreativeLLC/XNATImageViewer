@@ -168,7 +168,8 @@ xiv.ViewBoxTabs.prototype.addTabs = function(tabTitles) {
  * Clears a tab of it contents and removes it.  Clears
  * all of no tabtitle provided in the argument.
  *
- * @param {string=}
+ * @param {string=} opt_tabtitle
+ * @public
  */
 xiv.ViewBoxTabs.prototype.reset = function(opt_tabtitle) {
 
@@ -436,6 +437,7 @@ xiv.ViewBoxTabs.prototype.setDefaultClickEvents = function() {
 		//
 		// Deactivate all tabs.
 		//
+		window.console.log("SET ACTIVE HERE");
 		that.setActive(-1);		
 	    }
 	})
@@ -593,13 +595,15 @@ xiv.ViewBoxTabs.prototype.setTabContents = function (tabName, contents) {
     // Make or use existing scrollable container...
     //------------------
     if (contents instanceof utils.ui.ScrollableContainer) {
-	console.log("ITS A SCROLLABLE CONTAINER");
+	//console.log("ITS A SCROLLABLE CONTAINER");
 	scrollableContainer = contents;
-	tabPage.appendChild(scrollableContainer.element);
+	tabPage.appendChild(scrollableContainer.getElement());
     }
     else {
 	scrollableContainer = new utils.ui.ScrollableContainer({ 'parent': tabPage });
 	scrollableContainer.addContents(contents);
+	window.console.log(scrollableContainer.getContentsDict());
+	scrollableContainer.setZippysExpanded(false);
     }
 
 
@@ -607,5 +611,5 @@ xiv.ViewBoxTabs.prototype.setTabContents = function (tabName, contents) {
     //------------------
     // Set the scrollable container class.
     //------------------
-    goog.dom.classes.add(scrollableContainer.element, xiv.ViewBoxTabs.SCROLLGALLERY_CLASS);
+    goog.dom.classes.add(scrollableContainer.getElement(), xiv.ViewBoxTabs.SCROLLGALLERY_CLASS);
 }

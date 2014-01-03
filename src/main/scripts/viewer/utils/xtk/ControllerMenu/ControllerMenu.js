@@ -32,13 +32,45 @@ goog.require('utils.style');
  * (volumes) and 3D xtk objects.
  *
  * @constructor
- * @param {Object, XtkDisplayer}
  */
 goog.provide('utils.xtk.ControllerMenu');
-utils.xtk.ControllerMenu = function(xtkDisplayer) {
-    this.XtkDisplayer_ = xtkDisplayer;
+utils.xtk.ControllerMenu = function() {
+
+    /**
+     * @const 
+     * @type {!Array.<string>}
+     */
+    this.visibilityRowSpacing = ['0%','27%','35%', '55%', '88%'];
+
+
+
+    /**
+     * @private
+     * @type {!Object}
+     */ 
     this.menu2D_ = {};
+
+
+    /**
+     * @private
+     * @type {!Object}
+     */ 
     this.menu3D_ = {};
+
+
+
+    /**
+     * @private
+     * @type {!Object}
+     */ 
+    this.menuMap_ = {};
+
+
+    /**
+     * @private
+     * @type {!Array.function}
+     */ 
+    this.onVolumeToggled2D_ = []
 }
 goog.exportSymbol('utils.xtk.ControllerMenu', utils.xtk.ControllerMenu);
 
@@ -67,89 +99,55 @@ utils.xtk.ControllerMenu.THUMB_HOVER_CLASS = /** @const @type {String} */ goog.g
 
 
 /**
- * @const 
- * @type {Array.<string>}
- */
-utils.xtk.ControllerMenu.prototype.visibilityRowSpacing = ['0%','27%','35%', '55%', '88%'];
-
-
-
-
-/**
- * @private
- * @type {Object}
- */ 
-utils.xtk.ControllerMenu.prototype.XtkDisplayer_ = undefined;
-
-
-
-
-/**
- * @private
- * @type {Object}
- */ 
-utils.xtk.ControllerMenu.prototype.menu2D_ = {};
-
-
-
-
-/**
- * @return {Object}
- */ 
-utils.xtk.ControllerMenu.prototype.getMenu2D = function(){
-    return this.menu2D_;
-};
-
-
-
-
-/**
- * @private
- * @type {Object}
- */ 
-utils.xtk.ControllerMenu.prototype.menu3D_ = {};
-
-
-
-
-/**
- * @return {Object}
- */ 
-utils.xtk.ControllerMenu.prototype.getMenu3D = function(){
-    return this.menu3D_;
-};
-
-
-
-
-/**
- * @private
- * @type {Object}
- */ 
-utils.xtk.ControllerMenu.prototype.menuMap_ = {};
-
-
-
-
-/**
- * @return {Object}
- */ 
-utils.xtk.ControllerMenu.prototype.getMenuMap = function(){
-    return this.menuMap_;
-};
-
-
-
-
-/**
  * @return {Object.<string, Object>}
+ * @public
  */
-utils.xtk.ControllerMenu.prototype.getMenu = function(){
+utils.xtk.ControllerMenu.prototype.__defineGetter__('Menu', function(){
     return {
 	'2D Menu' : this.menu2D_,
 	'3D Menu' : this.menu3D_
     }
-}
+})
+
+
+
+/**
+ * @return {!Object}
+ * @public
+ */
+utils.xtk.ControllerMenu.prototype.__defineGetter__('MenuMap', function(){
+    return this.menuMap_
+})
+
+
+
+/**
+ * @return {!Object}
+ * @public
+ */
+utils.xtk.ControllerMenu.prototype.__defineGetter__('Menu2D', function(){
+    return this.menu2D_
+})
+
+
+
+/**
+ * @return {!Object}
+ * @public
+ */
+utils.xtk.ControllerMenu.prototype.__defineGetter__('Menu3D', function(){
+    return this.menu3D_
+})
+
+
+
+/**
+ * @param {!function}
+ * @public
+ */
+utils.xtk.ControllerMenu.prototype.__defineSetter__('onVolumeToggled2D', function(callback){
+    return this.onVolumeToggled2D_.push(callback)
+})
 
 
 
@@ -359,19 +357,22 @@ utils.xtk.ControllerMenu.prototype.makeVolumeRendering_ = function(fileName){
  * Creates a radioButton for the 2D menu that allows the user
  * to toggle the 2D volume shows in the 2D view planes.
  *
- * @param {!String, !String}
+ * @param {!string} fileName The filename to associate with the 2D Toggle button.
+ * @param {!string} category The category of the 2D toggle button.
  * @return {Element}
  * @private
  */
 utils.xtk.ControllerMenu.prototype.makeToggleButton2D_ = function(fileName, category){
 
-    var notTheSameButton, sameCategory;
+    
 
 
     //------------------
     // Define the toggle callback.
     //------------------
     var callback = function(button){
+
+	var notTheSameButton, sameCategory;
 
 	//
 	// Set the pertaining XtkObject.isSelected parameter to 'true'
@@ -382,14 +383,14 @@ utils.xtk.ControllerMenu.prototype.makeToggleButton2D_ = function(fileName, cate
 	//
 	// Add the xtkObject to renderers.
 	//
-	this.XtkDisplayer_.set2DRenderObject(button.id);
+	goog.array.forEach(this.onVolumeToggled2D_, function(callback){ callback(button.id)});
 
 	//
 	// Loop through all radio buttons, untoggling all but
 	// the one this was just clicked.
 	//
 	goog.array.forEach(goog.dom.getElementsByClass(utils.xtk.ControllerMenu.RADIO_BUTTON_CLASS), function(otherButton){
-	    theSameButton = (otherButton === button);
+	    theSameButton = (otherButton.id === button.id);
 	    sameCategory = (otherButton.getAttribute('category') !== undefined) && (otherButton.getAttribute('category') === button.getAttribute('category'));
 	 
 	    //

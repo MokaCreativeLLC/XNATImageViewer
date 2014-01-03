@@ -4,7 +4,7 @@ goog.addDependency('../../../xiv/Widget/Widget.js', ['xiv.Widget'], [ 'utils.sty
 
 
 goog.addDependency('../../../xiv/Modal/Modal.js', ['xiv.Modal'], [
-'utils.ui.ScrollableContainer.ThumbnailGallery',
+'utils.ui.ThumbnailGallery',
 'utils.xnat',
 'utils.dom',
 'utils.style',
@@ -175,7 +175,7 @@ goog.addDependency('../../../xiv/ViewBoxTabs/ViewBoxTabs.js', ['xiv.ViewBoxTabs'
 
 
 
-goog.addDependency('../../../xiv/Displayer/XtkDisplayer/XtkDisplayer.js', ['xiv.XtkDisplayer'], [
+goog.addDependency('../../../xiv/XtkDisplayer/XtkDisplayer.js', ['xiv.XtkDisplayer'], [
 'goog.string',
 'goog.dom',
 'goog.array',

@@ -484,7 +484,7 @@ xiv.ThumbnailManager.prototype.getThumbnailByElement = function(element) {
  * @returns {xiv.Thumbnail}
  * @public
  */
-xiv.ThumbnailManager.prototype.makeXivThumbnail = function(xnatProperties, opt_addToManager) {
+xiv.ThumbnailManager.prototype.makeThumbnail = function(xnatProperties, opt_addToManager) {
     var thumbnail = new xiv.Thumbnail(xnatProperties);
     if ((opt_addToManager === undefined) || (opt_addToManager === true)) { 
 	this.add(thumbnail);

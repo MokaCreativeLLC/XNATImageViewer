@@ -445,11 +445,12 @@ xiv.XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, c
  * 
  * @param {Array.<X.Object>} renderables object X object to be displayed.
  * @param {Array<.String>} planeStrs The render planes where the renderables should be rendered.
+ * @param {boolean=} opt_suspendCallbacks Suspends the 'onLoaded' callback.
  * @param {String=} opt_onloadPlane The optional plane to render first.
  */
-xiv.XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs, opt_onloadPlane) {
+xiv.XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs, opt_suspendCallbacks, opt_onloadPlane) {
 
-    window.console.log("loadInRenderers", renderables);
+ 
     var that = this;
     var renderCount = 0; 
     var xtkPlanes = [];
@@ -520,12 +521,13 @@ xiv.XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs
 	    that.loadInRenderer(renderables, xtkPlane, function(){
 		renderCount++;
 		if (renderCount === culledViewPlanes.length) {
-		    utils.dom.debug("All View Planes rendered...", that.allRenderedCallbacks_);
-
-		    goog.array.forEach(that.allRenderedCallbacks_, function(callback){
-			callback();
-
-		    })
+		    window.console.log("All View Planes rendered...");
+		    
+		    if (opt_suspendCallbacks !== true){
+			goog.array.forEach(that.allRenderedCallbacks_, function(callback){
+			    callback();
+			})
+		    }
 		}
 	    })
 	})

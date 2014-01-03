@@ -414,7 +414,6 @@ xiv.ViewBox.prototype.initDisplayer_ = function(){
 	this.loadTabs_();
 
 
-
 	//
 	// Thumbnail loaded callbacks
 	// 
@@ -522,12 +521,14 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb) {
  * 
  * @private
  */
-xiv.ViewBox.prototype.loadTabs_ = function () {   
+xiv.ViewBox.prototype.loadTabs_ = function () {  
+
+    
     //------------------
     // Clear existing tabs.
     //------------------
     this.ViewBoxTabs_.reset();
-
+    
     
 
     //------------------
@@ -553,7 +554,6 @@ xiv.ViewBox.prototype.loadTabs_ = function () {
     for (var key in controllerMenu){
 	// Only input object that have contents in them.
 	if (Object.keys(controllerMenu[key]).length !== 0){
-	    console.log('View Box Tab contents', controllerMenu[key]);
 	    this.ViewBoxTabs_.setTabContents(key, controllerMenu[key]);
 	}   
     }
@@ -655,6 +655,7 @@ xiv.ViewBox.prototype.onContentDividerDragged_ = function() {
     if (utils.style.dims(this.ContentDivider_.element, 'top') < this.ContentDivider_.getLowerLimit()) {
 	this.ViewBoxTabs_.setActive(this.ViewBoxTabs_.getLastActiveTab());
     } else {
+	window.console.log("CONTENT DIVIDER DRAGGED");
 	this.ViewBoxTabs_.setActive(-1);
     }
 

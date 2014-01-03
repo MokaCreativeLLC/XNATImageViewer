@@ -11,7 +11,7 @@ goog.require('goog.window');
 /**
  * utils includes
  */
-goog.require('utils.ui.ScrollableContainer.ThumbnailGallery');
+goog.require('utils.ui.ThumbnailGallery');
 goog.require('utils.xnat');
 goog.require('utils.dom');
 goog.require('utils.style');
@@ -50,10 +50,10 @@ xiv.Modal = function () {
 
 
     /**
-     * @type {String}
+     * @type {!Array.string}
      * @private
      */
-    this.xnatPath_ = '';
+    this.xnatPaths_ = [];
 
 
 
@@ -93,9 +93,17 @@ xiv.Modal = function () {
 
 
 
+    /**
+     * @type {?Element}
+     * @private
+     */
+    this.addPathsButton_ = null;
+
+
+
 
     /**
-     * @type {?utils.ui.ScrollableContainer.ThumbnailGallery}
+     * @type {?utils.ui.ThumbnailGallery}
      * @private
      */
     this.ThumbnailGallery_ = null;
@@ -193,6 +201,7 @@ xiv.Modal = function () {
     this.addCloseButton_();
     this.addFullScreenButton_();
     this.addPopupButton_();
+    this.addAddPathsButton_();
     this.addThumbnailGallery_();
     this.addManagers_();
     this.addRowMenu_();
@@ -240,6 +249,7 @@ xiv.Modal.MODAL_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Modal.CSS
 xiv.Modal.CLOSEBUTTON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Modal.CSS_CLASS_PREFIX, 'closebutton');
 xiv.Modal.FULLSCREENBUTTON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Modal.CSS_CLASS_PREFIX, 'fullscreenbutton');
 xiv.Modal.POPUPBUTTON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Modal.CSS_CLASS_PREFIX, 'popupbutton');
+xiv.Modal.ADDPATHSBUTTON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Modal.CSS_CLASS_PREFIX, 'addpathsbutton');
 xiv.Modal.THUMBNAILGALLERY_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Modal.CSS_CLASS_PREFIX, 'scrollgallery');
 xiv.Modal.COLUMNMENU_CLASS = /**@type {string} @const*/goog.getCssName(xiv.Modal.CSS_CLASS_PREFIX, 'columnmenu');
 xiv.Modal.ROWMENU_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Modal.CSS_CLASS_PREFIX, 'rowmenu');
@@ -252,6 +262,7 @@ xiv.Modal.ROWMENU_BUTTON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.
  * Get the associated modal for this object.
  *
  * @return {Element} The modal element of the Modal.js object.
+ * @public
  */
 xiv.Modal.prototype.__defineGetter__('modal', function() {
   return this.modal_;
@@ -263,6 +274,7 @@ xiv.Modal.prototype.__defineGetter__('modal', function() {
  * Get the associated xiv.ViewBoxManager for this object.
  *
  * @return {xiv.ViewBoxManager} The xiv.ViewBoxManager for this object.
+ * @public
  */
 xiv.Modal.prototype.__defineGetter__('ViewBoxManager', function() {
   return this.ViewBoxManager_;
@@ -275,6 +287,7 @@ xiv.Modal.prototype.__defineGetter__('ViewBoxManager', function() {
  * Get the associated xiv.ThumbnailManager for this object.
  *
  * @return {xiv.ThumbnailManager} The xiv.ThumbnailManager for this object.
+ * @public
  */
 xiv.Modal.prototype.__defineGetter__('ThumbnailManager', function() {
   return this.ThumbnailManager_;
@@ -283,15 +296,15 @@ xiv.Modal.prototype.__defineGetter__('ThumbnailManager', function() {
 
 
 
-
-
 /**
- * @return {!string}
- * @public
+ *
+ * @return {!Array.<string>} The array of stored XNAT paths.
  */
-xiv.Modal.prototype.getXnatPath = function() { 
-    return this.xnatPath_;
-}
+xiv.Modal.prototype.__defineGetter__('xnatPaths', function() {
+  return this.xnatPaths_;
+});
+
+
 
 
 
@@ -399,6 +412,33 @@ xiv.Modal.prototype.addPopupButton_ = function(){
 
 
 
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.Modal.prototype.addAddPathsButton_ = function(){
+
+    
+    this.addPathsButton_ = utils.dom.makeElement("div", this.modal_, "addPathsButton", {'opacity':.5});
+    this.addPathsButton_.title = 'Add XNAT paths to gallery.';
+    this.addPathsButton_.innerHTML = '+';
+
+    goog.events.listen(this.addPathsButton_, goog.events.EventType.MOUSEOVER, 
+		       function(event) {utils.style.setStyle(this.addPathsButton_, {'opacity':1})}.bind(this));
+    goog.events.listen(this.addPathsButton_, goog.events.EventType.MOUSEOUT, 
+		       function(event) {utils.style.setStyle(this.addPathsButton_, {'opacity':.5})}.bind(this));
+
+    goog.dom.classes.set(this.addPathsButton_, xiv.Modal.ADDPATHSBUTTON_CLASS);
+    this.addPathsButton_.onclick = function(){
+	
+    }.bind(this);
+}
+
+
+
+
+
 /**
  * As stated.
  * @private
@@ -407,9 +447,9 @@ xiv.Modal.prototype.addThumbnailGallery_ = function(){
     //------------------
     // Thumb gallery
     //------------------
-    this.ThumbnailGallery_ = new utils.ui.ScrollableContainer.ThumbnailGallery();
-    this.modal_.appendChild(this.ThumbnailGallery_.element);
-    goog.dom.classes.add(this.ThumbnailGallery_.element, xiv.Modal.THUMBNAILGALLERY_CLASS);
+    this.ThumbnailGallery_ = new utils.ui.ThumbnailGallery();
+    this.modal_.appendChild(this.ThumbnailGallery_.getElement());
+    goog.dom.classes.add(this.ThumbnailGallery_.getElement(), xiv.Modal.THUMBNAILGALLERY_CLASS);
 
 }
 
@@ -505,19 +545,13 @@ xiv.Modal.prototype.setViewBoxCallbacks_ = function(){
  * Sets the governing XNAT Path from which all file IO occurs.
  * As of now, this XNAT Path must be at the 'experiment level.'
  *
- * @param {!string} path The XNAT to set for querying.
+ * @param {!string} path The XNAT path to set for querying.
  * @public
  */
-xiv.Modal.prototype.setXnatPath = function(path) {
-
-
-    path = (path[0] !== "/") ? "/" + path : path;
-
-    //------------------
-    // Set the private var 'xnatPath_'.
-    //------------------
-    this.xnatPath_ = xiv.XNAT_QUERY_PREFIX + path; 
-};
+xiv.Modal.prototype.__defineSetter__ ('xnatPath', function(path) {
+    var updatedPath = (path[0] !== "/") ? "/" + path : path;
+    this.xnatPaths_.push(xiv.XNAT_QUERY_PREFIX + updatedPath); 
+})
 
 
 
@@ -543,7 +577,7 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
     //
     // IMPORTANT: Critical pre-step!
     //------------------
-    this.setXnatPath(path);
+    this.xnatPath = path;
 
 
 
@@ -567,16 +601,16 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
 	// Make thumbnails from the data.
 	//
 	goog.array.forEach(XNAT_IMAGE_VIEWER_DEMO_SCANS, function(demoScan){
-	    this.addThumbnailsToGallery_('scans',  [demoScan]);
+	    this.addThumbnailsToGallery_(['sample-data', 'scans'],  [demoScan]);
 	}.bind(this))
 	goog.array.forEach(XNAT_IMAGE_VIEWER_DEMO_SLICER, function(demoSlicer){
-	    this.addThumbnailsToGallery_('Slicer',  [demoSlicer]);
+	    this.addThumbnailsToGallery_(['sample-data','Slicer'],  [demoSlicer]);
 	}.bind(this))
 
     }
 
 
-    
+
     //------------------
     // LIVE MODE: 
     //
@@ -584,24 +618,43 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
     // Scans xiv.Thumbnails first, then Slicer xiv.Thumbnails.
     //------------------  
     else {
-	utils.xnat.getViewables(this.xnatPath_, 'scans', function(viewable){
-	    //
-	    // Add Scans xiv.Thumbnails to the xiv.ThumbnailGallery.
-	    //
-	    this.addThumbnailsToGallery_('scans',  [viewable]);
-	    //
-	    // Attempt to load Slicer thumbnails after the Scan thumbnails.
-	    //
-	    if (!slicerThumbnailsLoaded) {
-		utils.xnat.getViewables(this.xnatPath_, 'Slicer', function(viewable2){
 
-		    //window.console.log("\n\nSLICER VIEWABLE", viewable2);
-		    this.addThumbnailsToGallery_('Slicer',  [viewable2]);
-		}.bind(this));
-		slicerThumbnailsLoaded = true;
-	    }
-	}.bind(this));
+
+
+
+
+
+	goog.array.forEach(this.xnatPaths_, function(xnatPath){
+
+	    var pathObj = utils.xnat.getPathObject(xnatPath);
+	    var folders = [];
+	    for (key in pathObj){ 
+		if (goog.isDef(pathObj[key]) && key !== 'prefix'){
+		    folders.push(utils.xnat.folderAbbrev[key] + ": " + pathObj[key]) 
+		}
+	    };
+
+	    //
+	    // Clone the folder array to both slicer and scans.
+	    //
+	    var scanFolders = folders.slice(0);
+	    scanFolders.push('scans');
+	    var slicerFolders = folders.slice(0);
+	    slicerFolders.push('Slicer');
+
+	    utils.xnat.getViewables(xnatPath, 'scans', function(viewable){
+		this.addThumbnailsToGallery_(scanFolders,  [viewable]);
+		if (!slicerThumbnailsLoaded) {
+		    folders[folders.length-1] = 'Slicer';
+		    utils.xnat.getViewables(xnatPath, 'Slicer', function(slicerViewable){
+			this.addThumbnailsToGallery_(slicerFolders,  [slicerViewable]);
+		    }.bind(this));
+		    slicerThumbnailsLoaded = true;
+		}
+	    }.bind(this));
+	}.bind(this))
     }
+
 }
 
 
@@ -610,14 +663,13 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
 /**
  * Creates xiv.Thumbnails to feed into the scroll gallery zippys.
  *
- * @param {!string} folder The folder which the thumbnais belong to in the zippy headers of the ThumbnailGallery.
- * @param {!Array.<utils.xnat.properties>} viewablePropertiesArray The viewables properties to convert to thumbnails.
+ * @param {!string | !Array.string} folder The folder which the thumbnais belong to in the zippy headers of the ThumbnailGallery.
+ * @param {!Array.<utils.xnat.properties>} xnatPropsArr The viewables properties to convert to thumbnails.
  * @private
  */
-xiv.Modal.prototype.addThumbnailsToGallery_ = function (folder, viewablePropertiesArray) {
-    goog.array.forEach(viewablePropertiesArray, function(viewableProperties) { 
-	var thumbnail = this.ThumbnailManager_.makeXivThumbnail(viewableProperties);	
-	this.ThumbnailGallery_.addThumbnail(thumbnail, folder.toString()); 
+xiv.Modal.prototype.addThumbnailsToGallery_ = function (folders, xnatPropsArr) {
+    goog.array.forEach(xnatPropsArr, function(xnatProps) { 
+	this.ThumbnailGallery_.addThumbnail(this.ThumbnailManager_.makeThumbnail(xnatProps), folders); 
     }.bind(this))	
 }
 
@@ -972,7 +1024,7 @@ xiv.Modal.prototype.calculateModalDims_ = function () {
     //------------------
     // Determine the minimum modal width
     //------------------
-    var minModalWidth = utils.style.dims(this.ThumbnailGallery_.element, 'width') + 
+    var minModalWidth = utils.style.dims(this.ThumbnailGallery_.getElement(), 'width') + 
 	xiv.MIN_VIEWER_WIDTH * ViewBoxColumns + 
 	xiv.VIEWER_VERTICAL_MARGIN * ViewBoxColumns + 
 	xiv.EXPAND_BUTTON_WIDTH;
@@ -990,7 +1042,7 @@ xiv.Modal.prototype.calculateModalDims_ = function () {
     //------------------
     // Determine the modal width
     //------------------
-    var modalWidth = utils.style.dims(this.ThumbnailGallery_.element, 'width') + 
+    var modalWidth = utils.style.dims(this.ThumbnailGallery_.getElement(), 'width') + 
 	ViewBoxWidth  * ViewBoxColumns + 
 	xiv.VIEWER_VERTICAL_MARGIN * ViewBoxColumns + 
 	xiv.EXPAND_BUTTON_WIDTH;
@@ -1006,7 +1058,7 @@ xiv.Modal.prototype.calculateModalDims_ = function () {
     // If the modal is too wide, scale it down
     //-------------------------
     if (modalWidth > maxModalWidth) {	
-	var thumbGalleryWidth = utils.convert.toInt((utils.style.getComputedStyle(this.ThumbnailGallery_.element, 'width')));
+	var thumbGalleryWidth = utils.convert.toInt((utils.style.getComputedStyle(this.ThumbnailGallery_.getElement(), 'width')));
 	ViewBoxWidth = (maxModalWidth - thumbGalleryWidth - xiv.EXPAND_BUTTON_WIDTH)/ViewBoxColumns - xiv.VIEWER_VERTICAL_MARGIN ;
 	ViewBoxHeight = ViewBoxWidth / xiv.VIEWER_DIM_RATIO;
 	modalWidth = maxModalWidth;
@@ -1033,6 +1085,15 @@ xiv.Modal.prototype.calculateModalDims_ = function () {
 	'height': Math.round(modalHeight) - xiv.EXPAND_BUTTON_WIDTH * 2,
 	'top': xiv.EXPAND_BUTTON_WIDTH
     }
+
+
+    //-------------------------
+    // ScrollableContainer dims (holds the xiv.Thumbnails)
+    //-------------------------	
+    var thumbnailGalleryCSS = {
+	'height': Math.round(modalHeight) - xiv.EXPAND_BUTTON_WIDTH * 2,
+	'top': xiv.EXPAND_BUTTON_WIDTH + 30
+    }
     
     
 
@@ -1041,7 +1102,7 @@ xiv.Modal.prototype.calculateModalDims_ = function () {
     //-------------------------	
     var ViewBoxLefts = [];
     var ViewBoxTops = [];
-    var ScrollableContainerDims = utils.style.dims(this.ThumbnailGallery_.element)
+    var ScrollableContainerDims = utils.style.dims(this.ThumbnailGallery_.getElement())
     var viewerStart = ScrollableContainerDims.width +  ScrollableContainerDims['left'] + xiv.VIEWER_VERTICAL_MARGIN;
 
     this.ViewBoxManager_.loop( function(ViewBox, i, j) { 
@@ -1082,7 +1143,7 @@ xiv.Modal.prototype.calculateModalDims_ = function () {
 	    'tops': ViewBoxTops	
 	    
 	},
-	'ThumbnailGallery_': ScrollableContainerCSS,
+	'ThumbnailGallery_': thumbnailGalleryCSS,
 	'closeButton_': {
 	    
 	    'left': Math.round(_l) + Math.round(modalWidth) - 23,

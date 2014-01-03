@@ -303,7 +303,7 @@ utils.slicer.getSlicerSettings = function(mrmlFile) {
     }.bind(this))
 
 
-    console.log("SLICER SETTINGS - ALL", slicerSettings);
+    //console.log("SLICER SETTINGS - ALL", slicerSettings);
     return slicerSettings
 }
 
@@ -362,7 +362,7 @@ utils.slicer.getNodeFiles = function(scene, tagName, storageNodeType, opt_loopCa
         currObject['file'] = fileName;
 	currObject['storageNode'] = storageNode;
 
-	console.log("\n\nFILENAME", tagName, fileName);
+	//console.log("\n\nFILENAME", tagName, fileName);
 	// RUN CALLBACK
         if (opt_loopCallback !== undefined) { opt_loopCallback(sceneElement, currObject);}
 
@@ -537,7 +537,7 @@ utils.slicer.getFibers = function(scene) {
 	
         displayNodeRefs = sceneElement.getAttribute('displayNodeRef').split(' ');
 	fiberProperties = utils.slicer.getBasicDisplayProperties(scene, sceneElement);
-	console.log("FIBER PROPERTIES", fiberProperties);
+	//console.log("FIBER PROPERTIES", fiberProperties);
 
 
 	goog.array.forEach(fiberProperties, function(fiberProperty){
@@ -547,7 +547,7 @@ utils.slicer.getFibers = function(scene) {
 		fancyId = fiberProperty['displayNode'].getAttribute('DiffusionTensorDisplayPropertiesNodeRef');
 		goog.array.forEach(scene.getElementsByTagName('DiffusionTensorDisplayProperties'), function(displayProperty) {
 		    if (displayProperty.getAttribute('id') === fancyId) {
-			console.log('\n\nFOUND FANCY, fancyId');
+			//console.log('\n\nFOUND FANCY, fancyId');
 
 
 			fancyColorTableStorage = displayProperty.getAttribute('storageNodeRef');
@@ -555,7 +555,7 @@ utils.slicer.getFibers = function(scene) {
 			    if (colorTableStorageNode.getAttribute('id') === fancyColorTableStorage) {
 				
 				colorTableFile = colorTableStorageNode.getAttribute('fileName');
-				console.log("*************", colorTableFile);
+				//console.log("*************", colorTableFile);
 				fiberProperty['colorTable'] = colorTableFile
 			    }
 			})
