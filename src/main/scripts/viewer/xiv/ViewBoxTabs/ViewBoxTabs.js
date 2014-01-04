@@ -600,7 +600,8 @@ xiv.ViewBoxTabs.prototype.setTabContents = function (tabName, contents) {
 	tabPage.appendChild(scrollableContainer.getElement());
     }
     else {
-	scrollableContainer = new utils.ui.ScrollableContainer({ 'parent': tabPage });
+	scrollableContainer = new utils.ui.ScrollableContainer()
+	tabPage.appendChild(scrollableContainer.getElement());
 	scrollableContainer.addContents(contents);
 	window.console.log(scrollableContainer.getContentsDict());
 	scrollableContainer.setZippysExpanded(false);

@@ -297,7 +297,7 @@ xiv.XtkPlaneManager.prototype.getXtkPlaneElements = function() {
 xiv.XtkPlaneManager.prototype.getXtkPlaneInteractors = function() {
     var sliderElts = {};
     this.loopAll(function(xtkPlane){ 
-	if (xtkPlane.Slider_) { sliderElts[xtkPlane.id_] = xtkPlane.Slider_.element }
+	if (xtkPlane.Slider_) { sliderElts[xtkPlane.id_] = xtkPlane.Slider_.getElement() }
     });
     return sliderElts;
 }

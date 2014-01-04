@@ -439,8 +439,8 @@ xiv.XtkPlane.prototype.updateStyle = function (opt_args) {
     // Update the Slider.
     //------------------
     if (this.Slider_) {
-	if (this.element.parentNode && this.Slider_.element.parentNode !== this.element.parentNode) {
-	    this.element.parentNode.appendChild(this.Slider_.element);
+	if (this.element.parentNode && this.Slider_.getElement().parentNode !== this.element.parentNode) {
+	    this.element.parentNode.appendChild(this.Slider_.getElement());
 	}
 	this.Slider_.updateStyle();
     }

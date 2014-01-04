@@ -37,18 +37,20 @@ goog.addDependency('../../../utils/fx/fx.js', ['utils.fx'], [
 
 goog.addDependency('../../../utils/ui/GenericSlider/GenericSlider.js', ['utils.ui.GenericSlider'], [
 'goog.ui.Slider',
-'goog.dom', 
-'goog.ui.Component', 
-'goog.events', 
-'utils.dom', 
-'utils.array'
+'goog.dom',
+'goog.ui.Component',
+'goog.array',
+'goog.events'
+'utils.dom'
 ]);  
 
 
 goog.addDependency('../../../utils/ui/ScrollableContainer/ScrollableContainer.js', ['utils.ui.ScrollableContainer'], [
 'goog.string',
 'goog.dom', 
+'goog.events', 
 'goog.ui.AnimatedZippy', 
+'goog.ui.Zippy', 
 'utils.dom', 
 'utils.ui.GenericSlider'
 ]); 

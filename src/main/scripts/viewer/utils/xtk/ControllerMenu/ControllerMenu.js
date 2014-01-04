@@ -941,8 +941,8 @@ utils.xtk.ControllerMenu.prototype.makeSliderRow = function(labelTitle, callback
     // Need to differentiate between callbacks from the two thumb slider
     // and the slider
     //
-    if (slider.addSlideCallback){
-	slider.addSlideCallback(slideCallback)
+    if (slider.onSlide){
+	slider.onSlide(slideCallback);
     } else {
 	goog.events.listen(slider, goog.ui.Component.EventType.CHANGE, slideCallback);
     }
@@ -1018,17 +1018,18 @@ utils.xtk.ControllerMenu.prototype.makeSlider = function(opt_parent, opt_args) {
     //------------------
     // Make slider.
     //------------------
-    slider = new utils.ui.GenericSlider({'parent': this.getParent(opt_parent)});
+    slider = new utils.ui.GenericSlider();
+    this.getParent(opt_parent).appendChild(this.Slider_.getElement());
 
 
 
     //------------------
     // Set slider classes.
     //------------------
-    slider.addClassToWidget(utils.xtk.ControllerMenu.SLIDER_WIDGET_CLASS);
-    slider.addClassToThumb (utils.xtk.ControllerMenu.SLIDER_THUMB_CLASS);
-    slider.addClassToTrack (utils.xtk.ControllerMenu.SLIDER_TRACK_CLASS);
-    slider.setHoverClass(utils.xtk.ControllerMenu.THUMB_HOVER_CLASS);
+    goog.dom.classes.add(slider.getElement(), utils.xtk.ControllerMenu.SLIDER_WIDGET_CLASS);
+    goog.dom.classes.add(slider.getThumb(), utils.xtk.ControllerMenu.SLIDER_THUMB_CLASS);
+    goog.dom.classes.add(slider.getTrack(),utils.xtk.ControllerMenu.SLIDER_TRACK_CLASS);
+    slider.setThumbHoverClass(utils.xtk.ControllerMenu.THUMB_HOVER_CLASS);
 
 
 
@@ -1053,7 +1054,7 @@ utils.xtk.ControllerMenu.prototype.makeSlider = function(opt_parent, opt_args) {
     }
 
 
-    return {'slider': slider, 'element': slider.element};
+    return {'slider': slider, 'element': slider.getElement()};
 }
 
 
@@ -1105,7 +1106,7 @@ utils.xtk.ControllerMenu.prototype.makeTwoThumbSlider = function(opt_parent, opt
     // We need to change the CSS of all of the slider's child
     // elements.
     //-------------------
-    goog.array.forEach(goog.dom.getChildren(slider.element_), function(child) {
+    goog.array.forEach(goog.dom.getChildren(slider.getElement()), function(child) {
 	if (child.className === 'goog-twothumbslider-value-thumb' || child.className === 'goog-twothumbslider-extent-thumb') {
 	    goog.dom.classes.add(child, utils.xtk.ControllerMenu.TWOTHUMBSLIDER_THUMB_CLASS);
 	    utils.style.setHoverClass(child,  utils.xtk.ControllerMenu.THUMB_HOVER_CLASS, function(applyHover, removeHover){
