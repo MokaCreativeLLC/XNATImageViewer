@@ -119,6 +119,7 @@ goog.addDependency('../../../utils/xnat/xnat.js', ['utils.xnat'], [
 'goog.string',
 'goog.net.XhrIo',
 'goog.dom.xml',
+'goog.object',
 'goog.array',
 'utils.dom',
 'utils.array',

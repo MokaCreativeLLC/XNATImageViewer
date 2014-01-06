@@ -154,7 +154,7 @@ xiv.SlicerViewMenu.prototype.reset = function (slicerSettings) {
 	goog.array.forEach(scenes, function(sceneName){
 	    // Make the thumbnail
 	    displayText = "<b><font size = '2'>" + sceneName + "</font></b><br>";
-	    thumbnail = this.ThumbnailGallery_.insertThumbnail(this._slicerSettings[mrmlFile][sceneName]['thumbnail'], displayText, mrmlBase);
+	    thumbnail = this.ThumbnailGallery_.insertAndMakeThumbnail(this._slicerSettings[mrmlFile][sceneName]['thumbnail'], displayText, mrmlBase);
 	    thumbnail._MRML_ = mrmlFile;
 	    thumbnail._SCENE_ = sceneName;
 
@@ -186,13 +186,13 @@ xiv.SlicerViewMenu.prototype.onViewSelected = function (callback) {
 * @private
 */
 xiv.SlicerViewMenu.prototype.setThumbnailClickListener_ = function (thumbnail) {
-    thumbnail.onClick = function(){
+    thumbnail.onClick ( function(){
 	// Run click callbacks
 	if (this.thumbnailClickCallbacks_) {
 	    goog.array.forEach(this.thumbnailClickCallbacks_, 
 			       function(callback){ callback(this._slicerSettings[thumbnail._MRML_][thumbnail._SCENE_]) }.bind(this));
 	}
-    }.bind(this)
+    }.bind(this))
 }
 
 

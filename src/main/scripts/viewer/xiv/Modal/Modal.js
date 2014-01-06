@@ -620,10 +620,6 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
     else {
 
 
-
-
-
-
 	goog.array.forEach(this.xnatPaths_, function(xnatPath){
 
 	    var pathObj = utils.xnat.getPathObject(xnatPath);
@@ -642,13 +638,33 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
 	    var slicerFolders = folders.slice(0);
 	    slicerFolders.push('Slicer');
 
-	    utils.xnat.getViewables(xnatPath, 'scans', function(viewable){
+
+	    //
+	    // Begin with getting the scans first.
+	    //
+	    utils.xnat.getScans(xnatPath, function(viewable){
+
+		//
+		// Add the scans to the thumbnail gallery once 
+		// they're acquired.
+		//
 		this.addThumbnailsToGallery_(scanFolders,  [viewable]);
+
+
+		//
+		// Then load slicer thumbnails...
+		//
 		if (!slicerThumbnailsLoaded) {
+		    
+		   
+		    //
+		    // Get the slicer files.
+		    //
 		    folders[folders.length-1] = 'Slicer';
-		    utils.xnat.getViewables(xnatPath, 'Slicer', function(slicerViewable){
+		    utils.xnat.getSlicer(xnatPath, 'Slicer', function(slicerViewable){
 			this.addThumbnailsToGallery_(slicerFolders,  [slicerViewable]);
 		    }.bind(this));
+
 		    slicerThumbnailsLoaded = true;
 		}
 	    }.bind(this));
@@ -689,7 +705,7 @@ xiv.Modal.prototype.highlightInUseThumbnails = function () {
     // Unhighlight all thumbnails.
     //------------------
     this.ThumbnailManager_.loop(function(Thumbnail){  
-	Thumbnail.setActive(false, false);
+	Thumbnail.setActive(false);
     })
 
 
@@ -698,7 +714,7 @@ xiv.Modal.prototype.highlightInUseThumbnails = function () {
     // looping through the xiv.ViewBoxes.
     //------------------
     this.ViewBoxManager_.loop(function(ViewBox){  
-	ViewBox.Thumbnail && ViewBox.Thumbnail.setActive(true, false);
+	ViewBox.Thumbnail && ViewBox.Thumbnail.setActive(true);
     })
 }
 

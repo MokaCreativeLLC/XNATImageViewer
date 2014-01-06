@@ -22,22 +22,21 @@ goog.require('utils.style');
 
 
 /**
- * utils.ui.Thumbnail is the a generic class for creating thumbnails.
+ * utils.ui.Thumbnail is a ui class for creating thumbnails.  Thumbnails
+ * have two element compontents: an image and text, both of which are encapsulated
+ * by a main "element".  Both the text and image are defined by setter methods.
  *
  * @constructor
- * @param {Object=} opt_args The arguments to define the Thubnail.
  */
 goog.provide('utils.ui.Thumbnail');
-utils.ui.Thumbnail = function (opt_args) {
-
-    var parent = opt_args && opt_args['parent'] ? opt_args['parent'] : document.body;
+utils.ui.Thumbnail = function () {
 
 
     /**
      * @type {!Element}
      * @private
      */	
-    this.element_ = utils.dom.makeElement('div', parent, "utils.ui.Thumbnail");
+    this.element_ = utils.dom.makeElement('div', document.body, "utils.ui.Thumbnail");
     this.element_.setAttribute('thumbnailid', this.element_.getAttribute('id'));
 
 
@@ -110,67 +109,67 @@ utils.ui.Thumbnail = function (opt_args) {
     this.mouseOut_();
     
 }
-goog.exportSymbol('utils.ui.Thumbnail', utils.ui.Thumbnail);
 
 
 
 
-utils.ui.Thumbnail.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('utils-ui-thumbnail');
-utils.ui.Thumbnail.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.CSS_CLASS_PREFIX, '');
-utils.ui.Thumbnail.IMAGE_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.CSS_CLASS_PREFIX, 'image');
-utils.ui.Thumbnail.TEXT_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.CSS_CLASS_PREFIX, 'displaytext');
-utils.ui.Thumbnail.SELECTED_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.CSS_CLASS_PREFIX, 'selected');
-utils.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.ELEMENT_CLASS, 'mouseover');
-utils.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.IMAGE_CLASS, 'mouseover');
-utils.ui.Thumbnail.TEXT_MOUSEOVER_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.TEXT_CLASS, 'mouseover');
-utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.ELEMENT_CLASS, 'highlight');
-utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.ELEMENT_CLASS, 'active');
-utils.ui.Thumbnail.IMAGE_ACTIVE_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.IMAGE_CLASS, 'active');
-utils.ui.Thumbnail.TEXT_ACTIVE_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.TEXT_CLASS, 'active');
-utils.ui.Thumbnail.HOVER_CLONE_CLASS = /**@type {string} @const*/ goog.getCssName(utils.ui.Thumbnail.ELEMENT_CLASS, 'hoverclone');
+
+utils.ui.Thumbnail.CSS_CLASS_PREFIX = /**@type {string} @expose @const*/ goog.getCssName('utils-ui-thumbnail');
+utils.ui.Thumbnail.ELEMENT_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.Thumbnail.CSS_CLASS_PREFIX, '');
+utils.ui.Thumbnail.IMAGE_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.Thumbnail.CSS_CLASS_PREFIX, 'image');
+utils.ui.Thumbnail.TEXT_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.Thumbnail.CSS_CLASS_PREFIX, 'displaytext');
+utils.ui.Thumbnail.SELECTED_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.Thumbnail.CSS_CLASS_PREFIX, 'selected');
+utils.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.Thumbnail.ELEMENT_CLASS, 'mouseover');
+utils.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.Thumbnail.IMAGE_CLASS, 'mouseover');
+utils.ui.Thumbnail.TEXT_MOUSEOVER_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.Thumbnail.TEXT_CLASS, 'mouseover');
+utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.Thumbnail.ELEMENT_CLASS, 'highlight');
+utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.Thumbnail.ELEMENT_CLASS, 'active');
+utils.ui.Thumbnail.IMAGE_ACTIVE_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.Thumbnail.IMAGE_CLASS, 'active');
+utils.ui.Thumbnail.TEXT_ACTIVE_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.Thumbnail.TEXT_CLASS, 'active');
+utils.ui.Thumbnail.HOVER_CLONE_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.Thumbnail.ELEMENT_CLASS, 'hoverclone');
 
 
 
 
 /**
- * @return {Element} The thumbnail div (the entire element).
+ * @return {!Element} The thumbnail div (the entire element).
  * @public
  */
-utils.ui.Thumbnail.prototype.__defineGetter__('element', function() {
+utils.ui.Thumbnail.prototype.getElement = function() {
     return this.element_;	
-})
+}
 
 
 
 
 /**
- * @return {Element} The thumbnail image.
+ * @return {!Element} The thumbnail image.
  * @public
  */
-utils.ui.Thumbnail.prototype.__defineGetter__('image', function() {
+utils.ui.Thumbnail.prototype.getImage = function() {
     return this.image_;	
-})
+}
 
 
 
 
 /**
- * @return {Element} The thumbnail text.
+ * @return {!Element} The thumbnail text.
  * @public
  */
-utils.ui.Thumbnail.prototype.__defineGetter__('text', function() {
+utils.ui.Thumbnail.prototype.getText = function() {
     return this.text_;	
-})
+}
 
 
 
 /**
- * @return {Element} The thumbnail text.
+ * @return {!Element} The thumbnail text.
  * @public
  */
-utils.ui.Thumbnail.prototype.__defineGetter__('hoverNode', function() {
+utils.ui.Thumbnail.prototype.getHoverable = function() {
     return this.hoverable_ ? this.hoverable_ : this.element_;	
-})
+}
 
 
 
@@ -179,9 +178,9 @@ utils.ui.Thumbnail.prototype.__defineGetter__('hoverNode', function() {
  * @return {boolean} The 'active' state of the thumbnail (this is defined and set by the user).
  * @public
  */
-utils.ui.Thumbnail.prototype.__defineGetter__('isActive', function() {
+utils.ui.Thumbnail.prototype.isActive = function() {
     return this.isActive_;	
-})
+}
 
 
 
@@ -189,32 +188,32 @@ utils.ui.Thumbnail.prototype.__defineGetter__('isActive', function() {
  * @param {!function} callback The callback for the specified event.
  * @public
  */	
-utils.ui.Thumbnail.prototype.__defineSetter__('onClick', function(callback) {
+utils.ui.Thumbnail.prototype.onClick = function(callback) {
     goog.events.listen(this.hoverNode, goog.events.EventType.CLICK, callback);	
-})
+}
 
 
 
 
 /**
 * @param {!function} callback The callback for the specified event.
-* @private
+* @public
 */
-utils.ui.Thumbnail.prototype.__defineSetter__('onMouseOver' , function(callback) {
+utils.ui.Thumbnail.prototype.onMouseOver = function(callback) {
     //window.console.log("Thumbnail on mouse over:", callback);
     this.onMouseOver_.push(callback);
-})
+}
 
 
 
 
 /**
 * @param {!function} callback The callback for the specified event.
-* @private
+* @public
 */
-utils.ui.Thumbnail.prototype.__defineSetter__('onMouseOut' , function(callback) {
+utils.ui.Thumbnail.prototype.onMouseOut =  function(callback) {
     this.onMouseOut_.push(callback);
-})
+}
 
 
 
@@ -286,18 +285,18 @@ utils.ui.Thumbnail.prototype.createHoverable = function(opt_parent, opt_element)
  * Sets the thumbnail state to 'active'.  Applies the appropriate 
  * CSS for style changes.
  *
- * @param {boolean, boolean=} active Active state, opt_highlight_bg 
- * whether or not to highlight the background (false if it pertains
- * to thumbnails that have been dropped in a viewer).
+ * @param {boolean} active Active state, 
+ * @param {boolean=} opt_highlightBg Whether or not to highlight the 
+ * background. Defaults to false.
  * @public
  */
-utils.ui.Thumbnail.prototype.setActive = function(active, opt_highlight_bg) {
+utils.ui.Thumbnail.prototype.setActive = function(active, opt_highlightBg) {
 
-    //utils.dom.debug("setActive", active, opt_highlight_bg);
+    //utils.dom.debug("setActive", active, opt_highlightBg);
 
     this.isActive_ = active;
     if (this.isActive_){
-	if (opt_highlight_bg !== false) { goog.dom.classes.add(this.element_, utils.ui.Thumbnail.ELEMENT_HIGHLIGHT_CLASS); }
+	if (opt_highlightBg) { goog.dom.classes.add(this.element_, utils.ui.Thumbnail.ELEMENT_HIGHLIGHT_CLASS); }
 	goog.dom.classes.add(this.element_, utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS);
 	goog.dom.classes.add(this.text_, utils.ui.Thumbnail.TEXT_ACTIVE_CLASS);		
 	goog.dom.classes.add(this.image_, utils.ui.Thumbnail.IMAGE_ACTIVE_CLASS);		
@@ -427,6 +426,8 @@ utils.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
 
 
 /**
+ * Generic style update method.
+ * @private {Object=}
  * @public
  */
 utils.ui.Thumbnail.prototype.updateStyle = function (opt_args) {
@@ -437,6 +438,14 @@ utils.ui.Thumbnail.prototype.updateStyle = function (opt_args) {
 
 
 
+goog.exportSymbol('utils.ui.Thumbnail', utils.ui.Thumbnail);
+goog.exportSymbol('utils.ui.Thumbnail.prototype.onClick', utils.ui.Thumbnail.prototype.onClick);
+goog.exportSymbol('utils.ui.Thumbnail.prototype.onMouseOver', utils.ui.Thumbnail.prototype.onMouseOver);
+goog.exportSymbol('utils.ui.Thumbnail.prototype.onMouseOut', utils.ui.Thumbnail.prototype.onMouseOut);
+goog.exportSymbol('utils.ui.Thumbnail.prototype.getElement', utils.ui.Thumbnail.prototype.getElement);
+goog.exportSymbol('utils.ui.Thumbnail.prototype.getImage', utils.ui.Thumbnail.prototype.getImage);
+goog.exportSymbol('utils.ui.Thumbnail.prototype.getText', utils.ui.Thumbnail.prototype.getText);
+goog.exportSymbol('utils.ui.Thumbnail.prototype.getHoverable', utils.ui.Thumbnail.prototype.getHoverable);
 goog.exportSymbol('utils.ui.Thumbnail.prototype.setImage', utils.ui.Thumbnail.prototype.setImage);
 goog.exportSymbol('utils.ui.Thumbnail.prototype.setText', utils.ui.Thumbnail.prototype.setText);
 goog.exportSymbol('utils.ui.Thumbnail.prototype.removeHoverable', utils.ui.Thumbnail.prototype.removeHoverable);

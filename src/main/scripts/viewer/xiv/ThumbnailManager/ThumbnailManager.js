@@ -129,7 +129,7 @@ xiv.ThumbnailManager.prototype.createDragElement_ = function(srcElt) {
     var originalThumbnail = goog.dom.getElement(srcElt.getAttribute('thumbnailid'));
     var Thumb = this.getThumbnailByElement(originalThumbnail);
     if (!Thumb) { return;}
-    Thumb.setActive(true);
+    Thumb.setActive(true, true);
 
     var dragEl = originalThumbnail.cloneNode(true);
     dragEl.setAttribute('id', 'THUMBNAIL_DRAGGER');
@@ -190,7 +190,7 @@ xiv.ThumbnailManager.prototype.dragEnd_ = function (event) {
     // Deactivate that thumb as dragging activates it.  If it is dropped
     // into a xiv.ViewBox, it will get reactivated  if successfully loaded.
     //------------------
-    Thumb.setActive(false);
+    Thumb.setActive(false, true);
 
 
 
@@ -360,11 +360,11 @@ xiv.ThumbnailManager.prototype.add = function(thumbnail){
     //------------------
     goog.array.forEach(this.onMouseOver_, function(callback){
 	//window.console.log("MOUSE OVER CALLB", callback);
-	thumbnail.onMouseOver = callback;
+	thumbnail.onMouseOver(callback);
     }.bind(this))
 
     goog.array.forEach(this.onMouseOut_, function(callback){
-	thumbnail.onMouseOut = callback;
+	thumbnail.onMouseOut(callback);
     }.bind(this))  
 
 }
@@ -467,7 +467,7 @@ xiv.ThumbnailManager.prototype.addClickCallback = function(callback) {
  */
 xiv.ThumbnailManager.prototype.getThumbnailByElement = function(element) {
     for (var i=0, len = this.thumbs_.length; i < len; i++) {
-	if (goog.dom.getAncestorByClass(element, xiv.Thumbnail.CSS_CLASS_PREFIX) == this.thumbs_[i].element) {
+	if (goog.dom.getAncestorByClass(element, xiv.Thumbnail.CSS_CLASS_PREFIX) == this.thumbs_[i].getElement()) {
 	    return this.thumbs_[i];
 	}	
     }
@@ -488,11 +488,11 @@ xiv.ThumbnailManager.prototype.makeThumbnail = function(xnatProperties, opt_addT
     var thumbnail = new xiv.Thumbnail(xnatProperties);
     if ((opt_addToManager === undefined) || (opt_addToManager === true)) { 
 	this.add(thumbnail);
-	thumbnail.onClick = function(){
+	thumbnail.onClick( function(){
 	    goog.array.forEach(this.clickCallbacks_, function(callback){
 		callback(thumbnail)
 	    })
-	}.bind(this)
+	}.bind(this))
     }
     return thumbnail;
 }
