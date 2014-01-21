@@ -73,9 +73,24 @@
 }
 
 
+.xiv-modal-addpathsbutton {
+    position: absolute; 
+    cursor: pointer;
+    top: 30px;
+    left: 13px;
+    width: 167px;
+    height: 20px;
+    z-index: 1000;
+    color: white;
+    background-color: rgb(60,60,60);
+    text-align: center;
+    vertical-align: middle;
+    line-height: 20px;  
+}
+
+
 .xiv-modal-scrollgallery {
     position: absolute;
-    top: 30px;
     left: 0px;
     width: 180px;
 }

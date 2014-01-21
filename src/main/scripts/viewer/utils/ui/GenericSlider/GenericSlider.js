@@ -2,20 +2,14 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-
-/**
- * Google closure includes
- */
+// goog
 goog.require('goog.ui.Slider');
 goog.require('goog.dom');
 goog.require('goog.ui.Component');
 goog.require('goog.array');
 goog.require('goog.events');
 
-
-/**
- * utils includes
- */
+// utils
 goog.require('utils.dom');
 
 
@@ -33,8 +27,7 @@ goog.require('utils.dom');
 goog.provide('utils.ui.GenericSlider');
 utils.ui.GenericSlider = function (opt_args) {	 
 
-
-    goog.ui.Slider.call(this);
+    goog.base(this);
 	
 
     //------------------
@@ -196,6 +189,8 @@ utils.ui.GenericSlider.prototype.onSlide = function (callback) {
 
 
 
+
+
 /**
  * Adds a 'callback' method to the mousewheel event of the
  * slider.  It should be noted that 'bindToMouseWheel' needs
@@ -222,6 +217,17 @@ utils.ui.GenericSlider.prototype.onMouseWheel = function (callback) {
 utils.ui.GenericSlider.prototype.suspendOnSlide = function(suspend){
     this.suspendOnSlide_ = suspend;
 };
+
+
+
+
+/**
+ * Clears the onSlide callbacks.
+ */ 
+utils.ui.GenericSlider.prototype.clearOnSlide = function(suspend){
+    this.onSlide_ = [];
+};
+
 
 
 
@@ -255,7 +261,8 @@ utils.ui.GenericSlider.prototype.onMouseWheelScroll_ = function (event) {
  */
 utils.ui.GenericSlider.prototype.bindToMouseWheel = function (element, opt_callback) {
     var mouseWheelHandler = new goog.events.MouseWheelHandler(element);
-    mouseWheelHandler.addEventListener(goog.events.MouseWheelHandler.EventType.MOUSEWHEEL,  this.onMouseWheelScroll_, false, this);
+    mouseWheelHandler.addEventListener(goog.events.MouseWheelHandler.EventType.MOUSEWHEEL,  
+				       this.onMouseWheelScroll_, false, this);
     if ((this.MouseWheelHandlers_ === null) || (this.MouseWheelHandlers_.length === 0)) {
 	this.MouseWheelHandlers_ = [];
     }

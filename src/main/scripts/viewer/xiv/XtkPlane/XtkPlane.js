@@ -3,32 +3,20 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-
-/**
- * Google closure includes.
- */
+// goog
 goog.require('goog.dom');
 goog.require('goog.ui.Slider');
 
-
-/**
- * XTK includes.
- */
+// xtk
 goog.require('X.renderer2D');
 goog.require('X.renderer3D');
 
-
-/**
- * utils includes.
- */
+// utils
 goog.require('utils.dom');
 goog.require('utils.style');
 goog.require('utils.ui.GenericSlider');
 
-
-/**
- * xiv includes.
- */
+// xiv
 goog.require('xiv.Widget');
 
 
@@ -49,22 +37,71 @@ xiv.XtkPlane = function(id) {
     goog.dom.classes.set(this.element, xiv.XtkPlane.ELEMENT_CLASS);
 
 
+    /**
+     * @type {!string}
+     * @private
+     */
+    this.id_ = id;
 
-    //------------------
-    // XTK renderer tracking parameters.
-    // x, y, z or v
-    //------------------
-    this.id_ = id; 
+
+
+    /**
+     * @type {?X.renderer2D | ?X.renderer3D}
+     */  
+    this.Renderer_ = null;
+
+
+
+
+    /**
+     * @type {?utils.ui.GenericSlider}
+     * @private
+     */  
+    this.Slider_ = null;
+
+
+
+
+    /**
+     * @type {!string}
+     * @private
+     */
     this.indexPlane_ = (id === 'x') ? 'indexLR' : (id === 'y') ? 'indexPA' : 'indexIS';
+
+
+
+
+    /**
+     * @type {!number}
+     * @private
+     */
     this.indexNumber_ = (id === 'x') ? 0 : (id === 'y') ? 1 : 2;
 
 
 
-    //------------------
-    // For the slider so that it can
-    // update the slice as it moves.
-    //------------------
-    this.currVolume_ = undefined;
+
+    /**
+     * @type {?Element}
+     * @private
+     */
+    this.indexBox_ = null;
+
+
+
+    /**
+     * @private
+     * @type {!Array.function}
+     */
+    this.onloadCallbacks_ = null;
+
+
+
+
+    /**
+     * @private
+     * @type {?Object}
+     */
+    this.currVolume_ = null;
 
 
 
@@ -83,10 +120,11 @@ xiv.XtkPlane = function(id) {
 	// Slider
 	//
 	this.Slider_ = new utils.ui.GenericSlider({'parent': this.element, 'orientation' : 'horizontal'});
-	this.Slider_.addClassToThumb(xiv.XtkPlane.SLIDER_THUMB_CLASS);
-	this.Slider_.addClassToWidget(xiv.XtkPlane.SLIDER_CLASS);
-	this.Slider_.addClassToTrack(xiv.XtkPlane.SLIDER_TRACK_CLASS);
-	this.Slider_.setHoverClass(xiv.XtkPlane.SLIDER_THUMB_HOVERED_CLASS);
+	goog.dom.classes.add(this.Slider_.getElement(), xiv.XtkPlane.SLIDER_CLASS);
+	goog.dom.classes.add(this.Slider_.getThumb(), xiv.XtkPlane.SLIDER_THUMB_CLASS);
+	goog.dom.classes.add(this.Slider_.getTrack(), xiv.XtkPlane.SLIDER_TRACK_CLASS);
+
+	this.Slider_.setThumbHoverClass(xiv.XtkPlane.SLIDER_THUMB_HOVERED_CLASS);
 	
 
 	//
@@ -117,58 +155,6 @@ xiv.XtkPlane.SLIDER_TRACK_CLASS =  /**@type {string} @const*/ goog.getCssName(xi
 
 
 /**
- * @type {?X.renderer2D | ?X.renderer3D}
- */  
-xiv.XtkPlane.prototype.Renderer_ = null;
-
-
-
-
-/**
- * @type {?goog.ui.Slider}
- */  
-xiv.XtkPlane.prototype.Slider_ = null;
-
-
-
-
-/**
- * @type {string}
- * @private
- */
-xiv.XtkPlane.prototype.indexPlane_ = '';
-
-
-
-
-/**
- * @type {number}
- * @private
- */
-xiv.XtkPlane.prototype.indexNumber_ = -1;
-
-
-
-
-/**
- * @type {?Element}
- * @private
- */
-xiv.XtkPlane.prototype.indexBox_ = null;
-
-
-
-
-/**
- * @type {?string}
- * @private
- */
-xiv.XtkPlane.prototype.id_ = null;   
-
-
-
-
-/**
  * This exists so that governing classes
  * know what axis this ViewPlane represents.
  *
@@ -183,25 +169,7 @@ xiv.XtkPlane.prototype.getId = function() {
 
 
 /**
- * @private
- * @type {!Array.function}
- */
-xiv.XtkPlane.prototype.onloadCallbacks_ = null;
-
-
-
-
-/**
- * @private
- * @type {?Object}
- */
-xiv.XtkPlane.prototype.currVolume_ = null;
-
-
-
-
-/**
- * @param {XObject}
+ * @param {!XObject} vol The xtk volume to set.
  */
 xiv.XtkPlane.prototype.setCurrVolume = function(vol){
     this.currVolume_ = vol;
@@ -211,7 +179,7 @@ xiv.XtkPlane.prototype.setCurrVolume = function(vol){
 
 
 /**
- * @return {XObject}
+ * @return {?XObject} The currently loaded xtk volume.
  */
 xiv.XtkPlane.prototype.getCurrVolume = function(){
     return this.currVolume_;
@@ -322,7 +290,7 @@ xiv.XtkPlane.prototype.resetSlider = function() {
     //------------------
     // Clear slider callbacks.
     //------------------
-    this.Slider_.clearSlideCallbacks();
+    this.Slider_.clearOnSlide();
 
 
 
@@ -334,7 +302,7 @@ xiv.XtkPlane.prototype.resetSlider = function() {
     // have to create two separate listers: one on the slider
     // and one on the Xtk plane.
     //------------------
-    this.Slider_.addSlideCallback(function() { 
+    this.Slider_.onSlide(function() { 
 	var currVol = that.getCurrVolume();
 	var planeSlices = currVol['_slices' + that.id_.toUpperCase()]['_children'].length;
 	if (!currVol) return;

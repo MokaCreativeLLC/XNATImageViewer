@@ -3,26 +3,20 @@
 * @author amh1646@rit.edu (Amanda Hartung)
 */
 
-
-/**
- * Google closure includes
- */
+// goog
 goog.require('goog.dom');
 goog.require('goog.array');
 goog.require('goog.events');
 
 
-/**
- * utils includes
- */
+// utils
 goog.require('utils.dom');
 goog.require('utils.style');
 
-/**
- * viewer-widget includes
- */
+// xiv
 goog.require('xiv');
 goog.require('xiv.Widget');
+
 
 
 
@@ -31,14 +25,15 @@ goog.require('xiv.Widget');
  * xiv.Thumbnail is the parent class of Slicer and Dicom thumbnails.
  *
  * @constructor
- * @param {utils.xnat.properties} xnatProperties The properties that define the XNAT-specific thumbnail
+ * @param {utils.xnat.properties} xnatProperties The properties that 
+ *    define the XNAT-specific thumbnail
  * @extends {utils.ui.Thumbnail}
  */
 goog.provide('xiv.Thumbnail');
 xiv.Thumbnail = function (xnatProperties) {
 
     utils.ui.Thumbnail.call(this);
-    goog.dom.classes.add(this.element, xiv.Thumbnail.CSS_CLASS_PREFIX);
+    goog.dom.classes.add(this.element_, xiv.Thumbnail.CSS_CLASS_PREFIX);
 
 
 

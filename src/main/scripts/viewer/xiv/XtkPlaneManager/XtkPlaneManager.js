@@ -2,23 +2,16 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-/**
- * Google closure includes.
- */
+// goog
 goog.require('goog.array');
 
-
-/**
- * utils includes.
- */
+// utils
 goog.require('utils.dom');
 
-
-/**
- * xiv includes.
- */
+// xiv
 goog.require('xiv.Displayer');
 goog.require('xiv.XtkPlane');
+
 
 
 
@@ -35,13 +28,41 @@ goog.require('xiv.XtkPlane');
 goog.provide('xiv.XtkPlaneManager');
 xiv.XtkPlaneManager = function(xtkDisplayer) {
   
-    
-    this.XtkPlaneV_ = /** @type {xiv.XtkPlane} @private */ new xiv.XtkPlane('v');
-    this.XtkPlaneX_ = /** @type {xiv.XtkPlane} @private */ new xiv.XtkPlane('x'); 
-    this.XtkPlaneY_ = /** @type {xiv.XtkPlane} @private */ new xiv.XtkPlane('y');
-    this.XtkPlaneZ_ = /** @type {xiv.XtkPlane} @private */ new xiv.XtkPlane('z');
-    this.xtkPlanes_ = /** @type {Array.<xiv.XtkPlane>}  @private */ [this.XtkPlaneV_, this.XtkPlaneX_, this.XtkPlaneY_, this.XtkPlaneZ_];
-    this.xtkPlanes2D_ = /** @type {Array.<xiv.XtkPlane>}  @private */ [this.XtkPlaneX_, this.XtkPlaneY_, this.XtkPlaneZ_];
+    /** 
+     * @type {xiv.XtkPlane} 
+     * @private 
+     */
+    this.XtkPlaneV_ =  new xiv.XtkPlane('v');
+
+    /** 
+     * @type {xiv.XtkPlane} 
+     * @private 
+     */
+    this.XtkPlaneX_ = new xiv.XtkPlane('x'); 
+
+    /** 
+     * @type {xiv.XtkPlane} 
+     * @private 
+     */
+    this.XtkPlaneY_ = new xiv.XtkPlane('y');
+
+    /** 
+     * @type {xiv.XtkPlane} 
+     * @private 
+     */
+    this.XtkPlaneZ_ = new xiv.XtkPlane('z');
+
+    /** 
+     * @type {Array.<xiv.XtkPlane>}  
+     * @private 
+     */
+    this.xtkPlanes_ =  [this.XtkPlaneV_, this.XtkPlaneX_, this.XtkPlaneY_, this.XtkPlaneZ_];
+
+    /** 
+     * @type {Array.<xiv.XtkPlane>}  
+     * @private 
+     */ 
+    this.xtkPlanes2D_ = [this.XtkPlaneX_, this.XtkPlaneY_, this.XtkPlaneZ_];
 
 
 
@@ -545,7 +566,9 @@ xiv.XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs
 xiv.XtkPlaneManager.prototype.colorSliders = function(){
     this.loopAll(function(xtkPlane){
 	if (xtkPlane.Slider_){
-	    xtkPlane.Slider_.addClassToTrack(goog.getCssName(xiv.XtkPlane.SLIDER_TRACK_CLASS, xtkPlane.getId()));
+	    goog.dom.classes.add(xtkPlane.Slider_.getTrack(), 
+				 goog.getCssName(xiv.XtkPlane.SLIDER_TRACK_CLASS, 
+						 xtkPlane.getId()));
 	}
     })
 }
@@ -559,7 +582,9 @@ xiv.XtkPlaneManager.prototype.colorSliders = function(){
 xiv.XtkPlaneManager.prototype.uncolorSliders = function(){
     this.loopAll(function(xtkPlane){
 	if (xtkPlane.Slider_){
-	    xtkPlane.Slider_.removeClassFromTrack(goog.getCssName(xiv.XtkPlane.SLIDER_TRACK_CLASS, xtkPlane.getId()));
+	    goog.dom.classes.remove(xtkPlane.Slider_.getTrack(),
+				    goog.getCssName(xiv.XtkPlane.SLIDER_TRACK_CLASS, 
+						    xtkPlane.getId()));
 	}
     }) 
 }

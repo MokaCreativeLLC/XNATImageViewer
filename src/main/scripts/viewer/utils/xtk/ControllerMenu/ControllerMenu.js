@@ -3,19 +3,14 @@
  * @author amh1646@rih.edu (Amanda Hartung)
  */
 
-/**
- * Google closure includes.
- */
+// goog
 goog.require('goog.ui.TwoThumbSlider');
 goog.require('goog.events');
 goog.require('goog.array');
 goog.require('goog.string');
 goog.require('goog.dom');
 
-
-/**
- * utils includes.
- */
+// utils
 goog.require('utils.string');
 goog.require('utils.xtk');
 goog.require('utils.dom');
@@ -1007,7 +1002,8 @@ utils.xtk.ControllerMenu.prototype.makeButtonRow = function(labelTitle, callback
 /**
  * Makes a slider to be added to a sliderRow.
  *
- * @param {Element=, Object=}
+ * @param {Element=} opt_parent
+ * @param {Object=} opt_args 
  * @return {Object}
  */
 utils.xtk.ControllerMenu.prototype.makeSlider = function(opt_parent, opt_args) {
@@ -1019,7 +1015,7 @@ utils.xtk.ControllerMenu.prototype.makeSlider = function(opt_parent, opt_args) {
     // Make slider.
     //------------------
     slider = new utils.ui.GenericSlider();
-    this.getParent(opt_parent).appendChild(this.Slider_.getElement());
+    this.getParent(opt_parent).appendChild(slider.getElement());
 
 
 

@@ -3,20 +3,14 @@
 * @author amh1646@rit.edu (Amanda Hartung)
 */
 
-/**
- * Google closure includes
- */
+// goog
 goog.require('goog.dom');
 goog.require('goog.array');
 goog.require('goog.events');
 
-
-/**
- * utils includes
- */
+// utils
 goog.require('utils.dom');
 goog.require('utils.style');
-
 
 
 
@@ -113,7 +107,6 @@ utils.ui.Thumbnail = function () {
 
 
 
-
 utils.ui.Thumbnail.CSS_CLASS_PREFIX = /**@type {string} @expose @const*/ goog.getCssName('utils-ui-thumbnail');
 utils.ui.Thumbnail.ELEMENT_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.Thumbnail.CSS_CLASS_PREFIX, '');
 utils.ui.Thumbnail.IMAGE_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.Thumbnail.CSS_CLASS_PREFIX, 'image');
@@ -168,7 +161,8 @@ utils.ui.Thumbnail.prototype.getText = function() {
  * @public
  */
 utils.ui.Thumbnail.prototype.getHoverable = function() {
-    return this.hoverable_ ? this.hoverable_ : this.element_;	
+    this.hoverable_ = this.hoverable_ ? this.hoverable_ : this.element_;	
+    return this.hoverable_
 }
 
 
@@ -189,7 +183,9 @@ utils.ui.Thumbnail.prototype.isActive = function() {
  * @public
  */	
 utils.ui.Thumbnail.prototype.onClick = function(callback) {
-    goog.events.listen(this.hoverNode, goog.events.EventType.CLICK, callback);	
+    goog.events.listen(this.hoverable_, 
+		       goog.events.EventType.CLICK, 
+		       callback);	
 }
 
 
@@ -268,12 +264,15 @@ utils.ui.Thumbnail.prototype.createHoverable = function(opt_parent, opt_element)
 
     this.removeHoverable();
     this.setHoverListeners_(false);
-    this.hoverable_ = (opt_element) ? opt_element : this.element_.cloneNode(true);
 
+
+    this.hoverable_ = (opt_element) ? opt_element : this.element_.cloneNode(true);
     this.hoverable_.setAttribute('id', 'HOVERABLE' + this.element_.getAttribute('id'));
     this.hoverable_.setAttribute('thumbnailid', this.element_.getAttribute('id'));
     this.hoverable_.style.visibility = 'hidden';
     goog.dom.classes.add(this.hoverable_, utils.ui.Thumbnail.HOVER_CLONE_CLASS);
+
+
     this.setHoverListeners_(true);
     if (opt_parent){ opt_parent.appendChild(this.hoverable_) }
 }    
@@ -296,7 +295,9 @@ utils.ui.Thumbnail.prototype.setActive = function(active, opt_highlightBg) {
 
     this.isActive_ = active;
     if (this.isActive_){
-	if (opt_highlightBg) { goog.dom.classes.add(this.element_, utils.ui.Thumbnail.ELEMENT_HIGHLIGHT_CLASS); }
+	if (opt_highlightBg) { 
+	    goog.dom.classes.add(this.element_, utils.ui.Thumbnail.ELEMENT_HIGHLIGHT_CLASS); 
+	}
 	goog.dom.classes.add(this.element_, utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS);
 	goog.dom.classes.add(this.text_, utils.ui.Thumbnail.TEXT_ACTIVE_CLASS);		
 	goog.dom.classes.add(this.image_, utils.ui.Thumbnail.IMAGE_ACTIVE_CLASS);		
@@ -320,15 +321,19 @@ utils.ui.Thumbnail.prototype.setActive = function(active, opt_highlightBg) {
  */
 utils.ui.Thumbnail.prototype.mouseOver_ = function() {
 
-    
-    var hoverNode = this.hoverNode;
-    
+    // an ugly, but necessary way of 
+    // getting the hover node.
+    var hoverNode = this.getHoverable();
+
+
+
     //------------------
     // Apply classes.
     //------------------
     goog.dom.classes.add(hoverNode, utils.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS);			
     goog.dom.classes.add(hoverNode.childNodes[1], utils.ui.Thumbnail.TEXT_MOUSEOVER_CLASS);		
     goog.dom.classes.add(hoverNode.childNodes[0], utils.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS);
+
 
 
     if (hoverNode.style.visibility !== 'visible') {
@@ -342,8 +347,9 @@ utils.ui.Thumbnail.prototype.mouseOver_ = function() {
 	var textClone = goog.dom.getElementByClass(utils.ui.Thumbnail.TEXT_CLASS, hoverNode);
 	var cloneWidth = 0;
 
-
+	//
 	// Adjust only if the _hover clone is not the element_.
+	//
 	if (hoverNode !== this.element_) {
 	    // Set the clone width to something wider than the original thumbnail width
 	    // only if the the cloneWidth is calculated to be larger (text spillover)
@@ -383,16 +389,21 @@ utils.ui.Thumbnail.prototype.mouseOver_ = function() {
  */
 utils.ui.Thumbnail.prototype.mouseOut_ = function() {
 
-    var hoverNode = this.hoverNode;
+    // an ugly, but necessary way of 
+    // getting the hover node.
+    var hoverNode = this.getHoverable();
+
 
     if (hoverNode) { 
 	hoverNode.style.visibility = 'hidden';
-	goog.dom.classes.remove(hoverNode, utils.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS);			
-	goog.dom.classes.remove(hoverNode.childNodes[1], utils.ui.Thumbnail.TEXT_MOUSEOVER_CLASS);		
-	goog.dom.classes.remove(hoverNode.childNodes[0], utils.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS);
+	goog.dom.classes.remove(hoverNode, 
+				utils.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS);			
+	goog.dom.classes.remove(hoverNode.childNodes[1], 
+				utils.ui.Thumbnail.TEXT_MOUSEOVER_CLASS);		
+	goog.dom.classes.remove(hoverNode.childNodes[0], 
+				utils.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS);
 	this.element_.style.visibility = 'visible';
     }
-
  
     goog.array.forEach(this.onMouseOut_, function(callback){ 
 	//window.console.log('callback', callback);
@@ -406,19 +417,32 @@ utils.ui.Thumbnail.prototype.mouseOut_ = function() {
 /**
  * Sets the listener events for when the thumbnail is hovered on.
  *
- * @param {boolean} set Whether to apply the event listener or remove it.
+ * @param {boolean=} set Whether to apply the event listener or remove it.
  * @private
  */
 utils.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
 
-    var hoverNode = this.hoverNode;
+    // an ugly, but necessary way of 
+    // getting the hover node.
+    var hoverNode = this.getHoverable();
+
     if (set) {
-	goog.events.listen(hoverNode, goog.events.EventType.MOUSEOVER, this.mouseOver_.bind(this));
-	goog.events.listen(hoverNode, goog.events.EventType.MOUSEOUT, this.mouseOut_.bind(this));
+	goog.events.listen(hoverNode, 
+			   goog.events.EventType.MOUSEOVER, 
+			   this.mouseOver_.bind(this));
+
+	goog.events.listen(hoverNode, 
+			   goog.events.EventType.MOUSEOUT, 
+			   this.mouseOut_.bind(this));
 	
     } else {
-	goog.events.unlisten(hoverNode, goog.events.EventType.MOUSEOVER, this.mouseOver_.bind(this));
-	goog.events.unlisten(hoverNode, goog.events.EventType.MOUSEOUT, this.mouseOut_.bind(this));
+	goog.events.unlisten(hoverNode, 
+			     goog.events.EventType.MOUSEOVER, 
+			     this.mouseOver_.bind(this));
+
+	goog.events.unlisten(hoverNode, 
+			     goog.events.EventType.MOUSEOUT, 
+			     this.mouseOut_.bind(this));
     }
 }
 

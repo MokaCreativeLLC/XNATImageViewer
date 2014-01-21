@@ -2,32 +2,25 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-/**
- * Google closure includes.
- */
+// goog
 goog.require('goog.events');
 goog.require('goog.array');
 goog.require('goog.string');
 goog.require('goog.ui.TabPane');
 goog.require('goog.dom');
 
-
-/**
- * utils includes.
- */
+// utils
 goog.require('utils.convert');
 goog.require('utils.ui.ScrollableContainer');
 goog.require('utils.dom');
 goog.require('utils.fx');
 goog.require('utils.style');
 
-
-/**
- * xiv includes.
- */
+// xiv
 goog.require('xiv.ViewBox');
 goog.require('xiv.Widget');
 goog.require('xiv');
+
 
 
 
@@ -42,9 +35,6 @@ goog.require('xiv');
  */
 goog.provide('xiv.ViewBoxTabs');
 xiv.ViewBoxTabs = function () {
-
-
-    var that = this;
     xiv.Widget.call(this, 'Tabs');
     utils.dom.addCallbackManager(this);
 
@@ -155,10 +145,9 @@ xiv.ViewBoxTabs.prototype.setDeactivateCallbacks = function(callback) {
  * @param {Array.<string>}
  */
 xiv.ViewBoxTabs.prototype.addTabs = function(tabTitles) {
-    var that = this;
     goog.array.forEach(tabTitles, function(tabTitle){
-	that.addTab(tabTitle);
-    })
+	this.addTab(tabTitle);
+    }.bind(this))
 }
 
 
@@ -291,7 +280,7 @@ xiv.ViewBoxTabs.prototype.addTab = function(tabTitle) {
  * @return {Element | undefined}
  */
 xiv.ViewBoxTabs.prototype.getTabPage = function (value) {
-    var that = this;
+    
     var retVal = undefined;
     
 
@@ -301,7 +290,7 @@ xiv.ViewBoxTabs.prototype.getTabPage = function (value) {
     //------------------
     if (typeof value === 'string') {
 	value = value.toLowerCase();
-	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, that.element), function(tabPage, i) { 			
+	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.element), function(tabPage, i) { 			
 	    if (tabPage.label.toLowerCase().indexOf(value) > -1 && !retVal) { retVal = tabPage; }
 	})
 
@@ -310,7 +299,7 @@ xiv.ViewBoxTabs.prototype.getTabPage = function (value) {
     // Otherwise retreive that tab number.
     //------------------
     } else if (typeof value === 'number') {
-	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, that.element), function(tabPage, i) { 			
+	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.element), function(tabPage, i) { 			
 	    if (i === value) { retVal = tabPage;}
 	})			
     }
@@ -332,7 +321,7 @@ xiv.ViewBoxTabs.prototype.getTabPage = function (value) {
  * @param {number} The tab number to activate.
  */
 xiv.ViewBoxTabs.prototype.setActive = function (activeTabNum) {	
-    var that = this;
+    
     var tabFadeIn = 500;
 
 
@@ -348,7 +337,7 @@ xiv.ViewBoxTabs.prototype.setActive = function (activeTabNum) {
     // Cycle through each tab, hightlighting the tab 
     // associated with activeTabNum, not hightlting the others.
     //------------------
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, that.element), function(tab, i) { 
+    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.element), function(tab, i) { 
 	if (i === activeTabNum) {
 	    tab.setAttribute('isActive', true);
 	    goog.dom.classes.add(tab, xiv.ViewBoxTabs.ACTIVE_TAB_CLASS);
@@ -370,7 +359,7 @@ xiv.ViewBoxTabs.prototype.setActive = function (activeTabNum) {
     //------------------
     // If there's an active tab, make the tab page border more prominent.
     //------------------
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, that.element), function(tabPage) {
+    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.element), function(tabPage) {
 	if (activeTabNum > -1){
 	    goog.dom.classes.add(tabPage, xiv.ViewBoxTabs.ACTIVE_TABPAGE_CLASS);
 	    //utils.fx.fadeInFromZero(tabPage, tabFadeIn);
@@ -389,8 +378,7 @@ xiv.ViewBoxTabs.prototype.setActive = function (activeTabNum) {
  * @private
  */
 xiv.ViewBoxTabs.prototype.clearEventListeners = function(){
-    var that = this;
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, that.element), function(tab, i) { 
+    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.element), function(tab, i) { 
 	goog.events.removeAll(tab);
     })
 }
@@ -404,9 +392,7 @@ xiv.ViewBoxTabs.prototype.clearEventListeners = function(){
  * @private
  */
 xiv.ViewBoxTabs.prototype.setDefaultClickEvents = function() {
-    var that = this;
-
-
+    
 
     //------------------
     // Cycle through each tab...
@@ -420,9 +406,9 @@ xiv.ViewBoxTabs.prototype.setDefaultClickEvents = function() {
 	    // in the viewer (activation)
 	    //
 	    if (tab.getAttribute('isActive') === false || tab.getAttribute('isActive') === 'false') {
-		that.setActive(i);
-		that.lastActiveTab_ = i;
-		goog.array.forEach(that.activateCallbacks_, function(callback){ callback();})
+		this.setActive(i);
+		this.lastActiveTab_ = i;
+		goog.array.forEach(this.activateCallbacks_, function(callback){ callback();})
 
 
 	    //
@@ -433,15 +419,15 @@ xiv.ViewBoxTabs.prototype.setDefaultClickEvents = function() {
 		//
 		// Run deactiveate callbacks.
 		//
-		goog.array.forEach(that.deactivateCallbacks_, function(callback){ callback();})
+		goog.array.forEach(this.deactivateCallbacks_, function(callback){ callback();})
 		//
 		// Deactivate all tabs.
 		//
 		window.console.log("SET ACTIVE HERE");
-		that.setActive(-1);		
+		this.setActive(-1);		
 	    }
-	})
-    })	
+	}.bind(this))
+    }.bind(this))	
 }
 
 
@@ -454,14 +440,11 @@ xiv.ViewBoxTabs.prototype.setDefaultClickEvents = function() {
  * @private
  */
 xiv.ViewBoxTabs.prototype.setDefaultHoverEvents = function() {
-    var that = this;
-
-
-
+    
     //------------------
     // Cycle through each tab...
     //------------------
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, that.element), function(tab, i) { 
+    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.element), function(tab, i) { 
 
 	//
 	// Set tab hover
@@ -478,10 +461,10 @@ xiv.ViewBoxTabs.prototype.setDefaultHoverEvents = function() {
 	    //
 	    // Set TabIcon style change (opacity) -- applies whether active or inactive
 	    //
-	    goog.array.forEach(goog.dom.getElementsByClass(that.TABICON_CLASS, tab), function(icon){
+	    goog.array.forEach(goog.dom.getElementsByClass(this.TABICON_CLASS, tab), function(icon){
 		goog.dom.classes.add(icon, xiv.ViewBoxTabs.MOUSEOVER_TABICON_CLASS);
-	    })
-	})
+	    }.bind(this))
+	}.bind(this))
 
 
 	//
@@ -499,12 +482,12 @@ xiv.ViewBoxTabs.prototype.setDefaultHoverEvents = function() {
 	    //
 	    // TabIcon style change (opacity) -- applies whether active or inactive
 	    //
-	    goog.array.forEach(goog.dom.getElementsByClass(that.TABICON_CLASS, tab), function(icon){
+	    goog.array.forEach(goog.dom.getElementsByClass(this.TABICON_CLASS, tab), function(icon){
 		goog.dom.classes.remove(icon, xiv.ViewBoxTabs.MOUSEOVER_TABICON_CLASS);
-	    })
-	})
+	    }.bind(this))
+	}.bind(this))
 
-    })	
+    }.bind(this))	
 }
 
 
@@ -524,7 +507,7 @@ xiv.ViewBoxTabs.prototype.updateStyle = function (opt_args) {
     //------------------
     goog.dom.classes.add(this.element, xiv.ViewBoxTabs.ELEMENT_CLASS);
 
-    var that = this;
+    
     if (opt_args) { utils.style.setStyle(this.element, opt_args); }
 
 
@@ -538,22 +521,22 @@ xiv.ViewBoxTabs.prototype.updateStyle = function (opt_args) {
 	//
 	// Set tabPage height.
 	//
-	var viewBoxHeight = utils.style.dims(that.element.parentNode, 'outerHeight');
+	var viewBoxHeight = utils.style.dims(this.element.parentNode, 'outerHeight');
 	var tabHeight = utils.style.dims(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS)[0] , 'outerHeight')
-	var tabPageHeight =  (viewBoxHeight - utils.style.dims(that.element, 'top') - tabHeight - 3) || 0;
-	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, that.element), function(elt, i) {			
+	var tabPageHeight =  (viewBoxHeight - utils.style.dims(this.element, 'top') - tabHeight - 3) || 0;
+	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.element), function(elt, i) {	
 	    utils.style.setStyle(elt, {
 		'height': tabPageHeight,
-		'width': utils.style.dims(that.element.parentNode, 'width') - 2 // acommodates for border
+		'width': utils.style.dims(this.element.parentNode, 'width') - 2 // acommodates for border
 	    });
-	})
+	}.bind(this))
 
 
 	//
 	// Calculate Tab Width based on number of tabs.
 	//
 	var tabs = goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.element);
-	var parentWidth = utils.convert.toInt(utils.style.getComputedStyle(that.element, 'width')); 
+	var parentWidth = utils.convert.toInt(utils.style.getComputedStyle(this.element, 'width')); 
 	var tabWidth = (parentWidth / tabs.length) - 2; // for borders
 	goog.array.forEach(tabs, function(tab, i){
 	    utils.style.setStyle(tab, {
@@ -602,8 +585,9 @@ xiv.ViewBoxTabs.prototype.setTabContents = function (tabName, contents) {
     else {
 	scrollableContainer = new utils.ui.ScrollableContainer()
 	tabPage.appendChild(scrollableContainer.getElement());
+	window.console.log("CONTENTS", contents);
 	scrollableContainer.addContents(contents);
-	window.console.log(scrollableContainer.getContentsDict());
+	//window.console.log(scrollableContainer.getContentsDict());
 	scrollableContainer.setZippysExpanded(false);
     }
 

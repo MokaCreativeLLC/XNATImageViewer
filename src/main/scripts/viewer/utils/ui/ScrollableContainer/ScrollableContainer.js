@@ -2,20 +2,17 @@
  * @author sunilk@mokacreativellc.com
  */
 
-/**
- * Google closure indcludes
- */
+// goog
 goog.require('goog.ui.AnimatedZippy');
 goog.require('goog.ui.Zippy');
 goog.require('goog.string');
 goog.require('goog.dom');
 goog.require('goog.events');
 
-/**
- * utils indcludes
- */
+// utils
 goog.require('utils.dom');
 goog.require('utils.ui.GenericSlider');
+
 
 
 
@@ -23,7 +20,8 @@ goog.require('utils.ui.GenericSlider');
 /**
  * utils.ui.ScrollableContainer allows the user to input
  * contents to create a scrollable div.  It's a compound object
- * that uses goog.ui.AnimatedZippy or goog.ui.Zippy (for condensing contents and 
+ * that uses goog.ui.AnimatedZippy or goog.ui.Zippy 
+ * (for condensing contents and 
  * creating folders) and utils.ui.GenericSlider for scrolling
  * through the contents.
  *
@@ -37,7 +35,9 @@ utils.ui.ScrollableContainer = function (opt_args) {
      * @type {!Element}
      * @private
      */
-    this.element_ = utils.dom.makeElement("div", document.body, "ScrollableContainer");
+    this.element_ = utils.dom.makeElement("div", 
+					  document.body, 
+					  "ScrollableContainer");
 
 
 
@@ -46,7 +46,9 @@ utils.ui.ScrollableContainer = function (opt_args) {
      * @type {!Element}
      * @private
      */
-    this.scrollArea_ = utils.dom.makeElement("div", this.element_, "ScrollArea");
+    this.scrollArea_ = utils.dom.makeElement("div", 
+					     this.element_, 
+					     "ScrollArea");
 
 
 
@@ -570,7 +572,7 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
     //------------------
     // Apply Zippy indentation in container div (CSS)
     //------------------
-    this.indentHeaders_();
+    this.indentZippys_();
 
  
     
@@ -578,12 +580,19 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
     // Define Mouseover, Mouseout functions.
     //------------------
     goog.events.listen(header, goog.events.EventType.MOUSEOVER, function(){
-	goog.dom.classes.add(header, utils.ui.ScrollableContainer.ZIPPY_HEADER_MOUSEOVER_CLASS);
-	goog.dom.classes.add(expandIcon, utils.ui.ScrollableContainer.ZIPPY_ICON_MOUSEOVER_CLASS);
+	goog.dom.classes.add(header, 
+			     utils.ui.ScrollableContainer.ZIPPY_HEADER_MOUSEOVER_CLASS);
+
+	goog.dom.classes.add(expandIcon, 
+			     utils.ui.ScrollableContainer.ZIPPY_ICON_MOUSEOVER_CLASS);
     });
+
     goog.events.listen(header, goog.events.EventType.MOUSEOUT, function(){
-	goog.dom.classes.remove(header, utils.ui.ScrollableContainer.ZIPPY_HEADER_MOUSEOVER_CLASS);
-	goog.dom.classes.remove(expandIcon, utils.ui.ScrollableContainer.ZIPPY_ICON_MOUSEOVER_CLASS);
+	goog.dom.classes.remove(header, 
+				utils.ui.ScrollableContainer.ZIPPY_HEADER_MOUSEOVER_CLASS);
+
+	goog.dom.classes.remove(expandIcon, 
+				utils.ui.ScrollableContainer.ZIPPY_ICON_MOUSEOVER_CLASS);
     });	   
     
 
@@ -686,7 +695,7 @@ utils.ui.ScrollableContainer.prototype.indentZippys_ = function(){
  * @param {Element=} opt_parent (Optional) The parent to add the contents to (i.e. a zippy element).  Defaults to scrollArea_.
  * @param {String=} opt_parentKey (Optional) The key of the parent zippy to add the contents to.
  */
-utils.ui.ScrollableContainer.prototype.addContents = function (contents, opt_parent) {
+utils.ui.ScrollableContainer.prototype.addContents = function (contents, opt_parent, opt_parentKey) {
 
     //------------------
     // Set the parent element to the 'scrollArea' (main contents div)
@@ -754,7 +763,9 @@ utils.ui.ScrollableContainer.prototype.addContents = function (contents, opt_par
 	    // contents[parent][subfolder] = [subElts]
 	    //
 	    if (key === 'parentFolder'){
-		this.addContents(contents[key], this.contentsDict_[opt_parentKey].content, opt_parentKey);
+		this.addContents(contents[key], 
+				 this.contentsDict_[opt_parentKey].content, 
+				 opt_parentKey);
 	    }
 	    else {
 		//
@@ -762,7 +773,9 @@ utils.ui.ScrollableContainer.prototype.addContents = function (contents, opt_par
 		// expanded = (opt_parent === this.scrollArea_) ? true : false;
 		//
 		this.addZippy(key, opt_parent);
-		this.addContents(contents[key], this.contentsDict_[key].content, key);	
+		this.addContents(contents[key], 
+				 this.contentsDict_[key].content, 
+				 key);	
 	    }
 	}
     }

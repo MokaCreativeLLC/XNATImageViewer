@@ -2,18 +2,13 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-
-/**
- * Google closure includes
- */
+// goog
 goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.events');
 
 
-/**
- * utils includes
- */
+// utils
 goog.require('utils.style');
 goog.require('utils.dom');
 goog.require('utils.ui.Thumbnail');
@@ -138,7 +133,8 @@ utils.ui.ThumbnailGallery.prototype.addThumbnail = function(thumbnail, opt_folde
     //
     // Bind clone to mouse wheel.
     //
-    this.bindToMouseWheel(thumbnail.hoverNode, this.onHoverAndScroll_.bind(this));
+    this.bindToMouseWheel(thumbnail.getHoverable(), 
+			  this.onHoverAndScroll_.bind(this));
 
 
     //

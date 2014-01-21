@@ -2,15 +2,11 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-/**
- * Google closure includes
- */
+// goog
 goog.require('goog.dom.fullscreen');
 goog.require('goog.window');
 
-/**
- * utils includes
- */
+// utils
 goog.require('utils.ui.ThumbnailGallery');
 goog.require('utils.xnat');
 goog.require('utils.dom');
@@ -18,9 +14,7 @@ goog.require('utils.style');
 goog.require('utils.convert');
 goog.require('utils.fx');
 
-/**
- * viewer-widget includes
- */
+// xiv
 goog.require('xiv');
 goog.require('xiv.Widget');
 goog.require('xiv.ThumbnailManager');
@@ -314,11 +308,29 @@ xiv.Modal.prototype.__defineGetter__('xnatPaths', function() {
  * @private
  */
 xiv.Modal.prototype.addCloseButton_ = function(){
-    this.closeButton_ = utils.dom.makeElement("img", this.modal_, "closeButton", {'opacity':.5});
+
+    this.closeButton_ = utils.dom.makeElement("img", this.modal_, 
+					      "closeButton", {'opacity':.5});
     this.closeButton_.title = 'Close the Image Viewer'
     this.closeButton_.src = xiv.ICON_URL + "closeX.png";
-    goog.events.listen(this.closeButton_, goog.events.EventType.MOUSEOVER, function(event) { utils.style.setStyle(this.closeButton_, {'opacity':1});}.bind(this));
-    goog.events.listen(this.closeButton_, goog.events.EventType.MOUSEOUT, function(event) { utils.style.setStyle(this.closeButton_, {'opacity':.5});}.bind(this));
+
+    goog.events.listen(this.closeButton_, 
+		       goog.events.EventType.MOUSEOVER, 
+		       function(event) { 
+			   utils.style.setStyle(this.closeButton_, {
+			       'opacity':1
+			   });
+		       }.bind(this));
+
+
+    goog.events.listen(this.closeButton_, 
+		       goog.events.EventType.MOUSEOUT, 
+		       function(event) { 
+			   utils.style.setStyle(this.closeButton_, {
+			       'opacity':.5
+			   })
+		       }.bind(this));
+
     goog.dom.classes.set(this.closeButton_, xiv.Modal.CLOSEBUTTON_CLASS);
     this.closeButton_.onclick = this.destroy;
 
@@ -338,35 +350,49 @@ xiv.Modal.prototype.addCloseButton_ = function(){
  * @private
  */
 xiv.Modal.prototype.addFullScreenButton_ = function(){
-    this.fullScreenButton_ = utils.dom.makeElement("img", this.modal_, "fullScreenButton", {'opacity':.5});
+    this.fullScreenButton_ = utils.dom.makeElement("img", this.modal_, 
+						   "fullScreenButton", {'opacity':.5});
     this.fullScreenButton_.title = 'Enter full screen mode';
     this.fullScreenButton_.src = xiv.ICON_URL + "fullScreen.png";
 
 
     goog.events.listen(this.fullScreenButton_, 
 		       goog.events.EventType.MOUSEOVER, 
-		       function(event) { utils.style.setStyle(this.fullScreenButton_, {'opacity':1})}.bind(this));
+		       function(event) { 
+			   utils.style.setStyle(this.fullScreenButton_, {
+			       'opacity':1
+			   })
+		       }.bind(this));
 
 
     goog.events.listen(this.fullScreenButton_, 
 		       goog.events.EventType.MOUSEOUT, 
-		       function(event) { utils.style.setStyle(this.fullScreenButton_, {'opacity':.5})}.bind(this));
+		       function(event) { utils.style.setStyle(this.fullScreenButton_, 
+							      {
+								  'opacity':.5
+							      })
+				       }.bind(this));
 
 
-    goog.dom.classes.set(this.fullScreenButton_, xiv.Modal.FULLSCREENBUTTON_CLASS);
+    goog.dom.classes.set(this.fullScreenButton_, 
+			 xiv.Modal.FULLSCREENBUTTON_CLASS);
 
 
     this.fullScreenButton_.onclick = function(){
 	if (this.modal_.getAttribute('isfullscreen') === '0'){
+
 	    goog.dom.fullscreen.requestFullScreen(this.modal_); 
 	    this.modal_.setAttribute('isfullscreen', '1');
 	    this.fullScreenButton_.src = xiv.ICON_URL + "fullScreen-reverse.png";
 	    this.fullScreenButton_.title = 'Exit full screen mode';
+
 	} else {
+
 	    goog.dom.fullscreen.exitFullScreen();
 	    this.modal_.setAttribute('isfullscreen', '0');
 	    this.fullScreenButton_.src = xiv.ICON_URL + "fullScreen.png";
 	    this.fullScreenButton_.title = 'Enter full screen mode';
+
 	}
     }.bind(this);
 }
@@ -425,9 +451,13 @@ xiv.Modal.prototype.addAddPathsButton_ = function(){
     this.addPathsButton_.innerHTML = '+';
 
     goog.events.listen(this.addPathsButton_, goog.events.EventType.MOUSEOVER, 
-		       function(event) {utils.style.setStyle(this.addPathsButton_, {'opacity':1})}.bind(this));
+		       function(event) {
+			   utils.style.setStyle(this.addPathsButton_, 
+						{'opacity':1})}.bind(this));
     goog.events.listen(this.addPathsButton_, goog.events.EventType.MOUSEOUT, 
-		       function(event) {utils.style.setStyle(this.addPathsButton_, {'opacity':.5})}.bind(this));
+		       function(event) {
+			   utils.style.setStyle(this.addPathsButton_, 
+						{'opacity':.5})}.bind(this));
 
     goog.dom.classes.set(this.addPathsButton_, xiv.Modal.ADDPATHSBUTTON_CLASS);
     this.addPathsButton_.onclick = function(){
@@ -444,12 +474,10 @@ xiv.Modal.prototype.addAddPathsButton_ = function(){
  * @private
  */
 xiv.Modal.prototype.addThumbnailGallery_ = function(){
-    //------------------
-    // Thumb gallery
-    //------------------
     this.ThumbnailGallery_ = new utils.ui.ThumbnailGallery();
     this.modal_.appendChild(this.ThumbnailGallery_.getElement());
-    goog.dom.classes.add(this.ThumbnailGallery_.getElement(), xiv.Modal.THUMBNAILGALLERY_CLASS);
+    goog.dom.classes.add(this.ThumbnailGallery_.getElement(), 
+			 xiv.Modal.THUMBNAILGALLERY_CLASS);
 
 }
 
@@ -477,6 +505,7 @@ xiv.Modal.prototype.addManagers_ = function(){
 	    }
 	})	
     }.bind(this)
+
     this.ThumbnailManager_.onMouseOut = function(Thumbnail){;
 	this.ViewBoxManager_.loop(function(ViewBox){
 	    if (ViewBox.Thumbnail === Thumbnail && ViewBox.loadState !== 'loading'){
@@ -496,6 +525,7 @@ xiv.Modal.prototype.addManagers_ = function(){
 	ViewBox.element.style.borderColor = 'white';
 	this.highlightInUseThumbnails();
     }.bind(this)
+
     this.ViewBoxManager_.onThumbnailLoaded = function(ViewBox){
 	ViewBox.element.style.borderColor = ViewBox.element.getAttribute('originalbordercolor');
 	this.highlightInUseThumbnails();
@@ -593,18 +623,23 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
 	// Do a natural sort on the demo data (by their relevant key)
 	// as perscribed by XnatIO
 	//	
-	XNAT_IMAGE_VIEWER_DEMO_SCANS = utils.xnat.sortViewableCollection(XNAT_IMAGE_VIEWER_DEMO_SCANS, ['sessionInfo', 'Scan', 'value', 0]);
-	XNAT_IMAGE_VIEWER_DEMO_SLICER = utils.xnat.sortViewableCollection(XNAT_IMAGE_VIEWER_DEMO_SLICER, ['Name']);
+	XNAT_IMAGE_VIEWER_DEMO_SCANS = utils.xnat.sortViewableCollection(XNAT_IMAGE_VIEWER_DEMO_SCANS, 
+									 ['sessionInfo', 'Scan', 'value', 0]);
+	XNAT_IMAGE_VIEWER_DEMO_SLICER = utils.xnat.sortViewableCollection(XNAT_IMAGE_VIEWER_DEMO_SLICER, 
+									  ['Name']);
 
 
 	//
 	// Make thumbnails from the data.
 	//
 	goog.array.forEach(XNAT_IMAGE_VIEWER_DEMO_SCANS, function(demoScan){
-	    this.addThumbnailsToGallery_(['sample-data', 'scans'],  [demoScan]);
+	    this.addThumbnailsToGallery_(['sample-data', 'scans'],  
+					 [demoScan]);
 	}.bind(this))
+
 	goog.array.forEach(XNAT_IMAGE_VIEWER_DEMO_SLICER, function(demoSlicer){
-	    this.addThumbnailsToGallery_(['sample-data','Slicer'],  [demoSlicer]);
+	    this.addThumbnailsToGallery_(['sample-data','Slicer'],  
+					 [demoSlicer]);
 	}.bind(this))
 
     }
@@ -619,13 +654,15 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
     //------------------  
     else {
 
-
 	goog.array.forEach(this.xnatPaths_, function(xnatPath){
 
+	    //
+	    //  Get the the folders
+	    //
 	    var pathObj = utils.xnat.getPathObject(xnatPath);
 	    var folders = [];
 	    for (key in pathObj){ 
-		if (goog.isDef(pathObj[key]) && key !== 'prefix'){
+		if (goog.isDefAndNotNull(pathObj[key]) && key !== 'prefix'){
 		    folders.push(utils.xnat.folderAbbrev[key] + ": " + pathObj[key]) 
 		}
 	    };
@@ -655,13 +692,12 @@ xiv.Modal.prototype.setXnatPathAndLoadThumbnails = function(path){
 		// Then load slicer thumbnails...
 		//
 		if (!slicerThumbnailsLoaded) {
-		    
-		   
+
 		    //
 		    // Get the slicer files.
 		    //
 		    folders[folders.length-1] = 'Slicer';
-		    utils.xnat.getSlicer(xnatPath, 'Slicer', function(slicerViewable){
+		    utils.xnat.getSlicer(xnatPath, function(slicerViewable){
 			this.addThumbnailsToGallery_(slicerFolders,  [slicerViewable]);
 		    }.bind(this));
 

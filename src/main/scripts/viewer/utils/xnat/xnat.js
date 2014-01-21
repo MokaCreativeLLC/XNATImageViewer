@@ -3,10 +3,7 @@
  * @author herrickr@mir.wustl.edu (Rick Herrick)
  */
 
-
-/**
- * Google closure indcludes
- */
+// goog
 goog.require('goog.events');
 goog.require('goog.string');
 goog.require('goog.net.XhrIo');
@@ -14,10 +11,7 @@ goog.require('goog.dom.xml');
 goog.require('goog.array');
 goog.require('goog.object');
 
-
-/**
- * utils indcludes
- */
+// utils
 goog.require('utils.dom');
 goog.require('utils.array');
 
@@ -191,7 +185,7 @@ utils.xnat.splitUrl = function(url, splitString){
 
 /**
  * Constructs an XNAT Uri stopping at the desired 'level'.
- * Calls on the internal 'getXnatPathObject' method to split
+ * Calls on the internal 'getPathObject' method to split
  * the uri into it's various level components.  From then, it builds
  * the return string.
  *
@@ -205,7 +199,7 @@ utils.xnat.getXnatPathByLevel = function(url, level){
     //------------------
     // Splits the url into its various level components.
     //------------------
-    var pathObj = utils.xnat.getXnatPathObject(url)
+    var pathObj = utils.xnat.getPathObject(url)
 
 
 
@@ -267,44 +261,45 @@ utils.xnat.defaultPathObj =  {
  * Split's the 'url' argument into various XNAT level
  * folders.
  *
- * @param {!string} url
+ * @param {!string} url The URL to derive the path object from.
  * @return {string}
  */
-utils.xnat.getXnatPathObject = function(url){
-
+utils.xnat.getPathObject = function(url){
 
     var defaultPathObj = goog.object.clone(utils.xnat.defaultPathObj);
+    var splitter = url.split('/');
+    var levelHasValue = true;
+    var i = 0;
+    var j = 0;
 
-    //------------------
-    // Split the url at the '/' chars.  Loop through
-    // the split array..
-    //------------------
-    var splitter = url.split("/");
-    var len = splitter.length;
-    for (var i=0; i<len; i++){
-	if (defaultPathObj.hasOwnProperty(splitter[i]) && splitter[i+1]) {
+    for (i=0, len = splitter.length; i<len; i++){
+
+	//
+	// Stay within the loop only if the XNAT level has
+	// a value associated with it (i.e. a next position in the array)
+	//
+	levelHasValue = (defaultPathObj.hasOwnProperty(splitter[i]) && splitter[i+1])
+	if (!levelHasValue) continue
+
 	    
-
-	    //
-	    // The 'prefix' string -- usually the server name
-	    // and the 'data/archive/' or 'xnat/' prefix. 
-	    //
-	    if (splitter[i] === 'projects' &&  i != 0){
-		var j = 0;
-		while (j < i){
-		    defaultPathObj['prefix'] += splitter[j] + "/";
-		    j++;
-		}
+	//
+	// The 'prefix' string -- usually the server name
+	// and the 'data/archive/' or 'xnat/' prefix. 
+	//
+	if (splitter[i] === 'projects' &&  i !== 0){
+	    defaultPathObj['prefix'] = '';
+	    for (j=0; j < i; j++){
+		defaultPathObj['prefix'] += splitter[j] + "/";
 	    }
-
-
-	    //
-	    // Construct key-value pair.  Key is the XNAT level
-	    // value is the folder.
-	    //
-	    defaultPathObj[splitter[i]] = splitter[i+1];
-	    i++;
 	}
+	
+	
+	//
+	// Construct key-value pair.  Key is the XNAT level
+	// value is the folder.
+	//
+	defaultPathObj[splitter[i]] = splitter[i+1];
+	i++;
     }
 
     return defaultPathObj;
@@ -359,12 +354,12 @@ utils.xnat.compareSlicer = function(a,b) {
  * @param {!function} callback The callback to run once the scan JSON is gotten.
  */
 utils.xnat.getScans = function (url, callback){
-
+    window.console.log("URL1", url);
     url = utils.xnat.getXnatPathByLevel(url, 'experiments');
 
     var viewableFolder = 'scans';
     var queryFolder = url + "/" + viewableFolder;
-    var pathObj = utils.xnat.getXnatPathObject(url);
+    var pathObj = utils.xnat.getPathObject(url);
     var gottenScans = 0;
     var xnatPropsArr = [];
     var fileQueryUrl = '';
@@ -487,11 +482,12 @@ utils.xnat.getScans = function (url, callback){
  */
 utils.xnat.getSlicer = function (url, callback){
 
+    window.console.log("URL2", url);
     url = utils.xnat.getXnatPathByLevel(url, 'experiments');
 
     var viewableFolder = 'Slicer';
     var queryFolder = url + "/resources/" + viewableFolder + "/files";
-    var pathObj = utils.xnat.getXnatPathObject(url);
+    var pathObj = utils.xnat.getPathObject(url);
     var readableFiles = ['.mrml', '.nrrd']; 
     var xnatPropsArr = [];
     var slicerProperties;
@@ -657,17 +653,17 @@ utils.xnat.sortXnatPropertiesArray = function (xnatPropsArr, keyDepthArr){
 
 
 
-goog.exportSymbol('utis.xnat.properties', utis.xnat.properties);
-goog.exportSymbol('utis.xnat.folderAbbrev', utis.xnat.folderAbbrev);
-goog.exportSymbol('utis.xnat.jsonGet', utis.xnat.jsonGet);
-goog.exportSymbol('utis.xnat.get', utis.xnat.get);
-goog.exportSymbol('utis.xnat.splitUrl', utis.xnat.splitUrl);
-goog.exportSymbol('utis.xnat.getXnatPathByLevel', utis.xnat.getXnatPathByLevel);
-goog.exportSymbol('utis.xnat.getPathOject', utis.xnat.getPathOject);
-goog.exportSymbol('utis.xnat.getViewables', utis.xnat.getViewables);
-goog.exportSymbol('utis.xnat.compareScan', utis.xnat.compareScan);
-goog.exportSymbol('utis.xnat.compareSlicer', utis.xnat.compareSlicer);
-goog.exportSymbol('utis.xnat.getScans', utis.xnat.getScans);
-goog.exportSymbol('utis.xnat.getSlicer', utis.xnat.getSlicer);
-goog.exportSymbol('utis.xnat.defaultPathObj', utis.xnat.defaultPathObj);
-goog.exportSymbol('utis.xnat.sortXnatProperties', utis.xnat.sortXnatProperties);
+goog.exportSymbol('utils.xnat.properties', utils.xnat.properties);
+goog.exportSymbol('utils.xnat.folderAbbrev', utils.xnat.folderAbbrev);
+goog.exportSymbol('utils.xnat.jsonGet', utils.xnat.jsonGet);
+goog.exportSymbol('utils.xnat.get', utils.xnat.get);
+goog.exportSymbol('utils.xnat.splitUrl', utils.xnat.splitUrl);
+goog.exportSymbol('utils.xnat.getXnatPathByLevel', utils.xnat.getXnatPathByLevel);
+goog.exportSymbol('utils.xnat.getPathOject', utils.xnat.getPathOject);
+goog.exportSymbol('utils.xnat.getViewables', utils.xnat.getViewables);
+goog.exportSymbol('utils.xnat.compareScan', utils.xnat.compareScan);
+goog.exportSymbol('utils.xnat.compareSlicer', utils.xnat.compareSlicer);
+goog.exportSymbol('utils.xnat.getScans', utils.xnat.getScans);
+goog.exportSymbol('utils.xnat.getSlicer', utils.xnat.getSlicer);
+goog.exportSymbol('utils.xnat.defaultPathObj', utils.xnat.defaultPathObj);
+goog.exportSymbol('utils.xnat.sortXnatProperties', utils.xnat.sortXnatProperties);

@@ -1,8 +1,11 @@
+// xiv
 goog.require('xiv');
 
+// xtk
 goog.require('X.loader');
 goog.require('X.parserIMA');
 
+// google
 goog.require('goog.dom.fullscreen');
 
 ///////////////////////////////////////////////

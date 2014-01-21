@@ -40,7 +40,7 @@ goog.addDependency('../../../utils/ui/GenericSlider/GenericSlider.js', ['utils.u
 'goog.dom',
 'goog.ui.Component',
 'goog.array',
-'goog.events'
+'goog.events',
 'utils.dom'
 ]);  
 
@@ -61,7 +61,7 @@ goog.addDependency('../../../utils/ui/Thumbnail/Thumbnail.js', ['utils.ui.Thumbn
 'goog.array',
 'goog.events',
 'utils.dom',
-'utils.style',
+'utils.style'
 ]);
 
 
@@ -121,6 +121,8 @@ goog.addDependency('../../../utils/xnat/xnat.js', ['utils.xnat'], [
 'goog.dom.xml',
 'goog.object',
 'goog.array',
+
+
 'utils.dom',
 'utils.array',
 ]);
