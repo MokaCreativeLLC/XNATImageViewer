@@ -47,7 +47,6 @@ goog.require('xiv.SlicerViewMenu');
  * @constructor
  * 
  * @extends {xiv.Widget}
- * @extents {goog.fx.DragDrop}
  * @param {Object=} opt_args Optional arguments to define the ViewBox.
  */
 goog.provide('xiv.ViewBox');
@@ -56,7 +55,7 @@ xiv.ViewBox = function (opt_args) {
     //------------------
     // Call parents, set class
     //------------------  
-    xiv.Widget.call(this, 'xiv.ViewBox');
+    goog.base(this, 'xiv.ViewBox');
     goog.dom.classes.set(this.element, xiv.ViewBox.ELEMENT_CLASS);
 
 

@@ -33,7 +33,7 @@ goog.provide('xiv.Thumbnail');
 xiv.Thumbnail = function (xnatProperties) {
 
     utils.ui.Thumbnail.call(this);
-    goog.dom.classes.add(this.element_, xiv.Thumbnail.CSS_CLASS_PREFIX);
+    goog.dom.classes.add(this.element, xiv.Thumbnail.CSS_CLASS_PREFIX);
 
 
 

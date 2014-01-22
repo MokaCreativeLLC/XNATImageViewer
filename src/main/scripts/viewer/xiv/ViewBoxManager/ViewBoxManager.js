@@ -320,19 +320,19 @@ xiv.ViewBoxManager.prototype.removeColumn = function(opt_animate) {
     if (this.ViewBoxes_[0] && this.ViewBoxes_[0].length > 1) {
 	goog.array.forEach(this.ViewBoxes_, function(ViewBox, i) {
 	    var rowLen = ViewBox.length - 1;
-	    utils.fx.fadeTo(ViewBox[rowLen].element, xiv.ANIM_FAST, 0);
+	    utils.fx.fadeTo(ViewBox[rowLen].getElement(), xiv.ANIM_FAST, 0);
 	    
 	    //
 	    // Remove the drag drop handles
 	    // 
-	    var dragDropHandle = this.dragDropHandles_[ViewBox[rowLen].element.id];
+	    var dragDropHandle = this.dragDropHandles_[ViewBox[rowLen].getElement().id];
 	    dragDropHandle.parentNode.removeChild(dragDropHandle);
 	    delete dragDropHandle;
 
 	    //
 	    // Remove the xiv.ViewBox
 	    //
-	    ViewBox[rowLen].element.parentNode.removeChild(ViewBox[rowLen].element);
+	    ViewBox[rowLen].getElement().parentNode.removeChild(ViewBox[rowLen].getElement());
 	    ViewBox.splice(rowLen, 1);		
 	}.bind(this))
     }
@@ -425,12 +425,12 @@ xiv.ViewBoxManager.prototype.removeRow = function(opt_animate) {
     if (this.ViewBoxes_.length > 1) {
 	var delRow = this.ViewBoxes_[this.ViewBoxes_.length - 1];
 	goog.array.forEach(delRow, function(currDelViewBox) { 
-	    utils.fx.fadeTo(currDelViewBox.element, xiv.ANIM_FAST, 0);
-	    currDelViewBox.element.parentNode.removeChild(currDelViewBox.element);
+	    utils.fx.fadeTo(currDelViewBox.getElement(), xiv.ANIM_FAST, 0);
+	    currDelViewBox.getElement().parentNode.removeChild(currDelViewBox.getElement());
 	    //
 	    // Remove the drag drop handles
 	    // 
-	    var dragDropHandle = this.dragDropHandles_[currDelViewBox.element.id];
+	    var dragDropHandle = this.dragDropHandles_[currDelViewBox.getElement().id];
 	    dragDropHandle.parentNode.removeChild(dragDropHandle);
 	    delete dragDropHandle;
 	}.bind(this))
@@ -477,7 +477,7 @@ xiv.ViewBoxManager.prototype.updateModal_ = function(newViewBoxSet, opt_animate)
 	//
 	if (newViewBoxSet) {
 	    goog.array.forEach(newViewBoxSet, function(newViewBox) {
-		utils.style.setStyle(newViewBox.element, {'opacity': 0})
+		utils.style.setStyle(newViewBox.getElement(), {'opacity': 0})
 	    })
 	}
 
@@ -517,7 +517,7 @@ xiv.ViewBoxManager.prototype.updateModal_ = function(newViewBoxSet, opt_animate)
 xiv.ViewBoxManager.prototype.getViewBoxByElement = function(element) {
     for (var i=0, len = this.ViewBoxes_.length; i < len; i++) {
 	for (var j=0, len2 = this.ViewBoxes_[i].length; j < len2; j++) {
-	    if (element === this.ViewBoxes_[i][j].element) {
+	    if (element === this.ViewBoxes_[i][j].getElement()) {
 		return  this.ViewBoxes_[i][j];	
 	    }
 	}
@@ -537,7 +537,7 @@ xiv.ViewBoxManager.prototype.getViewBoxByElement = function(element) {
  * @public
  */
 xiv.ViewBoxManager.prototype.getViewBoxElement = function(row, col) {
-    return this.ViewBoxes_[row][col].element
+    return this.ViewBoxes_[row][col].getElement()
 }
 
 
@@ -586,7 +586,7 @@ xiv.ViewBoxManager.prototype.getViewBoxes = function() {
  */
 xiv.ViewBoxManager.prototype.getViewBoxElements = function() {
     var ws = this.loop (function(ViewBox) { 
-	return ViewBox.element;	
+	return ViewBox.getElement();	
     })
     
     return (ws instanceof Array) ? ws : [ws];
@@ -607,7 +607,7 @@ xiv.ViewBoxManager.prototype.makeViewBox = function() {
     // Create xiv.ViewBox
     //------------------
     var ViewBox = new xiv.ViewBox();
-    this.Modal_.modal.appendChild(ViewBox.element);
+    this.Modal_.modal.appendChild(ViewBox.getElement());
 
 
 
@@ -617,7 +617,7 @@ xiv.ViewBoxManager.prototype.makeViewBox = function() {
     var modalWindow = goog.dom.getElementsByClass(xiv.Modal.MODAL_CLASS)[0];
     var dragDropHandle = utils.dom.makeElement("img", modalWindow, "DragAndDropHandle");
     dragDropHandle.src = xiv.ICON_URL + "Icons/Toggle-DragAndDrop.png";
-    dragDropHandle.ViewBoxId = ViewBox.element.id; 
+    dragDropHandle.ViewBoxId = ViewBox.getElement().id; 
 
     //
     // Apply class.
@@ -627,7 +627,7 @@ xiv.ViewBoxManager.prototype.makeViewBox = function() {
     //
     // Add to class property.
     //
-    this.dragDropHandles_[ViewBox.element.id] = dragDropHandle;
+    this.dragDropHandles_[ViewBox.getElement().id] = dragDropHandle;
 
     //
     // Tool tip
@@ -658,8 +658,8 @@ xiv.ViewBoxManager.prototype.makeViewBox = function() {
  * Swaps one xiv.ViewBox with another based on the class, 
  * the element of the ID.
  *
- * @param {xiv.ViewBox|Element|string} v1 xiv.ViewBox Class, xiv.ViewBox.element_, or xiv.ViewBox ID
- * @param {xiv.ViewBox|Element|string, v2 xiv.ViewBox Class, xiv.ViewBox.element_, or xiv.ViewBox ID
+ * @param {xiv.ViewBox|Element|string} v1 xiv.ViewBox Class, xiv.ViewBox.getElement(), or xiv.ViewBox ID
+ * @param {xiv.ViewBox|Element|string, v2 xiv.ViewBox Class, xiv.ViewBox.getElement(), or xiv.ViewBox ID
  * @public
  */
 xiv.ViewBoxManager.prototype.swap = function(v1, v2) {
@@ -670,8 +670,8 @@ xiv.ViewBoxManager.prototype.swap = function(v1, v2) {
     //------------------
     var arrLoc = this.loop ( function (v, i, j) { 
 	var byObj = (v === v1) || (v === v2);
-	var byElement = (v.element === v1) || (v.element === v2);
-	var byId = (v.element.id === v1) || (v.element.id === v2);
+	var byElement = (v.getElement() === v1) || (v.getElement() === v2);
+	var byId = (v.getElement().id === v1) || (v.getElement().id === v2);
 	
 	if (byObj || byElement || byId) {
 	    return {
@@ -888,7 +888,7 @@ xiv.ViewBoxManager.prototype.resetDragDropGroup_ = function() {
     //------------------
     // Create new drag-drop groups:
     // for the draggers (the handle) and 
-    // the targets (the xiv.ViewBox.elements).
+    // the targets (the xiv.ViewBox.getElement()s).
     //------------------
     this.dragDropGroup_ = new goog.fx.DragDropGroup();
     this.dragDropTargets = new goog.fx.DragDropGroup();
@@ -899,8 +899,8 @@ xiv.ViewBoxManager.prototype.resetDragDropGroup_ = function() {
     // Add the items to the dragDropGroup_s.
     //------------------
     this.loop(function(ViewBox) {
-	this.dragDropGroup_.addItem(this.dragDropHandles_[ViewBox.element.id]);
-	this.dragDropTargets.addItem(ViewBox.element);
+	this.dragDropGroup_.addItem(this.dragDropHandles_[ViewBox.getElement().id]);
+	this.dragDropTargets.addItem(ViewBox.getElement());
     }.bind(this))
 
 
@@ -925,7 +925,7 @@ xiv.ViewBoxManager.prototype.resetDragDropGroup_ = function() {
     //------------------
     // google.fx.dragDropGroup_ inherited function
     // to create a dragElement (a childless clone 
-    // of the xiv.ViewBox.element).
+    // of the xiv.ViewBox.getElement()).
     //------------------
     this.dragDropGroup_.createDragElement = function(sourceElt) {
 	var dragElement = this.makeDragClone_(goog.dom.getElement(sourceElt.ViewBoxId));
@@ -957,11 +957,11 @@ xiv.ViewBoxManager.prototype.dragStart_ = function(event) {
     
     this.ViewBoxPositions_ = /**@type {<Object.<string, Object>}*/{};
     this.loop(function(ViewBox){
-	this.ViewBoxPositions_[ViewBox.element.id] = {
-	    'absolute': utils.style.absolutePosition(ViewBox.element),
-	    'relative': utils.style.dims(ViewBox.element)
+	this.ViewBoxPositions_[ViewBox.getElement().id] = {
+	    'absolute': utils.style.absolutePosition(ViewBox.getElement()),
+	    'relative': utils.style.dims(ViewBox.getElement())
 	}
-	this.dragDropHandles_[ViewBox.element.id].style.visibility = 'hidden';
+	this.dragDropHandles_[ViewBox.getElement().id].style.visibility = 'hidden';
     }.bind(this))
 }
 
@@ -995,8 +995,8 @@ xiv.ViewBoxManager.prototype.makeDragClone_ = function(ViewBoxElement, opt_paren
  */
 xiv.ViewBoxManager.prototype.updateDragDropHandles = function() {
     this.loop(function(ViewBox){
-	var ViewBoxDims = utils.style.dims(ViewBox.element);
-	var dragDropHandle = this.dragDropHandles_[ViewBox.element.id];
+	var ViewBoxDims = utils.style.dims(ViewBox.getElement());
+	var dragDropHandle = this.dragDropHandles_[ViewBox.getElement().id];
 	utils.style.setStyle(dragDropHandle, {'left': ViewBoxDims['left'], 'top': ViewBoxDims['top']});
     }.bind(this))
 }
@@ -1010,9 +1010,9 @@ xiv.ViewBoxManager.prototype.updateDragDropHandles = function() {
  */
 xiv.ViewBoxManager.prototype.dragOver_ = function(event) {
 
-    if (event.dropTargetItem.element.id !== event.dragSourceItem.currentDragElement_.ViewBoxId) {
+    if (event.dropTargetItem.getElement().id !== event.dragSourceItem.currentDragElement_.ViewBoxId) {
 	var ViewBoxElementA = goog.dom.getElement(event.dragSourceItem.currentDragElement_.ViewBoxId);
-	var ViewBoxElementB = goog.dom.getElement(event.dropTargetItem.element.id);
+	var ViewBoxElementB = goog.dom.getElement(event.dropTargetItem.getElement().id);
 
 	this.swap(ViewBoxElementA, ViewBoxElementB);
 	
@@ -1099,7 +1099,7 @@ xiv.ViewBoxManager.prototype.dragEnd_ = function(event) {
     // Show dragDropHandles_
     //
     this.loop(function(ViewBox){
-	this.dragDropHandles_[ViewBox.element.id].style.visibility = 'visible';	
+	this.dragDropHandles_[ViewBox.getElement().id].style.visibility = 'visible';	
     }.bind(this))
 }
 

@@ -11,6 +11,7 @@ goog.require('goog.events');
 
 // utils
 goog.require('utils.dom');
+goog.require('utils.events.EventManager');
 
 
 
@@ -26,14 +27,16 @@ goog.require('utils.dom');
  */
 goog.provide('utils.ui.GenericSlider');
 utils.ui.GenericSlider = function (opt_args) {	 
-
     goog.base(this);
 	
 
-    //------------------
-    // Set orientation
-    //------------------
-    this.setOrientation('vertical');
+
+    /**
+     * @type {!Element}
+     * @protected
+     */
+    this.element = utils.dom.makeElement('div', document.body, "utils.ui.GenericSlider_Widget");
+    this.decorate(this.element); // Applies the 'Slider' properties to the element
 
 
 
@@ -41,44 +44,8 @@ utils.ui.GenericSlider = function (opt_args) {
      * @type {!Element}
      * @private
      */
-    this.element_ = utils.dom.makeElement('div', document.body, "utils.ui.GenericSlider_Widget");
-    this.decorate(this.element_); // Applies the 'Slider' properties to the element
-
-
-
-    /**
-     * @type {!Element}
-     * @private
-     */
-    this.track_ = utils.dom.makeElement("div", this.element_, "utils.ui.GenericSlider_Track");
+    this.track_ = utils.dom.makeElement("div", this.element, "utils.ui.GenericSlider_Track");
 		
-
-
-    /**
-     * @private
-     * @type {!boolean}
-     */ 
-    this.suspendOnSlide_ = false;
-
-
-
-
-    /**
-     * @return {Array.<function>}
-     * @private
-     */	
-    this.onSlide_ = [];
-
-
-
-
-    /**
-     * @return {Array.<function>}
-     * @private
-     */	
-    this.onMouseWheel_ = [];
-
-
 
     /**
      * @param {!Array.<goog.events.MouseWheelHandler>}
@@ -88,58 +55,53 @@ utils.ui.GenericSlider = function (opt_args) {
 
 
 
+    /**
+     * @param {!utils.events.EventManager}
+     * @protected
+     */ 
+    this.EventManager = new utils.events.EventManager(utils.ui.GenericSlider.EventType);
 
-    //------------------
-    // Find the thumbnail because it's not overtly given.
-    //------------------
-    var children = goog.dom.getChildren(this.element_)
-    for (var i=0, len = children.length; i < len; i++) {
-	if (children[i].className === 'goog-slider-thumb') {
 
-	    /**
-	     * @type {!Element}
-	     * @private
-	     */
-	    this.thumb_ = children[i];
-	    break;
-	}		
-    }
+
+    /**
+     * @type {!Element}
+     * @private
+     */
+    this.thumb_ = this.findThumbElement_();
 
 
     
-    //------------------
-    // Define the onSlide master function.
-    //------------------
-    utils.ui.GenericSlider.superClass_.addEventListener.call(this, goog.ui.Component.EventType.CHANGE, function (e) {
-	utils.dom.stopPropagation(e);
-	goog.array.forEach(this.onSlide_, function(callback){ 
-	    if (!this.suspendOnSlide_) { callback(e); } 
-	}.bind(this))
-    }.bind(this));	    
-
-
-
-
-    //------------------
-    // Set CSS
-    //------------------
-    var orientationLower = this.getOrientation().toLowerCase();
-    goog.dom.classes.add(this.element_, goog.getCssName(utils.ui.GenericSlider.ELEMENT_CLASS_PREFIX,  orientationLower));
-    goog.dom.classes.add(this.track_,   goog.getCssName(utils.ui.GenericSlider.TRACK_CLASS_PREFIX, orientationLower));
-    goog.dom.classes.add(this.thumb_,   goog.getCssName(utils.ui.GenericSlider.THUMB_CLASS_PREFIX,  orientationLower));
+    //
+    // Other init calls.
+    //
+    this.initEvents_();
+    this.setOrientation(this.getOrientation().toLowerCase());
 }
 goog.inherits(utils.ui.GenericSlider, goog.ui.Slider);	
+goog.exportSymbol('utils.ui.GenericSlider', utils.ui.GenericSlider);	
 
 
 
 
+/**
+ * Event types.
+ * @enum {string}
+ */
+utils.ui.GenericSlider.EventType = {
+  SLIDE: goog.events.getUniqueId('slide'),
+  MOUSEWHEEL: goog.events.getUniqueId('mousewheel'),
+};
 
-utils.ui.GenericSlider.CSS_CLASS_PREFIX = /**@type {string} @expose @const*/ goog.getCssName('utils-ui-genericslider');
-utils.ui.GenericSlider.ELEMENT_CLASS_PREFIX = /**@type {string} @expose @const*/ utils.ui.GenericSlider.CSS_CLASS_PREFIX;
-utils.ui.GenericSlider.TRACK_CLASS_PREFIX = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.GenericSlider.CSS_CLASS_PREFIX, 'track');
-utils.ui.GenericSlider.THUMB_CLASS_PREFIX = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.GenericSlider.CSS_CLASS_PREFIX, 'thumb');
-utils.ui.GenericSlider.THUMB_HOVERED_BORDER_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.GenericSlider.THUMB_CLASS_PREFIX, 'hovered-border');
-utils.ui.GenericSlider.THUMB_HOVERED_COLOR_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.GenericSlider.THUMB_CLASS_PREFIX, 'hovered-color');
+
+
+
+/**
+ * @return {!utils.events.EventManager} The event manager for the slider..
+ * @public
+ */
+utils.ui.GenericSlider.prototype.getEventManager = function(){
+    return this.EventManager;
+}
 
 
 
@@ -149,7 +111,7 @@ utils.ui.GenericSlider.THUMB_HOVERED_COLOR_CLASS = /**@type {string} @expose @co
  * @public
  */
 utils.ui.GenericSlider.prototype.getElement = function(){
-    return this.element_;
+    return this.element;
 }
 
 
@@ -176,63 +138,6 @@ utils.ui.GenericSlider.prototype.getThumb = function(){
 
 
 /**
- * Adds a 'callback' method to the slide event of the
- * slider.
- *
- * @param {!function} callback The callback function to add.
- * @public
- */	
-utils.ui.GenericSlider.prototype.onSlide = function (callback) {
-    this.onSlide_.push( function(event){ callback(this, event)})
-}
-
-
-
-
-
-
-/**
- * Adds a 'callback' method to the mousewheel event of the
- * slider.  It should be noted that 'bindToMouseWheel' needs
- * to be applied to an element before this function gets called.
- *
- * @param {!function} callback The callback function to add.
- * @public
- */	
-utils.ui.GenericSlider.prototype.onMouseWheel = function (callback) {
-    this.onMouseWheel_.push( function(event){ callback(this, event)})
-}
-
-
-
-
-
-/**
- * Gives the user the option to suspend the 'onSlide' callbacks
- * when the argument is 'true'.
- * 
- * @param {!boolean} suspend 'true' to suspend the onSlide, 'false' to allow them.
- * @public
- */ 
-utils.ui.GenericSlider.prototype.suspendOnSlide = function(suspend){
-    this.suspendOnSlide_ = suspend;
-};
-
-
-
-
-/**
- * Clears the onSlide callbacks.
- */ 
-utils.ui.GenericSlider.prototype.clearOnSlide = function(suspend){
-    this.onSlide_ = [];
-};
-
-
-
-
-
-/**
  * Runs the callbacks and manages the mousewheel events when 
  * detected over the mousewheel elements contained within the
  * MouseWheelHandlers_ variable.
@@ -242,9 +147,7 @@ utils.ui.GenericSlider.prototype.clearOnSlide = function(suspend){
  */
 utils.ui.GenericSlider.prototype.onMouseWheelScroll_ = function (event) {
     this.setValue(Math.round(this.getValue() + event.deltaY / 3));
-    goog.array.forEach(this.onMouseWheel_, function(callback){ 
-	callback() 
-    })
+    this.EventManager.runEvent('MOUSEWHEEL');
     event.preventDefault();
 }
 
@@ -267,7 +170,7 @@ utils.ui.GenericSlider.prototype.bindToMouseWheel = function (element, opt_callb
 	this.MouseWheelHandlers_ = [];
     }
     if (opt_callback){
-	this.onMouseWheel(opt_callback);
+	this.EventManager.onEvent('MOUSEWHEEL', opt_callback);
     }
     this.MouseWheelHandlers_.push(mouseWheelHandler);
 }
@@ -281,12 +184,14 @@ utils.ui.GenericSlider.prototype.bindToMouseWheel = function (element, opt_callb
  * @public
  */
 utils.ui.GenericSlider.prototype.updateStyle = function () {
-    this.suspendOnSlide(true);
+    this.EventManager.setEventSuspended('SLIDE', true);
+
     var pos = this.getValue();
     if (pos < this.getMaximum()) this.setValue(pos + 1);
     else this.setValue(pos - 1);
     this.setValue(pos);    
-    this.suspendOnSlide(false);
+
+    this.EventManager.setEventSuspended('SLIDE', false);
 }
 
 
@@ -335,14 +240,71 @@ utils.ui.GenericSlider.prototype.setThumbHoverClass = function(className) {
 
 
 
+/**
+ * Changes the orientation and applies the CSS properties associated with
+ * the orientation.
+ *
+ * @param {goog.ui.SliderBase.Orientation} orient The orientation.
+ */
+utils.ui.GenericSlider.prototype.setOrientation = function(orient) {
+    goog.base(this, 'setOrientation', orient);	  
 
-goog.exportSymbol('utils.ui.GenericSlider', utils.ui.GenericSlider);
-goog.exportSymbol('utils.ui.GenericSlider.prototype.getElement', utils.ui.GenericSlider.prototype.getElement);
-goog.exportSymbol('utils.ui.GenericSlider.prototype.getTrack', utils.ui.GenericSlider.prototype.getTrack);
-goog.exportSymbol('utils.ui.GenericSlider.prototype.getThumb', utils.ui.GenericSlider.prototype.getThumb);
-goog.exportSymbol('utils.ui.GenericSlider.prototype.onSlide', utils.ui.GenericSlider.prototype.onSlide);
-goog.exportSymbol('utils.ui.GenericSlider.prototype.onMouseWheel', utils.ui.GenericSlider.prototype.onMouseWheel);
-goog.exportSymbol('utils.ui.GenericSlider.prototype.suspendOnSlide', utils.ui.GenericSlider.prototype.suspendOnSlide);
-goog.exportSymbol('utils.ui.GenericSlider.prototype.bindToMouseWheel', utils.ui.GenericSlider.prototype.bindToMouseWheel);
-goog.exportSymbol('utils.ui.GenericSlider.prototype.updateStyle', utils.ui.GenericSlider.prototype.updateStyle);
-goog.exportSymbol('utils.ui.GenericSlider.prototype.setThumbHoverClass', utils.ui.GenericSlider.prototype.setThumbHoverClass);
+    var orientationLower = this.getOrientation().toLowerCase();
+    goog.dom.classes.add(this.element, 
+			 goog.getCssName(utils.ui.GenericSlider.ELEMENT_CLASS_PREFIX,  
+					 orientationLower));
+    goog.dom.classes.add(this.track_,   
+			 goog.getCssName(utils.ui.GenericSlider.TRACK_CLASS_PREFIX, 
+					 orientationLower));
+    goog.dom.classes.add(this.thumb_,   
+			 goog.getCssName(utils.ui.GenericSlider.THUMB_CLASS_PREFIX,  
+					 orientationLower));  
+}
+
+
+
+
+
+/**
+ * Initializes the change event to the custom 'SLIDE' event.
+ */
+utils.ui.GenericSlider.prototype.initEvents_ = function() {
+    utils.ui.GenericSlider.superClass_.addEventListener.call(this, goog.ui.Component.EventType.CHANGE, function (e) {
+	utils.dom.stopPropagation(e);
+	this.EventManager.runEvent('SLIDE');
+    }.bind(this));	    
+}
+
+
+
+
+
+/**
+ * Finds the thumbnail element associated with the parent class.
+ * This exists because it's not overtly provided in the 
+ * inheritance.
+ *
+ * @return {!Element} The thumbnail element.
+ */
+utils.ui.GenericSlider.prototype.findThumbElement_ = function() {
+    var children = goog.dom.getChildren(this.element);
+    for (var i=0, len = children.length; i < len; i++) {
+	if (children[i].className === 'goog-slider-thumb') {
+	    return children[i];
+	}		
+    }
+}
+
+
+
+utils.ui.GenericSlider.CSS_CLASS_PREFIX = /**@type {string} @expose @const*/ goog.getCssName('utils-ui-genericslider');
+utils.ui.GenericSlider.ELEMENT_CLASS_PREFIX = /**@type {string} @expose @const*/ utils.ui.GenericSlider.CSS_CLASS_PREFIX;
+utils.ui.GenericSlider.TRACK_CLASS_PREFIX = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.GenericSlider.CSS_CLASS_PREFIX, 'track');
+utils.ui.GenericSlider.THUMB_CLASS_PREFIX = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.GenericSlider.CSS_CLASS_PREFIX, 'thumb');
+utils.ui.GenericSlider.THUMB_HOVERED_BORDER_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.GenericSlider.THUMB_CLASS_PREFIX, 'hovered-border');
+utils.ui.GenericSlider.THUMB_HOVERED_COLOR_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.GenericSlider.THUMB_CLASS_PREFIX, 'hovered-color');
+
+
+
+
+

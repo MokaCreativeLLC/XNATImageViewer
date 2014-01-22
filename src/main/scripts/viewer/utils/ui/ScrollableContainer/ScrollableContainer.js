@@ -35,7 +35,7 @@ utils.ui.ScrollableContainer = function (opt_args) {
      * @type {!Element}
      * @private
      */
-    this.element_ = utils.dom.makeElement("div", 
+    this.element = utils.dom.makeElement("div", 
 					  document.body, 
 					  "ScrollableContainer");
 
@@ -47,7 +47,7 @@ utils.ui.ScrollableContainer = function (opt_args) {
      * @private
      */
     this.scrollArea_ = utils.dom.makeElement("div", 
-					     this.element_, 
+					     this.element, 
 					     "ScrollArea");
 
 
@@ -58,7 +58,8 @@ utils.ui.ScrollableContainer = function (opt_args) {
      * @private
      */
     this.Slider_ = new utils.ui.GenericSlider();
-    this.element_.appendChild(this.Slider_.getElement());
+    this.Slider_.setOrientation('vertical');
+    this.element.appendChild(this.Slider_.getElement());
     
 
 
@@ -101,15 +102,15 @@ utils.ui.ScrollableContainer = function (opt_args) {
     //------------------
     // Set Slider UI and callbacks
     //------------------
-    this.Slider_.onSlide(this.mapSliderToContents.bind(this));  
-    this.Slider_.bindToMouseWheel(this.element_);
+    this.Slider_.getEventManager().onEvent('SLIDE', this.mapSliderToContents.bind(this));  
+    this.Slider_.bindToMouseWheel(this.element);
 
     
 
     //------------------
     // Set style - the container.
     //------------------
-    goog.dom.classes.set(this.element_, utils.ui.ScrollableContainer.ELEMENT_CLASS);
+    goog.dom.classes.set(this.element, utils.ui.ScrollableContainer.ELEMENT_CLASS);
     goog.dom.classes.set(this.scrollArea_, utils.ui.ScrollableContainer.SCROLL_AREA_CLASS);
 
 
@@ -161,45 +162,6 @@ utils.ui.ScrollableContainer.contentsStruct = function(header, headerLabel, expa
 
 
 
-utils.ui.ScrollableContainer.CSS_CLASS_PREFIX = /**@type {!string} @expose @const*/ 
-goog.getCssName('utils-ui-scrollablecontainer');
-utils.ui.ScrollableContainer.ELEMENT_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, '');
-utils.ui.ScrollableContainer.SCROLL_AREA_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'scrollarea');
-utils.ui.ScrollableContainer.SLIDER_ELEMENT_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'slider-widget');
-utils.ui.ScrollableContainer.SLIDER_THUMB_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'slider-thumb');
-utils.ui.ScrollableContainer.SLIDER_THUMB_HOVERED_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'slider-thumb-hovered');
-utils.ui.ScrollableContainer.SLIDER_TRACK_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'slider-track');
-utils.ui.ScrollableContainer.ZIPPY_HEADER_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyheader');
-utils.ui.ScrollableContainer.ZIPPY_HEADER_SUB_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyheader-sub');
-utils.ui.ScrollableContainer.ZIPPY_HEADER_LABEL_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyheaderlabel');
-utils.ui.ScrollableContainer.ZIPPY_HEADER_LABEL_SUB_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyheaderlabel-sub');
-utils.ui.ScrollableContainer.ZIPPY_ICON_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyexpandicon');
-utils.ui.ScrollableContainer.ZIPPY_ICON_SUB_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyexpandicon-sub');
-utils.ui.ScrollableContainer.ZIPPY_CONTENT_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippycontent');
-utils.ui.ScrollableContainer.ZIPPY_CONTENT_SUB_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippycontent-sub');
-utils.ui.ScrollableContainer.ZIPPY_HEADER_MOUSEOVER_CLASS = /**@type {!string} @expose @const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyheader-mouseover');
-utils.ui.ScrollableContainer.ZIPPY_ICON_MOUSEOVER_CLASS = /**@type {!string} @expose const*/ 
-goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyexpandicon-mouseover');
-
-
-
-
-
 /**
  * This function needs to be called before contents are set.
  *
@@ -219,7 +181,7 @@ utils.ui.ScrollableContainer.prototype.setZippysAnimated = function(animated){
  * @public
  */
 utils.ui.ScrollableContainer.prototype.getElement = function(){
-    return this.element_;
+    return this.element;
 }
 
 
@@ -257,7 +219,7 @@ utils.ui.ScrollableContainer.prototype.getContentsDict = function(){
  */
 utils.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 
-    var widgetHeight = utils.style.dims(this.element_, 'height');
+    var widgetHeight = utils.style.dims(this.element, 'height');
     var scrollAreaHeight = utils.convert.toInt(utils.style.getComputedStyle(this.scrollArea_, 'height'));
     var beforeRange = [this.Slider_.getMinimum(), this.Slider_.getMaximum()];
     var afterRange = [0, scrollAreaHeight - widgetHeight];
@@ -313,7 +275,7 @@ utils.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
  * @param {Object=} opt_args
  */
 utils.ui.ScrollableContainer.prototype.updateStyle = function (opt_args) {
-    if (opt_args) { utils.style.setStyle(this.element_, opt_args) }
+    if (opt_args) { utils.style.setStyle(this.element, opt_args) }
 }
 
 
@@ -724,8 +686,8 @@ utils.ui.ScrollableContainer.prototype.addContents = function (contents, opt_par
 
 	// When there's no zippy parent folder, we set the height
 	// of the main element_ to the scroll area.
-	if (utils.style.dims(this.element_, 'height') === 0 && opt_parent === this.scrollArea_){
-	    utils.style.setStyle(this.element_, {'height': utils.style.dims(this.scrollArea_, 'height')});
+	if (utils.style.dims(this.element, 'height') === 0 && opt_parent === this.scrollArea_){
+	    utils.style.setStyle(this.element, {'height': utils.style.dims(this.scrollArea_, 'height')});
 	}
 
 	// Allows user to move the contents when sliding the slider.
@@ -783,21 +745,37 @@ utils.ui.ScrollableContainer.prototype.addContents = function (contents, opt_par
 
 
 
-
-goog.exportSymbol('utils.ui.ScrollableContainer', utils.ui.ScrollableContainer)
-goog.exportSymbol('utils.ui.ScrollableContainer.contentsDict', utils.ui.ScrollableContainer.contentsDict);
-goog.exportSymbol('utils.ui.ScrollableContainer.contentsStruct', utils.ui.ScrollableContainer.contentsStruct);
-goog.exportSymbol('utils.ui.ScrollableContainer.prototype.getElement', utils.ui.ScrollableContainer.prototype.getElement);
-goog.exportSymbol('utils.ui.ScrollableContainer.prototype.getSlider', utils.ui.ScrollableContainer.prototype.getSlider);
-goog.exportSymbol('utils.ui.ScrollableContainer.prototype.getContentsDict', utils.ui.ScrollableContainer.prototype.getContentsDict);
-goog.exportSymbol('utils.ui.ScrollableContainer.prototype.mapSliderToContents', utils.ui.ScrollableContainer.prototype.mapSliderToContents);
-goog.exportSymbol('utils.ui.ScrollableContainer.prototype.updateStyle', utils.ui.ScrollableContainer.prototype.updateStyle);
-goog.exportSymbol('utils.ui.ScrollableContainer.prototype.setZippyExpanded', utils.ui.ScrollableContainer.prototype.setZippyExpanded);
-goog.exportSymbol('utils.ui.ScrollableContainer.prototype.setZippysExpanded', utils.ui.ScrollableContainer.prototype.setZippysExpanded);
-goog.exportSymbol('utils.ui.ScrollableContainer.prototype.bindToMouseWheel', utils.ui.ScrollableContainer.prototype.bindToMouseWheel);
-goog.exportSymbol('utils.ui.ScrollableContainer.prototype.getDepth', utils.ui.ScrollableContainer.prototype.getDepth);
-goog.exportSymbol('utils.ui.ScrollableContainer.prototype.getNodeIndentation', utils.ui.ScrollableContainer.prototype.getNodeIndentation);
-goog.exportSymbol('utils.ui.ScrollableContainer.prototype.setIndentationByDepth', utils.ui.ScrollableContainer.prototype.setIndentationByDepth);
-goog.exportSymbol('utils.ui.ScrollableContainer.prototype.zippyExists', utils.ui.ScrollableContainer.prototype.zippyExists);
-goog.exportSymbol('utils.ui.ScrollableContainer.prototype.addZippy', utils.ui.ScrollableContainer.prototype.addZippy);
-goog.exportSymbol('utils.ui.ScrollableContainer.prototype.addContents', utils.ui.ScrollableContainer.prototype.addContents);
+utils.ui.ScrollableContainer.CSS_CLASS_PREFIX = /**@type {!string} @expose @const*/ 
+goog.getCssName('utils-ui-scrollablecontainer');
+utils.ui.ScrollableContainer.ELEMENT_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, '');
+utils.ui.ScrollableContainer.SCROLL_AREA_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'scrollarea');
+utils.ui.ScrollableContainer.SLIDER_ELEMENT_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'slider-widget');
+utils.ui.ScrollableContainer.SLIDER_THUMB_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'slider-thumb');
+utils.ui.ScrollableContainer.SLIDER_THUMB_HOVERED_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'slider-thumb-hovered');
+utils.ui.ScrollableContainer.SLIDER_TRACK_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'slider-track');
+utils.ui.ScrollableContainer.ZIPPY_HEADER_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyheader');
+utils.ui.ScrollableContainer.ZIPPY_HEADER_SUB_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyheader-sub');
+utils.ui.ScrollableContainer.ZIPPY_HEADER_LABEL_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyheaderlabel');
+utils.ui.ScrollableContainer.ZIPPY_HEADER_LABEL_SUB_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyheaderlabel-sub');
+utils.ui.ScrollableContainer.ZIPPY_ICON_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyexpandicon');
+utils.ui.ScrollableContainer.ZIPPY_ICON_SUB_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyexpandicon-sub');
+utils.ui.ScrollableContainer.ZIPPY_CONTENT_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippycontent');
+utils.ui.ScrollableContainer.ZIPPY_CONTENT_SUB_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippycontent-sub');
+utils.ui.ScrollableContainer.ZIPPY_HEADER_MOUSEOVER_CLASS = /**@type {!string} @expose @const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyheader-mouseover');
+utils.ui.ScrollableContainer.ZIPPY_ICON_MOUSEOVER_CLASS = /**@type {!string} @expose const*/ 
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippyexpandicon-mouseover');

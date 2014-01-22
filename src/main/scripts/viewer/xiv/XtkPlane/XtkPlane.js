@@ -143,17 +143,6 @@ goog.exportSymbol('xiv.XtkPlane', xiv.XtkPlane);
 
 
 
-xiv.XtkPlane.CSS_CLASS_PREFIX =  /**@type {string} @const*/ goog.getCssName('xiv-xtkplane');
-xiv.XtkPlane.ELEMENT_CLASS =  /**@type {string} @const*/  goog.getCssName(xiv.XtkPlane.CSS_CLASS_PREFIX, '');
-xiv.XtkPlane.INDEXBOX_CLASS =  /**@type {string} @const*/ goog.getCssName(xiv.XtkPlane.CSS_CLASS_PREFIX, 'indexbox');
-xiv.XtkPlane.SLIDER_CLASS =  /**@type {string} @const*/ goog.getCssName(xiv.XtkPlane.CSS_CLASS_PREFIX, 'slider-widget');
-xiv.XtkPlane.SLIDER_THUMB_CLASS =  /**@type {string} @const*/ goog.getCssName(xiv.XtkPlane.CSS_CLASS_PREFIX, 'slider-thumb');
-xiv.XtkPlane.SLIDER_THUMB_HOVERED_CLASS =  /**@type {string} @const*/ goog.getCssName(xiv.XtkPlane.CSS_CLASS_PREFIX, 'slider-thumb-hovered');
-xiv.XtkPlane.SLIDER_TRACK_CLASS =  /**@type {string} @const*/ goog.getCssName(xiv.XtkPlane.CSS_CLASS_PREFIX, 'slider-track');
-
-
-
-
 /**
  * This exists so that governing classes
  * know what axis this ViewPlane represents.
@@ -290,7 +279,7 @@ xiv.XtkPlane.prototype.resetSlider = function() {
     //------------------
     // Clear slider callbacks.
     //------------------
-    this.Slider_.clearOnSlide();
+    this.Slider_.getEventManager().clearEvent('SLIDE');
 
 
 
@@ -302,7 +291,7 @@ xiv.XtkPlane.prototype.resetSlider = function() {
     // have to create two separate listers: one on the slider
     // and one on the Xtk plane.
     //------------------
-    this.Slider_.onSlide(function() { 
+    this.Slider_.getEventManager().onEvent('SLIDE', function() { 
 	var currVol = that.getCurrVolume();
 	var planeSlices = currVol['_slices' + that.id_.toUpperCase()]['_children'].length;
 	if (!currVol) return;
@@ -414,3 +403,14 @@ xiv.XtkPlane.prototype.updateStyle = function (opt_args) {
     }
 
 }
+
+
+
+
+xiv.XtkPlane.CSS_CLASS_PREFIX =  /**@type {string} @const*/ goog.getCssName('xiv-xtkplane');
+xiv.XtkPlane.ELEMENT_CLASS =  /**@type {string} @const*/  goog.getCssName(xiv.XtkPlane.CSS_CLASS_PREFIX, '');
+xiv.XtkPlane.INDEXBOX_CLASS =  /**@type {string} @const*/ goog.getCssName(xiv.XtkPlane.CSS_CLASS_PREFIX, 'indexbox');
+xiv.XtkPlane.SLIDER_CLASS =  /**@type {string} @const*/ goog.getCssName(xiv.XtkPlane.CSS_CLASS_PREFIX, 'slider-widget');
+xiv.XtkPlane.SLIDER_THUMB_CLASS =  /**@type {string} @const*/ goog.getCssName(xiv.XtkPlane.CSS_CLASS_PREFIX, 'slider-thumb');
+xiv.XtkPlane.SLIDER_THUMB_HOVERED_CLASS =  /**@type {string} @const*/ goog.getCssName(xiv.XtkPlane.CSS_CLASS_PREFIX, 'slider-thumb-hovered');
+xiv.XtkPlane.SLIDER_TRACK_CLASS =  /**@type {string} @const*/ goog.getCssName(xiv.XtkPlane.CSS_CLASS_PREFIX, 'slider-track');

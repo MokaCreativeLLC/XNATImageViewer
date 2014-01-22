@@ -70,7 +70,7 @@ xiv.XtkPlaneManager = function(xtkDisplayer) {
     // Set the plane parentNodes
     //--------------
     goog.array.forEach(this.xtkPlanes_, function(xtkPlane){
-	xtkPlane.setElementParentNode(xtkDisplayer.element);
+	xtkPlane.setElementParentNode(xtkDisplayer.getElement());
     })
     
 
@@ -251,7 +251,7 @@ xiv.XtkPlaneManager.prototype.setBackgroundColor = function (planeName, args) {
 		// The mrml puts the last number as the top of the gradient
 		//
 		var gradientStr = 'linear-gradient(' +  bgColors[1] + "," +  bgColors[0] + ')';
-		xtkPlane.element.setAttribute('originalbackgroundcolor', gradientStr);
+		xtkPlane.getElement().setAttribute('originalbackgroundcolor', gradientStr);
 	    }
 
 	} 
@@ -286,7 +286,7 @@ xiv.XtkPlaneManager.prototype.getCameraSettings = function () {
 xiv.XtkPlaneManager.prototype.getXtkPlaneFromElement = function(elt) {
     
     var xtkvp = undefined;
-    this.loopAll(function(xtkPlane){ if (elt === xtkPlane.element) { xtkvp = xtkPlane; }});
+    this.loopAll(function(xtkPlane){ if (elt === xtkPlane.getElement()) { xtkvp = xtkPlane; }});
     return xtkvp;
 }
 
@@ -301,7 +301,7 @@ xiv.XtkPlaneManager.prototype.getXtkPlaneFromElement = function(elt) {
 */
 xiv.XtkPlaneManager.prototype.getXtkPlaneElements = function() {
     var elts = {};
-    this.loopAll(function(xtkPlane){ elts[xtkPlane.id_] = xtkPlane.element });
+    this.loopAll(function(xtkPlane){ elts[xtkPlane.id_] = xtkPlane.getElement() });
     return elts;
 }
 

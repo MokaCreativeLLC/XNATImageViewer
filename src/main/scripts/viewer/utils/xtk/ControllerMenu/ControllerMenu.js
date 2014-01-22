@@ -936,8 +936,9 @@ utils.xtk.ControllerMenu.prototype.makeSliderRow = function(labelTitle, callback
     // Need to differentiate between callbacks from the two thumb slider
     // and the slider
     //
-    if (slider.onSlide){
-	slider.onSlide(slideCallback);
+    if (slider.getEventManager){
+	slider.getEventManager().onEvent('SLIDE', slideCallback);
+
     } else {
 	goog.events.listen(slider, goog.ui.Component.EventType.CHANGE, slideCallback);
     }

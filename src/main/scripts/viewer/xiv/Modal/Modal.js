@@ -498,21 +498,21 @@ xiv.Modal.prototype.addManagers_ = function(){
     // Highlight the ViewBox when hovering over 
     // its Thumbnail in the Scroll Gallery
     //------------------
-     this.ThumbnailManager_.onMouseOver = function(Thumbnail){
+     this.ThumbnailManager_.getEventManager().onEvent('MOUSEOVER', function(Thumbnail){
 	this.ViewBoxManager_.loop(function(ViewBox){
 	    if (ViewBox.Thumbnail === Thumbnail){
 		ViewBox.element.style.borderColor = 'white';
 	    }
 	})	
-    }.bind(this)
+    }.bind(this))
 
-    this.ThumbnailManager_.onMouseOut = function(Thumbnail){;
+    this.ThumbnailManager_.getEventManager().onEvent('MOUSEOUT', function(Thumbnail){;
 	this.ViewBoxManager_.loop(function(ViewBox){
 	    if (ViewBox.Thumbnail === Thumbnail && ViewBox.loadState !== 'loading'){
 		ViewBox.element.style.borderColor = ViewBox.element.getAttribute('originalbordercolor');	
 	    }
 	})
-    }.bind(this)
+    }.bind(this))
 
 
 
@@ -543,13 +543,17 @@ xiv.Modal.prototype.addManagers_ = function(){
  * @private
  */
 xiv.Modal.prototype.setThumbnailCallbacks_ = function(){
-    this.ThumbnailManager_.addDropCallback(function(viewBoxElement, thumbnailElement) {
+
+    this.ThumbnailManager_.getEventManager().onEvent('THUMBNAILDROP', function(viewBoxElement, thumbnailElement) {
+
+	window.console.log("thumb drop!", viewBoxElement, thumbnailElement);
 	var _ViewBox = this.ViewBoxManager_.getViewBoxByElement(viewBoxElement);
 	var _Thumb = this.ThumbnailManager_.getThumbnailByElement(thumbnailElement);
 	_ViewBox.loadThumbnail(_Thumb);
     }.bind(this)); 
 
-    this.ThumbnailManager_.addClickCallback(function(_Thumb) {
+    this.ThumbnailManager_.getEventManager().onEvent('THUMBNAILCLICK', function(_Thumb) {
+	window.console.log("THCUA", _Thumb);
 	this.ViewBoxManager_.getFirstEmpty().loadThumbnail(_Thumb);
     }.bind(this));
 }

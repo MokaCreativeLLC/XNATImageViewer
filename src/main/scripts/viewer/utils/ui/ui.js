@@ -3,19 +3,7 @@
  */
 
 /**
- * Google closure indcludes
- */
-
-/**
- * utils indcludes
- */
-
-/**
- * viewer-widget includes
- */
-
-/**
- * Placeholder parent class of utils.ui objects.
+ * Parent class of utils.ui objects.
  *
  * @constructor
  */

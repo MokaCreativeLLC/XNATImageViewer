@@ -2,20 +2,16 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-/**
- * Google closure includes
- */
+// goog
 goog.require('goog.fx.DragDrop');
 goog.require('goog.fx.DragDropGroup');
 
-/**
- * utils includes
- */
+// utils
 goog.require('utils.array');
+goog.require('utils.events.EventManager');
 
-/**
- * viewer-widget includes
- */
+
+// xiv
 goog.require('xiv.Thumbnail');
 
 
@@ -27,72 +23,56 @@ goog.require('xiv.Thumbnail');
  * the xiv._Modal ckass to reference. 
  *
  * @constructor
+ * @extends {xiv.Widget}
  */
 goog.provide('xiv.ThumbnailManager');
 xiv.ThumbnailManager = function () {
-    this.initDragDrop();
-    this.dropCallbacks_ = [];
-    this.clickCallbacks_ = [];
+    
+    /**
+     * @type {!Array.<xiv.Thumbnail>}
+     * @private
+     */    
     this.thumbs_ = [];
 
-
+    
     /**
-     * @type {!Array.function}
+     * @type {?goog.fx.DragDropGroup}
      * @private
      */
-    this.onMouseOver_ = [];
+    this.thumbnailDragDropGroup_ = null;
+
+
 
 
     /**
-     * @type {!Array.function}
+     * @type {?goog.fx.DragDropGroup}
      * @private
      */
-    this.onMouseOut_ = [];
+    this.thumbnailTargetGroup_ = null;
+
+
+
+    //
+    // Other init functions
+    //
+    utils.events.addEventManager(this, xiv.ThumbnailManager.EventType);
+    this.initDragDrop();
 }
+goog.inherits(xiv.ThumbnailManager, xiv.Widget);
 goog.exportSymbol('xiv.ThumbnailManager', xiv.ThumbnailManager);
 
 
 
-
 /**
- * @type {?Array.<function>}
- * @private
+ * Event types.
+ * @enum {string}
  */
-xiv.ThumbnailManager.prototype.dropCallbacks_ = null;
-
-
-
-
-/**
- * @type {?Array.<function>}
- * @private
- */
-xiv.ThumbnailManager.prototype.clickCallbacks_ = null;
-
-
-
-
-/**
- * @type {?Array.<xiv.Thumbnail>}
- * @private
- */
-xiv.ThumbnailManager.prototype.thumbs_ = null;
-
-
-
-/**
- * @type {?goog.fx.DragDropGroup}
- * @private
- */
-this.thumbnailDragDropGroup_ = null;
-
-
-/**
- * @type {?goog.fx.DragDropGroup}
- * @private
- */
-this.thumbnailTargetGroup_ = null;
-
+xiv.ThumbnailManager.EventType = {
+  MOUSEOVER: goog.events.getUniqueId('mouseover'),
+  MOUSEOUT: goog.events.getUniqueId('mouseout'),
+  THUMBNAILCLICK: goog.events.getUniqueId('thumbnailclick'),
+  THUMBNAILDROP: goog.events.getUniqueId('thumbnaildrop'),
+};
 
 
 
@@ -125,6 +105,7 @@ xiv.ThumbnailManager.prototype.loop = function(opt_callback){
  * @private
  */
 xiv.ThumbnailManager.prototype.createDragElement_ = function(srcElt) {
+    window.console.log("CREATE DRAG ELEMENT");
     var srcElt = goog.dom.getAncestorByClass(srcElt, xiv.Thumbnail.CSS_CLASS_PREFIX);
     var originalThumbnail = goog.dom.getElement(srcElt.getAttribute('thumbnailid'));
     var Thumb = this.getThumbnailByElement(originalThumbnail);
@@ -201,13 +182,14 @@ xiv.ThumbnailManager.prototype.dragEnd_ = function (event) {
     //*************************************************************
     if (dragThumbnail.dropTarget) {
 	var thumbDraggerFader = goog.dom.getElement('THUMBNAIL_DRAGGER_FADER');
-	utils.fx.fadeOutAndRemove(thumbDraggerFader, xiv.ANIM_MED, function(){
-	    delete thumbDraggerFader;	
-	})
-	goog.array.forEach(this.dropCallbacks_, function(callback) {
-	    callback(dragThumbnail.dropTarget, originalThumbnail);
-	    delete dragThumbnail.dropTarget;
- 	})
+	utils.fx.fadeOutAndRemove(thumbDraggerFader, 
+				  xiv.ANIM_MED, 
+				  function(){
+				      delete thumbDraggerFader;	
+				  })
+	this.EventManager.runEvent('THUMBNAILDROP', 
+				   dragThumbnail.dropTarget, 
+				   originalThumbnail);
     }
 }
 
@@ -261,6 +243,7 @@ xiv.ThumbnailManager.prototype.drop_ = function(event) {
  */
 xiv.ThumbnailManager.prototype.initDragDrop = function(){
 
+    window.console.log("INIT DRAG DROP");
     //------------------
     // Create Drag and drop Groups as 
     // per goog.fx.DragGroup.
@@ -273,23 +256,28 @@ xiv.ThumbnailManager.prototype.initDragDrop = function(){
     //------------------
     // Define the xiv.Thumbnail clone, for dragging.
     //------------------
-    this.thumbnailDragDropGroup_.createDragElement = this.createDragElement_.bind(this)
+    this.thumbnailDragDropGroup_.createDragElement = 
+	this.createDragElement_.bind(this);
 
 
 
     //------------------ 
     // Dragger events
     //------------------
-    goog.events.listen(this.thumbnailDragDropGroup_, 'dragover', this.dragOver_.bind(this));
-    goog.events.listen(this.thumbnailDragDropGroup_, 'dragend', this.dragEnd_.bind(this));
-    goog.events.listen(this.thumbnailDragDropGroup_, 'dragout', this.dragOut_.bind(this));
+    goog.events.listen(this.thumbnailDragDropGroup_, 
+		       'dragover', this.dragOver_.bind(this));
+    goog.events.listen(this.thumbnailDragDropGroup_, 
+		       'dragend', this.dragEnd_.bind(this));
+    goog.events.listen(this.thumbnailDragDropGroup_, 
+		       'dragout', this.dragOut_.bind(this));
 
 
 
     //------------------
     // target events
     //------------------
-    goog.events.listen(this.thumbnailTargetGroup_, 'drop', this.drop_.bind(this));
+    goog.events.listen(this.thumbnailTargetGroup_, 
+		       'drop', this.drop_.bind(this));
 
 
 
@@ -307,25 +295,6 @@ xiv.ThumbnailManager.prototype.initDragDrop = function(){
     this.thumbnailDragDropGroup_.init();
 
 }
-
-
-/**
-* @param {!function} callback
-* @public
-*/
-xiv.ThumbnailManager.prototype.__defineSetter__('onMouseOver', function(callback){
-    this.onMouseOver_.push(callback);
-})
-
-
-
-/**
-* @param {!function} callback
-* @public
-*/
-xiv.ThumbnailManager.prototype.__defineSetter__('onMouseOut', function(callback){
-    this.onMouseOut_.push(callback); 
-})
 
 
 
@@ -358,14 +327,13 @@ xiv.ThumbnailManager.prototype.add = function(thumbnail){
     // then highlight the view box that the 
     // thumbnail was dropped into when we hover over it.
     //------------------
-    goog.array.forEach(this.onMouseOver_, function(callback){
-	//window.console.log("MOUSE OVER CALLB", callback);
-	thumbnail.onMouseOver(callback);
+    this.EventManager.onEvent('MOUSEOVER', function(callback){
+	thumbnail.getEventManager().onEvent('MOUSEOVER', callback);
     }.bind(this))
 
-    goog.array.forEach(this.onMouseOut_, function(callback){
-	thumbnail.onMouseOut(callback);
-    }.bind(this))  
+    this.EventManager.onEvent('MOUSEOUT', function(callback){
+	thumbnail.getEventManager().onEvent('MOUSEOUT', callback);
+    }.bind(this))
 
 }
 
@@ -380,7 +348,7 @@ xiv.ThumbnailManager.prototype.add = function(thumbnail){
  * @param {xiv.Thumbnail}
  */
 xiv.ThumbnailManager.prototype.addDragDropSource = function(thumbnail){
-    var thumbElt = thumbnail.hoverNode;
+    var thumbElt = thumbnail.getHoverable();
     if (thumbElt) {
 	this.thumbnailDragDropGroup_.addItem(thumbElt);
     }
@@ -433,31 +401,6 @@ xiv.ThumbnailManager.prototype.addDragDropTargets = function(targetArr) {
 
 
 
-/**
- * Callback for when a drop occurs.
- *
- * @param {function}
- * @protected
- */
-xiv.ThumbnailManager.prototype.addDropCallback = function(callback) {
-    this.dropCallbacks_.push(callback);
-}
-
-
-
-
-/**
- * Callback for when a click occurs (same things as a drop).
- *
- * @param {function}
- * @protected
- */
-xiv.ThumbnailManager.prototype.addClickCallback = function(callback) {
-    this.clickCallbacks_.push(callback);
-}
-
-
-
 
 /**
  * Returns the xiv.Thumbnail class when the argument is its element. 
@@ -488,10 +431,9 @@ xiv.ThumbnailManager.prototype.makeThumbnail = function(xnatProperties, opt_addT
     var thumbnail = new xiv.Thumbnail(xnatProperties);
     if ((opt_addToManager === undefined) || (opt_addToManager === true)) { 
 	this.add(thumbnail);
-	thumbnail.onClick( function(){
-	    goog.array.forEach(this.clickCallbacks_, function(callback){
-		callback(thumbnail)
-	    })
+	thumbnail.getEventManager().onEvent('CLICK',  function(){
+	    window.console.log("THUM", thumbnail);
+	    this.EventManager.runEvent('THUMBNAILCLICK', thumbnail);
 	}.bind(this))
     }
     return thumbnail;

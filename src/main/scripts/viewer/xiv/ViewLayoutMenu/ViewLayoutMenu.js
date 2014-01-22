@@ -118,7 +118,7 @@ xiv.ViewLayoutMenu = function (viewLayouts) {
 	// Adjust MenuItem class for the
 	// image viewer's purposes.
 	//
-	var childNodes = goog.dom.getElementsByClass('goog-menuitem-content', this.menu_.element_);
+	var childNodes = goog.dom.getElementsByClass('goog-menuitem-content', this.menu_.getElement());
 	content = childNodes[i];
 	goog.dom.classes.add(content, xiv.ViewLayoutMenu.MENUITEM_CONTENT_CLASS);
 	content.title = title;
@@ -136,7 +136,7 @@ xiv.ViewLayoutMenu = function (viewLayouts) {
 	i++;
     }
     this.menu_.render(this.menuHolder_);
-    goog.dom.classes.add(this.menu_.element_, xiv.ViewLayoutMenu.MENU_CLASS);
+    goog.dom.classes.add(this.menu_.getElement(), xiv.ViewLayoutMenu.MENU_CLASS);
 
 
 
@@ -492,7 +492,7 @@ xiv.ViewLayoutMenu.prototype.setHighlightedIndex = function(index) {
     //------------------
     // Highlight the menuitem.
     //------------------
-    var highlightContent = goog.dom.getElementByClass(xiv.ViewLayoutMenu.MENUITEM_CONTENT_CLASS, this.menuItems_[index].element_);
+    var highlightContent = goog.dom.getElementByClass(xiv.ViewLayoutMenu.MENUITEM_CONTENT_CLASS, this.menuItems_[index].getElement());
     goog.dom.classes.add(highlightContent, xiv.ViewLayoutMenu.MENUITEM_CONTENT_HIGHLIGHT_CLASS);
 
 
@@ -523,7 +523,7 @@ xiv.ViewLayoutMenu.prototype.setHighlightedIndex = function(index) {
     //------------------
     // Unhighlight from other contents.
     //------------------
-    var menuContents = goog.dom.getElementsByClass('goog-menuitem-content', this.menu_.element_);
+    var menuContents = goog.dom.getElementsByClass('goog-menuitem-content', this.menu_.getElement());
     for (var i = 0, len = menuContents.length; i < len; i++) {
 	if (menuContents[i] !== highlightContent) {
 	    goog.dom.classes.remove(menuContents[i], xiv.ViewLayoutMenu.MENUITEM_CONTENT_HIGHLIGHT_CLASS);

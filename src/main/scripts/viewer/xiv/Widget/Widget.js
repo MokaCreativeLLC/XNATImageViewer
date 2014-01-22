@@ -6,15 +6,9 @@
  * Google closure includes
  */
 
-/**
- * utils includes
- */
+// utils
 goog.require('utils.dom');
 goog.require('utils.style');
-
-/**
- * viewer-widget includes
- */
 
 
 
@@ -33,9 +27,9 @@ xiv.Widget = function (id, opt_parent) {
 
     /**
      * @type {!Element}
-     * @private
+     * @protected
      */
-    this.element_ = utils.dom.makeElement("div", opt_parent, id);
+    this.element = utils.dom.makeElement("div", opt_parent, id);
 }
 
 goog.exportSymbol('xiv.Widget', xiv.Widget);
@@ -46,9 +40,9 @@ goog.exportSymbol('xiv.Widget', xiv.Widget);
  * @return {Element}
  * @public
  */
-xiv.Widget.prototype.__defineGetter__('element', function(){
-    return this.element_;
-})
+xiv.Widget.prototype.getElement = function(){
+    return this.element;
+}
 
 
 
@@ -58,7 +52,7 @@ xiv.Widget.prototype.__defineGetter__('element', function(){
  * @protected
  */
 xiv.Widget.prototype.setElementParentNode = function(parentNode) {
-    return this.element_  &&  goog.dom.appendChild(parentNode, this.element_);
+    return this.element  &&  goog.dom.appendChild(parentNode, this.element);
 }
 
 
@@ -70,7 +64,7 @@ xiv.Widget.prototype.setElementParentNode = function(parentNode) {
  * @param {Object=}
  */
 xiv.Widget.prototype.updateStyle = function (opt_args) {
-    if (opt_args && this.element_) {
-	utils.style.setStyle(this.element_, opt_args);
+    if (opt_args && this.element) {
+	utils.style.setStyle(this.element, opt_args);
     }
 }

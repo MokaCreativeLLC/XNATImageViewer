@@ -3,21 +3,16 @@
  * @author herrickr@mir.wustl.edu (Rick Herrick)
  */
 
-/**
- * Google closure includes
- */
+// goog
 goog.require('goog.fx');
 goog.require('goog.events');
 goog.require('goog.net.XhrIo');
 
-/**
- * utils includes
- */
+// utils
 goog.require('utils.style');
+goog.require('utils.events.EventManager');
 
-/**
- * viewer-widget includes
- */
+// xiv
 goog.require('xiv.Modal');
 
 
@@ -139,7 +134,6 @@ xiv.CONTENT_DIVIDER_HEIGHT =  /** @const @type {number} */ 4;
 xiv.prototype.minContentDividerTop = function (widgetHeight) {
     return widgetHeight - xiv.CONTENT_DIVIDER_HEIGHT - xiv.MIN_TAB_HEIGHT;
 } 
-
 
 
 

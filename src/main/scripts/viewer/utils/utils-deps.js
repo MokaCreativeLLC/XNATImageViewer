@@ -35,13 +35,21 @@ goog.addDependency('../../../utils/fx/fx.js', ['utils.fx'], [
 
 
 
+
+goog.addDependency('../../../utils/events/EventManager/EventManager.js', ['utils.events.EventManager'], [
+'goog.array'    
+]);  
+
+
+
 goog.addDependency('../../../utils/ui/GenericSlider/GenericSlider.js', ['utils.ui.GenericSlider'], [
 'goog.ui.Slider',
 'goog.dom',
 'goog.ui.Component',
 'goog.array',
 'goog.events',
-'utils.dom'
+'utils.dom',
+'utils.events.EventManager'
 ]);  
 
 
@@ -61,7 +69,8 @@ goog.addDependency('../../../utils/ui/Thumbnail/Thumbnail.js', ['utils.ui.Thumbn
 'goog.array',
 'goog.events',
 'utils.dom',
-'utils.style'
+'utils.style',
+'utils.events.EventManager'
 ]);
 
 
