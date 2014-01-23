@@ -6,6 +6,9 @@
  * Google closure includes
  */
 
+// goog
+goog.require('goog.dom');
+
 // utils
 goog.require('utils.dom');
 goog.require('utils.style');
@@ -18,20 +21,23 @@ goog.require('utils.style');
  * that feed into the modal.  In order for an 
  *
  * @constructor
- * @param {id} id The id to associate with the object's element.
- * @param {opt_parent} opt_parent The optional parent node to apply to the element.
+ * @param {!string} id The id to associate with the object's element.
+ * @param {string=} opt_args The optional args to set.
  */
 goog.provide('xiv.Widget');
-xiv.Widget = function (id, opt_parent) {
-    var opt_parent = opt_parent ? opt_parent : document.body;
+xiv.Widget = function (id, opt_args) {
 
+    var args = {'id': id + '_' + goog.string.createUniqueString()}
+   
+    opt_args && goog.object.extend(args, opt_args)
+    
     /**
      * @type {!Element}
      * @protected
      */
-    this.element = utils.dom.makeElement("div", opt_parent, id);
+    this.element = goog.dom.createDom('div', args)
+    
 }
-
 goog.exportSymbol('xiv.Widget', xiv.Widget);
 
 

@@ -78,7 +78,7 @@ xiv.Thumbnail = function (xnatProperties) {
     // hoverable_
     //------------------
     this.createHoverable()
-    xiv._Modal.modal.appendChild(this.hoverable_);
+    xiv._Modal.getModalElement().appendChild(this.hoverable_);
     goog.dom.classes.add(this.hoverable_, xiv.Thumbnail.CSS_CLASS_PREFIX);
        
 }

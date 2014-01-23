@@ -2,9 +2,7 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-/**
- * Google closure includes
- */
+// goog
 goog.require('goog.events');
 goog.require('goog.fx.dom');
 goog.require('goog.fx.Transition');
@@ -17,9 +15,7 @@ goog.require('goog.fx.dom.Slide');
 goog.require('goog.fx.AnimationParallelQueue');
 goog.require('goog.fx.Animation');
 
-/**
- * utils includes
- */
+// utils
 goog.require('utils.style');
 
 
@@ -292,4 +288,44 @@ utils.fx.parallelAnimate  = function (elts, startDims, endDims, duration, opt_on
     // Play animation.
     //------------------
     animQueue.play();
+}
+
+
+
+
+/**
+ * As stated.
+ * @param {!Element} elt The element to listen to.
+ * @param {number=} opt_overOp The mouseover opacity (defaults to 1).
+ * @param {number=} opt_outOp The mouseout opacity (defaults to .5);
+ * @public
+ */
+utils.fx.setBasicHoverStates = function(elt, overOp, outOp){
+
+    overOp = overOp === undefined ? 1 : overOp
+    outOp = outOp === undefined ? .5 : outOp
+
+
+    var mouseOver = function(event) { 
+	utils.style.setStyle(elt, {
+	    'opacity': overOp
+	});
+    }
+
+    var mouseOut = function(event) {
+	utils.style.setStyle(elt, {
+	    'opacity': outOp
+	})
+    }
+
+    goog.events.listen(elt, 
+		       goog.events.EventType.MOUSEOVER, 
+		       mouseOver);
+
+
+    goog.events.listen(elt, 
+		       goog.events.EventType.MOUSEOUT, 
+		       mouseOut);
+
+    mouseOut();
 }

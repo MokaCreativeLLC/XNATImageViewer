@@ -7,6 +7,7 @@
 goog.require('goog.dom');
 goog.require('goog.array');
 goog.require('goog.events');
+goog.require('goog.string');
 
 // utils
 goog.require('utils.dom');
@@ -30,7 +31,9 @@ utils.ui.Thumbnail = function () {
      * @type {!Element}
      * @private
      */	
-    this.element = utils.dom.makeElement('div', document.body, "utils.ui.Thumbnail");
+    this.element = goog.dom.createDom('div', {
+	'id': 'utils.ui.Thumbnail_' + goog.string.createUniqueString()
+    });
     this.element.setAttribute('thumbnailid', this.element.getAttribute('id'));
 
 
@@ -38,14 +41,19 @@ utils.ui.Thumbnail = function () {
      * @type {!Image}
      * @private
      */	
-    this.image_ = utils.dom.makeElement('img', this.element, "utils.ui.Thumbnail"); 
+    this.image_ = goog.dom.createDom('img', {
+	'id' : 'utils.ui.Thumbnail_' + goog.string.createUniqueString()
+    }); 
     
 
     /**
      * @type {!Element}
      * @private
      */	
-    this.text_ = utils.dom.makeElement("div", this.element, "DisplayText");
+    this.text_ = goog.dom.createDom('div', {
+	'id': 'DisplayText_' + goog.string.createUniqueString()
+    });
+
 
 
     /**
@@ -76,6 +84,13 @@ utils.ui.Thumbnail = function () {
     this.setClasses_();
     this.setHoverListeners_(true);
     this.mouseOut_();
+
+
+    //
+    // DOM tree.
+    //
+    goog.dom.append(this.element, this.image_);
+    goog.dom.append(this.element, this.text_);
     
 }
 goog.exportSymbol('utils.ui.Thumbnail', utils.ui.Thumbnail);

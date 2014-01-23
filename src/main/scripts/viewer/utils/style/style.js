@@ -2,10 +2,10 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-/**
- * Google closure indcludes
- */
+// goog
 goog.require('goog.style');
+goog.require('goog.dom');
+goog.require('goog.string');
 
 
 
@@ -458,7 +458,10 @@ utils.style.determineStartEndDimsCSS = function(elt, toBeClass, opt_adjustcallba
     // Determine the end dimenions by creating a tempEndStateElt and 
     // applying the to-be CSS to it.
     //------------------
-    var tempEndStateElt = utils.dom.makeElement("div", elt.parentNode, "tempEndStateElt");
+    var tempEndStateElt = goog.dom.createDom("div", {
+	'id': 'tempEndStateElt' + goog.string.getUniqueString()
+    });
+    elt.parentNode.appendChild(tempEndStateElt);
     goog.dom.classes.set(tempEndStateElt, toBeClass);	
 
     

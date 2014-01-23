@@ -8,6 +8,8 @@ goog.require('goog.dom');
 goog.require('goog.ui.Component');
 goog.require('goog.array');
 goog.require('goog.events');
+goog.require('goog.string');
+
 
 // utils
 goog.require('utils.dom');
@@ -35,7 +37,9 @@ utils.ui.GenericSlider = function (opt_args) {
      * @type {!Element}
      * @protected
      */
-    this.element = utils.dom.makeElement('div', document.body, "utils.ui.GenericSlider_Widget");
+    this.element = goog.dom.createDom('div', {
+	'id': 'utils.ui.GenericSlider_Widget' + goog.string.createUniqueString()
+    });
     this.decorate(this.element); // Applies the 'Slider' properties to the element
 
 
@@ -44,8 +48,10 @@ utils.ui.GenericSlider = function (opt_args) {
      * @type {!Element}
      * @private
      */
-    this.track_ = utils.dom.makeElement("div", this.element, "utils.ui.GenericSlider_Track");
-		
+    this.track_ = goog.dom.createDom("div", {
+	'id': 'utils.ui.GenericSlider_Track' + goog.string.createUniqueString()
+    });
+    this.element.appendChild(this.track_);
 
     /**
      * @param {!Array.<goog.events.MouseWheelHandler>}

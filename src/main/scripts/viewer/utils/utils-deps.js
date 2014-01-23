@@ -34,6 +34,46 @@ goog.addDependency('../../../utils/fx/fx.js', ['utils.fx'], [
 ]); 
 
 
+goog.addDependency('../../../utils/string/string.js', ['utils.string'], [
+'goog.string'
+]); 
+
+
+goog.addDependency('../../../utils/style/style.js', ['utils.style'], [
+'goog.style', 
+'goog.dom', 
+'goog.array', 
+'goog.events', 
+'utils.dom', 
+'utils.convert'
+]); 
+
+
+goog.addDependency('../../../utils/slicer/slicer.js', ['utils.slicer'], [
+]);
+
+goog.addDependency('../../../utils/xtk/xtk.js', ['utils.xtk'], [
+'utils.slicer'
+]);
+
+goog.addDependency('../../../utils/xnat/xnat.js', ['utils.xnat'], [
+'goog.events', 
+'goog.string',
+'goog.net.XhrIo',
+'goog.dom.xml',
+'goog.object',
+'goog.array',
+
+
+'utils.dom',
+'utils.array',
+]);
+
+
+goog.addDependency('../../../utils/events/events.js', ['utils.events'], [
+'goog.events',
+'utils.style'    
+]);
 
 
 goog.addDependency('../../../utils/events/EventManager/EventManager.js', ['utils.events.EventManager'], [
@@ -85,28 +125,6 @@ goog.addDependency('../../../utils/ui/ThumbnailGallery/ThumbnailGallery.js', ['u
 ]);
 
 
-goog.addDependency('../../../utils/string/string.js', ['utils.string'], [
-'goog.string'
-]); 
-
-
-goog.addDependency('../../../utils/style/style.js', ['utils.style'], [
-'goog.style', 
-'goog.dom', 
-'goog.array', 
-'goog.events', 
-'utils.dom', 
-'utils.convert'
-]); 
-
-
-
-goog.addDependency('../../../utils/slicer/slicer.js', ['utils.slicer'], [
-]);
-
-goog.addDependency('../../../utils/xtk/xtk.js', ['utils.xtk'], [
-'utils.slicer'
-]);
 
 
 goog.addDependency('../../../utils/xtk/ControllerMenu/ControllerMenu.js', ['utils.xtk.ControllerMenu'], [
@@ -123,18 +141,7 @@ goog.addDependency('../../../utils/xtk/ControllerMenu/ControllerMenu.js', ['util
 ]);
 
 
-goog.addDependency('../../../utils/xnat/xnat.js', ['utils.xnat'], [
-'goog.events', 
-'goog.string',
-'goog.net.XhrIo',
-'goog.dom.xml',
-'goog.object',
-'goog.array',
 
-
-'utils.dom',
-'utils.array',
-]);
 
 
 

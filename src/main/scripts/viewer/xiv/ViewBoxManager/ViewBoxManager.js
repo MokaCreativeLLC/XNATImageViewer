@@ -607,7 +607,7 @@ xiv.ViewBoxManager.prototype.makeViewBox = function() {
     // Create xiv.ViewBox
     //------------------
     var ViewBox = new xiv.ViewBox();
-    this.Modal_.modal.appendChild(ViewBox.getElement());
+    this.Modal_.getModalElement().appendChild(ViewBox.getElement());
 
 
 
@@ -1055,7 +1055,7 @@ xiv.ViewBoxManager.prototype.dragEnd_ = function(event) {
     var draggerClone = this.makeDragClone_(dragger, document.body);
     // Set the draggerClone parent to the modal parent
     // to avoid any weird positioning issues.
-    this.Modal_.modal.parentNode.appendChild(draggerClone);
+    this.Modal_.getModalElement().parentNode.appendChild(draggerClone);
     var draggerViewBoxDims = utils.style.absolutePosition(dragger);
     utils.style.setStyle(draggerClone, {
 	'top': draggerViewBoxDims['top'], 

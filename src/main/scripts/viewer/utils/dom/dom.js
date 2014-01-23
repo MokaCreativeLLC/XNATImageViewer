@@ -126,38 +126,34 @@ utils.dom.getMouseXY = function (e) {
 
 
 
-/**
- * Constructs an element based on the provided arguments.
- *
- * @param {!String, !Element, String=, Object=}
- * return {Element}
- */
-utils.dom.makeElement = function (type, parent, opt_id_prefix, css) {
-	
-    if (!type) {
-	throw Error("utils.dom.makeElement: Cannot make element without a valid type.");
-    }
-    
-    if (!parent) {
-	var parent = document.body;
-	//utils.dom.debug("utils.dom.makeElement: ", parent);
-	//utils.dom.debug("utils.dom.makeElement: ", type);
-	//utils.dom.debug("utils.dom.makeElement: ", className);
-	//throw Error("utils.dom.makeElement: Cannot make element without a valid parent.");
-    }
 
-    var e = document.createElement(type);
-    e.id =  utils.dom.uniqueId();
-    e.id =   opt_id_prefix ?  opt_id_prefix + '_' +  e.id : e.id;
-    
-    if (css) {
-	utils.style.setStyle(e, css);		
-    }
-    
-    parent && parent.appendChild(e);
-    
-    return e;
+/**
+ * Creates a basic button.
+ *
+ * @param {Object.<string, string | number | function>=} opt_attrs
+ * @param {number=} opt_mouseOverOpacity
+ * @param {number=} opt_mouseOutOpacity
+ * return {Element}
+ * @private
+ */
+utils.dom.createBasicHoverButton = function(opt_attrs, opt_mouseOverOpacity, opt_mouseOutOpacity){
+
+    var type = (opt_attrs && opt_attrs['src']) ? 'img' : 'div';
+    var attrs = opt_attrs ? opt_attrs : {};
+    var basicButton = goog.dom.createDom(type, attrs);
+
+    opt_mouseOverOpacity = opt_mouseOverOpacity === undefined 
+	? 1 : opt_mouseOverOpacity;
+    opt_mouseOutOpacity = opt_mouseOutOpacity === undefined 
+	? .5 : opt_mouseOutOpacity;
+
+    utils.fx.setBasicHoverStates(basicButton, 
+				 opt_mouseOverOpacity, 
+				 opt_mouseOutOpacity); 
+   
+    return basicButton
 }
+
 
 
 

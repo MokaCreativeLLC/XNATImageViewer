@@ -2,8 +2,13 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
+// goog
+goog.require('goog.events');
+
 // utils
-goog.require('utils.events.EventManager');
+goog.require('utils.style');
+
+
 
 
 /**
@@ -12,7 +17,7 @@ goog.require('utils.events.EventManager');
  * @constructor
  */
 goog.provide('utils.events');
-utils.ui = function () {};
+utils.events = {};
 goog.exportSymbol('utils.events', utils.events);
 
 

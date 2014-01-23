@@ -6,6 +6,7 @@
 goog.require('goog.array');
 
 
+
 /**
  * This class exists as a *simple* means of managing 
  * events associated with a certain event type for a given object.

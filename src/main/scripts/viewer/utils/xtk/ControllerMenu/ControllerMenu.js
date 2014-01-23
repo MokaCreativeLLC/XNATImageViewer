@@ -519,7 +519,9 @@ utils.xtk.ControllerMenu.prototype.makeOpacity_ = function(fileName, opt_parents
  * @return {Element}
  */
 utils.xtk.ControllerMenu.prototype.makeRow = function (eltArr, opt_lefts) {
-    var row = utils.dom.makeElement('div', document.body, 'ElementRow');
+    var row = goog.dom.createDom('div', {
+	'id' : 'ElementRow_' + goog.string.createUniqueString()
+    });
     goog.dom.classes.add(row, utils.xtk.ControllerMenu.ROW_CLASS);
 
 
@@ -846,7 +848,11 @@ utils.xtk.ControllerMenu.prototype.getParent = function(elt){
  * @return {Element}
  */
 utils.xtk.ControllerMenu.prototype.makeLabel = function(labelTitle, opt_parent){
-    var label = utils.dom.makeElement('div', this.getParent(opt_parent), 'Label' + goog.string.removeAll(labelTitle, ' '), {});
+    var label = goog.dom.createDom('div',{
+	'id' : 'Label' + goog.string.removeAll(labelTitle, ' ') + goog.string.createUniqueString()
+    });
+    goog.dom.append(this.getParent(opt_parent), label);
+    
     goog.dom.classes.add(label, utils.xtk.ControllerMenu.LABEL_CLASS)
     label.innerHTML = labelTitle;
     return label;
@@ -862,7 +868,10 @@ utils.xtk.ControllerMenu.prototype.makeLabel = function(labelTitle, opt_parent){
  * @return {Element}
  */
 utils.xtk.ControllerMenu.prototype.makeNumberDisplay = function(opt_parent){
-    var value = utils.dom.makeElement('div', this.getParent(opt_parent), 'NumberDisplay', {});
+    var value = goog.dom.createDom('div', {
+	'id' : 'NumberDisplay_' + goog.string.createUniqueString()
+    });
+    goog.dom.append(this.getParent(opt_parent), value);
     goog.dom.classes.add(value, utils.xtk.ControllerMenu.VALUE_CLASS)
     return value;
 }
@@ -1072,13 +1081,18 @@ utils.xtk.ControllerMenu.prototype.makeTwoThumbSlider = function(opt_parent, opt
     //------------------
     // Make the slider element.
     //------------------
-    var elt = utils.dom.makeElement('div', this.getParent(opt_parent), 'ThresholdSlider');    
-
+    var elt = goog.dom.createDom('div', {
+	'id' : 'ThresholdSlider_' + goog.string.createUniqueString()
+    });    
+    goog.dom.append(this.getParent(opt_parent), elt);
 
     //------------------
     // Make the track element.
     //------------------
-    var track = utils.dom.makeElement('div', elt, 'ThresholdSlider_track');
+    var track = goog.dom.createDom('div', {
+	'id' : 'ThresholdSlider_track'+ goog.string.createUniqueString()
+    });    
+    goog.dom.append(elt, track));
     goog.dom.classes.add(track, utils.xtk.ControllerMenu.TWOTHUMBSLIDER_TRACK_CLASS);
 
 
@@ -1160,7 +1174,11 @@ utils.xtk.ControllerMenu.prototype.makeTwoThumbSlider = function(opt_parent, opt
  */
 utils.xtk.ControllerMenu.prototype.makeCheckbox = function(opt_parent){
 
-    var checkbox = utils.dom.makeElement('input', this.getParent(opt_parent), 'CheckBox', {});
+    var checkbox = goog.dom.createDom('input', { 
+	'id': 'CheckBox'+ goog.string.createUniqueString()
+    });    
+    goog.dom.append(this.getParent(opt_parent), checkBox);
+
     checkbox.type = 'checkbox';
     goog.dom.classes.add(checkbox, utils.xtk.ControllerMenu.BUTTON_CLASS );
     return checkbox;
@@ -1177,7 +1195,11 @@ utils.xtk.ControllerMenu.prototype.makeCheckbox = function(opt_parent){
  */
 utils.xtk.ControllerMenu.prototype.makeRadioButton = function(opt_parent){
 
-    var radio = utils.dom.makeElement('input', this.getParent(opt_parent), 'Button', {});
+    var radio = goog.dom.createDom('input', {
+	'id': 'Button'+ goog.string.createUniqueString()
+    });    
+    goog.dom.append(this.getParent(opt_parent), radio);
+
     radio.type = 'radio';
     goog.dom.classes.add(radio, utils.xtk.ControllerMenu.BUTTON_CLASS);   
     goog.dom.classes.add(radio, utils.xtk.ControllerMenu.RADIO_BUTTON_CLASS);   

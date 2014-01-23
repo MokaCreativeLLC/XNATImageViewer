@@ -35,9 +35,9 @@ utils.ui.ScrollableContainer = function (opt_args) {
      * @type {!Element}
      * @private
      */
-    this.element = utils.dom.makeElement("div", 
-					  document.body, 
-					  "ScrollableContainer");
+    this.element = goog.dom.createDom('div', {
+	'id': 'ScrollableContainer_' + goog.string.createUniqueString()
+    });
 
 
 
@@ -46,11 +46,12 @@ utils.ui.ScrollableContainer = function (opt_args) {
      * @type {!Element}
      * @private
      */
-    this.scrollArea_ = utils.dom.makeElement("div", 
-					     this.element, 
-					     "ScrollArea");
+    this.scrollArea_ = goog.dom.createDom("div", {
+	'id': 'ScrollArea'
+    });
+    this.element.appendChild(this.scrollArea_);
 
-
+					  
 
 
     /**
@@ -430,7 +431,9 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
     // because the top one needs to be at the top of the contents and others need
     // to have a margin.
     //------------------
-    header = utils.dom.makeElement("div", opt_parent, "ZippyHeader_" + zKey);
+    header = goog.dom.createDom('div', {'id': "ZippyHeader_" + zKey});
+    opt_parent && opt_parent.appendChild(header);
+
     if (!counter) header.style.marginTop = '0px'; 
     header.key = zKey;
     
@@ -440,8 +443,8 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
     //------------------
     // Set the zippy label.
     //------------------
-    headerLabel = utils.dom.makeElement("div", header, "ZippyHeaderLabel_" + zKey);
-    headerLabel.innerHTML = goog.string.toTitleCase(zKey);
+    headerLabel = goog.dom.createDom('div', {'id': "ZippyHeaderLabel_" + zKey}, goog.string.toTitleCase(zKey));
+    header.appendChild(headerLabel);
     
     
 
@@ -459,8 +462,7 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
     //------------------
     // Add the Zippy expand icon
     //------------------
-    expandIcon = utils.dom.makeElement("div", header, "ZippyExpandIcon_" + zKey);
-    expandIcon.innerHTML = "+";
+    expandIcon = goog.dom.createDom('div', {'id': "ZippyExpandIcon_" + zKey}, '+');
     
     
 
@@ -468,7 +470,7 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
     //------------------
     // Add Zippy content
     //------------------
-    content = utils.dom.makeElement("div", opt_parent, "ZippyContent_" + zKey);
+    content = goog.dom.createDom('div', {'id': "ZippyContent_" + zKey});
     
 
     

@@ -71,14 +71,7 @@ startViewer = function (serverRoot, dataPath) {
     // on the above parameters
     //------------------
     modal = new xiv.Modal();
-    modal.setElementParentNode(document.body);
-    
-
-
-
-    //------------------
-    // Set the global Xnat URI
-    //------------------
-    modal.setXnatPathAndLoadThumbnails(dataPath);
+    modal.addXnatPath(dataPath);
+    modal.loadThumbnails();
 
 };
