@@ -1,4 +1,26 @@
 /**
+ * @preserve Copyright 2014 Washington University
+ * All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification, 
+ * are permitted provided that the following conditions are met:
+ * ·         Redistributions of source code must retain the above copyright notice, 
+ *   this list of conditions and the following disclaimer.
+ * ·         Redistributions in binary form must reproduce the above copyright notice, 
+ * this list of conditions and the following disclaimer in the documentation and/or other 
+ * materials provided with the distribution.
+ *  ·         Neither the name of Washington University nor the names of its contributors 
+ * may be used to endorse or promote products derived from this software without specific
+ *  prior written permission.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
+ * THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT 
+ * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR 
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
@@ -25,36 +47,21 @@ goog.require('xiv.ViewBoxManager');
 
 
 
+
 /**
- * 'xiv.Modal' is the central class where all of the xiv.Widgets
- * meet: ScrollableContainer, xiv.Thumbnails, xiv.ViewBoxes.  It also 
- * oversees the xiv.ViewBoxManager and xiv.ThumbnailManager classes and 
- * the actual modal window.  It should be noted that
- * the 'xiv.Modal.element' variable is the background, which is the
- * parent of the 'xiv.Modal.element' element.
+ * xiv.Modal is the central class where all of the xiv.Widgets
+ * meet.
  *
  * @constructor
- * @param {!string} mode
  * @param {string=} opt_iconUrl The url for the icons.  Defaults to ''.
  * @extends {xiv.Widget}
  */
 
 goog.provide('xiv.Modal');
-xiv.Modal = function (mode, opt_iconUrl) {
+xiv.Modal = function (opt_iconUrl) {
 
     goog.base(this, xiv.Modal.ID_PREFIX);   
-    this.element.setAttribute('isfullscreen', '0');
     goog.dom.append(document.body, this.element);
-
-
-
-    /**
-     * @cost
-     * @type {!string}
-     * @private
-     */
-    this.mode_ = mode;
-
 
 
 
@@ -85,10 +92,8 @@ xiv.Modal = function (mode, opt_iconUrl) {
     for (var key in this.buttons_){
 	goog.dom.append(this.element, this.buttons_[key]);
     }
-
+    this.setFullScreenButtonCallbacks_();
  
-
-
 
     /**
      * @type {!xiv.ThumbnailManager}
@@ -121,9 +126,7 @@ xiv.Modal = function (mode, opt_iconUrl) {
     //
     // Modal Classes
     //
-    if (this.mode_ === 'popup'){
-	goog.dom.classes.add(this.Modal_.getElement(), 'xiv-modal-popup');
-    } 
+    this.adjustStyleToMode_();
     
 }
 goog.inherits(xiv.Modal, xiv.Widget);
@@ -132,53 +135,94 @@ goog.exportSymbol('xiv.Modal', xiv.Modal);
 
 
 
-xiv.Modal.ANIM_LEN = /**@const*/ 500;
-xiv.Modal.MAX_MODAL_WIDTH_PERCENTAGE = /**@const*/ .90;
-xiv.Modal.MAX_MODAL_HEIGHT_PERCENTAGE = /**@const*/ .95;
-xiv.Modal.VIEWBOX_DIM_RATIO = /**@const*/.85
-xiv.Modal.MIN_VIEWBOX_HEIGHT = /**@const*/ 320;
-xiv.Modal.MIN_VIEWBOX_WIDTH = /**@const*/ xiv.MIN_VIEWBOX_HEIGHT * xiv.VIEWBOX_DIM_RATIO;
-xiv.Modal.VIEWER_VERTICAL_MARGIN =/**@const*/20;
-xiv.Modal.VIEWER_HORIZONTAL_MARGIN =/**@const*/20;
-xiv.Modal.EXPAND_BUTTON_WIDTH =/**@const*/30;
-
-
-
-
-
-/** 
- * @expose
- * @const 
- * @type {Array.string} 
+/**
+ * @cost
+ * @type {!string}
+ * @private
  */
-xiv.Modal.STATES = [
-   'windowed',
-   'popup',
-   'fullscreen',
-]
+xiv.Modal.prototype.mode_ = 'windowed';
 
+
+/**
+ * @cost
+ * @type {?string}
+ * @private
+ */
+xiv.Modal.prototype.previousMode_ = null;
+
+
+
+/**
+ * @type {!string}
+ * @private
+ */	
+xiv.Modal.prototype.iconUrl_ = '';
 
 
 
 /**
  * @const
- * @dict
+ * @private
  */
-xiv.Modal.buttonTypes = {
-    'close': 'Close XNAT Image Viewer.',
-    'fullScreen': 'Enter full-screen mode.',
-    'popup': 'Popup to new window.',
-    'windowed': 'Exit full-screen mode.',
-    'removeRow': 'Remove ViewBox row',
-    'removeColumn': 'Remove ViewBox column',
-    'insertColumn': 'Insert ViewBox column',
-    'insertRow' : 'Insert ViewBox row',
-    'addXnatFolders' : 'Add more XNAT folders.'
+xiv.Modal.hideableButtonKeys_ = 
+    ['popup', 'close'];
+
+
+
+
+/**
+ * @private
+ */   
+xiv.Modal.prototype.setFullScreenButtonCallbacks_ = function(){
+
+    this.buttons_['windowed'].style.visibility = 'hidden';
+
+    this.buttons_['fullScreen'].onclick = function() {
+	this.previousMode_ = this.mode_;
+	goog.dom.fullscreen.requestFullScreen(this.element); 
+	this.setMode('fullScreen');
+	this.buttons_['fullScreen'].style.visibility = 'hidden';
+	this.buttons_['windowed'].style.visibility = 'visible';
+    }.bind(this);
+
+
+    this.buttons_['windowed'].onclick = function() {
+	goog.dom.fullscreen.exitFullScreen(); 
+	this.setMode(this.previousMode_);
+	this.buttons_['fullScreen'].style.visibility = 'visible';
+	this.buttons_['windowed'].style.visibility = 'hidden';
+    }.bind(this);
 }
 
 
 
-	
+
+/**
+ * @private
+ */
+xiv.Modal.prototype.adjustStyleToMode_ = function(){
+
+
+    window.console.log("ADJUST MODE", this.mode_);
+
+    if (this.mode_ === 'popup' || this.mode_ === 'fullScreen'){
+	goog.dom.classes.add(this.background_, 
+			     xiv.Modal.BLACK_BG_CLASS); 
+	goog.array.forEach(xiv.Modal.hideableButtonKeys_, function(key){
+	    this.buttons_[key].style.visibility = 'hidden';
+	}.bind(this))
+
+    } else {
+	goog.dom.classes.remove(this.background_, 
+				xiv.Modal.BLACK_BG_CLASS);
+	goog.array.forEach(xiv.Modal.hideableButtonKeys_, function(key){
+	    this.buttons_[key].style.visibility = 'visible';
+	}.bind(this))
+    }
+}
+
+
+
 /**
  * @private
  */
@@ -216,11 +260,7 @@ xiv.Modal.makeButtons_ = function(iconUrl){
 
 
 
-/**
- * @type {!string}
- * @private
- */	
-xiv.Modal.prototype.iconUrl_ = '';
+
 
 
 
@@ -273,6 +313,59 @@ xiv.Modal.prototype.getButtons = function() {
 }
 
 
+/**
+ * public
+ * @const
+ */
+xiv.Modal.MODES = [
+    'fullScreen',
+    'popup',
+    'windowed'
+]
+
+
+
+/**
+ * @param {!string} The iconUrl to set.
+ * @public
+ */
+xiv.Modal.prototype.setIconUrl = function(iconUrl) {
+    this.iconUrl_ = iconUrl;
+}
+
+
+
+/**
+ * @return {!string} The iconUrl to set.
+ * @public
+ */
+xiv.Modal.prototype.getIconUrl = function(iconUrl) {
+    return this.iconUrl_;
+}
+
+
+
+
+/**
+ * @param {!string} The mode to test
+ * @public
+ */
+xiv.Modal.prototype.setMode = function(mode) {
+    if (!mode || xiv.Modal.MODES.indexOf(mode) === -1){
+	throw TypeError('Invalid xiv.Modal mode: ' + mode);
+    }
+    this.mode_ = mode;
+    this.adjustStyleToMode_();
+}
+
+
+/**
+ * @return {!Object} The button object.
+ * @public
+ */
+xiv.Modal.prototype.getMode = function() {
+  return this.mode_;
+}
 
 
 
@@ -767,7 +860,45 @@ xiv.Modal.prototype.updateStyle = function (opt_args) {
 }
 
 
-xiv.Modal.ID_PREFIX = 'xiv.Modal';
+
+/**
+ * @const
+ * @dict
+ */
+xiv.Modal.buttonTypes = {
+    'close': 'Close XNAT Image Viewer.',
+    'fullScreen': 'Enter full-screen mode.',
+    'popup': 'Popup to new window.',
+    'windowed': 'Exit full-screen mode.',
+    'removeRow': 'Remove ViewBox row',
+    'removeColumn': 'Remove ViewBox column',
+    'insertColumn': 'Insert ViewBox column',
+    'insertRow' : 'Insert ViewBox row',
+    'addXnatFolders' : 'Add more XNAT folders.'
+}
+
+
+xiv.Modal.ID_PREFIX = /**@type {string} @const*/ 'xiv.Modal';
+xiv.Modal.CSS_CLASS_PREFIX = /**@type {string} @const*/ 
+goog.string.toSelectorCase(utils.string.getLettersOnly(xiv.Modal.ID_PREFIX));
+
+xiv.Modal.ANIM_LEN = /**@const*/ 500;
+xiv.Modal.MAX_MODAL_WIDTH_PERCENTAGE = /**@const*/ .90;
+xiv.Modal.MAX_MODAL_HEIGHT_PERCENTAGE = /**@const*/ .95;
+xiv.Modal.VIEWBOX_DIM_RATIO = /**@const*/.85
+xiv.Modal.MIN_VIEWBOX_HEIGHT = /**@const*/ 320;
+xiv.Modal.MIN_VIEWBOX_WIDTH = /**@const*/ xiv.MIN_VIEWBOX_HEIGHT * xiv.VIEWBOX_DIM_RATIO;
+xiv.Modal.VIEWER_VERTICAL_MARGIN =/**@const*/20;
+xiv.Modal.VIEWER_HORIZONTAL_MARGIN =/**@const*/20;
+xiv.Modal.EXPAND_BUTTON_WIDTH =/**@const*/30;
+
+xiv.Modal.BLACK_BG_CLASS = /**@const*/ 
+goog.getCssName(xiv.Modal.CSS_CLASS_PREFIX, 
+		'background-black');
+
+
+
+
 
 
 

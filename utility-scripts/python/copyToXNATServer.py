@@ -2,6 +2,7 @@ import sys
 import os
 import shutil
 from datetime import datetime
+import time
  
 import convertDemo
 
@@ -40,7 +41,7 @@ def main():
 
 
 
-
+    print (time.strftime("%I:%M:%S"))
     #----------------------------
     #  Copy folders and/or files
     #----------------------------
@@ -78,7 +79,7 @@ def main():
             # copy the file
             shutil.copy(src, dst)
             
-             
+    print '\n\nCompleted at: '+ time.strftime("%H:%M:%S") + '\n\n'
            
 
 if __name__ == "__main__":

@@ -4,10 +4,17 @@
  */
 
 // goog
+goog.require('goog.dom');
+goog.require('goog.dom.fullscreen');
 goog.require('goog.fx');
 goog.require('goog.events');
 
+// xtk
+goog.require('X.loader');
+goog.require('X.parserIMA');
+
 // utils
+goog.require('utils.fx');
 goog.require('utils.style');
 goog.require('utils.xnat');
 
@@ -23,22 +30,13 @@ goog.require('xiv.PathSelector');
  * object.
  *
  * @param {!string} mode
- * @param {!string} dataPath
  * @param {!string} rootUrl
- * @param {!string} iconUrl
  * @param {!string} xnatQueryPrefix
+ * @param {!string} opt_iconUrl
  * @constructor
  */
 goog.provide('xiv');
-var xiv = function(mode, dataPath, rootUrl, iconUrl, xnatQueryPrefix){
-
-    /**
-     * @type {!Array.string}
-     * @private
-     */
-    this.queryPrefix_ = xnatQueryPrefix;
-
-
+var xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
 
     /** 
      * @private
@@ -47,28 +45,23 @@ var xiv = function(mode, dataPath, rootUrl, iconUrl, xnatQueryPrefix){
     this.rootUrl_ = rootUrl;
 
 
-
-    /** 
+    /**
+     * @type {!Array.string}
      * @private
-     * @type {!string} 
      */
-    this.dataPath_ = dataPath;
+    this.queryPrefix_ = xnatQueryPrefix;
 
 
-
-    /** 
-     * @private
-     * @type {!string} 
-     */
-    this.iconUrl_ = iconUrl;
-
+    if (goog.isString(opt_iconUrl)){
+	this.iconUrl_ =  opt_iconUrl;
+    }
 
 
     /**
      * @type {!Array.string}
      * @private
      */
-    this.xnatPaths_ = [];
+    this.dataPaths_ = [];
 
 
 
@@ -80,14 +73,16 @@ var xiv = function(mode, dataPath, rootUrl, iconUrl, xnatQueryPrefix){
 
 
 
-
-
     /** 
      * @type {!xiv.Modal} 
      * @private
      */
-    this.Modal_ = new xiv.Modal('windowed', this.iconUrl_);
-
+    this.Modal_ = new xiv.Modal(this.iconUrl_);
+    this.Modal_.setMode(mode);
+    this.setModalButtonCallbacks_();
+    window.onresize = function () { 
+	this.Modal_updateStyle() 
+    }.bind(this);
 
 
 
@@ -95,27 +90,47 @@ var xiv = function(mode, dataPath, rootUrl, iconUrl, xnatQueryPrefix){
      * @type {!xiv.PathSelector}
      * @private
      */
-    this.PathSelector_ = new xiv.PathSelector(this);
-
-
-
-    //
-    // Setup
-    //
-    window.onresize = function () { 
-	this.updateStyle() 
-    }.bind(this); 
-
-
-
-    //
-    // Store path
-    //
-    this.addXnatPath(dataPath);
+    this.PathSelector_ = new xiv.PathSelector();
 
 };
 goog.exportSymbol('xiv', xiv);
 
+
+
+
+
+/** 
+ * @private
+ * @type {!string} 
+ */
+xiv.prototype.iconUrl_ =  '';
+
+
+
+
+/**
+ * Begins the XNAT Image Viewer.
+ * @public
+ */
+xiv.prototype.showModal = function(){
+    this.Modal_.getElement().style.opacity = 0;
+    goog.dom.append(document.body, this.Modal_.getElement());
+    utils.fx.fadeInFromZero(this.Modal_.getElement(), 
+			    xiv.ANIM_TIME);
+}
+
+
+
+
+/**
+ * Begins the XNAT Image Viewer.
+ * @param {function=} opt_callback
+ * @public
+ */
+xiv.prototype.hideModal = function(opt_callback){
+    utils.fx.fadeOut(this.Modal_.getElement(), 
+    xiv.ANIM_TIME, opt_callback);
+}
 
 
 
@@ -150,6 +165,19 @@ xiv.prototype.addViewableProperties = function(path, viewableProperties) {
 
 
 
+/**
+ * Sets the governing XNAT Path from which all file IO occurs.
+ * As of now, this XNAT Path must be at the 'experiment level.'
+ *
+ * @param {!string} path The XNAT path to set for querying.
+ * @public
+ */
+xiv.prototype.addDataPath = function(path) {
+    var updatedPath = (path[0] !== "/") ? "/" + path : path;
+    this.dataPaths_.push(this.queryPrefix_ + updatedPath); 
+}
+
+
 
 
 /**
@@ -158,25 +186,42 @@ xiv.prototype.addViewableProperties = function(path, viewableProperties) {
  * @return {!Array.<string>} The array of stored XNAT paths.
  * @public
  */
-xiv.prototype.getXnatPaths = function() {
-  return this.xnatPaths_;
+xiv.prototype.getDataPaths = function() {
+  return this.dataPaths_;
 };
 
 
 
 
-
 /**
- * Sets the governing XNAT Path from which all file IO occurs.
- * As of now, this XNAT Path must be at the 'experiment level.'
- *
- * @param {!string} path The XNAT path to set for querying.
+ * Fades out then deletes the modal and all of its
+ * child elements.
  * @public
  */
-xiv.prototype.addXnatPath = function(path) {
-    var updatedPath = (path[0] !== "/") ? "/" + path : path;
-    this.xnatPaths_.push(this.queryPrefix_ + updatedPath); 
+xiv.prototype.destroy = function () {
+    this.hideModal(function (){
+	xiv.revertDocumentStyle_();
+	this.Modal_.getElement().parentNode.removeChild(
+	    this.Modal_.getElement());
+	delete this.Modal_.getElement();
+    }.bind(this));
 }
+
+
+
+
+/**
+ * Begins the XNAT Image Viewer.
+ * @private
+ */
+xiv.prototype.setModalButtonCallbacks_ = function(){
+    this.Modal_.getButtons()['popup'].onclick = 
+	this.makeModalPopup_.bind(this);
+    this.Modal_.getButtons()['addXnatFolders'].onclick = 
+	this.showPathSelector_.bind(this);
+    this.Modal_.getButtons()['close'].onclick = 
+	this.destroy.bind(this);
+} 
 
 
 
@@ -185,11 +230,20 @@ xiv.prototype.addXnatPath = function(path) {
  * @private
  */
 xiv.prototype.makeModalPopup_ = function(){
+
+    var dataPaths = '';
+    goog.array.forEach(this.dataPaths_, function(dataPath){
+	dataPaths += dataPath + '&'
+    })
     goog.window.popup(this.rootUrl_ 
 		      + '/scripts/viewer/popup.html' 
 		      + '?' 
-		      + this.dataPath_);
+		      + dataPaths);
+
+    // Destroy
     this.destroy();
+
+    // Reload window
     window.location.reload();
 }
 
@@ -205,90 +259,6 @@ xiv.prototype.showPathSelector_ = function(){
 
 
 
-
-
-
-/**
- * @expose
- * Begins the XNAT Image Viewer.
- * @public
- */
-xiv.prototype.begin = function(){
-
-    
-    this.Modal_.getButtons()['popup'].onclick = this.makeModalPopup_.bind(this);
-    this.Modal_.getButtons()['addXnatFolders'].onclick = this.showPathSelector_.bind(this);
-    this.Modal_.getButtons()['close'].onclick = this.destroy.bind(this);
-    
-
-
-    //this.loadThumbnails(); 
-
-
-    //
-    // Hide the popup if we're already in popup mode.
-    //
-    /*
-    if (this.mode_ === 'popup'){
-	button.style.visibility = 'hidden';
-    }
-    */
-
-
-    this.Modal_.getElement().style.opacity = 0;
-    goog.dom.append(document.body, this.Modal_.getElement());
-    utils.fx.fadeInFromZero(this.Modal_.getElement(), 500);
-}
-
-
-
-
-
-/**
- * Fades out then deletes the modal and all of its
- * child elements.
- * @public
- */
-xiv.prototype.destroy = function () {
-    utils.fx.fadeOut(this.Modal_.getElement(), 300, function () {
-	try{ 
-	    this.Modal_.getElement().parentNode.removeChild(this.Modal_.getElement());
-	    delete this.Modal_.getElement();
-	}
-	catch(e) {}
-    }.bind(this));
-
-
-
-    //------------------
-    // NOTE: This is in response to xiv.start()
-    // where it's set to hidden to prevent
-    // Webkit-based browsers from scrolling.
-    //------------------
-    document.body.style.overflow = 'visible';
-}
-
-
-
-
-/**
- * @param {!string} path
- * @private
- */
-xiv.deriveThumbnailFolders_ = function(path){
-    var pathObj = utils.xnat.getPathObject(path);
-    var folders = [];
-    for (key in pathObj){ 
-	if (goog.isDefAndNotNull(pathObj[key]) && key !== 'prefix'){
-	    folders.push(utils.xnat.folderAbbrev[key] + ": " + pathObj[key]) 
-	}
-    };
-    return folders;
-}
-
-
-
-
 /**
  * @private
  */
@@ -296,8 +266,9 @@ xiv.prototype.loadStoredProperties_ = function(){
     var key = /**@type {?string}*/null;
     var propsArr = /**@type {?Array.<utils.xnat.viewableProperties>}*/null;
     for (key in this.viewableProperties_) {
-	propsArr = utils.xnat.sortViewableCollection(this.viewableProperties_[key], 
-						     ['sessionInfo', 'Scan', 'value', 0]);
+	propsArr = utils.xnat.sortViewableCollection(
+	    this.viewableProperties_[key], 
+	    ['sessionInfo', 'Scan', 'value', 0]);
 	this.propertiesToThumbnails_(key, propsArr);
     }
 }
@@ -310,10 +281,11 @@ xiv.prototype.loadStoredProperties_ = function(){
  * @param {!Array.<utils.xnat.viewableProperties>} propertiesArr
  * @private
  */
-xiv.prototype.propertiesToThumbnails_ = function(key, propertiesArr){
+xiv.prototype.addThumbsToModal_ = function(key, propertiesArr){
     goog.array.forEach(propertiesArr, function(viewableProperties){
 	this.Modal_.addThumbnail(viewableProperties, 
-	    goog.isArray(key) ? key: xiv.deriveThumbnailFolders_(key));
+	    goog.isArray(key) ? key: 
+		xiv.deriveThumbnailFolders_(key));
     }.bind(this))
 }
 
@@ -343,7 +315,7 @@ xiv.prototype.loadThumbnails = function(){
     // Get Viewables from XNAT server.
     // Scans xiv.Thumbnails first, then Slicer xiv.Thumbnails.
     //------------------  
-    goog.array.forEach(this.xnatPaths_, function(xnatPath){
+    goog.array.forEach(this.dataPaths_, function(xnatPath){
 
 	folders = xiv.deriveThumbnailFolders_(xnatPath);
 
@@ -354,8 +326,8 @@ xiv.prototype.loadThumbnails = function(){
 
 	    this.addViewableProperty(xnatPath, scanProps);
 
-	    this.propertiesToThumbnails_(folders.slice(0).push('scans'), 
-					 scanProps);
+	    this.addThumbsToModal_(folders.slice(0).push('scans'), 
+				       scanProps);
 
 	    if (!slicerThumbnailsLoaded) {
 		// Then, get the slicer files.
@@ -363,8 +335,8 @@ xiv.prototype.loadThumbnails = function(){
 		   
 		    this.addViewableProperty(xnatPath, slicerProps);
 
-		    this.propertiesToThumbnails_(folders.slice(0).push('Slicer'), 
-						 slicerProps);
+		    this.addThumbsToModal_(folders.slice(0).push('Slicer'), 
+					       slicerProps);
 
 		}.bind(this));
 		slicerThumbnailsLoaded = true;
@@ -376,8 +348,79 @@ xiv.prototype.loadThumbnails = function(){
 
 
 
+/**
+ * @param {!string} path
+ * @private
+ */
+xiv.deriveThumbnailFolders_ = function(path){
+    var pathObj = utils.xnat.getPathObject(path);
+    var folders = [];
+    for (key in pathObj){ 
+	if (goog.isDefAndNotNull(pathObj[key]) && 
+	    key !== 'prefix'){
+	    folders.push(utils.xnat.folderAbbrev[key] 
+			 + ": " + pathObj[key]) 
+	}
+    };
+    return folders;
+}
+
+
+
+/**
+ * @private
+ */
+xiv.loadCustomExtensions_ = function() {
+    X.loader.extensions['IMA'] = [X.parserIMA, null];
+}
+
+
+/**
+ * @private
+ */
+xiv.adjustDocumentStyle_ = function() {
+    document.body.style.overflow = 'hidden';
+}
+
+
+
+/**
+ * @private
+ */
+xiv.revertDocumentStyle_ = function() {
+    document.body.style.overflow = 'visible';
+}
+
+
+
+/**
+ * The main start function to load
+ * up the XNAT Image Viewer.  Sets global URIs
+ * (so as to load the thumbnails from a given experiment)
+ * and brings up the modal accordingly.
+ *
+ * @public
+ * @param {!string} windowMode
+ * @param {!string} xnatServerRoot
+ * @param {!string} dataPath
+ * @param {!string} imagePath
+ */
+xiv.startViewer = function (windowMode, xnatServerRoot, dataPath, imagePath) {
+
+    xiv.loadCustomExtensions_();
+    xiv.adjustDocumentStyle_();
+
+    var imageViewer = new xiv(windowMode, 
+                              xnatServerRoot,  
+			      utils.xnat.getQueryPrefix(xnatServerRoot),
+			      imagePath);
+    imageViewer.addDataPath(dataPath); 
+    imageViewer.showModal();
+    //imageViewer.loadThumbnails();
+};
+goog.exportSymbol('xiv.startViewer', xiv.startViewer)
 
 
 
 
-
+xiv.ANIM_TIME = /**@const*/ 300;

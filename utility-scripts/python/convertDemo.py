@@ -66,12 +66,16 @@ def convertDemoToPopup(demoPath):
         # Replace the appropriate paths
         #
         line = line.replace('src/main/scripts/viewer/', '').strip()
+        
 
         #
         # Set the Image viewer mode
         #
-        if isChangeableLine(line):
-            line = "XNAT_IMAGE_VIEWER_MODE = 'popup';";
+        if isModalStateLine(line):
+            line = 'var modalState = \'popup\';';
+
+        if isModeLine(line):
+            line = 'var mode = \'live\';';
         
         newlines.append(line)
 
@@ -79,8 +83,13 @@ def convertDemoToPopup(demoPath):
 
 
 
-def isChangeableLine(line):
-    return ' = ' in line and 'XNAT_IMAGE_VIEWER_MODE' in line and line.count('=') == 1 and not 'new' in line
+def isModeLine(line):
+    return ' = ' in line and 'mode' in line and line.count('=') == 1 and not 'new' in line
+
+
+def isModalStateLine(line):
+    return ' = ' in line and 'modalState' in line and line.count('=') == 1 and not 'new' in line
+
 
 
 
@@ -113,9 +122,10 @@ def convertDemoToVM(demoPath):
         #
         # Set the Image viewer mode
         #
-        if isChangeableLine(line):
-            if not 'XNAT_DATA_PATH' in line:
-                line = "XNAT_IMAGE_VIEWER_MODE = 'live';";
+        if isModeLine(line):
+            line = 'mode = \'live\';';
+        elif isModalStateLine(line):
+            line = 'var modalState = \'windowed\';';
 
             
         #
@@ -144,6 +154,8 @@ def convertDemoToVM(demoPath):
         #
         if 'src/main/' in line:
             line = line.replace('src/main/', '')
+
+
 
             
         newlines.append(line.strip())
@@ -198,6 +210,7 @@ def main():
     makeAndWrite(popupLines, popupTargets)
 
              
+
            
 
 if __name__ == "__main__":

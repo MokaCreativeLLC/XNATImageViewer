@@ -7,37 +7,43 @@
 
 
 
+.xiv-modal {
+    position: fixed;
+    background-color: rgba(0,0,0,1);
+    border: none;
+    border-radius: 20px;
+    top: 10%;
+    left: 10%;
+    height: 80%;
+    width: 80%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    z-index: 2;
+}
+
+
+
+
 .xiv-modal-background {
     position: fixed;
     top: 0px;
     left: 0px;
     height: 100%;
     width: 100%;
-    z-index: 1000;
+    z-index: -1;
     background-color: rgba(0,0,0,.5);
     display: inline-block;
     font-family: Helvetica,"Helvetica neue", Arial, sans-serif
 }
 
 
-.xiv-modal-popup {
+.xiv-modal-background-black {
     background-color: rgba(0,0,0,1);
     color: rgba(0,0,0,1);
 }
 
 
-.xiv-modal-window {
-    position: absolute;
-    background-color: rgba(0,0,0,1);
-    border: none;
-    border-radius: 20px;
-    height: 50%;
-    width: 50%;
-    overflow-x: hidden;
-    overflow-y: hidden;
-}
-
-.xiv-modal-closebutton {
+.xiv-modal-close-button {
     position: absolute; 
     cursor: pointer;
     top: 10px;
@@ -49,7 +55,7 @@
 }
 
 
-.xiv-modal-fullscreenbutton {
+.xiv-modal-full-screen-button, .xiv-modal-windowed-button {
     position: absolute; 
     cursor: pointer;
     top: 29px;
@@ -61,7 +67,8 @@
 }
 
 
-.xiv-modal-popupbutton {
+
+.xiv-modal-popup-button {
     position: absolute; 
     cursor: pointer;
     top: 50px;
@@ -73,7 +80,7 @@
 }
 
 
-.xiv-modal-addpathsbutton {
+.xiv-modal-add-xnat-folders-button {
     position: absolute; 
     cursor: pointer;
     top: 30px;
@@ -89,7 +96,7 @@
 }
 
 
-.xiv-modal-scrollgallery {
+.xiv-modal-scroll-gallery {
     position: absolute;
     left: 0px;
     width: 180px;
@@ -98,42 +105,55 @@
 
 
 
-.xiv-modal-columnmenu {
+.xiv-modal-insert-column-button, .xiv-modal-remove-column-button,
+.xiv-modal-insert-row-button, .xiv-modal-remove-row-button {
     position: absolute;
-    bottom: 0px;
-    top: 50%;
-    margin-top: -20px;
+    cursor: pointer; 
+    z-index: 2;
+}
+
+
+
+.xiv-modal-insert-column-button, .xiv-modal-remove-column-button {
     left: 100%;
-    margin-left: -30px;
-}
-
-
-
-.xiv-modal-rowmenu {
-    position: absolute;
-    top: 100%;
-    margin-top: -30px;
-    left: 50%;
-    margin-left: 60px;
-}
-
-
-.xiv-modal-columnmenu-button, .xiv-modal-rowmenu-button {
-    position: absolute;
-    cursor: pointer;
-    z-index: 100;
-}
-
-
-.xiv-modal-columnmenu-button {
-    left: 13px;
+    top: 50%;
+    margin-left: -19px;
     width: 6px;
-    height: 12px;
+    height: 12px;    
 }
 
 
-.xiv-modal-rowmenu-button {
-   top: 13px;
-   width: 12px;
-   height: 6px;
+.xiv-modal-insert-column-button {
+    margin-top: -10px;    
+}
+
+
+.xiv-modal-remove-column-button {
+    margin-top: 10px;
+}
+
+
+
+
+
+
+
+
+.xiv-modal-insert-row-button, .xiv-modal-remove-row-button {
+    top: 100%;
+    left: 50%;
+    margin-top: -19px;
+    width: 12px;
+    height: 6px;    
+}
+
+
+
+.xiv-modal-insert-row-button {
+    margin-left: -10px;    
+}
+
+
+.xiv-modal-remove-row-button {
+    margin-left: 10px;
 }

@@ -28,8 +28,7 @@ goog.require('utils.array');
  *
  */
 goog.provide("utils.xnat");
-//utils.xnat = function() {}
-//goog.exportSymbol('utils.xnat', utils.xnat)
+
 
 
 
@@ -37,7 +36,7 @@ goog.provide("utils.xnat");
  * @constructor
  * @dict
  */
-goog.provide('utils.xnat.viewableProperties');
+goog.provide("utils.xnat.viewableProperties");
 utils.xnat.viewableProperties = function(){ 
     this['category'] =  'dicom';
     this['files'] = ['testfile.text'];
@@ -55,13 +54,14 @@ utils.xnat.viewableProperties = function(){
         "type" : {'label':"type", 'value': ["MPRAGE"]}
     }
 };
-
+goog.exportSymbol('utils.xnat.viewableProperties', utils.xnat.viewableProperties);
 
 
 
 
 /**
  * @const {string}
+ * @public
  */
 utils.xnat.JPEG_CONVERT_SUFFIX = '?format=image/jpeg';
 
@@ -72,6 +72,7 @@ utils.xnat.JPEG_CONVERT_SUFFIX = '?format=image/jpeg';
 /**
  * XNAT folder abbreviations.
  * @const {Object.<string, string>}
+ * @public
  */
 utils.xnat.folderAbbrev = {
     'projects': 'proj',
@@ -130,7 +131,7 @@ utils.xnat.jsonGet = function(url, callback){
  * argument.
  *
  * @param {!string, !function}
- * @expose
+ * @public
  */
 utils.xnat.get = function(url, callback){
     //window.console.log("utils.xnat - get: ", url);
@@ -152,6 +153,7 @@ utils.xnat.get = function(url, callback){
  * @param {!string} url
  * @param {!string} splitString
  * @return {Object.<string,string>}
+ * @public
  */
 utils.xnat.splitUrl = function(url, splitString){
 
@@ -241,8 +243,9 @@ utils.xnat.getXnatPathByLevel = function(url, level){
 
 
 /**
-* @dict
-*/
+ * @dict
+ * @public
+ */
 utils.xnat.defaultPathObj =  {
     'prefix': null,
     'projects':null,
@@ -312,7 +315,8 @@ utils.xnat.getPathObject = function(url){
  * Function for sorting scan objects.
  *
  * @param {!Object.<String, String | Object.<String, String | Object>} a First scan object to compare. 
- * @param {!Object.<String, String | Object.<String, String | Object>} b Second scan object to compare. 
+ * @param {!Object.<String, String | Object.<String, String | Object>} b Second scan object to compare.
+ * @public 
  */
 utils.xnat.compareScan = function(a,b) {
     if (a['sessionInfo']['Scan']['value'][0].toLowerCase() < b['sessionInfo']['Scan']['value'][0].toLowerCase())
@@ -329,7 +333,8 @@ utils.xnat.compareScan = function(a,b) {
  * Function for sorting the slicer objects.
  *
  * @param {!Object.<String, String | Object.<String, String | Object>} a First scan object to compare. 
- * @param {!Object.<String, String | Object.<String, String | Object>} b Second scan object to compare. 
+ * @param {!Object.<String, String | Object.<String, String | Object>} b Second scan object to compare.
+ * @public 
  */
 utils.xnat.compareSlicer = function(a,b) {
     if (a['Name'][0].toLowerCase() < b['Name'][0].toLowerCase())
@@ -351,6 +356,7 @@ utils.xnat.compareSlicer = function(a,b) {
  *
  * @param {!string} url The XNAT url where to get the scan JSON from.
  * @param {!function} callback The callback to run once the scan JSON is gotten.
+ * @public
  */
 utils.xnat.getScans = function (url, callback){
     window.console.log("URL1", url);
@@ -478,6 +484,7 @@ utils.xnat.getScans = function (url, callback){
  *
  * @param {!string} url The XNAT url where to get the scan JSON from.
  * @param {!function} callback The callback to run once the scan JSON is gotten.
+ * @public
  */
 utils.xnat.getSlicer = function (url, callback){
 
@@ -612,6 +619,7 @@ utils.xnat.getSlicer = function (url, callback){
  *
  * @param {!Array.<utils.xnat.viewableProperties>} xnatPropsArr The array of utils.xnat.viewableProperties to sort. 
  * @param {!Array.<String>} keyDepthArr The key depth array indicating the sorting criteria.
+ * @public
  */
 utils.xnat.sortXnatPropertiesArray = function (xnatPropsArr, keyDepthArr){
 
@@ -652,17 +660,20 @@ utils.xnat.sortXnatPropertiesArray = function (xnatPropsArr, keyDepthArr){
 
 
 
-goog.exportSymbol('utils.xnat.viewableProperties', utils.xnat.viewableProperties);
-goog.exportSymbol('utils.xnat.folderAbbrev', utils.xnat.folderAbbrev);
-goog.exportSymbol('utils.xnat.jsonGet', utils.xnat.jsonGet);
-goog.exportSymbol('utils.xnat.get', utils.xnat.get);
-goog.exportSymbol('utils.xnat.splitUrl', utils.xnat.splitUrl);
-goog.exportSymbol('utils.xnat.getXnatPathByLevel', utils.xnat.getXnatPathByLevel);
-goog.exportSymbol('utils.xnat.getPathOject', utils.xnat.getPathOject);
-goog.exportSymbol('utils.xnat.getViewables', utils.xnat.getViewables);
-goog.exportSymbol('utils.xnat.compareScan', utils.xnat.compareScan);
-goog.exportSymbol('utils.xnat.compareSlicer', utils.xnat.compareSlicer);
-goog.exportSymbol('utils.xnat.getScans', utils.xnat.getScans);
-goog.exportSymbol('utils.xnat.getSlicer', utils.xnat.getSlicer);
-goog.exportSymbol('utils.xnat.defaultPathObj', utils.xnat.defaultPathObj);
-goog.exportSymbol('utils.xnat.sortXnatProperties', utils.xnat.sortXnatProperties);
+/**
+* @param {!string} xnatServerRoot
+* @return {!string} The query prefix.
+* @public
+*/
+utils.xnat.getQueryPrefix = function(xnatServerRoot) {
+    //
+    // The query prefix
+    //
+    var xnatQueryPrefix = xnatServerRoot + '/REST';
+    if (xnatQueryPrefix.length > 0 && 
+        xnatQueryPrefix[xnatQueryPrefix.length - 1] === '/') {
+	xnatQueryPrefix = xnatQueryPrefix.substring(0, 
+            xnatQueryPrefix.length - 1);
+    }
+    return xnatQueryPrefix;
+}
