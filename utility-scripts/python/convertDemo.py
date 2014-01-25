@@ -70,7 +70,7 @@ def convertDemoToPopup(demoPath):
         #
         # Set the Image viewer mode
         #
-        if ' = ' in line and 'XNAT_IMAGE_VIEWER_MODE' in line and line.count('=') == 1:
+        if isChangeableLine(line):
             line = "XNAT_IMAGE_VIEWER_MODE = 'popup';";
         
         newlines.append(line)
@@ -78,6 +78,9 @@ def convertDemoToPopup(demoPath):
     return newlines
 
 
+
+def isChangeableLine(line):
+    return ' = ' in line and 'XNAT_IMAGE_VIEWER_MODE' in line and line.count('=') == 1 and not 'new' in line
 
 
 
@@ -110,7 +113,7 @@ def convertDemoToVM(demoPath):
         #
         # Set the Image viewer mode
         #
-        if '=' in line and 'XNAT_IMAGE_VIEWER_MODE' in line and line.count('=') == 1:
+        if isChangeableLine(line):
             if not 'XNAT_DATA_PATH' in line:
                 line = "XNAT_IMAGE_VIEWER_MODE = 'live';";
 

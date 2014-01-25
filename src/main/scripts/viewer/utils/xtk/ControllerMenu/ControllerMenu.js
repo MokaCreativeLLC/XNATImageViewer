@@ -520,9 +520,9 @@ utils.xtk.ControllerMenu.prototype.makeOpacity_ = function(fileName, opt_parents
  */
 utils.xtk.ControllerMenu.prototype.makeRow = function (eltArr, opt_lefts) {
     var row = goog.dom.createDom('div', {
-	'id' : 'ElementRow_' + goog.string.createUniqueString()
+	'id' : 'ElementRow_' + goog.string.createUniqueString(),
+	'class': utils.xtk.ControllerMenu.ROW_CLASS
     });
-    goog.dom.classes.add(row, utils.xtk.ControllerMenu.ROW_CLASS);
 
 
 
@@ -849,11 +849,11 @@ utils.xtk.ControllerMenu.prototype.getParent = function(elt){
  */
 utils.xtk.ControllerMenu.prototype.makeLabel = function(labelTitle, opt_parent){
     var label = goog.dom.createDom('div',{
-	'id' : 'Label' + goog.string.removeAll(labelTitle, ' ') + goog.string.createUniqueString()
+	'id' : 'Label' + goog.string.removeAll(labelTitle, ' ') + goog.string.createUniqueString(),
+	'class': utils.xtk.ControllerMenu.LABEL_CLASS
     });
     goog.dom.append(this.getParent(opt_parent), label);
     
-    goog.dom.classes.add(label, utils.xtk.ControllerMenu.LABEL_CLASS)
     label.innerHTML = labelTitle;
     return label;
 }
@@ -869,10 +869,11 @@ utils.xtk.ControllerMenu.prototype.makeLabel = function(labelTitle, opt_parent){
  */
 utils.xtk.ControllerMenu.prototype.makeNumberDisplay = function(opt_parent){
     var value = goog.dom.createDom('div', {
-	'id' : 'NumberDisplay_' + goog.string.createUniqueString()
+	'id' : 'NumberDisplay_' + goog.string.createUniqueString(),
+	'class': utils.xtk.ControllerMenu.VALUE_CLASS
     });
     goog.dom.append(this.getParent(opt_parent), value);
-    goog.dom.classes.add(value, utils.xtk.ControllerMenu.VALUE_CLASS)
+
     return value;
 }
 
@@ -945,8 +946,8 @@ utils.xtk.ControllerMenu.prototype.makeSliderRow = function(labelTitle, callback
     // Need to differentiate between callbacks from the two thumb slider
     // and the slider
     //
-    if (slider.getEventManager){
-	slider.getEventManager().onEvent('SLIDE', slideCallback);
+    if (slider['EVENTS']){
+	slider['EVENTS'].onEvent('SLIDE', slideCallback);
 
     } else {
 	goog.events.listen(slider, goog.ui.Component.EventType.CHANGE, slideCallback);
@@ -1077,23 +1078,24 @@ utils.xtk.ControllerMenu.prototype.makeSlider = function(opt_parent, opt_args) {
  */
 utils.xtk.ControllerMenu.prototype.makeTwoThumbSlider = function(opt_parent, opt_args) {
 
-
     //------------------
     // Make the slider element.
     //------------------
     var elt = goog.dom.createDom('div', {
-	'id' : 'ThresholdSlider_' + goog.string.createUniqueString()
+	'id' : 'ThresholdSlider_' + goog.string.createUniqueString(),
     });    
     goog.dom.append(this.getParent(opt_parent), elt);
+
+
 
     //------------------
     // Make the track element.
     //------------------
     var track = goog.dom.createDom('div', {
-	'id' : 'ThresholdSlider_track'+ goog.string.createUniqueString()
+	'id' : 'ThresholdSlider_track_'+ goog.string.createUniqueString(),
+	'class' : utils.xtk.ControllerMenu.TWOTHUMBSLIDER_TRACK_CLASS
     });    
-    goog.dom.append(elt, track));
-    goog.dom.classes.add(track, utils.xtk.ControllerMenu.TWOTHUMBSLIDER_TRACK_CLASS);
+    goog.dom.append(elt, track);
 
 
 
@@ -1175,12 +1177,13 @@ utils.xtk.ControllerMenu.prototype.makeTwoThumbSlider = function(opt_parent, opt
 utils.xtk.ControllerMenu.prototype.makeCheckbox = function(opt_parent){
 
     var checkbox = goog.dom.createDom('input', { 
-	'id': 'CheckBox'+ goog.string.createUniqueString()
+	'id': 'CheckBox'+ goog.string.createUniqueString(),
+	'class': utils.xtk.ControllerMenu.BUTTON_CLASS
     });    
     goog.dom.append(this.getParent(opt_parent), checkBox);
 
     checkbox.type = 'checkbox';
-    goog.dom.classes.add(checkbox, utils.xtk.ControllerMenu.BUTTON_CLASS );
+
     return checkbox;
 }
 
@@ -1196,13 +1199,14 @@ utils.xtk.ControllerMenu.prototype.makeCheckbox = function(opt_parent){
 utils.xtk.ControllerMenu.prototype.makeRadioButton = function(opt_parent){
 
     var radio = goog.dom.createDom('input', {
-	'id': 'Button'+ goog.string.createUniqueString()
+	'id': utils.xtk.ControllerMenu.BUTTON_CLASS + goog.string.createUniqueString(),
+	'class': utils.xtk.ControllerMenu.BUTTON_CLASS + ' ' 
+	    + utils.xtk.ControllerMenu.RADIO_BUTTON_CLASS
     });    
     goog.dom.append(this.getParent(opt_parent), radio);
 
     radio.type = 'radio';
-    goog.dom.classes.add(radio, utils.xtk.ControllerMenu.BUTTON_CLASS);   
-    goog.dom.classes.add(radio, utils.xtk.ControllerMenu.RADIO_BUTTON_CLASS);   
+
     return radio;
 }
 

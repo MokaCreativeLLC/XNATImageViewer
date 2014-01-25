@@ -4,23 +4,15 @@
  */
 
 
-/**
- * Google closure includes.
- */
+// goog
 goog.require('goog.string');
 goog.require('goog.dom');
 goog.require('goog.array');
 
-
-/**
- * XTK includes.
- */
+// xtk
 goog.require('X.sphere');
 
-
-/**
- * utils includes.
- */
+// utils
 goog.require('utils.string');
 goog.require('utils.slicer');
 goog.require('utils.style');
@@ -29,10 +21,7 @@ goog.require('utils.xtk.ControllerMenu');
 goog.require('utils.convert');
 goog.require('utils.dom');
 
-
-/**
- * xiv includes.
- */
+// xiv
 goog.require('xiv.ViewBox');
 goog.require('xiv');
 goog.require('xiv.Widget');
@@ -50,17 +39,15 @@ goog.require('xiv.Thumbnail');
  * xtk-utils to load in XObjects) in a given xiv.ViewBox.
  *
  * @constructor
- * @param {xiv.ViewBox, Object=}
+ * @param {xiv.ViewBox}
  * @extends {xiv.Displayer}
  */
 goog.provide('xiv.XtkDisplayer');
 xiv.XtkDisplayer = function(ViewBox) {
 
-    //------------------
-    // Call parents, set class
-    //------------------  
-    xiv.Displayer.call(this, 'xiv.XtkDisplayer');
-    goog.dom.classes.set(this.element, xiv.XtkDisplayer.ELEMENT_CLASS);
+    goog.base(this, 'xiv.XtkDisplayer', {
+	'class': xiv.XtkDisplayer.ELEMENT_CLASS
+    });
 
 
 
@@ -80,12 +67,12 @@ xiv.XtkDisplayer = function(ViewBox) {
 
 
 
-
     /**
-     * @type {?Object}
      * @private
-     */
-    this.slicerSettings_ = null;
+     * @type {!utils.xtk.ControllerMenu}
+     */ 
+    this.ControllerMenu_ = new utils.xtk.ControllerMenu();
+
 
 
 
@@ -102,39 +89,6 @@ xiv.XtkDisplayer = function(ViewBox) {
      * @private
      */ 
     this.onLoaded_ = [];
-
-
-
-    /**
-     * @type {!Object}
-     * @private
-     */ 
-    this.currentViewables_ = {};
-
-
-
-    /**
-     * @type {!Object}
-     * @private
-     */
-    this.currentViewablesSettings_ = {};
-
-
-
-    /**
-     * @type {!Object}
-     * @private
-     */
-    this.currentSlicerSettings_ = {};
-
-
-
-    /**
-     * @private
-     * @type {!utils.xtk.ControllerMenu}
-     */ 
-    this.ControllerMenu_ = new utils.xtk.ControllerMenu();
-
 
 
 
@@ -157,9 +111,38 @@ goog.exportSymbol('xiv.XtkDisplayer', xiv.XtkDisplayer);
 
 
 
-xiv.XtkDisplayer.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-displayer');
-xiv.XtkDisplayer.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.XtkDisplayer.CSS_CLASS_PREFIX, '');
+/**
+ * @type {?utils.slicer.settings}
+ * @private
+ */
+xiv.XtkDisplayer.prototype.slicerSettings_ = null;
 
+
+
+
+/**
+ * @type {?Object}
+ * @private
+ */ 
+xiv.XtkDisplayer.prototype.currentViewables_ = null;
+
+
+
+
+/**
+ * @type {?Object}
+ * @private
+ */
+xiv.XtkDisplayer.prototype.currentViewablesSettings_ = null;
+
+
+
+
+/**
+ * @type {?Object}
+ * @private
+ */
+xiv.XtkDisplayer.prototype.currentSlicerSetting_ = null;
 
 
 
@@ -230,9 +213,9 @@ xiv.XtkDisplayer.prototype.__defineGetter__('ControllerMenu',  function(){
  * @public
  */
 xiv.XtkDisplayer.prototype.__defineGetter__('ViewLayout',  function(){
-    if (this.currentSlicerSettings_ && this.currentSlicerSettings_['layout']) {
+    if (this.currentSlicerSetting_ && this.currentSlicerSetting_['layout']) {
 	window.console.log("LAYOUT", this.currentViewablesSettings_['layout']);
-	return this.currentSlicerSettings_['layout'];
+	return this.currentSlicerSetting_['layout'];
     } else {
 	return xiv.DEFAULT_LAYOUT
     }
@@ -246,10 +229,10 @@ xiv.XtkDisplayer.prototype.__defineGetter__('ViewLayout',  function(){
  * @public 
  */
 xiv.XtkDisplayer.prototype.__defineGetter__('BackgroundColors', function(){
-    if (this.currentSlicerSettings_ && this.currentSlicerSettings_['background-color']) {
+    if (this.currentSlicerSetting_ && this.currentSlicerSetting_['background-color']) {
 	//window.console.log("LAYOUT", this.currentViewablesSettings_['background-colors']);
-	return [utils.convert.arrayToRgb(this.currentSlicerSettings_['background-color'][0], 255), 
-		utils.convert.arrayToRgb(this.currentSlicerSettings_['background-color'][1], 255)]
+	return [utils.convert.arrayToRgb(this.currentSlicerSetting_['background-color'][0], 255), 
+		utils.convert.arrayToRgb(this.currentSlicerSetting_['background-color'][1], 255)]
     } else {
 	return ['rgba(0,0,0,1)', 'rgba(0,0,0,1)']
     }
@@ -753,13 +736,13 @@ xiv.XtkDisplayer.prototype.showSlicerViewMenu_ = function(){
 
     this.ViewBox_.SlicerViewMenu.onViewSelected(function(slicerSetting){
 	window.console.log("LOADING THIS GUY", slicerSetting);
-	this.currentSlicerSettings_ = slicerSetting;
+	this.currentSlicerSetting_ = slicerSetting;
 	this.ViewBox_.SlicerViewMenu.hideViewSelectDialog();
 	this.XtkPlaneManager_.setCamera('3D', slicerSetting['camera']);
 	this.loadViewables_(slicerSetting);
     }.bind(this));
 
-    this.ViewBox_.SlicerViewMenu.showViewSelectDialog();
+    this.ViewBox_.SlicerViewMenu.showDialog();
 
 
 }
@@ -812,7 +795,5 @@ xiv.XtkDisplayer.prototype.set2DRenderObject_ = function(fileName) {
 
 
 
-goog.exportSymbol('xiv.XtkDisplayer.prototype.isLoaded', xiv.XtkDisplayer.prototype.isLoaded);
-goog.exportSymbol('xiv.XtkDisplayer.prototype.load', xiv.XtkDisplayer.prototype.load);
-goog.exportSymbol('xiv.XtkDisplayer.prototype.loopSettingsViewables', xiv.XtkDisplayer.prototype.loopSettingsViewables);
-goog.exportSymbol('xiv.XtkDisplayer.prototype.updateStyle', xiv.XtkDisplayer.prototype.updateStyle);
+xiv.XtkDisplayer.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-displayer');
+xiv.XtkDisplayer.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.XtkDisplayer.CSS_CLASS_PREFIX, '');

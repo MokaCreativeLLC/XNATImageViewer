@@ -37,8 +37,8 @@ goog.provide("utils.xnat");
  * @constructor
  * @dict
  */
-goog.provide("utils.xnat.properties");
-utils.xnat.properties = function(){ 
+goog.provide('utils.xnat.viewableProperties');
+utils.xnat.viewableProperties = function(){ 
     this['category'] =  'dicom';
     this['files'] = ['testfile.text'];
     this['thumbnailUrl'] = 'image.jpeg';
@@ -54,7 +54,6 @@ utils.xnat.properties = function(){
         "Scan" : {'label':"Scan", 'value': ['Empty Scan']},
         "type" : {'label':"type", 'value': ["MPRAGE"]}
     }
-    
 };
 
 
@@ -413,7 +412,7 @@ utils.xnat.getScans = function (url, callback){
 		// Populate medatadata object pertaining to
 		// the scan. See keys below...
 		//
-		scanProperties = new utils.xnat.properties();
+		scanProperties = new utils.xnat.viewableProperties();
 		for (key in pathObj){
 		    if (pathObj[key] !== 'undefined'){
 			scanProperties['sessionInfo'][key] = pathObj[key]; 
@@ -549,7 +548,7 @@ utils.xnat.getSlicer = function (url, callback){
 		// Populate medatadata object.  See keys
 		// below for specificity.
 		//
-		slicerProperties = new utils.xnat.properties();
+		slicerProperties = new utils.xnat.viewableProperties();
 		for (key in viewableFile){
 		    slicerProperties[key] = viewableFile[key];
 		}
@@ -611,7 +610,7 @@ utils.xnat.getSlicer = function (url, callback){
  * Sorts the viewable collection, which is an array of XNAT derived JSONS
  * customized (added to) for the purposes of the Image viewer.
  *
- * @param {!Array.<utils.xnat.properties>} xnatPropsArr The array of utils.xnat.properties to sort. 
+ * @param {!Array.<utils.xnat.viewableProperties>} xnatPropsArr The array of utils.xnat.viewableProperties to sort. 
  * @param {!Array.<String>} keyDepthArr The key depth array indicating the sorting criteria.
  */
 utils.xnat.sortXnatPropertiesArray = function (xnatPropsArr, keyDepthArr){
@@ -653,7 +652,7 @@ utils.xnat.sortXnatPropertiesArray = function (xnatPropsArr, keyDepthArr){
 
 
 
-goog.exportSymbol('utils.xnat.properties', utils.xnat.properties);
+goog.exportSymbol('utils.xnat.viewableProperties', utils.xnat.viewableProperties);
 goog.exportSymbol('utils.xnat.folderAbbrev', utils.xnat.folderAbbrev);
 goog.exportSymbol('utils.xnat.jsonGet', utils.xnat.jsonGet);
 goog.exportSymbol('utils.xnat.get', utils.xnat.get);

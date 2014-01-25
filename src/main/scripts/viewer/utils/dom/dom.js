@@ -126,32 +126,115 @@ utils.dom.getMouseXY = function (e) {
 
 
 
+/**
+* @param {!Array.string} idPrefixes The array of id prefixes.
+* @param {string=}  opt_iconSrcFolder Defaults to ''. 
+* @param {string=}  opt_iconExt Defaults to .png.
+*/
+utils.dom.createBasicHoverButtonSet = function(idPrefixes, opt_iconSrcFolder, opt_iconExt){
+    
+    if (!goog.isArray(idPrefixes)){
+	throw new TypeError('Array expected!', idPrefixes);
+    }
+
+    if (opt_iconSrcFolder && !goog.isString(opt_iconSrcFolder)){
+	throw new TypeError('String expected!', opt_iconSrcFolder);
+    }
+
+    if (opt_iconExt && !goog.isString(opt_iconExt)){
+	throw new TypeError('String expected!', opt_iconExt);
+    }
+
+
+    /**
+     * @dict
+     */
+    var buttonSet = {};
+
+
+    /**
+     * @type {!string}
+     */
+    var ext = opt_iconExt ? opt_iconExt : 'png';
+
+
+    var key = '';
+    for (var i=0, len = idPrefixes.length; i < len; i++){
+	key = idPrefixes[i];
+	buttonSet[key] = utils.dom.createBasicHoverButton(key, {
+	    'src': opt_iconSrcFolder ? 
+		goog.string.path.join(opt_iconSrcFolder, 
+		goog.string.toSelectorCase(key) + '.' + ext) : '',
+	})
+    }
+
+
+    return buttonSet;
+}
+
+
+
 
 /**
  * Creates a basic button.
  *
- * @param {Object.<string, string | number | function>=} opt_attrs
- * @param {number=} opt_mouseOverOpacity
- * @param {number=} opt_mouseOutOpacity
- * return {Element}
+ * @param {!string} idPrefix 
+ * @param {Object=} opt_attrs
+ * @param {number=} opt_mouseOverOpacity Defaults to 1.
+ * @param {number=} opt_mouseOutOpacity Defaults to 0.5.
+ * return {!Element}
  * @private
  */
-utils.dom.createBasicHoverButton = function(opt_attrs, opt_mouseOverOpacity, opt_mouseOutOpacity){
+utils.dom.createBasicHoverButton = function(idPrefix, opt_attrs, opt_mouseOverOpacity, opt_mouseOutOpacity){
 
-    var type = (opt_attrs && opt_attrs['src']) ? 'img' : 'div';
+    if (!goog.isString(idPrefix)){
+	throw new TypeError('String expected!');
+    }
+    if (opt_attrs && !goog.isObject(opt_attrs)){
+	throw new TypeError('Object expected!');
+    }
+    if (goog.isDefAndNotNull(opt_mouseOverOpacity) 
+	&& !goog.isNumber(opt_mouseOverOpacity)){
+	throw new TypeError('Number expected!');
+    }
+    if (goog.isDefAndNotNull(opt_mouseOutOpacity) 
+	&& !goog.isNumber(opt_mouseOutOpacity)){
+	throw new TypeError('Number expected!');
+    }
+
+
     var attrs = opt_attrs ? opt_attrs : {};
-    var basicButton = goog.dom.createDom(type, attrs);
+    var buttonDiv = utils.dom.createUniqueDom('div', idPrefix, attrs);
 
+    //
+    // Make an 'img' element if there's a 'src' attrib.
+    //
+    if (opt_attrs && opt_attrs['src']){
+	var imgElt = goog.dom.createDom('img', {
+	    'src': opt_attrs['src']
+	})
+	// Restyle image to fit in div
+	imgElt.style.backgroundSize = 'contain';
+	imgElt.style.maxWidth = '100%';
+	imgElt.style.maxHeight = '100%';
+	goog.dom.append(buttonDiv, imgElt)
+	imgElt.onclick = imgElt.parentNode.onclick;
+    }
+
+
+    //
+    // Set the opacity values
+    //
     opt_mouseOverOpacity = opt_mouseOverOpacity === undefined 
 	? 1 : opt_mouseOverOpacity;
     opt_mouseOutOpacity = opt_mouseOutOpacity === undefined 
 	? .5 : opt_mouseOutOpacity;
 
-    utils.fx.setBasicHoverStates(basicButton, 
+    utils.fx.setBasicHoverStates(buttonDiv, 
 				 opt_mouseOverOpacity, 
 				 opt_mouseOutOpacity); 
    
-    return basicButton
+    return buttonDiv
 }
 
 
@@ -159,45 +242,43 @@ utils.dom.createBasicHoverButton = function(opt_attrs, opt_mouseOverOpacity, opt
 
 
 /**
- * Merges two javaScript objects, giving obj2 the priority.
  *
- * @param {?Object, ?Object, number=}
- * return {Object}
+ * @param {!string} type
+ * @param {!string} idPrefix
+ * @param {!Object} opt_attrs
+ * @return {!Elemehnt}
  */
-utils.dom.mergeArgs = function (obj1, obj2, opt_recursionDepth) {
-    var recDepth = (opt_recursionDepth) ? opt_recursionDepth : 2; 
-    var obj3 = {};
+utils.dom.createUniqueDom = function (type, idPrefix, opt_attrs) {
 
-
-
-    //------------------
-    // Add obj1's attributes to obj3
-    //------------------
-    for (var attr in obj1) { 
-    	obj3[attr] = obj1[attr]; 
+    if (!goog.isString(type)){
+	throw new TypeError('String expected!', type);
     }
-
-
-
-    //------------------
-    // Merge with object2, performing recursion
-    // as needed.
-    //------------------
-    if (obj2) {
-	for (var attr in obj2) { 
-	    //utils.dom.debug(obj2[attr] + " " + obj2[attr].toString())
-	    if (obj2[attr] && (obj2[attr].toString() === '[object Object]') && (attr in obj3)) {
-	    	//utils.dom.debug("Found an existing object within an object when merging: " + attr + " " + obj2[attr])
-	    	obj3[attr] = utils.dom.mergeArgs(obj3[attr], obj2[attr]);
-	    }
-	    else{
-		obj3[attr] = obj2[attr];     		
-	    }
-	}   	
+    if (!goog.isString(idPrefix)){
+	throw new TypeError('String expected!', idPrefix);
     }
+    if (opt_attrs && !goog.isObject(opt_attrs)){
+	throw new TypeError('Object expected!');
+    }
+    
+    /**
+     * @dict
+     */
+    var opt_attrs = opt_attrs && goog.isObject(opt_attrs) ? opt_attrs : {}
 
 
-    return obj3;
+    //
+    // Allow only letters in the id prefix
+    //
+    var id = utils.string.getLettersOnly(idPrefix);
+
+    opt_attrs['id'] = opt_attrs['id'] ? opt_attrs['id'] : 
+	goog.string.toSelectorCase(id) 
+	+ '_' + goog.string.createUniqueString();
+
+    opt_attrs['class'] = opt_attrs['class'] ? opt_attrs['class'] : 
+	goog.string.toSelectorCase(id);
+
+    return goog.dom.createDom(type, opt_attrs);
 }
 
 
@@ -215,27 +296,6 @@ utils.dom.stopPropagation = function (e) {
 		e.cancelBubble = true;
 	if (e.stopPropagation) 
 		e.stopPropagation();
-}
-
-
-
-
-/**
- * Generates a unique id string. 
- * From: http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
- *
- * @param {Event}
- */
-utils.dom.uniqueId = function () {
-	
-    function __s4__() {
-	return Math.floor((1 + Math.random()) * 0x10000)
-	    .toString(16)
-	    .substring(1);
-    };
-
-    return __s4__() + __s4__() + '-' + __s4__() + '-' + __s4__() + '-' +
-        __s4__() + '-' + __s4__() + __s4__() + __s4__();	
 }
 
 

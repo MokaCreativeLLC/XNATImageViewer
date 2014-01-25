@@ -46,10 +46,12 @@ def main():
     #----------------------------
     for key, src in origins.iteritems():
 
+
+
         dst = targets[key]
 
         print "\n\nSRC: %s\nDST: %s"%(src, dst)
-        
+            
         #
         # For directories
         #
@@ -64,6 +66,8 @@ def main():
         # For files
         #
         else:
+            if os.path.basename(src).startswith('.'):
+                continue
             # Delete existing file
             if os.path.exists(dst):
                 os.remove(dst)

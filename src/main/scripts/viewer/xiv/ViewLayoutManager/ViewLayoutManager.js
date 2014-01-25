@@ -3,11 +3,10 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-/**
- * Google closure includes
- */
+// goog
 goog.require('goog.fx.AnimationParallelQueue');
 goog.require('goog.dom');
+goog.require('goog.string');
 goog.require('goog.events');
 goog.require('goog.fx.Animation');
 goog.require('goog.fx.dom.FadeInAndShow');
@@ -16,18 +15,14 @@ goog.require('goog.fx.dom.Resize');
 goog.require('goog.fx.dom.Slide');
 goog.require('goog.fx.dom.BgColorTransform');
 
-/**
- * utils includes
- */
+// utils
 goog.require('utils.dom');
 goog.require('utils.array');
 goog.require('utils.string');
 goog.require('utils.style');
 goog.require('utils.fx');
 
-/**
- * viewer-widget includes
- */
+// xiv
 goog.require('xiv');
 goog.require('xiv.ViewLayout');
 
@@ -59,7 +54,7 @@ xiv.ViewLayoutManager = function() {
     this.viewLayouts_['coronal'] = (new xiv.ViewLayout('Coronal'));
     this.viewLayouts_['transverse'] = (new xiv.ViewLayout('Transverse'));
     this.viewLayouts_['3d'] = (new xiv.ViewLayout('3D'));
-    this.viewLayouts_['fourup'] = (new xiv.ViewLayout('Four-Up'));
+    this.viewLayouts_['fourup'] = (new xiv.ViewLayout('FourUp'));
     this.viewLayouts_['conventional'] = (new xiv.ViewLayout('Conventional'));
     this.viewLayouts_['none'] = (new xiv.ViewLayout('none'));
 
@@ -589,8 +584,15 @@ xiv.ViewLayoutManager.prototype.setViewLayout = function(viewLayout, callback) {
     // visible planes.
     //------------------
     this.loopAll(function(viewPlaneElement, i, plane, interactor){    
-	var tempElt = utils.dom.makeElement("div", viewPlaneElement.parentNode, "tempEltForAnim");
-	goog.dom.classes.set(tempElt, this.currViewLayout_.cssSheets[plane]);
+
+
+	var tempElt = goog.dom.createDom("div", {
+	    'id':'tempEltForAnim', 
+	    'class': this.currViewLayout_.cssSheets[plane]
+	});
+	goog.dom.append(viewPlaneElement.parentNode, tempElt);
+
+
 	if (utils.style.getComputedStyle(tempElt, ['visibility'])['visibility'] === 'visible') {  
 	    this.visiblePlanes_.push(viewPlaneElement); 
 	    if (interactor) {

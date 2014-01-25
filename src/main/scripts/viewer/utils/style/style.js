@@ -267,11 +267,16 @@ utils.style.dims = function (elt, arg1) {
     // attributes.
     //------------------	
     } else {
+	
+	
 	var retObj = {};
-	var p = goog.style.getRelativePosition(elt, elt.parentNode);
+
+	var p = (elt.parentNode) ? goog.style.getRelativePosition(elt, elt.parentNode) : 
+	    goog.style.getRelativePosition(elt, document.body)
+
 	var posObj = {
-	    left: utils.convert.toInt(elt.style.left) || p.x,
-	    top: utils.convert.toInt(elt.style.top) || p.y
+	    left: utils.convert.toInt(elt.style.left) || (p.x),
+	    top: utils.convert.toInt(elt.style.top) || (p.y)
 	};
 
 	retObj = utils.dom.mergeArgs(retObj, posObj);		

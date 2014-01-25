@@ -3,9 +3,7 @@
  * @author amh1646@rih.edu (Amanda Hartung)
  */
 
-/**
- * Google closure includes
- */
+// goog
 goog.require('goog.dom.DomHelper');
 
 
@@ -138,11 +136,11 @@ utils.slicer.getBackgroundColor = function(scene) {
 
 
 /**
- * @type {Object.<number, string>}
+ * @enum {string}
  */
 utils.slicer.layoutStringMap = {
     '2': 'Conventional',
-    '3': 'Four-Up'
+    '3': 'FourUp'
 }
 
 
@@ -297,7 +295,7 @@ utils.slicer.getSlicerSettings = function(mrmlFile) {
 
 	// Layout
 	slicerSettings[sceneView]['layout'] = utils.slicer.getLayout(currScene);
-	slicerSettings[sceneView]['layout'] = slicerSettings[sceneView]['layout'] ? slicerSettings[sceneView]['layout'] : 'Four-Up';
+	slicerSettings[sceneView]['layout'] = slicerSettings[sceneView]['layout'] ? slicerSettings[sceneView]['layout'] : 'FourUp';
 
 
     }.bind(this))
@@ -639,3 +637,6 @@ utils.slicer.getVolumes = function(scene) {
 
     return volumes;
 }
+
+
+

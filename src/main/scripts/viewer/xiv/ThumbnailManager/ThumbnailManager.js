@@ -10,7 +10,6 @@ goog.require('goog.fx.DragDropGroup');
 goog.require('utils.array');
 goog.require('utils.events.EventManager');
 
-
 // xiv
 goog.require('xiv.Thumbnail');
 
@@ -19,36 +18,35 @@ goog.require('xiv.Thumbnail');
 
 /**
  * xiv.Thumbnail manager handles the interactive features of xiv.Thumbnails
- * such as drag and drop, and also keeps a running list of them for
- * the xiv._Modal ckass to reference. 
+ * such as drag and drop, and also keeps a running list of them. 
  *
  * @constructor
  * @extends {xiv.Widget}
  */
 goog.provide('xiv.ThumbnailManager');
 xiv.ThumbnailManager = function () {
-    
+
+
     /**
-     * @type {!Array.<xiv.Thumbnail>}
+     * @dict
      * @private
      */    
-    this.thumbs_ = [];
+    this.thumbs_ = {};
 
     
     /**
-     * @type {?goog.fx.DragDropGroup}
+     * @type {!goog.fx.DragDropGroup}
      * @private
      */
-    this.thumbnailDragDropGroup_ = null;
-
-
+    this.thumbnailDragDropGroup_ =  new goog.fx.DragDropGroup();
 
 
     /**
-     * @type {?goog.fx.DragDropGroup}
+     * @type {!goog.fx.DragDropGroup}
      * @private
      */
-    this.thumbnailTargetGroup_ = null;
+    this.thumbnailTargetGroup_ = new goog.fx.DragDropGroup();
+
 
 
 
@@ -76,6 +74,20 @@ xiv.ThumbnailManager.EventType = {
 
 
 
+/**
+ * @param {!Element} elt
+ * @private
+ */
+xiv.ThumbnailManager.prototype.setHoverParent = function(elt){
+    this.loop(function(thumbnail){
+	goog.dom.append(elt, thumbnail.getHoverable());
+    })
+}
+
+
+
+
+
 
 /**
  * Loops through all the thumbnails, applying
@@ -86,10 +98,13 @@ xiv.ThumbnailManager.EventType = {
  * @public
  */
 xiv.ThumbnailManager.prototype.loop = function(opt_callback){
-    goog.array.forEach(this.thumbs_, function(_thumbnail){
-	opt_callback && opt_callback(_thumbnail);
-    })
+    for (key in this.thumbs_) {
+	if (goog.isFunction(opt_callback)) {
+	    opt_callback(this.thumbs_[key]);
+	}
+    }
 }
+
 
 
 
@@ -161,8 +176,11 @@ xiv.ThumbnailManager.prototype.dragEnd_ = function (event) {
     // Get the origin thumbnail Element, from which the cloned xiv.Thumbnail 
     // came.  This is conducted through a class query.
     //------------------
-    var dragThumbnail = goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, utils.ui.Thumbnail.CSS_CLASS_PREFIX);
-    var originalThumbnail = goog.dom.getElement(dragThumbnail.getAttribute('thumbnailid'))
+    var dragThumbnail = 
+	goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, 
+				    utils.ui.Thumbnail.CSS_CLASS_PREFIX);
+    var originalThumbnail = 
+	goog.dom.getElement(dragThumbnail.getAttribute('thumbnailid'))
     var Thumb = this.getThumbnailByElement(originalThumbnail);
 
 
@@ -187,7 +205,7 @@ xiv.ThumbnailManager.prototype.dragEnd_ = function (event) {
 				  function(){
 				      delete thumbDraggerFader;	
 				  })
-	this.EventManager.runEvent('THUMBNAILDROP', 
+	this['EVENTS'].runEvent('THUMBNAILDROP', 
 				   dragThumbnail.dropTarget, 
 				   originalThumbnail);
     }
@@ -203,7 +221,9 @@ xiv.ThumbnailManager.prototype.dragEnd_ = function (event) {
  */
 xiv.ThumbnailManager.prototype.drop_ = function(event) {
 
-    var dragThumbnail = goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, utils.ui.Thumbnail.CSS_CLASS_PREFIX);
+    var dragThumbnail = 
+	goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, 
+				    utils.ui.Thumbnail.CSS_CLASS_PREFIX);
     var thumbDragger = goog.dom.getElement('THUMBNAIL_DRAGGER'); 
     var dragClone = thumbDragger.cloneNode(true);
 
@@ -244,12 +264,6 @@ xiv.ThumbnailManager.prototype.drop_ = function(event) {
 xiv.ThumbnailManager.prototype.initDragDrop = function(){
 
     window.console.log("INIT DRAG DROP");
-    //------------------
-    // Create Drag and drop Groups as 
-    // per goog.fx.DragGroup.
-    //------------------
-    this.thumbnailDragDropGroup_ = new goog.fx.DragDropGroup();
-    this.thumbnailTargetGroup_ = new goog.fx.DragDropGroup();
 
 
 
@@ -311,7 +325,15 @@ xiv.ThumbnailManager.prototype.add = function(thumbnail){
     //------------------
     // Add to private array.
     //------------------
-    this.thumbs_.push(thumbnail);
+    this.thumbs_[goog.getUid(thumbnail)] = thumbnail;
+
+
+
+    //------------------
+    // Change the thumbnail's element id 
+    // to the Uid
+    //------------------
+    thumbnail.getElement().setAttribute('id', goog.getUid(thumbnail));
 
 
 
@@ -327,12 +349,12 @@ xiv.ThumbnailManager.prototype.add = function(thumbnail){
     // then highlight the view box that the 
     // thumbnail was dropped into when we hover over it.
     //------------------
-    this.EventManager.onEvent('MOUSEOVER', function(callback){
-	thumbnail.getEventManager().onEvent('MOUSEOVER', callback);
+    this['EVENTS'].onEvent('MOUSEOVER', function(callback){
+	thumbnail['EVENTS'].onEvent('MOUSEOVER', callback);
     }.bind(this))
 
-    this.EventManager.onEvent('MOUSEOUT', function(callback){
-	thumbnail.getEventManager().onEvent('MOUSEOUT', callback);
+    this['EVENTS'].onEvent('MOUSEOUT', function(callback){
+	thumbnail['EVENTS'].onEvent('MOUSEOUT', callback);
     }.bind(this))
 
 }
@@ -409,11 +431,7 @@ xiv.ThumbnailManager.prototype.addDragDropTargets = function(targetArr) {
  * @returns {xiv.Thumbnail}
  */
 xiv.ThumbnailManager.prototype.getThumbnailByElement = function(element) {
-    for (var i=0, len = this.thumbs_.length; i < len; i++) {
-	if (goog.dom.getAncestorByClass(element, xiv.Thumbnail.CSS_CLASS_PREFIX) == this.thumbs_[i].getElement()) {
-	    return this.thumbs_[i];
-	}	
-    }
+    return this.thumbs_[element.id];
 }
 
 
@@ -422,18 +440,20 @@ xiv.ThumbnailManager.prototype.getThumbnailByElement = function(element) {
 /**
  * Returns a newly created xiv.Thumbnail object. 
  *
- * @param {utils.xnat.properties} xnatProperties
+ * @param {utils.xnat.viewableProperties} xnatProperties
  * @param {boolean=} opt_addToManager
  * @returns {xiv.Thumbnail}
  * @public
  */
 xiv.ThumbnailManager.prototype.makeThumbnail = function(xnatProperties, opt_addToManager) {
+
     var thumbnail = new xiv.Thumbnail(xnatProperties);
+
     if ((opt_addToManager === undefined) || (opt_addToManager === true)) { 
 	this.add(thumbnail);
-	thumbnail.getEventManager().onEvent('CLICK',  function(){
+	thumbnail['EVENTS'].onEvent('CLICK',  function(){
 	    window.console.log("THUM", thumbnail);
-	    this.EventManager.runEvent('THUMBNAILCLICK', thumbnail);
+	    this['EVENTS'].runEvent('THUMBNAILCLICK', thumbnail);
 	}.bind(this))
     }
     return thumbnail;

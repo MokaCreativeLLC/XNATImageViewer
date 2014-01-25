@@ -21,8 +21,8 @@ goog.require('utils.ui.ScrollableContainer');
  * Thumbnail Galleries are subclass of ScrollableContainer that specifically contain
  * utils.ui.Thumbnail objects.
  *
- * @extends {utils.ui.ScrollableContainer}
  * @constructor
+ * @extends {utils.ui.ScrollableContainer}
  */
 goog.provide('utils.ui.ThumbnailGallery');
 utils.ui.ThumbnailGallery = function () {
@@ -194,7 +194,7 @@ utils.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){
 	// Unhover all of the thumbnails
 	//
 	for (var thumbID in this.Thumbnails_) {
-	    this.Thumbnails_[thumbID].getEventManager().runEvent('MOUSEOUT');
+	    this.Thumbnails_[thumbID]['EVENTS'].runEvent('MOUSEOUT');
 	}
 
 	//
@@ -221,7 +221,7 @@ utils.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){
     // set the stored one to the new one.
     //------------------ 
     if (this.currMousewheelThumbnail_ && (this.currMousewheelThumbnail_ !== this.Thumbnails_[originalThumbnailId])){
-	this.currMousewheelThumbnail_.getEventManager().runEvent('MOUSEOUT'); 
+	this.currMousewheelThumbnail_['EVENTS'].runEvent('MOUSEOUT'); 
     } 
     this.currMousewheelThumbnail_ = this.Thumbnails_[originalThumbnailId];
     //window.console.log("\n\nThe mouse is over", this.Thumbnails_[originalThumbnailId].element_.id);
@@ -233,7 +233,7 @@ utils.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){
     // return out, otherwise call the mouseOver.
     //------------------ 
     if (!this.currMousewheelThumbnail_){ return }
-    this.currMousewheelThumbnail_.getEventManager().runEvent('MOUSEOVER');   
+    this.currMousewheelThumbnail_['EVENTS'].runEvent('MOUSEOVER');   
     
   
 

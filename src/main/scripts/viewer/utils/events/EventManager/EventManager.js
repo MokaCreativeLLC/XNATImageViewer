@@ -81,7 +81,13 @@ utils.events.EventManager.prototype.getEventTypes = function(){
  * @public
  */
 utils.events.EventManager.prototype.onEvent = function(eventType, callback){
+
+    if (!goog.isFunction(callback)){
+        throw new TypeError('Function expected!');
+    }
+
     this.checkEventType_(eventType);
+
     if (!goog.array.contains(this.events_[eventType], callback)){
 	this.events_[eventType].push(callback);
     }
@@ -100,8 +106,8 @@ utils.events.EventManager.prototype.runEvent = function(eventType){
     this.checkEventType_(eventType);
     if (!this.suspendedEvents_[eventType]){
 	for (var i=0, len = this.events_[eventType].length; i<len; i++){
-	    utils.events.EventManager.runPartial(this.events_[eventType][i], 
-						 [].splice.call(arguments,1))
+	    this.events_[eventType][i].apply(null, 
+	      Array.prototype.splice.call(arguments, 1));
 	}
     }
 }
@@ -220,38 +226,3 @@ utils.events.EventManager.prototype.checkEventType_ = function(eventType){
 }
 
 
-
-
-
-
-
-
-/**
- * @param {!Object} obj The obj to add the event manager to.
- * @param {!eventTypes} eventTypes The eventTypes enums of the object.
- * @public
- */
-utils.events.addEventManager = function(obj, eventTypes){
-
-    if (!obj){
-	throw 'Invalid obj argument for addEventManager: \'' + obj + '\'.';
-    }
-
-    if (!eventTypes){
-	throw 'Invalid eventTypes argument for addEventManager: \'' + eventTypes + '\'.';
-    }
-
-    /**
-     * @param {!utils.events.EventManager}
-     * @protected
-     */ 
-    obj.EventManager = new utils.events.EventManager(eventTypes);
-
-    /**
-     * @return {!utils.events.EventManager} The event manager.
-     * @public
-     */
-    obj.getEventManager = function(){
-	return obj.EventManager;
-    }
-}

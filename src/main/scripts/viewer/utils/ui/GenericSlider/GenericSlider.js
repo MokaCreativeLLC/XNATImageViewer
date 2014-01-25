@@ -13,7 +13,7 @@ goog.require('goog.string');
 
 // utils
 goog.require('utils.dom');
-goog.require('utils.events.EventManager');
+goog.require('utils.events');
 
 
 
@@ -53,6 +53,16 @@ utils.ui.GenericSlider = function (opt_args) {
     });
     this.element.appendChild(this.track_);
 
+
+
+    /**
+     * @type {!Element}
+     * @private
+     */
+    this.thumb_ = this.findThumbElement_();
+
+
+
     /**
      * @param {!Array.<goog.events.MouseWheelHandler>}
      * @private
@@ -61,19 +71,10 @@ utils.ui.GenericSlider = function (opt_args) {
 
 
 
-    /**
-     * @param {!utils.events.EventManager}
-     * @protected
-     */ 
-    this.EventManager = new utils.events.EventManager(utils.ui.GenericSlider.EventType);
-
-
-
-    /**
-     * @type {!Element}
-     * @private
-     */
-    this.thumb_ = this.findThumbElement_();
+    //
+    // Events
+    //
+    utils.events.addEventManager(this, utils.ui.GenericSlider.EventType);
 
 
     
@@ -97,18 +98,6 @@ utils.ui.GenericSlider.EventType = {
   SLIDE: goog.events.getUniqueId('slide'),
   MOUSEWHEEL: goog.events.getUniqueId('mousewheel'),
 };
-
-
-
-
-/**
- * @return {!utils.events.EventManager} The event manager for the slider..
- * @public
- */
-utils.ui.GenericSlider.prototype.getEventManager = function(){
-    return this.EventManager;
-}
-
 
 
 
@@ -153,7 +142,7 @@ utils.ui.GenericSlider.prototype.getThumb = function(){
  */
 utils.ui.GenericSlider.prototype.onMouseWheelScroll_ = function (event) {
     this.setValue(Math.round(this.getValue() + event.deltaY / 3));
-    this.EventManager.runEvent('MOUSEWHEEL');
+    this['EVENTS'].runEvent('MOUSEWHEEL');
     event.preventDefault();
 }
 
@@ -176,7 +165,7 @@ utils.ui.GenericSlider.prototype.bindToMouseWheel = function (element, opt_callb
 	this.MouseWheelHandlers_ = [];
     }
     if (opt_callback){
-	this.EventManager.onEvent('MOUSEWHEEL', opt_callback);
+	this['EVENTS'].onEvent('MOUSEWHEEL', opt_callback);
     }
     this.MouseWheelHandlers_.push(mouseWheelHandler);
 }
@@ -190,14 +179,14 @@ utils.ui.GenericSlider.prototype.bindToMouseWheel = function (element, opt_callb
  * @public
  */
 utils.ui.GenericSlider.prototype.updateStyle = function () {
-    this.EventManager.setEventSuspended('SLIDE', true);
+    this['EVENTS'].setEventSuspended('SLIDE', true);
 
     var pos = this.getValue();
     if (pos < this.getMaximum()) this.setValue(pos + 1);
     else this.setValue(pos - 1);
     this.setValue(pos);    
 
-    this.EventManager.setEventSuspended('SLIDE', false);
+    this['EVENTS'].setEventSuspended('SLIDE', false);
 }
 
 
@@ -277,7 +266,7 @@ utils.ui.GenericSlider.prototype.setOrientation = function(orient) {
 utils.ui.GenericSlider.prototype.initEvents_ = function() {
     utils.ui.GenericSlider.superClass_.addEventListener.call(this, goog.ui.Component.EventType.CHANGE, function (e) {
 	utils.dom.stopPropagation(e);
-	this.EventManager.runEvent('SLIDE');
+	this['EVENTS'].runEvent('SLIDE');
     }.bind(this));	    
 }
 

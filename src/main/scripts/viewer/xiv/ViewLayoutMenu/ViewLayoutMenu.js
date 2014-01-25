@@ -2,9 +2,7 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-/**
- * Google closure includes.
- */
+// goog
 goog.require('goog.ui.MenuButton');
 goog.require('goog.style');
 goog.require('goog.async.Delay');
@@ -12,19 +10,16 @@ goog.require('goog.ui.MenuItem');
 goog.require('goog.array');
 goog.require('goog.ui.Menu');
 goog.require('goog.events');
+goog.require('goog.string');
 goog.require('goog.dom');
 goog.require('goog.fx');
 
-/**
- * utils includes.
- */
+// utils
 goog.require('utils.dom');
 goog.require('utils.style');
 goog.require('utils.fx');
 
-/**
- * xiv includes
- */
+// xiv
 goog.require('xiv');
 goog.require('xiv.Widget');
 
@@ -42,36 +37,47 @@ goog.require('xiv.Widget');
 goog.provide('xiv.ViewLayoutMenu');
 xiv.ViewLayoutMenu = function (viewLayouts) {
   		
-    xiv.Widget.call(this, 'xiv.ViewLayoutMenu');
-    var that = this;
+    goog.base(this, 'xiv.ViewLayoutMenu', {
+	'title': "Select View Plane",
+	'class': xiv.ViewLayoutMenu.ELEMENT_CLASS
+    });
+
+
+
+    /**
+     * @private
+     * @type {!Object.<string, xiv.ViewLayout>}
+     */
     this.viewLayouts_ = viewLayouts;
-
-    
-
-    //------------------
-    // Define the element, and apply its class
-    //------------------
-    this.element.title  = "Select View Plane";
-    goog.dom.classes.set(this.element, xiv.ViewLayoutMenu.ELEMENT_CLASS);
-
 
 
     //------------------
     // Define MenuHolder element, and apply its class.
     //------------------
-    this.menuHolder_ = utils.dom.makeElement("div", this.element, "shortMenuDiv")
-    goog.dom.classes.set(this.menuHolder_, xiv.ViewLayoutMenu.MENUHOLDER_CLASS);
+    this.menuHolder_ = goog.dom.createDom("div", {
+	'id' : "shortMenuDiv",
+	'class': xiv.ViewLayoutMenu.MENUHOLDER_CLASS
+    })
 
 
 
     //------------------
     // Define the icon of the menu and apply its class.
     //------------------
-    this.icon_ = utils.dom.makeElement("img", this.element, "menuIcon");	
-    this.icon_.src = xiv.ICON_URL + "ViewLayoutMenu/Menu.png";
-    goog.dom.classes.set(this.icon_, xiv.ViewLayoutMenu.ICON_CLASS);
+    this.icon_ = goog.dom.createDom("img", {
+	'id': "menuIcon",
+	'src': xiv.ICON_URL + "ViewLayoutMenu/Menu.png",
+	'class': xiv.ViewLayoutMenu.ICON_CLASS
+    });	
 
     
+    //
+    // Append
+    //
+    goog.dom.append(this.element, this.menuHolder_);
+    goog.dom.append(this.element, this.icon_);
+
+
 
     //------------------
     // Establish the closure menu
@@ -129,9 +135,12 @@ xiv.ViewLayoutMenu = function (viewLayouts) {
 	// Set the icon of the menu item (the anatomical 
 	// plane.
 	//
-	contentIcon = utils.dom.makeElement("img", content, "contentIcon");
-	contentIcon.src = this.viewLayouts_[key]['src'];
-	goog.dom.classes.add(contentIcon, xiv.ViewLayoutMenu.MENUITEM_ICON_CLASS);
+	contentIcon = goog.dom.createDom("img", {
+	    'id': "contentIcon_" + goog.string.createUniqueString(),
+	    'src' : this.viewLayouts_[key]['src'],
+	    'class' : xiv.ViewLayoutMenu.MENUITEM_ICON_CLASS
+	});
+	goog.dom.append(content, contentIcon);
 
 	i++;
     }
@@ -249,13 +258,6 @@ xiv.ViewLayoutMenu.prototype.menuVisible_ = false;
 
 
 
-/**
- * @private
- * @type {?Object.<string, xiv.ViewLayout>}
- */
-xiv.ViewLayoutMenu.prototype.viewLayouts_ = null;
-
-
 
 
 /**
@@ -332,7 +334,7 @@ xiv.ViewLayoutMenu.prototype.setViewLayout = function(viewLayout) {
  * slide and fade aspects.
  */
 xiv.ViewLayoutMenu.prototype.setMenuInteraction = function() {
-    var that = this;
+
     var isHovered = false;
     var delay = /** @type {?goog.async.Delay)}*/ null;
     var mouseoutDate = /** @type {?number}*/ null;
@@ -383,7 +385,7 @@ xiv.ViewLayoutMenu.prototype.setMenuInteraction = function() {
 	    //
 	    // 'opt_arg' could be a boolean (programmatic calling of method).
 	    //
-	    if (typeof opt_arg === 'boolean') {that.menuVisible_ = !opt_arg}
+	    if (typeof opt_arg === 'boolean') {this.menuVisible_ = !opt_arg}
 
 
 	    //
@@ -391,16 +393,16 @@ xiv.ViewLayoutMenu.prototype.setMenuInteraction = function() {
 	    //
 	    else { utils.dom.stopPropagation(opt_arg)}
 	}
-	that.menuVisible_ = !that.menuVisible_   
+	this.menuVisible_ = !this.menuVisible_   
 
 	
 	//
 	// Animate the menu in if it's visible.
 	// Utilises the internal 'animateMenu' method.
 	//
-	if (that.menuVisible_){
-	    goog.style.showElement(that.menuHolder_, that.menuVisible_);
-	    that.animateMenu(hidePos, showPos);
+	if (this.menuVisible_){
+	    goog.style.showElement(this.menuHolder_, this.menuVisible_);
+	    this.animateMenu(hidePos, showPos);
 
 
 	//
@@ -408,12 +410,12 @@ xiv.ViewLayoutMenu.prototype.setMenuInteraction = function() {
 	// Utilises the internal 'animateMenu' method.
 	//
 	} else {
-	    that.animateMenu(showPos, hidePos, function(){
-		goog.style.showElement(that.menuHolder_, that.menuVisible_);
+	    this.animateMenu(showPos, hidePos, function(){
+		goog.style.showElement(this.menuHolder_, this.menuVisible_);
 	    });
 	    suspendOtherClicks = false;
 	}
-    }
+    }.bind(this)
 
 
 
@@ -464,7 +466,7 @@ xiv.ViewLayoutMenu.prototype.setMenuInteraction = function() {
 
 	utils.dom.stopPropagation(e);
 	var selectedPlane = e.target.getId();
-	that.setViewLayout(selectedPlane);
+	this.setViewLayout(selectedPlane);
 
 
 	//
@@ -485,8 +487,7 @@ xiv.ViewLayoutMenu.prototype.setMenuInteraction = function() {
  * @param {!number}
  */
 xiv.ViewLayoutMenu.prototype.setHighlightedIndex = function(index) {
-    var that = this;
-    
+
    
 
     //------------------
@@ -553,7 +554,7 @@ xiv.ViewLayoutMenu.prototype.getSelectedViewLayout = function(viewLayout) {
  */
 xiv.ViewLayoutMenu.prototype.animateMenu  = function (startPos, endPos, opt_callback) {
     //utils.dom.debug("Animate!");
-    var that = this;
+
     var animQueue = new goog.fx.AnimationParallelQueue();
     var easing = goog.fx.easing.easeOut;
 

@@ -24,6 +24,7 @@ goog.require('xiv');
 
 
 
+
 /**
  * xiv.ViewBoxTabs are the tabs that occur at the bottom
  * of the xiv.ViewBox.  They are only visible when a viewable is in the xiv.ViewBox.
@@ -36,38 +37,17 @@ goog.require('xiv');
 goog.provide('xiv.ViewBoxTabs');
 xiv.ViewBoxTabs = function () {
     xiv.Widget.call(this, 'Tabs');
-    utils.dom.addCallbackManager(this);
 
-
+    /**
+     * @type {!goog.ui.TabPane}
+     * @private
+     */
     this.googTabPane_ = new goog.ui.TabPane(this.element);
     this.activateCallbacks_ = [];
     this.deactivateCallbacks_ = [];
 }
 goog.inherits(xiv.ViewBoxTabs, xiv.Widget);
 goog.exportSymbol('xiv.ViewBoxTabs', xiv.ViewBoxTabs)
-
-
-
-
-xiv.ViewBoxTabs.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-viewboxtabs');
-xiv.ViewBoxTabs.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, '');
-xiv.ViewBoxTabs.TAB_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, 'tab');
-xiv.ViewBoxTabs.ACTIVE_TAB_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TAB_CLASS, 'active');
-xiv.ViewBoxTabs.HOVERED_TAB_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TAB_CLASS, 'hovered');
-xiv.ViewBoxTabs.TABPAGE_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, 'tabpage');
-xiv.ViewBoxTabs.SCROLLGALLERY_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TABPAGE_CLASS, 'scrollgallery');
-xiv.ViewBoxTabs.ACTIVE_TABPAGE_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TABPAGE_CLASS, 'active');
-xiv.ViewBoxTabs.TABICON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, 'tabicon');
-xiv.ViewBoxTabs.MOUSEOVER_TABICON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TABICON_CLASS, 'mouseover');
-
-
-
-
-/**
- * @type {?goog.ui.TabPane}
- * @private
- */
-xiv.ViewBoxTabs.prototype.googTabPane_ = null;
 
 
 
@@ -104,6 +84,20 @@ xiv.ViewBoxTabs.prototype.activateCallbacks_ = null;
  * @private
  */
 xiv.ViewBoxTabs.prototype.deactivateCallbacks_ = null;
+
+
+
+/**
+ * @private
+ * @const
+ * @enum {string}
+ */
+xiv.ViewBoxTabs.iconSrc_ = {
+    'Info':  'Icons/InfoIcon.png',
+    '3D Menu' : 'Icons/3DMenu.png',
+    '2D Menu' : 'Icons/2DMenu.png',
+    'Slicer Views': 'Icons/SlicerViews.png',
+}
 
 
 
@@ -204,21 +198,6 @@ xiv.ViewBoxTabs.prototype.reset = function(opt_tabtitle) {
 
 
 /**
- * @private
- * @const
- * @type {Object.<string, string>}
- */
-xiv.ViewBoxTabs.prototype.iconSrc_ = {
-    'Info':  'Icons/InfoIcon.png',
-    '3D Menu' : 'Icons/3DMenu.png',
-    '2D Menu' : 'Icons/2DMenu.png',
-    'Slicer Views': 'Icons/SlicerViews.png',
-}
-
-
-
-
-/**
  * Adds a tab.  Utilises the tabObject_ object to create
  * tabs, their icons and pages.
  *
@@ -229,19 +208,22 @@ xiv.ViewBoxTabs.prototype.addTab = function(tabTitle) {
     //------------------
     //  Tab		
     //------------------
-    var tab = utils.dom.makeElement('div', this.element, 'Tab');
-    goog.dom.classes.set(tab, xiv.ViewBoxTabs.TAB_CLASS);
-    tab.title = tabTitle;
+    var tab = goog.dom.createDom('div', {
+	'id': 'Tab_' + goog.string.createUniqueString(),
+	'class' : xiv.ViewBoxTabs.TAB_CLASS,
+	'title': tabTitle
+    });
 
     
 
     //------------------
     //  Tab icon	
     //------------------	
-    var tabIcon = utils.dom.makeElement('img', tab, 'TabIcon');
-    goog.dom.classes.add(tabIcon, xiv.ViewBoxTabs.TABICON_CLASS);
-    var iconSrc = xiv.ICON_URL + this.iconSrc_[goog.string.removeAll(tabTitle)]
-    tabIcon.src = iconSrc ? iconSrc : undefined;
+    var tabIcon = goog.dom.createDom('img', {
+	'id' : 'TabIcon_' + goog.string.createUniqueString(),
+	'class' : xiv.ViewBoxTabs.TABICON_CLASS,
+	'src': xiv.ICON_URL + xiv.ViewBoxTabs.iconSrc_[goog.string.removeAll(tabTitle)]
+    });
     if (tabIcon.src.toString().indexOf('undefined') > -1 ){ tabIcon.innerHTML = tabTitle}
 
 
@@ -249,10 +231,24 @@ xiv.ViewBoxTabs.prototype.addTab = function(tabTitle) {
     //------------------
     //  Tab page
     //------------------	
-    var tabPage = utils.dom.makeElement('div', this.element.parentNode, xiv.ViewBoxTabs.TABPAGE_CLASS);
-    goog.dom.classes.set(tabPage, xiv.ViewBoxTabs.TABPAGE_CLASS);
+    var tabPage = goog.dom.createDom('div', {
+	'id' : 'TabPage_' + goog.string.createUniqueString(),
+	'class': xiv.ViewBoxTabs.TABPAGE_CLASS,
+	'label': tabTitle
+    });
     utils.style.setStyle(tabPage, utils.style.dims(this.element, 'width'))
-    tabPage.label = tabTitle;
+    
+
+
+    //
+    // Appends
+    //
+    goog.append(this.element, tab);
+    goog.append(tab, tabIcon);
+    goog.append(this.element.parentNode, tabPage);
+
+
+
     this.googTabPane_.addPage(new goog.ui.TabPane.TabPage(tabPage));	
 
 
@@ -598,3 +594,17 @@ xiv.ViewBoxTabs.prototype.setTabContents = function (tabName, contents) {
     //------------------
     goog.dom.classes.add(scrollableContainer.getElement(), xiv.ViewBoxTabs.SCROLLGALLERY_CLASS);
 }
+
+
+
+
+xiv.ViewBoxTabs.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-viewboxtabs');
+xiv.ViewBoxTabs.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, '');
+xiv.ViewBoxTabs.TAB_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, 'tab');
+xiv.ViewBoxTabs.ACTIVE_TAB_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TAB_CLASS, 'active');
+xiv.ViewBoxTabs.HOVERED_TAB_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TAB_CLASS, 'hovered');
+xiv.ViewBoxTabs.TABPAGE_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, 'tabpage');
+xiv.ViewBoxTabs.SCROLLGALLERY_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TABPAGE_CLASS, 'scrollgallery');
+xiv.ViewBoxTabs.ACTIVE_TABPAGE_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TABPAGE_CLASS, 'active');
+xiv.ViewBoxTabs.TABICON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, 'tabicon');
+xiv.ViewBoxTabs.MOUSEOVER_TABICON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TABICON_CLASS, 'mouseover');

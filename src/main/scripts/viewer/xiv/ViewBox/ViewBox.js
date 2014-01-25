@@ -3,27 +3,20 @@
  * @author amh1646@rit.edu (Amanda Hartung)
  */
 
-
-/**
- * Google closure includes
- */
+// goog
 goog.require('goog.fx');
 goog.require('goog.fx.DragDrop');
 goog.require('goog.string');
 goog.require('goog.dom');
 goog.require('goog.events');
 
-/**
- * utils includes
- */
+// utils
 goog.require('utils.dom');
 goog.require('utils.style');
 goog.require('utils.array');
 goog.require('utils.fx');
 
-/**
- * viewer-widget includes
- */
+// xiv
 goog.require('xiv');
 goog.require('xiv.Widget');
 goog.require('xiv.ViewLayoutManager');
@@ -96,7 +89,8 @@ xiv.ViewBox = function (opt_args) {
      * @type {xiv.ContentDivider}
      * @private
      */	
-    this.ContentDivider_ = new xiv.ContentDivider(this.element);
+    this.ContentDivider_ = new xiv.ContentDivider();
+    goog.dom.append(this.element, this.ContentDivider_.getContainment());
 
 
 
@@ -221,17 +215,14 @@ xiv.ViewBox = function (opt_args) {
     this.updateStyle();
 }
 goog.inherits(xiv.ViewBox, xiv.Widget);
-//goog.inherits(xiv.ViewBox, goog.fx.DragDrop);
 goog.exportSymbol('xiv.ViewBox', xiv.ViewBox);
 
 
+xiv.ViewBox.MIN_HOLDER_HEIGHT = /**@const*/ 200;
+xiv.ViewBox.SCAN_TAB_LABEL_HEIGHT =  /**@const*/ 15;
+xiv.ViewBox.SCAN_TAB_LABEL_WIDTH = /** @const */ 50;
+xiv.ViewBox.MIN_TAB_HEIGHT =  /** @const */ xiv.ViewBox.SCAN_TAB_LABEL_HEIGHT;
 
-
-xiv.ViewBox.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-viewbox');
-xiv.ViewBox.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, '');
-xiv.ViewBox.HIDDEN_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, 'hidden');
-xiv.ViewBox.DRAG_AND_DROP_HANDLE_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, 'draganddrophandle');
-xiv.ViewBox.DRAGGING_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, 'dragging');
 
 
 
@@ -505,12 +496,12 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb) {
 
     //------------------
     // Show/hide the slicer view menu depending on the 
-    // Thumbnail's xnatProperties
+    // Thumbnail's getXnatProperties()
     //------------------    
-    this.SlicerViewMenu_.element.style.visibility = (thumb.xnatProperties['category'].toLowerCase() === 'slicer') ? 'visible' : 'hidden';
+    this.SlicerViewMenu_.element.style.visibility = (thumb.getXnatProperties()['category'].toLowerCase() === 'slicer') ? 'visible' : 'hidden';
 
 
-    this.Displayer_.load(thumb.xnatProperties);    
+    this.Displayer_.load(thumb.getXnatProperties());    
 }
  
 
@@ -533,14 +524,14 @@ xiv.ViewBox.prototype.loadTabs_ = function () {
     //------------------
     // Info Tab.
     //------------------
-    this.ViewBoxTabs_.setTabContents('Info', this.Displayer_.makeInfoTabContents(this.Thumbnail_.xnatProperties));
+    this.ViewBoxTabs_.setTabContents('Info', this.Displayer_.createInfoTabContents(this.Thumbnail_.getXnatProperties()));
     
 
 
     //------------------
     // Slicer View Tab.
     //------------------
-    if (this.Thumbnail_.xnatProperties['category'] == 'Slicer') {
+    if (this.Thumbnail_.getXnatProperties()['category'] == 'Slicer') {
 	this.ViewBoxTabs_.setTabContents('Slicer Views', this.SlicerViewMenu_.getThumbnailGallery());
     }
 
@@ -682,10 +673,11 @@ xiv.ViewBox.prototype.linkContentDividerToViewBox_ = function () {
     var isAnimated = true;
 
 
-    this.ContentDivider_.addDragCallback(this.onContentDividerDragged_.bind(this))
+    this.ContentDivider_['EVENTS'].onEvent('DRAG', 
+	this.onContentDividerDragged_.bind(this))
 
 
-    this.ContentDivider_.addDragEndCallback(function() {
+    this.ContentDivider_['EVENTS'].onEvent('DRAGEND', function() {
 	this.updateStyle();
     }.bind(this))
 
@@ -739,7 +731,7 @@ xiv.ViewBox.prototype.updateStyle = function (opt_args) {
     // other widgets in the xiv.ViewBox.
     //
     // The first thing that needs to happen is to detect a change in the 
-    // contiainment zone of the content divider (i.e. this.ContentDivider_._containment).
+    // contiainment zone of the content divider (i.e. this.ContentDivider_.getContainment()).
     // If there is a change (arbitrarily determined by width) and if the divider 
     // is not dragging, then we determine the containment and top part of the divider.
     //------------------
@@ -748,22 +740,22 @@ xiv.ViewBox.prototype.updateStyle = function (opt_args) {
 	//
 	//  If there's a change in the width of the widget, proceed.
 	//
-	var dimChangeWidth = !(utils.style.dims(this.ContentDivider_._containment, 'width') === widgetDims['width']);
+	var dimChangeWidth = !(utils.style.dims(this.ContentDivider_.getContainment(), 'width') === widgetDims['width']);
 
 	if (dimChangeWidth) {
 	    
 	    //
 	    //  Determine the top of the content divider and its containment.
 	    //
-	    var t = xiv.MIN_HOLDER_HEIGHT;	
-	    var h = widgetDims['height'] - t - utils.style.dims(this.ContentDivider_.element, 'height') - xiv.MIN_TAB_HEIGHT + 3;
+	    var t = xiv.ViewBox.MIN_HOLDER_HEIGHT;	
+	    var h = widgetDims['height'] - t - utils.style.dims(this.ContentDivider_.element, 'height') - xiv.ViewBox.MIN_TAB_HEIGHT + 3;
 	
 	    utils.style.setStyle(this.ContentDivider_.element, {
 		'top': xiv.prototype.minContentDividerTop(widgetDims['height']) - 1
 	    });
 
 
-	    utils.style.setStyle(this.ContentDivider_._containment, {
+	    utils.style.setStyle(this.ContentDivider_.getContainment(), {
 		'top': t, 
 		'height': h, 
 		'width': widgetDims['width']
@@ -828,7 +820,9 @@ xiv.ViewBox.prototype.updateStyle = function (opt_args) {
 
 
 
-goog.exportSymbol('xiv.ViewBox.prototype.doNotHide', xiv.ViewBox.prototype.doNotHide);
-goog.exportSymbol('xiv.ViewBox.prototype.setViewLayout', xiv.ViewBox.prototype.setViewLayout);
-goog.exportSymbol('xiv.ViewBox.prototype.setViewLayout', xiv.ViewBox.prototype.setViewLayout);
-goog.exportSymbol('xiv.ViewBox.prototype.updateStyle', xiv.ViewBox.prototype.updateStyle);
+
+xiv.ViewBox.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-viewbox');
+xiv.ViewBox.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, '');
+xiv.ViewBox.HIDDEN_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, 'hidden');
+xiv.ViewBox.DRAG_AND_DROP_HANDLE_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, 'draganddrophandle');
+xiv.ViewBox.DRAGGING_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, 'dragging');

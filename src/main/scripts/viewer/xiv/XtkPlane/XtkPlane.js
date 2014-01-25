@@ -5,6 +5,7 @@
 
 // goog
 goog.require('goog.dom');
+goog.require('goog.string');
 goog.require('goog.ui.Slider');
 
 // xtk
@@ -130,8 +131,13 @@ xiv.XtkPlane = function(id) {
 	//
 	// IndexBox
 	//
-	this.indexBox_ = utils.dom.makeElement('div', this.element, 'IndexBox');
-	goog.dom.classes.set(this.indexBox_, xiv.XtkPlane.INDEXBOX_CLASS);
+	this.indexBox_ = goog.dom.createDom('div', {
+	    'id': 'IndexBox_' + goog.string.createUniqueString(),
+	    'class': xiv.XtkPlane.INDEXBOX_CLASS
+	});
+
+
+	goog.dom.append(this.element, this.indexBox_);
     } 
     
     //this.resetRenderer();
@@ -279,7 +285,7 @@ xiv.XtkPlane.prototype.resetSlider = function() {
     //------------------
     // Clear slider callbacks.
     //------------------
-    this.Slider_.getEventManager().clearEvent('SLIDE');
+    this.Slider_['EVENTS'].clearEvent('SLIDE');
 
 
 
@@ -291,7 +297,7 @@ xiv.XtkPlane.prototype.resetSlider = function() {
     // have to create two separate listers: one on the slider
     // and one on the Xtk plane.
     //------------------
-    this.Slider_.getEventManager().onEvent('SLIDE', function() { 
+    this.Slider_['EVENTS'].onEvent('SLIDE', function() { 
 	var currVol = that.getCurrVolume();
 	var planeSlices = currVol['_slices' + that.id_.toUpperCase()]['_children'].length;
 	if (!currVol) return;

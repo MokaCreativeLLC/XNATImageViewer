@@ -26,17 +26,11 @@ goog.require('utils.style');
  */
 goog.provide('xiv.Widget');
 xiv.Widget = function (id, opt_args) {
-
-    var args = {'id': id + '_' + goog.string.createUniqueString()}
-   
-    opt_args && goog.object.extend(args, opt_args)
-    
     /**
      * @type {!Element}
      * @protected
      */
-    this.element = goog.dom.createDom('div', args)
-    
+    this.element = utils.dom.createUniqueDom('div', id, opt_args)
 }
 goog.exportSymbol('xiv.Widget', xiv.Widget);
 

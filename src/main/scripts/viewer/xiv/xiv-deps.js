@@ -27,6 +27,13 @@ goog.addDependency('../../../xiv/ThumbnailManager/ThumbnailManager.js', ['xiv.Th
 
 
 
+goog.addDependency('../../../xiv/PathSelector/PathSelector.js', ['xiv.PathSelector'], [
+'goog.string', 
+'goog.dom', 
+]);
+
+
+
 goog.addDependency('../../../xiv/Thumbnail/Thumbnail.js', ['xiv.Thumbnail'], [
 'goog.dom',
 'goog.array',
@@ -202,11 +209,8 @@ goog.addDependency('../../../xiv/Displayer/Displayer.js', ['xiv.Displayer'], [
 'goog.dom',
 'goog.array',
 'utils.convert',
-'utils.dom',
 'utils.style',
-'xiv.ViewBox',
 'xiv.Widget',
-'xiv',
 ]);
 
 

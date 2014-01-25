@@ -121,8 +121,8 @@ class MokaUtils(object):
                 if MokaUtils.SCRIPT_DIR in src:
                     return
                 filename = os.path.basename(src)
-                relPath = os.path.dirname(src).replace(srcDir, '')
-                dst = (os.path.join("./", backupFolderName + "/" + relPath + "/" + filename)).replace("\\", "/").replace("//", "/")   
+                relPath = os.path.dirname(src).replace(srcDir, '').replace('../', '').replace('./', '')
+                dst = (os.path.join("./", backupFolderName + "/" + relPath + "/" + filename)).replace("\\", "/").replace("//", "/") 
                 # make paths that don't exist
                 if (not os.path.exists(os.path.dirname(dst))):
                     os.makedirs(os.path.dirname(dst))
@@ -755,6 +755,7 @@ class MokaUtils(object):
                 for name in [val['name']  for key, val in MokaUtils.cmd.ARG_TYPES.iteritems()]:
                     if name in self.optDict:
                         self.optDict[name] = MokaUtils.string.unQuote(self.optDict[name])
+                    
 
                 if 'extension' in self.optDict:
                     self.optDict['extension'] = MokaUtils.string.cleanExtension(self.optDict['extension'])
@@ -903,6 +904,7 @@ class MokaUtils(object):
                 @type replacer: string
                 """
 
+
                 if os.path.exists(src) and os.path.isfile(src):
 
                     changedLinesCount = 0
@@ -948,7 +950,7 @@ class MokaUtils(object):
 
                 finder = self.optDict['finder']
                 replacer = self.optDict['replacer']
-            
+                
                 def callback(src):
                     if src.endswith(self.optDict['extension']) and not MokaUtils.SCRIPT_DIR in src:
                         self.__replaceInFile(src, finder, replacer)
@@ -1084,7 +1086,6 @@ class MokaUtils(object):
 
             try:
                 opts, args = getopt.getopt(args, argOpts)
-
             except getopt.GetoptError as err:
                 print '\n%s\n'%(str(err))
                 MokaUtils.cmd.hint()

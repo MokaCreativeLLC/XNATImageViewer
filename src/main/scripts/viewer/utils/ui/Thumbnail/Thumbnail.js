@@ -12,7 +12,7 @@ goog.require('goog.string');
 // utils
 goog.require('utils.dom');
 goog.require('utils.style');
-goog.require('utils.events.EventManager');
+goog.require('utils.events');
 
 
 
@@ -56,25 +56,11 @@ utils.ui.Thumbnail = function () {
 
 
 
-    /**
-     * @type {?Element}
-     * @private
-     */	
-    this.hoverable_ = null;
+    //
+    // Events
+    //
+    utils.events.addEventManager(this, utils.ui.Thumbnail.EventType);
 
-
-    /**
-     * @param {!utils.events.EventManager}
-     * @protected
-     */ 
-    this.EventManager = new utils.events.EventManager(utils.ui.Thumbnail.EventType);
-
-
-    /**
-     * @type {boolean}
-     * @private
-     */
-    this.isActive_ = false;
 
 
     //
@@ -112,12 +98,18 @@ utils.ui.Thumbnail.EventType = {
 
 
 /**
- * @return {!utils.events.EventManager} The event manager.
- * @public
+ * @type {?Element}
+ * @private
+ */	
+utils.ui.Thumbnail.prototype.hoverable_ = null;
+
+
+
+/**
+ * @type {!boolean}
+ * @private
  */
-utils.ui.Thumbnail.prototype.getEventManager = function(){
-    return this.EventManager;
-}
+utils.ui.Thumbnail.prototype.isActive_ = false;
 
 
 
@@ -323,7 +315,7 @@ utils.ui.Thumbnail.prototype.mouseOver_ = function() {
     //------------------
     // Run callbacks.
     //------------------
-    this.EventManager.runEvent('MOUSEOVER');
+    this['EVENTS'].runEvent('MOUSEOVER');
 }
 
 
@@ -340,9 +332,9 @@ utils.ui.Thumbnail.prototype.mouseOut_ = function() {
     // an ugly, but necessary way of 
     // getting the hover node.
     var hoverNode = this.getHoverable();
+    window.console.log(hoverNode);
 
-
-    if (hoverNode) { 
+    if (hoverNode && hoverNode.childNodes.length > 1) { 
 	hoverNode.style.visibility = 'hidden';
 	goog.dom.classes.remove(hoverNode, 
 				utils.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS);			
@@ -353,7 +345,7 @@ utils.ui.Thumbnail.prototype.mouseOut_ = function() {
 	this.element.style.visibility = 'visible';
     }
  
-    this.EventManager.runEvent('MOUSEOUT');
+    this['EVENTS'].runEvent('MOUSEOUT');
 }
 
 
@@ -438,9 +430,9 @@ utils.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
  * @private
  */	
 utils.ui.Thumbnail.prototype.initEvents_ = function() {
-    this.EventManager.clearEvent('CLICK');
+    this['EVENTS'].clearEvent('CLICK');
     goog.events.listen(this.getHoverable(), goog.events.EventType.CLICK, function(){
-	this.EventManager.runEvent('CLICK');
+	this['EVENTS'].runEvent('CLICK');
     }.bind(this));	   
 }
 

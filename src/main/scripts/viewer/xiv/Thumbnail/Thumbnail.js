@@ -8,7 +8,6 @@ goog.require('goog.dom');
 goog.require('goog.array');
 goog.require('goog.events');
 
-
 // utils
 goog.require('utils.dom');
 goog.require('utils.style');
@@ -25,7 +24,7 @@ goog.require('xiv.Widget');
  * xiv.Thumbnail is the parent class of Slicer and Dicom thumbnails.
  *
  * @constructor
- * @param {utils.xnat.properties} xnatProperties The properties that 
+ * @param {utils.xnat.viewableProperties} xnatProperties The properties that 
  *    define the XNAT-specific thumbnail
  * @extends {utils.ui.Thumbnail}
  */
@@ -38,7 +37,7 @@ xiv.Thumbnail = function (xnatProperties) {
 
 
     /**
-     * @type {!utils.xnat.properties}
+     * @type {!utils.xnat.viewableProperties}
      * @const
      */    
     this.xnatProperties_ = xnatProperties;
@@ -78,7 +77,6 @@ xiv.Thumbnail = function (xnatProperties) {
     // hoverable_
     //------------------
     this.createHoverable()
-    xiv._Modal.getModalElement().appendChild(this.hoverable_);
     goog.dom.classes.add(this.hoverable_, xiv.Thumbnail.CSS_CLASS_PREFIX);
        
 }
@@ -87,27 +85,19 @@ goog.exportSymbol('xiv.Thumbnail', xiv.Thumbnail);
 
 
 
+/**
+ * @return {utils.xnat.viewableProperties} The XNAT-related properties object of the thumbnail.
+ * @public
+ */
+xiv.Thumbnail.prototype.getXnatProperties = function(){
+    return this.xnatProperties_;
+}
+
+
+
 
 xiv.Thumbnail.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-thumbnail');
 xiv.Thumbnail.DRAGGING_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.Thumbnail.CSS_CLASS_PREFIX, 'dragging');
-
-
-
-
-/**
- * @return {utils.xnat.properties} The XNAT-related properties object of the thumbnail.
- * @public
- */
-xiv.Thumbnail.prototype.__defineGetter__('xnatProperties', function(){
-    return this.xnatProperties_;
-})
-
-
-
-
-goog.exportSymbol('xiv.Thumbnail.prototype.getFiles', xiv.Thumbnail.prototype.getFiles);
-
-
 
 
 

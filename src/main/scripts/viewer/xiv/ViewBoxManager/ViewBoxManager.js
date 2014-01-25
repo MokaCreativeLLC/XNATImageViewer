@@ -3,9 +3,7 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-/**
- * Google closure includes
- */
+// goog
 goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.events');
@@ -14,14 +12,10 @@ goog.require('goog.fx.DragDrop');
 goog.require('goog.fx.AnimationParallelQueue');
 goog.require('goog.ui.Tooltip');
 
-/**
- * utils includes
- */
+// utils
 goog.require('utils.style');
 
-/**
- * viewer-widget includes
- */
+// xiv
 goog.require('xiv');
 goog.require('xiv.ViewBox');
 
@@ -36,17 +30,17 @@ goog.require('xiv.ViewBox');
  * the xiv.ViewBox locations within the modal using a multi-dimenesional
  * array.
  *
- * @param {xiv.Modal} Modal The xiv.Modal object that holds the xiv.ViewBox objects.
+ * @param {xiv.Modal} xivModal The xiv.Modal object that holds the xiv.ViewBox objects.
  * @constructor
  */
 goog.provide('xiv.ViewBoxManager');
-xiv.ViewBoxManager = function (Modal) {
+xiv.ViewBoxManager = function (xivModal) {
 
     /**
      * @type {xiv.Modal}
      * @private
      */
-    this.Modal_  = Modal;
+    this.Modal_  = xivModal;
 
 
     /**
@@ -607,22 +601,23 @@ xiv.ViewBoxManager.prototype.makeViewBox = function() {
     // Create xiv.ViewBox
     //------------------
     var ViewBox = new xiv.ViewBox();
-    this.Modal_.getModalElement().appendChild(ViewBox.getElement());
-
+    goog.dom.append(this.Modal_.getModalElement(), ViewBox.getElement());
 
 
     //------------------
     // DragAndDrop Handle.
     //------------------    	
-    var modalWindow = goog.dom.getElementsByClass(xiv.Modal.MODAL_CLASS)[0];
-    var dragDropHandle = utils.dom.makeElement("img", modalWindow, "DragAndDropHandle");
-    dragDropHandle.src = xiv.ICON_URL + "Icons/Toggle-DragAndDrop.png";
-    dragDropHandle.ViewBoxId = ViewBox.getElement().id; 
+    
+    var dragDropHandle = goog.dom.createDom("img",  {
+	'id': 'DragAndDropHandle',
+	'class' : xiv.ViewBox.DRAG_AND_DROP_HANDLE_CLASS,
+	'src' : xiv.ICON_URL + "Icons/Toggle-DragAndDrop.png"
+    });
+    dragDropHandle.setAttribute('viewboxid', ViewBox.getElement().id); 
 
-    //
-    // Apply class.
-    //
-    goog.dom.classes.set(dragDropHandle, xiv.ViewBox.DRAG_AND_DROP_HANDLE_CLASS);
+    goog.dom.append(this.Modal_.getModalElement(), dragDropHandle)
+
+
     
     //
     // Add to class property.
@@ -928,7 +923,7 @@ xiv.ViewBoxManager.prototype.resetDragDropGroup_ = function() {
     // of the xiv.ViewBox.getElement()).
     //------------------
     this.dragDropGroup_.createDragElement = function(sourceElt) {
-	var dragElement = this.makeDragClone_(goog.dom.getElement(sourceElt.ViewBoxId));
+	var dragElement = this.makeDragClone_(goog.dom.getElement(sourceElt.getAttribute('viewboxid')));
 	return dragElement;
     }.bind(this);
 
@@ -1010,8 +1005,8 @@ xiv.ViewBoxManager.prototype.updateDragDropHandles = function() {
  */
 xiv.ViewBoxManager.prototype.dragOver_ = function(event) {
 
-    if (event.dropTargetItem.getElement().id !== event.dragSourceItem.currentDragElement_.ViewBoxId) {
-	var ViewBoxElementA = goog.dom.getElement(event.dragSourceItem.currentDragElement_.ViewBoxId);
+    if (event.dropTargetItem.getElement().id !== event.dragSourceItem.currentDragElement_.getAttribute('viewboxid')) {
+	var ViewBoxElementA = goog.dom.getElement(event.dragSourceItem.currentDragElement_.getAttribute('viewboxid'));
 	var ViewBoxElementB = goog.dom.getElement(event.dropTargetItem.getElement().id);
 
 	this.swap(ViewBoxElementA, ViewBoxElementB);
@@ -1043,7 +1038,7 @@ xiv.ViewBoxManager.prototype.dragOver_ = function(event) {
  */
 xiv.ViewBoxManager.prototype.dragEnd_ = function(event) {
 
-    var originalViewBox = goog.dom.getElement(event.dragSourceItem.currentDragElement_.ViewBoxId);
+    var originalViewBox = goog.dom.getElement(event.dragSourceItem.currentDragElement_.getAttribute('viewboxid'));
     var originalViewBoxDims = utils.style.absolutePosition(originalViewBox);
     var dragger = event.dragSourceItem.parent_.dragEl_;
     var animQueue = new goog.fx.AnimationParallelQueue();	
@@ -1103,21 +1098,4 @@ xiv.ViewBoxManager.prototype.dragEnd_ = function(event) {
     }.bind(this))
 }
 
-
-
-goog.exportSymbol('xiv.ViewBoxManager.prototype.onViewBoxesChanged', xiv.ViewBoxManager.prototype.onViewBoxesChanged);
-goog.exportSymbol('xiv.ViewBoxManager.prototype.loop', xiv.ViewBoxManager.prototype.loop);
-goog.exportSymbol('xiv.ViewBoxManager.prototype.totalColumns', xiv.ViewBoxManager.prototype.totalColumns);
-goog.exportSymbol('xiv.ViewBoxManager.prototype.totalRows', xiv.ViewBoxManager.prototype.totalRows);
-goog.exportSymbol('xiv.ViewBoxManager.prototype.insertColumn', xiv.ViewBoxManager.prototype.insertColumn);
-goog.exportSymbol('xiv.ViewBoxManager.prototype.removeColumn', xiv.ViewBoxManager.prototype.removeColumn);
-goog.exportSymbol('xiv.ViewBoxManager.prototype.insertRow', xiv.ViewBoxManager.prototype.insertRow);
-goog.exportSymbol('xiv.ViewBoxManager.prototype.removeRow', xiv.ViewBoxManager.prototype.removeRow);
-goog.exportSymbol('xiv.ViewBoxManager.prototype.getViewBoxByElement', xiv.ViewBoxManager.prototype.getViewBoxByElement);
-goog.exportSymbol('xiv.ViewBoxManager.prototype.getViewBoxElement', xiv.ViewBoxManager.prototype.getViewBoxElement);
-goog.exportSymbol('xiv.ViewBoxManager.prototype.getViewBoxes', xiv.ViewBoxManager.prototype.getViewBoxes);
-goog.exportSymbol('xiv.ViewBoxManager.prototype.getViewBoxElements', xiv.ViewBoxManager.prototype.getViewBoxElements);
-goog.exportSymbol('xiv.ViewBoxManager.prototype.makeViewBox', xiv.ViewBoxManager.prototype.makeViewBox);
-goog.exportSymbol('xiv.ViewBoxManager.prototype.swap', xiv.ViewBoxManager.prototype.swap);
-goog.exportSymbol('xiv.ViewBoxManager.prototype.numViewBoxes', xiv.ViewBoxManager.prototype.numViewBoxes);
 

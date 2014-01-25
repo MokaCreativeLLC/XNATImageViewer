@@ -52,6 +52,13 @@ goog.addDependency('../../../utils/style/style.js', ['utils.style'], [
 goog.addDependency('../../../utils/slicer/slicer.js', ['utils.slicer'], [
 ]);
 
+
+goog.addDependency('../../../utils/slicer/mrbProperties/mrbProperties.js', ['utils.slicer.mrbProperties'], [
+'goog.array',
+'goog.string',
+'utils.string'
+]);
+
 goog.addDependency('../../../utils/xtk/xtk.js', ['utils.xtk'], [
 'utils.slicer'
 ]);

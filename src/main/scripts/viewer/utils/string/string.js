@@ -100,10 +100,31 @@ utils.string.fileNameMatch = function(file1, file2) {
  * Removes all non-alphanumeric characters from a given 
  * string and replaces them with ''.
  *
- * @paratm {!string}
+ * @paratm {!string} str
  * @return {string}
  */
 utils.string.stripNonAlphanumeric = function(str) {
-    return str.replace(/[^a-zA-Z 0-9]+/g,'');
+    return str.replace(/\W/g, '')
+}
+
+
+
+/** .
+ *
+ * @param {!string} str
+ * @return {string}
+ */
+utils.string.stripIllegal = function(str) {
+    return str.replace(/[|&;$%@"<>()+,]/g, '');
 }
     
+
+
+/** .
+ *
+ * @param {!string} str
+ * @return {string}
+ */
+utils.string.getLettersOnly = function(str) {
+    return utils.string.stripNonAlphanumeric(str).replace(/[0-9]/g, '');
+}
