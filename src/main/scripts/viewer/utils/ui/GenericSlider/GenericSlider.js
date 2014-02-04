@@ -37,10 +37,10 @@ utils.ui.GenericSlider = function (opt_args) {
      * @type {!Element}
      * @protected
      */
-    this.element = goog.dom.createDom('div', {
+    this.element_ = goog.dom.createDom('div', {
 	'id': 'utils.ui.GenericSlider_Widget' + goog.string.createUniqueString()
     });
-    this.decorate(this.element); // Applies the 'Slider' properties to the element
+    this.decorate(this.element_); // Applies the 'Slider' properties to the element
 
 
 
@@ -51,7 +51,7 @@ utils.ui.GenericSlider = function (opt_args) {
     this.track_ = goog.dom.createDom("div", {
 	'id': 'utils.ui.GenericSlider_Track' + goog.string.createUniqueString()
     });
-    this.element.appendChild(this.track_);
+    this.element_.appendChild(this.track_);
 
 
 
@@ -106,7 +106,7 @@ utils.ui.GenericSlider.EventType = {
  * @public
  */
 utils.ui.GenericSlider.prototype.getElement = function(){
-    return this.element;
+    return this.element_;
 }
 
 
@@ -245,7 +245,7 @@ utils.ui.GenericSlider.prototype.setOrientation = function(orient) {
     goog.base(this, 'setOrientation', orient);	  
 
     var orientationLower = this.getOrientation().toLowerCase();
-    goog.dom.classes.add(this.element, 
+    goog.dom.classes.add(this.element_, 
 			 goog.getCssName(utils.ui.GenericSlider.ELEMENT_CLASS_PREFIX,  
 					 orientationLower));
     goog.dom.classes.add(this.track_,   
@@ -282,7 +282,7 @@ utils.ui.GenericSlider.prototype.initEvents_ = function() {
  * @return {!Element} The thumbnail element.
  */
 utils.ui.GenericSlider.prototype.findThumbElement_ = function() {
-    var children = goog.dom.getChildren(this.element);
+    var children = goog.dom.getChildren(this.element_);
     for (var i=0, len = children.length; i < len; i++) {
 	if (children[i].className === 'goog-slider-thumb') {
 	    return children[i];

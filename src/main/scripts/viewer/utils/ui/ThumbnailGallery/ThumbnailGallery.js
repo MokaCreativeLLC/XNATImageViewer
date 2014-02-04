@@ -15,37 +15,30 @@ goog.require('utils.ui.ScrollableContainer');
 
 
 
-
-
 /**
- * Thumbnail Galleries are subclass of ScrollableContainer that specifically contain
- * utils.ui.Thumbnail objects.
+ * Thumbnail Galleries are subclass of ScrollableContainer that specifically 
+ * contain utils.ui.Thumbnail objects.
  *
  * @constructor
  * @extends {utils.ui.ScrollableContainer}
  */
 goog.provide('utils.ui.ThumbnailGallery');
 utils.ui.ThumbnailGallery = function () {
-
     goog.base(this);
-    this.getElement().setAttribute('id',  "utils.ui.ThumbnailGallery" + utils.dom.uniqueId());
-
-
-    /**
-     * @type {!Object<string, utils.ui.Thumbnail>}
-     * @private
-     */
-    this.Thumbnails_ = {};
-
-
-    //
-    // Other init methods.
-    //
+    this.getElement().setAttribute('id', "utils.ui.ThumbnailGallery" + '_' + 
+				   goog.string.createUniqueString());
     this.setClasses_();    
 }
 goog.inherits(utils.ui.ThumbnailGallery, utils.ui.ScrollableContainer);
 goog.exportSymbol('utils.ui.ThumbnailGallery', utils.ui.ThumbnailGallery);
 
+
+
+/**
+ * @type {Object<string, utils.ui.Thumbnail>}
+ * @private
+ */
+utils.ui.ThumbnailGallery.prototype.Thumbnails_;
 
 
 
@@ -59,13 +52,20 @@ goog.exportSymbol('utils.ui.ThumbnailGallery', utils.ui.ThumbnailGallery);
  * @return {!utils.ui.Thumbnail}
  * @public
  */
-utils.ui.ThumbnailGallery.prototype.makeThumbnail = function(imageUrl, displayText) {
+utils.ui.ThumbnailGallery.prototype.makeThumbnail = function(imageUrl, 
+							     displayText) {
 
     var thumbnail = new utils.ui.Thumbnail();
  
-    goog.dom.classes.addRemove(thumbnail.getElement(), goog.dom.classes.get(thumbnail.getElement()), this.thumbnailClasses_);
-    goog.dom.classes.addRemove(thumbnail.getText(), goog.dom.classes.get(thumbnail.getText()), this.thumbnailTextClasses_);
-    goog.dom.classes.addRemove(thumbnail.getImage(), goog.dom.classes.get(thumbnail.getImage()), this.thumbnailImageClasses_);
+    goog.dom.classes.addRemove(thumbnail.getElement(), 
+			       goog.dom.classes.get(thumbnail.getElement()), 
+			       this.thumbnailClasses_);
+    goog.dom.classes.addRemove(thumbnail.getText(), 
+			       goog.dom.classes.get(thumbnail.getText()), 
+			       this.thumbnailTextClasses_);
+    goog.dom.classes.addRemove(thumbnail.getImage(), 
+			       goog.dom.classes.get(thumbnail.getImage()), 
+			       this.thumbnailImageClasses_);
 
     thumbnail.setImage(imageUrl);
     thumbnail.setText(displayText);
@@ -78,47 +78,30 @@ utils.ui.ThumbnailGallery.prototype.makeThumbnail = function(imageUrl, displayTe
 
 
 /**
-* Adds a thumbnail to the gallery, or a gallery zippy if the opt_folders argument is provided.
-*
-* @param {!utils.ui.Thumbnail} thumbnail The thumbnail object to add to the scrollable container.
-* @param {string= | Array.<string>=} opt_folders The optional zippy 
-* folder name to put the thumbnail in.  Otherwise it goes to the parent.
-* @public
-*/
-utils.ui.ThumbnailGallery.prototype.addThumbnail = function(thumbnail, opt_folders) {
-
-    var folders = (opt_folders === undefined) ? ['parentFolder'] : 
-	goog.isArray(opt_folders) ? opt_folders : [opt_folders];
-    var contents = {};
-  
-
-    //
+ * Adds a thumbnail to the gallery, or a gallery zippy if the opt_folders 
+ * argument is provided.
+ *
+ * @param {!utils.ui.Thumbnail} thumbnail The thumbnail object to add to the 
+ *   scrollable container.
+ * @param {string= | Array.<string>=} opt_folders The optional zippy 
+ * folder name to put the thumbnail in.  Otherwise it goes to the parent.
+ * @public
+ */
+utils.ui.ThumbnailGallery.prototype.addThumbnail = function(thumbnail, 
+							    opt_folders) {
     // Bind clone to mouse wheel.
-    //
     this.bindToMouseWheel(thumbnail.getHoverable(), 
 			  this.onHoverAndScroll_.bind(this));
-
-
-    //
     // Track thumbnail.
-    //
-    this.Thumbnails_[thumbnail.getElement().id] = thumbnail;
-    
-
-    //
-    // Add contents to the ScrollableContainer based on
-    // the folder depth.
-    //
-    var currContents = contents;
-    for (var i=0, len = folders.length; i < len; i++){
-	currContents[folders[i]] = {};
-	if (i < len - 1){
-	    currContents = currContents[folders[i]];
-	} else {
-	    currContents[folders[i]] = thumbnail.getElement();
-	}
+    if (!this.Thumbnails_){
+	this.Thumbnails_ = {};
     }
-    this.addContents(contents);
+    this.Thumbnails_[thumbnail.getElement().id] = thumbnail;
+    // Set folders
+    this.addElementAndFolders_(thumbnail.getElement(), 
+			      (opt_folders === undefined) ? ['parentFolder'] : 
+			      goog.isArray(opt_folders) ? opt_folders : 
+			      [opt_folders])
 }
 
 
@@ -133,13 +116,14 @@ utils.ui.ThumbnailGallery.prototype.addThumbnail = function(thumbnail, opt_folde
  * @return {!utils.ui.Thumbnail}
  * @public
  */
-utils.ui.ThumbnailGallery.prototype.insertAndMakeThumbnail = function(imageUrl, displayText, opt_folders) {
-    var thumbnail = this.makeThumbnail(imageUrl, displayText)
-    this.addThumbnail(thumbnail, opt_folders);
-    this.setThumbnailClasses_('image');
-    this.setThumbnailClasses_('text');
-    this.setThumbnailClasses_('thumbnail');
-    return thumbnail;
+utils.ui.ThumbnailGallery.prototype.makeAndInsertThumbnail = 
+    function(imageUrl, displayText, opt_folders) {
+	var thumbnail = this.makeThumbnail(imageUrl, displayText)
+	this.addThumbnail(thumbnail, opt_folders);
+	this.setThumbnailClasses_('image');
+	this.setThumbnailClasses_('text');
+	this.setThumbnailClasses_('thumbnail');
+	return thumbnail;
 }
 
 
@@ -167,7 +151,8 @@ utils.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){
     //
     // Return out if the mouse is not over a Thumbnail element.
     //------------------ 
-    var hoveredThumbnail =  goog.dom.getAncestorByClass(mouseOverElt, utils.ui.Thumbnail.CSS_CLASS_PREFIX);
+    var hoveredThumbnail =  goog.dom.getAncestorByClass(mouseOverElt, 
+				utils.ui.Thumbnail.CSS_CLASS_PREFIX);
     if (!hoveredThumbnail) { return };
 
 
@@ -201,7 +186,8 @@ utils.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){
 	// Refevert to the actual ID of the element, assuming
 	// that the hovered element is a descendent of a thumbnail.
 	//
-	originalThumbnailId = goog.dom.getAncestorByClass(mouseOverElt, utils.ui.Thumbnail.CSS_CLASS_PREFIX).id;
+	originalThumbnailId = goog.dom.getAncestorByClass(mouseOverElt, 
+					utils.ui.Thumbnail.CSS_CLASS_PREFIX).id;
 
 	//
 	// If there's still no ID, we unhover the saved Thumbnail
@@ -220,12 +206,15 @@ utils.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){
     // First unhover the previously stored one, then
     // set the stored one to the new one.
     //------------------ 
-    if (this.currMousewheelThumbnail_ && (this.currMousewheelThumbnail_ !== this.Thumbnails_[originalThumbnailId])){
+    if (this.currMousewheelThumbnail_ && (this.currMousewheelThumbnail_ 
+			!== this.Thumbnails_[originalThumbnailId])){
 	this.currMousewheelThumbnail_['EVENTS'].runEvent('MOUSEOUT'); 
     } 
     this.currMousewheelThumbnail_ = this.Thumbnails_[originalThumbnailId];
-    //window.console.log("\n\nThe mouse is over", this.Thumbnails_[originalThumbnailId].element_.id);
-    //window.console.log("This is showing", this.currMousewheelThumbnail_.element_.id);
+    //window.console.log("\n\nThe mouse is over", 
+    // this.Thumbnails_[originalThumbnailId].element_.id);
+    //window.console.log("This is showing", 
+    // this.currMousewheelThumbnail_.element_.id);
 
 
     //------------------ 
@@ -241,7 +230,8 @@ utils.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){
     // Return out if the hoverNode is the Thumbnail element.
     // (We don't need to reposition it.)
     //------------------ 
-    if (this.currMousewheelThumbnail_.getHoverable() === this.currMousewheelThumbnail_.getElement()) { return };
+    if (this.currMousewheelThumbnail_.getHoverable() === 
+	this.currMousewheelThumbnail_.getElement()) { return };
 
 
 
@@ -262,30 +252,32 @@ utils.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){
  * @param {!string} nodeCategory
  * @private
  */
-utils.ui.ThumbnailGallery.prototype.setThumbnailClasses_ = function (nodeCategory) {
+utils.ui.ThumbnailGallery.prototype.setThumbnailClasses_ = 
+    function (nodeCategory) {
 
-    var classes = [];
-    var element;
-    for (var thumbID in this.Thumbnails_) {
-	switch(nodeCategory){
-	case 'thumbnail':
-	    classes = this.thumbnailClasses_;
-	    element = this.Thumbnails_[thumbID].getElement();
-	    break;
-	case 'image':
-	    classes = this.thumbnailImageClasses_;
-	    element = this.Thumbnails_[thumbID].getImage();
-	    break;
-	case 'text':
-	    classes = this.thumbnailTextClasses_;
-	    element = this.Thumbnails_[thumbID].getText();
-	    break;   
-	default:
-	    break;
+	var classes = [];
+	var element;
+	for (var thumbID in this.Thumbnails_) {
+	    switch(nodeCategory){
+	    case 'thumbnail':
+		classes = this.thumbnailClasses_;
+		element = this.Thumbnails_[thumbID].getElement();
+		break;
+	    case 'image':
+		classes = this.thumbnailImageClasses_;
+		element = this.Thumbnails_[thumbID].getImage();
+		break;
+	    case 'text':
+		classes = this.thumbnailTextClasses_;
+		element = this.Thumbnails_[thumbID].getText();
+		break;   
+	    default:
+		break;
+	    }
+    	    goog.dom.classes.addRemove(element,  
+				       goog.dom.classes.get(element), classes);
+	    
 	}
-    	goog.dom.classes.addRemove(element,  goog.dom.classes.get(element), classes);
-	
-    }
 }
 
 
@@ -307,11 +299,13 @@ utils.ui.ThumbnailGallery.prototype.addThumbnailClass = function (className) {
 * @param {!string} className
 * @public
 */
-utils.ui.ThumbnailGallery.prototype.addThumbnailImageClass = function (className) {
-    //window.console.log(" \n\n\n*********   add thumbnail image class", className);
-    this.thumbnailImageClasses_.push(className);
-    this.setThumbnailClasses_('image');
-}
+utils.ui.ThumbnailGallery.prototype.addThumbnailImageClass = 
+    function (className) {
+	//window.console.log(" \n\n\n*********   
+	//add thumbnail image class", className);
+	this.thumbnailImageClasses_.push(className);
+	this.setThumbnailClasses_('image');
+    }
 
 
 
@@ -320,10 +314,11 @@ utils.ui.ThumbnailGallery.prototype.addThumbnailImageClass = function (className
  * @param {!string} className
  * @public
  */
-utils.ui.ThumbnailGallery.prototype.addThumbnailTextClass = function (className) {
-    this.thumbnailTextClasses_.push(className);
-    this.setThumbnailClasses_('text');
-}
+utils.ui.ThumbnailGallery.prototype.addThumbnailTextClass = 
+    function (className) {
+	this.thumbnailTextClasses_.push(className);
+	this.setThumbnailClasses_('text');
+    }
 
 
 
@@ -352,9 +347,11 @@ utils.ui.ThumbnailGallery.prototype.setClasses_ = function() {
     this.thumbnailClasses_ = goog.dom.classes.get(tempThumb.getElement());
     this.thumbnailClasses_.push(utils.ui.ThumbnailGallery.THUMBNAIL_CLASS);
     this.thumbnailImageClasses_ = goog.dom.classes.get(tempThumb.getImage());
-    this.thumbnailImageClasses_.push(utils.ui.ThumbnailGallery.THUMBNAIL_IMAGE_CLASS);
+    this.thumbnailImageClasses_.push(
+	utils.ui.ThumbnailGallery.THUMBNAIL_IMAGE_CLASS);
     this.thumbnailTextClasses_ = goog.dom.classes.get(tempThumb.getText());
-    this.thumbnailTextClasses_.push(utils.ui.ThumbnailGallery.THUMBNAIL_TEXT_CLASS);
+    this.thumbnailTextClasses_.push(
+	utils.ui.ThumbnailGallery.THUMBNAIL_TEXT_CLASS);
     goog.dom.removeNode(tempThumb.getElement());
     delete tempThumb;
 }
@@ -362,18 +359,61 @@ utils.ui.ThumbnailGallery.prototype.setClasses_ = function() {
 
 
 
-
+/**
+* @type {string} 
+* @expose 
+* @const
+*/ 
 utils.ui.ThumbnailGallery.CSS_CLASS_PREFIX = 
-    /**@type {string} @expose @const*/ goog.getCssName('utils-ui-scrollablethumbnailgallery');
+    goog.getCssName('utils-ui-scrollablethumbnailgallery');
+
+/**
+* @type {string} 
+* @expose 
+* @const
+*/ 
 utils.ui.ThumbnailGallery.ELEMENT_CLASS = 
-    /**@type {string} @expose @const*/ goog.getCssName(utils.ui.ThumbnailGallery.CSS_CLASS_PREFIX, '');
+    goog.getCssName(utils.ui.ThumbnailGallery.CSS_CLASS_PREFIX, '');
+
+/**
+* @type {string} 
+* @expose 
+* @const
+*/ 
 utils.ui.ThumbnailGallery.DIALOG_CLASS = 
-    /**@type {string} @expose @const*/ goog.getCssName(utils.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 'dialog');
+    goog.getCssName(utils.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 'dialog');
+
+/**
+* @type {string} 
+* @expose 
+* @const
+*/ 
 utils.ui.ThumbnailGallery.THUMBNAIL_CLASS = 
-    /**@type {string} @expose @const*/ goog.getCssName(utils.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 'thumbnail');
+    goog.getCssName(utils.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 'thumbnail');
+
+/**
+* @type {string} 
+* @expose 
+* @const
+*/ 
 utils.ui.ThumbnailGallery.THUMBNAIL_IMAGE_CLASS = 
-    /**@type {string} @expose @const*/ goog.getCssName(utils.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 'thumbnail-image');
+    goog.getCssName(utils.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 
+		    'thumbnail-image');
+
+/**
+* @type {string} 
+* @expose 
+* @const
+*/ 
 utils.ui.ThumbnailGallery.THUMBNAIL_TEXT_CLASS = 
-    /**@type {string} @expose @const*/ goog.getCssName(utils.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 'thumbnail-displaytext');
+    goog.getCssName(utils.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 
+		    'thumbnail-displaytext');
+
+/**
+* @type {string} 
+* @expose 
+* @const
+*/ 
 utils.ui.ThumbnailGallery.THUMBNAILGALLERY_CLASS = 
-    /**@type {string} @expose @const*/ goog.getCssName(utils.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 'thumbnailgallery');
+    goog.getCssName(utils.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 
+		    'thumbnailgallery');

@@ -73,7 +73,7 @@ xiv.ContentDivider = function () {
     //
     // Appends
     //
-    goog.dom.append(this.element, this.icon_);
+    goog.dom.append(this.getElement(), this.icon_);
 
 
 
@@ -156,7 +156,7 @@ xiv.ContentDivider.prototype.getUpperLimit = function() {
  * @public
  */
 xiv.ContentDivider.prototype.getPosition = function() {
-    return utils.style.dims(this.element, 'top'); 
+    return utils.style.dims(this.getElement(), 'top'); 
 } 
 
 
@@ -174,7 +174,7 @@ xiv.ContentDivider.prototype.getPosition = function() {
 xiv.ContentDivider.prototype.getLowerLimit = function() {
     return utils.style.dims(this.containment_, 'top') + 
 	utils.style.dims(this.containment_, 'height') - 
-	utils.style.dims(this.element, 'height');
+	utils.style.dims(this.getElement(), 'height');
 } 
 
 
@@ -191,7 +191,7 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
     //------------------
     // On Mousedown...
     //------------------
-    goog.events.listen(this.element, goog.events.EventType.MOUSEDOWN, function(e) {
+    goog.events.listen(this.getElement(), goog.events.EventType.MOUSEDOWN, function(e) {
 	
 	//
 	// Stop propagation.
@@ -203,7 +203,7 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
 	// Params.
 	//
 	var cDims = utils.style.dims(this.containment_);
-	var d = new goog.fx.Dragger(this.element, null, new goog.math.Rect(0, cDims.top, 0, cDims.height - xiv.CONTENT_DIVIDER_HEIGHT));
+	var d = new goog.fx.Dragger(this.getElement(), null, new goog.math.Rect(0, cDims.top, 0, cDims.height - xiv.CONTENT_DIVIDER_HEIGHT));
 	this.dragging_ = true;	
 
 
@@ -212,7 +212,7 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
 	//
 	d.addEventListener(goog.fx.Dragger.EventType.START, function(e) {
 	    this.dragging_ = true;
-	    goog.array.forEach(this.dragStartCallbacks_, function(callback) { callback(this.element, e) });	
+	    goog.array.forEach(this.dragStartCallbacks_, function(callback) { callback(this.getElement(), e) });	
 	}.bind(this));
 
 	
@@ -221,7 +221,7 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
 	//
 	d.addEventListener(goog.fx.Dragger.EventType.DRAG, function(e) {
 	    utils.dom.stopPropagation(e);
-	    goog.array.forEach(this.dragCallbacks_, function(callback) { callback(this.element, e) });	
+	    goog.array.forEach(this.dragCallbacks_, function(callback) { callback(this.getElement(), e) });	
 	}.bind(this));
 	
 
@@ -231,7 +231,7 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
 	d.addEventListener(goog.fx.Dragger.EventType.END, function(e) {
 	    this.dragging_ = false;
 	    d.dispose();
-	    goog.array.forEach(this.dragEndCallbacks_, function(callback) { callback(this.element, e)});	
+	    goog.array.forEach(this.dragEndCallbacks_, function(callback) { callback(this.getElement(), e)});	
 	}.bind(this));
 
 
@@ -254,8 +254,8 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
  */
 xiv.ContentDivider.prototype.slideTo = function(newTop, opt_animate) {
     
-    var dims = utils.style.dims(this.element);
-    var slide = new goog.fx.dom.Slide(this.element, [dims.left, dims.top], [0, newTop], xiv.ANIM_MED, goog.fx.easing.easeOut);
+    var dims = utils.style.dims(this.getElement());
+    var slide = new goog.fx.dom.Slide(this.getElement(), [dims.left, dims.top], [0, newTop], xiv.ANIM_MED, goog.fx.easing.easeOut);
 
 
 
@@ -263,13 +263,13 @@ xiv.ContentDivider.prototype.slideTo = function(newTop, opt_animate) {
     // Callbacks dor the animation events (BEGIN, ANIMATE, END).
     //------------------
     goog.events.listen(slide, goog.fx.Animation.EventType.BEGIN, function() {
-	goog.array.forEach(this.dragStartCallbacks_, function(callback) { callback(this.element) }.bind(this));			
+	goog.array.forEach(this.dragStartCallbacks_, function(callback) { callback(this.getElement()) }.bind(this));			
     }.bind(this));
     goog.events.listen(slide, goog.fx.Animation.EventType.ANIMATE, function() {
-	goog.array.forEach(this.dragCallbacks_, function(callback) { callback(this.element) }.bind(this));			
+	goog.array.forEach(this.dragCallbacks_, function(callback) { callback(this.getElement()) }.bind(this));			
     }.bind(this));
     goog.events.listen(slide, goog.fx.Animation.EventType.END, function() {
-	goog.array.forEach(this.dragEndCallbacks_, function(callback) { callback(this.element) }.bind(this));			
+	goog.array.forEach(this.dragEndCallbacks_, function(callback) { callback(this.getElement()) }.bind(this));			
     }.bind(this));
 
 
@@ -289,7 +289,7 @@ xiv.ContentDivider.prototype.slideTo = function(newTop, opt_animate) {
 xiv.ContentDivider.prototype.updateStyle = function (opt_args) {
     if (opt_args) { 
 	this.setArgs(opt_args) 
-	utils.style.setStyle(this.element, this.currArgs().elementCSS);
+	utils.style.setStyle(this.getElement(), this.currArgs().elementCSS);
     }
 }
 

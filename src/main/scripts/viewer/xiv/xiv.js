@@ -1,4 +1,5 @@
 /**
+ * @preserve Copyright 2014 Washington University
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  * @author herrickr@mir.wustl.edu (Rick Herrick)
  */
@@ -81,7 +82,7 @@ var xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
     this.Modal_.setMode(mode);
     this.setModalButtonCallbacks_();
     window.onresize = function () { 
-	this.Modal_updateStyle() 
+	this.Modal_.updateStyle() 
     }.bind(this);
 
 
@@ -123,44 +124,32 @@ xiv.prototype.showModal = function(){
 
 
 /**
- * Begins the XNAT Image Viewer.
+ * Hides the XNAT Image Viewer.
  * @param {function=} opt_callback
  * @public
  */
 xiv.prototype.hideModal = function(opt_callback){
-    utils.fx.fadeOut(this.Modal_.getElement(), 
-    xiv.ANIM_TIME, opt_callback);
+    utils.fx.fadeOut(this.Modal_.getElement(), xiv.ANIM_TIME, opt_callback);
 }
 
 
 
 
 /**
- * @param {!string} path 
- * @param {!utils.xnat.viewableProperties} viewableProperty
- * @public
+ * Stores the viewableProperties in a object, using its path as a key.
+ *
+ * @param {!utils.xnat.viewableProperties} viewableProperties The 
+ *    utils.xnat.viewableProperties object to store.
+ * @param {!string} path The XNAT path associated with the viewableProperty.
+ * @private
  */
-xiv.prototype.addViewableProperty = function(path, viewableProperty) {
+xiv.prototype.storeViewableProperties_ = function(viewableProperties, path) {
     if (!this.viewableProperties_.hasOwnProperty(path)){
 	 this.viewableProperties_[path] = [];
     }
-    this.viewableProperties_[path].push(viewableProperty);
+    this.viewableProperties_[path].push(viewableProperties);
 };
 
-
-
-
-
-/**
- * @param {!string} path
- * @param {!Array.<utils.xnat.viewableProperty>} viewableProperty
- * @public
- */
-xiv.prototype.addViewableProperties = function(path, viewableProperties) {
-    goog.array.forEach(viewableProperties, function(viewableProperty){
-	this.addViewableProperty(viewableProperty);
-    }.bind(this))
-};
 
 
 
@@ -262,7 +251,7 @@ xiv.prototype.showPathSelector_ = function(){
 /**
  * @private
  */
-xiv.prototype.loadStoredProperties_ = function(){
+xiv.prototype.loadStoredViewableProperties_ = function(){
     var key = /**@type {?string}*/null;
     var propsArr = /**@type {?Array.<utils.xnat.viewableProperties>}*/null;
     for (key in this.viewableProperties_) {
@@ -277,16 +266,15 @@ xiv.prototype.loadStoredProperties_ = function(){
 
 
 /**
+ * 
  * @param {!string | !array.<string>} key
- * @param {!Array.<utils.xnat.viewableProperties>} propertiesArr
+ * @param {utils.xnat.viewableProperties} viewableProperties
  * @private
  */
-xiv.prototype.addThumbsToModal_ = function(key, propertiesArr){
-    goog.array.forEach(propertiesArr, function(viewableProperties){
-	this.Modal_.addThumbnail(viewableProperties, 
-	    goog.isArray(key) ? key: 
-		xiv.deriveThumbnailFolders_(key));
-    }.bind(this))
+xiv.prototype.addThumbnailToModal_ = function(viewableProperties, key){
+    window.console.log(viewableProperties, key)
+    this.Modal_.addThumbnail(viewableProperties, 
+	goog.isArray(key) ? key: xiv.extractThumbnailFolders_(key));
 }
 
 
@@ -300,15 +288,12 @@ xiv.prototype.addThumbsToModal_ = function(key, propertiesArr){
  * @public
  */
 xiv.prototype.loadThumbnails = function(){
-
-    var slicerThumbnailsLoaded = /**@type {!boolean}*/false;
-    var folders =/**@type {!Array.string}*/[];
-
-
+    var folders = [];
+   
     //------------------
     // Load stored properties first.
     //------------------ 
-    this.loadStoredProperties_();
+    this.loadStoredViewableProperties_();
 
 
     //------------------
@@ -316,43 +301,48 @@ xiv.prototype.loadThumbnails = function(){
     // Scans xiv.Thumbnails first, then Slicer xiv.Thumbnails.
     //------------------  
     goog.array.forEach(this.dataPaths_, function(xnatPath){
-
-	folders = xiv.deriveThumbnailFolders_(xnatPath);
-
-	//
-	// Begin with getting the scans first.
-	//
-	utils.xnat.getScans(xnatPath, function(scanProps){
-
-	    this.addViewableProperty(xnatPath, scanProps);
-
-	    this.addThumbsToModal_(folders.slice(0).push('scans'), 
-				       scanProps);
-
-	    if (!slicerThumbnailsLoaded) {
-		// Then, get the slicer files.
-		utils.xnat.getSlicer(xnatPath, function(slicerProps){
-		   
-		    this.addViewableProperty(xnatPath, slicerProps);
-
-		    this.addThumbsToModal_(folders.slice(0).push('Slicer'), 
-					       slicerProps);
-
-		}.bind(this));
-		slicerThumbnailsLoaded = true;
-	    }
-	}.bind(this));
+	this.addViewables_(xnatPath, xiv.extractThumbnailFolders_(xnatPath));
     }.bind(this))
 }
 
 
 
+/**
+ * @cost
+ * @type {Object.<str, str>}
+ */
+xiv.xnatQueries_ = {
+    'scans' : utils.xnat.getScans,
+    'slicer': utils.xnat.getSlicer
+}
+
+
 
 /**
+ * @private
+ */
+xiv.prototype.addViewables_ = function(xnatPath, folders){
+    for (var key in xiv.xnatQueries_){
+	xiv.xnatQueries_[key](xnatPath, function(scanProps){
+	    this.storeViewableProperties_(scanProps, xnatPath); 
+	    this.addThumbnailToModal_(scanProps, folders.concat(key));
+	}.bind(this))
+    }  
+}
+
+
+
+
+
+/**
+ * Extracts the folders in the provided path and returns a set of folders
+ * for querying thumbnails. 
+ *
  * @param {!string} path
  * @private
  */
-xiv.deriveThumbnailFolders_ = function(path){
+xiv.extractThumbnailFolders_ = function(path){
+    window.console.log(path);
     var pathObj = utils.xnat.getPathObject(path);
     var folders = [];
     for (key in pathObj){ 
@@ -416,7 +406,7 @@ xiv.startViewer = function (windowMode, xnatServerRoot, dataPath, imagePath) {
 			      imagePath);
     imageViewer.addDataPath(dataPath); 
     imageViewer.showModal();
-    //imageViewer.loadThumbnails();
+    imageViewer.loadThumbnails();
 };
 goog.exportSymbol('xiv.startViewer', xiv.startViewer)
 

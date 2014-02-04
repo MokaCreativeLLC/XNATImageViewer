@@ -35,7 +35,7 @@ goog.provide('xiv.XtkPlane');
 xiv.XtkPlane = function(id) {
 
     xiv.Widget.call(this, 'xiv.XtkPlane');
-    goog.dom.classes.set(this.element, xiv.XtkPlane.ELEMENT_CLASS);
+    goog.dom.classes.set(this.getElement(), xiv.XtkPlane.ELEMENT_CLASS);
 
 
     /**
@@ -120,7 +120,7 @@ xiv.XtkPlane = function(id) {
 	//
 	// Slider
 	//
-	this.Slider_ = new utils.ui.GenericSlider({'parent': this.element, 'orientation' : 'horizontal'});
+	this.Slider_ = new utils.ui.GenericSlider({'parent': this.getElement(), 'orientation' : 'horizontal'});
 	goog.dom.classes.add(this.Slider_.getElement(), xiv.XtkPlane.SLIDER_CLASS);
 	goog.dom.classes.add(this.Slider_.getThumb(), xiv.XtkPlane.SLIDER_THUMB_CLASS);
 	goog.dom.classes.add(this.Slider_.getTrack(), xiv.XtkPlane.SLIDER_TRACK_CLASS);
@@ -137,7 +137,7 @@ xiv.XtkPlane = function(id) {
 	});
 
 
-	goog.dom.append(this.element, this.indexBox_);
+	goog.dom.append(this.getElement(), this.indexBox_);
     } 
     
     //this.resetRenderer();
@@ -203,7 +203,7 @@ xiv.XtkPlane.prototype.resetRenderer = function () {
     if (this.Renderer_) { this.Renderer_.destroy(); }
     this.Renderer_ = (this.id_ === 'v') ? new X.renderer3D : new X.renderer2D();
     this.Renderer_.orientation = this.id_.toUpperCase();
-    this.Renderer_.container = this.element;
+    this.Renderer_.container = this.getElement();
     this.Renderer_.init();
 }
 
@@ -385,8 +385,7 @@ xiv.XtkPlane.prototype.updateStyle = function (opt_args) {
     // Update widget css to be right size/place within frame holder
     //------------------
     if (opt_args) {
-        var eltDims = utils.dom.mergeArgs(utils.style.dims(this.element), opt_args);
-        utils.style.setStyle(this.element, eltDims);
+        utils.style.setStyle(this.getElement(), opt_args);
     }
 
 
@@ -402,8 +401,8 @@ xiv.XtkPlane.prototype.updateStyle = function (opt_args) {
     // Update the Slider.
     //------------------
     if (this.Slider_) {
-	if (this.element.parentNode && this.Slider_.getElement().parentNode !== this.element.parentNode) {
-	    this.element.parentNode.appendChild(this.Slider_.getElement());
+	if (this.getElement().parentNode && this.Slider_.getElement().parentNode !== this.getElement().parentNode) {
+	    this.getElement().parentNode.appendChild(this.Slider_.getElement());
 	}
 	this.Slider_.updateStyle();
     }

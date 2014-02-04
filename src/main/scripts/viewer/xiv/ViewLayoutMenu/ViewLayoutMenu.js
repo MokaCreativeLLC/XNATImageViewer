@@ -74,8 +74,8 @@ xiv.ViewLayoutMenu = function (viewLayouts) {
     //
     // Append
     //
-    goog.dom.append(this.element, this.menuHolder_);
-    goog.dom.append(this.element, this.icon_);
+    goog.dom.append(this.getElement(), this.menuHolder_);
+    goog.dom.append(this.getElement(), this.icon_);
 
 
 
@@ -422,7 +422,7 @@ xiv.ViewLayoutMenu.prototype.setMenuInteraction = function() {
     //------------------
     // Onclick:  Show or hide the menu
     //------------------
-    goog.events.listen(this.element, goog.events.EventType.CLICK, function (event) {
+    goog.events.listen(this.getElement(), goog.events.EventType.CLICK, function (event) {
 	if (!suspendOtherClicks){
 	    toggleMenu(event);
 	    closeCountdown(2500);
@@ -517,7 +517,7 @@ xiv.ViewLayoutMenu.prototype.setHighlightedIndex = function(index) {
     //------------------
     // Adjust title.
     //------------------
-    this.element.title  = "Select View Plane (" + highlightContent.getAttribute('viewlayoutid') + ")";
+    this.getElement().title  = "Select View Plane (" + highlightContent.getAttribute('viewlayoutid') + ")";
 
 
 

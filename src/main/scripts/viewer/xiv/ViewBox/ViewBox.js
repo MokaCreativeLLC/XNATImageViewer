@@ -49,7 +49,7 @@ xiv.ViewBox = function (opt_args) {
     // Call parents, set class
     //------------------  
     goog.base(this, 'xiv.ViewBox');
-    goog.dom.classes.set(this.element, xiv.ViewBox.ELEMENT_CLASS);
+    goog.dom.classes.set(this.getElement(), xiv.ViewBox.ELEMENT_CLASS);
 
 
     /**
@@ -90,7 +90,7 @@ xiv.ViewBox = function (opt_args) {
      * @private
      */	
     this.ContentDivider_ = new xiv.ContentDivider();
-    goog.dom.append(this.element, this.ContentDivider_.getContainment());
+    goog.dom.append(this.getElement(), this.ContentDivider_.getContainment());
 
 
 
@@ -176,7 +176,7 @@ xiv.ViewBox = function (opt_args) {
 
 
 
-    this.doNotHide(this.SlicerViewMenu_.element);
+    this.doNotHide(this.SlicerViewMenu_.getElement());
 
 
     this.keeperClasses_ = /** @private */ [xiv.XtkDisplayer.ELEMENT_CLASS];
@@ -187,15 +187,15 @@ xiv.ViewBox = function (opt_args) {
     //------------------
     // Set parents
     //------------------
-    this.element.appendChild(this.SlicerViewMenu_.element);
-    this.ContentDivider_.setElementParentNode(this.element);
-    this.ViewLayoutMenu_.setElementParentNode(this.element);
-    this.ViewBoxTabs_.setElementParentNode(this.element);
+    goog.dom.append(this.getElement(), this.SlicerViewMenu_.getElement());
+    this.ContentDivider_.setElementParentNode(this.getElement());
+    this.ViewLayoutMenu_.setElementParentNode(this.getElement());
+    this.ViewBoxTabs_.setElementParentNode(this.getElement());
     this.setViewLayoutMenuCallbacks_();
 
 
 
-    //goog.fx.DragDrop.call(this, this.element, undefined);	
+    //goog.fx.DragDrop.call(this, this.getElement(), undefined);	
     
 
 
@@ -345,7 +345,7 @@ xiv.ViewBox.prototype.setViewLayout = function(viewPlane) {
  * @private
  */
 xiv.ViewBox.prototype.showChildElements_ = function() {
-    goog.array.forEach(this.element.childNodes, function(childElt){
+    goog.array.forEach(this.getElement().childNodes, function(childElt){
 	goog.dom.classes.remove(childElt, xiv.ViewBox.HIDDEN_CLASS);
     }.bind(this))
 }
@@ -359,7 +359,7 @@ xiv.ViewBox.prototype.showChildElements_ = function() {
  * @private
  */
 xiv.ViewBox.prototype.hideChildElements_ = function() {
-    goog.array.forEach(this.element.childNodes, function(childElt){
+    goog.array.forEach(this.getElement().childNodes, function(childElt){
 	if (this.doNotHide_ && (this.doNotHide_.length > 0) && (this.doNotHide_.indexOf(childElt) === -1)) {
 	    goog.dom.classes.add(childElt, xiv.ViewBox.HIDDEN_CLASS);
 	}
@@ -387,7 +387,7 @@ xiv.ViewBox.prototype.initDisplayer_ = function(){
 	this.Displayer_ = new xiv.XtkDisplayer(this);
 	break;
     }
-    this.Displayer_.setElementParentNode(this.element);
+    this.Displayer_.setElementParentNode(this.getElement());
 
 
     //------------------
@@ -396,8 +396,8 @@ xiv.ViewBox.prototype.initDisplayer_ = function(){
     this.Displayer_.onLoaded = function(){
 	this.loadState_ = 'loaded';
 
-	if (this.element.hasAttribute('originalbordercolor')){
-	    this.element.style.borderColor = this.element.getAttribute('originalbordercolor');
+	if (this.getElement().hasAttribute('originalbordercolor')){
+	    this.getElement().style.borderColor = this.getElement().getAttribute('originalbordercolor');
 	}
 	this.ViewLayoutMenu_.setViewLayout(this.Displayer_.ViewLayout);
 	this.showChildElements_();
@@ -498,7 +498,7 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb) {
     // Show/hide the slicer view menu depending on the 
     // Thumbnail's getXnatProperties()
     //------------------    
-    this.SlicerViewMenu_.element.style.visibility = (thumb.getXnatProperties()['category'].toLowerCase() === 'slicer') ? 'visible' : 'hidden';
+    this.SlicerViewMenu_.getElement().style.visibility = (thumb.getXnatProperties()['category'].toLowerCase() === 'slicer') ? 'visible' : 'hidden';
 
 
     this.Displayer_.load(thumb.getXnatProperties());    
@@ -642,7 +642,7 @@ xiv.ViewBox.prototype.onContentDividerDragged_ = function() {
     // Deactivate tabs if the content divider slides to
     // to the bottom of the xiv.ViewBox.
     //
-    if (utils.style.dims(this.ContentDivider_.element, 'top') < this.ContentDivider_.getLowerLimit()) {
+    if (utils.style.dims(this.ContentDivider_.getElement(), 'top') < this.ContentDivider_.getLowerLimit()) {
 	this.ViewBoxTabs_.setActive(this.ViewBoxTabs_.getLastActiveTab());
     } else {
 	window.console.log("CONTENT DIVIDER DRAGGED");
@@ -653,7 +653,7 @@ xiv.ViewBox.prototype.onContentDividerDragged_ = function() {
     // Update the position of the tabs and the style
     // of the xiv.ViewBox.
     //
-    var contentDividerDims = utils.style.dims(this.ContentDivider_.element);
+    var contentDividerDims = utils.style.dims(this.ContentDivider_.getElement());
     var tabTop = contentDividerDims['top'] + contentDividerDims['height'];
     this.ViewBoxTabs_.updateStyle({ 'top': tabTop});
     this.updateStyle();
@@ -714,15 +714,15 @@ xiv.ViewBox.prototype.updateStyle = function (opt_args) {
     //------------------
     // Get the dimensions of the view box.
     //------------------
-    widgetDims = utils.style.dims(this.element);
+    widgetDims = utils.style.dims(this.getElement());
 
 
 
     //------------------
     // Merge any new arguments and update.
     //------------------
-    opt_args = (opt_args) ? utils.dom.mergeArgs(widgetDims, opt_args) : widgetDims;
-    utils.style.setStyle(this.element, opt_args);
+    opt_args = (opt_args) ? opt_args : widgetDims;
+    utils.style.setStyle(this.getElement(), opt_args);
 
 
 
@@ -748,9 +748,9 @@ xiv.ViewBox.prototype.updateStyle = function (opt_args) {
 	    //  Determine the top of the content divider and its containment.
 	    //
 	    var t = xiv.ViewBox.MIN_HOLDER_HEIGHT;	
-	    var h = widgetDims['height'] - t - utils.style.dims(this.ContentDivider_.element, 'height') - xiv.ViewBox.MIN_TAB_HEIGHT + 3;
+	    var h = widgetDims['height'] - t - utils.style.dims(this.ContentDivider_.getElement(), 'height') - xiv.ViewBox.MIN_TAB_HEIGHT + 3;
 	
-	    utils.style.setStyle(this.ContentDivider_.element, {
+	    utils.style.setStyle(this.ContentDivider_.getElement(), {
 		'top': xiv.prototype.minContentDividerTop(widgetDims['height']) - 1
 	    });
 
@@ -771,7 +771,7 @@ xiv.ViewBox.prototype.updateStyle = function (opt_args) {
     // NOTE: It's necessary that they be placed
     // in this part of the function.
     //------------------
-    var contentDividerDims = utils.style.dims(this.ContentDivider_.element);
+    var contentDividerDims = utils.style.dims(this.ContentDivider_.getElement());
     var contentDividerHeight = contentDividerDims['height'];
     var tabTop = contentDividerDims['top'] + contentDividerHeight;
     var tabHeight = widgetDims['height'] - tabTop;

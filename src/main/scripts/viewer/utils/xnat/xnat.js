@@ -1,4 +1,5 @@
 /**
+ * @preserve Copyright 2014 Washington University
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  * @author herrickr@mir.wustl.edu (Rick Herrick)
  */
@@ -54,7 +55,8 @@ utils.xnat.viewableProperties = function(){
         "type" : {'label':"type", 'value': ["MPRAGE"]}
     }
 };
-goog.exportSymbol('utils.xnat.viewableProperties', utils.xnat.viewableProperties);
+goog.exportSymbol('utils.xnat.viewableProperties', 
+		  utils.xnat.viewableProperties);
 
 
 
@@ -84,37 +86,28 @@ utils.xnat.folderAbbrev = {
 
 
 
-
-
-
-
 /**
  * Queries a server for a JSON formatted object
  * for processing in the 'callback' argument.  Utilizes the
  * Google closure library 'XhrIo' to handle communication with
  * the XNAT server.
  *
- * @param {!string} url
- * @param {!function} callback
+ * @param {!string} url The XNAT url to run the operation on.
+ * @param {!function} callback The callback to send the results to.
  */
 utils.xnat.jsonGet = function(url, callback){
     //window.console.log("utils.xnat - jsonGet: ", url);
 
+    /**
+     * @type {!string}
+     */
+    var queryChar =  (url.indexOf('?') > -1) ? '&' : '?';
 
-
-    //------------------
-    // Construct the url to give a json formatted object
-    // in its response.
-    //------------------
-    var queryChar = (url.indexOf('?') > -1) ? '&' : '?';
+    /**
+     * @type {!string}
+     */
     var queryUrl = url + queryChar + "format=json";
 
-
-
-    //------------------
-    // Send the URL to server, run callback on the resonse
-    // object.
-    //------------------
     goog.net.XhrIo.send(queryUrl, function(e) {
 	var xhr = e.target;
 	var obj = xhr.getResponseJson();
@@ -190,7 +183,7 @@ utils.xnat.splitUrl = function(url, splitString){
  * the uri into it's various level components.  From then, it builds
  * the return string.
  *
- * @param {!string} url
+ * @param {!string} url 
  * @param {!string} level
  * @return {string}
  * @public
@@ -236,7 +229,8 @@ utils.xnat.getXnatPathByLevel = function(url, level){
 	return returnString;
     }
     else {
-	throw new Error("utils.xnat - getXnatPathByLevel: No folder specified at the '" + level + "' level.")
+	throw new Error("utils.xnat - getXnatPathByLevel: No folder " + 
+			"specified at the '" + level + "' level.")
     }
 }
 
@@ -264,11 +258,11 @@ utils.xnat.defaultPathObj =  {
  * folders.
  *
  * @param {!string} url The URL to derive the path object from.
- * @return {string}
+ * @return {!Object<string, string>} The derived  
  */
 utils.xnat.getPathObject = function(url){
-
-    var defaultPathObj = goog.object.clone(utils.xnat.defaultPathObj);
+    window.console.log(url);
+    var pathObj = goog.object.clone(utils.xnat.defaultPathObj);
     var splitter = url.split('/');
     var levelHasValue = true;
     var i = 0;
@@ -280,7 +274,8 @@ utils.xnat.getPathObject = function(url){
 	// Stay within the loop only if the XNAT level has
 	// a value associated with it (i.e. a next position in the array)
 	//
-	levelHasValue = (defaultPathObj.hasOwnProperty(splitter[i]) && splitter[i+1])
+	levelHasValue = (pathObj.hasOwnProperty(splitter[i]) && 
+			 splitter[i+1]);
 	if (!levelHasValue) continue
 
 	    
@@ -289,9 +284,9 @@ utils.xnat.getPathObject = function(url){
 	// and the 'data/archive/' or 'xnat/' prefix. 
 	//
 	if (splitter[i] === 'projects' &&  i !== 0){
-	    defaultPathObj['prefix'] = '';
+	    pathObj['prefix'] = '';
 	    for (j=0; j < i; j++){
-		defaultPathObj['prefix'] += splitter[j] + "/";
+		pathObj['prefix'] += splitter[j] + "/";
 	    }
 	}
 	
@@ -300,11 +295,11 @@ utils.xnat.getPathObject = function(url){
 	// Construct key-value pair.  Key is the XNAT level
 	// value is the folder.
 	//
-	defaultPathObj[splitter[i]] = splitter[i+1];
+	pathObj[splitter[i]] = splitter[i+1];
 	i++;
     }
 
-    return defaultPathObj;
+    return pathObj;
 }
 
 
@@ -314,14 +309,18 @@ utils.xnat.getPathObject = function(url){
 /**
  * Function for sorting scan objects.
  *
- * @param {!Object.<String, String | Object.<String, String | Object>} a First scan object to compare. 
- * @param {!Object.<String, String | Object.<String, String | Object>} b Second scan object to compare.
+ * @param {!Object.<String, String | Object.<String, String | Object>} a 
+ *    First scan object to compare. 
+ * @param {!Object.<String, String | Object.<String, String | Object>} b 
+ *   Second scan object to compare.
  * @public 
  */
 utils.xnat.compareScan = function(a,b) {
-    if (a['sessionInfo']['Scan']['value'][0].toLowerCase() < b['sessionInfo']['Scan']['value'][0].toLowerCase())
+    if (a['sessionInfo']['Scan']['value'][0].toLowerCase() < 
+	b['sessionInfo']['Scan']['value'][0].toLowerCase())
 	return -1;
-    if (a['sessionInfo']['Scan']['value'][0].toLowerCase() > b['sessionInfo']['Scan']['value'][0].toLowerCase())
+    if (a['sessionInfo']['Scan']['value'][0].toLowerCase() > 
+	b['sessionInfo']['Scan']['value'][0].toLowerCase())
 	return 1;
     return 0;
 }
@@ -332,8 +331,10 @@ utils.xnat.compareScan = function(a,b) {
 /**
  * Function for sorting the slicer objects.
  *
- * @param {!Object.<String, String | Object.<String, String | Object>} a First scan object to compare. 
- * @param {!Object.<String, String | Object.<String, String | Object>} b Second scan object to compare.
+ * @param {!Object.<String, String | Object.<String, String | Object>} a 
+ *    First scan object to compare. 
+ * @param {!Object.<String, String | Object.<String, String | Object>} b 
+ *    Second scan object to compare.
  * @public 
  */
 utils.xnat.compareSlicer = function(a,b) {
@@ -355,7 +356,8 @@ utils.xnat.compareSlicer = function(a,b) {
  * object. 
  *
  * @param {!string} url The XNAT url where to get the scan JSON from.
- * @param {!function} callback The callback to run once the scan JSON is gotten.
+ * @param {!function} callback The callback to run once the scan JSON is 
+ *    gotten.
  * @public
  */
 utils.xnat.getScans = function (url, callback){
@@ -374,7 +376,8 @@ utils.xnat.getScans = function (url, callback){
     var thumbImg = '';
 
 
-    window.console.log('utils.xnat.getScans: Sending simple request for ['+ queryFolder + ']');
+    window.console.log('utils.xnat.getScans: Sending simple request for [' 
+		       + queryFolder + ']');
 
     
 
@@ -389,7 +392,8 @@ utils.xnat.getScans = function (url, callback){
 	    //
 	    // Construct a fileQueryUrl for every scan folder.
 	    //
-	    fileQueryUrl = url + "/" + viewableFolder + "/" + scans['ID'] + "/files";
+	    fileQueryUrl = url + "/" + viewableFolder + "/" + scans['ID'] 
+		+ "/files";
 
 
 	    //
@@ -425,8 +429,10 @@ utils.xnat.getScans = function (url, callback){
 		    }
 		}
 		scanProperties['files'] = scanFileArr;
-		scanProperties['sessionInfo']['SessionID']['value'] = [pathObj['experiments']];
-		scanProperties['sessionInfo']['Accession #']['value'] = [pathObj['projects']];
+		scanProperties['sessionInfo']['SessionID']['value'] = 
+		    [pathObj['experiments']];
+		scanProperties['sessionInfo']['Accession #']['value'] = 
+		    [pathObj['projects']];
 		scanProperties['sessionInfo']['Scan']['value'] =  [scans['ID']];
 				
 
@@ -443,8 +449,9 @@ utils.xnat.getScans = function (url, callback){
 		//
 		// Define the thumbnailImage URI
 		//
-		scanProperties['thumbnailUrl'] = goog.string.endsWith(thumbImg , 
-								utils.xnat.JPEG_CONVERT_SUFFIX) ? 
+		scanProperties['thumbnailUrl'] = 
+		    goog.string.endsWith(thumbImg , 
+					 utils.xnat.JPEG_CONVERT_SUFFIX) ? 
 		    thumbImg : thumbImg + utils.xnat.JPEG_CONVERT_SUFFIX;
 
 
@@ -462,7 +469,8 @@ utils.xnat.getScans = function (url, callback){
 		// before sending back, then run the callback.
 		//
 		if (gottenScans === scanJson.length){
-		    xnatPropsArr = utils.xnat.sortXnatPropertiesArray(xnatPropsArr, ['sessionInfo', 'Scan', 'value', 0]);
+		    xnatPropsArr = utils.xnat.sortXnatPropertiesArray(
+			xnatPropsArr, ['sessionInfo', 'Scan', 'value', 0]);
 		    goog.array.forEach(xnatPropsArr, function(scanProperties){
 			callback(scanProperties);
 		    })
@@ -500,14 +508,13 @@ utils.xnat.getSlicer = function (url, callback){
     var gottenSlicerFiles = 0;
     var viewableSlicerPackageFiles = [];
     var slicerThumb = ''; 
-
     var fileQueryStr = '';
-
     var imageArr = ['jpeg', 'jpg', 'png', 'gif'];
     var imageFound = false;
     var ext = '';
 
-    window.console.log('utils.xnat.getSlicer: Sending simple request for ['+ queryFolder + ']');
+    window.console.log('utils.xnat.getSlicer: Sending simple request for ['
+		       + queryFolder + ']');
 
 
 
@@ -526,7 +533,8 @@ utils.xnat.getSlicer = function (url, callback){
 	    //
 	    // Loop through all of the .mrb files.
 	    //
-	    utils.xnat.jsonGet(fileQueryStr + "?listContents=true", function(response){
+	    utils.xnat.jsonGet(fileQueryStr + "?listContents=true", 
+			       function(response){
 
 
 		//
@@ -534,17 +542,18 @@ utils.xnat.getSlicer = function (url, callback){
 		// be viewed.  This is done through the 'listContents' suffix
 		// when communicating with an XNAT server.
 		//
-		//window.console.log('XNAT IO 392: ' + fileQueryStr + "?listContents=true");
+		//window.console.log('XNAT IO 392: ' + 
+		// fileQueryStr + "?listContents=true");
 		goog.array.forEach(response, function(r) {
-
 		    //
-		    // Only consider contents files that actually refer to a file,
-		    // so that it can be loaded into the viewer (Sometimes these contents
-		    // do not refer to a file).
+		    // Only consider contents files that actually refer to a 
+		    // file, so that it can be loaded into the viewer 
+		    // (Sometimes these contents do not refer to a file).
 		    //
 		    if (r['File Name'][r['File Name'].length-1] != '/') {
 			if (r['File Name'].indexOf('__MACOSX') == -1) {
-			    viewableSlicerPackageFiles.push(fileQueryStr + "!" + r['File Name']);
+			    viewableSlicerPackageFiles.push(fileQueryStr 
+						+ "!" + r['File Name']);
 			}
 		    }   
 
@@ -566,19 +575,23 @@ utils.xnat.getSlicer = function (url, callback){
 		}
 		slicerProperties['files'] = viewableSlicerPackageFiles;
 		slicerProperties['category'] = 'Slicer';
-		slicerProperties['sessionInfo']['SessionID']['value'] = [pathObj['experiments']];
+		slicerProperties['sessionInfo']['SessionID']['value'] = 
+		    [pathObj['experiments']];
 		slicerProperties['sessionInfo']['Format']['value'] = ['.mrb'];
-		slicerProperties['sessionInfo']['Accession #']['value'] = [pathObj['projects']];
+		slicerProperties['sessionInfo']['Accession #']['value'] = 
+		    [pathObj['projects']];
 
 
 		//
 		// Get thumbnailImage by looking through files
-		// to determine what can be used for the thumbnail representation.
+		// to determine what can be used for the thumbnail 
+		// representation.
 		// (Slicer usually packages a screenshot).
 		// Select the first one.
 		//
 		imageFound = false;
-		goog.array.forEach(slicerProperties['files'], function(fileName){
+		goog.array.forEach(slicerProperties['files'], 
+				   function(fileName){
 		    ext = utils.string.getFileExtension(fileName);
 		    goog.array.forEach(imageArr, function(imageType){
 			if (ext === imageType && !imageFound){
@@ -599,7 +612,8 @@ utils.xnat.getSlicer = function (url, callback){
 		// before sending back, then run the callback.
 		//
 		if (gottenSlicerFiles === slicerJson.length){
-		    xnatPropsArr = utils.xnat.sortXnatPropertiesArray(xnatPropsArr, ['Name']);
+		    xnatPropsArr = utils.xnat.sortXnatPropertiesArray(
+			xnatPropsArr, ['Name']);
 		    goog.array.forEach(xnatPropsArr, function(slicerProperties){
 			callback(slicerProperties);
 		    })

@@ -68,7 +68,7 @@ utils.ui.ScrollableContainer = function (opt_args) {
      * @type {!Element}
      * @private
      */
-    this.element = goog.dom.createDom('div', {
+    this.element_ = goog.dom.createDom('div', {
 	'id': 'ScrollableContainer_' + goog.string.createUniqueString(),
 	'class': utils.ui.ScrollableContainer.ELEMENT_CLASS
     });
@@ -99,7 +99,7 @@ utils.ui.ScrollableContainer = function (opt_args) {
     // Set Slider UI and callbacks
     //------------------
     this.Slider_['EVENTS'].onEvent('SLIDE', this.mapSliderToContents_.bind(this));  
-    this.Slider_.bindToMouseWheel(this.element);
+    this.Slider_.bindToMouseWheel(this.element_);
 
     
 
@@ -116,8 +116,8 @@ utils.ui.ScrollableContainer = function (opt_args) {
     //
     // Appends 
     //
-    goog.dom.append(this.element, this.scrollArea_);
-    goog.dom.append(this.element, this.Slider_.getElement());
+    goog.dom.append(this.element_, this.scrollArea_);
+    goog.dom.append(this.element_, this.Slider_.getElement());
 
 
 
@@ -127,6 +127,28 @@ utils.ui.ScrollableContainer = function (opt_args) {
     this.updateStyle();
 
 }
+
+
+
+
+/**
+ * @prviate
+ */
+utils.ui.ScrollableContainer.prototype.addElementAndFolders_ = 
+function(elt, folders) {
+    var contents = {};
+    var currContents = contents;
+    for (var i=0, len = folders.length; i < len; i++){
+	currContents[folders[i]] = {};
+	if (i < len - 1){
+	    currContents = currContents[folders[i]];
+	} else {
+	    currContents[folders[i]] = elt;
+	}
+    }
+    this.addContents(contents);
+}
+
 
 
 
@@ -168,7 +190,7 @@ utils.ui.ScrollableContainer.prototype.setZippysAnimated = function(animated){
  * @public
  */
 utils.ui.ScrollableContainer.prototype.getElement = function(){
-    return this.element;
+    return this.element_;
 }
 
 
@@ -204,7 +226,7 @@ utils.ui.ScrollableContainer.prototype.getContentsDict = function(){
  */
 utils.ui.ScrollableContainer.prototype.mapSliderToContents_ = function () {
 
-    var widgetHeight = utils.style.dims(this.element, 'height');
+    var widgetHeight = utils.style.dims(this.element_, 'height');
     var scrollAreaHeight = utils.convert.toInt(utils.style.getComputedStyle(this.scrollArea_, 'height'));
     var beforeRange = [this.Slider_.getMinimum(), this.Slider_.getMaximum()];
     var afterRange = [0, scrollAreaHeight - widgetHeight];
@@ -260,7 +282,7 @@ utils.ui.ScrollableContainer.prototype.mapSliderToContents_ = function () {
  * @param {Object=} opt_args
  */
 utils.ui.ScrollableContainer.prototype.updateStyle = function (opt_args) {
-    if (opt_args) { utils.style.setStyle(this.element, opt_args) }
+    if (opt_args) { utils.style.setStyle(this.element_, opt_args) }
 }
 
 
@@ -673,8 +695,8 @@ utils.ui.ScrollableContainer.prototype.addContents = function (contents, opt_par
 
 	// When there's no zippy parent folder, we set the height
 	// of the main element_ to the scroll area.
-	if (utils.style.dims(this.element, 'height') === 0 && opt_parent === this.scrollArea_){
-	    utils.style.setStyle(this.element, {'height': utils.style.dims(this.scrollArea_, 'height')});
+	if (utils.style.dims(this.element_, 'height') === 0 && opt_parent === this.scrollArea_){
+	    utils.style.setStyle(this.element_, {'height': utils.style.dims(this.scrollArea_, 'height')});
 	}
 
 	// Allows user to move the contents when sliding the slider.

@@ -30,7 +30,7 @@ xiv.SlicerViewMenu = function () {
     goog.base(this, 'xiv.SlicerViewMenu', {
 	'class': xiv.SlicerViewMenu.ELEMENT_CLASS
     });
-    utils.fx.fadeOut(this.element, 0);
+    utils.fx.fadeOut(this.getElement(), 0);
 
 
 
@@ -63,18 +63,22 @@ xiv.SlicerViewMenu = function () {
     //
     // Appends
     //
-    goog.dom.append(this.element, this.ThumbnailGallery_.getElement());
-    goog.dom.append(this.element, this.headerText);
+    goog.dom.append(this.getElement(), this.ThumbnailGallery_.getElement());
+    goog.dom.append(this.getElement(), this.headerText);
 
 
 
     //
     // Set classes
     //
-    goog.dom.classes.add(this.ThumbnailGallery_.getElement(), xiv.SlicerViewMenu.THUMBNAILGALLERY_CLASS);
-    this.ThumbnailGallery_.addThumbnailClass(xiv.SlicerViewMenu.THUMBNAIL_CLASS);
-    this.ThumbnailGallery_.addThumbnailImageClass(xiv.SlicerViewMenu.THUMBNAIL_IMAGE_CLASS);
-    this.ThumbnailGallery_.addThumbnailTextClass(xiv.SlicerViewMenu.THUMBNAIL_TEXT_CLASS);
+    goog.dom.classes.add(this.ThumbnailGallery_.getElement(), 
+			 xiv.SlicerViewMenu.THUMBNAILGALLERY_CLASS);
+    this.ThumbnailGallery_.addThumbnailClass(
+	xiv.SlicerViewMenu.THUMBNAIL_CLASS);
+    this.ThumbnailGallery_.addThumbnailImageClass(
+	xiv.SlicerViewMenu.THUMBNAIL_IMAGE_CLASS);
+    this.ThumbnailGallery_.addThumbnailTextClass(
+	xiv.SlicerViewMenu.THUMBNAIL_TEXT_CLASS);
 }
 goog.inherits(xiv.SlicerViewMenu, xiv.Widget);
 goog.exportSymbol('xiv.SlicerViewMenu', xiv.SlicerViewMenu);
@@ -137,7 +141,7 @@ xiv.SlicerViewMenu.prototype.getThumbnailGallery = function(){
  * @public
  */
 xiv.SlicerViewMenu.prototype.showDialog = function() {
-    utils.fx.fadeIn(this.element, xiv.ANIM_SLOW);
+    utils.fx.fadeIn(this.getElement(), xiv.ANIM_SLOW);
 }
 
 
@@ -148,8 +152,8 @@ xiv.SlicerViewMenu.prototype.showDialog = function() {
  * @public
  */
 xiv.SlicerViewMenu.prototype.hideDialog = function() {
-    utils.fx.fadeOut(this.element, xiv.ANIM_MED);
-    goog.dom.removeNode(this.element);
+    utils.fx.fadeOut(this.getElement(), xiv.ANIM_MED);
+    goog.dom.removeNode(this.getElement());
 }
 
 
@@ -181,9 +185,11 @@ xiv.SlicerViewMenu.prototype.reset = function (mrbProperties) {
 	scenes = this.mrbProperties_[mrmlFile]['__scenes__'];
 	goog.array.forEach(scenes, function(sceneName){
 	    // Make the thumbnail
-	    displayText = "<b><font size = '2'>" + sceneName + "</font></b><br>";
-	    thumbnail = this.ThumbnailGallery_.insertAndMakeThumbnail(this.mrbProperties_[mrmlFile][sceneName]['thumbnail'], 
-								      displayText, mrmlBase);
+	    displayText = "<b><font size = '2'>" + sceneName + 
+		"</font></b><br>";
+	    thumbnail = this.ThumbnailGallery_.makeAndInsertThumbnail(
+		this.mrbProperties_[mrmlFile][sceneName]['thumbnail'], 
+		displayText, mrmlBase);
 	    thumbnail._MRML_ = mrmlFile;
 	    thumbnail._SCENE_ = sceneName;
 

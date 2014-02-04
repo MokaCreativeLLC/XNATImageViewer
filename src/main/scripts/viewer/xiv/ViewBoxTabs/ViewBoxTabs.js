@@ -42,7 +42,7 @@ xiv.ViewBoxTabs = function () {
      * @type {!goog.ui.TabPane}
      * @private
      */
-    this.googTabPane_ = new goog.ui.TabPane(this.element);
+    this.googTabPane_ = new goog.ui.TabPane(this.getElement());
     this.activateCallbacks_ = [];
     this.deactivateCallbacks_ = [];
 }
@@ -173,12 +173,12 @@ xiv.ViewBoxTabs.prototype.reset = function(opt_tabtitle) {
 	//
 	// Remove tab from dom.
 	//
-	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.element), function(tab, i) { 
+	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.getElement()), function(tab, i) { 
 	    goog.dom.removeNode(tab);
 	    delete tab;
 	})
 	// Remove tab page from dom.
-	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.element), function(tab, i) { 
+	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.getElement()), function(tab, i) { 
 	    goog.dom.removeNode(tab);
 	    delete tab;
 	})
@@ -186,7 +186,7 @@ xiv.ViewBoxTabs.prototype.reset = function(opt_tabtitle) {
 	//
 	// Remove tab icon from dom.
 	//
-	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABICON_CLASS, this.element), function(tab, i) { 
+	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABICON_CLASS, this.getElement()), function(tab, i) { 
 	    goog.dom.removeNode(tab);
 	    delete tab;
 	})
@@ -236,16 +236,16 @@ xiv.ViewBoxTabs.prototype.addTab = function(tabTitle) {
 	'class': xiv.ViewBoxTabs.TABPAGE_CLASS,
 	'label': tabTitle
     });
-    utils.style.setStyle(tabPage, utils.style.dims(this.element, 'width'))
+    utils.style.setStyle(tabPage, utils.style.dims(this.getElement(), 'width'))
     
 
 
     //
     // Appends
     //
-    goog.append(this.element, tab);
+    goog.append(this.getElement(), tab);
     goog.append(tab, tabIcon);
-    goog.append(this.element.parentNode, tabPage);
+    goog.append(this.getElement().parentNode, tabPage);
 
 
 
@@ -286,7 +286,7 @@ xiv.ViewBoxTabs.prototype.getTabPage = function (value) {
     //------------------
     if (typeof value === 'string') {
 	value = value.toLowerCase();
-	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.element), function(tabPage, i) { 			
+	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.getElement()), function(tabPage, i) { 			
 	    if (tabPage.label.toLowerCase().indexOf(value) > -1 && !retVal) { retVal = tabPage; }
 	})
 
@@ -295,7 +295,7 @@ xiv.ViewBoxTabs.prototype.getTabPage = function (value) {
     // Otherwise retreive that tab number.
     //------------------
     } else if (typeof value === 'number') {
-	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.element), function(tabPage, i) { 			
+	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.getElement()), function(tabPage, i) { 			
 	    if (i === value) { retVal = tabPage;}
 	})			
     }
@@ -333,7 +333,7 @@ xiv.ViewBoxTabs.prototype.setActive = function (activeTabNum) {
     // Cycle through each tab, hightlighting the tab 
     // associated with activeTabNum, not hightlting the others.
     //------------------
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.element), function(tab, i) { 
+    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.getElement()), function(tab, i) { 
 	if (i === activeTabNum) {
 	    tab.setAttribute('isActive', true);
 	    goog.dom.classes.add(tab, xiv.ViewBoxTabs.ACTIVE_TAB_CLASS);
@@ -355,7 +355,7 @@ xiv.ViewBoxTabs.prototype.setActive = function (activeTabNum) {
     //------------------
     // If there's an active tab, make the tab page border more prominent.
     //------------------
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.element), function(tabPage) {
+    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.getElement()), function(tabPage) {
 	if (activeTabNum > -1){
 	    goog.dom.classes.add(tabPage, xiv.ViewBoxTabs.ACTIVE_TABPAGE_CLASS);
 	    //utils.fx.fadeInFromZero(tabPage, tabFadeIn);
@@ -374,7 +374,7 @@ xiv.ViewBoxTabs.prototype.setActive = function (activeTabNum) {
  * @private
  */
 xiv.ViewBoxTabs.prototype.clearEventListeners = function(){
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.element), function(tab, i) { 
+    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.getElement()), function(tab, i) { 
 	goog.events.removeAll(tab);
     })
 }
@@ -393,7 +393,7 @@ xiv.ViewBoxTabs.prototype.setDefaultClickEvents = function() {
     //------------------
     // Cycle through each tab...
     //------------------
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.element), function(tab, i) { 
+    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.getElement()), function(tab, i) { 
 
 	goog.events.listen(tab, goog.events.EventType.MOUSEUP, function(event) {
 
@@ -440,7 +440,7 @@ xiv.ViewBoxTabs.prototype.setDefaultHoverEvents = function() {
     //------------------
     // Cycle through each tab...
     //------------------
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.element), function(tab, i) { 
+    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.getElement()), function(tab, i) { 
 
 	//
 	// Set tab hover
@@ -501,29 +501,29 @@ xiv.ViewBoxTabs.prototype.updateStyle = function (opt_args) {
     //  Google closure reclaims the element, so we need to reassert
     //  the class.
     //------------------
-    goog.dom.classes.add(this.element, xiv.ViewBoxTabs.ELEMENT_CLASS);
+    goog.dom.classes.add(this.getElement(), xiv.ViewBoxTabs.ELEMENT_CLASS);
 
     
-    if (opt_args) { utils.style.setStyle(this.element, opt_args); }
+    if (opt_args) { utils.style.setStyle(this.getElement(), opt_args); }
 
 
     //------------------
     // For calculating the tabPageHeight.  
     // Don't proceed if there are no tabs.
     //------------------
-    if (goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.element).length > 0) {
+    if (goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.getElement()).length > 0) {
 
 
 	//
 	// Set tabPage height.
 	//
-	var viewBoxHeight = utils.style.dims(this.element.parentNode, 'outerHeight');
+	var viewBoxHeight = utils.style.dims(this.getElement().parentNode, 'outerHeight');
 	var tabHeight = utils.style.dims(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS)[0] , 'outerHeight')
-	var tabPageHeight =  (viewBoxHeight - utils.style.dims(this.element, 'top') - tabHeight - 3) || 0;
-	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.element), function(elt, i) {	
+	var tabPageHeight =  (viewBoxHeight - utils.style.dims(this.getElement(), 'top') - tabHeight - 3) || 0;
+	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.getElement()), function(elt, i) {	
 	    utils.style.setStyle(elt, {
 		'height': tabPageHeight,
-		'width': utils.style.dims(this.element.parentNode, 'width') - 2 // acommodates for border
+		'width': utils.style.dims(this.getElement().parentNode, 'width') - 2 // acommodates for border
 	    });
 	}.bind(this))
 
@@ -531,8 +531,8 @@ xiv.ViewBoxTabs.prototype.updateStyle = function (opt_args) {
 	//
 	// Calculate Tab Width based on number of tabs.
 	//
-	var tabs = goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.element);
-	var parentWidth = utils.convert.toInt(utils.style.getComputedStyle(this.element, 'width')); 
+	var tabs = goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.getElement());
+	var parentWidth = utils.convert.toInt(utils.style.getComputedStyle(this.getElement(), 'width')); 
 	var tabWidth = (parentWidth / tabs.length) - 2; // for borders
 	goog.array.forEach(tabs, function(tab, i){
 	    utils.style.setStyle(tab, {

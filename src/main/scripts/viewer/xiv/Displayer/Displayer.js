@@ -1,4 +1,4 @@
-409390409390409390/** 
+/** 
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  * @author amh1646@rit.edu (Amanda Hartung)
  */
@@ -180,7 +180,7 @@ xiv.Displayer.prototype.createDicomTab_ = function(xnatProperties) {
 	'id': 'InfoTabContents',
 	'class': xiv.Displayer.TABCONTENT_INFO_CLASS
     });
-    goog.dom.append(this.element.parentNode, contents);
+    goog.dom.append(this.getElement().parentNode, contents);
 
 
     //
@@ -288,7 +288,7 @@ xiv.Displayer.prototype.createSlicerTab_ = function(xnatProperties) {
 	'id': 'InfoTabContents',
 	'class': xiv.Displayer.TABCONTENT_INFO_CLASS
     });
-    goog.dom.append(this.element.parentNode, contents);
+    goog.dom.append(this.getElement().parentNode, contents);
 
 
 

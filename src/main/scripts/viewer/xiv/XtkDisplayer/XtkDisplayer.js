@@ -755,9 +755,6 @@ xiv.XtkDisplayer.prototype.showSlicerViewMenu_ = function(){
  * @public
  */
 xiv.XtkDisplayer.prototype.updateStyle = function (opt_args) {
-    if (opt_args){
-	var widgetDims = utils.dom.mergeArgs(utils.style.dims(this.element), opt_args);	utils.style.setStyle(this.element, widgetDims);
-    } 
     this.XtkPlaneManager_.updateStyle();
 }
 

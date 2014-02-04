@@ -31,10 +31,10 @@ utils.ui.Thumbnail = function () {
      * @type {!Element}
      * @private
      */	
-    this.element = goog.dom.createDom('div', {
+    this.element_ = goog.dom.createDom('div', {
 	'id': 'utils.ui.Thumbnail_' + goog.string.createUniqueString()
     });
-    this.element.setAttribute('thumbnailid', this.element.getAttribute('id'));
+    this.element_.setAttribute('thumbnailid', this.element_.getAttribute('id'));
 
 
     /**
@@ -75,8 +75,8 @@ utils.ui.Thumbnail = function () {
     //
     // DOM tree.
     //
-    goog.dom.append(this.element, this.image_);
-    goog.dom.append(this.element, this.text_);
+    goog.dom.append(this.element_, this.image_);
+    goog.dom.append(this.element_, this.text_);
     
 }
 goog.exportSymbol('utils.ui.Thumbnail', utils.ui.Thumbnail);
@@ -119,7 +119,7 @@ utils.ui.Thumbnail.prototype.isActive_ = false;
  * @public
  */
 utils.ui.Thumbnail.prototype.getElement = function() {
-    return this.element;	
+    return this.element_;	
 }
 
 
@@ -151,7 +151,7 @@ utils.ui.Thumbnail.prototype.getText = function() {
  * @public
  */
 utils.ui.Thumbnail.prototype.getHoverable = function() {
-    this.hoverable_ = this.hoverable_ ? this.hoverable_ : this.element;	
+    this.hoverable_ = this.hoverable_ ? this.hoverable_ : this.element_;	
     return this.hoverable_
 }
 
@@ -221,9 +221,9 @@ utils.ui.Thumbnail.prototype.createHoverable = function(opt_parent, opt_element)
     this.setHoverListeners_(false);
 
 
-    this.hoverable_ = (opt_element) ? opt_element : this.element.cloneNode(true);
-    this.hoverable_.setAttribute('id', 'HOVERABLE' + this.element.getAttribute('id'));
-    this.hoverable_.setAttribute('thumbnailid', this.element.getAttribute('id'));
+    this.hoverable_ = (opt_element) ? opt_element : this.element_.cloneNode(true);
+    this.hoverable_.setAttribute('id', 'HOVERABLE' + this.element_.getAttribute('id'));
+    this.hoverable_.setAttribute('thumbnailid', this.element_.getAttribute('id'));
     this.hoverable_.style.visibility = 'hidden';
     goog.dom.classes.add(this.hoverable_, utils.ui.Thumbnail.HOVER_CLONE_CLASS);
 
@@ -253,15 +253,15 @@ utils.ui.Thumbnail.prototype.setActive = function(active, opt_highlightBg) {
     this.isActive_ = active;
     if (this.isActive_){
 	if (opt_highlightBg) { 
-	    goog.dom.classes.add(this.element, utils.ui.Thumbnail.ELEMENT_HIGHLIGHT_CLASS); 
+	    goog.dom.classes.add(this.element_, utils.ui.Thumbnail.ELEMENT_HIGHLIGHT_CLASS); 
 	}
-	goog.dom.classes.add(this.element, utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS);
+	goog.dom.classes.add(this.element_, utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS);
 	goog.dom.classes.add(this.text_, utils.ui.Thumbnail.TEXT_ACTIVE_CLASS);		
 	goog.dom.classes.add(this.image_, utils.ui.Thumbnail.IMAGE_ACTIVE_CLASS);		
 	
     } else {
-	goog.dom.classes.remove(this.element, utils.ui.Thumbnail.ELEMENT_HIGHLIGHT_CLASS);
-	goog.dom.classes.remove(this.element, utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS);			
+	goog.dom.classes.remove(this.element_, utils.ui.Thumbnail.ELEMENT_HIGHLIGHT_CLASS);
+	goog.dom.classes.remove(this.element_, utils.ui.Thumbnail.ELEMENT_ACTIVE_CLASS);			
 	goog.dom.classes.remove(this.text_, utils.ui.Thumbnail.TEXT_ACTIVE_CLASS);		
 	goog.dom.classes.remove(this.image_, utils.ui.Thumbnail.IMAGE_ACTIVE_CLASS);
     }
@@ -276,8 +276,8 @@ utils.ui.Thumbnail.prototype.setActive = function(active, opt_highlightBg) {
  * @public
  */
 utils.ui.Thumbnail.prototype.updateStyle = function (opt_args) {
-    if (opt_args && this.element) {
-	utils.style.setStyle(this.element, opt_args);
+    if (opt_args && this.element_) {
+	utils.style.setStyle(this.element_, opt_args);
     }
 }
 
@@ -342,7 +342,7 @@ utils.ui.Thumbnail.prototype.mouseOut_ = function() {
 				utils.ui.Thumbnail.TEXT_MOUSEOVER_CLASS);		
 	goog.dom.classes.remove(hoverNode.childNodes[0], 
 				utils.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS);
-	this.element.style.visibility = 'visible';
+	this.element_.style.visibility = 'visible';
     }
  
     this['EVENTS'].runEvent('MOUSEOUT');
@@ -363,8 +363,8 @@ utils.ui.Thumbnail.prototype.repositionHoverable = function(){
     //
     // Find the common ancestor
     //
-    var commonAncestor = goog.dom.findCommonAncestor(this.element, hoverNode);
-    var thumbnailDims = utils.style.getPositionRelativeToAncestor(this.element, commonAncestor);
+    var commonAncestor = goog.dom.findCommonAncestor(this.element_, hoverNode);
+    var thumbnailDims = utils.style.getPositionRelativeToAncestor(this.element_, commonAncestor);
     var imgClone = goog.dom.getElementByClass(utils.ui.Thumbnail.IMAGE_CLASS, hoverNode)
     var textClone = goog.dom.getElementByClass(utils.ui.Thumbnail.TEXT_CLASS, hoverNode);
     var cloneWidth = 0;
@@ -372,11 +372,11 @@ utils.ui.Thumbnail.prototype.repositionHoverable = function(){
     //
     // Adjust only if the _hover clone is not the element.
     //
-    if (hoverNode !== this.element) {
+    if (hoverNode !== this.element_) {
 	// Set the clone width to something wider than the original thumbnail width
 	// only if the the cloneWidth is calculated to be larger (text spillover)
 	cloneWidth = imgClone.scrollWidth + textClone.scrollWidth + 25;
-	cloneWidth = (cloneWidth > this.element.clientWidth) ? cloneWidth : this.element.clientWidth;
+	cloneWidth = (cloneWidth > this.element_.clientWidth) ? cloneWidth : this.element_.clientWidth;
 	utils.style.setStyle(hoverNode, {
 	    'position': 'absolute',
 	    'top': thumbnailDims['top'], 
@@ -443,7 +443,7 @@ utils.ui.Thumbnail.prototype.initEvents_ = function() {
  * @private
  */
 utils.ui.Thumbnail.prototype.setClasses_ = function() {
-    goog.dom.classes.set(this.element, utils.ui.Thumbnail.ELEMENT_CLASS);
+    goog.dom.classes.set(this.element_, utils.ui.Thumbnail.ELEMENT_CLASS);
     goog.dom.classes.set(this.image_, utils.ui.Thumbnail.IMAGECLASS);
     goog.dom.classes.set(this.text_, utils.ui.Thumbnail.TEXT_CLASS);
 }
