@@ -8,7 +8,8 @@ goog.require('goog.fx.DragDropGroup');
 
 // utils
 goog.require('utils.array');
-goog.require('utils.events.EventManager');
+goog.require('utils.events');
+goog.require('utils.ui.ThumbnailGallery');
 
 // xiv
 goog.require('xiv.Thumbnail');
@@ -49,15 +50,48 @@ xiv.ThumbnailManager = function () {
 
 
 
-
     //
     // Other init functions
     //
     utils.events.addEventManager(this, xiv.ThumbnailManager.EventType);
+
+    this.createThumbnailGallery_();
     this.initDragDrop();
 }
 goog.inherits(xiv.ThumbnailManager, xiv.Widget);
 goog.exportSymbol('xiv.ThumbnailManager', xiv.ThumbnailManager);
+
+
+
+
+/**
+ * @type {utils.ui.ThumbnailGallery}
+ * @private
+ */
+xiv.ThumbnailManager.prototype.ThumbnailGallery_;
+
+
+
+
+/**
+ * @public
+ * @return: The Thumbnail Gallery
+ */
+xiv.ThumbnailManager.prototype.getThumbnailGallery = function() {
+    return this.ThumbnailGallery_;
+} 
+
+
+
+/**
+ * @private
+ */
+xiv.ThumbnailManager.prototype.createThumbnailGallery_ = function() {
+    this.ThumbnailGallery_ = new utils.ui.ThumbnailGallery();
+    goog.dom.classes.add(this.ThumbnailGallery_.getElement(), 
+			 xiv.ThumbnailManager.THUMBNAILGALLERY_CLASS);
+} 
+
 
 
 
@@ -312,15 +346,52 @@ xiv.ThumbnailManager.prototype.initDragDrop = function(){
 
 
 
+/**
+ * Returns a newly created xiv.Thumbnail object. 
+ *
+ * @param {utils.xnat.viewableProperties} xnatProperties
+ * @param {!string | !Array.string} folders 
+ *    The folders which the thumbnails belong to.
+ * @public
+ */
+xiv.ThumbnailManager.prototype.createAndAddThumbnail = 
+function(xnatProperties, folders) {
+    this.addThumbnail(this.createThumbnail(xnatProperties),folders);
+}
+
+
+
+
+/**
+ * Returns a newly created xiv.Thumbnail object. 
+ *
+ * @param {utils.xnat.viewableProperties} xnatProperties
+ * @returns {xiv.Thumbnail}
+ * @public
+ */
+xiv.ThumbnailManager.prototype.createThumbnail = function(xnatProperties) {
+    var thumbnail = new xiv.Thumbnail(xnatProperties);
+    thumbnail['EVENTS'].onEvent('CLICK',  function(){
+	//window.console.log("THUM", thumbnail);
+	this['EVENTS'].runEvent('THUMBNAILCLICK', thumbnail);
+    }.bind(this))
+    return thumbnail;
+}
+
+
+
+
 
 /**
  * Adds a xiv.Thumbnail to both the private thumbs_ list as well as the 
  * dragdropsource group.
  *
- * @param {xiv.Thumbnail}
+ * @param {xiv.Thumbnail} thumbnail The thumbnail to add.
+ * @param {!string | !Array.string} folders 
+ *    The folders which the thumbnails belong to.
  * @public
  */
-xiv.ThumbnailManager.prototype.add = function(thumbnail){
+xiv.ThumbnailManager.prototype.addThumbnail = function(thumbnail, folders){
 
     //------------------
     // Add to private array.
@@ -328,10 +399,15 @@ xiv.ThumbnailManager.prototype.add = function(thumbnail){
     this.thumbs_[goog.getUid(thumbnail)] = thumbnail;
 
 
+    //------------------
+    // Add to gallery
+    //------------------
+    //window.console.log(folders);
+    this.ThumbnailGallery_.addThumbnail(thumbnail, folders);    
+
 
     //------------------
-    // Change the thumbnail's element id 
-    // to the Uid
+    // Change the thumbnail's element id to the Uid
     //------------------
     thumbnail.getElement().setAttribute('id', goog.getUid(thumbnail));
 
@@ -437,24 +513,27 @@ xiv.ThumbnailManager.prototype.getThumbnailByElement = function(element) {
 
 
 
+
 /**
- * Returns a newly created xiv.Thumbnail object. 
- *
- * @param {utils.xnat.viewableProperties} xnatProperties
- * @param {boolean=} opt_addToManager
- * @returns {xiv.Thumbnail}
- * @public
+ * @type {string} 
+ * @const
  */
-xiv.ThumbnailManager.prototype.makeThumbnail = function(xnatProperties, opt_addToManager) {
+xiv.ThumbnailManager.ID_PREFIX = 'xiv.ThumbnailManager';
 
-    var thumbnail = new xiv.Thumbnail(xnatProperties);
 
-    if ((opt_addToManager === undefined) || (opt_addToManager === true)) { 
-	this.add(thumbnail);
-	thumbnail['EVENTS'].onEvent('CLICK',  function(){
-	    window.console.log("THUM", thumbnail);
-	    this['EVENTS'].runEvent('THUMBNAILCLICK', thumbnail);
-	}.bind(this))
-    }
-    return thumbnail;
-}
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ThumbnailManager.CSS_CLASS_PREFIX = 
+    goog.string.toSelectorCase(
+	utils.string.getLettersOnly(xiv.ThumbnailManager.ID_PREFIX));
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ThumbnailManager.THUMBNAILGALLERY_CLASS =  
+    goog.getCssName(xiv.ThumbnailManager.CSS_CLASS_PREFIX, 'thumbnailgallery');

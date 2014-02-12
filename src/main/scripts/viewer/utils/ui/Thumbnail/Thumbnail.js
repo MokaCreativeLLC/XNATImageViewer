@@ -332,7 +332,7 @@ utils.ui.Thumbnail.prototype.mouseOut_ = function() {
     // an ugly, but necessary way of 
     // getting the hover node.
     var hoverNode = this.getHoverable();
-    window.console.log(hoverNode);
+    //window.console.log(hoverNode);
 
     if (hoverNode && hoverNode.childNodes.length > 1) { 
 	hoverNode.style.visibility = 'hidden';

@@ -132,20 +132,35 @@ utils.ui.ScrollableContainer = function (opt_args) {
 
 
 /**
- * @prviate
+ * @param {!Element} elt
+ * @param {!Array.string} folders
+ * @return {Object} An n-dimensional object tree.
+ * @public
+ */
+utils.ui.ScrollableContainer.folderTreeFromArray = function(elt, folders) {
+    //window.console.log(folders[0]);
+    var obj = {};
+    if (folders.length == 1) {
+	obj[folders[0]] = elt;
+    }
+    else {
+	obj[folders[0]] = utils.ui.ScrollableContainer.folderTreeFromArray(
+							elt, folders.slice(1));
+    }
+    return obj
+}
+
+
+/**
+ * @param {!Element} elt
+ * @param {!Array.string} folders
+ * @private
  */
 utils.ui.ScrollableContainer.prototype.addElementAndFolders_ = 
 function(elt, folders) {
-    var contents = {};
-    var currContents = contents;
-    for (var i=0, len = folders.length; i < len; i++){
-	currContents[folders[i]] = {};
-	if (i < len - 1){
-	    currContents = currContents[folders[i]];
-	} else {
-	    currContents[folders[i]] = elt;
-	}
-    }
+    var contents = utils.ui.ScrollableContainer.folderTreeFromArray(
+	elt, folders)
+    //window.console.log("CONTENTS", contents);
     this.addContents(contents);
 }
 

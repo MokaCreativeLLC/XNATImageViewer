@@ -52,7 +52,7 @@ utils.ui.ThumbnailGallery.prototype.Thumbnails_;
  * @return {!utils.ui.Thumbnail}
  * @public
  */
-utils.ui.ThumbnailGallery.prototype.makeThumbnail = function(imageUrl, 
+utils.ui.ThumbnailGallery.prototype.createThumbnail = function(imageUrl, 
 							     displayText) {
 
     var thumbnail = new utils.ui.Thumbnail();
@@ -96,8 +96,10 @@ utils.ui.ThumbnailGallery.prototype.addThumbnail = function(thumbnail,
     if (!this.Thumbnails_){
 	this.Thumbnails_ = {};
     }
-    this.Thumbnails_[thumbnail.getElement().id] = thumbnail;
+    this.Thumbnails_[goog.getUid(thumbnail)] = thumbnail;
     // Set folders
+
+    window.console.log(opt_folders);
     this.addElementAndFolders_(thumbnail.getElement(), 
 			      (opt_folders === undefined) ? ['parentFolder'] : 
 			      goog.isArray(opt_folders) ? opt_folders : 
@@ -116,9 +118,9 @@ utils.ui.ThumbnailGallery.prototype.addThumbnail = function(thumbnail,
  * @return {!utils.ui.Thumbnail}
  * @public
  */
-utils.ui.ThumbnailGallery.prototype.makeAndInsertThumbnail = 
+utils.ui.ThumbnailGallery.prototype.createAndAddThumbnail = 
     function(imageUrl, displayText, opt_folders) {
-	var thumbnail = this.makeThumbnail(imageUrl, displayText)
+	var thumbnail = this.createThumbnail(imageUrl, displayText)
 	this.addThumbnail(thumbnail, opt_folders);
 	this.setThumbnailClasses_('image');
 	this.setThumbnailClasses_('text');

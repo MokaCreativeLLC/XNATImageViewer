@@ -1,0 +1,95 @@
+/**
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+// goog
+
+
+// utils
+goog.require('utils.xnat.Viewable');
+
+
+
+/**
+ * @constructor
+ * @extends {utils.xnat.Viewable}
+ */
+goog.provide('utils.xnat.Viewable.Slicer');
+utils.xnat.Viewable.Slicer = function () {
+    utils.xnat.Viewable.applyProperties_(this)
+}
+goog.inherits(utils.xnat.Viewable.Slicer, utils.xnat.Viewable);
+goog.exportSymbol('utils.xnat.Viewable.Slicer', utils.xnat.Viewable.Slicer);
+
+
+
+
+
+
+
+utils.xnat.Viewable.Slicer.getFiles = function(Viewable){
+    var fileQueryUrl = Viewable['URI'] + '/files';
+}
+
+
+/**
+ * Function for sorting the slicer objects.
+ *
+ * @param {!Object.<String, String | Object.<String, String | Object>} a 
+ *    First scan object to compare. 
+ * @param {!Object.<String, String | Object.<String, String | Object>} b 
+ *    Second scan object to compare.
+ * @public 
+ */
+utils.xnat.Viewable.Slicer.sortCompare = function(a,b) {
+    if (a['Name'][0].toLowerCase() < b['Name'][0].toLowerCase())
+	return -1;
+    if (a['Name'][0].toLowerCase() > b['Name'][0].toLowerCase())
+	return 1;
+    return 0;
+}
+
+
+
+utils.xnat.Viewable.Slicer.getThumbnail = function(Viewable){
+    var imageFound = false;
+    goog.array.forEach(Viewable['files'], 
+	function(fileName){
+	    var ext = utils.string.getFileExtension(fileName);
+	    goog.array.forEach(imageArr, function(imageType){
+		if (ext === imageType && !imageFound){
+		    Viewable['thumbnailUrl'] = fileName; 
+		    imageFound = true;
+		}
+	    })
+	})
+}
+
+
+
+
+utils.xnat.Viewable.Slicer.getViewables = function(url){
+    /**
+     * @type {!string}
+     */
+    var url = utils.xnat.getXnatPathByLevel(url, 'experiments');
+    /**
+     * @type {!string}
+     */
+    var viewableFolder = 'scans';
+    /**
+     * @type {!string}
+     */
+    var scanFolder = url + "/resources/" + scans + "/files";
+
+    
+    utils.xnat.loopViewableFolderContents(scanFolder, function(scan){
+	// get file list (shared, with custom query properties)
+	// create Viewable (shared)
+	// derive the thumbnail (shared, individualized method)
+	// store viewablePrps (shared)
+	// sort list (shared, with custom parameters)
+    })
+}
+
+

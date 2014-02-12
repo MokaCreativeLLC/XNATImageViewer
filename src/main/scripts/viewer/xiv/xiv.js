@@ -67,10 +67,10 @@ var xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
 
 
     /**
-     * @type {!Object.<string, Array.<utils.xnat.viewableProperties>>}
+     * @type {!Object.<string, Array.<utils.xnat.Viewable>>}
      * @private
      */
-    this.viewableProperties_ = {};
+    this.Viewables_ = {};
 
 
 
@@ -136,18 +136,18 @@ xiv.prototype.hideModal = function(opt_callback){
 
 
 /**
- * Stores the viewableProperties in a object, using its path as a key.
+ * Stores the viewable in a object, using its path as a key.
  *
- * @param {!utils.xnat.viewableProperties} viewableProperties The 
- *    utils.xnat.viewableProperties object to store.
- * @param {!string} path The XNAT path associated with the viewableProperty.
+ * @param {!utils.xnat.Viewable} viweable The 
+ *    utils.xnat.Viewable object to store.
+ * @param {!string} path The XNAT path associated with the Viewable.
  * @private
  */
-xiv.prototype.storeViewableProperties_ = function(viewableProperties, path) {
-    if (!this.viewableProperties_.hasOwnProperty(path)){
-	 this.viewableProperties_[path] = [];
+xiv.prototype.storeViewable_ = function(viewable, path) {
+    if (!this.Viewables_.hasOwnProperty(path)){
+	 this.Viewables_[path] = [];
     }
-    this.viewableProperties_[path].push(viewableProperties);
+    this.Viewables_[path].push(viewable);
 };
 
 
@@ -206,8 +206,8 @@ xiv.prototype.destroy = function () {
 xiv.prototype.setModalButtonCallbacks_ = function(){
     this.Modal_.getButtons()['popup'].onclick = 
 	this.makeModalPopup_.bind(this);
-    this.Modal_.getButtons()['addXnatFolders'].onclick = 
-	this.showPathSelector_.bind(this);
+    //this.Modal_.getButtons()['addXnatFolders'].onclick = 
+    //	this.showPathSelector_.bind(this);
     this.Modal_.getButtons()['close'].onclick = 
 	this.destroy.bind(this);
 } 
@@ -248,36 +248,6 @@ xiv.prototype.showPathSelector_ = function(){
 
 
 
-/**
- * @private
- */
-xiv.prototype.loadStoredViewableProperties_ = function(){
-    var key = /**@type {?string}*/null;
-    var propsArr = /**@type {?Array.<utils.xnat.viewableProperties>}*/null;
-    for (key in this.viewableProperties_) {
-	propsArr = utils.xnat.sortViewableCollection(
-	    this.viewableProperties_[key], 
-	    ['sessionInfo', 'Scan', 'value', 0]);
-	this.propertiesToThumbnails_(key, propsArr);
-    }
-}
-
-
-
-
-/**
- * 
- * @param {!string | !array.<string>} key
- * @param {utils.xnat.viewableProperties} viewableProperties
- * @private
- */
-xiv.prototype.addThumbnailToModal_ = function(viewableProperties, key){
-    window.console.log(viewableProperties, key)
-    this.Modal_.addThumbnail(viewableProperties, 
-	goog.isArray(key) ? key: xiv.extractThumbnailFolders_(key));
-}
-
-
 
 
 
@@ -287,49 +257,49 @@ xiv.prototype.addThumbnailToModal_ = function(viewableProperties, key){
  *
  * @public
  */
-xiv.prototype.loadThumbnails = function(){
-    var folders = [];
-   
-    //------------------
-    // Load stored properties first.
-    //------------------ 
-    this.loadStoredViewableProperties_();
-
-
-    //------------------
-    // Get Viewables from XNAT server.
-    // Scans xiv.Thumbnails first, then Slicer xiv.Thumbnails.
-    //------------------  
-    goog.array.forEach(this.dataPaths_, function(xnatPath){
-	this.addViewables_(xnatPath, xiv.extractThumbnailFolders_(xnatPath));
-    }.bind(this))
+xiv.prototype.loadViewables = function(){
+    goog.array.forEach(this.dataPaths_, this.getViewables_.bind(this))
 }
 
 
 
-/**
- * @cost
- * @type {Object.<str, str>}
- */
-xiv.xnatQueries_ = {
-    'scans' : utils.xnat.getScans,
-    'slicer': utils.xnat.getSlicer
-}
-
-
 
 /**
+ * @param {!string} xnatPath
  * @private
  */
-xiv.prototype.addViewables_ = function(xnatPath, folders){
-    for (var key in xiv.xnatQueries_){
-	xiv.xnatQueries_[key](xnatPath, function(scanProps){
-	    this.storeViewableProperties_(scanProps, xnatPath); 
-	    this.addThumbnailToModal_(scanProps, folders.concat(key));
-	}.bind(this))
-    }  
+xiv.prototype.getViewables_ = function(xnatPath){
+    utils.xnat.getViewables(xnatPath, this.onViewableGotten_.bind(this))
 }
 
+
+
+/**
+ * @param {!utils.xnat.Viewable} viewable
+ * @private
+ */
+xiv.prototype.onViewableGotten_ = function(viewable){
+    this.storeViewable_(viewable);
+    window.console.log("NOT ADDING VIEWABLE TO MODAL YET");
+    //this.addViewableToModal_(viewable);
+} 
+
+
+
+
+/**
+ * Adds a thumbnail to the modal.
+ * @param {!string | !array.<string>} key
+ * @param {utils.xnat.Viewable} Viewable
+ * @private
+ */
+xiv.prototype.addViewableToModal_ = function(Viewable){
+    //window.console.log(Viewable, key)
+    var folders = xiv.extractViewableFolders_(viewable['queryUrl']);
+    window.console.log(Viewable, folders);
+    this.Modal_.getThumbnailManager().createAndAddThumbnail(Viewable, 
+							    folders);
+}
 
 
 
@@ -341,8 +311,8 @@ xiv.prototype.addViewables_ = function(xnatPath, folders){
  * @param {!string} path
  * @private
  */
-xiv.extractThumbnailFolders_ = function(path){
-    window.console.log(path);
+xiv.extractViewableFolders_ = function(path){
+    window.console.log('extractViewableFolders', path);
     var pathObj = utils.xnat.getPathObject(path);
     var folders = [];
     for (key in pathObj){ 
@@ -406,7 +376,7 @@ xiv.startViewer = function (windowMode, xnatServerRoot, dataPath, imagePath) {
 			      imagePath);
     imageViewer.addDataPath(dataPath); 
     imageViewer.showModal();
-    imageViewer.loadThumbnails();
+    imageViewer.loadViewables();
 };
 goog.exportSymbol('xiv.startViewer', xiv.startViewer)
 

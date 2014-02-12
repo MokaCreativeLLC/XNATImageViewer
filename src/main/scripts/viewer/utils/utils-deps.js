@@ -70,11 +70,29 @@ goog.addDependency('../../../utils/xnat/xnat.js', ['utils.xnat'], [
 'goog.dom.xml',
 'goog.object',
 'goog.array',
-
-
 'utils.dom',
 'utils.array',
 ]);
+
+
+goog.addDependency('../../../utils/xnat/Viewable.js', ['utils.xnat.Viewable'], [
+'utils.xnat',
+]);
+
+
+goog.addDependency('../../../utils/xnat/Scan/Scan.js',
+['utils.xnat.Viewable.Scan'], [
+'utils.xnat',
+'utils.xnat.Viewable',
+]);
+
+
+goog.addDependency('../../../utils/xnat/Slicer/Slicer.js',
+['utils.xnat.Viewable.Slicer'], [
+'utils.xnat',
+'utils.xnat.Viewable',
+]);
+
 
 
 goog.addDependency('../../../utils/events/events.js', ['utils.events'], [

@@ -1,0 +1,32 @@
+Series UID: 1.2.840.113619.2.1.1.2703111462.985.1148036686.932
+Study date: 20060703
+Study time: 091845.000000
+Series date: 20060703
+Series time: 135453
+Subject: case27
+Subject birth date: 
+Series description: SCAN 1: T2  SCAN 2: PD
+Manufacturer: GE MEDICAL SYSTEMS
+Model name: GENESIS_SIGNA
+Study id: MR1
+Series number: 12
+Repetition time (ms): 6000.000000
+Echo time[0] (ms): 
+Echo time[1] (ms): 99.000000
+Inversion time (ms): 
+Flip angle: 90
+Number of averages: 2.000000
+Slice thickness (mm): 5.000000
+Slice spacing (mm): 6.000000
+Image columns: 256
+Image rows: 256
+Number of frames: 
+Phase encoding direction: 
+Voxel size x (mm): 0.859365
+Voxel size y (mm): 0.859387
+Number of volumes: 1
+Number of slices: 20
+Number of files: 20
+Number of frames: 0
+Slice duration (ms) : 0
+Orientation: cor

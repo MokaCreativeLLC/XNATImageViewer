@@ -9,6 +9,9 @@ goog.require('goog.events');
 goog.require('utils.style');
 
 
+goog.provide('utils.events');
+utils.events = function(){}
+goog.exportSymbol('utils.events', utils.events);
 
 
 /**

@@ -34,7 +34,7 @@ emptyScanDict = {
 emptySlicerDict = { 
 'Name': '',
 'Size': '',
-'URI': '',
+'queryUri': '',
 'cat_ID' : '',
 'category': 'Slicer',
 'collection': 'Slicer',
@@ -168,7 +168,7 @@ def main():
                 # Write the needed key-value pairs.
                 #
                 slicer[slicerKey]['Name'] = f.split('.')[0]
-                slicer[slicerKey]['URI'] = fileUri
+                slicer[slicerKey]['queryUrl'] = fileUri
                 slicer[slicerKey]['files'] = mrbFiles
                 slicer[slicerKey]['thumbnailUrl'] = thumbImg
                 #slicer[slicerKey]['sessionInfo']['Scan']['value'] = [slicerKey]
