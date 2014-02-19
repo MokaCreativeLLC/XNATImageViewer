@@ -17,7 +17,8 @@ goog.require('utils.ui.ScrollableContainer');
 
 /**
  * Thumbnail Galleries are subclass of ScrollableContainer that specifically 
- * contain utils.ui.Thumbnail objects.
+ * contain utils.ui.Thumbnail objects and methods pertaining to their 
+ * interaction.
  * @constructor
  * @extends {utils.ui.ScrollableContainer}
  */
@@ -99,7 +100,7 @@ utils.ui.ThumbnailGallery.prototype.addThumbnail = function(thumbnail,
     // Set folders
 
     window.console.log(opt_folders);
-    this.addElementAndFolders_(thumbnail.getElement(), 
+    this.addElementAndFolders(thumbnail.getElement(), 
 			      (opt_folders === undefined) ? ['parentFolder'] : 
 			      goog.isArray(opt_folders) ? opt_folders : 
 			      [opt_folders])
