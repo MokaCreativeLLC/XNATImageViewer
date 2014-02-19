@@ -155,9 +155,20 @@ xiv.ThumbnailManager.prototype.loop = function(opt_callback){
  */
 xiv.ThumbnailManager.prototype.createDragElement_ = function(srcElt) {
     window.console.log("CREATE DRAG ELEMENT");
-    var srcElt = goog.dom.getAncestorByClass(srcElt, xiv.Thumbnail.CSS_CLASS_PREFIX);
-    var originalThumbnail = goog.dom.getElement(srcElt.getAttribute('thumbnailid'));
-    var Thumb = this.getThumbnailByElement(originalThumbnail);
+
+    while (srcElt) {
+	if (srcElt.getAttribute('thumbnailid')) {
+	    break;
+	}
+	srcElt = srcElt.parentNode;
+    }
+    window.console.log(srcElt, this.thumbs_);
+    
+    var originalThumbnail = goog.dom.getElement(
+	srcElt.getAttribute('thumbnailid'));  
+    window.console.log(originalThumbnail);
+    var Thumb = this.thumbs_[originalThumbnail.getAttribute('id')];
+
     if (!Thumb) { return;}
     Thumb.setActive(true, true);
 
@@ -349,14 +360,14 @@ xiv.ThumbnailManager.prototype.initDragDrop = function(){
 /**
  * Returns a newly created xiv.Thumbnail object. 
  *
- * @param {utils.xnat.viewableProperties} xnatProperties
+ * @param {utils.xnat.Viewable} _Viewable
  * @param {!string | !Array.string} folders 
  *    The folders which the thumbnails belong to.
  * @public
  */
 xiv.ThumbnailManager.prototype.createAndAddThumbnail = 
-function(xnatProperties, folders) {
-    this.addThumbnail(this.createThumbnail(xnatProperties),folders);
+function(_Viewable, folders) {
+    this.addThumbnail(this.createThumbnail(_Viewable),folders);
 }
 
 
@@ -365,12 +376,13 @@ function(xnatProperties, folders) {
 /**
  * Returns a newly created xiv.Thumbnail object. 
  *
- * @param {utils.xnat.viewableProperties} xnatProperties
+ * @param {utils.xnat.Viewable} _Viewable
  * @returns {xiv.Thumbnail}
  * @public
  */
-xiv.ThumbnailManager.prototype.createThumbnail = function(xnatProperties) {
-    var thumbnail = new xiv.Thumbnail(xnatProperties);
+xiv.ThumbnailManager.prototype.createThumbnail = function(_Viewable) {
+    window.console.log(_Viewable['thumbnailUrl']);
+    var thumbnail = new xiv.Thumbnail(_Viewable);
     thumbnail['EVENTS'].onEvent('CLICK',  function(){
 	//window.console.log("THUM", thumbnail);
 	this['EVENTS'].runEvent('THUMBNAILCLICK', thumbnail);
@@ -396,7 +408,7 @@ xiv.ThumbnailManager.prototype.addThumbnail = function(thumbnail, folders){
     //------------------
     // Add to private array.
     //------------------
-    this.thumbs_[goog.getUid(thumbnail)] = thumbnail;
+    this.thumbs_[thumbnail.getElement().getAttribute('id')] = thumbnail;
 
 
     //------------------
@@ -404,12 +416,6 @@ xiv.ThumbnailManager.prototype.addThumbnail = function(thumbnail, folders){
     //------------------
     //window.console.log(folders);
     this.ThumbnailGallery_.addThumbnail(thumbnail, folders);    
-
-
-    //------------------
-    // Change the thumbnail's element id to the Uid
-    //------------------
-    thumbnail.getElement().setAttribute('id', goog.getUid(thumbnail));
 
 
 

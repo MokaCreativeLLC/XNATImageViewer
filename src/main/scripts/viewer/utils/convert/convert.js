@@ -2,16 +2,14 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-/**
- * Google closure includes
- */
+// goog
+goog.require('goog.array');
 
-/**
- * utils includes
- */
+
 
 
 /**
+ * Utility class for conducting conversions.
  * @constructor
  */
 goog.provide('utils.convert');
@@ -22,14 +20,19 @@ goog.exportSymbol('utils.convert', utils.convert);
 
 
 /**
- * Converts inputted args into '%' strings.
- *
- * NOTE: 'value' should be 0-1.
- *
- * @param {!number}
+ * Converts a float (between 0-1) to a string percentage.
+ * @param {!number} value
  * @return {string}
+ * @throws Error if value is not a string or between 0 and 1.
+ * @public 
  */
 utils.convert.pct = function (value) {
+    if (!goog.isNumber(value)){
+	throw new TypeError('Number expected!', value);
+    }
+    if ((value > 1) || (value < 0)){
+	throw new Error('Value must be between 0 and 1!')
+    }
     return (value * 100).toString() + "%";
 }
 
@@ -38,11 +41,14 @@ utils.convert.pct = function (value) {
 
 /**
  * Converts inputted args into 'px' strings.
- *
- * @param {Array | number}
- * @return {string | Array.string}
+ * @param {!Array.<number> | !number} args The arguments to convert.
+ * @return {!string | !Array.string} The px results.
+ * @public 
  */
 utils.convert.px = function (args) {
+    if ((!goog.isArray(args)) && (!goog.isNumber(args))){
+	throw new TypeError('Array or number expected!', args);
+    }
     if (args instanceof Array) {
 	return args.map(function (a) {return a.toString() + 'px'});
     }
@@ -58,47 +64,38 @@ utils.convert.px = function (args) {
 
 
 /**
- * Remaps value 'startVal' from range 'prevRange' to 'newRange'.
- *
- * @param {!number, !Array.number, !Array.number}
- * @return {number}
+ * Converts value 'startVal' from range 'prevRange' to 'newRange'.  If startVal
+ * is less than the smallest value of prevRange, sets startVal to the 0 index 
+ * of prevRange.  If its larger than the largest value of prevRange, sets 
+ * startVal to the largest value in the array.
+ * @param {!number} startVal The value to convert to the second range.
+ * @param {!Array.number} prevRange An n-length array to be sorted, to 
+ *    determine the previous range from.
+ * @param {!Array.number} newRange An n-length array to be sorted to determine
+ *    the new range from.
+ * @return {Object.<string, number>} The converted number as part of an object
+ *    along with the old naumber.
+ * @public 
  */
 utils.convert.remap1D = function (startVal, prevRange, newRange) {
 
-
-    //utils.dom.debug("N: " + n)
-    //utils.dom.debug("prevRange: " + prevRange)
-    //utils.dom.debug("newRange: " + newRange)
-    
-
-
-    //------------------
-    // Define 'swapElts' method
-    //------------------
     function swapElts(darr) {
-	var holder = darr[0];
+	var holder = /**@type {Array.number}*/ darr[0];
 	darr[0] = darr[1];
 	darr[1] = holder;
 	return darr;
     }
     
-
-
-    //------------------
-    // Throw error if there are range equalities.
-    //------------------
     if ((prevRange[0] === prevRange[1]) || (newRange[0] === newRange[1])) {
 	throw ("Remap: initial domain is equal!");
     }
     
-
 
     //------------------
     // Make sure the ranges are in order
     //------------------
     prevRange = prevRange.sort()
     newRange = newRange.sort()
-
 
 
     //------------------
@@ -108,12 +105,10 @@ utils.convert.remap1D = function (startVal, prevRange, newRange) {
     //------------------
     if (startVal <= prevRange[0]) {
 	startVal = prevRange[0];
-	var returner = {
-	    newVal: newRange[0],
-	    adjOld: startVal
-	};
-	return returner;
-
+	return {
+	    'remappedVal': newRange[0],
+	    'oldValue': startVal
+	}
 
 
     //------------------
@@ -123,20 +118,19 @@ utils.convert.remap1D = function (startVal, prevRange, newRange) {
     //------------------
     } else if (startVal >= prevRange[1]) {
 	startVal = prevRange[1];
-	var returner = {
-	    newVal: newRange[1],
-	    adjOld: startVal
-	};
-	return returner;
+	return {
+	    'remappedVal': newRange[1],
+	    'oldValue': startVal
+	}
     }
     
-
 
     //------------------
     // Determine the newVal mathetmaically.
     //------------------
-    var newVal = Math.round((startVal/(prevRange[1]-prevRange[0])) * ((newRange[1]-newRange[0])));
-
+    var newVal = /**@type {number}*/ 
+    Math.round((startVal/(prevRange[1]-prevRange[0])) * 
+			    ((newRange[1]-newRange[0])));
 
 
     //------------------
@@ -150,86 +144,65 @@ utils.convert.remap1D = function (startVal, prevRange, newRange) {
     }
     
 
-
     //------------------
     // Return.
     //------------------
-    //utils.dom.debug("newVAl: " + newVal);    
-    //utils.dom.debug("*****************")
     return {
-	newVal: newVal,
-	adjOld: startVal
+	'remappedVal': newVal,
+	'oldValue': startVal
     };
 }
 
 
 
-
 /**
- * Replaces any illegal characters within a given string.
- *
- * @param {!string, string=}
- * @return {string}
- */
-utils.convert.replaceIllegalChars = function (value, opt_replaceStr) {
-	
-    if (typeof value !== 'string') {
-	throw Error("Illegal value " + typeof value + " in argument of utils.convert.replaceIllegalChars.")
-    }
-    
-    if (opt_replaceStr === undefined) {
-	opt_replaceStr = "";
-    }
-    
-
-    //------------------
-    // Replace 'slashes', commas
-    //------------------
-    var replaced = value.replace(/\/./g, opt_replaceStr);
-    replaced = replaced.replace(/[|&;$%@"<>()+,]/g, opt_replaceStr);
-    
-    return replaced;
-	
-}
-
-
-
-
-/**
- * @param {!number | !string}
- * @return {number}
+ * Converts either a float or a string to an int.
+ * @param {!number | !string} val
+ * @return {number} The number to convert.
+ * @public 
  */
 utils.convert.toInt = function (val) {
-	return parseInt(val, 10);
+    if ((!goog.isString(val)) && (!goog.isNumber(val))){
+	throw new TypeError('Number or string expected!', val);
+    }
+    return parseInt(val, 10);
 }
 
 
 
 /**
-* @param {string}
-* @return {Array.number}
-*/
-utils.convert.toFloatArray = function (str) {
-
-    if (!str) {
-	return;
+ * Converts a set of spaced strings to a float array.
+ * @param {string} val The string to convert.
+ * @return {!Array.number} An n-dimensional array of converted strings.
+ * @public 
+ */
+utils.convert.toFloatArray = function (val) {
+    if ((!goog.isString(val))){
+	throw new TypeError('String expected!', val);
     }
-    var numArr = [];
-    str = str.split(' ');
-    goog.array.forEach(str, function(num, i) { numArr[i] = parseFloat(num, 10)});
+    var numArr = /**@type {!Array.number}*/ [];
+    val = val.split(' ');
+    goog.array.forEach(val, function(num, i) { 
+	numArr[i] = parseFloat(num, 10)});
     return numArr;
 }
 
 
 
 /**
-* @param {!Object}
-* @return {Array{
-*/
-utils.convert.objectToArray = function (obj) {
-    var returnable = [];
-    for (var key in obj){ 
-	returnable = returnable.concat(obj[key])
+ * Returns an array of only values (not keys) of an object.
+ * @param {!Object} val The object to convert.
+ * @return {Array} The array of object property values.
+ * @public 
+ */
+utils.convert.objectToArray = function (val) {
+    if ((!goog.isObject(val))){
+	throw new TypeError('Object expected!', val);
+    }
+    var returnable = /**@type {!Array.Object}*/[];
+    var key = /**@type {!string}*/ ''d;
+    for (key in val){ 
+	returnable = returnable.concat(val[key])
     }
     return returnable;
 }
@@ -237,28 +210,41 @@ utils.convert.objectToArray = function (obj) {
 
 
 /**
-* @param {!string}
-* @return {Array.<number>}
-*/
-utils.convert.rgbToArray = function (rgbStr) {
-    var arr = rgbStr.match(/\d+/g);
-    for (var i = 0, len = arr.length; i < len; i++){
+ * Converts an rgb string to an array of floats.
+ * @param {!string} val The string to convert.
+ * @return {Array.<number>} An array of rgb floats.
+ * @public 
+ */
+utils.convert.rgbToArray = function (val) {
+    if ((!goog.isString(val))){
+	throw new TypeError('String expected!', val);
+    }
+    var arr = /**@type {Array.<string> | Array.<number>}*/val.match(/\d+/g);
+    var i = /**@type {!number} */ 0;
+    for (i = 0, len = arr.length; i < len; i++){
 	arr[i] = parseInt(arr[i], 10);
     }
-
     return arr;
 }
 
 
 /**
-* @param {Array.<number>} numArr
-* @param {number=} opt_multiplier
-* @return {!string}
-*/
-utils.convert.arrayToRgb = function (numArr, opt_multiplier) {
-    var str = 'rgb('
-    var opt_multiplier = (opt_multiplier === undefined) ? 1 : opt_multiplier;
-    goog.array.forEach(numArr, function(num){
+ * Converts an array of numbers to an rgb string.
+ * @param {Array.<number>} val Array of values to convert.
+ * @param {number=} opt_multiplier The multiplier to apply to the rbg string. 
+ *    Defaults to 0.
+ * @return {!string} The rgb string.
+ * @public 
+ */
+utils.convert.arrayToRgb = function (val, opt_multiplier) {
+    if ((!goog.isArray(val))){
+	throw new TypeError('Array expected!', val);
+    }
+    var str = /**@type {!string} @const */ 'rgb('
+    var opt_multiplier = /**@type {!number} */ 
+    (opt_multiplier === undefined) ? 1 : opt_multiplier;
+
+    goog.array.forEach(val, function(num){
 	str += parseInt(num * opt_multiplier, 10).toString() + ','
     })
     str = str.substring(0, str.length -1) + ')';

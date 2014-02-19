@@ -2,21 +2,33 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-// goog
-goog.require('goog.events');
-
 // utils
-goog.require('utils.style');
+goog.require('utils.events.EventManager');
 
 
+
+
+/**
+ * Very basic event management class when simple event management is needed
+ * in contrast with goog.events.
+ * @constructor
+ */
 goog.provide('utils.events');
 utils.events = function(){}
 goog.exportSymbol('utils.events', utils.events);
 
 
+
+
 /**
+ * Adds an event manager to the given object by adding the string property
+ * 'EVENTS' to the object.  Since Google closure does not intervene with string
+ * properties, this *should* be a conflict-free property, but it needs further
+ * verification.
  * @param {!Object} obj The obj to add the event manager to.
- * @param {!eventTypes} eventTypes The eventTypes enums of the object.
+ * @param {!eventTypes} eventTypes The eventTypes enums of the object that 
+ *     should be defined PER object.
+ * @raise Error if no eventType enum is defined.
  * @public
  */
 utils.events.addEventManager = function(obj, eventTypes){
@@ -26,12 +38,12 @@ utils.events.addEventManager = function(obj, eventTypes){
     }
 
     if (!eventTypes){
-	throw 'Invalid eventTypes argument for addEventManager: \'' + eventTypes + '\'.';
+	throw 'Invalid eventTypes argument for addEventManager: \'' + 
+	    eventTypes + '\'.';
     }
 
     /**
-     * @param {!utils.events.EventManager}
-     * @protected
+     * @type {!utils.events.EventManager}
      */ 
     obj['EVENTS'] = new utils.events.EventManager(eventTypes);
 

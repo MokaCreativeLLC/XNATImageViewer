@@ -53,6 +53,8 @@ utils.string.dirname = function (uri) {
 
 
 
+
+
 /** 
  * Returns file extension of either a file list 
  * or a string.
@@ -127,4 +129,49 @@ utils.string.stripIllegal = function(str) {
  */
 utils.string.getLettersOnly = function(str) {
     return utils.string.stripNonAlphanumeric(str).replace(/[0-9]/g, '');
+}
+
+
+
+/**
+ * Replaces any illegal characters within a given string.
+ * @param {!string} value
+ * @param {string=} opt_replaceStr
+ * @return {string}
+ * @throws 
+ * @public 
+ */
+utils.string.replaceIllegal = function (value, opt_replaceStr) {
+	
+    if (typeof value !== 'string') {
+	throw Error("Illegal value " + typeof value + 
+		    " in argument of utils.string.replaceIllegal .")
+    }
+    
+    if (opt_replaceStr === undefined) {
+	opt_replaceStr = "";
+    }
+    
+    //------------------
+    // Replace 'slashes', commas
+    //------------------
+    var replaced = value.replace(/\/./g, opt_replaceStr);
+    replaced = replaced.replace(/[|&;$%@"<>()+,]/g, opt_replaceStr);    
+    return replaced;
+}
+
+
+
+
+/**
+ * Truncates a string to a length, the adds '...' to the end of it.
+ * @param {!string} str The string to shorten.
+ * @param {!number} opt_maxLen The max length of the string.  Defaults to 30.
+ * @return {!string} The truncated string.
+ * @private
+ */
+utils.string.truncateString = function(str, opt_maxLen){
+    opt_maxLen = (opt_maxLen === undefined) ? 30 : opt_maxLen;
+    return (str.length > opt_maxLen) ? 
+	str.substring(0, opt_maxLen - 3) + '...' : str;
 }

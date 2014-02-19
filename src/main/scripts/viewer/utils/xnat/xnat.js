@@ -295,19 +295,20 @@ utils.xnat.graftUrl = function(prefixUrl, suffixUrl, graftPoint){
 
 
 /**
- * @param 
+ * Retrieves viewables, one-by-one, for manipulation in the opt_callback
+ * argument.
+ * @param {!string} url The url to retrieve the viewables from.
+ * @param {function=} opt_callback The optional callback applied to each 
+ *     viewable.
  */
-utils.xnat.getViewables = function (url, callback){
-
+utils.xnat.getViewables = function (url, opt_callback){
     utils.xnat.VIEWABLE_TYPES = {
 	'Scan': utils.xnat.Viewable.Scan,
 	'Slicer': utils.xnat.Viewable.Slicer,
     }
-
     for (var viewableType in utils.xnat.VIEWABLE_TYPES){
 	utils.xnat.Viewable.getViewables(url, 
-		utils.xnat.VIEWABLE_TYPES[viewableType], callback)
-	//utils.xnat.VIEWABLE_TYPES[viewableType].getViewables(url, callback)
+		utils.xnat.VIEWABLE_TYPES[viewableType], opt_callback)
     }
 }
 

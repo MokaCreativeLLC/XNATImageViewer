@@ -4,7 +4,6 @@
 
 /**
  * Parent class of utils.ui objects.
- *
  * @constructor
  */
 goog.provide('utils.ui');

@@ -1119,29 +1119,40 @@ utils.xtk.ControllerMenu.prototype.makeTwoThumbSlider = function(opt_parent, opt
     // We need to change the CSS of all of the slider's child
     // elements.
     //-------------------
-    goog.array.forEach(goog.dom.getChildren(slider.getElement()), function(child) {
-	if (child.className === 'goog-twothumbslider-value-thumb' || child.className === 'goog-twothumbslider-extent-thumb') {
-	    goog.dom.classes.add(child, utils.xtk.ControllerMenu.TWOTHUMBSLIDER_THUMB_CLASS);
-	    utils.style.setHoverClass(child,  utils.xtk.ControllerMenu.THUMB_HOVER_CLASS, function(applyHover, removeHover){
+    goog.array.forEach(goog.dom.getChildren(slider.getElement()), 
+		       function(child) {
+	if (child.className === 'goog-twothumbslider-value-thumb' || 
+	    child.className === 'goog-twothumbslider-extent-thumb') {
+	    goog.dom.classes.add(child, 
+			utils.xtk.ControllerMenu.TWOTHUMBSLIDER_THUMB_CLASS);
+	    utils.style.setHoverClass(child,  
+		utils.xtk.ControllerMenu.THUMB_HOVER_CLASS, 
+				      function(applyHover, removeHover){
 
 		//
 		// set Dragging class
 		//
-		utils.ui.GenericSlider.superClass_.addEventListener.call(slider, goog.ui.SliderBase.EventType.DRAG_START, function (e) {
+		utils.ui.GenericSlider.superClass_.addEventListener.call(
+		    slider, goog.ui.SliderBase.EventType.DRAG_START, 
+		    function (e) {
 
-		    //
 		    // Suspend mouseout listener when dragging.
-		    //
-		    goog.events.unlisten(child, goog.events.EventType.MOUSEOUT, removeHover);
-		    goog.dom.classes.add(child, utils.xtk.ControllerMenu.THUMB_HOVER_CLASS);
+		    goog.events.unlisten(child, 
+			goog.events.EventType.MOUSEOUT, removeHover);
+		    goog.dom.classes.add(child, 
+			utils.xtk.ControllerMenu.THUMB_HOVER_CLASS);
 		});	  
-		utils.ui.GenericSlider.superClass_.addEventListener.call(slider, goog.ui.SliderBase.EventType.DRAG_END, function (e) {
+		utils.ui.GenericSlider.superClass_.addEventListener.call(
+		    slider, goog.ui.SliderBase.EventType.DRAG_END, 
+		    function (e) {
 
 		    //
 		    // Reapply mouseout listener when done dragging.
 		    //
-		    goog.events.listen(child, goog.events.EventType.MOUSEOUT, removeHover);
-		    goog.dom.classes.remove(child, utils.xtk.ControllerMenu.THUMB_HOVER_CLASS);
+		    goog.events.listen(child, goog.events.EventType.MOUSEOUT, 
+				       removeHover);
+		    goog.dom.classes.remove(child, 
+				utils.xtk.ControllerMenu.THUMB_HOVER_CLASS);
 		});
 	    });
 	}		

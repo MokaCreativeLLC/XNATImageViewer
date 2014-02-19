@@ -496,12 +496,12 @@ xiv.ViewBox.prototype.loadThumbnail = function (thumb) {
 
     //------------------
     // Show/hide the slicer view menu depending on the 
-    // Thumbnail's getXnatProperties()
+    // Thumbnail's getViewable()
     //------------------    
-    this.SlicerViewMenu_.getElement().style.visibility = (thumb.getXnatProperties()['category'].toLowerCase() === 'slicer') ? 'visible' : 'hidden';
+    this.SlicerViewMenu_.getElement().style.visibility = (thumb.getViewable()['category'].toLowerCase() === 'slicer') ? 'visible' : 'hidden';
 
 
-    this.Displayer_.load(thumb.getXnatProperties());    
+    this.Displayer_.load(thumb.getViewable());    
 }
  
 
@@ -524,14 +524,14 @@ xiv.ViewBox.prototype.loadTabs_ = function () {
     //------------------
     // Info Tab.
     //------------------
-    this.ViewBoxTabs_.setTabContents('Info', this.Displayer_.createInfoTabContents(this.Thumbnail_.getXnatProperties()));
+    this.ViewBoxTabs_.setTabContents('Info', this.Displayer_.createInfoTabContents(this.Thumbnail_.getViewable()));
     
 
 
     //------------------
     // Slicer View Tab.
     //------------------
-    if (this.Thumbnail_.getXnatProperties()['category'] == 'Slicer') {
+    if (this.Thumbnail_.getViewable()['category'] == 'Slicer') {
 	this.ViewBoxTabs_.setTabContents('Slicer Views', this.SlicerViewMenu_.getThumbnailGallery());
     }
 

@@ -2,9 +2,6 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-// goog
-
-
 // utils
 goog.require('utils.xnat');
 
@@ -14,15 +11,17 @@ goog.require('utils.xnat');
  * @constructor
  */
 goog.provide('utils.xnat.Viewable');
-utils.xnat.Viewable = function(experimentUrl, viewableJson) {
+utils.xnat.Viewable = function(experimentUrl, viewableJson, opt_initComplete) {
     this['experimentUrl'] = experimentUrl;
     this['originalJson'] = viewableJson;
     this['queryUrl'] = utils.xnat.graftUrl(this['experimentUrl'], 
 			this['originalJson']['URI'], 'experiments');
-    //window.console.log("QUERY URL", this['queryUrl'])
+    window.console.log("QUERY URL", opt_initComplete)
     utils.xnat.Viewable.applyProperties_(this);
-    this.getFiles(this.getThumbnailImage.bind(this));
-    
+    this.getFiles(function(){
+	window.console.log("ON FILES GOTTEN");
+	this.onFilesGotten_(opt_initComplete);
+    }.bind(this));    
 }
 goog.exportSymbol('utils.xnat.Viewable', utils.xnat.Viewable);
 
@@ -65,7 +64,7 @@ utils.xnat.Viewable.applyProperties_ = function(obj){
 utils.xnat.Viewable.loopFolderContents = function(viewableFolder, callback) {
     utils.xnat.jsonGet(viewableFolder, function(viewablesJson){
 	goog.array.forEach(viewablesJson, function(viewable){
-	    window.console.log("VIEWABLE:", viewable);
+	    //window.console.log("VIEWABLE:", viewable);
 	    callback(viewable)
 	})
     })
@@ -118,6 +117,18 @@ utils.xnat.sortXnatPropertiesArray = function (xnatPropsArr, keyDepthArr){
 }
 
 
+/**
+ * @param {function=} opt_initComplete
+ */
+utils.xnat.Viewable.prototype.onFilesGotten_ = function(opt_initComplete){
+    this.getThumbnailImage(function(){
+	if (opt_initComplete){
+	    window.console.log("INIT COMPLETE", this['thumbnailUrl']);
+	    opt_initComplete(this)
+	}
+    }.bind(this));
+}
+
 
 
 /** 
@@ -141,30 +152,32 @@ utils.xnat.Viewable.prototype.getFiles = function(opt_callback){
 	    //window.console.log("ABSOLUTE URL:", fileUrls[i], fileUrl); 
 	    if (fileUrl) { this['files'].push(fileUrl) };
 	}
-
-	opt_callback()
+	if (opt_callback){
+	    opt_callback()
+	}
     }.bind(this))
 }
 
 
 
 
-utils.xnat.Viewable.getViewables = function(url, viewableObj, callback){
-    
+/**
+ * @param {!string} url
+ * @param {!utils.xnat.Viewable} anonViewable
+ * @param {function=} opt_callback
+*/
+utils.xnat.Viewable.getViewables = function(url, anonViewable, opt_callback){
     
     var url = /** @type {!string} */ 
     utils.xnat.getXnatPathByLevel(url, 'experiments');
-
     var queryFolder = /** @type {!string} */ 
-    url + '/' + viewableObj['folderQuerySuffix']
+    url + '/' + anonViewable['folderQuerySuffix']
+    var viewable;
 
     //window.console.log("HERE", url, queryFolder);
-    var viewable;
     utils.xnat.Viewable.loopFolderContents(queryFolder, function(scanJson){
-	viewable = new viewableObj(url, scanJson)
-	window.console.log(viewable);
-	// derive the thumbnail (shared, individualized method)
-	// store viewablePrps (shared)
+	viewable = new anonViewable(url, scanJson, opt_callback)
+	//window.console.log(viewable);
 	// sort list (shared, with custom parameters)
     })
 }

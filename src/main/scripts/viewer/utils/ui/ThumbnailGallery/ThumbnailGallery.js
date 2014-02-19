@@ -18,7 +18,6 @@ goog.require('utils.ui.ScrollableContainer');
 /**
  * Thumbnail Galleries are subclass of ScrollableContainer that specifically 
  * contain utils.ui.Thumbnail objects.
- *
  * @constructor
  * @extends {utils.ui.ScrollableContainer}
  */

@@ -3,13 +3,21 @@
  */
 
 // goog
+goog.require('goog.events');
 goog.require('goog.style');
 goog.require('goog.dom');
 goog.require('goog.string');
+goog.require('goog.array');
+
+// utils
+goog.require('utils.convert');
+
 
 
 
 /**
+ * Style utility class for operations not provided by native JS library or 
+ * goog.style.
  * @constructor
  */
 goog.provide('utils.style');
@@ -21,11 +29,11 @@ goog.exportSymbol('utils.style', utils.style);
 
 /**
  * Full list of CSS properties.
- *
  * @const
  * @type {Array.<string>}
+ * @public
  */
-utils.style.prototype.cssProperties = [
+utils.style.cssProperties = [
 'azimuth',
 'background-attachment',
 'background-color',
@@ -38,9 +46,12 @@ utils.style.prototype.cssProperties = [
 'border-spacing',
 'border-style',
 'border-top', 'border-right', 'border-bottom', 'border-left',
-'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',
-'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style',
-'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width',
+'border-top-color', 'border-right-color', 'border-bottom-color', 
+    'border-left-color',
+'border-top-style', 'border-right-style', 'border-bottom-style', 
+    'border-left-style',
+'border-top-width', 'border-right-width', 'border-bottom-width', 
+    'border-left-width',
 'border-width',
 'border',
 'bottom',
@@ -130,36 +141,32 @@ utils.style.prototype.cssProperties = [
 
 
 /**
- * Remove all classes from an element that 
- * contain 'containsStr' within it.
- *
- * @param {!Element, !string} elt The element to remove the class, 
- * containsStr The evaluation string -- if the class contains it, the class is removed.
+ * Remove all classes from an element that contain 'containsStr' within it.
+ * @param {!Element} elt The element to perform the operation on.
+ * @pararm {!string} containsStr The evaluation string -- if the class 
+ *    contains it, the class is removed.
+ * @public
  */
 utils.style.removeClassesThatContain = function (elt, containsStr) {
 
-    var classes = goog.dom.classes.get(elt);
-    var removeClasses = [];
-
-    
-
+    var classes = /**@type{!Array.string}*/ goog.dom.classes.get(elt);
+    var removeClasses = /**@type{!Array.string}*/ [];
+    var i = /**@type{!number}*/ 0;
+   
     //------------------
-    // Loop throught the classes, track
-    // all that contain 'containsStr'.
+    // Loop throught the classes, track all that contain 'containsStr'.
     //------------------
     containsStr = containsStr.toLowerCase();
-    for (var i=0, len = classes.length; i < len; i++){
+    for (i=0, len = classes.length; i < len; i++){
         if (classes[i].toLowerCase().indexOf(containsStr) > -1) {
             removeClasses.push(classes[i])
         }
     }
     
-
-
     //------------------
     // Remove all classes that met the criteria.
     //------------------
-    for (var i=0, len = removeClasses.length; i < len; i++){
+    for (i=0, len = removeClasses.length; i < len; i++){
 	goog.dom.classes.remove(elt, removeClasses[i]); 
     }
 }
@@ -169,11 +176,10 @@ utils.style.removeClassesThatContain = function (elt, containsStr) {
 
 
 /**
- * Returns the absolute position of the element
- * provided in the argument.
- *
- * @param {!Element}
- * @return {Array.<number>}
+ * Returns the absolute position of the element provided in the argument.
+ * @param {!Element} elt The element to derive the result from.
+ * @return {Array.<number>} The absolute position of the element.
+ * @public
  */
 utils.style.absolutePosition = function ( elt) {
     return elt.getBoundingClientRect();
@@ -182,53 +188,26 @@ utils.style.absolutePosition = function ( elt) {
 
 
 
-/**
- * Returns the offset dimensions of 
- * the provided element.
- *
- * @param {!Element} elt The element to calculate the offset dims on.
- * @return {Object.<string, number>} The offset dimensions.
- */
-utils.style.offsetDims = function (elt) {
-    
-    var offsetDims = {'top': 0, 'left': 0};
-
-    do {
-	if ( !isNaN( elt.offsetTop ) )
-	{
-	    offsetDims['top'] += elt.offsetTop;
-	}
-
-	if ( !isNaN( elt.offsetLeft ) )
-	{
-	    offsetDims['left'] += elt.offsetLeft;
-	}
-
-    } while( elt = elt.offsetParent );
-
-
-    return offsetDims
-}
-
-
-
 
 /**
  * Gets the in-line dimensions of a given element.
- *
- * @param {!Element, Array.<string>=|string=}
- * @return {Object.<string, number|string>}
+ * @param {!Element} elt The element to derive the result from.
+ * @param {!Array.<string>= | string=} property The property or properties
+ *    to retrieve the inline results from.
+ * @return {Object.<string, number> | Object.<string, string>}  The inline 
+ *    results.
+ * @public
  */
-utils.style.dims = function (elt, arg1) {
+utils.style.dims = function (elt, property) {
 
     //------------------
     // If we're looking for just one attribute we 
     // go right to the kill...
     //------------------
-    if (arg1 && typeof arg1 === 'string') {
-	var val;
+    if (property && typeof property === 'string') {
+	var val /**@type{!number | !string}*/ = ;
 	
-	switch(arg1) {
+	switch(property) {
 	case 'height':
 	    return elt.clientHeight;// || $(elt).height();
 	case 'width':
@@ -243,21 +222,23 @@ utils.style.dims = function (elt, arg1) {
 	    return elt.offsetLeft
 	default:
 
-	    val = /%emt/.test(elt.style[arg1]);
+	    val = /%emt/.test(elt.style[property]);
 	    
 	    if (!val) {
-		return utils.convert.toInt(elt.style[arg1]);
+		return utils.convert.toInt(elt.style[property]);
 	    }
 	    
-	    var p = goog.style.getRelativePosition(elt, elt.parentNode);
-	    var posObj = {
+	    var p = /**@type {!goog.math.Coordinate}*/ 
+	    goog.style.getRelativePosition(elt, elt.parentNode);
+	    var posObj = /**@type {!Object.<string, number>}*/{
 		left: utils.convert.toInt(elt.style.left) || p.x,
 		top: utils.convert.toInt(elt.style.top) || p.y
 	    };
 
-	    return posObj[arg1];
-	    //return utils.convert.toInt(elt.style[arg1]) //||  $(elt).position()[arg1];
-	    //return $(elt).position()[arg1];
+	    return posObj[property];
+	    //return utils.convert.toInt(elt.style[property]) //||  
+	    // $(elt).position()[property];
+	    //return $(elt).position()[property];
 	}
 
 
@@ -269,13 +250,15 @@ utils.style.dims = function (elt, arg1) {
     } else {
 	
 	
-	var retObj = {};
+	var retObj = /**{Object.<string, number> | Object.<string, string>} */
+	{};
 
-	var p = (elt.parentNode) ? goog.style.getRelativePosition(elt, 
-							elt.parentNode) : 
+	var p = /**@type {!Element}*/
+	(elt.parentNode) ? goog.style.getRelativePosition(elt, 
+							  elt.parentNode) : 
 	    goog.style.getRelativePosition(elt, document.body)
 
-	var posObj = {
+	var posObj = /**@type {!Object.<string, number>}*/{
 	    left: utils.convert.toInt(elt.style.left) || (p.x),
 	    top: utils.convert.toInt(elt.style.top) || (p.y)
 	};
@@ -300,34 +283,40 @@ utils.style.dims = function (elt, arg1) {
 
 
 /**
- * For getting the style parameters of an element where
- * it's style is derived from a stylesheet.
- *
- * @param {Element, string= | Array.<string=>}
+ * Gets the style parameters of an element where it's style is derived from 
+ * a css stylesheet.  If opt_propertyKey is specified, returns only the value 
+ * of that property.
+ * @param {!Element} elt The element to derive the result from.
+ * @param {string= | Array.<string>=} opt_propertyKey The property key.
+ * @return {string | number | Object.<string, string> | Object.<string, number>}
+ * @public
  */
-utils.style.getComputedStyle = function (elt, opt_key) {
-
+utils.style.getComputedStyle = function (elt, opt_propertyKey) {
 
     //------------------
-    // If 'opt_key' is a string, not array...
+    // If 'opt_propertyKey' is a string, not array...
     //--------------------
-    if (opt_key && typeof opt_key === 'string'){
-	return window.getComputedStyle(elt, null).getPropertyValue(opt_key) 
-
-
-
+    if (opt_propertyKey && typeof opt_propertyKey === 'string'){
+	return window.getComputedStyle(elt, null).
+	    getPropertyValue(opt_propertyKey); 
 
     //------------------
-    // Otherwise, when 'opt_key' is an array.
+    // Otherwise, when 'opt_propertyKey' is an array.
     //------------------
     } else {
-	if (opt_key === undefined) {
-	    opt_key = utils.style.prototype.cssProperties;
+	if (opt_propertyKey === undefined) {
+	    opt_propertyKey = utils.style.cssProperties;
 	}
+	/**
+	 * @type {Object.<string, string>|Object.<string, number>}
+	 */
 	var attrs = {};
 	var styleSheet = window.getComputedStyle(elt, null);
-	for (var i=0, len = opt_key.length; i < len; i++) {
-	    attrs[opt_key[i]] = styleSheet.getPropertyValue(opt_key[i]);
+	var i = /**@type {!number}*/ 0;
+	var len = /**@type {!number}*/ 0;
+	for (i=0, len = opt_propertyKey.length; i < len; i++) {
+	    attrs[opt_propertyKey[i]] = 
+		styleSheet.getPropertyValue(opt_propertyKey[i]);
 	}
 	return utils.style.parseIntNumericalProperties(attrs);
     }
@@ -337,10 +326,12 @@ utils.style.getComputedStyle = function (elt, opt_key) {
 
 
 /**
- * Conducts a parseInt on numerical style attributes.
- * Converts the strings accordingly.
- *
- * @param {Object.<string, string>}
+ * Conducts a parseInt on numerical style attributes. Converts the strings 
+ * accordingly.
+ * @param {Object.<string, string>} obj The properties object with string 
+ *    numbers.
+ * @return {Object.<string, number>} obj The properties object numbers.
+ * @public
  */
 utils.style.parseIntNumericalProperties = function (obj) {
 	
@@ -362,8 +353,10 @@ utils.style.parseIntNumericalProperties = function (obj) {
 	'margin-left'
     ];
 
+    var i = /**@type {!number}*/ 0;
+    var len = /**@type {!number}*/ 0;
     for (key in obj) {
-	for (var i = 0, len = pxConvertArr.length; i < len; i++){
+	for (i = 0, len = pxConvertArr.length; i < len; i++){
 	    if (key === pxConvertArr[i]) {
 		obj[key] = utils.convert.toInt(obj[key]);
 	    }
@@ -378,40 +371,38 @@ utils.style.parseIntNumericalProperties = function (obj) {
 
 /**
  * Sets the style of a given element, in-line.
- *
- * @param {!Element, !Object.<string, string>}
+ * @param {!Element} elt The element to apply the style to.
+ * @param {!Object.<string, string> | !Object.<string, number>} styleObj The 
+ *    object whose properties contain the in-line style to apply to the 
+ *    element.
+ * @public
  */
-utils.style.setStyle = function (elt, cssObj) {
+utils.style.setStyle = function (elt, styleObj) {
 
-    if (!elt || !cssObj) { return; }
+    if (!elt || !styleObj) { return; }
     if (!elt.style) { elt.style = {} }
 
 
     //------------------
     // First, call google's setStyle function.
     //------------------
-    goog.style.setStyle(elt, cssObj);
+    goog.style.setStyle(elt, styleObj);
     
     
     //------------------
     // For numerical properties (px)
     //------------------
-    var arr = ["top", "left", "height", "width", "fontSize", "borderWidth", "borderRadius"]
+    var arr = /**@type {!Array.<string>}*/ 
+    ["top", "left", "height", "width", "fontSize", 
+	       "borderWidth", "borderRadius"]
     goog.array.forEach(arr, function(dim) { 
-	if (cssObj[dim]) {
-
-	    //
+	if (styleObj[dim]) {
 	    // If a percentage, skip...
-	    //
-	    if (goog.string.endsWith(cssObj[dim], '%')) { 
-		elt.style[dim] = cssObj[dim];
+	    if (goog.string.endsWith(styleObj[dim], '%')) { 
 
-
-	    //
 	    // Otherwise, convert all other strings to numbers
-	    //
 	    } else {
-		elt.style[dim] = utils.convert.px(cssObj[dim]);// : cssObj[dim];
+		elt.style[dim] = utils.convert.px(styleObj[dim]);
 	    }
 	}
     })
@@ -421,29 +412,37 @@ utils.style.setStyle = function (elt, cssObj) {
 
 
 /**
- * Applies a class to an element if it is being
- * hovered on. 
- *
- * @param {!Element} elt
- * @param {!String} className
- * @param {function=} opt_customMethod The custom 
- * @param {Object=} opt_customMethodBinder The binding object to apply to the opt_customMethod argument.
+ * Applies a css class to an element if it is being hovered on. 
+ * @param {!Element} elt The element to apply the css class to.
+ * @param {!string} className The class name to be applied.
+ * @param {function=} opt_eventFindTuneMethod The custom method to run during 
+ *    the occurence of the hover states.
+ * @param {Object=} opt_eventFindTuneMethodBinder The binding object to apply 
+ *    to the opt_eventFindTuneMethod argument.
+ * @public
  */	
-utils.style.setHoverClass = function(elt, className, opt_customMethod, opt_customMethodBinder) {
+utils.style.setHoverClass = function(elt, className, opt_eventFindTuneMethod, 
+				     opt_eventFindTuneMethodBinder) {
 
     // Mouseover / mouseout
-    var applyHover = function(){ goog.dom.classes.add(elt, className);}
-    var removeHover = function(){ goog.dom.classes.remove(elt, className);}
+    var applyHover = /**@type {!function}*/ function(){ 
+	goog.dom.classes.add(elt, className);
+    }
+    var removeHover = /**@type {!function}*/ function(){ 
+	goog.dom.classes.remove(elt, className);
+    }
     goog.events.listen(elt, goog.events.EventType.MOUSEOVER, applyHover);
     goog.events.listen(elt, goog.events.EventType.MOUSEOUT, removeHover);
 
 
-    if (opt_customMethod) {
+    if (opt_eventFindTuneMethod) {
 	// Apply binder if needed
-	opt_customMethod =  (opt_customMethodBinder !== undefined) ?
-	    opt_customMethod.bind(opt_customMethodBinder) : opt_customMethod;
+	opt_eventFindTuneMethod =  
+	    (opt_eventFindTuneMethodBinder !== undefined) ?
+	    opt_eventFindTuneMethod.bind(opt_eventFindTuneMethodBinder) : 
+	    opt_eventFindTuneMethod;
 	// Run custom method,
-	opt_customMethod(applyHover, removeHover);	
+	opt_eventFindTuneMethod(applyHover, removeHover);	
     }  
 }
 
@@ -454,17 +453,25 @@ utils.style.setHoverClass = function(elt, className, opt_customMethod, opt_custo
  * current CSS class, versus its to-be css class.  Returns numerical
  * defintiion of the current and to-be states.  This is generally used
  * for animation purposes.
- *
- * @param {!Element, !string, Array.<string>=, Function=}
+ * @param {!Element} elt The clement to derive the start-end dims from.
+ * @param {!string} toBeClass The to-be class to calculate the changes from.
+ * @param {function=} opt_adjustcallback The adjust callback to apply to the
+ *    method.
+ * @param {Array.<string>=} opt_properties The properties to determine the 
+ *    start end dims from.  Defaults to utils.style.cssProperties if 
+ *    undefined.
  * @return {Object.<string.<Object.<string, string|number>>>}
+ * @public
  */
-utils.style.determineStartEndDimsCSS = function(elt, toBeClass, opt_adjustcallback, opt_properties) {
+utils.style.determineStartEndDimsCSS = function(elt, toBeClass, 
+						opt_adjustcallback, 
+						opt_properties) {
     
     //------------------    
     // Determine the end dimenions by creating a tempEndStateElt and 
     // applying the to-be CSS to it.
     //------------------
-    var tempEndStateElt = goog.dom.createDom("div", {
+    var tempEndStateElt = /**@type {!Element}*/ goog.dom.createDom("div", {
 	'id': 'tempEndStateElt' + goog.string.getUniqueString()
     });
     elt.parentNode.appendChild(tempEndStateElt);
@@ -508,27 +515,25 @@ utils.style.determineStartEndDimsCSS = function(elt, toBeClass, opt_adjustcallba
 
 
 /**
- * Gets the pixel position of an element relative to the provided
- * ancestor, using recursion.
- *
- * @param {!Element} element
- * @param {!Element} ancestor
- * @return {!Object<string, number>} The position of the element.
+ * Gets the pixel position of an element relative to the provided ancestor, 
+ * using recursion.
+ * @param {!Element} element The element to derive the results from.
+ * @param {!Element} ancestor The ancestor of element to derive the results
+ *    from.
+ * @return {!Object<string, number>} The ancestor-relatve position of the 
+ *    element.
+ * @public
  */
 utils.style.getPositionRelativeToAncestor = function(element, ancestor) {
-    var currLeft = 0;
-    var currTop = 0;
-
+    var currLeft = /**@type {!number}*/ 0;
+    var currTop = /**@type {!number}*/ 0;
     if (element.offsetParent) {
-
-	var parent = element;
+	var parent = /**@type {!Element}*/ element;
 	while (parent !== ancestor){
 	    currLeft += parent.offsetLeft;
 	    currTop += parent.offsetTop;
 	    parent = parent.offsetParent;
 	}
-	//do {
-	//} while (obj != obj.offsetParent);
 	return {'left': currLeft, 'top': currTop};
     }
 }

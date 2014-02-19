@@ -21,7 +21,6 @@ goog.require('utils.xnat');
 
 // xiv
 goog.require('xiv.Modal');
-goog.require('xiv.PathSelector');
 
 
 
@@ -280,8 +279,8 @@ xiv.prototype.getViewables_ = function(xnatPath){
  */
 xiv.prototype.onViewableGotten_ = function(viewable){
     this.storeViewable_(viewable);
-    window.console.log("NOT ADDING VIEWABLE TO MODAL YET");
-    //this.addViewableToModal_(viewable);
+    //window.console.log("NOT ADDING VIEWABLE TO MODAL YET");
+    this.addViewableToModal_(viewable);
 } 
 
 
@@ -290,15 +289,16 @@ xiv.prototype.onViewableGotten_ = function(viewable){
 /**
  * Adds a thumbnail to the modal.
  * @param {!string | !array.<string>} key
- * @param {utils.xnat.Viewable} Viewable
  * @private
  */
 xiv.prototype.addViewableToModal_ = function(Viewable){
     //window.console.log(Viewable, key)
-    var folders = xiv.extractViewableFolders_(viewable['queryUrl']);
-    window.console.log(Viewable, folders);
+    var folders = xiv.extractViewableFolders_(Viewable);
+    //window.console.log(Viewable, folders);
+    window.console.log(Viewable['thumbnailUrl']);
     this.Modal_.getThumbnailManager().createAndAddThumbnail(Viewable, 
 							    folders);
+    this.Modal_.getThumbnailManager().setHoverParent(this.Modal_.getElement());
 }
 
 
@@ -308,12 +308,11 @@ xiv.prototype.addViewableToModal_ = function(Viewable){
  * Extracts the folders in the provided path and returns a set of folders
  * for querying thumbnails. 
  *
- * @param {!string} path
+ * @param {utils.xnat.Viewable} Viewable
  * @private
  */
-xiv.extractViewableFolders_ = function(path){
-    window.console.log('extractViewableFolders', path);
-    var pathObj = utils.xnat.getPathObject(path);
+xiv.extractViewableFolders_ = function(Viewable){
+    var pathObj = utils.xnat.getPathObject(Viewable['experimentUrl']);
     var folders = [];
     for (key in pathObj){ 
 	if (goog.isDefAndNotNull(pathObj[key]) && 
@@ -322,6 +321,11 @@ xiv.extractViewableFolders_ = function(path){
 			 + ": " + pathObj[key]) 
 	}
     };
+
+    //
+    // Apply Viewable category
+    //
+    folders.push(Viewable['category']);
     return folders;
 }
 

@@ -16,9 +16,11 @@ goog.require('utils.xnat.Viewable');
  * @extends {utils.xnat.Viewable}
  */
 goog.provide('utils.xnat.Viewable.Slicer');
-utils.xnat.Viewable.Slicer = function(experimentUrl, viewableJson) {
-    this['category'] = 'Slicer';
-    goog.base(this, experimentUrl, viewableJson);
+utils.xnat.Viewable.Slicer = function(experimentUrl, viewableJson, 
+				      opt_initComplete) {
+    this['category'] = 'Slicer Scenes';
+    goog.base(this, experimentUrl, viewableJson, opt_initComplete);
+    this['sessionInfo']['Format']['value'] = '.mrb';
 }
 goog.inherits(utils.xnat.Viewable.Slicer, utils.xnat.Viewable);
 goog.exportSymbol('utils.xnat.Viewable.Slicer', utils.xnat.Viewable.Slicer);
@@ -51,6 +53,19 @@ utils.xnat.Viewable.Slicer['fileContentsKey'] = 'File Name';
 
 /**
  * @const
+ * @type {!Array.string}
+ */
+utils.xnat.Viewable.Slicer.thumbnailExtensions = [
+    'jpeg', 
+    'jpg', 
+    'png', 
+    'gif'
+];
+
+
+
+/**
+ * @const
  * @type {!string}
  */
 utils.xnat.Viewable.prototype.makeFileUrl = function(xnatFileObj) {
@@ -63,40 +78,7 @@ utils.xnat.Viewable.prototype.makeFileUrl = function(xnatFileObj) {
 
 
 
-
-
-
-/**
- * Function for sorting the slicer objects.
- *
- * @param {!Object.<String, String | Object.<String, String | Object>} a 
- *    First scan object to compare. 
- * @param {!Object.<String, String | Object.<String, String | Object>} b 
- *    Second scan object to compare.
- * @public 
- */
-utils.xnat.Viewable.Slicer.sortCompare = function(a,b) {
-    if (a['Name'][0].toLowerCase() < b['Name'][0].toLowerCase())
-	return -1;
-    if (a['Name'][0].toLowerCase() > b['Name'][0].toLowerCase())
-	return 1;
-    return 0;
-}
-
-
-
-/**
- * @const
- */
-utils.xnat.Viewable.Slicer.thumbnailExtensions = [
-    'jpeg', 
-    'jpg', 
-    'png', 
-    'gif'
-];
-
-
-utils.xnat.Viewable.Slicer.prototype.getThumbnailImage = function(){
+utils.xnat.Viewable.Slicer.prototype.getThumbnailImage = function(opt_callback){
 
     var ext = /** @type {!string} */ '';
     var i = /** @type {!number} */ 0;
@@ -117,6 +99,9 @@ utils.xnat.Viewable.Slicer.prototype.getThumbnailImage = function(){
 	    }		   
 	}
   }
+    if (opt_callback){
+	opt_callback(this);
+    }
 }
 
 

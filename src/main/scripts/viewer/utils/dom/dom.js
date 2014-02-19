@@ -2,22 +2,16 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-/**
- * Google closure includes
- */
+// goog
 goog.require('goog.dom');
-
-/**
- * utils includes
- */
+goog.require('goog.string');
 
 
 
 
 /**
  * 'utils.com' is a utility class that handles element and 
- * dom operations.
- *
+ * dom operations not provided by the JS platform or goog.dom.
  * @constructor
  */
 goog.provide('utils.dom');
@@ -28,138 +22,40 @@ goog.exportSymbol('utils.dom', utils.dom);
 
 
 /**
- * Adds both properites and methods to a given 
- * object that allow for simple callback managment:
- * add, remove and run.
- *
- * @param {!Object}
+ * Creates a set of buttons with a hovering behavior.  Assumes certain aspects
+ * of the buttons:
+ *     1) The ID prefix gets converted to a selector case to retrieve
+ *        the image src, assuming that the opt_iconSrcFolder options is 
+ *        provided.
+ *     2) The extension of the images defaults to .png.
+ *     3) The unhovered opacity of the button is .5 and the hovered opacity is
+ *        1.
+ * @param {!Array.string} idPrefixes The array of id prefixes.
+ * @param {string=}  opt_iconSrcFolder Defaults to ''. 
+ * @param {string=}  opt_iconExt Defaults to .png.
+ * @return {!Object.<string, Element>}  An object where the keys are the ids
+ *     of the button elements.
+ * @public
  */
-utils.dom.addCallbackManager = function (obj) {
-    
-    //------------------
-    // Set an object property called 'callbacks'
-    //------------------
-    obj.callbacks = {}
-    
-
-
-    //------------------
-    // Define the 'add' method.
-    //------------------
-    obj.addCallback = function (key, callback) {
-	if (!obj.callbacks[key]) {
-	    obj.callbacks[key] = [];
-	}
-	if (obj.callbacks[key].indexOf(callback) === -1) {
-	    obj.callbacks[key].push(callback);
-	}
-    }
-    
-
-
-    //------------------
-    // Define the 'remove' method.
-    //------------------
-    obj.removeCallback = function (key, callback) {		
-	var ind = obj.callbacks[key].indexOf(callback);
-	if (ind > -1) {
-	    obj.callbacks[key].splice(ind, 1);
-	}
-    }
-    
-
-
-    //------------------
-    // Define the 'run' method.
-    //------------------
-    obj.runCallbacks = function (key) {
-	for (var i = 0, len = obj.callbacks[key].length; i < len; i++) {			
-	    obj.callbacks[key][i]();
-	    
-	}
-    }
-
-}
-
-
-
-
-/**
- * Multi-browser debug output. 
- *
- * NOTE: the user should still specify the location
- * of the message in the 'msg' argument.
- *
- * @param {!string}
- */
-utils.dom.debug = function (msg) {
-    window.console && console.log(msg);
-}
-
-
-
-
-/**
- * Multi-browser acquisition of the x and y 
- * coordinates of the mouse.
- *
- * @param {event}
- */
-utils.dom.getMouseXY = function (e) {
-    if (navigator.appName === 'Microsoft Internet Explorer') {
-      tempX = e.clientX + document.body.scrollLeft;
-      tempY = e.clientY + document.body.scrollTop;
-    }
-    else {  
-
-      // grab the x-y pos.s if browser is NS
-      tempX = e.pageX;
-      tempY = e.pageY;
-    }  
-
-    if (tempX < 0) {tempX = 0;}
-    if (tempY < 0) {tempY = 0;}  
-
-    return {'x':tempX, 'y':tempY};
-}
-
-
-
-
-/**
-* @param {!Array.string} idPrefixes The array of id prefixes.
-* @param {string=}  opt_iconSrcFolder Defaults to ''. 
-* @param {string=}  opt_iconExt Defaults to .png.
-*/
-utils.dom.createBasicHoverButtonSet = function(idPrefixes, opt_iconSrcFolder, opt_iconExt){
+utils.dom.createBasicHoverButtonSet = function(idPrefixes, opt_iconSrcFolder, 
+					       opt_iconExt){
     
     if (!goog.isArray(idPrefixes)){
 	throw new TypeError('Array expected!', idPrefixes);
     }
-
     if (opt_iconSrcFolder && !goog.isString(opt_iconSrcFolder)){
 	throw new TypeError('String expected!', opt_iconSrcFolder);
     }
-
     if (opt_iconExt && !goog.isString(opt_iconExt)){
 	throw new TypeError('String expected!', opt_iconExt);
     }
 
+    var buttonSet = /**@type {Object.<string, Element>}*/{};
+    var ext = /**@type {!string}*/ opt_iconExt ? opt_iconExt : 'png';
+    var key = /**@type {!string}*/ '';
+    var i = /**@type {!number}*/ 0;
 
-    /**
-     * @dict
-     */
-    var buttonSet = {};
-
-
-    /**
-     * @type {!string}
-     */
-    var ext = opt_iconExt ? opt_iconExt : 'png';
-
-
-    var key = '';
-    for (var i=0, len = idPrefixes.length; i < len; i++){
+    for (i=0, len = idPrefixes.length; i < len; i++){
 	key = idPrefixes[i];
 	buttonSet[key] = utils.dom.createBasicHoverButton(key, {
 	    'src': opt_iconSrcFolder ? 
@@ -167,8 +63,6 @@ utils.dom.createBasicHoverButtonSet = function(idPrefixes, opt_iconSrcFolder, op
 		goog.string.toSelectorCase(key) + '.' + ext) : '',
 	})
     }
-
-
     return buttonSet;
 }
 
@@ -176,16 +70,18 @@ utils.dom.createBasicHoverButtonSet = function(idPrefixes, opt_iconSrcFolder, op
 
 
 /**
- * Creates a basic button.
- *
- * @param {!string} idPrefix 
- * @param {Object=} opt_attrs
+ * Creates a basic button.  
+ * @param {!string} idPrefix The id prefix of the button.  
+ * @param {Object.<string, string | number>=} opt_attrs The optional 
+ *    attributes of the button.
  * @param {number=} opt_mouseOverOpacity Defaults to 1.
  * @param {number=} opt_mouseOutOpacity Defaults to 0.5.
- * return {!Element}
- * @private
+ * return {!Element} The button element.
+ * @public
  */
-utils.dom.createBasicHoverButton = function(idPrefix, opt_attrs, opt_mouseOverOpacity, opt_mouseOutOpacity){
+utils.dom.createBasicHoverButton = function(idPrefix, 
+					    opt_attrs, opt_mouseOverOpacity, 
+					    opt_mouseOutOpacity){
 
     if (!goog.isString(idPrefix)){
 	throw new TypeError('String expected!');
@@ -201,16 +97,14 @@ utils.dom.createBasicHoverButton = function(idPrefix, opt_attrs, opt_mouseOverOp
 	&& !goog.isNumber(opt_mouseOutOpacity)){
 	throw new TypeError('Number expected!');
     }
-
-
-    var attrs = opt_attrs ? opt_attrs : {};
-    var buttonDiv = utils.dom.createUniqueDom('div', idPrefix, attrs);
-
+    var attrs = /**@type {!Object}*/ opt_attrs ? opt_attrs : {};
+    var buttonDiv = /**@type {!Element}*/ 
+    utils.dom.createUniqueDom('div', idPrefix, attrs);
     //
     // Make an 'img' element if there's a 'src' attrib.
     //
     if (opt_attrs && opt_attrs['src']){
-	var imgElt = goog.dom.createDom('img', {
+	var imgElt = /**@type {!Element}*/ goog.dom.createDom('img', {
 	    'src': opt_attrs['src']
 	})
 	// Restyle image to fit in div
@@ -220,8 +114,6 @@ utils.dom.createBasicHoverButton = function(idPrefix, opt_attrs, opt_mouseOverOp
 	goog.dom.append(buttonDiv, imgElt)
 	imgElt.onclick = imgElt.parentNode.onclick;
     }
-
-
     //
     // Set the opacity values
     //
@@ -233,20 +125,27 @@ utils.dom.createBasicHoverButton = function(idPrefix, opt_attrs, opt_mouseOverOp
     utils.fx.setBasicHoverStates(buttonDiv, 
 				 opt_mouseOverOpacity, 
 				 opt_mouseOutOpacity); 
-   
     return buttonDiv
 }
 
 
 
 
-
 /**
- *
- * @param {!string} type
- * @param {!string} idPrefix
- * @param {!Object} opt_attrs
- * @return {!Elemehnt}
+ * Creates a dom element with a unique id to it.  Assumes / performs the 
+ * the following:
+ *    - Takes the idPrefix to create a custom id with the prefix and 
+ *      goog.string.createUniqueString() added together.
+ *    - If the attribute 'class' is not provided in opt_attrs, assumes that
+ *      the css class assigned to the element is 
+ *      goog.string.toSelectorCase(utils.string.getLettersOnly(idPrefix))
+ * @param {!string} type The element type.
+ * @param {!string} idPrefix The idPrefix of the element.  Ids are created by 
+ *     using the prefix and then adding a goog.string.createUniqueString().
+ * @param {!Object.<string, string | number>} opt_attrs The optional attributes
+ *     of the DOM element.
+ * @return {!Element}
+ * @public
  */
 utils.dom.createUniqueDom = function (type, idPrefix, opt_attrs) {
 
@@ -259,25 +158,21 @@ utils.dom.createUniqueDom = function (type, idPrefix, opt_attrs) {
     if (opt_attrs && !goog.isObject(opt_attrs)){
 	throw new TypeError('Object expected!');
     }
-    
     /**
      * @dict
      */
-    var opt_attrs = opt_attrs && goog.isObject(opt_attrs) ? opt_attrs : {}
-
+    var opt_attrs = /**@type {!Object}*/ 
+    opt_attrs && goog.isObject(opt_attrs) ? opt_attrs : {}
 
     //
     // Allow only letters in the id prefix
     //
-    var id = utils.string.getLettersOnly(idPrefix);
-
+    var id = /**@type {!string}*/ utils.string.getLettersOnly(idPrefix);
     opt_attrs['id'] = opt_attrs['id'] ? opt_attrs['id'] : 
 	goog.string.toSelectorCase(id) 
 	+ '_' + goog.string.createUniqueString();
-
     opt_attrs['class'] = opt_attrs['class'] ? opt_attrs['class'] : 
 	goog.string.toSelectorCase(id);
-
     return goog.dom.createDom(type, opt_attrs);
 }
 
@@ -286,67 +181,67 @@ utils.dom.createUniqueDom = function (type, idPrefix, opt_attrs) {
 
 
 /**
- * Prevents the propagation of an event
- * to its parent elements.
- *
- * @param {Event}
+ * Prevents the propagation of an event to its parent elements.
+ * @param {!Event} e The event to stop the propagation of.
+ * @public
  */
 utils.dom.stopPropagation = function (e) {
-	if (!e) var e = window.event;
-		e.cancelBubble = true;
-	if (e.stopPropagation) 
-		e.stopPropagation();
+    if (!e) var e = /**@type {!Event}*/ window.event;
+    e.cancelBubble = true;
+    if (e.stopPropagation) 
+	e.stopPropagation();
 }
 
 
 
 
 /**
+ * Used if you want to validate an object's properties against a template. In
+ * this case, if the args object has properties not found in the templateArgs
+ * object.
  * Determines if there's an argument match between 'templateArgs' and 'args'
- * with template being the priority.  Applies a callback at the end
- * if needed.
- *
- * @param {!string, !Object.<string, Object>, !Object.<string, Object>, function=}
+ * with template being the priority.
+ * @param {!Object} templateArgs The args to check against.
+ * @param {!Object} args The args that require validation.
+ * @throws Error if a property doesn't exist in args that exists in 
+ *    templateArgs or if templateArgs does not contain a given property in 
+ *    args.
+ * @public
  */
-utils.dom.validateArgs = function (originString, templateArgs, args, opt_callback) {
-	
-    //------------------
-    // Check of the 'attr' key the templateArgs.
-    //------------------
-    var errorStr = "A " + originString + " has invalid arguments:";
+utils.dom.checkForExtraneousArgs = function (templateArgs, args, opt_callback) {
+    var extraneousArgStr = /**@type {!string} @const*/ 
+        'Invalid arguments detected in args:';
     for (var attr in args) { 
     	if (! (attr in templateArgs)) {
-    	    throw (errorStr + " '" + attr + "' "); 
+    	    throw (extraneousArgStr + ' \'' + attr + '\' ' ); 
     	}
-    	else{
-    	    
-	    //
-    	    // Recurse if the value is an object
-	    //
+    	else {
    	    if (args[attr].toString() === '[object Object]') {
-   		utils.dom.validateArgs(originString, templateArgs[attr], args[attr])
+   		utils.dom.validateArgs(originString, templateArgs[attr], 
+				       args[attr])
    	    } 		
     	}
     }
-
-    if (opt_callback) { opt_callback() };
 }
 
 
 
 
 /**
- * Reads in a CSS provided by the 'className' argument
- * returning an object with its properties.
- *
- * @param {!string}
- * @return {Object}
+ * Reads in a CSS provided by the 'cssClassName' argument returning an object 
+ * with properties.
+ * @param {!string} cssClassName The css class to read from.
+ * @return {Object} The classes object.
+ * @public 
  */ 
-utils.dom.readCSS = function(className) {
-    var classes = document.styleSheets[0].rules || document.styleSheets[0].cssRules
-    for(var x=0; x < classes.length;  x++) {
-        if(classes[x].selectorText == className) {
-            (classes[x].cssText) ? alert(classes[x].cssText) : alert(classes[x].style.cssText);
+utils.dom.readCSS = function(cssClassName) {
+    var classes = /**@type {!number}*/ document.styleSheets[0].rules || 
+	document.styleSheets[0].cssRules
+    var x = /**@type {!number}*/ 0;
+    for(x=0; x < classes.length; x++) {
+        if(classes[x].selectorText == cssClassName) {
+            (classes[x].cssText) ? alert(classes[x].cssText) : 
+		alert(classes[x].style.cssText);
         }
     }
     return classes;

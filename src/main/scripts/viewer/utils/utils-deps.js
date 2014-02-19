@@ -1,12 +1,8 @@
-//goog.addDependency('../../../utils/lib/X/injects/thresholdable.js', ['X.thresholdable'], ['X.base']);
+goog.addDependency('../../../utils/utils.js', ['utils', 'utils.globals'], []); 
 
 
-goog.addDependency('../../../utils/utils.js', ['utils', 'utils.globals'], [
-]); 
+goog.addDependency('../../../utils/array/array.js', ['utils.array'], []); 
 
-goog.addDependency('../../../utils/array/array.js', ['utils.array'], [
-'goog.array'
-]); 
 
 goog.addDependency('../../../utils/convert/convert.js', ['utils.convert'], [
 'goog.array'
@@ -15,13 +11,24 @@ goog.addDependency('../../../utils/convert/convert.js', ['utils.convert'], [
 
 goog.addDependency('../../../utils/dom/dom.js', ['utils.dom'], [
 'goog.dom'
+'goog.string'
+]); 
+
+
+goog.addDependency('../../../utils/style/style.js', ['utils.style'], [
+'goog.events', 
+'goog.style', 
+'goog.dom', 
+'goog.array',  
+'goog.string',  
+'utils.convert'
 ]); 
 
 
 goog.addDependency('../../../utils/fx/fx.js', ['utils.fx'], [
-'utils.style', 
 'goog.events', 
 'goog.fx.dom', 
+'goog.fx.easing', 
 'goog.fx.Transition', 
 'goog.fx.dom.Fade', 
 'goog.fx.dom.FadeInAndShow', 
@@ -30,7 +37,9 @@ goog.addDependency('../../../utils/fx/fx.js', ['utils.fx'], [
 'goog.fx.dom.Resize', 
 'goog.fx.dom.Slide', 
 'goog.fx.AnimationParallelQueue', 
-'goog.fx.Animation'
+'goog.fx.Animation',
+'utils.style', 
+'utils.convert', 
 ]); 
 
 
@@ -39,18 +48,7 @@ goog.addDependency('../../../utils/string/string.js', ['utils.string'], [
 ]); 
 
 
-goog.addDependency('../../../utils/style/style.js', ['utils.style'], [
-'goog.style', 
-'goog.dom', 
-'goog.array', 
-'goog.events', 
-'utils.dom', 
-'utils.convert'
-]); 
-
-
-goog.addDependency('../../../utils/slicer/slicer.js', ['utils.slicer'], [
-]);
+goog.addDependency('../../../utils/slicer/slicer.js', ['utils.slicer'], []);
 
 
 goog.addDependency('../../../utils/slicer/mrbProperties/mrbProperties.js', ['utils.slicer.mrbProperties'], [
@@ -96,12 +94,12 @@ goog.addDependency('../../../utils/xnat/Slicer/Slicer.js',
 
 
 goog.addDependency('../../../utils/events/events.js', ['utils.events'], [
-'goog.events',
-'utils.style'    
+'utils.events.EventManager'    
 ]);
 
 
-goog.addDependency('../../../utils/events/EventManager/EventManager.js', ['utils.events.EventManager'], [
+goog.addDependency('../../../utils/events/EventManager/EventManager.js', 
+		   ['utils.events.EventManager'], [
 'goog.array'    
 ]);  
 
@@ -122,17 +120,24 @@ goog.addDependency('../../../utils/ui/ScrollableContainer/ScrollableContainer.js
 'goog.string',
 'goog.dom', 
 'goog.events', 
+'goog.object', 
 'goog.ui.AnimatedZippy', 
 'goog.ui.Zippy', 
+'goog.ui.Zippy.Events', 
 'utils.dom', 
-'utils.ui.GenericSlider'
+'utils.ui.GenericSlider',
+'utils.convert',
+'utils.style',
+'utils.string',
 ]); 
 
 
-goog.addDependency('../../../utils/ui/Thumbnail/Thumbnail.js', ['utils.ui.Thumbnail'], [
+goog.addDependency('../../../utils/ui/Thumbnail/Thumbnail.js', 
+['utils.ui.Thumbnail'], [
 'goog.dom',
 'goog.array',
 'goog.events',
+'goog.string',
 'utils.dom',
 'utils.style',
 'utils.events.EventManager'

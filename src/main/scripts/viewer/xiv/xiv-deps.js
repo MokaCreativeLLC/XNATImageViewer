@@ -2,6 +2,19 @@
 
 goog.addDependency('../../../xiv/Widget/Widget.js', ['xiv.Widget'], [ 'utils.style', 'utils.dom', 'goog.dom']); 
 
+goog.addDependency('../../../xiv/xiv.js', ['xiv'], [ 
+    'goog.dom',
+    'goog.dom.fullscreen',
+    'goog.fx',
+    'goog.events',
+    'X.loader',
+    'X.parserIMA',
+    'utils.fx',
+    'utils.style',
+    'utils.xnat',
+    'xiv.Modal',
+]); 
+
 
 goog.addDependency('../../../xiv/Modal/Modal.js', ['xiv.Modal'], [
 'utils.xnat',
@@ -15,21 +28,6 @@ goog.addDependency('../../../xiv/Modal/Modal.js', ['xiv.Modal'], [
 'xiv.ThumbnailManager',
 ]); 
 
-
-goog.addDependency('../../../xiv/PathSelector/PathSelector.js', ['xiv.PathSelector'], [
-'goog.dom',
-'goog.string',
-'xiv.Widget'
-]);
-
-goog.addDependency('../../../xiv/xiv.js', ['xiv'], [ 
-    'goog.fx', 
-    'goog.events', 
-    'goog.net.XhrIo', 
-    'utils.style', 
-    'xiv.Modal', 
-    'xiv.PathSelector'
-]); 
 
 goog.addDependency('../../../xiv/ThumbnailManager/ThumbnailManager.js', 
 		   ['xiv.ThumbnailManager'], [

@@ -10,7 +10,6 @@ goog.require('goog.array');
 goog.require('goog.events');
 goog.require('goog.string');
 
-
 // utils
 goog.require('utils.dom');
 goog.require('utils.events');
@@ -40,7 +39,8 @@ utils.ui.GenericSlider = function (opt_args) {
     this.element_ = goog.dom.createDom('div', {
 	'id': 'utils.ui.GenericSlider_Widget' + goog.string.createUniqueString()
     });
-    this.decorate(this.element_); // Applies the 'Slider' properties to the element
+    // Applies the 'Slider' properties to the element
+    this.decorate(this.element_);
 
 
 
@@ -136,7 +136,6 @@ utils.ui.GenericSlider.prototype.getThumb = function(){
  * Runs the callbacks and manages the mousewheel events when 
  * detected over the mousewheel elements contained within the
  * MouseWheelHandlers_ variable.
- * 
  * @param {Event} event
  * @private
  */
@@ -152,12 +151,14 @@ utils.ui.GenericSlider.prototype.onMouseWheelScroll_ = function (event) {
 /**
  * Binds the mouse wheel scroll events appropriated for the slider through
  * the provided element.
- *
- * @param {!Element} element The element to listen for the mousewheel event that triggers the slider to move.
- * @param {function=} opt_callback (Optional) The callback that occurs as the mousewheel scrolls.
+ * @param {!Element} element The element to listen for the mousewheel event 
+ *    that triggers the slider to move.
+ * @param {function=} opt_callback (Optional) The callback that occurs as the
+ *    mousewheel scrolls.
  * @public
  */
-utils.ui.GenericSlider.prototype.bindToMouseWheel = function (element, opt_callback) {
+utils.ui.GenericSlider.prototype.bindToMouseWheel = function (element, 
+							      opt_callback) {
     var mouseWheelHandler = new goog.events.MouseWheelHandler(element);
     mouseWheelHandler.addEventListener(goog.events.MouseWheelHandler.EventType.MOUSEWHEEL,  
 				       this.onMouseWheelScroll_, false, this);
@@ -278,7 +279,6 @@ utils.ui.GenericSlider.prototype.initEvents_ = function() {
  * Finds the thumbnail element associated with the parent class.
  * This exists because it's not overtly provided in the 
  * inheritance.
- *
  * @return {!Element} The thumbnail element.
  */
 utils.ui.GenericSlider.prototype.findThumbElement_ = function() {
@@ -292,12 +292,20 @@ utils.ui.GenericSlider.prototype.findThumbElement_ = function() {
 
 
 
-utils.ui.GenericSlider.CSS_CLASS_PREFIX = /**@type {string} @expose @const*/ goog.getCssName('utils-ui-genericslider');
-utils.ui.GenericSlider.ELEMENT_CLASS_PREFIX = /**@type {string} @expose @const*/ utils.ui.GenericSlider.CSS_CLASS_PREFIX;
-utils.ui.GenericSlider.TRACK_CLASS_PREFIX = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.GenericSlider.CSS_CLASS_PREFIX, 'track');
-utils.ui.GenericSlider.THUMB_CLASS_PREFIX = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.GenericSlider.CSS_CLASS_PREFIX, 'thumb');
-utils.ui.GenericSlider.THUMB_HOVERED_BORDER_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.GenericSlider.THUMB_CLASS_PREFIX, 'hovered-border');
-utils.ui.GenericSlider.THUMB_HOVERED_COLOR_CLASS = /**@type {string} @expose @const*/ goog.getCssName(utils.ui.GenericSlider.THUMB_CLASS_PREFIX, 'hovered-color');
+utils.ui.GenericSlider.CSS_CLASS_PREFIX = /**@type {string} @expose@const*/ 
+goog.getCssName('utils-ui-genericslider');
+utils.ui.GenericSlider.ELEMENT_CLASS_PREFIX =/**@type {string} @expose @const*/
+utils.ui.GenericSlider.CSS_CLASS_PREFIX;
+utils.ui.GenericSlider.TRACK_CLASS_PREFIX = /**@type {string} @expose @const*/ 
+goog.getCssName(utils.ui.GenericSlider.CSS_CLASS_PREFIX, 'track');
+utils.ui.GenericSlider.THUMB_CLASS_PREFIX = /**@type {string} @expose @const*/ 
+goog.getCssName(utils.ui.GenericSlider.CSS_CLASS_PREFIX, 'thumb');
+utils.ui.GenericSlider.THUMB_HOVERED_BORDER_CLASS = 
+/**@type {string} @expose @const*/ 
+goog.getCssName(utils.ui.GenericSlider.THUMB_CLASS_PREFIX, 'hovered-border');
+utils.ui.GenericSlider.THUMB_HOVERED_COLOR_CLASS = 
+/**@type {string} @expose @const*/ 
+goog.getCssName(utils.ui.GenericSlider.THUMB_CLASS_PREFIX, 'hovered-color');
 
 
 
