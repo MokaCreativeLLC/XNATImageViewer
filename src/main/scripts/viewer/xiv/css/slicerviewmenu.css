@@ -1,0 +1,69 @@
+/*
+ * Standard styling for the slicerview menu
+ *
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.xiv-slicerviewmenu {
+    cursor: pointer;
+    position: absolute;
+    position: absolute;
+    top: 2.5%;
+    left: 2.5%;
+    width: 90%;
+    height: 90%;
+    cursor: pointer;
+    z-index: 5000;
+}
+
+
+
+.xiv-slicerviewmenu-headertext {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    font-size: 14;		
+    font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
+    color : rgb(255,255,255);  
+}
+
+
+.xiv-slicerviewmenu-thumbnail {
+    width: 100%;
+    height: 176px;
+}
+
+
+.xiv-slicerviewmenu-thumbnail-image {
+    width: 160px;
+    height: 160px;
+    top: 8px;
+    left: 8px;	
+}
+
+
+.xiv-slicerviewmenu-thumbnail-displaytext {
+    position: absolute;
+    height: 70px;
+    top: 8px;
+    left: 176px;
+    font-size: 9;		
+    font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
+    color : rgb(255,255,255);  
+    line-height: 17px;
+    opacity: 1;
+	
+}
+
+
+.xiv-slicerviewmenu-thumbnailgallery {
+    position: absolute;
+    top: 8.5%;
+    height: 90%;
+    width: 100%;
+    left: 0px;
+    opacity: 1;
+    border: solid 1px rgb(155,155,155);
+}

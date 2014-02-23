@@ -1,0 +1,113 @@
+/*
+ * Standard styling for the ViewboxTabs
+ *
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.xiv-viewboxtabs {
+    height: 15px;
+    width: 100%;
+    position: absolute;
+    top: 400px;
+    left: 0px;
+    border-width: 1px;
+    background-color: rgb(35, 35, 35);
+}
+
+
+	
+.xiv-viewboxtabs-tab {
+    position: absolute;
+    top: 0px;	
+    color: white;
+    font-size: 10px;
+    font-family: Helvetica, 'Helvetica neue', Arial, sans-serif;
+    background-color: rgb(0,0,0);
+    height: 14px;
+    cursor: pointer;
+    border: solid 1px;
+    border-top-color: rgb(60, 60, 60);
+    border-right-color: rgb(60, 60, 60);
+    border-left-color: rgb(60, 60, 60);
+    border-bottom-color: rgba(0, 0, 0, 0);
+}
+
+
+.xiv-viewboxtabs-tab-active, .xiv-viewboxtabs-tab-hovered {
+    border-top-color: rgb(120, 120, 120);
+    border-right-color: rgb(120, 120, 120);
+    border-left-color: rgb(120, 120, 120);
+    border-bottom-color: rgba(0, 0, 0, 0);
+}
+
+
+.xiv-viewboxtabs-tab-active {
+    z-index: 3;
+}
+
+	
+.xiv-viewboxtabs-tabicon {
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    margin-left: -6px;
+    height: 11px;
+    width: 11px;
+    opacity: .5;
+    z-index: 10001;
+    color: white;
+}
+
+
+
+.xiv-viewboxtabs-tabicon-info {
+    background: rgb(50,0,0);
+    content: url('images/viewer/Icons/InfoIcon.png');
+    z-Index: 100000;
+}
+
+
+.xiv-viewboxtabs-tabicon-3dmenu {
+    content: url('images/viewer/Icons/3DMenu.png');
+}
+
+.xiv-viewboxtabs-tabicon-2dmenu {
+    content: url('images/viewer/Icons/2DMenu.png');
+}
+
+
+
+
+.xiv-viewboxtabs-tabicon-mouseover {
+    opacity: 1;
+}
+
+	
+.xiv-viewboxtabs-tabpage {
+    position: absolute;
+    top: 15px;
+    color: white;
+    font-family: Helvetica, 'Helvetica neue', Arial, sans-serif;
+    background-color: rgb(0,0,0);
+    height: 0px;
+    width: 100%;
+    border: solid 1px rgb(60, 60, 60);
+    visibility: hidden;
+}
+
+
+.xiv-viewboxtabs-tabpage-active {
+    border: solid 1px rgb(120, 120, 120);
+    visibility: visible;
+    z-index: 2;
+}
+
+
+.xiv-viewboxtabs-tabpage-scrollgallery {
+    top: 15px;
+    width: 100%;
+    height: 92%;
+    border: none;
+}
