@@ -205,7 +205,7 @@ utils.style.dims = function (elt, property) {
     // go right to the kill...
     //------------------
     if (property && typeof property === 'string') {
-	var val /**@type{!number | !string}*/ = ;
+	var val /**@type{!number | !string}*/ = '';
 	
 	switch(property) {
 	case 'height':

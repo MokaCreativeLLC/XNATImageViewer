@@ -171,7 +171,7 @@ utils.ui.ThumbnailGallery.prototype.addThumbnail = function(thumbnail,
     this.Thumbnails_[goog.getUid(thumbnail)] = thumbnail;
     // Set folders
 
-    window.console.log(opt_folders);
+    //window.console.log(opt_folders);
     this.addElementAndFolders(thumbnail.getElement(), 
 			      (opt_folders === undefined) ? ['parentFolder'] : 
 			      goog.isArray(opt_folders) ? opt_folders : 

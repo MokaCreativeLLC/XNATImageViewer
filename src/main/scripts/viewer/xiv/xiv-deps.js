@@ -23,6 +23,7 @@ goog.addDependency('../../../xiv/Modal/Modal.js', ['xiv.Modal'], [
     'goog.dom.fullscreen',
     'goog.array',
     'goog.string',
+    'goog.string.path',
     'goog.fx',
     'goog.fx.easing',
     'goog.fx.AnimationParallelQueue',
@@ -54,9 +55,9 @@ goog.addDependency('../../../xiv/ThumbnailManager/ThumbnailManager.js',
 		       'goog.array',
 		       'goog.fx.DragDrop', 
 		       'goog.fx.DragDropGroup', 
-		       'utils.events', 
 		       'utils.string', 
 		       'utils.fx', 
+		       'utils.events.EventManager', 
 		       'utils.ui.ThumbnailGallery',
 		       'utils.ui.Thumbnail',
 		       'xiv.Thumbnail'
@@ -73,7 +74,6 @@ goog.addDependency('../../../xiv/Thumbnail/Thumbnail.js', ['xiv.Thumbnail'], [
 
 
 
-
 goog.addDependency('../../../xiv/ViewBoxManager/ViewBoxManager.js', 
 ['xiv.ViewBoxManager'], [
 'goog.array',
@@ -85,7 +85,7 @@ goog.addDependency('../../../xiv/ViewBoxManager/ViewBoxManager.js',
 'goog.fx.AnimationParallelQueue',
 'goog.ui.Tooltip',
 'utils.style',
-'utils.events',
+'utils.events.EventManager',
 'xiv.ViewBox'
 ]);
 
@@ -125,6 +125,7 @@ goog.addDependency('../../../xiv/ViewBox/ViewBox.js', ['xiv.ViewBox'], [
 'utils.style',
 'utils.array',
 'utils.fx',
+'utils.events.EventManager',
 'xiv',
 'xiv.Widget',
 'xiv.ViewLayoutManager',
@@ -185,6 +186,7 @@ goog.addDependency('../../../xiv/ContentDivider/ContentDivider.js', ['xiv.Conten
 'goog.fx',
 'utils.dom',
 'utils.style',
+'utils.events.EventManager',
 'xiv.ViewBoxTabs',
 'xiv.Widget',
 'xiv',
@@ -249,11 +251,13 @@ goog.addDependency('../../../xiv/XtkPlaneManager/XtkPlaneManager.js', ['xiv.XtkP
 ]);
 
 
-goog.addDependency('../../../xiv/SlicerViewMenu/SlicerViewMenu.js', ['xiv.SlicerViewMenu'], [
+goog.addDependency('../../../xiv/SlicerViewMenu/SlicerViewMenu.js', 
+['xiv.SlicerViewMenu'], [
 'goog.array',
 'utils.dom',
 'utils.ui.Thumbnail',
 'utils.ui.ScrollableContainer',
+'utils.events.EventManager',
 'xiv',
 'xiv.Widget',
 'xiv.ViewBox',

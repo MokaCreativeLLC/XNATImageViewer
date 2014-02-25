@@ -22,7 +22,7 @@ utils.xnat.Path = function(url){
     this['resources'] = null;
     this['files'] = null;
 
-    utils.xnat.Path.deconstructUrl(url).bind(this);
+    this.deconstructUrl_(url);
 }
 goog.exportSymbol('utils.xnat.Path', utils.xnat.Path);
 
@@ -30,21 +30,21 @@ goog.exportSymbol('utils.xnat.Path', utils.xnat.Path);
 
 /**
  * Deconstructs the URL into its various components.
+ * @param {!utils.xnat.Path} the pa.
  * @param {!string} url The URL to derive the path information from.
- * @public
+ * @private
  */
-utils.xnat.Path.deconstructUrl = function(url) {
+utils.xnat.Path.prototype.deconstructUrl_ = function(url) {
     var splitter = /** @type {!string}*/ url.split('/');
     var levelHasValue = /** @type {!boolean}*/ true;
     var i = /** @type {!number}*/ 0;
     var j = /** @type {!number}*/ 0;
     var len = /** @type {!number}*/ splitter.length;
 
-    for (i=0, i<len; i++){
+    for (i=0; i<len; i++) {
 	// Stay within the loop only if the XNAT level has
 	// a value associated with it (i.e. a next position in the array)
-	levelHasValue = (this.hasOwnProperty(splitter[i]) && 
-			 splitter[i+1]);
+	levelHasValue = (this.hasOwnProperty(splitter[i]) && splitter[i+1]);
 	if (!levelHasValue) continue
 
 	// The 'prefix' string -- usually the server name

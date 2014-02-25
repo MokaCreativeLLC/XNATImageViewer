@@ -75,7 +75,7 @@ utils.xnat.Viewable.Scan.prototype.getThumbnailImage = function(opt_callback){
     this['files'] = this['files'].sort(utils.array.naturalCompare);
     var imgInd = /** @type {!number} */
     Math.floor((this['files'].length) / 2);
-    window.console.log(this['files'], this['files'].length, imgInd);
+    //window.console.log(this['files'], this['files'].length, imgInd);
     this['thumbnailUrl'] = this['files'][imgInd] + 
 	utils.xnat.JPEG_CONVERT_SUFFIX;
     if (opt_callback){

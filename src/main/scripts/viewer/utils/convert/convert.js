@@ -200,7 +200,7 @@ utils.convert.objectToArray = function (val) {
 	throw new TypeError('Object expected!', val);
     }
     var returnable = /**@type {!Array.Object}*/[];
-    var key = /**@type {!string}*/ ''d;
+    var key = /**@type {!string}*/ '';
     for (key in val){ 
 	returnable = returnable.concat(val[key])
     }

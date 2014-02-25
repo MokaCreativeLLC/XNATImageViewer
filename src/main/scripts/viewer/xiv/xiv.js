@@ -73,14 +73,6 @@ var xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
     this.Viewables_ = {};
 
 
-
-    /**
-     * @type {!xiv.PathSelector}
-     * @private
-     */
-    this.PathSelector_ = new xiv.PathSelector();
-
-
     this.createModal_();
 };
 goog.exportSymbol('xiv', xiv);
@@ -258,7 +250,7 @@ xiv.prototype.addViewableToModal_ = function(Viewable){
     var folders = /**@type {!Array.string}*/ 
     xiv.extractViewableFolders_(Viewable);
     //window.console.log(Viewable, folders);
-    window.console.log(Viewable['thumbnailUrl']);
+    //window.console.log(Viewable['thumbnailUrl']);
     this.Modal_.getThumbnailManager().createAndAddThumbnail(Viewable, 
 							    folders);
     this.Modal_.getThumbnailManager().setHoverParent(this.Modal_.getElement());
@@ -272,7 +264,7 @@ xiv.prototype.addViewableToModal_ = function(Viewable){
  */
 xiv.prototype.createModal_ = function(){
     this.Modal_ = /**@type {!xiv.Modal}*/ new xiv.Modal(this.iconUrl_);
-    this.Modal_.setMode(mode);
+    this.Modal_.setMode('windowed');
     this.setModalButtonCallbacks_();
     window.onresize = function () { 
 	this.Modal_.updateStyle() 
@@ -307,11 +299,15 @@ xiv.prototype.storeViewable_ = function(viewable, path) {
 xiv.extractViewableFolders_ = function(Viewable){
     var pathObj =  /**@type {!utils.xnat.Path}*/
     new utils.xnat.Path(Viewable['experimentUrl']);
+    
     var folders = /**@type {!Array.string}*/ [];
     var key = /**@type {!string}*/ '';
+    var keyValid = /**@type {string}*/ utils.xnat.folderAbbrev[key];
+
+    //window.console.log("PATH OBJ", pathObj, "key valid", keyValid);
     for (key in pathObj){ 
 	if (goog.isDefAndNotNull(pathObj[key]) && 
-	    key !== 'prefix'){
+	    key !== 'prefix' && utils.xnat.folderAbbrev.hasOwnProperty(key)){
 	    folders.push(utils.xnat.folderAbbrev[key] 
 			 + ": " + pathObj[key]) 
 	}

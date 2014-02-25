@@ -13,7 +13,7 @@ goog.require('goog.fx.AnimationParallelQueue');
 goog.require('goog.ui.Tooltip');
 
 // utils
-goog.require('utils.events');
+goog.require('utils.events.EventManager');
 goog.require('utils.style');
 
 // xiv
@@ -71,7 +71,8 @@ xiv.ViewBoxManager = function (xivModal) {
 
 
     // events
-    utils.events.addEventManager(this, xiv.ViewBoxManager.EventType);
+    utils.events.EventManager.addEventManager(this, 
+					      xiv.ViewBoxManager.EventType);
 }
 goog.exportSymbol('xiv.ViewBoxManager', xiv.ViewBoxManager);
 

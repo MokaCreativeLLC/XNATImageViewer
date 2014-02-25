@@ -8,6 +8,7 @@ goog.require('goog.dom');
 goog.require('goog.dom.fullscreen');
 goog.require('goog.array');
 goog.require('goog.string');
+goog.require('goog.string.path');
 goog.require('goog.fx');
 goog.require('goog.fx.easing');
 goog.require('goog.fx.AnimationParallelQueue');
@@ -384,7 +385,7 @@ xiv.Modal.prototype.getMode = function() {
  * @public
  */
 xiv.Modal.prototype.highlightInUseThumbnails = function () {
-    window.console.log("HIGHTLIGHT IN USE THUMBNAILS!");
+    //window.console.log("HIGHTLIGHT IN USE THUMBNAILS!");
  
     // Unhighlight all thumbnails.
     this.ThumbnailManager_.loop(function(Thumbnail){  
@@ -617,7 +618,7 @@ xiv.Modal.prototype.deriveFinalHeightsAndWidths_ = function (modalDims) {
 	this._dims['height'] = this._dims['ViewBox']['height'] * 
 				    this._dims['ViewBox']['rows'];
         this._dims['height'] += xiv.Modal.VIEWBOX_VERT_MGN  * 
-				     this._dims['ViewBox']['rows'] - 1); 
+				     (this._dims['ViewBox']['rows'] - 1); 
 	this._dims['height'] += xiv.Modal.EXPANDBUTTON_W * 2;
 
     }
@@ -733,6 +734,7 @@ xiv.Modal.prototype.updateStyle_ViewBoxes_ = function(){
  * @private
  */
 xiv.Modal.prototype.setIconUrl_ = function(opt_iconUrl) {
+    //window.console.log(opt_iconUrl);
     if (opt_iconUrl && goog.isString(opt_iconUrl)){
 	this.iconUrl_ = goog.string.path.join(opt_iconUrl, 
 			xiv.Modal.ID_PREFIX.replace('.','/'));
@@ -856,7 +858,7 @@ xiv.Modal.prototype.setFullScreenButtonCallbacks_ = function(){
  */
 xiv.Modal.prototype.adjustStyleToMode_ = function(){
 
-    window.console.log("ADJUST MODE", this.mode_);
+    //window.console.log("ADJUST MODE", this.mode_);
 
     if (this.mode_ === 'popup' || this.mode_ === 'fullScreen'){
 	goog.dom.classes.add(this.background_, 

@@ -12,7 +12,7 @@ goog.require('goog.string');
 
 // utils
 goog.require('utils.dom');
-goog.require('utils.events');
+goog.require('utils.events.EventManager');
 
 
 
@@ -60,7 +60,8 @@ utils.ui.GenericSlider = function (opt_args) {
 
 
     // Events
-    utils.events.addEventManager(this, utils.ui.GenericSlider.EventType);
+    utils.events.EventManager.addEventManager(this, 
+					      utils.ui.GenericSlider.EventType);
 
     // Other init calls.
     this.initEvents_();
@@ -310,7 +311,7 @@ utils.ui.GenericSlider.prototype.findThumbElement_ = function() {
     goog.dom.getChildren(this.element_);
     var i = /**@type{!number}*/ 0;
     var len = /**@type{!number}*/ children.length;
-    for (i=0, i < len; i++) {
+    for (i=0; i < len; i++) {
 	if (children[i].className === 'goog-slider-thumb') {
 	    return children[i];
 	}		

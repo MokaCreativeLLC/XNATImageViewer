@@ -9,8 +9,16 @@ goog.addDependency('../../../utils/convert/convert.js', ['utils.convert'], [
 ]); 
 
 
+goog.addDependency('../../../utils/events/events.js', ['utils.events'], []);
+
+goog.addDependency('../../../utils/events/EventManager.js', 
+		   ['utils.events.EventManager'], [
+'goog.array'    
+]); 
+
+
 goog.addDependency('../../../utils/dom/dom.js', ['utils.dom'], [
-'goog.dom'
+'goog.dom',
 'goog.string'
 ]); 
 
@@ -66,8 +74,8 @@ goog.addDependency('../../../utils/xnat/xnat.js', ['utils.xnat'], [
 'goog.object',
 'utils.dom',
 'utils.array',
-'utils.xnat.Viewable'
-'utils.xnat.Viewable.Scan'
+'utils.xnat.Viewable',
+'utils.xnat.Viewable.Scan',
 'utils.xnat.Viewable.Slicer'
 ]);
 
@@ -101,18 +109,6 @@ goog.addDependency('../../../utils/xnat/Slicer/Slicer.js',
 
 
 
-goog.addDependency('../../../utils/events/events.js', ['utils.events'], [
-'utils.events.EventManager'    
-]);
-
-
-goog.addDependency('../../../utils/events/EventManager/EventManager.js', 
-		   ['utils.events.EventManager'], [
-'goog.array'    
-]);  
-
-
-
 goog.addDependency('../../../utils/ui/GenericSlider/GenericSlider.js', 
 ['utils.ui.GenericSlider'], [
 'goog.ui.Slider',
@@ -122,7 +118,7 @@ goog.addDependency('../../../utils/ui/GenericSlider/GenericSlider.js',
 'goog.array',
 'goog.events',
 'utils.dom',
-'utils.events'
+'utils.events.EventManager'
 ]);  
 
 
@@ -138,7 +134,7 @@ goog.addDependency('../../../utils/ui/ScrollableContainer/ScrollableContainer.js
 'utils.ui.GenericSlider',
 'utils.convert',
 'utils.style',
-'utils.string',
+'utils.string'
 ]); 
 
 

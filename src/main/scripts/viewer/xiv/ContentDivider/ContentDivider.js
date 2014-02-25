@@ -12,6 +12,7 @@ goog.require('goog.array');
 // utils
 goog.require('utils.dom');
 goog.require('utils.style');
+goog.require('utils.events.EventManager');
 
 // xiv
 goog.require('xiv.Widget');
@@ -66,7 +67,8 @@ xiv.ContentDivider = function () {
     //
     // Event manager
     //
-    utils.events.addEventManager(this, xiv.ContentDivider.EventType);
+    utils.events.EventManager.addEventManager(this, 
+					      xiv.ContentDivider.EventType);
 
 
 

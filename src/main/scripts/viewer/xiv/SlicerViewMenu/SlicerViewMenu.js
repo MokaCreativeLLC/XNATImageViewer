@@ -11,7 +11,7 @@ goog.require('utils.dom');
 goog.require('utils.style');
 goog.require('utils.fx');
 goog.require('utils.ui.ThumbnailGallery');
-goog.require('utils.events');
+goog.require('utils.events.EventManager');
 
 
 
@@ -56,7 +56,8 @@ xiv.SlicerViewMenu = function () {
     //
     // Events
     //
-    utils.events.addEventManager(this, xiv.SlicerViewMenu.EventType);
+    utils.events.EventManager.addEventManager(this, 
+					      xiv.SlicerViewMenu.EventType);
 
 
 

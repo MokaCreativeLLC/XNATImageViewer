@@ -32,12 +32,12 @@ utils.xnat.Viewable = function(experimentUrl, viewableJson, opt_initComplete) {
     this['pathObj'] = /** @type {!utils.xnat.Path} */
     new utils.xnat.Path(this['queryUrl']);
 
-    window.console.log("QUERY URL", opt_initComplete);
+    //window.console.log("QUERY URL", opt_initComplete);
 
     utils.xnat.Viewable.applyProperties(this);
 
     this.getFiles(function(){
-	window.console.log("ON FILES GOTTEN");
+	//window.console.log("ON FILES GOTTEN");
 	this.onFilesGotten_(opt_initComplete);
     }.bind(this));    
 }
@@ -102,6 +102,7 @@ utils.xnat.Viewable.applyProperties = function(obj){
  */
 utils.xnat.Viewable.loopFolderContents = function(viewableFolderUrl, callback) {
     utils.xnat.jsonGet(viewableFolderUrl, function(viewablesJson){
+	//window.console.log(viewablesJson);
 	goog.array.forEach(viewablesJson, function(viewable){
 	    //window.console.log("VIEWABLE:", viewable);
 	    callback(viewable)
@@ -167,7 +168,7 @@ utils.xnat.sortXnatPropertiesArray = function (viewables, keyDepthArr){
 utils.xnat.Viewable.prototype.onFilesGotten_ = function(opt_initComplete){
     this.getThumbnailImage(function(){
 	if (opt_initComplete){
-	    window.console.log("INIT COMPLETE", this['thumbnailUrl']);
+	    //window.console.log("INIT COMPLETE", this['thumbnailUrl']);
 	    opt_initComplete(this)
 	}
     }.bind(this));
@@ -222,8 +223,9 @@ utils.xnat.Viewable.getViewables = function(url, anonViewable, opt_callback){
     url + '/' + anonViewable['folderQuerySuffix']
     var viewable;
 
-    //window.console.log("HERE", url, queryFolder);
+    //window.console.log('url:', url, '\nqueryFolder:', queryFolder);
     utils.xnat.Viewable.loopFolderContents(queryFolder, function(scanJson){
+	//window.console.log(scanJson, pathObj);
 	viewable = new anonViewable(pathObj.pathByLevel('experiments'), 
 				    scanJson, opt_callback)
 	//window.console.log(viewable);

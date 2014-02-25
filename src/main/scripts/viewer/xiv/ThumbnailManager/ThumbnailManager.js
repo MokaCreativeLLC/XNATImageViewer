@@ -12,7 +12,7 @@ goog.require('goog.fx.DragDrop');
 goog.require('goog.fx.DragDropGroup');
 
 // utils
-goog.require('utils.events');
+goog.require('utils.events.EventManager');
 goog.require('utils.string');
 goog.require('utils.fx');
 goog.require('utils.ui.Thumbnail');
@@ -53,7 +53,8 @@ xiv.ThumbnailManager = function () {
 
 
     // events
-    utils.events.addEventManager(this, xiv.ThumbnailManager.EventType);
+    utils.events.EventManager.addEventManager(this, 
+					      xiv.ThumbnailManager.EventType);
 
     // inits
     this.createThumbnailGallery_();
@@ -213,7 +214,7 @@ function(_Viewable, folders) {
  * @public
  */
 xiv.ThumbnailManager.prototype.createThumbnail = function(_Viewable) {
-    window.console.log(_Viewable['thumbnailUrl']);
+    //window.console.log(_Viewable['thumbnailUrl']);
     var thumbnail = /**@type {!xiv.Thumbnail}*/ new xiv.Thumbnail(_Viewable);
     thumbnail['EVENTS'].onEvent('CLICK',  function(){
 	//window.console.log("THUM", thumbnail);
@@ -318,7 +319,7 @@ xiv.ThumbnailManager.prototype.createThumbnailGallery_ = function() {
  * @private
  */
 xiv.ThumbnailManager.prototype.initDragDrop_ = function(){
-    window.console.log("INIT DRAG DROP");
+    //window.console.log("INIT DRAG DROP");
 
     // Define the xiv.Thumbnail clone, for dragging.
     this.thumbnailDragDropGroup_.createDragElement = 
@@ -359,7 +360,7 @@ xiv.ThumbnailManager.prototype.initDragDrop_ = function(){
  * @private
  */
 xiv.ThumbnailManager.prototype.createDragElement_ = function(srcElt) {
-    window.console.log("CREATE DRAG ELEMENT");
+    //window.console.log("CREATE DRAG ELEMENT");
 
     while (srcElt) {
 	if (srcElt.getAttribute('thumbnailid')) {
@@ -367,11 +368,11 @@ xiv.ThumbnailManager.prototype.createDragElement_ = function(srcElt) {
 	}
 	srcElt = srcElt.parentNode;
     }
-    window.console.log(srcElt, this.thumbs_);
+    //window.console.log(srcElt, this.thumbs_);
     
     var originalThumbnail = /**@type {!Element}*/ goog.dom.getElement(
 	srcElt.getAttribute('thumbnailid'));  
-    window.console.log(originalThumbnail);
+    //window.console.log(originalThumbnail);
     var Thumb = /**@type {!Element}*/
     this.thumbs_[originalThumbnail.getAttribute('id')];
 

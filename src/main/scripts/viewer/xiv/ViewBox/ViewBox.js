@@ -15,6 +15,7 @@ goog.require('utils.dom');
 goog.require('utils.style');
 goog.require('utils.array');
 goog.require('utils.fx');
+goog.require('utils.events.EventManager');
 
 // xiv
 goog.require('xiv');
@@ -81,7 +82,8 @@ xiv.ViewBox = function (opt_args) {
      * @type {?xiv.ViewLayoutMenu}
      * @private
      */
-    this.ViewLayoutMenu_ = new xiv.ViewLayoutMenu(this.ViewLayoutManager_.getViewLayouts());
+    this.ViewLayoutMenu_ = new xiv.ViewLayoutMenu(
+	this.ViewLayoutManager_.getViewLayouts());
 
 
 
@@ -184,7 +186,7 @@ xiv.ViewBox = function (opt_args) {
 
 
     // events
-    utils.events.addEventManager(this, xiv.ViewBox.EventType);
+    utils.events.EventManager.addEventManager(this, xiv.ViewBox.EventType);
 
     //------------------
     // Style updates

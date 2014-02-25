@@ -11,9 +11,10 @@ goog.require('goog.events');
 
 // utils
 goog.require('utils.dom');
+goog.require('utils.convert');
+goog.require('utils.style');
+goog.require('utils.string');
 goog.require('utils.ui.GenericSlider');
-goog.require('utils.ui.convert');
-goog.require('utils.ui.style');
 
 
 
@@ -82,21 +83,23 @@ goog.exportSymbol('utils.ui.ScrollableContainer', utils.ui.ScrollableContainer);
  * The restricted properties struct that define a set of contents for the 
  * scrollable container.
  * @constructor
- * @struct
+ * @dict
  * @param {Element} header The zippy header element.
+ * @param {Element} content The zippy content element.
  * @param {Element} headerLabel The zippy header label element.
  * @param {Element} expandIcon The expand icon of the scrollable container.
  * @param {Element} content The content element.
  * @param {!goog.ui.AnimatedZippy | !goog.ui.Zippy} zippy The zippy object.
  * @param {!number} depth The depth of the struct.
  */
-utils.ui.ScrollableContainer.contentsStruct = function(header, zippy, depth){ 
-    this.header = /**@type {Element}*/ header;
-    this.headerLabel = /**@type {Element}*/ header.childNodes[0];
-    this.expandIcon = /**@type {Element}*/ header.childNodes[1];
-    this.content = /**@type {Element}*/ header.childNodes[2];
-    this.zippy = /**@type {!goog.ui.AnimatedZippy | !goog.ui.Zippy}*/zippy;
-    this.depth = /**@type {!number}*/ depth;
+utils.ui.ScrollableContainer.contentsDict = 
+function(header, content, zippy, depth){ 
+    this['header'] = /**@type {Element}*/ header;
+    this['headerLabel'] = /**@type {Element}*/ header.childNodes[0];
+    this['expandIcon'] = /**@type {Element}*/ header.childNodes[1];
+    this['content'] = /**@type {Element}*/ content;
+    this['zippy'] = /**@type {!goog.ui.AnimatedZippy | !goog.ui.Zippy}*/zippy;
+    this['depth'] = /**@type {!number}*/ depth;
 };
 goog.exportSymbol('utils.ui.contentsStruct', utils.ui.contentsStruct);
 
@@ -124,23 +127,40 @@ utils.ui.ScrollableContainer.folderTreeFromArray = function(elt, folders) {
 
 
 /**
+ * @type {!string}
+ * @const
+ */ 
+utils.ui.ScrollableContainer.CONTENT_REF_ATTR = 'contentid'
+
+
+/**
  * As stated.
  * @param {!string} zKey The key of the zippy.
  * @param {!Element} parentElt The parene element of the zippy header.
  * @return {!Element} The header element.
  * @private
  */
-utils.ui.ScrollableContainer.createZippyHeader_ = function(zKey, parentElt) {
+utils.ui.ScrollableContainer.prototype.createZippyHeader_ = 
+function(zKey, parentElt) {
     var header = /**@type {!Element} */ 
     goog.dom.createDom('div', {'id': "ZippyHeader_" + zKey});
     parentElt.appendChild(header);
     header.key = zKey;
-    // Add the header label, expandIcon, content
-    header.appendChild(this.createZippyHeaderLabel_(zKey));
-    header.appendChild(this.createZippyExpandIcon_(zKey));
-    header.appendChild(this.createZippyContent_(zKey));
+
+    // Add the header label, expandIcon
+    var headerLabel = /**@type {!Element} */ this.createZippyHeaderLabel_(zKey);
+    var expandIcon = /**@type {!Element} */ this.createZippyExpandIcon_(zKey);
+    header.appendChild(headerLabel);
+    header.appendChild(expandIcon);
+
+    // Contents need to be added to header's parent.
+    var zippyContents = /**@type {!Element}*/ this.createZippyContent_(zKey);
+    header.setAttribute(utils.ui.ScrollableContainer.CONTENT_REF_ATTR, 
+			zippyContents.id);
+    parentElt.appendChild(zippyContents);
     return header;
 }
+
 
 
 
@@ -151,8 +171,9 @@ utils.ui.ScrollableContainer.createZippyHeader_ = function(zKey, parentElt) {
  * @return {!Element} The header label.
  * @private
  */
-utils.ui.ScrollableContainer.createZippyHeaderLabel_ = function(zKey){
-    return goog.dom.createDom('div', {'id': "ZippyHeaderLabel_" + zKey},
+utils.ui.ScrollableContainer.prototype.createZippyHeaderLabel_ = function(zKey){
+    return goog.dom.createDom('div', {'id': "ZippyHeaderLabel_" + zKey + '_' + 
+				      goog.string.createUniqueString()},
 			      utils.string.truncateString(
 			      goog.string.toTitleCase(zKey), 
 		              utils.ui.ScrollableContainer.MAX_LABEL_LENGTH))
@@ -167,8 +188,9 @@ utils.ui.ScrollableContainer.createZippyHeaderLabel_ = function(zKey){
  * @return {!Element} The described element.
  * @private
  */
-utils.ui.ScrollableContainer.createZippyExpandIcon_ = function(zKey){
-     return goog.dom.createDom('div', {'id': "ZippyExpandIcon_" + zKey}, '+');
+utils.ui.ScrollableContainer.prototype.createZippyExpandIcon_ = function(zKey){
+     return goog.dom.createDom('div', {'id': "ZippyExpandIcon_" + zKey + '_' +  
+				      goog.string.createUniqueString()}, '+');
 }
 
 
@@ -179,8 +201,9 @@ utils.ui.ScrollableContainer.createZippyExpandIcon_ = function(zKey){
  * @return {!Element} The described element.
  * @private
  */
-utils.ui.ScrollableContainer.createZippyContent_ = function(zKey){
-    return goog.dom.createDom('div', {'id': "ZippyContent_" + zKey});
+utils.ui.ScrollableContainer.prototype.createZippyContent_ = function(zKey){
+    return goog.dom.createDom('div', {'id': "ZippyContent_" + zKey + '_' +  
+				      goog.string.createUniqueString()});
 }
 
 
@@ -359,6 +382,23 @@ goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX,
 
 
 /**
+ * @type {Array.number}
+ * @private
+ */
+utils.ui.ScrollableContainer.prototype.indents_;
+
+
+
+
+/**
+ * @type {!number}
+ * @private
+ */
+utils.ui.ScrollableContainer.prototype.defaultIndentation_ = 5;
+
+
+
+/**
  * Semi-recursive contents adder for inserting contents to the container, 
  * where the contents have a hierarchy (i.e. there are main zippys, main 
  * contents, and sub-zippys and sub-contents).
@@ -404,6 +444,8 @@ goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX,
 utils.ui.ScrollableContainer.prototype.addContents = function (contents, 
 							       opt_parent, 
 							       opt_parentKey) {
+
+    //window.console.log("ADD CONTENTS", contents, opt_parent, opt_parentKey);
     opt_parent =  opt_parent ? opt_parent : this.scrollArea_;
     if (goog.dom.isElement(contents)) {
 	this.addContentsElement_(contents, opt_parent, opt_parentKey);
@@ -425,9 +467,10 @@ utils.ui.ScrollableContainer.prototype.addContents = function (contents,
  */
 utils.ui.ScrollableContainer.prototype.addElementAndFolders = 
     function(elt, folders) {
+	//window.console.log("\n\nCONTENTS", elt, folders);
     var contents = /**@type {!Object}*/
         utils.ui.ScrollableContainer.folderTreeFromArray(elt, folders)
-    //window.console.log("CONTENTS", contents);
+    //window.console.log("\n\nCONTENTS", contents);
     this.addContents(contents);
 }
 
@@ -500,9 +543,9 @@ utils.ui.ScrollableContainer.prototype.updateStyle = function (opt_args) {
  *    compress.  Defaults to 'true'.
  * @public
  */
-utils.ui.ScrollableContainer.prototype.setZippyExpanded = function(zKey, 
-								   opt_expand) {
-    this.contentsDict_[zKey].zippy.setExpanded((opt_expand === false) ? 
+utils.ui.ScrollableContainer.prototype.setZippyExpanded = 
+function(zKey, opt_expand) {
+    this.contentsDict_[zKey]['zippy'].setExpanded((opt_expand === false) ? 
 					       false : true);
 }
 
@@ -517,8 +560,9 @@ utils.ui.ScrollableContainer.prototype.setZippyExpanded = function(zKey,
  */
 utils.ui.ScrollableContainer.prototype.setZippysExpanded = function(opt_expand)
 {
-    for (var zKey in this.contentsDict_){
-	this.contentsDict_[zKey].zippy.setExpanded((opt_expand === false) ? 
+    var zKey = /**@type {!string} */ '';
+    for (zKey in this.contentsDict_){
+	this.contentsDict_[zKey]['zippy'].setExpanded((opt_expand === false) ? 
 						   false : true);
     }
 }
@@ -571,7 +615,12 @@ utils.ui.ScrollableContainer.prototype.getDepth = function(element){
  */
 utils.ui.ScrollableContainer.prototype.getNodeIndentation = function(element) {
     var depth =  /**@type {!number}*/ this.getDepth(element);
-    var indent =  /**@type {!number}*/ this.indentations_[depth];
+
+
+    this.setIndentationByDepth(depth);
+
+
+    var indent =  /**@type {!number}*/ this.indents_[depth];
     if (goog.isDef(indent)){
 	return indent;
     } else {
@@ -585,13 +634,25 @@ utils.ui.ScrollableContainer.prototype.getNodeIndentation = function(element) {
  * Allows the user to set the indentation of the zippy at its given depth.  
  * If such a depth doesn't exist, nothing will happen.
  * @param {!number} depth The depth level to set the indentation from.
- * @param {!number} indentation The px amount (as a number) to indent.
+ * @param {number=} opt_indent The optional px amount (as a number) to 
+ *    indent.  (Defaults to 5 * depth).
  * @public
  */
 utils.ui.ScrollableContainer.prototype.setIndentationByDepth = 
-function(depth, indentation) {
-    this.indentations_ = this.indentations_ ? this.indentations_ : {};
-    this.indentations_[depth] = indentations;
+function(depth, opt_indent) {
+    this.indents_ = this.indents_ ? this.indents_ : [];
+
+    // Construct the other indents if they're not there.
+    if (this.indents_.length < (depth + 1)){
+	var i = /**@type {!number}*/ 0;
+	for (i=0; i<depth; i++){
+	    this.indents_[i] = i * this.defaultIndentation_;
+	}
+    }
+
+    if (opt_indent !== undefined){
+	this.indents_[depth] = opt_indent;
+    }
 }
 
 
@@ -620,26 +681,40 @@ utils.ui.ScrollableContainer.prototype.zippyExists = function(zKey) {
  */
 utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
    
+    // Exit out if the zippy exists
+    if (this.contentsDict_ && this.contentsDict_.hasOwnProperty(zKey)){
+	return
+    }
+    
     var header = /**@type {Element}*/ this.createZippyHeader_(zKey, 
 			opt_parent ? opt_parent : this.scrollArea_);
+
+    header.setAttribute('zkey', zKey);
     // Adjust the header margin
     header.style.marginTop = goog.object.getCount(this.contentsDict_) ?
 			      '0px' : header.style.marginTop; 
     
+
+    var contentsElt = /**@type {Element}*/ goog.dom.getElement(
+	header.getAttribute(utils.ui.ScrollableContainer.CONTENT_REF_ATTR));
+
+
     var zippy = /** @type {!goog.ui.AnimatedZippy | !goog.ui.Zippy} */
-    new this.zippyType_(header, header.childNodes[2], true);
-    this.setZippyExpandedEvents_(zippy)
+    new this.zippyType_(header, contentsElt, true)
+
+
+
+    // Store zippy and header
+    this.contentsDict_ = this.contentsDict_ ? this.contentsDict_ : {};
+    if (this.contentsDict_[zKey] !== undefined) {return};
+    this.contentsDict_[zKey] = new utils.ui.ScrollableContainer.contentsDict(
+	header, contentsElt, zippy, this.getDepth(header));
 
     // zippy inits
     this.addZippyCss_(zKey);
     this.addZippyEvents_(zKey);
+    this.setZippyExpandedEvents_(zKey);
     this.indentZippys_();
-
-    // Store zippy and header
-    this.contentsDict_ = (this.contentsDict_) : this.contentsDict_ : {};
-    if (this.contentsDict_[zKey] !== undefined) {return};
-    this.contentsDict_[zKey] = new utils.ui.ScrollableContainer.contentsStruct(
-	header, zippy, this.getDepth(header));
 
     return zippy;
 }
@@ -648,16 +723,17 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
 
 /**
  * As stated.
+ * @param {!string} zKey The name and label of the zippy.
  * @private
  */
-utils.ui.ScrollableContainer.prototype.addZippyCss_ = function() {		
-    goog.dom.classes.add(header, 
+utils.ui.ScrollableContainer.prototype.addZippyCss_ = function(zKey) {		
+    goog.dom.classes.add(this.contentsDict_[zKey]['header'], 
 			 utils.ui.ScrollableContainer.ZIPPY_HEADER_CLASS);
-    goog.dom.classes.add(headerLabel, 
+    goog.dom.classes.add(this.contentsDict_[zKey]['headerLabel'], 
 			 utils.ui.ScrollableContainer.ZIPPY_HEADER_LABEL_CLASS);
-    goog.dom.classes.add(expandIcon, 
+    goog.dom.classes.add(this.contentsDict_[zKey]['expandIcon'], 
 			 utils.ui.ScrollableContainer.ZIPPY_ICON_CLASS);
-    goog.dom.classes.add(content, 
+    goog.dom.classes.add(this.contentsDict_[zKey]['content'], 
 			 utils.ui.ScrollableContainer.ZIPPY_CONTENT_CLASS);
 
 }
@@ -666,24 +742,27 @@ utils.ui.ScrollableContainer.prototype.addZippyCss_ = function() {
 
 /**
  * As stated.
+ * @param {!string} zKey The name and label of the zippy.
  * @private
  */
-utils.ui.ScrollableContainer.prototype.addZippyEvents_ = function() {
+utils.ui.ScrollableContainer.prototype.addZippyEvents_ = function(zKey) {
     //------------------
     // Define Mouseover, Mouseout functions.
     //------------------
-    goog.events.listen(header, goog.events.EventType.MOUSEOVER, function(){
-	goog.dom.classes.add(header, 
+    goog.events.listen(this.contentsDict_[zKey]['header'], 
+		       goog.events.EventType.MOUSEOVER, function(){
+	goog.dom.classes.add(this.contentsDict_[zKey]['header'], 
 		utils.ui.ScrollableContainer.ZIPPY_HEADER_MOUSEOVER_CLASS);
-	goog.dom.classes.add(expandIcon, 
+	goog.dom.classes.add(this.contentsDict_[zKey]['expandIcon'], 
 		utils.ui.ScrollableContainer.ZIPPY_ICON_MOUSEOVER_CLASS);
-    });
-    goog.events.listen(header, goog.events.EventType.MOUSEOUT, function(){
-	goog.dom.classes.remove(header, 
+    }.bind(this));
+    goog.events.listen(this.contentsDict_[zKey]['header'], 
+		       goog.events.EventType.MOUSEOUT, function(){
+	goog.dom.classes.remove(this.contentsDict_[zKey]['header'], 
 		utils.ui.ScrollableContainer.ZIPPY_HEADER_MOUSEOVER_CLASS);
-	goog.dom.classes.remove(expandIcon, 
+	goog.dom.classes.remove(this.contentsDict_[zKey]['expandIcon'], 
 		utils.ui.ScrollableContainer.ZIPPY_ICON_MOUSEOVER_CLASS);
-    });	   
+    }.bind(this));	   
 } 
 
 
@@ -696,26 +775,6 @@ utils.ui.ScrollableContainer.prototype.addZippyEvents_ = function() {
  * @private
  */	
 utils.ui.ScrollableContainer.prototype.contentsDict_;
-
-
-
-
-/**
- * @type {Object.<number, number>}
- * @dict
- * @private
- */
-utils.ui.ScrollableContainer.prototype.indentations_;
-
-
-
-
-/**
- * @type {!number}
- * @private
- */
-utils.ui.ScrollableContainer.prototype.defaultIndentation_ = 5;
-
 
 
 
@@ -811,15 +870,18 @@ utils.ui.ScrollableContainer.prototype.mapSliderToContents_ = function () {
 utils.ui.ScrollableContainer.prototype.indentZippys_ = function(){
 
     var furthestIndent = /**@type {!number}*/ 0;
+    var key = /**@type {!string}*/ '';
+    var header = /**@type {Element}*/ undefined;
+
     for (key in this.contentsDict_){ 
-	var header = /**@type {!Element}*/ this.contentsDict_[key].header;
+	header = /**@type {!Element}*/ this.contentsDict_[key]['header'];
 	furthestIndent = this.getNodeIndentation(header);
     }
     var width = /**@type {!number}*/ 100 - furthestIndent;   
 
 
     for (key in this.contentsDict_){
-	var header = /**@type {!Element}*/ this.contentsDict_[key].header;
+	header = /**@type {!Element}*/ this.contentsDict_[key]['header'];
 	var indentPct = /**@type {!number}*/ this.getNodeIndentation(header);
 	header.style.left = (indentPct).toString() + '%';
 	header.style.width = (width).toString() + '%';
@@ -844,14 +906,19 @@ utils.ui.ScrollableContainer.prototype.setSliderCallbacks_ = function() {
 
 /**
  * As stated.
- * @param {!goog.ui.AnimatedZippy | !goog.ui.Zippy} zippy The zippy to apply the
- *     listeners to.
+ * @param {!string} zKey The name and label of the zippy.
  */
-utils.ui.ScrollableContainer.prototype.setZippyExpandedEvents_ = function(zippy)
+utils.ui.ScrollableContainer.prototype.setZippyExpandedEvents_ = function(zKey)
 {
+
+    var zippy = /**@type {!goog.ui.AnimatedZippy | !goog.ui.Zippy}*/
+    this.contentsDict_[zKey]['zippy'];
+    
     goog.events.listen(zippy, goog.object.getValues(goog.ui.Zippy.Events)
 		       , function(e) { 		
 	
+	var expandIcon = /**@type {!Element}*/ 
+			   this.contentsDict_[zKey]['expandIcon'];
 	//
 	// Create a map that allows the slider to move
 	// the contents in proportion to the slider.
@@ -885,6 +952,9 @@ utils.ui.ScrollableContainer.prototype.setZippyExpandedEvents_ = function(zippy)
  */
 utils.ui.ScrollableContainer.prototype.addContentsElement_ = 
 function (contents, opt_parent, opt_parentKey) {
+
+    //window.console.log("ADD CONTENTS ELEMENT", contents, 
+    //		       opt_parent, opt_parentKey);
     // All contents need to be relatively positioned.
     utils.style.setStyle(contents, {'position': 'relative'});
     // Add element to the parent Element
@@ -921,7 +991,7 @@ utils.ui.ScrollableContainer.prototype.addContentsArray_ =
 function (contents, opt_parent, opt_parentKey) {
     var i = /**@type {!number}*/ 0;
     var len =  /**@type {!number}*/ contents.length;
-    for (i=0, i < len; i++) {
+    for (i=0; i < len; i++) {
 	this.addContents(contents[i], opt_parent, opt_parentKey);
     }
 }
@@ -962,9 +1032,10 @@ function (contents, opt_parent, opt_parentKey) {
 	else {
 	    // Keep root folders expanded, but sub-folders closed.
 	    // expanded = (opt_parent === this.scrollArea_) ? true : false;
+	    //window.console.log('\n\nADD ZIPPY', key);
 	    this.addZippy(key, opt_parent);
 	    this.addContents(contents[key], 
-			     this.contentsDict_[key].content, key);	
+			     this.contentsDict_[key]['content'], key);	
 	}
     }
 }

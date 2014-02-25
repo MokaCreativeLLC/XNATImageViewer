@@ -69,10 +69,10 @@ utils.xnat.folderAbbrev = {
  * @public
  */
 utils.xnat.jsonGet = function(url, callback){
-    //window.console.log("utils.xnat - jsonGet: ", url);
+    //window.console.log("\n\nutils.xnat - jsonGet: ", url);
     var queryChar =  /** @type {!string}*/ (url.indexOf('?') > -1) ? '&' : '?';
     var queryUrl = /** @type {!string}*/ url + queryChar + "format=json";
-    utils.xnat.get(queryUrl, callback);
+    utils.xnat.get(queryUrl, callback, 'json');
 }
 
 
@@ -90,7 +90,7 @@ utils.xnat.jsonGet = function(url, callback){
  * @public
  */
 utils.xnat.get = function(url, callback, opt_getType){
-    //window.console.log("utils.xnat - get: ", url);
+    //window.console.log("\n\nutils.xnat - get: ", url);
     goog.net.XhrIo.send(url, function(e) {
 	var xhr = /** @type {!Object}*/ e.target;
 	switch (opt_getType) {

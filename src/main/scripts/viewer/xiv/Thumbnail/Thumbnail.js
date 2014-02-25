@@ -26,8 +26,8 @@ xiv.Thumbnail = function (Viewable_) {
      * @type {utils.xnat.Viewable}
      */    
     this.Viewable_ = Viewable_;
-    window.console.log("THUMB1:", Viewable_, this.Viewable_['thumbnailUrl']);
-    window.console.log("THUMB2:", Viewable_, this.Viewable_['files']);
+    //window.console.log("THUMB1:", Viewable_, this.Viewable_['thumbnailUrl']);
+    //window.console.log("THUMB2:", Viewable_, this.Viewable_['files']);
     this.setImage(this.Viewable_['thumbnailUrl']);
     this.createText_();
     this.createHoverable()

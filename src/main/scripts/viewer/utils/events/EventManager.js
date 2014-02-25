@@ -21,11 +21,13 @@ goog.require('goog.array');
  */
 goog.provide('utils.events.EventManager');
 utils.events.EventManager = function (eventTypes) {
-
+    
     if (!eventTypes){
 	throw 'Invalid eventTypes constructor argument: \'' + eventTypes + 
 	    '\'.';
     }
+
+    var key = /**@type {!string} */ '';
 
     /**
      * The event types provided by the event objects.
@@ -37,8 +39,7 @@ utils.events.EventManager = function (eventTypes) {
 
     /**
      * The basic event-tracking object.
-     *
-     * @type {!Object<string, Array.function>}
+     * @type {!Object.<string, Array.function>}
      * @private
      */
     this.events_ = {}
@@ -49,8 +50,7 @@ utils.events.EventManager = function (eventTypes) {
 
     /**
      * The tracking object for suspended events.
-     *
-     * @type {!Object<string, boolean>}
+     * @type {!Object.<string, boolean>}
      * @private
      */
     this.suspendedEvents_ = {}
@@ -59,6 +59,39 @@ utils.events.EventManager = function (eventTypes) {
     }
 };
 goog.exportSymbol('utils.events.EventManager', utils.events.EventManager);
+
+
+
+/**
+ * Adds an event manager to the given object by adding the string property
+ * 'EVENTS' to the object.  Since Google closure does not intervene with string
+ * properties, this *should* be a conflict-free property, but it needs further
+ * verification.
+ * @param {!Object} obj The obj to add the event manager to.
+ * @param {!eventTypes} eventTypes The eventTypes enums of the object that 
+ *     should be defined PER object.
+ * @raise Error if no eventType enum is defined.
+ * @public
+ */
+utils.events.EventManager.addEventManager = function(obj, eventTypes){
+
+    if (!obj){
+	throw 'Invalid obj argument for addEventManager: \'' + obj + '\'.';
+    }
+
+    if (!eventTypes){
+	throw 'Invalid eventTypes argument for addEventManager: \'' + 
+	    eventTypes + '\'.';
+    }
+
+    /**
+     * @type {!utils.events.EventManager}
+     */ 
+    obj['EVENTS'] = new utils.events.EventManager(eventTypes);
+
+}
+goog.exportSymbol('utils.events.EventManager.addEventManager', 
+		  utils.events.EventManager.addEventManager);
 
 
 
@@ -106,7 +139,7 @@ utils.events.EventManager.prototype.runEvent = function(eventType){
     if (!this.suspendedEvents_[eventType]){
 	var i = /**@type {!number}*/ 0;
 	var len = /**@type {!number}*/ this.events_[eventType].length;
-	for (i=0, i<len; i++){
+	for (i=0; i<len; i++){
 	    this.events_[eventType][i].apply(null, 
 	      Array.prototype.splice.call(arguments, 1));
 	}
@@ -178,6 +211,7 @@ utils.events.EventManager.prototype.setEventSuspended = function(eventType,
  * @public
  */
 utils.events.EventManager.prototype.setAllEventsSuspended = function(suspend){
+    var key = /**@type {!string} */ '';
     for (key in this.suspendedEvents_){
 	this.suspendedEvents_[key] = suspend;
     }

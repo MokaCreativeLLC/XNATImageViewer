@@ -12,7 +12,7 @@ goog.require('goog.string');
 // utils
 goog.require('utils.dom');
 goog.require('utils.style');
-goog.require('utils.events');
+goog.require('utils.events.EventManager');
 
 
 
@@ -62,7 +62,8 @@ utils.ui.Thumbnail = function () {
     //
     // Events
     //
-    utils.events.addEventManager(this, utils.ui.Thumbnail.EventType);
+    utils.events.EventManager.addEventManager(this, 
+					      utils.ui.Thumbnail.EventType);
 
 
     //
