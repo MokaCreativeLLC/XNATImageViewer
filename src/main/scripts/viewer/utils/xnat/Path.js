@@ -29,6 +29,22 @@ goog.exportSymbol('utils.xnat.Path', utils.xnat.Path);
 
 
 /**
+ * XNAT folder abbreviations.
+ * @type {!Array.string}
+ * @const
+ * @public
+ */
+utils.xnat.Path.xnatLevelOrder = [
+    'projects',
+    'subjects',
+    'experiments',
+    ['scans', 'resources'],
+    'files'
+]
+
+
+
+/**
  * Deconstructs the URL into its various components.
  * @param {!utils.xnat.Path} the pa.
  * @param {!string} url The URL to derive the path information from.
@@ -52,7 +68,9 @@ utils.xnat.Path.prototype.deconstructUrl_ = function(url) {
 	if (splitter[i] === 'projects' &&  i !== 0){
 	    this['prefix'] = '';
 	    for (j=0; j < i; j++){
-		this['prefix'] += splitter[j] + "/";
+		this['prefix'] += splitter[j] 
+		this['prefix'] = (j < i-1) ? 
+		    this['prefix'] + '/': this['prefix'];
 	    }
 	}
 
@@ -75,37 +93,35 @@ utils.xnat.Path.prototype.deconstructUrl_ = function(url) {
  * @public
  */
 utils.xnat.Path.prototype.pathByLevel = function(level){
-    if (this[level]) {
-	var returnString = /** @type {!string}*/ this['prefix'];
-	
-	if (this['projects']){
-	    returnString += "projects/" + this['projects'];
-	}
-
-	if (this['subjects']){
-	    returnString += "/subjects/" + this['subjects'];
-	}
-
-	if (this['experiments']){
-	    returnString += "/experiments/" + this['experiments'];
-	}
-
-	if (this['scans']){
-	    returnString += "scans/" + this['scans'];
-	}
-	else if (this['resources']){
-	    returnString += "resources/" + this['resources'];
-	}
-
-	if (this['files']){
-	    returnString += "/files/" + this['files'];
-	}
-
-	return returnString;
+    window.console.log("XNAT LEVEL", level);
+    if (!this.hasOwnProperty(level)){
+	throw new Error("Invalid level: ", level);
     }
-    else {
-	throw new Error("utils.xnat - getXnatPathByLevel: No folder " + 
-			"specified at the '" + level + "' level.")
+    
+    var returnString = /** @type {!string}*/ this['prefix'];
+    var currLevel = /** @type {!string}*/ '';
+    var currSub = /** @type {!string}*/ '';
+    var i = /**@type {!number}*/ 0;
+    var j = /**@type {!number}*/ 0;
+    var len = /**@type {!number}*/ utils.xnat.Path.xnatLevelOrder.length;
+    var len2 = /**@type {!number}*/ 0;
+
+    for (i=0; i<len; i++){
+	currLevel = utils.xnat.Path.xnatLevelOrder[i];
+	if (goog.isArray(currLevel)){
+	    len2 = currLevel.length;
+	    for (j=0; j<len2; j++){
+		currSubLevel = currLevel[i][j];
+		if (this[currSubLevel]){
+		    returnString += currSubLevel + '/' + this[currSubLevel];
+		}
+	    }
+	} else {
+	    returnString += '/' + currLevel + '/' + this[currLevel];
+	}
+	if (level === currLevel || currLevel.indexOf(level) > -1){
+	    return returnString;
+	}	
     }
 }
 
@@ -149,4 +165,18 @@ utils.xnat.Path.getQueryPrefix = function(xnatServerRoot) {
             xnatQueryPrefix.length - 1);
     }
     return xnatQueryPrefix;
+}
+
+
+/**
+ * Loops through utils.xnat.Path.xnatLevelOrder and runs a callback.
+ * @param {!function} callback The callback to run on each level.
+ * @public
+ */
+utils.xnat.Path.forEachXnatLevel = function(callback){
+    var i = /**@type {!number}*/ 0;
+    var len = /**@type {!number}*/ utils.xnat.Path.xnatLevelOrder.length;
+    for (i=0; i < len; i++){
+	callback(utils.xnat.Path.xnatLevelOrder[i], i);
+    }
 }

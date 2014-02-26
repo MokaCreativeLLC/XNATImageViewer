@@ -201,7 +201,7 @@ xiv.ThumbnailManager.prototype.loop = function(callback){
  */
 xiv.ThumbnailManager.prototype.createAndAddThumbnail = 
 function(_Viewable, folders) {
-    this.addThumbnail(this.createThumbnail(_Viewable),folders);
+    this.addThumbnail(this.createThumbnail(_Viewable), folders);
 }
 
 

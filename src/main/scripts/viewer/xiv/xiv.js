@@ -16,6 +16,7 @@ goog.require('X.loader');
 goog.require('utils.fx');
 goog.require('utils.xnat');
 goog.require('utils.xnat.Path');
+goog.require('utils.xnat.ProjectTree');
 
 // xiv
 goog.require('X.parserIMA'); // custom
@@ -94,12 +95,17 @@ xiv.startViewer = function (windowMode, xnatServerRoot, dataPath, imagePath) {
     xiv.loadCustomExtensions_();
     xiv.adjustDocumentStyle_();
     var imageViewer = new xiv(windowMode, 
-                              xnatServerRoot,  
+                               xnatServerRoot,  
 			      utils.xnat.Path.getQueryPrefix(xnatServerRoot),
 			      imagePath);
+
+    // First add and load the current data path
     imageViewer.addDataPath(dataPath); 
+    imageViewer.loadViewables(imageViewer.getDataPaths()[0]);
+    imageViewer.loadProjectTree();
+
+    // Show the modal
     imageViewer.showModal();
-    imageViewer.loadViewables();
 };
 goog.exportSymbol('xiv.startViewer', xiv.startViewer)
 
@@ -118,6 +124,14 @@ xiv.ANIM_TIME = 300;
  * @private
  */
 xiv.prototype.Modal_;
+
+
+
+/**
+ * @type {utils.xnat.ProjectTree}
+ * @private
+ */
+xiv.prototype.ProjectTree_;
 
 
 
@@ -153,7 +167,10 @@ xiv.prototype.hideModal = function(opt_callback){
 xiv.prototype.addDataPath = function(path) {
     var updatedPath = /**@type {!string}*/ 
     (path[0] !== "/") ? "/" + path : path;
-    this.dataPaths_.push(this.queryPrefix_ + updatedPath); 
+
+    if (this.dataPaths_.indexOf(this.queryPrefix_ + updatedPath) === -1) {
+	this.dataPaths_.push(this.queryPrefix_ + updatedPath); 
+    }
 }
 
 
@@ -181,6 +198,52 @@ xiv.prototype.destroy = function () {
 	delete this.Modal_.getElement();
     }.bind(this));
 }
+
+
+
+/**
+ * As stated. 
+ * @public
+ */
+xiv.prototype.loadProjectTree = function() {
+    // Query the project tree based on the stored path.
+    var projTree = /**@type {!utils.xnat.ProjectTree}*/
+    new utils.xnat.ProjectTree(this.getDataPaths()[0]);
+
+    var allExpt = /**@type {!Array.string}*/
+    projTree.getLevelUris('experiments')
+
+    var storedExptInd = /**@type {!number}*/
+    allExpt.indexOf(this.getDataPaths()[0]);
+
+    var i = /**@type {!number}*/ 0;
+
+    // Store the tree
+    projTree.load(function(projTree){
+	allExpt = projTree.getLevelUris('experiments')
+	storedExptInd = allExpt.indexOf(this.getDataPaths()[0]);
+	for (i=0; i<allExpt.length; i++){
+	    if (i != storedExptInd){
+		this.addDataPath(allExpt[i]);
+		this.loadViewables(allExpt[i]);
+	    }
+	}
+	this.setProjectTree(projTree);
+    }.bind(this))	
+}
+
+
+
+
+/**
+ * As stated.
+ * @param {!utils.xnat.ProjectTree}
+ * @public
+ */
+xiv.prototype.setProjectTree = function(tree){
+    this.ProjectTree_ = tree;
+} 
+
 
 
 
@@ -223,19 +286,16 @@ xiv.prototype.makeModalPopup_ = function(){
 
 /**
  * Gets the viewables from the xnat server.
+ * @param {!string} viewablesUri The uri to retrieve the viewables from.
  * @public
  */
-xiv.prototype.loadViewables = function(){
-    goog.array.forEach(this.dataPaths_, function(xnatDataPath){
-
-	utils.xnat.getViewables(xnatDataPath, function(viewable){
-
-	    this.storeViewable_(viewable);
-	    this.addViewableToModal_(viewable);
-
-	}.bind(this))
-
+xiv.prototype.loadViewables = function(viewablesUri){
+    //goog.array.forEach(this.dataPaths_, function(viewablesUri){
+    utils.xnat.getViewables(viewablesUri, function(viewable){
+	this.storeViewable_(viewable);
+	this.addViewableToModal_(viewable);
     }.bind(this))
+    //}.bind(this))
 }
 
 
@@ -249,7 +309,7 @@ xiv.prototype.addViewableToModal_ = function(Viewable){
     //window.console.log(Viewable, key)
     var folders = /**@type {!Array.string}*/ 
     xiv.extractViewableFolders_(Viewable);
-    //window.console.log(Viewable, folders);
+    window.console.log(Viewable, folders);
     //window.console.log(Viewable['thumbnailUrl']);
     this.Modal_.getThumbnailManager().createAndAddThumbnail(Viewable, 
 							    folders);

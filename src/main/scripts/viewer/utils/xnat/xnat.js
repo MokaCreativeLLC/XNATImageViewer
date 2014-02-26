@@ -69,9 +69,9 @@ utils.xnat.folderAbbrev = {
  * @public
  */
 utils.xnat.jsonGet = function(url, callback){
-    //window.console.log("\n\nutils.xnat - jsonGet: ", url);
     var queryChar =  /** @type {!string}*/ (url.indexOf('?') > -1) ? '&' : '?';
     var queryUrl = /** @type {!string}*/ url + queryChar + "format=json";
+    //window.console.log("\n\nutils.xnat - jsonGet: ", queryUrl);
     utils.xnat.get(queryUrl, callback, 'json');
 }
 
@@ -97,7 +97,12 @@ utils.xnat.get = function(url, callback, opt_getType){
 	case undefined: 
 	    callback(xhr);
 	case 'json':
-	    callback(xhr.getResponseJson()['ResultSet']['Result']);
+	    var responseJson = /**@type {!Object}*/ xhr.getResponseJson();
+	    if (responseJson.hasOwnProperty('ResultSet')){
+		callback(responseJson['ResultSet']['Result']);
+	    } else {
+		callback(responseJson);
+	    }
 	}
     });
 }
@@ -121,3 +126,4 @@ utils.xnat.getViewables = function (url, opt_callback){
 		utils.xnat.VIEWABLE_TYPES[viewableType], opt_callback)
     }
 }
+
