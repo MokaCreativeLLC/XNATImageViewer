@@ -155,12 +155,14 @@ utils.ui.ThumbnailGallery.prototype.createThumbnail = function(imageUrl,
  *
  * @param {!utils.ui.Thumbnail} thumbnail The thumbnail object to add to the 
  *   scrollable container.
- * @param {string= | Array.<string>=} opt_folders The optional zippy 
+ * @param {string= | Array.<string>=} opt_folders The optional zippy structure.
+ * @param {!number} opt_minFolderInd The optional index of the 
+ *     zippy structure to minimize.  All are expanded otherwise
  * folder name to put the thumbnail in.  Otherwise it goes to the parent.
  * @public
  */
-utils.ui.ThumbnailGallery.prototype.addThumbnail = function(thumbnail, 
-							    opt_folders) {
+utils.ui.ThumbnailGallery.prototype.addThumbnail = 
+function(thumbnail, opt_folders) {
     // Bind clone to mouse wheel.
     this.bindToMouseWheel(thumbnail.getHoverable(), 
 			  this.onHoverAndScroll_.bind(this));
@@ -171,7 +173,7 @@ utils.ui.ThumbnailGallery.prototype.addThumbnail = function(thumbnail,
     this.Thumbnails_[goog.getUid(thumbnail)] = thumbnail;
     // Set folders
 
-    //window.console.log(opt_folders);
+    //window.console.log(opt_folders, "\n\nMIN", opt_minFolderInd);
     this.addElementAndFolders(thumbnail.getElement(), 
 			      (opt_folders === undefined) ? ['parentFolder'] : 
 			      goog.isArray(opt_folders) ? opt_folders : 

@@ -206,26 +206,37 @@ xiv.prototype.destroy = function () {
  * @public
  */
 xiv.prototype.loadProjectTree = function() {
+
+    var startingLoadPath = /**@type {!sting} */ this.getDataPaths()[0];
+    var sharedLevel = /**@type {!sting} */ '';
+
     // Query the project tree based on the stored path.
     var projTree = /**@type {!utils.xnat.ProjectTree}*/
-    new utils.xnat.ProjectTree(this.getDataPaths()[0]);
+    new utils.xnat.ProjectTree(startingLoadPath);
 
     var allExpt = /**@type {!Array.string}*/
     projTree.getLevelUris('experiments')
 
     var storedExptInd = /**@type {!number}*/
-    allExpt.indexOf(this.getDataPaths()[0]);
+    allExpt.indexOf(startingLoadPath);
 
     var i = /**@type {!number}*/ 0;
 
     // Store the tree
     projTree.load(function(projTree){
 	allExpt = projTree.getLevelUris('experiments')
-	storedExptInd = allExpt.indexOf(this.getDataPaths()[0]);
+	storedExptInd = allExpt.indexOf(startingLoadPath);
 	for (i=0; i<allExpt.length; i++){
 	    if (i != storedExptInd){
 		this.addDataPath(allExpt[i]);
-		this.loadViewables(allExpt[i]);
+
+		// Close the zippys at the deepest shared XNAT level
+		sharedLevel = 
+		    utils.xnat.Path.getDeepestSharedXnatLevel(
+			startingLoadPath, 
+			allExpt[i]);
+		window.console.log("DEEPEST SHARED", sharedLevel);
+		this.loadViewables(allExpt[i], sharedLevel);
 	    }
 	}
 	this.setProjectTree(projTree);
@@ -287,13 +298,17 @@ xiv.prototype.makeModalPopup_ = function(){
 /**
  * Gets the viewables from the xnat server.
  * @param {!string} viewablesUri The uri to retrieve the viewables from.
+ * @param {string=} opt_zippyMinimizedLevel To XNAT level where to minimize
+ *    the zippys of the viewables.  If not provided, all zippys of the 
+ *    viewers will be expanded. 
  * @public
  */
-xiv.prototype.loadViewables = function(viewablesUri){
+xiv.prototype.loadViewables = function(viewablesUri, opt_zippyMinimizedLevel){
     //goog.array.forEach(this.dataPaths_, function(viewablesUri){
     utils.xnat.getViewables(viewablesUri, function(viewable){
 	this.storeViewable_(viewable);
-	this.addViewableToModal_(viewable);
+	window.console.log("LOAD VIEWABLES", opt_zippyMinimizedLevel);
+	this.addViewableToModal_(viewable, opt_zippyMinimizedLevel);
     }.bind(this))
     //}.bind(this))
 }
@@ -303,17 +318,44 @@ xiv.prototype.loadViewables = function(viewablesUri){
 /**
  * Adds a thumbnail to the modal.
  * @param {!string | !array.<string>} key
+ * @param {string=} opt_zippyMinimizedLevel To XNAT level where to minimize
+ *    the zippys of the viewables.  If not provided, all zippys of the 
+ *    viewers will be expanded. 
  * @private
  */
-xiv.prototype.addViewableToModal_ = function(Viewable){
+xiv.prototype.addViewableToModal_ = function(Viewable, opt_zippyMinimizedLevel){
     //window.console.log(Viewable, key)
     var folders = /**@type {!Array.string}*/ 
     xiv.extractViewableFolders_(Viewable);
-    window.console.log(Viewable, folders);
+    var minFolderInd = /**@type {number}*/ undefined;
+    //window.console.log(Viewable, folders);
     //window.console.log(Viewable['thumbnailUrl']);
-    this.Modal_.getThumbnailManager().createAndAddThumbnail(Viewable, 
-							    folders);
+
+
+    // For folder minimization
+    if (opt_zippyMinimizedLevel){
+	var folderAbbrev = /**@type {!string}*/
+	utils.xnat.folderAbbrev[opt_zippyMinimizedLevel];
+	goog.array.forEach(folders, function(folder, i){
+	    //window.console.log(opt_zippyMinimizedLevel, folder, folderAbbrev, 
+	    //folder.indexOf(folderAbbrev));
+	    if (folder.indexOf(folderAbbrev) == 0){
+		// go one above the shared folder.
+		minFolderInd = ((i + 1) >= folders.length) ? undefined : i + 1;	
+	    }
+	})
+	window.console.log("MINIMIZE FOLDER INDEX", opt_zippyMinimizedLevel,
+			   minFolderInd);
+    }
+    
+    
+    this.Modal_.getThumbnailManager().createAndAddThumbnail(Viewable, folders);
     this.Modal_.getThumbnailManager().setHoverParent(this.Modal_.getElement());
+
+    if (minFolderInd !== undefined) {
+	this.Modal_.getThumbnailManager().getThumbnailGallery().
+	    setZippyExpanded(folders[minFolderInd], false)
+    }
 }
 
 

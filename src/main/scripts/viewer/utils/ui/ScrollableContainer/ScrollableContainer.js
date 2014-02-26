@@ -133,6 +133,8 @@ utils.ui.ScrollableContainer.folderTreeFromArray = function(elt, folders) {
 utils.ui.ScrollableContainer.CONTENT_REF_ATTR = 'contentid'
 
 
+
+
 /**
  * As stated.
  * @param {!string} zKey The key of the zippy.
@@ -145,7 +147,7 @@ function(zKey, parentElt) {
     var header = /**@type {!Element} */ 
     goog.dom.createDom('div', {'id': "ZippyHeader_" + zKey});
     parentElt.appendChild(header);
-    header.setAttribute('zkey', zKey);
+    
 
     // Add the header label, expandIcon
     var headerLabel = /**@type {!Element} */ this.createZippyHeaderLabel_(zKey);
@@ -470,7 +472,7 @@ utils.ui.ScrollableContainer.prototype.addElementAndFolders =
 	//window.console.log("\n\nCONTENTS", elt, folders);
     var contents = /**@type {!Object}*/
         utils.ui.ScrollableContainer.folderTreeFromArray(elt, folders)
-    window.console.log("\n\nCONTENTS", contents);
+    //window.console.log("\n\nCONTENTS", contents);
     this.addContents(contents);
 }
 
@@ -538,15 +540,26 @@ utils.ui.ScrollableContainer.prototype.updateStyle = function (opt_args) {
 
 /**
  * Expand the zippy folder within the contents.
- * @param {!string} zKey The key of the stored zippy to expand or compress.
+ * @param {!string} zippyRef Either the storage key of the stored zippy to 
+ *    expand or compress, or the header text.
  * @param {boolean=} opt_expand (Optional) 'true' to expand zippy, 'false' to 
  *    compress.  Defaults to 'true'.
  * @public
  */
 utils.ui.ScrollableContainer.prototype.setZippyExpanded = 
-function(zKey, opt_expand) {
-    this.contentsDict_[zKey]['zippy'].setExpanded((opt_expand === false) ? 
-					       false : true);
+function(zippyRef, opt_expand) {
+
+    opt_expand = (opt_expand === false) ? false : true;
+
+    var key = /**@type {string} */ this.contentsDict_.hasOwnProperty(zippyRef) 
+	|| this.getStorageKeyFromHeaderText(zippyRef);
+
+    //window.console.log(zippyRef, key, 
+    //this.getStorageKeyFromHeaderText(zippyRef));
+
+    if (key){
+	this.contentsDict_[key]['zippy'].setExpanded(opt_expand);
+    }
 }
 
 
@@ -560,9 +573,9 @@ function(zKey, opt_expand) {
  */
 utils.ui.ScrollableContainer.prototype.setZippysExpanded = function(opt_expand)
 {
-    var zKey = /**@type {!string} */ '';
-    for (zKey in this.contentsDict_){
-	this.contentsDict_[zKey]['zippy'].setExpanded((opt_expand === false) ? 
+    var storageKey = /**@type {!string} */ '';
+    for (storageKey in this.contentsDict_){
+	this.contentsDict_[storageKey]['zippy'].setExpanded((opt_expand === false) ? 
 						   false : true);
     }
 }
@@ -658,12 +671,12 @@ function(depth, opt_indent) {
 
 /**
  * Checks if a given zippy exists within the contents.
- * @param {!string} zKey The key of the zippy (it's label) to check.
+ * @param {!string} storageKey The key of the zippy (it's label) to check.
  * @return {!boolean} Whether the zippy exists.
  * @public
  */
-utils.ui.ScrollableContainer.prototype.zippyExists = function(zKey) {
-   return zKey in this.contentsDict_;
+utils.ui.ScrollableContainer.prototype.zippyExists = function(storageKey) {
+   return this.contentsDict_.hasOwnProperty(storageKey);
 }
 
 
@@ -713,6 +726,7 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
 
     // Store id
     var storageKey = /**@type {!string}*/ goog.getUid(zippy);
+    header.setAttribute('zkey', zKey);
     header.setAttribute('storagekey', storageKey);
 
     this.contentsDict_ = this.contentsDict_ ? this.contentsDict_ : {};
@@ -735,17 +749,18 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
 
 /**
  * As stated.
- * @param {!string} zKey The name and label of the zippy.
+ * @param {!string} storageKey.
  * @private
  */
-utils.ui.ScrollableContainer.prototype.addZippyCss_ = function(zKey) {		
-    goog.dom.classes.add(this.contentsDict_[zKey]['header'], 
+utils.ui.ScrollableContainer.prototype.addZippyCss_ = function(storageKey) {
+		
+    goog.dom.classes.add(this.contentsDict_[storageKey]['header'], 
 			 utils.ui.ScrollableContainer.ZIPPY_HEADER_CLASS);
-    goog.dom.classes.add(this.contentsDict_[zKey]['headerLabel'], 
+    goog.dom.classes.add(this.contentsDict_[storageKey]['headerLabel'], 
 			 utils.ui.ScrollableContainer.ZIPPY_HEADER_LABEL_CLASS);
-    goog.dom.classes.add(this.contentsDict_[zKey]['expandIcon'], 
+    goog.dom.classes.add(this.contentsDict_[storageKey]['expandIcon'], 
 			 utils.ui.ScrollableContainer.ZIPPY_ICON_CLASS);
-    goog.dom.classes.add(this.contentsDict_[zKey]['content'], 
+    goog.dom.classes.add(this.contentsDict_[storageKey]['content'], 
 			 utils.ui.ScrollableContainer.ZIPPY_CONTENT_CLASS);
 
 }
@@ -754,25 +769,46 @@ utils.ui.ScrollableContainer.prototype.addZippyCss_ = function(zKey) {
 
 /**
  * As stated.
- * @param {!string} zKey The name and label of the zippy.
+ * @param {!string} headerText The header text to search.
+ * @return {string} The storage key.
+ * @public
+ */
+utils.ui.ScrollableContainer.prototype.getStorageKeyFromHeaderText = 
+function(headerText) {
+    var key = /**@type {!string}*/ '';
+    for (key in this.contentsDict_){
+	window.console.log(this.contentsDict_[key]['headerLabel'].innerHTML,
+			   headerText);
+	if (this.contentsDict_[key]['headerLabel'].innerHTML.toLowerCase() ===
+	    headerText.toLowerCase()){
+	    return key;
+	}
+    }
+}
+
+
+
+/**
+ * As stated.
+ * @param {!string} storageKey The storageKey.
  * @private
  */
-utils.ui.ScrollableContainer.prototype.addZippyEvents_ = function(zKey) {
+utils.ui.ScrollableContainer.prototype.addZippyEvents_ = function(storageKey) {
     //------------------
     // Define Mouseover, Mouseout functions.
     //------------------
-    goog.events.listen(this.contentsDict_[zKey]['header'], 
+    goog.events.listen(this.contentsDict_[storageKey]['header'], 
 		       goog.events.EventType.MOUSEOVER, function(){
-	goog.dom.classes.add(this.contentsDict_[zKey]['header'], 
+	goog.dom.classes.add(this.contentsDict_[storageKey]['header'], 
 		utils.ui.ScrollableContainer.ZIPPY_HEADER_MOUSEOVER_CLASS);
-	goog.dom.classes.add(this.contentsDict_[zKey]['expandIcon'], 
+	goog.dom.classes.add(this.contentsDict_[storageKey]['expandIcon'], 
 		utils.ui.ScrollableContainer.ZIPPY_ICON_MOUSEOVER_CLASS);
     }.bind(this));
-    goog.events.listen(this.contentsDict_[zKey]['header'], 
+    goog.events.listen(this.contentsDict_[storageKey]['header'], 
 		       goog.events.EventType.MOUSEOUT, function(){
-	goog.dom.classes.remove(this.contentsDict_[zKey]['header'], 
+	goog.dom.classes.remove(this.contentsDict_[storageKey]['header'], 
 		utils.ui.ScrollableContainer.ZIPPY_HEADER_MOUSEOVER_CLASS);
-	goog.dom.classes.remove(this.contentsDict_[zKey]['expandIcon'], 
+	goog.dom.classes.remove(this.contentsDict_[storageKey]['expandIcon'], 
 		utils.ui.ScrollableContainer.ZIPPY_ICON_MOUSEOVER_CLASS);
     }.bind(this));	   
 } 
@@ -918,19 +954,20 @@ utils.ui.ScrollableContainer.prototype.setSliderCallbacks_ = function() {
 
 /**
  * As stated.
- * @param {!string} zKey The name and label of the zippy.
+ * @param {!string} storageKey The storage key.
  */
-utils.ui.ScrollableContainer.prototype.setZippyExpandedEvents_ = function(zKey)
+utils.ui.ScrollableContainer.prototype.setZippyExpandedEvents_ = 
+function(storageKey)
 {
 
     var zippy = /**@type {!goog.ui.AnimatedZippy | !goog.ui.Zippy}*/
-    this.contentsDict_[zKey]['zippy'];
+    this.contentsDict_[storageKey]['zippy'];
     
     goog.events.listen(zippy, goog.object.getValues(goog.ui.Zippy.Events)
 		       , function(e) { 		
 	
 	var expandIcon = /**@type {!Element}*/ 
-			   this.contentsDict_[zKey]['expandIcon'];
+			   this.contentsDict_[storageKey]['expandIcon'];
 
 	// Create a map that allows the slider to move
 	// the contents in proportion to the slider.
@@ -962,8 +999,8 @@ utils.ui.ScrollableContainer.prototype.setZippyExpandedEvents_ = function(zKey)
 utils.ui.ScrollableContainer.prototype.addContentsElement_ = 
 function (contents, opt_parent, opt_parentKey) {
 
-    window.console.log("ADD CONTENTS ELEMENT", contents, 
-    		       opt_parent, opt_parentKey);
+    //window.console.log("ADD CONTENTS ELEMENT", contents, 
+    //		       opt_parent, opt_parentKey);
     // All contents need to be relatively positioned.
     utils.style.setStyle(contents, {'position': 'relative'});
     // Add element to the parent Element

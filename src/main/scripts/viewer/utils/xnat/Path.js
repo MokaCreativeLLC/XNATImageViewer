@@ -180,3 +180,30 @@ utils.xnat.Path.forEachXnatLevel = function(callback){
 	callback(utils.xnat.Path.xnatLevelOrder[i], i);
     }
 }
+
+
+
+/**
+ * Returns the shared xnat level between two uris.
+ * @param {!string} uri1 The first uri to compare.
+ * @param {!string} uri2 The second uri to compare.
+ * @return {string} The deepest shared xnat level
+ * @public
+ */
+utils.xnat.Path.getDeepestSharedXnatLevel = function(uri1, uri2){
+    var path1 = /**@type {!utils.xnat.Path}*/ new utils.xnat.Path(uri1);
+    var path2 = /**@type {!utils.xnat.Path}*/ new utils.xnat.Path(uri2);
+    var sharedLevel = /**@type {sting} */ undefined;
+
+    //window.console.log(path1, path2);
+    utils.xnat.Path.forEachXnatLevel(function(level){
+	//window.console.log(path1[level], path2[level], 
+	//		   path1[level] === path2[level])
+	if (path1[level] && (path1[level] === path2[level])){
+	    sharedLevel = level;
+	}
+	//window.console.log(sharedLevel);
+    })
+
+    return sharedLevel;
+}

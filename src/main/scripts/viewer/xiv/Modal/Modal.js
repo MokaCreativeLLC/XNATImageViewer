@@ -51,6 +51,18 @@ goog.exportSymbol('xiv.Modal', xiv.Modal);
 
 
 /**
+ * public
+ * @const
+ */
+xiv.Modal.MODES = [
+    'fullScreen',
+    'popup',
+    'windowed'
+]
+
+
+
+/**
  * @type {!number} 
  * @const
  */
@@ -223,6 +235,7 @@ xiv.Modal.prototype.ThumbnailManager_;
 xiv.Modal.prototype.ViewBoxManager_;
 
 
+
 /**
  * @const
  * @type {!string}
@@ -321,20 +334,8 @@ xiv.Modal.prototype.getButtons = function() {
 
 
 /**
- * public
- * @const
- */
-xiv.Modal.MODES = [
-    'fullScreen',
-    'popup',
-    'windowed'
-]
-
-
-
-/**
  * As stated.
- * @param {!string} The iconUrl to set.
+ * @param {!string} iconUrl The iconUrl to set.
  * @public
  */
 xiv.Modal.prototype.setIconUrl = function(iconUrl) {

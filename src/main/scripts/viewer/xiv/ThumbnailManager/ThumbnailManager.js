@@ -239,7 +239,7 @@ xiv.ThumbnailManager.prototype.addThumbnail = function(thumbnail, folders){
     this.thumbs_[thumbnail.getElement().getAttribute('id')] = thumbnail;
 
     // Add to gallery
-    //window.console.log(folders);
+    //window.console.log(folders, "\n\nMINIMIZE", opt_minFolderInd);
     this.ThumbnailGallery_.addThumbnail(thumbnail, folders);    
 
     // Add also to the drag drop tracking group.

@@ -86,6 +86,7 @@ goog.addDependency('../../../utils/xnat/Path.js', ['utils.xnat.Path'], [
 
 goog.addDependency('../../../utils/xnat/ProjectTree.js', 
 ['utils.xnat.ProjectTree'], [
+'goog.array',
 'utils.xnat',
 'utils.xnat.Path'
 ]);
