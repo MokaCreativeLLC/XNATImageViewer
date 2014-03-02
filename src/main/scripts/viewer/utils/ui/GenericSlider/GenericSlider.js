@@ -84,8 +84,7 @@ utils.ui.GenericSlider.EventType = {
 
 
 /**
- * @type {string} 
- * @expose
+ * @type {!string} 
  * @const
  */
 utils.ui.GenericSlider.CSS_CLASS_PREFIX =  
@@ -94,52 +93,39 @@ goog.getCssName('utils-ui-genericslider');
 
 
 /**
- * @type {string} 
- * @expose
+ * @type {!string} 
  * @const
  */
-utils.ui.GenericSlider.ELEMENT_CLASS_PREFIX =
-utils.ui.GenericSlider.CSS_CLASS_PREFIX;
-
-
-
-/**
- * @type {string} 
- * @expose
- * @const
- */
-utils.ui.GenericSlider.TRACK_CLASS_PREFIX = 
+utils.ui.GenericSlider.TRACK_CLASS = 
 goog.getCssName(utils.ui.GenericSlider.CSS_CLASS_PREFIX, 'track');
 
 
 
 /**
- * @type {string} 
- * @expose
+ * @type {!string} 
  * @const
  */
-utils.ui.GenericSlider.THUMB_CLASS_PREFIX =  
+utils.ui.GenericSlider.TRACK_HOVERED_CLASS = 
+goog.getCssName(utils.ui.GenericSlider.TRACK_CLASS, 'hovered');
+
+
+
+/**
+ * @type {!string} 
+ * @const
+ */
+utils.ui.GenericSlider.THUMB_CLASS =  
 goog.getCssName(utils.ui.GenericSlider.CSS_CLASS_PREFIX, 'thumb');
 
 
 
-/**
- * @type {string} 
- * @expose
- * @const
- */
-utils.ui.GenericSlider.THUMB_HOVERED_BORDER_CLASS = 
-goog.getCssName(utils.ui.GenericSlider.THUMB_CLASS_PREFIX, 'hovered-border');
-
-
 
 /**
- * @type {string} 
- * @expose
+ * @type {!string} 
  * @const
  */
-utils.ui.GenericSlider.THUMB_HOVERED_COLOR_CLASS = 
-goog.getCssName(utils.ui.GenericSlider.THUMB_CLASS_PREFIX, 'hovered-color');
+utils.ui.GenericSlider.THUMB_HOVERED_CLASS =  
+goog.getCssName(utils.ui.GenericSlider.THUMB_CLASS, 'hovered');
 
 
 
@@ -221,6 +207,7 @@ function (element, opt_callback) {
  * @public
  */
 utils.ui.GenericSlider.prototype.updateStyle = function () {
+    window.console.log("update style");
     this['EVENTS'].setEventSuspended('SLIDE', true);
     var pos = /**@type {!number}*/ this.getValue();
     if (pos < this.getMaximum()) this.setValue(pos + 1);
@@ -232,57 +219,36 @@ utils.ui.GenericSlider.prototype.updateStyle = function () {
 
 
 /**
- * Applies the 'className' to the slider thumb when a mouse
- * hovers over it.  This method was implemented to ensure
- * a better UX than a default event listening call.
- * @param {!string} className The class to apply to the thumb.
- * @public
- */	
-utils.ui.GenericSlider.prototype.setThumbHoverClass = function(className) {
-    this.hoverClass_ = className;
-
-    goog.events.listen(this.thumb_, 
-		       goog.events.EventType.MOUSEOVER, 
-		       this.applyThumbnailHover_.bind(this));
-    goog.events.listen(this.thumb_, 
-		       goog.events.EventType.MOUSEOUT, 
-		       this.removeThumbnailHover_.bind(this));
-
-    // Remove hoverListeners when dragging the thumbnail...
-    utils.ui.GenericSlider.superClass_.addEventListener.call(this, 
-			goog.ui.SliderBase.EventType.DRAG_START, 
-			this.onThumbnailDragStart_.bind(this), this);
-
-    // Reapply mouseout listener when done dragging.
-    utils.ui.GenericSlider.superClass_.addEventListener.call(this, 
-			goog.ui.SliderBase.EventType.DRAG_END, 
-			this.onThumbnailMouseOut_.bind(this), this);
+ * Changes the orientation and applies the CSS properties associated with
+ * the orientation.
+ * @param {goog.ui.SliderBase.Orientation} orient The orientation.
+ */
+utils.ui.GenericSlider.prototype.setOrientation = function(orient) {
+    goog.base(this, 'setOrientation', orient);	  
+    this.setCssClasses_(this.getOrientation().toLowerCase());
 }
-
 
 
 
 /**
  * Changes the orientation and applies the CSS properties associated with
  * the orientation.
- *
  * @param {goog.ui.SliderBase.Orientation} orient The orientation.
  */
-utils.ui.GenericSlider.prototype.setOrientation = function(orient) {
-    goog.base(this, 'setOrientation', orient);	  
+utils.ui.GenericSlider.prototype.setCssClasses_ = function(orientation) {
 
-    var orientationLower = /**@type {!string}*/ 
-    this.getOrientation().toLowerCase();
+    function addRemove(elt, className){
+	goog.dom.classes.addRemove(elt,
+				   [goog.getCssName(className, 'horizontal'),
+				    goog.getCssName(className, 'vertical')],
+				   [goog.getCssName(className),
+				    goog.getCssName(className, orientation),
+				   ]);
+    }
 
-    goog.dom.classes.add(this.element_, 
-	goog.getCssName(utils.ui.GenericSlider.ELEMENT_CLASS_PREFIX,  
-					 orientationLower));
-    goog.dom.classes.add(this.track_,   
-	goog.getCssName(utils.ui.GenericSlider.TRACK_CLASS_PREFIX, 
-					 orientationLower));
-    goog.dom.classes.add(this.thumb_,   
-	goog.getCssName(utils.ui.GenericSlider.THUMB_CLASS_PREFIX,  
-					 orientationLower));  
+    addRemove(this.element_, utils.ui.GenericSlider.CSS_CLASS_PREFIX);
+    addRemove(this.track_, utils.ui.GenericSlider.TRACK_CLASS);
+    addRemove(this.thumb_, utils.ui.GenericSlider.THUMB_CLASS);  
 }
 
 
@@ -295,7 +261,9 @@ utils.ui.GenericSlider.prototype.initEvents_ = function() {
 			goog.ui.Component.EventType.CHANGE, function (e) {
 	utils.dom.stopPropagation(e);
 	this['EVENTS'].runEvent('SLIDE');
-    }.bind(this));	    
+    }.bind(this));
+
+    this.initHoverEvents_();
 }
 
 
@@ -328,6 +296,7 @@ utils.ui.GenericSlider.prototype.findThumbElement_ = function() {
  * @private
  */
 utils.ui.GenericSlider.prototype.onMouseWheelScroll_ = function (event) {
+    //window.console.log("mousewheel scroll");
     this.setValue(Math.round(this.getValue() + event.deltaY / 3));
     this['EVENTS'].runEvent('MOUSEWHEEL');
     event.preventDefault();
@@ -337,11 +306,51 @@ utils.ui.GenericSlider.prototype.onMouseWheelScroll_ = function (event) {
 
 
 /**
- * As stated.
+ * @type {Object}
  * @private
  */
-utils.ui.GenericSlider.prototype.applyThumbnailHover_ = function() { 
-    goog.dom.classes.add(this.thumb_, this.hoverClass_)
+utils.ui.GenericSlider.prototype.hoverables_;
+
+
+
+/**
+ * As stated.
+ * @type {!boolean}
+ * @private
+ */
+utils.ui.GenericSlider.prototype.isSliding_ = false;
+
+
+
+/**
+ * As stated.
+ * @type {!string}
+ * @private
+ */
+utils.ui.GenericSlider.prototype.lastHoverEvent_ = '';
+
+
+
+
+/**
+ * @param {string=} opt_thumbClass The thumb class to add.
+ * @param {string=} opt_trackClass The track class to add.
+ * @public
+ */
+utils.ui.GenericSlider.prototype.setHoverClasses = 
+function(opt_thumbClass, opt_trackClass){
+    var tempObj = {
+	'thumb': opt_thumbClass,
+	'track': opt_trackClass
+    }
+    // Add to hover classes.
+    var key = /**@type {!string} */ '';
+    for (key in tempObj){
+	if (tempObj[key] && 
+	    this.hoverables_[key]['classes'].indexOf(tempObj[key]) == -1){
+	    this.hoverables_[key]['classes'].push(tempObj[key])
+	}
+    }
 }
 
 
@@ -350,35 +359,170 @@ utils.ui.GenericSlider.prototype.applyThumbnailHover_ = function() {
  * As stated.
  * @private
  */
-utils.ui.GenericSlider.prototype.removeThumbnailHover_ = function() { 
-    goog.dom.classes.remove(this.thumb_, this.hoverClass_)
+utils.ui.GenericSlider.prototype.initHoverEvents_ = function(){
+    this.initHoverables_();
+    this.setBasicHoverEvents_();
+    this.setUniqueHoverEvents_();
+    this.setDragHoverEvents_()
+}
+
+
+
+
+/**
+ * Sets the basic mouseout and mouseover class adds and removes for the thumb
+ * and the track.
+ * @private
+ */
+utils.ui.GenericSlider.prototype.setBasicHoverEvents_ = function(){
+    var elt = /**@type {!Element} */ undefined;
+    var key = /**@type {!string} */ '';
+    // Basic hover class changes
+    for (key in this.hoverables_){
+	elt = this.hoverables_[key]['element'];
+
+	this.hoverables_[key]['MOUSEOVER'].push(
+	    goog.events.listen(elt, goog.events.EventType.MOUSEOVER, 
+		       this.getClassModifier_(key, goog.dom.classes.add)));
+
+	this.hoverables_[key]['MOUSEOUT'].push(
+	    goog.events.listen(elt, goog.events.EventType.MOUSEOUT, function(){
+		// Except when sliding...
+		if (!this.isSliding_) {
+		//    window.console.log("HERE!");
+		    this.getClassModifier_(key, goog.dom.classes.remove)();
+		}
+	    }.bind(this)));
+    }
 }
 
 
 
 /**
- * Suspends mouseout listener when dragging, because we still want to maintain 
- * the hover style.
- * @param {!goog.events.EventType} 
+ * As stated.
+ * @private
+ */
+utils.ui.GenericSlider.prototype.setUniqueHoverEvents_ = function(){
+
+    // Hover track when hovering thumb...
+    this.hoverables_['thumb']['MOUSEOVER'].push(
+	goog.events.listen(this.thumb_, goog.events.EventType.MOUSEOVER,
+	    function(){
+		this.lastHoverEvent_ = 'MOUSEOVER';
+		this.getClassModifier_('track', goog.dom.classes.add);
+	    }.bind(this)))
+
+    // Unhover track when hovering thumb...
+    this.hoverables_['thumb']['MOUSEOUT'].push(
+    goog.events.listen(this.thumb_, goog.events.EventType.MOUSEOUT, 
+        function(){
+	    this.lastHoverEvent_ = 'MOUSEOUT';
+	    // Except when sliding...
+	    if (!this.isSliding_){
+		this.getClassModifier_('track', goog.dom.classes.remove)();
+	    }
+        }.bind(this)))
+}
+
+    
+
+/**
+ * As stated.
+ * @private
+ */
+utils.ui.GenericSlider.prototype.setDragHoverEvents_ = function(){
+    // DragStart set...
+    utils.ui.GenericSlider.superClass_.addEventListener.call(this, 
+		goog.ui.SliderBase.EventType.DRAG_START, 
+		this.onThumbnailDragStart_.bind(this));
+
+    // DragEnd set...
+    utils.ui.GenericSlider.superClass_.addEventListener.call(this, 
+    			goog.ui.SliderBase.EventType.DRAG_END, 
+    this.onThumbnailDragEnd_.bind(this), this);
+    
+    // Drag set...
+    this['EVENTS'].onEvent('SLIDE', function(){ 
+	if (this.isSliding_){
+	    var key = /**@type {!string} */ '';
+	    for (key in this.hoverables_){
+		// Apply the hover class
+		this.getClassModifier_(key, goog.dom.classes.add)();
+	    }
+	}
+    }.bind(this));
+}
+
+
+
+/**
+ * As stated.
+ * @private
+ */
+utils.ui.GenericSlider.prototype.initHoverables_ = function(){
+    this.hoverables_ = {
+	'thumb': {},
+	'track' : {}
+    }
+    this.hoverables_['thumb']['element'] = this.thumb_;    
+    this.hoverables_['track']['element'] = this.track_;
+    this.hoverables_['thumb']['classes'] = 
+	[utils.ui.GenericSlider.THUMB_HOVERED_CLASS];
+    this.hoverables_['track']['classes'] = 
+	[utils.ui.GenericSlider.TRACK_HOVERED_CLASS];
+
+    for (var key in this.hoverables_){
+	this.hoverables_[key]['MOUSEOVER'] = [];
+	this.hoverables_[key]['MOUSEOUT'] = [];
+    }
+}
+
+
+
+/**
+ * As stated.
+ * @param {!string} The key referencing this.hoverables_.
+ * @param {!function} The function to manipulate the classes with.
+ * @return {!function} The function that runs the modification of an elements
+ *    class names.
+ * @private
+ */
+utils.ui.GenericSlider.prototype.getClassModifier_ = 
+function(key, classManipFcn) {
+    return function(){
+	goog.array.forEach(this.hoverables_[key]['classes'], 
+			   function(className){
+	    classManipFcn(this.hoverables_[key]['element'], className)
+	}.bind(this))
+    }.bind(this)
+}
+
+
+
+/**
+ * Event as described.
+ * @param {!goog.events.EventType} e The event.
  * @private
  */
 utils.ui.GenericSlider.prototype.onThumbnailDragStart_ = function (e) {
-    goog.events.unlisten(this.thumb_, goog.events.EventType.MOUSEOUT, 
-			 this.removeThumbnailHover_);
-    goog.dom.classes.add(this.thumb_, this.hoverClass_);
+    this.isSliding_ = true;
 }
 
 
 
 /**
- * Custom mouseout function for the thumbnail.
- * @param {!goog.events.EventType} 
+ * Event as described.
+ * @param {!goog.events.EventType} e The event.
  * @private
  */
-utils.ui.GenericSlider.prototype.onThumbnailMouseOut_ = function (e) {    
-    goog.events.listen(this.thumb_, goog.events.EventType.MOUSEOUT, 
-		       this.removeThumbnailHover_);
-    goog.dom.classes.remove(this.thumb_, this.hoverClass_);
+utils.ui.GenericSlider.prototype.onThumbnailDragEnd_ = function (e) {
+    this.isSliding_ = false;
+    if (this.lastHoverEvent_ === 'MOUSEOUT'){
+	var key = /**@type {!string} */ '';
+	for (key in this.hoverables_){
+	    this.getClassModifier_(key, goog.dom.classes.remove)();
+	}
+    }
 }
 
 

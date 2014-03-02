@@ -120,12 +120,16 @@ xiv.XtkPlane = function(id) {
 	//
 	// Slider
 	//
-	this.Slider_ = new utils.ui.GenericSlider({'parent': this.getElement(), 'orientation' : 'horizontal'});
-	goog.dom.classes.add(this.Slider_.getElement(), xiv.XtkPlane.SLIDER_CLASS);
-	goog.dom.classes.add(this.Slider_.getThumb(), xiv.XtkPlane.SLIDER_THUMB_CLASS);
-	goog.dom.classes.add(this.Slider_.getTrack(), xiv.XtkPlane.SLIDER_TRACK_CLASS);
+	this.Slider_ = new utils.ui.GenericSlider({'parent': this.getElement(),
+						'orientation' : 'horizontal'});
+	goog.dom.classes.add(this.Slider_.getElement(),
+			     xiv.XtkPlane.SLIDER_CLASS);
+	goog.dom.classes.add(this.Slider_.getThumb(), 
+			     xiv.XtkPlane.SLIDER_THUMB_CLASS);
+	goog.dom.classes.add(this.Slider_.getTrack(), 
+			     xiv.XtkPlane.SLIDER_TRACK_CLASS);
 
-	this.Slider_.setThumbHoverClass(xiv.XtkPlane.SLIDER_THUMB_HOVERED_CLASS);
+	this.Slider_.setHoverClasses(xiv.XtkPlane.SLIDER_THUMB_HOVERED_CLASS);
 	
 
 	//

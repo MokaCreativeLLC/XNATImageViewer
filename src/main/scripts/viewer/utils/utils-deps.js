@@ -35,6 +35,7 @@ goog.addDependency('../../../utils/style/style.js', ['utils.style'], [
 
 goog.addDependency('../../../utils/fx/fx.js', ['utils.fx'], [
 'goog.events', 
+'goog.dom.classes', 
 'goog.fx.dom', 
 'goog.fx.easing', 
 'goog.fx.Transition', 
@@ -123,6 +124,7 @@ goog.addDependency('../../../utils/ui/GenericSlider/GenericSlider.js',
 ['utils.ui.GenericSlider'], [
 'goog.ui.Slider',
 'goog.dom',
+'goog.dom.classes',
 'goog.string',
 'goog.ui.Component',
 'goog.array',
@@ -141,6 +143,7 @@ goog.addDependency('../../../utils/ui/ScrollableContainer/ScrollableContainer.js
 'goog.ui.Zippy', 
 'goog.ui.Zippy.Events', 
 'utils.dom', 
+'utils.fx', 
 'utils.ui.GenericSlider',
 'utils.convert',
 'utils.style',

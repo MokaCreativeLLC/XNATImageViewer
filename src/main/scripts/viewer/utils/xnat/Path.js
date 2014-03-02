@@ -93,7 +93,7 @@ utils.xnat.Path.prototype.deconstructUrl_ = function(url) {
  * @public
  */
 utils.xnat.Path.prototype.pathByLevel = function(level){
-    window.console.log("XNAT LEVEL", level);
+    //window.console.log("XNAT LEVEL", level);
     if (!this.hasOwnProperty(level)){
 	throw new Error("Invalid level: ", level);
     }

@@ -84,7 +84,7 @@ utils.xnat.ProjectTree.prototype.load = function(callback){
 		}
 	    }
 
-	    window.console.log("CALLBACK", callback);
+	    //window.console.log("CALLBACK", callback);
 	    // Call getTree
 	    this['projects'].push(this.getTree('projects', 
 	    		this.initPath_.pathByLevel('projects'), callback)); 

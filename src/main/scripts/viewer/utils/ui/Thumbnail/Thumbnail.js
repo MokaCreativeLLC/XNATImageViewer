@@ -72,7 +72,7 @@ utils.ui.Thumbnail = function () {
     this.initEvents_();
     this.setClasses_();
     this.setHoverListeners_(true);
-    this.mouseOut_();    
+    this.mouseOut();    
 }
 goog.exportSymbol('utils.ui.Thumbnail', utils.ui.Thumbnail);
 
@@ -493,9 +493,9 @@ utils.ui.Thumbnail.prototype.mouseOver_ = function() {
 /**
  * Applies the classes to the various objects when the mouse hovers over the 
  * utils.ui.Thumbnail.
- * @private
+ * @public
  */
-utils.ui.Thumbnail.prototype.mouseOut_ = function() {
+utils.ui.Thumbnail.prototype.mouseOut = function() {
     var hoverNode = /**@type {!Element}*/ this.getHoverable();
     if (hoverNode && hoverNode.childNodes.length > 1) { 
 	hoverNode.style.visibility = 'hidden';
@@ -526,14 +526,14 @@ utils.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
 			   this.mouseOver_.bind(this));
 	goog.events.listen(hoverNode, 
 			   goog.events.EventType.MOUSEOUT, 
-			   this.mouseOut_.bind(this));
+			   this.mouseOut.bind(this));
     } else {
 	goog.events.unlisten(hoverNode, 
 			     goog.events.EventType.MOUSEOVER, 
 			     this.mouseOver_.bind(this));
 	goog.events.unlisten(hoverNode, 
 			     goog.events.EventType.MOUSEOUT, 
-			     this.mouseOut_.bind(this));
+			     this.mouseOut.bind(this));
     }
 }
 

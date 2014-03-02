@@ -12,7 +12,6 @@
     left: 0px;
     cursor: pointer;
     background-color: rgb(0,0,0);
-    opacity: .7;
 }
 
 
@@ -43,7 +42,7 @@
     overflow-y: hidden;
     overflow-x: hidden;
     border : solid;
-    border-color: rgb(200,200,200);
+    border-color: rgb(100,100,100);
     border-width : 1px;
     border-radius: 0px;	 
     cursor: pointer;
@@ -62,7 +61,7 @@
     font-size: 9;		
     font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
     white-space: nowrap;  
-    color : rgb(200,200,200);  
+    color : rgb(100,100,100);  
     line-height: 17px;
 	
 }

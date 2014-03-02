@@ -296,7 +296,7 @@ utils.style.getComputedStyle = function (elt, opt_propertyKey) {
     //------------------
     // If 'opt_propertyKey' is a string, not array...
     //--------------------
-    if (opt_propertyKey && typeof opt_propertyKey === 'string'){
+    if (opt_propertyKey && goog.isString(opt_propertyKey)){
 	return window.getComputedStyle(elt, null).
 	    getPropertyValue(opt_propertyKey); 
 
@@ -313,11 +313,12 @@ utils.style.getComputedStyle = function (elt, opt_propertyKey) {
 	var attrs = {};
 	var styleSheet = window.getComputedStyle(elt, null);
 	var i = /**@type {!number}*/ 0;
-	var len = /**@type {!number}*/ 0;
-	for (i=0, len = opt_propertyKey.length; i < len; i++) {
+	var len = /**@type {!number}*/ opt_propertyKey.length;
+	for (i=0; i < len; i++) {
 	    attrs[opt_propertyKey[i]] = 
 		styleSheet.getPropertyValue(opt_propertyKey[i]);
 	}
+	//window.console.log(attrs);
 	return utils.style.parseIntNumericalProperties(attrs);
     }
 
@@ -358,7 +359,7 @@ utils.style.parseIntNumericalProperties = function (obj) {
     for (key in obj) {
 	for (i = 0, len = pxConvertArr.length; i < len; i++){
 	    if (key === pxConvertArr[i]) {
-		obj[key] = utils.convert.toInt(obj[key]);
+		obj[key] = parseInt(obj[key], 10);
 	    }
 	}
     }	

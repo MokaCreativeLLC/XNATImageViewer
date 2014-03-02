@@ -6,6 +6,7 @@
 
 .xiv-thumbnail-manager-thumbnailgallery{
     position: absolute;
+    top: 30px;
     left: 0px;
     width: 180px;
 }

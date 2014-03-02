@@ -37,10 +37,9 @@
     color: rgb(120, 120, 120);
     font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
     cursor: pointer;
-    display: inline-block;
-    margin-top: 5px;
     z-index: 1000;
-    line-height: 1.5em; 
+    line-height: 1.5em;
+    margin-bottom: 4px;
 }
 
 
@@ -76,12 +75,11 @@
 .utils-ui-scrollablecontainer-zippycontent {
     overflow: visible;
     width: 100%;
-    top: 25px;
+    top: 20px;
     left: 12px;
     z-index: 1000;
+    margin-bottom: 4px;
 }
-
-
 
 
 
@@ -90,6 +88,8 @@
     background-color: rgb(0,0,0);
     border: none;
     height: 100%;
+    top: 0px;
+    left: 0px;
 }
 
 
@@ -97,14 +97,16 @@
 .utils-ui-scrollablecontainer-slider-thumb {
     height: 60px;
     width: 100%;
-    background-color: rgb(120,120,120);
+    background-color: rgb(100,100,100);
     z-index: 100;
     cursor: pointer;
 }
 
 
 .utils-ui-scrollablecontainer-slider-thumb-hovered {
-    background-color: rgb(180,180,180);
+    box-sizing: border-box;
+    background-color: rgb(140,140,140);
+    border: solid 1px rgb(100,100,100);
 }
 
 
@@ -114,5 +116,12 @@
     background-color: rgba(0,0,0,0);
     border: none;
     z-index: 99;
+}
+
+
+.utils-ui-scrollablecontainer-slider-track-hovered {
+    box-sizing: border-box;
+    background-color: rgb(50,50,50);
+    border-right: solid 1px rgb(100,100,100);
 }
 

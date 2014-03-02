@@ -77,14 +77,17 @@ goog.addDependency('../../../xiv/Thumbnail/Thumbnail.js', ['xiv.Thumbnail'], [
 goog.addDependency('../../../xiv/ViewBoxManager/ViewBoxManager.js', 
 ['xiv.ViewBoxManager'], [
 'goog.array',
+'goog.string',
 'goog.dom',
 'goog.events',
-'goog.fx',
-'goog.fx.dom',
+'goog.fx.easing',
+'goog.fx.dom.Slide',
 'goog.fx.DragDrop',
+'goog.fx.DragDropGroup',
 'goog.fx.AnimationParallelQueue',
-'goog.ui.Tooltip',
+'utils.string',
 'utils.style',
+'utils.fx',
 'utils.events.EventManager',
 'xiv.ViewBox'
 ]);

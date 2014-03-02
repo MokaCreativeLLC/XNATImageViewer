@@ -59,21 +59,6 @@ var xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
     
 
 
-    /**
-     * @type {!Array.string}
-     * @private
-     */
-    this.dataPaths_ = [];
-
-
-
-    /**
-     * @type {!Object.<string, Array.<utils.xnat.Viewable>>}
-     * @private
-     */
-    this.Viewables_ = {};
-
-
     this.createModal_();
 };
 goog.exportSymbol('xiv', xiv);
@@ -136,12 +121,31 @@ xiv.prototype.ProjectTree_;
 
 
 /**
+ * @type {Array.string}
+ * @private
+ */
+xiv.prototype.dataPaths_;
+
+
+
+/**
+ * @type {Object.<string, Array.<utils.xnat.Viewable>>}
+ * @private
+ */
+xiv.prototype.Viewables_;
+
+
+
+
+/**
  * Begins the XNAT Image Viewer.
  * @public
  */
 xiv.prototype.showModal = function(){
     this.Modal_.getElement().style.opacity = 0;
     goog.dom.append(document.body, this.Modal_.getElement());
+    // Important that this be here;
+    this.Modal_.getViewBoxManager().insertColumn(false);
     utils.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME);
 }
 
@@ -165,6 +169,9 @@ xiv.prototype.hideModal = function(opt_callback){
  * @public
  */
 xiv.prototype.addDataPath = function(path) {
+
+    this.dataPaths_ = this.dataPaths_ ? this.dataPaths_ : [];
+    
     var updatedPath = /**@type {!string}*/ 
     (path[0] !== "/") ? "/" + path : path;
 
@@ -235,7 +242,7 @@ xiv.prototype.loadProjectTree = function() {
 		    utils.xnat.Path.getDeepestSharedXnatLevel(
 			startingLoadPath, 
 			allExpt[i]);
-		window.console.log("DEEPEST SHARED", sharedLevel);
+		//window.console.log("DEEPEST SHARED", sharedLevel);
 		this.loadViewables(allExpt[i], sharedLevel);
 	    }
 	}
@@ -307,7 +314,7 @@ xiv.prototype.loadViewables = function(viewablesUri, opt_zippyMinimizedLevel){
     //goog.array.forEach(this.dataPaths_, function(viewablesUri){
     utils.xnat.getViewables(viewablesUri, function(viewable){
 	this.storeViewable_(viewable);
-	window.console.log("LOAD VIEWABLES", opt_zippyMinimizedLevel);
+	//window.console.log("LOAD VIEWABLES", opt_zippyMinimizedLevel);
 	this.addViewableToModal_(viewable, opt_zippyMinimizedLevel);
     }.bind(this))
     //}.bind(this))
@@ -344,8 +351,8 @@ xiv.prototype.addViewableToModal_ = function(Viewable, opt_zippyMinimizedLevel){
 		minFolderInd = ((i + 1) >= folders.length) ? undefined : i + 1;	
 	    }
 	})
-	window.console.log("MINIMIZE FOLDER INDEX", opt_zippyMinimizedLevel,
-			   minFolderInd);
+	//window.console.log("MINIMIZE FOLDER INDEX", opt_zippyMinimizedLevel,
+	//		   minFolderInd);
     }
     
     
@@ -375,7 +382,6 @@ xiv.prototype.createModal_ = function(){
 
 
 
-
 /**
  * Stores the viewable in an object, using its path as a key.
  * @param {!utils.xnat.Viewable} viweable The utils.xnat.Viewable object to 
@@ -384,6 +390,7 @@ xiv.prototype.createModal_ = function(){
  * @private
  */
 xiv.prototype.storeViewable_ = function(viewable, path) {
+    this.Viewables_ = this.Viewables_ ? this.Viewables_ : {};
     if (!this.Viewables_.hasOwnProperty(path)){
 	 this.Viewables_[path] = [];
     }

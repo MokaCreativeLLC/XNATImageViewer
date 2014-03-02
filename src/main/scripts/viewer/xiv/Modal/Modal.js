@@ -42,7 +42,6 @@ xiv.Modal = function (opt_iconUrl) {
     goog.base(this, xiv.Modal.ID_PREFIX);   
     this.setIconUrl_(opt_iconUrl);
     this.createComponents_();
-    //this.updateStyle();
     this.adjustStyleToMode_();
 }
 goog.inherits(xiv.Modal, xiv.Widget);
@@ -82,7 +81,7 @@ xiv.Modal.MAX_MODAL_W_PCT =  .90;
  * @type {number} 
  * @const
  */
-xiv.Modal.MAX_MODAL_H_PCT =  .95;
+xiv.Modal.MAX_MODAL_H_PCT =  .90;
 
 
 
@@ -106,7 +105,8 @@ xiv.Modal.MIN_VIEWBOX_H =  320;
  * @type {number} 
  * @const
  */
-xiv.Modal.MIN_VIEWBOX_W =  xiv.MIN_VIEWBOX_H * xiv.VIEWBOX_DIM_RATIO;
+xiv.Modal.MIN_VIEWBOX_W =  xiv.Modal.MIN_VIEWBOX_H * 
+    xiv.Modal.VIEWBOX_DIM_RATIO;
 
 
 
@@ -114,7 +114,7 @@ xiv.Modal.MIN_VIEWBOX_W =  xiv.MIN_VIEWBOX_H * xiv.VIEWBOX_DIM_RATIO;
  * @type {number} 
  * @const
  */
-xiv.Modal.VIEWER_VERT_MGN = 20;
+xiv.Modal.VIEWBOX_VERT_MGN = 20;
 
 
 
@@ -122,7 +122,7 @@ xiv.Modal.VIEWER_VERT_MGN = 20;
  * @type {number} 
  * @const
  */
-xiv.Modal.VIEWER_HORIZ_MGN = 20;
+xiv.Modal.VIEWBOX_HORIZ_MGN = 20;
 
 
 
@@ -201,6 +201,14 @@ goog.getCssName(xiv.Modal.ROWMENU_CLASS, 'button');
  * @private
  */  
 xiv.Modal.prototype.iconUrl_;
+
+
+
+/**
+ * @type {string}
+ * @private
+ */  
+xiv.Modal.prototype.rootIconUrl_;
 
 
 
@@ -287,16 +295,6 @@ xiv.Modal.buttonTypes = {
     //'addXnatFolders' : 'Add more XNAT folders.'
 }
 
-
-
-/**
- * Get the associated modal for this object.
- * @return {Element} The modal element of the Modal.js object.
- * @public
- */
-xiv.Modal.prototype.getModalElement = function() {
-  return this.modal_;
-};
 
 
  
@@ -409,25 +407,25 @@ xiv.Modal.prototype.highlightInUseThumbnails = function () {
  */
 xiv.Modal.prototype.animateModal  = function (opt_callback) {
 
-    var modalDims = /**@type {!Object}*/ this.getCalculatedModalDims_();
+    this.calculateInlineModalDims_();
+
     var animQueue = /**@type {!goog.fx.AnimationParallelQueue}*/ 
     new goog.fx.AnimationParallelQueue();
     
     // Set-up
-    this.addModalAnims_(modalDims);
-    this.addViewBoxAnims_(modalDims);
+    this.addModalAnims_(this._dims, animQueue);
+    this.addViewBoxAnims_(this._dims, animQueue);
     this.highlightInUseThumbnails();
 	
-    // Events
-    goog.events.listen(modalResize, 'animate', 
-		       this.onModalAnimationAnimate_.bind(this))
+
     goog.events.listen(animQueue, 'end', function(){
-	this.onModalAnimationEnd_.bind(this)
+	this.onModalAnimationEnd_();
 	if (opt_callback) { opt_callback() };
-    })
+    }.bind(this))
 
     // Play
     animQueue.play();
+    this.fadeInHiddenViewers_();
 }
 
 
@@ -438,7 +436,7 @@ xiv.Modal.prototype.animateModal  = function (opt_callback) {
  */
 xiv.Modal.prototype.onModalAnimationAnimate_ = function() {
     this.ViewBoxManager_.loop( function(ViewBox) { 
-	ViewBox.updateStyle();
+	//ViewBox.updateStyle();
     })
 }
 
@@ -449,12 +447,21 @@ xiv.Modal.prototype.onModalAnimationAnimate_ = function() {
  * @private
  */
 xiv.Modal.prototype.onModalAnimationEnd_ = function() {
-    
     // Update style.
     this.updateStyle();
+    //this.fadeInHiddenViewers_();
+}
 
+
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.Modal.prototype.fadeInHiddenViewers_ = function() {
     // Fade in new viewers.
     this.ViewBoxManager_.loop( function(ViewBox, i, j) { 
+	//window.console.log(ViewBox.getElement().style.opacity);
 	if (ViewBox.getElement().style.opacity == 0) {
 	    utils.fx.fadeIn(ViewBox.getElement(), xiv.Modal.ANIM_LEN);
 	}
@@ -472,14 +479,24 @@ xiv.Modal.prototype.onModalAnimationEnd_ = function() {
  * @private
  */
 xiv.Modal.prototype.addModalAnims_ = function (modalDims, animQueue) {
-    animQueue.add(new goog.fx.dom.Resize(
-	this.modal_, [this.modal_.offsetWidth, this.modal_.offsetHeight], 
-	[modalDims.width, modalDims.height], xiv.Modal.ANIM_LEN, 
-	goog.fx.easing.easeOut));
+
+    var modalResize = /**@type {!goog.fx.dom.Resize}*/ new goog.fx.dom.Resize(
+	this.getElement(), [this.getElement().offsetWidth, 
+			    this.getElement().offsetHeight], 
+	[modalDims['width'], modalDims['height']], xiv.Modal.ANIM_LEN, 
+	goog.fx.easing.easeOut);
+    animQueue.add(modalResize);
+
+
+    // Events
+    goog.events.listen(modalResize, 'animate', 
+		       this.onModalAnimationAnimate_.bind(this))
+
 
     animQueue.add(new goog.fx.dom.Slide(
-	this.modal_, [this.modal_.offsetLeft, this.modal_.offsetTop], 
-	[modalDims.left, modalDims.top], 
+	this.getElement(), [this.getElement().offsetLeft, 
+			    this.getElement().offsetTop], 
+	[modalDims['left'], modalDims['top']], 
 	xiv.Modal.ANIM_LEN, goog.fx.easing.easeOut));
 }
 
@@ -501,12 +518,13 @@ xiv.Modal.prototype.addViewBoxAnims_ = function (modalDims, animQueue) {
 	elt = ViewBox.getElement();
 	animQueue.add(new goog.fx.dom.Resize(
 	    elt, [elt.offsetWidth, elt.offsetHeight], 
-	    [modalDims.ViewBox.width, modalDims.ViewBox.height], 
+	    [modalDims['ViewBox']['width'], modalDims['ViewBox']['height']], 
 	    xiv.Modal.ANIM_LEN, goog.fx.easing.easeOut));
 
 	animQueue.add(new goog.fx.dom.Slide(
 	    elt, [elt.offsetLeft, elt.offsetTop], 
-	    [modalDims.ViewBox.lefts[i][j], modalDims.ViewBox.tops[i][j]], 
+	    [modalDims['ViewBox']['left'][i][j], 
+	     modalDims['ViewBox']['top'][i][j]], 
 	    xiv.Modal.ANIM_LEN, goog.fx.easing.easeOut));	
     })
 }
@@ -522,13 +540,12 @@ xiv.Modal.prototype.addViewBoxAnims_ = function (modalDims, animQueue) {
  */
 xiv.Modal.prototype.calculateInlineModalDims_ = function () {
     this._dims = /**@dict*/ {};
-    this.deriveStartingParams_();
-    this.deriveMinModalWidth_();
-    this.deriveViewBoxHeightsAndWidths_();
-    this.derivePeliminaryHeightAndWidth_();
-    this.deriveFinalHeightsAndWidths_();
-    this.derivePositions_();
-    this.getViewBoxHeightsAndWidths_();   
+    this.setStartingDimensionParams_();
+    this.deriveViewBoxDims_();
+    this.derivePelimModalDims_();
+    this.deriveAllFinalDims_();
+    this.deriveViewBoxPositions_();
+    this.deriveModalPosition_();
 }
 
 
@@ -536,61 +553,41 @@ xiv.Modal.prototype.calculateInlineModalDims_ = function () {
 /**
  * @private
  */ 
-xiv.Modal.prototype.deriveStartingParams_ = function() {
-    this._dims['max'] = {};
-    this._dims['min'] = {};
-    this._dims['ViewBox'] = {};
-    this._dims['prelims'] = {};
-    this._dims['ThumbnailGallery'] = {};
+xiv.Modal.prototype.setStartingDimensionParams_ = function() {
 
     this._dims['height'] = xiv.Modal.MAX_MODAL_H_PCT * window.innerHeight;
+
+    this._dims['max'] = {};
     this._dims['max']['width'] = Math.round(window.innerWidth * 
-					 xiv.Modal.MAX_MODAL_H_PCT);	
-    this._dims['ViewBox']['cols'] = this.ViewBoxManager_.totalColumns();
-    this._dims['ViewBox']['rows'] = this.ViewBoxManager_.totalRows();
-    this._dims['ThumbnailGallery']['width'] = utils.style.dims(
-	this.ThumbnailManager_.getThumbnailGallery().getElement(), 'width')
+					 xiv.Modal.MAX_MODAL_H_PCT);
+    this._dims['ViewBox'] = {};	
+    this._dims['ViewBox']['cols'] = this.ViewBoxManager_.columnCount();
+    this._dims['ViewBox']['rows'] = this.ViewBoxManager_.rowCount();
+
+
+    this._dims['ThumbnailGallery'] = {};
+    this._dims['ThumbnailGallery']['width'] = 
+	parseInt(utils.style.getComputedStyle(
+	this.ThumbnailManager_.getThumbnailGallery().getElement(), 'width'),
+	10);
+
+    //window.console.log("WIDTH", this._dims['ThumbnailGallery']['width']);
+    //window.console.log('PRELIM CALC',
+	//this.ThumbnailManager_.getThumbnailGallery().getElement(),
+	//this._dims['ViewBox'],
+	//this._dims['ThumbnailGallery']['width'])
 }
 
 
 
 /**
+ * As stated.
  * @private
  */ 
-xiv.Modal.prototype.deriveMinModalWidth_ = function() {
-    // Determine the minimum modal width
-    this._dims['min']['width'] =  this._dims['ThumbnailGallery']['width']; 
-    this._dims['min']['width'] += xiv.Modal.MIN_VIEWBOX_W * 
-	this._dims['ViewBox']['cols']; 
-    this._dims['min']['width'] += xiv.Modal.VIEWBOX_VERT_MGN * 
-	this._dims['ViewBox']['cols']; 
-    this._dims['min']['width'] += xiv.Modal.EXPANDBUTTON_W;
-}
-
-
-
-/**
- * @private
- */ 
-xiv.Modal.prototype.derivePeliminaryHeightAndWidth_ = function() {
-    this._dims['prelims']['width'] = this._dims['ThumbnailGallery']['width']; 
-    this._dims['prelims']['width'] += this._dims['ViewBox']['width']  * 
-	this._dims['ViewBox']['cols']; 
-    this._dims['prelims']['width'] += xiv.Modal.VIEWBOX_VERT_MGN * 
-	ViewBoxColumns + xiv.Modal.EXPANDBUTTON_W;
-
-    this._dims['width'] = this._dims['prelims']['width'];
-}
-
-
-
-/**
- * @private
- */ 
-xiv.Modal.prototype.deriveViewBoxHeightsAndWidths_ = function() {
+xiv.Modal.prototype.deriveViewBoxDims_ = function() {
     // Determine the the modal width based on prescribed proportions
-    this._dims['ViewBox']['height'] = (this._dims['height'] - 
-				  ((this._dims['ViewBox']['rows'] + 1) * 
+    this._dims['ViewBox']['height'] = 
+	(this._dims['height'] - ((this._dims['ViewBox']['rows'] + 1) * 
 		    xiv.Modal.EXPANDBUTTON_W)) / this._dims['ViewBox']['rows'];
     this._dims['ViewBox']['width'] = xiv.Modal.VIEWBOX_DIM_RATIO * 
 	this._dims['ViewBox']['height'];
@@ -599,9 +596,23 @@ xiv.Modal.prototype.deriveViewBoxHeightsAndWidths_ = function() {
 
 
 /**
+ * As stated.
  * @private
  */ 
-xiv.Modal.prototype.deriveFinalHeightsAndWidths_ = function (modalDims) {
+xiv.Modal.prototype.derivePelimModalDims_ = function() {
+    this._dims['width'] = this._dims['ThumbnailGallery']['width']; 
+    this._dims['width'] += this._dims['ViewBox']['width']  * 
+	this._dims['ViewBox']['cols']; 
+    this._dims['width'] += xiv.Modal.VIEWBOX_VERT_MGN * 
+	this._dims['ViewBox']['cols'] + xiv.Modal.EXPANDBUTTON_W;
+}
+
+
+
+/**
+ * @private
+ */ 
+xiv.Modal.prototype.deriveAllFinalDims_ = function (modalDims) {
 
     // If the modal is too wide, scale it down
     if (this._dims['width'] > this._dims['max']['width']) {
@@ -612,10 +623,14 @@ xiv.Modal.prototype.deriveFinalHeightsAndWidths_ = function (modalDims) {
 		xiv.Modal.EXPANDBUTTON_W) / this._dims['ViewBox']['cols']; 
 
 	this._dims['ViewBox']['width'] -= xiv.Modal.VIEWBOX_VERT_MGN;
+
+
 	this._dims['ViewBox']['height'] = 
 	    this._dims['ViewBox']['width'] / xiv.Modal.VIEWBOX_DIM_RATIO;
 
 	this._dims['width'] = this._dims['max']['width'];
+
+
 	this._dims['height'] = this._dims['ViewBox']['height'] * 
 				    this._dims['ViewBox']['rows'];
         this._dims['height'] += xiv.Modal.VIEWBOX_VERT_MGN  * 
@@ -624,7 +639,7 @@ xiv.Modal.prototype.deriveFinalHeightsAndWidths_ = function (modalDims) {
 
     }
     //utils.dom.debug("height: ", height);
-    this._dims['ThumbnailGallery']['height'] = this._dims['height'] - 40;
+    this._dims['ThumbnailGallery']['height'] = this._dims['height'] - 60;
 }
 
 
@@ -632,7 +647,7 @@ xiv.Modal.prototype.deriveFinalHeightsAndWidths_ = function (modalDims) {
 /**
  * @private
  */ 
-xiv.Modal.prototype.derivePositions_ = function () {
+xiv.Modal.prototype.deriveModalPosition_ = function () {
     this._dims['left'] = (window.innerWidth - this._dims['width'])/2 ;
     this._dims['top'] = (window.innerHeight - this._dims['height'])/2;
 }
@@ -642,8 +657,8 @@ xiv.Modal.prototype.derivePositions_ = function () {
 /**
  * @private
  */ 
-xiv.Modal.prototype.getViewBoxPositions_ = function () {
-    this._dims['ViewBox'] = {};    
+xiv.Modal.prototype.deriveViewBoxPositions_ = function () {
+  
     this._dims['ViewBox']['left'] = [];
     this._dims['ViewBox']['top'] = [];
 
@@ -656,6 +671,11 @@ xiv.Modal.prototype.getViewBoxPositions_ = function () {
 	
 	l = this._dims['ViewBox']['start'] + j * (
 	    this._dims['ViewBox']['width'] + xiv.Modal.VIEWBOX_VERT_MGN);
+
+	//window.console.log("LEFT", l);
+	//window.console.log(this._dims['ViewBox']['start'] , j , 
+	//this._dims['ViewBox']['width'] , xiv.Modal.VIEWBOX_VERT_MGN);
+
 	if (j==0 || !this._dims['ViewBox']['left'][i]) {
 	    this._dims['ViewBox']['left'].push([])
 	}
@@ -684,7 +704,8 @@ xiv.Modal.prototype.getViewBoxPositions_ = function () {
  */
 xiv.Modal.prototype.updateStyle = function () {	
     this.calculateInlineModalDims_();
-    utils.style.setStyle(this.modal_, this._dims);
+    window.console.log("DIMS", this._dims);
+    utils.style.setStyle(this.getElement(), this._dims);
     this.updateStyle_ThumbnailGallery_();
     this.updateStyle_ViewBoxes_();
     this.highlightInUseThumbnails();
@@ -698,10 +719,10 @@ xiv.Modal.prototype.updateStyle = function () {
  */
 xiv.Modal.prototype.updateStyle_ThumbnailGallery_ = function(){
     // xiv.ViewBoxes	
-    if (this.ThumbnailGallery_) {
+    if (this.ThumbnailManager_) {
 	utils.style.setStyle(
 	    this.ThumbnailManager_.getThumbnailGallery().getElement(), {
-	    'height': this._dims['ThumbnailGallery']['height']
+	    'height': this._dims['ViewBox']['height']
 	})	
     }
 }
@@ -737,6 +758,7 @@ xiv.Modal.prototype.updateStyle_ViewBoxes_ = function(){
 xiv.Modal.prototype.setIconUrl_ = function(opt_iconUrl) {
     //window.console.log(opt_iconUrl);
     if (opt_iconUrl && goog.isString(opt_iconUrl)){
+	this.rootIconUrl_ = opt_iconUrl;
 	this.iconUrl_ = goog.string.path.join(opt_iconUrl, 
 			xiv.Modal.ID_PREFIX.replace('.','/'));
     }
@@ -752,8 +774,7 @@ xiv.Modal.prototype.createComponents_ = function() {
     this.createBackground_();
     this.createButtons_();
     this.createThumbnailManager_();
-    //this.createViewBoxManager_();
-    //this.updateStyle();
+    this.createViewBoxManager_();
 }
 
 
@@ -779,6 +800,7 @@ xiv.Modal.prototype.createButtons_ = function() {
 	goog.dom.append(this.getElement(), this.buttons_[key]);
     }
     this.setFullScreenButtonCallbacks_();
+    this.setRowColumnInsertRemoveCallbacks_();
 }
 
 
@@ -805,9 +827,9 @@ xiv.Modal.prototype.createThumbnailManager_ = function() {
  */
 xiv.Modal.prototype.createViewBoxManager_ = function() {
     this.ViewBoxManager_ = new xiv.ViewBoxManager();
+    this.ViewBoxManager_.setIconUrl(this.rootIconUrl_);
     this.ViewBoxManager_.setViewBoxesParent(this.getElement());   
     this.setViewBoxManagerCallbacks_();
-    this.ViewBoxManager_.insertColumn(false);
 }
 
 
@@ -849,6 +871,27 @@ xiv.Modal.prototype.setFullScreenButtonCallbacks_ = function(){
 	this.onFullScreenButtonClicked_.bind(this)
     this.buttons_['windowed'].onclick = 
 	this.onWindowedButtonClicked_.bind(this);
+}
+
+
+
+/**
+ * As stated.
+ * @private
+ */   
+xiv.Modal.prototype.setRowColumnInsertRemoveCallbacks_ = function(){
+    this.buttons_['insertRow'].onclick = function(){
+	this.ViewBoxManager_.insertRow()
+    }.bind(this)
+    this.buttons_['removeRow'].onclick = function(){
+	this.ViewBoxManager_.removeRow()
+    }.bind(this)
+    this.buttons_['insertColumn'].onclick = function(){
+	this.ViewBoxManager_.insertColumn()
+    }.bind(this)
+    this.buttons_['removeColumn'].onclick = function(){
+	this.ViewBoxManager_.removeColumn()
+    }.bind(this)
 }
 
 

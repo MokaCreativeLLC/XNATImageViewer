@@ -170,7 +170,7 @@ function(thumbnail, opt_folders) {
     if (!this.Thumbnails_){
 	this.Thumbnails_ = {};
     }
-    this.Thumbnails_[goog.getUid(thumbnail)] = thumbnail;
+    this.Thumbnails_[thumbnail.getElement().getAttribute('id')] = thumbnail;
     // Set folders
 
     //window.console.log(opt_folders, "\n\nMIN", opt_minFolderInd);
@@ -179,6 +179,14 @@ function(thumbnail, opt_folders) {
 			      goog.isArray(opt_folders) ? opt_folders : 
 			      [opt_folders])
 }
+
+
+
+
+/**
+ * @type {string=} imageUrl The url for the thumbnail image.
+ */
+utils.ui.ThumbnailGallery.prototype.currHoverThumbId_;
 
 
 
@@ -214,41 +222,54 @@ utils.ui.ThumbnailGallery.prototype.createAndAddThumbnail =
 */
 utils.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){    
 
+    //window.console.log('onHoverAndScroll');
     var mouseOverElt = /**@type {!Element} */
     document.elementFromPoint(event.clientX, event.clientY);
     
     var hoveredThumbnail = /**@type {!Element} */
     goog.dom.getAncestorByClass(mouseOverElt,
 				utils.ui.Thumbnail.CSS_CLASS_PREFIX);
-    if (!hoveredThumbnail) { return };
+    if (!hoveredThumbnail) { 
+	this.currHoverThumbId_ = null;
+	return 
+    };
 
     var originalThumbnailId  = /**@type {!string} */
     hoveredThumbnail.getAttribute('thumbnailid');
 
-
+    //window.console.log(hoveredThumbnail, originalThumbnailId);
     //------------------
     // If there's no originalThumbnailId...
     // (Either the case when we're over nothing, OR
     // the Thumbnail hover element is the actual Thumbnail element)
     //------------------ 
-    if (originalThumbnailId === null) {
-
+    if (originalThumbnailId === null || 
+	originalThumbnailId !== this.currHoverThumbId_) {
 	// Unhover all of the thumbnails
 	var thumbID = /**@type {!string} */ '';
 	for (thumbID in this.Thumbnails_) {
 	    this.Thumbnails_[thumbID]['EVENTS'].runEvent('MOUSEOUT');
 	}
+	
 
 	// Revert to the actual ID of the element, assuming
 	// that the hovered element is a descendent of a thumbnail.
 	originalThumbnailId = goog.dom.getAncestorByClass(mouseOverElt, 
-					utils.ui.Thumbnail.CSS_CLASS_PREFIX).id;
+        utils.ui.Thumbnail.CSS_CLASS_PREFIX).getAttribute('thumbnailid');
 
 	// If there's still no ID, we unhover the saved Thumbnail
 	// (it means we're over nothing).
-	if (originalThumbnailId === null) { 
+	if (originalThumbnailId === null) {
+	    this.currHoverThumbId_ = null;
 	    this.currMousewheelThumbnail_.setHovered(false); 
 	    return;
+	} else {
+	    window.console.log(originalThumbnailId);
+	    this.currHoverThumbId_ = originalThumbnailId;
+	    if (this.currMousewheelThumbnail_){
+		//this.currMousewheelThumbnail_.setHovered(false); 
+		this.Thumbnails_[this.currHoverThumbId_].mouseOut();
+	    }
 	}
     }
     
@@ -258,14 +279,15 @@ utils.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){
     // set the stored one to the new one.
     //------------------ 
     if (this.currMousewheelThumbnail_ && (this.currMousewheelThumbnail_ 
-			!== this.Thumbnails_[originalThumbnailId])){
+			!== this.Thumbnails_[this.currHoverThumbId_])){
 	this.currMousewheelThumbnail_['EVENTS'].runEvent('MOUSEOUT'); 
     } 
-    this.currMousewheelThumbnail_ = this.Thumbnails_[originalThumbnailId];
-    //window.console.log("\n\nThe mouse is over", 
-    // this.Thumbnails_[originalThumbnailId].element_.id);
+    this.currMousewheelThumbnail_ = this.Thumbnails_[this.currHoverThumbId_];
+    window.console.log("\n\nThe mouse is over", 
+     this.Thumbnails_[originalThumbnailId].getElement().id);
     //window.console.log("This is showing", 
-    // this.currMousewheelThumbnail_.element_.id);
+    // this.currMousewheelThumbnail_.getElement().id);
+    //window.console.log(this.Thumbnails_);
 
 
     //------------------ 

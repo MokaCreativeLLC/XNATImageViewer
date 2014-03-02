@@ -4,12 +4,15 @@
 
 // goog
 goog.require('goog.ui.AnimatedZippy');
+goog.require('goog.ui.Zippy.Events');
 goog.require('goog.ui.Zippy');
 goog.require('goog.string');
+goog.require('goog.object');
 goog.require('goog.dom');
 goog.require('goog.events');
 
 // utils
+goog.require('utils.fx');
 goog.require('utils.dom');
 goog.require('utils.convert');
 goog.require('utils.style');
@@ -74,6 +77,7 @@ utils.ui.ScrollableContainer = function (opt_args) {
     this.setSliderCallbacks_();
     this.setSliderStyles_();
     this.updateStyle();
+    this.mapSliderToContents_();
 }
 goog.exportSymbol('utils.ui.ScrollableContainer', utils.ui.ScrollableContainer);
 
@@ -136,81 +140,6 @@ utils.ui.ScrollableContainer.CONTENT_REF_ATTR = 'contentid'
 
 
 /**
- * As stated.
- * @param {!string} zKey The key of the zippy.
- * @param {!Element} parentElt The parene element of the zippy header.
- * @return {!Element} The header element.
- * @private
- */
-utils.ui.ScrollableContainer.prototype.createZippyHeader_ = 
-function(zKey, parentElt) {
-    var header = /**@type {!Element} */ 
-    goog.dom.createDom('div', {'id': "ZippyHeader_" + zKey});
-    parentElt.appendChild(header);
-    
-
-    // Add the header label, expandIcon
-    var headerLabel = /**@type {!Element} */ this.createZippyHeaderLabel_(zKey);
-    var expandIcon = /**@type {!Element} */ this.createZippyExpandIcon_(zKey);
-    header.appendChild(headerLabel);
-    header.appendChild(expandIcon);
-
-    // Contents need to be added to header's parent.
-    var zippyContents = /**@type {!Element}*/ this.createZippyContent_(zKey);
-    header.setAttribute(utils.ui.ScrollableContainer.CONTENT_REF_ATTR, 
-			zippyContents.id);
-    parentElt.appendChild(zippyContents);
-    return header;
-}
-
-
-
-
-
-/**
- * As stated.
- * @param {!string} zKey The key of the zippy.
- * @return {!Element} The header label.
- * @private
- */
-utils.ui.ScrollableContainer.prototype.createZippyHeaderLabel_ = function(zKey){
-    return goog.dom.createDom('div', {'id': "ZippyHeaderLabel_" + zKey + '_' + 
-				      goog.string.createUniqueString()},
-			      utils.string.truncateString(
-			      goog.string.toTitleCase(zKey), 
-		              utils.ui.ScrollableContainer.MAX_LABEL_LENGTH))
-}
-
-
-
-
-/**
- * As stated.
- * @param {!string} zKey The key of the zippy.
- * @return {!Element} The described element.
- * @private
- */
-utils.ui.ScrollableContainer.prototype.createZippyExpandIcon_ = function(zKey){
-     return goog.dom.createDom('div', {'id': "ZippyExpandIcon_" + zKey + '_' +  
-				      goog.string.createUniqueString()}, '+');
-}
-
-
-
-/**
- * As stated.
- * @param {!string} zKey The key of the zippy.
- * @return {!Element} The described element.
- * @private
- */
-utils.ui.ScrollableContainer.prototype.createZippyContent_ = function(zKey){
-    return goog.dom.createDom('div', {'id': "ZippyContent_" + zKey + '_' +  
-				      goog.string.createUniqueString()});
-}
-
-
-
-/**
  * @const
  * @type {!number}
  */
@@ -266,6 +195,8 @@ goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'slider-widget');
 utils.ui.ScrollableContainer.SLIDER_THUMB_CLASS =  
 goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'slider-thumb');
 
+
+
 /**
  * @type {!string} 
  * @expose 
@@ -274,6 +205,18 @@ goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'slider-thumb');
 utils.ui.ScrollableContainer.SLIDER_THUMB_HOVERED_CLASS =  
 goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 
 		'slider-thumb-hovered');
+
+
+
+/**
+ * @type {!string} 
+ * @expose 
+ * @const
+ */ 
+utils.ui.ScrollableContainer.SLIDER_TRACK_HOVERED_CLASS =  
+goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 
+		'slider-track-hovered');
+
 
 
 /**
@@ -350,6 +293,7 @@ goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX,
  */ 
 utils.ui.ScrollableContainer.ZIPPY_CONTENT_CLASS =  
 goog.getCssName(utils.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'zippycontent');
+
 
 
 /**
@@ -710,10 +654,10 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
     
     var header = /**@type {Element}*/ this.createZippyHeader_(zKey, 
 			opt_parent ? opt_parent : this.scrollArea_);
-
+    utils.fx.fadeInFromZero(header);
     // Adjust the header margin
-    header.style.marginTop = goog.object.getCount(this.contentsDict_) ?
-			      '0px' : header.style.marginTop; 
+    //header.style.marginTop = goog.object.getCount(this.contentsDict_) ?
+    //'0px' : header.style.marginTop; 
     
 
     var contentsElt = /**@type {Element}*/ goog.dom.getElement(
@@ -735,6 +679,11 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
 	new utils.ui.ScrollableContainer.contentsDict(
 	header, contentsElt, zippy, this.getDepth(header));
 
+    // The first zippy should not have a margin.
+    //if (goog.object.getCount(this.contentsDict_) == 1) {
+    //header.style.marginTop = '0px';
+    //}
+    
     // zippy inits
     this.addZippyCss_(storageKey);
     this.addZippyEvents_(storageKey);
@@ -743,6 +692,81 @@ utils.ui.ScrollableContainer.prototype.addZippy = function(zKey, opt_parent) {
 
 
     return zippy;
+}
+
+
+
+/**
+ * As stated.
+ * @param {!string} zKey The key of the zippy.
+ * @param {!Element} parentElt The parene element of the zippy header.
+ * @return {!Element} The header element.
+ * @private
+ */
+utils.ui.ScrollableContainer.prototype.createZippyHeader_ = 
+function(zKey, parentElt) {
+    var header = /**@type {!Element} */ 
+    goog.dom.createDom('div', {'id': "ZippyHeader_" + zKey});
+    parentElt.appendChild(header);
+    
+
+    // Add the header label, expandIcon
+    var headerLabel = /**@type {!Element} */ this.createZippyHeaderLabel_(zKey);
+    var expandIcon = /**@type {!Element} */ this.createZippyExpandIcon_(zKey);
+    header.appendChild(headerLabel);
+    header.appendChild(expandIcon);
+
+    // Contents need to be added to header's parent.
+    var zippyContents = /**@type {!Element}*/ this.createZippyContent_(zKey);
+    header.setAttribute(utils.ui.ScrollableContainer.CONTENT_REF_ATTR, 
+			zippyContents.id);
+    parentElt.appendChild(zippyContents);
+    return header;
+}
+
+
+
+
+
+/**
+ * As stated.
+ * @param {!string} zKey The key of the zippy.
+ * @return {!Element} The header label.
+ * @private
+ */
+utils.ui.ScrollableContainer.prototype.createZippyHeaderLabel_ = function(zKey){
+    return goog.dom.createDom('div', {'id': "ZippyHeaderLabel_" + zKey + '_' + 
+				      goog.string.createUniqueString()},
+			      utils.string.truncateString(
+			      goog.string.toTitleCase(zKey), 
+		              utils.ui.ScrollableContainer.MAX_LABEL_LENGTH))
+}
+
+
+
+
+/**
+ * As stated.
+ * @param {!string} zKey The key of the zippy.
+ * @return {!Element} The described element.
+ * @private
+ */
+utils.ui.ScrollableContainer.prototype.createZippyExpandIcon_ = function(zKey){
+     return goog.dom.createDom('div', {'id': "ZippyExpandIcon_" + zKey + '_' +  
+				      goog.string.createUniqueString()}, '+');
+}
+
+
+
+/**
+ * As stated.
+ * @param {!string} zKey The key of the zippy.
+ * @return {!Element} The described element.
+ * @private
+ */
+utils.ui.ScrollableContainer.prototype.createZippyContent_ = function(zKey){
+    return goog.dom.createDom('div', {'id': "ZippyContent_" + zKey + '_' +  
+				      goog.string.createUniqueString()});
 }
 
 
@@ -777,8 +801,8 @@ utils.ui.ScrollableContainer.prototype.getStorageKeyFromHeaderText =
 function(headerText) {
     var key = /**@type {!string}*/ '';
     for (key in this.contentsDict_){
-	window.console.log(this.contentsDict_[key]['headerLabel'].innerHTML,
-			   headerText);
+	//window.console.log(this.contentsDict_[key]['headerLabel'].innerHTML,
+	//		   headerText);
 	if (this.contentsDict_[key]['headerLabel'].innerHTML.toLowerCase() ===
 	    headerText.toLowerCase()){
 	    return key;
@@ -794,9 +818,6 @@ function(headerText) {
  * @private
  */
 utils.ui.ScrollableContainer.prototype.addZippyEvents_ = function(storageKey) {
-    //------------------
-    // Define Mouseover, Mouseout functions.
-    //------------------
     goog.events.listen(this.contentsDict_[storageKey]['header'], 
 		       goog.events.EventType.MOUSEOVER, function(){
 	goog.dom.classes.add(this.contentsDict_[storageKey]['header'], 
@@ -804,6 +825,7 @@ utils.ui.ScrollableContainer.prototype.addZippyEvents_ = function(storageKey) {
 	goog.dom.classes.add(this.contentsDict_[storageKey]['expandIcon'], 
 		utils.ui.ScrollableContainer.ZIPPY_ICON_MOUSEOVER_CLASS);
     }.bind(this));
+
     goog.events.listen(this.contentsDict_[storageKey]['header'], 
 		       goog.events.EventType.MOUSEOUT, function(){
 	goog.dom.classes.remove(this.contentsDict_[storageKey]['header'], 
@@ -837,8 +859,9 @@ utils.ui.ScrollableContainer.prototype.setSliderStyles_ = function(){
 			 utils.ui.ScrollableContainer.SLIDER_THUMB_CLASS);
     goog.dom.classes.add(this.Slider_.getTrack(), 
 			 utils.ui.ScrollableContainer.SLIDER_TRACK_CLASS);
-    this.Slider_.setThumbHoverClass(
-	utils.ui.ScrollableContainer.SLIDER_THUMB_HOVERED_CLASS);
+    this.Slider_.setHoverClasses(
+	utils.ui.ScrollableContainer.SLIDER_THUMB_HOVERED_CLASS,
+	utils.ui.ScrollableContainer.SLIDER_TRACK_HOVERED_CLASS);
 }
 
 
@@ -851,6 +874,8 @@ utils.ui.ScrollableContainer.prototype.setSliderStyles_ = function(){
  * @private
  */
 utils.ui.ScrollableContainer.prototype.mapSliderToContents_ = function () {
+
+    
     var widgetHeight = /**@type {!number}*/
     utils.style.dims(this.element_, 'height');
 
@@ -864,9 +889,9 @@ utils.ui.ScrollableContainer.prototype.mapSliderToContents_ = function () {
     var afterRange = /**@type {!Array.number}*/
     [0, scrollAreaHeight - widgetHeight];
 
-    var sliderThumb = /**@type {!Element}*/ this.Slider_.thumb;
+    var sliderThumb = /**@type {!Element}*/ this.Slider_.getThumb();
 
-
+    //window.console.log("mapslider", widgetHeight, scrollAreaHeight);
     //------------------
     // If there's the scrollArea (contents) is greater
     // than the height of the container element, then we 
@@ -938,6 +963,24 @@ utils.ui.ScrollableContainer.prototype.indentZippys_ = function(){
 
 
 
+/**
+ * As stated.
+ * @return {Element} The spacer element.
+ * @private
+ */
+utils.ui.ScrollableContainer.prototype.createContentSpacer_ = function(){
+    var spacer = /**@type {Element}*/ goog.dom.createDom('div');
+    goog.dom.classes.add(spacer, 
+	utils.ui.ScrollableContainer.ZIPPY_CONTENT_SPACER_CLASS);
+    return spacer;
+}
+
+
+
+
+
+
+
 
 /**
  * Sets the slider callbacks.
@@ -962,25 +1005,25 @@ function(storageKey)
 
     var zippy = /**@type {!goog.ui.AnimatedZippy | !goog.ui.Zippy}*/
     this.contentsDict_[storageKey]['zippy'];
-    
-    goog.events.listen(zippy, goog.object.getValues(goog.ui.Zippy.Events)
-		       , function(e) { 		
-	
-	var expandIcon = /**@type {!Element}*/ 
-			   this.contentsDict_[storageKey]['expandIcon'];
+    var expandIcon = /**@type {Element}*/ undefined;
+    var content = /**@type {Element}*/ undefined;
 
+    goog.events.listen(zippy, goog.object.getValues(goog.ui.Zippy.Events), 
+    function(e) { 		
+	
+	expandIcon = this.contentsDict_[storageKey]['expandIcon'];
+	 
 	// Create a map that allows the slider to move
 	// the contents in proportion to the slider.
-	this.mapSliderToContents_(this.Slider_, this);		
+	this.mapSliderToContents_();
 	
-
 	// Change expand icon to '+' or '-'
 	if (e.target.isExpanded()) {
 	    expandIcon.innerHTML =  "-";
-	    utils.style.setStyle(expandIcon, { 'margin-left': '-1em' })
+	    utils.style.setStyle(expandIcon, { 'margin-left': '-1em' });
 	} else {
 	    expandIcon.innerHTML =  "+";
-	    utils.style.setStyle(expandIcon, { 'margin-left': '-1.1em' })	
+	    utils.style.setStyle(expandIcon, { 'margin-left': '-1.1em' });
 	}
     }.bind(this));
 }
@@ -1005,9 +1048,9 @@ function (contents, opt_parent, opt_parentKey) {
     utils.style.setStyle(contents, {'position': 'relative'});
     // Add element to the parent Element
     goog.dom.appendChild(opt_parent, contents);
+    utils.fx.fadeInFromZero(contents);
 
     // Indent the contents
-    this.indentZippys_();
     contents.style.left = (this.getNodeIndentation(opt_parent)).toString() +'%';
 
     // When there's no zippy parent folder, we set the height
@@ -1019,7 +1062,7 @@ function (contents, opt_parent, opt_parentKey) {
     }
 
     // Allows user to move the contents when sliding the slider.
-    this.mapSliderToContents_(this.Slider_, this);
+    this.mapSliderToContents_();
     
 }
 
