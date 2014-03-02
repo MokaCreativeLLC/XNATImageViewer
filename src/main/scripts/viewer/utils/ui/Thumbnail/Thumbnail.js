@@ -429,11 +429,11 @@ utils.ui.Thumbnail.prototype.updateStyle = function (opt_args) {
 utils.ui.Thumbnail.prototype.repositionHoverable = function(){
 
     var hoverNode = /**@type {!Element}*/ this.getHoverable();
+    // Adjust only if the hover node is different from the element.
+    if (hoverNode === this.element_) { return }
 
 
-    //
     // Find the common ancestor
-    //
     var commonAncestor = /**@type {Element}*/
     goog.dom.findCommonAncestor(this.element_, hoverNode);
     var thumbnailDims = /**@type {Object}*/
@@ -444,26 +444,21 @@ utils.ui.Thumbnail.prototype.repositionHoverable = function(){
     var textClone = /**@type {Element}*/ 
     hoverNode.getElementsByTagName('div')[0];
     var cloneWidth = /**@type {!number}*/ 0;
-    
 
-    //
-    // Adjust only if the _hover clone is not the element.
-    //
-    if (hoverNode !== this.element_) {
-	// Set the clone width to something wider than the original thumbnail 
-	// width only if the the cloneWidth is calculated to be larger (text 
-	// spillover)
-	cloneWidth = imgClone.scrollWidth + textClone.scrollWidth + 25;
-	cloneWidth = (cloneWidth > this.element_.clientWidth) ? cloneWidth : 
-	    this.element_.clientWidth;
-	utils.style.setStyle(hoverNode, {
-	    'position': 'absolute',
-	    'top': thumbnailDims['top'], 
-	    'left': thumbnailDims['left'],
-	    'width':  cloneWidth,
-	    'visibility': 'visible'
-	});
-    }
+
+    // Set the clone width to something wider than the original thumbnail 
+    // width only if the the cloneWidth is calculated to be larger (text 
+    // spillover)
+    cloneWidth = imgClone.scrollWidth + textClone.scrollWidth + 25;
+    cloneWidth = (cloneWidth > this.element_.clientWidth) ? cloneWidth : 
+	this.element_.clientWidth;
+    utils.style.setStyle(hoverNode, {
+	'position': 'absolute',
+	'top': thumbnailDims['top'], 
+	'left': thumbnailDims['left'],
+	'width':  cloneWidth,
+	'visibility': 'visible'
+    });
 }
 
 
@@ -473,7 +468,8 @@ utils.ui.Thumbnail.prototype.repositionHoverable = function(){
  * hovers over the utils.ui.Thumbnail.
  * @private
  */
-utils.ui.Thumbnail.prototype.mouseOver_ = function() {
+utils.ui.Thumbnail.prototype.mouseOver = function() {
+    //window.console.log("MOUSEOVER");
     var hoverNode = /**@type {!Element}*/ this.getHoverable();
     goog.dom.classes.add(hoverNode, 
 			 utils.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS);	
@@ -481,7 +477,7 @@ utils.ui.Thumbnail.prototype.mouseOver_ = function() {
 			 utils.ui.Thumbnail.TEXT_MOUSEOVER_CLASS);		
     goog.dom.classes.add(hoverNode.childNodes[0], 
 			 utils.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS);
-    if (hoverNode.style.visibility !== 'visible') {
+    if (hoverNode !== this.element_) {
 	this.repositionHoverable();
     }
     this['EVENTS'].runEvent('MOUSEOVER');
@@ -496,16 +492,21 @@ utils.ui.Thumbnail.prototype.mouseOver_ = function() {
  * @public
  */
 utils.ui.Thumbnail.prototype.mouseOut = function() {
+    //window.console.log("MOUSEPUT");
     var hoverNode = /**@type {!Element}*/ this.getHoverable();
     if (hoverNode && hoverNode.childNodes.length > 1) { 
-	hoverNode.style.visibility = 'hidden';
+	
+	//window.console.log("MOUSEPUT_2");
 	goog.dom.classes.remove(hoverNode, 
 				utils.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS);
 	goog.dom.classes.remove(hoverNode.childNodes[1], 
 				utils.ui.Thumbnail.TEXT_MOUSEOVER_CLASS);
 	goog.dom.classes.remove(hoverNode.childNodes[0], 
 				utils.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS);
-	this.element_.style.visibility = 'visible';
+
+	hoverNode.style.visibility = (hoverNode !== this.element_) ? 'hidden' : 
+	    'visible';
+	
     }
     this['EVENTS'].runEvent('MOUSEOUT');
 }
@@ -523,14 +524,14 @@ utils.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
     if (set) {
 	goog.events.listen(hoverNode, 
 			   goog.events.EventType.MOUSEOVER, 
-			   this.mouseOver_.bind(this));
+			   this.mouseOver.bind(this));
 	goog.events.listen(hoverNode, 
 			   goog.events.EventType.MOUSEOUT, 
 			   this.mouseOut.bind(this));
     } else {
 	goog.events.unlisten(hoverNode, 
 			     goog.events.EventType.MOUSEOVER, 
-			     this.mouseOver_.bind(this));
+			     this.mouseOver.bind(this));
 	goog.events.unlisten(hoverNode, 
 			     goog.events.EventType.MOUSEOUT, 
 			     this.mouseOut.bind(this));

@@ -5,10 +5,12 @@
 // goog
 goog.require('goog.ui.Slider');
 goog.require('goog.dom');
+goog.require('goog.dom.classes');
 goog.require('goog.ui.Component');
 goog.require('goog.array');
 goog.require('goog.events');
 goog.require('goog.string');
+goog.require('goog.object');
 
 // utils
 goog.require('utils.dom');
@@ -344,13 +346,12 @@ function(opt_thumbClass, opt_trackClass){
 	'track': opt_trackClass
     }
     // Add to hover classes.
-    var key = /**@type {!string} */ '';
-    for (key in tempObj){
-	if (tempObj[key] && 
+    goog.object.forEach(tempObj, function(tempObjVal, key){
+	if (tempObjVal && 
 	    this.hoverables_[key]['classes'].indexOf(tempObj[key]) == -1){
 	    this.hoverables_[key]['classes'].push(tempObj[key])
 	}
-    }
+    }.bind(this))
 }
 
 
@@ -376,24 +377,25 @@ utils.ui.GenericSlider.prototype.initHoverEvents_ = function(){
  */
 utils.ui.GenericSlider.prototype.setBasicHoverEvents_ = function(){
     var elt = /**@type {!Element} */ undefined;
-    var key = /**@type {!string} */ '';
-    // Basic hover class changes
-    for (key in this.hoverables_){
-	elt = this.hoverables_[key]['element'];
 
-	this.hoverables_[key]['MOUSEOVER'].push(
+    goog.object.forEach(this.hoverables_, function(hoverable, key){
+	elt = hoverable['element'];
+
+	// Mouseover
+	hoverable['MOUSEOVER'].push(
 	    goog.events.listen(elt, goog.events.EventType.MOUSEOVER, 
 		       this.getClassModifier_(key, goog.dom.classes.add)));
 
-	this.hoverables_[key]['MOUSEOUT'].push(
+	// Mouseout
+	hoverable['MOUSEOUT'].push(
 	    goog.events.listen(elt, goog.events.EventType.MOUSEOUT, function(){
-		// Except when sliding...
+		//window.console.log("Mousehout!", this.isSliding_)
 		if (!this.isSliding_) {
-		//    window.console.log("HERE!");
+		    //window.console.log("HERE!");
 		    this.getClassModifier_(key, goog.dom.classes.remove)();
 		}
 	    }.bind(this)));
-    }
+    }.bind(this))
 }
 
 
@@ -409,7 +411,7 @@ utils.ui.GenericSlider.prototype.setUniqueHoverEvents_ = function(){
 	goog.events.listen(this.thumb_, goog.events.EventType.MOUSEOVER,
 	    function(){
 		this.lastHoverEvent_ = 'MOUSEOVER';
-		this.getClassModifier_('track', goog.dom.classes.add);
+		this.getClassModifier_('track', goog.dom.classes.add)();
 	    }.bind(this)))
 
     // Unhover track when hovering thumb...
@@ -444,11 +446,10 @@ utils.ui.GenericSlider.prototype.setDragHoverEvents_ = function(){
     // Drag set...
     this['EVENTS'].onEvent('SLIDE', function(){ 
 	if (this.isSliding_){
-	    var key = /**@type {!string} */ '';
-	    for (key in this.hoverables_){
+	    goog.object.forEach(this.hoverables_, function(hoverable, key){
 		// Apply the hover class
 		this.getClassModifier_(key, goog.dom.classes.add)();
-	    }
+	    }.bind(this))
 	}
     }.bind(this));
 }
@@ -471,10 +472,10 @@ utils.ui.GenericSlider.prototype.initHoverables_ = function(){
     this.hoverables_['track']['classes'] = 
 	[utils.ui.GenericSlider.TRACK_HOVERED_CLASS];
 
-    for (var key in this.hoverables_){
-	this.hoverables_[key]['MOUSEOVER'] = [];
-	this.hoverables_[key]['MOUSEOUT'] = [];
-    }
+    goog.object.forEach(this.hoverables_, function(hoverable){
+	hoverable['MOUSEOVER'] = [];
+	hoverable['MOUSEOUT'] = [];
+    }.bind(this))
 }
 
 
@@ -518,10 +519,9 @@ utils.ui.GenericSlider.prototype.onThumbnailDragStart_ = function (e) {
 utils.ui.GenericSlider.prototype.onThumbnailDragEnd_ = function (e) {
     this.isSliding_ = false;
     if (this.lastHoverEvent_ === 'MOUSEOUT'){
-	var key = /**@type {!string} */ '';
-	for (key in this.hoverables_){
+	goog.object.forEach(this.hoverables_, function(hoverable, key){
 	    this.getClassModifier_(key, goog.dom.classes.remove)();
-	}
+	}.bind(this))
     }
 }
 

@@ -7,6 +7,7 @@ goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.events');
 goog.require('goog.string');
+goog.require('goog.object');
 
 // utils
 goog.require('utils.style');
@@ -111,7 +112,7 @@ utils.ui.ThumbnailGallery.THUMBNAILGALLERY_CLASS =
  * @type {Object<string, utils.ui.Thumbnail>}
  * @private
  */
-utils.ui.ThumbnailGallery.prototype.Thumbnails_;
+utils.ui.ThumbnailGallery.prototype.Thumbs_;
 
 
 
@@ -167,10 +168,10 @@ function(thumbnail, opt_folders) {
     this.bindToMouseWheel(thumbnail.getHoverable(), 
 			  this.onHoverAndScroll_.bind(this));
     // Track thumbnail.
-    if (!this.Thumbnails_){
-	this.Thumbnails_ = {};
+    if (!this.Thumbs_){
+	this.Thumbs_ = {};
     }
-    this.Thumbnails_[thumbnail.getElement().getAttribute('id')] = thumbnail;
+    this.Thumbs_[thumbnail.getElement().getAttribute('id')] = thumbnail;
     // Set folders
 
     //window.console.log(opt_folders, "\n\nMIN", opt_minFolderInd);
@@ -179,15 +180,6 @@ function(thumbnail, opt_folders) {
 			      goog.isArray(opt_folders) ? opt_folders : 
 			      [opt_folders])
 }
-
-
-
-
-/**
- * @type {string=} imageUrl The url for the thumbnail image.
- */
-utils.ui.ThumbnailGallery.prototype.currHoverThumbId_;
-
 
 
 
@@ -214,105 +206,57 @@ utils.ui.ThumbnailGallery.prototype.createAndAddThumbnail =
 
 
 /**
+ * @type {string}
+ * @private
+ */
+utils.ui.ThumbnailGallery.prototype.storedHoverThumbId_;
+
+
+
+
+/**
+ * As stated.
+ * @private
+ */
+utils.ui.ThumbnailGallery.prototype.clearHoverThumb_ = function(){ 
+    goog.object.forEach(this.Thumbs_, function(thumb){
+	thumb.mouseOut();
+    })
+    this.storedHoverThumbId_ = null;
+}
+
+
+
+/**
 * Conducts the needed thumbnail element style changes when scrolling
-* and hovering over the thumbnail gallery.  If this didn't exist,
-* the first thumbnail's hover element would persist during the scroll.  This
-* allows for the current thumbnail's hover element to display.
+* and hovering over the thumbnail gallery.  
 * @private
 */
 utils.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){    
 
     //window.console.log('onHoverAndScroll');
-    var mouseOverElt = /**@type {!Element} */
+    var mouseElt = /**@type {!Element} */
     document.elementFromPoint(event.clientX, event.clientY);
-    
-    var hoveredThumbnail = /**@type {!Element} */
-    goog.dom.getAncestorByClass(mouseOverElt,
-				utils.ui.Thumbnail.CSS_CLASS_PREFIX);
-    if (!hoveredThumbnail) { 
-	this.currHoverThumbId_ = null;
-	return 
-    };
+    var mouseThumb = /**@type {!Element} */
+    goog.dom.getAncestorByClass(mouseElt, utils.ui.Thumbnail.CSS_CLASS_PREFIX);
 
-    var originalThumbnailId  = /**@type {!string} */
-    hoveredThumbnail.getAttribute('thumbnailid');
-
-    //window.console.log(hoveredThumbnail, originalThumbnailId);
-    //------------------
-    // If there's no originalThumbnailId...
-    // (Either the case when we're over nothing, OR
-    // the Thumbnail hover element is the actual Thumbnail element)
-    //------------------ 
-    if (originalThumbnailId === null || 
-	originalThumbnailId !== this.currHoverThumbId_) {
-	// Unhover all of the thumbnails
-	var thumbID = /**@type {!string} */ '';
-	for (thumbID in this.Thumbnails_) {
-	    this.Thumbnails_[thumbID]['EVENTS'].runEvent('MOUSEOUT');
-	}
-	
-
-	// Revert to the actual ID of the element, assuming
-	// that the hovered element is a descendent of a thumbnail.
-	originalThumbnailId = goog.dom.getAncestorByClass(mouseOverElt, 
-        utils.ui.Thumbnail.CSS_CLASS_PREFIX).getAttribute('thumbnailid');
-
-	// If there's still no ID, we unhover the saved Thumbnail
-	// (it means we're over nothing).
-	if (originalThumbnailId === null) {
-	    this.currHoverThumbId_ = null;
-	    this.currMousewheelThumbnail_.setHovered(false); 
-	    return;
-	} else {
-	    window.console.log(originalThumbnailId);
-	    this.currHoverThumbId_ = originalThumbnailId;
-	    if (this.currMousewheelThumbnail_){
-		//this.currMousewheelThumbnail_.setHovered(false); 
-		this.Thumbnails_[this.currHoverThumbId_].mouseOut();
-	    }
-	}
+    // Exit out if not over a thumbnail or thumbnail's hoverable.
+    if (!mouseThumb) { 
+	this.clearHoverThumb_();
+	return;
     }
-    
-    //------------------
-    // Derive the thumbnail that the mousewheel is over:
-    // First unhover the previously stored one, then
-    // set the stored one to the new one.
-    //------------------ 
-    if (this.currMousewheelThumbnail_ && (this.currMousewheelThumbnail_ 
-			!== this.Thumbnails_[this.currHoverThumbId_])){
-	this.currMousewheelThumbnail_['EVENTS'].runEvent('MOUSEOUT'); 
-    } 
-    this.currMousewheelThumbnail_ = this.Thumbnails_[this.currHoverThumbId_];
-    window.console.log("\n\nThe mouse is over", 
-     this.Thumbnails_[originalThumbnailId].getElement().id);
-    //window.console.log("This is showing", 
-    // this.currMousewheelThumbnail_.getElement().id);
-    //window.console.log(this.Thumbnails_);
 
-
-    //------------------ 
-    // If there's no new hovered thunbnail,
-    // return out, otherwise call the mouseOver.
-    //------------------ 
-    if (!this.currMousewheelThumbnail_){ return }
-    this.currMousewheelThumbnail_['EVENTS'].runEvent('MOUSEOVER');   
-    
-  
-
-    //------------------ 
-    // Return out if the hoverNode is the Thumbnail element.
-    // (We don't need to reposition it.)
-    //------------------ 
-    if (this.currMousewheelThumbnail_.getHoverable() === 
-	this.currMousewheelThumbnail_.getElement()) { return };
-
-
-
-    //------------------ 
-    // Reposition if the Thumbnail hover element is
-    // different than the Thumbnail element.
-    //------------------ 
-    this.currMousewheelThumbnail_.repositionHoverable();
+    var hoverThumbId = /**@type{!string}*/ 
+    mouseThumb.getAttribute('thumbnailid');
+    if (this.storedHoverThumbId_ !== hoverThumbId) {
+	this.clearHoverThumb_();
+	this.storedHoverThumbId_ = hoverThumbId;
+	this.Thumbs_[this.storedHoverThumbId_].mouseOver();
+	//window.console.log(this.storedHoverThumbId_) 
+	//window.console.log(
+	//this.Thumbs_[this.storedHoverThumbId_].getHoverable())
+    }
+    this.Thumbs_[this.storedHoverThumbId_].repositionHoverable();
 };
 
 
@@ -333,19 +277,19 @@ utils.ui.ThumbnailGallery.prototype.setThumbnailClasses_ =
 	var element;
 	var classes = /**@type {!Array.string} */ [];
 	var thumbID = /**@type {!string} */ '';
-	for (thumbID in this.Thumbnails_) {
+	for (thumbID in this.Thumbs_) {
 	    switch(nodeCategory){
 	    case 'thumbnail':
 		classes = this.thumbnailClasses_;
-		element = this.Thumbnails_[thumbID].getElement();
+		element = this.Thumbs_[thumbID].getElement();
 		break;
 	    case 'image':
 		classes = this.thumbnailImageClasses_;
-		element = this.Thumbnails_[thumbID].getImage();
+		element = this.Thumbs_[thumbID].getImage();
 		break;
 	    case 'text':
 		classes = this.thumbnailTextClasses_;
-		element = this.Thumbnails_[thumbID].getText();
+		element = this.Thumbs_[thumbID].getText();
 		break;   
 	    default:
 		break;

@@ -129,6 +129,7 @@ goog.addDependency('../../../utils/ui/GenericSlider/GenericSlider.js',
 'goog.ui.Component',
 'goog.array',
 'goog.events',
+'goog.object',
 'utils.dom',
 'utils.events.EventManager'
 ]);  
@@ -167,6 +168,7 @@ goog.addDependency('../../../utils/ui/ThumbnailGallery/ThumbnailGallery.js', ['u
 'goog.dom',
 'goog.array',
 'goog.events',
+'goog.object',
 'utils.dom',
 'utils.style',
 'utils.ui.Thumbnail',
