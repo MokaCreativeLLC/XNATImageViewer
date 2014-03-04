@@ -546,6 +546,7 @@ xiv.Modal.prototype.calculateInlineModalDims_ = function () {
     this.deriveAllFinalDims_();
     this.deriveViewBoxPositions_();
     this.deriveModalPosition_();
+    this.deriveButtonPositions_();
 }
 
 
@@ -610,6 +611,7 @@ xiv.Modal.prototype.derivePelimModalDims_ = function() {
 
 
 /**
+ * As stated.
  * @private
  */ 
 xiv.Modal.prototype.deriveAllFinalDims_ = function (modalDims) {
@@ -645,6 +647,7 @@ xiv.Modal.prototype.deriveAllFinalDims_ = function (modalDims) {
 
 
 /**
+ * As stated.
  * @private
  */ 
 xiv.Modal.prototype.deriveModalPosition_ = function () {
@@ -653,8 +656,30 @@ xiv.Modal.prototype.deriveModalPosition_ = function () {
 }
     
 
+/**
+ * As stated.
+ * @private
+ */ 
+xiv.Modal.prototype.deriveButtonPositions_ = function () {
+    var tWidth = /**@type {!number}*/
+    this._dims['ViewBox']['left'][0][0] + 
+    (this._dims['ViewBox']['left'][0][this._dims['ViewBox']['cols']-1] + 
+	this._dims['ViewBox']['width'] - 
+    this._dims['ViewBox']['left'][0][0])/2 
+    - 4;
+
+    this._dims['buttons'] = {
+	'insertRow' : {},
+	'removeRow' : {}
+    };
+    this._dims['buttons']['insertRow']['left'] = tWidth -2;
+    this._dims['buttons']['removeRow']['left'] = tWidth + 2;
+}
+
+
 
 /**
+ * As stated.
  * @private
  */ 
 xiv.Modal.prototype.deriveViewBoxPositions_ = function () {
@@ -704,10 +729,11 @@ xiv.Modal.prototype.deriveViewBoxPositions_ = function () {
  */
 xiv.Modal.prototype.updateStyle = function () {	
     this.calculateInlineModalDims_();
-    window.console.log("DIMS", this._dims);
+    //window.console.log("DIMS", this._dims);
     utils.style.setStyle(this.getElement(), this._dims);
     this.updateStyle_ThumbnailGallery_();
     this.updateStyle_ViewBoxes_();
+    this.updateStyle_buttons_();
     this.highlightInUseThumbnails();
 }
 
@@ -748,6 +774,19 @@ xiv.Modal.prototype.updateStyle_ViewBoxes_ = function(){
     }	
 }
 
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.Modal.prototype.updateStyle_buttons_ = function(){
+    utils.style.setStyle(this.buttons_['insertRow'], {
+	'left': this._dims['buttons']['insertRow']['left']
+    })
+    utils.style.setStyle(this.buttons_['removeRow'], { 
+	'left': this._dims['buttons']['removeRow']['left']
+    })
+}
 
 
 /**
@@ -796,9 +835,9 @@ xiv.Modal.prototype.createBackground_ = function() {
  */
 xiv.Modal.prototype.createButtons_ = function() {
     this.buttons_ = xiv.Modal.generateButtons_(this.iconUrl_);
-    for (var key in this.buttons_){
-	goog.dom.append(this.getElement(), this.buttons_[key]);
-    }
+    goog.object.forEach(this.buttons_, function(button, key){
+	goog.dom.append(this.getElement(), button);
+    }.bind(this))
     this.setFullScreenButtonCallbacks_();
     this.setRowColumnInsertRemoveCallbacks_();
 }

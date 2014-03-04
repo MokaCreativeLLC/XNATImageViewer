@@ -209,7 +209,7 @@ function (element, opt_callback) {
  * @public
  */
 utils.ui.GenericSlider.prototype.updateStyle = function () {
-    window.console.log("update style");
+    //window.console.log("update style");
     this['EVENTS'].setEventSuspended('SLIDE', true);
     var pos = /**@type {!number}*/ this.getValue();
     if (pos < this.getMaximum()) this.setValue(pos + 1);

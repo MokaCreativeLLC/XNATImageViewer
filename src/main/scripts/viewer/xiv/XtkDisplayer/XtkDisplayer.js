@@ -109,6 +109,11 @@ goog.inherits(xiv.XtkDisplayer, xiv.Displayer);
 goog.exportSymbol('xiv.XtkDisplayer', xiv.XtkDisplayer);
 
 
+/** 
+ * @const 
+ * @type {!string} 
+ */
+xiv.XtkDisplayer.DEFAULT_LAYOUT = "Four-Up";
 
 
 /**
@@ -207,19 +212,19 @@ xiv.XtkDisplayer.prototype.__defineGetter__('ControllerMenu',  function(){
 
 
 
-
 /**
- * @return {!string}  Returns the layout provided by the viewables settings.  If none, defaults to 'xiv.DEFAULT_LAYOUT'.
+ * @return {!string}  Returns the layout provided by the viewables settings.  
+ *     If none, defaults to 'xiv.XtkDisplayer.DEFAULT_LAYOUT'.
  * @public
  */
-xiv.XtkDisplayer.prototype.__defineGetter__('ViewLayout',  function(){
+xiv.XtkDisplayer.prototype.getViewLayout =  function(){
     if (this.currentSlicerSetting_ && this.currentSlicerSetting_['layout']) {
 	window.console.log("LAYOUT", this.currentViewablesSettings_['layout']);
 	return this.currentSlicerSetting_['layout'];
     } else {
-	return xiv.DEFAULT_LAYOUT
+	return xiv.XtkDisplayer.DEFAULT_LAYOUT;
     }
-})
+}
 
 
 
@@ -732,17 +737,17 @@ xiv.XtkDisplayer.prototype.loadSlicer_ = function (fileCollection) {
  */
 xiv.XtkDisplayer.prototype.showSlicerViewMenu_ = function(){
 
-    this.ViewBox_.SlicerViewMenu.reset(this.slicerSettings_);
+    this.ViewBox_.getSlicerViewMenu().reset(this.slicerSettings_);
 
-    this.ViewBox_.SlicerViewMenu.onViewSelected(function(slicerSetting){
+    this.ViewBox_.getSlicerViewMenu().onViewSelected(function(slicerSetting){
 	window.console.log("LOADING THIS GUY", slicerSetting);
 	this.currentSlicerSetting_ = slicerSetting;
-	this.ViewBox_.SlicerViewMenu.hideViewSelectDialog();
+	this.ViewBox_.getSlicerViewMenu().hideViewSelectDialog();
 	this.XtkPlaneManager_.setCamera('3D', slicerSetting['camera']);
 	this.loadViewables_(slicerSetting);
     }.bind(this));
 
-    this.ViewBox_.SlicerViewMenu.showDialog();
+    this.ViewBox_.getSlicerViewMenu().showDialog();
 
 
 }

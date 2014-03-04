@@ -303,22 +303,27 @@ xiv.ViewLayoutMenu.prototype.clearCallbacks = function() {
  * Enacts the appropriate menu changes and calls 
  * the appropriate methods when a viewLayout is set. 
  * This is called when the user interacts with the menu.
- *
- * @param {!String} viewLayout
+ * @param {!String} viewLayout The view layout to set.
  */
 xiv.ViewLayoutMenu.prototype.setViewLayout = function(viewLayout) {
-    for (var i=0, len = this.menuItems_.length; i < len; i++){
-	if (this.menuItems_[i].getId().toLowerCase() === viewLayout.toLowerCase()) {
+    var i = /**@type {!number}*/ 0;
+    var len = /**@type {!number}*/ this.menuItems_.length;
+
+    for (i=0; i < len; i++){
+	if (this.menuItems_[i].getId().toLowerCase() === 
+	    viewLayout.toLowerCase()) {
 
 	    // Record the view layouts, previous and current.
-	    this.prevViewLayout_ = this.currViewLayout_ ? this.currViewLayout_ : viewLayout;
+	    this.prevViewLayout_ = this.currViewLayout_ ? 
+		this.currViewLayout_ : viewLayout;
 	    this.currViewLayout_ = viewLayout;
 
 	    // Highlight / unhighlight the relevant menu items.
 	    this.setHighlightedIndex(i);
 
 	    // Run callbacks.
-	    goog.array.forEach(this.selectMenuItemCallbacks_, function(callback){ callback(viewLayout)})
+	    goog.array.forEach(this.selectMenuItemCallbacks_, 
+			       function(callback){ callback(viewLayout)})
 	    break;
 	}
     }
@@ -447,7 +452,8 @@ xiv.ViewLayoutMenu.prototype.setMenuInteraction = function() {
     //------------------
     // Mouseover / Mouseout hover over the main icon.
     //------------------
-    utils.style.setHoverClass(this.icon_, xiv.ViewLayoutMenu.ICON_HOVERED_CLASS);
+    utils.style.setHoverClass(this.icon_, 
+			      xiv.ViewLayoutMenu.ICON_HOVERED_CLASS);
 
 
 
@@ -466,6 +472,7 @@ xiv.ViewLayoutMenu.prototype.setMenuInteraction = function() {
 
 	utils.dom.stopPropagation(e);
 	var selectedPlane = e.target.getId();
+	window.console.log("HERE", selectedPlane);
 	this.setViewLayout(selectedPlane);
 
 

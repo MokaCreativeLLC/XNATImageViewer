@@ -4,21 +4,17 @@
  */
 
 // goog
-goog.require('goog.fx');
-goog.require('goog.fx.DragDrop');
 goog.require('goog.string');
 goog.require('goog.dom');
 goog.require('goog.events');
+goog.require('goog.array');
+goog.require('goog.object');
 
 // utils
-goog.require('utils.dom');
 goog.require('utils.style');
-goog.require('utils.array');
-goog.require('utils.fx');
 goog.require('utils.events.EventManager');
 
 // xiv
-goog.require('xiv');
 goog.require('xiv.Widget');
 goog.require('xiv.ViewLayoutManager');
 goog.require('xiv.ViewLayoutMenu');
@@ -32,165 +28,30 @@ goog.require('xiv.SlicerViewMenu');
 
 /**
  * Viewing box for viewable types (images, 3d volumes and meshes, 
- * Slicer scenes).
- * xiv.ViewBoxes accept thumbnails, either dropped or clicked in, and load them
- * as perscribed by the xiv.ViewBox child classes.  xiv.ViewBoxes are a 
- * communicator class
- * in the sense that they get various interaction and visualization classes
- * to talk to one another.  For instance, it links the xiv.ViewLayoutMenu to 
- * to the xiv.ViewLayoutManager to the xiv.Displayer. 
+ * Slicer scenes). xiv.ViewBoxes accept xiv.thumbnails, either dropped or 
+ * clicked in, and load them based on their characteristics.
+ * xiv.ViewBox is also a communicator class in the sense that it gets
+ * various interaction and visualization classes to talk to one another.  F
+ * or instance, it links the xiv.ViewLayoutMenu to the xiv.ViewLayoutManager 
+ * to the xiv.Displayer. 
  * @constructor
  * @extends {xiv.Widget}
  * @param {Object=} opt_args Optional arguments to define the ViewBox.
  */
 goog.provide('xiv.ViewBox');
 xiv.ViewBox = function (opt_args) {
-
-    //------------------
-    // Call parents, set class
-    //------------------  
     goog.base(this, 'xiv.ViewBox');
     goog.dom.classes.set(this.getElement(), xiv.ViewBox.ELEMENT_CLASS);
-
-
-    /**
-     * @type {xiv.SlicerViewMenu}
-     * @private
-     */
-    this.SlicerViewMenu_ = new xiv.SlicerViewMenu(this);
-
-
-
-    /**
-     * @type {number}
-     * @private
-     */
-    this.thumbnailLoadTime_ = 0;
-
-
-
-
-    /**
-     * @type {xiv.ViewLayoutManager}
-     * @protected
-     */
-    this.ViewLayoutManager_ = new xiv.ViewLayoutManager();
-
-
-
-    /**
-     * @type {?xiv.ViewLayoutMenu}
-     * @private
-     */
-    this.ViewLayoutMenu_ = new xiv.ViewLayoutMenu(
-	this.ViewLayoutManager_.getViewLayouts());
-
-
-
-    /**
-     * @type {xiv.ContentDivider}
-     * @private
-     */	
-    this.ContentDivider_ = new xiv.ContentDivider();
-    goog.dom.append(this.getElement(), this.ContentDivider_.getContainment());
-
-
-
-
-    /**
-     * @type {xiv.ViewBoxTabs}
-     * @private
-     */	
-    this.ViewBoxTabs_ = new xiv.ViewBoxTabs();
-
-
-
-    /**
-     * @type {?Displayer}
-     * @private
-     */
-    this.Displayer_ = null;
-
-
-
-    /**
-     * @type {?xiv.Thumbnail}
-     * @private
-     */
-    this.Thumbnail_ = null;
-
-
-
-    /**
-     * @type {Array.<Element>}
-     * @private
-     */
-    this.doNotHide_ = [];
-
-
-
-    /**
-     * @type {!String}
-     * @private
-     */
-    this.loadFramework_ = 'XTK';
-
-
-
-    /**
-     * @type {!String}
-     * @private
-     */
-    this.loadState_ = 'empty';
-
- 
-
-
-    //------------------
-    // Allows the content divider to update the 
-    // xiv.ViewBox components when moved.
-    //------------------
-    this.linkContentDividerToViewBox_();
-
-
-
-    this.doNotHide(this.SlicerViewMenu_.getElement());
-
-
-    this.keeperClasses_ = /** @private */ [xiv.XtkDisplayer.ELEMENT_CLASS];
-    this.otherFadeClasses_ = /** @private */  [xiv.XtkPlane.SLIDER_CLASS];
-
-
-
-    //------------------
-    // Element hierarchy
-    //------------------
-    goog.dom.append(this.getElement(), this.SlicerViewMenu_.getElement());
-    goog.dom.append(this.getElement(), this.ContentDivider_.getElement());
-    goog.dom.append(this.getElement(), this.ViewLayoutMenu_.getElement());
-    goog.dom.append(this.getElement(), this.ViewBoxTabs_.getElement());
-
-    this.setViewLayoutMenuCallbacks_();
-
-
-
-    //goog.fx.DragDrop.call(this, this.getElement(), undefined);	
     
-
-
-
-    //------------------
-    // Init displayer
-    //------------------
-    this.initDisplayer_();
-
+    // inits
+    this.initComponents_();
 
     // events
     utils.events.EventManager.addEventManager(this, xiv.ViewBox.EventType);
+    this.setComponentCallbacks_();
 
-    //------------------
-    // Style updates
-    //------------------ 
+    // style
+    this.doNotHide(this.SlicerViewMenu_.getElement());
     this.hideChildElements_();
     this.updateStyle();
 }
@@ -198,13 +59,11 @@ goog.inherits(xiv.ViewBox, xiv.Widget);
 goog.exportSymbol('xiv.ViewBox', xiv.ViewBox);
 
 
-
 /**
  * @type {string} 
  * @const
  */
 xiv.ViewBox.CSS_CLASS_PREFIX = goog.getCssName('xiv-viewbox');
-
 
 
 /**
@@ -215,14 +74,12 @@ xiv.ViewBox.ELEMENT_CLASS =
 goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, '');
 
 
-
 /**
  * @type {string} 
  * @const
  */
 xiv.ViewBox.HIDDEN_CLASS = 
 goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, 'hidden');
-
 
 
 /**
@@ -233,7 +90,6 @@ xiv.ViewBox.DRAG_AND_DROP_HANDLE_CLASS =
 goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, 'draganddrophandle');
 
 
-
 /**
  * @type {string} 
  * @const
@@ -242,18 +98,39 @@ xiv.ViewBox.DRAGGING_CLASS =
 goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, 'dragging');
 
 
+/**
+ * @type {number} 
+ * @const
+ */
+xiv.ViewBox.MIN_HOLDER_HEIGHT = 200;
 
 
-xiv.ViewBox.MIN_HOLDER_HEIGHT = /**@const*/ 200;
-xiv.ViewBox.SCAN_TAB_LABEL_HEIGHT =  /**@const*/ 15;
-xiv.ViewBox.SCAN_TAB_LABEL_WIDTH = /** @const */ 50;
-xiv.ViewBox.MIN_TAB_HEIGHT =  /** @const */ xiv.ViewBox.SCAN_TAB_LABEL_HEIGHT;
+/**
+ * @type {number} 
+ * @const
+ */
+xiv.ViewBox.SCAN_TAB_LABEL_HEIGHT =  15;
+
+
+/**
+ * @type {number} 
+ * @const
+ */
+xiv.ViewBox.SCAN_TAB_LABEL_WIDTH = 50;
+
+
+/**
+ * @type {number} 
+ * @const
+ */
+xiv.ViewBox.MIN_TAB_HEIGHT =  15;
 
 
 
 /**
  * Event types.
  * @enum {string}
+ * @public
  */
 xiv.ViewBox.EventType = {
   THUMBNAIL_PRELOAD: goog.events.getUniqueId('thumbnail_preload'),
@@ -261,6 +138,47 @@ xiv.ViewBox.EventType = {
   THUMBNAIL_LOADERROR: goog.events.getUniqueId('thumbnail_loaderror'),
 }
 
+
+/**
+ * @type {number}
+ * @private
+ */
+xiv.ViewBox.prototype.thumbLoadTime_;
+
+
+/**
+ * @type {Displayer}
+ * @private
+ */
+xiv.ViewBox.prototype.Displayer_;
+
+
+/**
+ * @type {xiv.Thumbnail}
+ * @private
+ */
+xiv.ViewBox.prototype.Thumbnail_;
+
+
+/**
+ * @type {Array.<Element>}
+ * @private
+ */
+xiv.ViewBox.prototype.doNotHide_;
+
+
+/**
+ * @type {!String}
+ * @private
+ */
+xiv.ViewBox.prototype.loadFramework_ = 'XTK';
+
+
+/**
+ * @type {!String}
+ * @private
+ */
+xiv.ViewBox.prototype.loadState_ = 'empty';
 
 
 /**
@@ -272,19 +190,14 @@ xiv.ViewBox.prototype.getLoadState = function() {
 }
 
 
-
-
 /**
  * Get the associated SlicerViewMenu for this object.
- *
- * @return {xiv.SlicerViewMenu} The SlicerViewMenu object of the ViewBox.
+ * @return {!xiv.SlicerViewMenu} The SlicerViewMenu object of the ViewBox.
  * @public
  */
-xiv.ViewBox.prototype.__defineGetter__('SlicerViewMenu', function() {
+xiv.ViewBox.prototype.getSlicerViewMenu =  function() {
     return this.SlicerViewMenu_;
-})
-
-
+}
 
 
 /**
@@ -296,122 +209,40 @@ xiv.ViewBox.prototype.getThumbnail = function(){
 }
 
 
-
-
-
-
-
 /**
  * Get the associated thumbnail load time for this object.
- *
- * @return {!number} The date (in millseconds) when the last thumbnail was loaded into the ViewBox.
+ * @return {number} The date (in millseconds) when the last thumbnail was 
+ *     loaded into the ViewBox.
  * @public
  */
-xiv.ViewBox.prototype.__defineGetter__('thumbnailLoadTime', function() {
-    return this.thumbnailLoadTime_;
-})
-
+xiv.ViewBox.prototype.getThumbnailLoadTime =  function() {
+    return this.thumbLoadTime_;
+}
 
 
 /**
- * @param {!Element} element The element to prevent from hiding when no Thumbnail is loaded.
+ * Adds an element to the doNotHide list.
+ * @param {!Element} element The element to prevent from hiding when no 
+ *    Thumbnail is loaded.
  * @public
  */
 xiv.ViewBox.prototype.doNotHide = function(element){
+    this.doNotHide_ = (this.doNotHide_) ? this.doNotHide_ : [];
     this.doNotHide_.push(element);
 };
-
-
 
 
 /**
  * Allows for external communication to set
  * the viewscheme within the xiv.ViewBox by communicating
  * to its xiv.ViewLayoutMenu object.
- *
  * @param {!string} viewPlane Sets the view layout associated with the argument.
  * @public
  */
 xiv.ViewBox.prototype.setViewLayout = function(viewPlane) {
+    window.console.log("HERE", viewPlane);
     this.ViewLayoutMenu_.setViewLayout(viewPlane);
 }
-
-
-
-/**
- * Show child elements of the xiv.ViewBox. 
- *
- * @private
- */
-xiv.ViewBox.prototype.showChildElements_ = function() {
-    goog.array.forEach(this.getElement().childNodes, function(childElt){
-	goog.dom.classes.remove(childElt, xiv.ViewBox.HIDDEN_CLASS);
-    }.bind(this))
-}
-
-
-
-
-/**
- * Hide child elements of the xiv.ViewBox.  
- *
- * @private
- */
-xiv.ViewBox.prototype.hideChildElements_ = function() {
-    goog.array.forEach(this.getElement().childNodes, function(childElt){
-	if (this.doNotHide_ && (this.doNotHide_.length > 0) && (this.doNotHide_.indexOf(childElt) === -1)) {
-	    goog.dom.classes.add(childElt, xiv.ViewBox.HIDDEN_CLASS);
-	}
-    }.bind(this))
-}
-
-
-
-
-/**
- * Initializes the 'xiv.Displayer' object which allows
- * various viewable content to be displayed, based on 
- * the 'loadFramework' internal variable.
- *
- * @private
- */
-xiv.ViewBox.prototype.initDisplayer_ = function(){
-  
-
-    //------------------
-    // Retrieve the loadFramework.
-    //------------------
-    switch (this.loadFramework_){
-    case 'XTK': 
-	this.Displayer_ = new xiv.XtkDisplayer(this);
-	break;
-    }
-    goog.dom.append(this.getElement(), this.Displayer_.getElement());
-
-
-    //------------------
-    // Onload callbacks
-    //------------------
-    this.Displayer_.onLoaded = function(){
-	this.loadState_ = 'loaded';
-
-	if (this.getElement().hasAttribute('originalbordercolor')){
-	    this.getElement().style.borderColor = 
-		this.getElement().getAttribute('originalbordercolor');
-	}
-	this.ViewLayoutMenu_.setViewLayout(this.Displayer_.ViewLayout);
-	this.showChildElements_();
-	this.loadTabs_();
-
-
-	//
-	// Thumbnail loaded callbacks
-	//
-	this['EVENTS'].runEvent('THUMBNAIL_LOADED', this)
-    }.bind(this)
-}
-
-
 
 
 /**
@@ -424,29 +255,20 @@ xiv.ViewBox.prototype.initDisplayer_ = function(){
  */
 xiv.ViewBox.prototype.loadThumbnail = function (Thumbnail) {
 
-    var onloadPlane =  '3D';
-    var controllerMenu = undefined;
+    var onloadPlane =  /**@type {!string}*/ '3D';
+    var controllerMenu = /**@type {utils.xtk.ControllerMenu}*/ undefined;
     
+    // Set load state.
     this.loadState_ = 'loading';
 
-    //------------------
     // Track the thumbnail internally.
-    //------------------
     this.Thumbnail_ = Thumbnail;
-    // Thumbnail preLoaded callbacks 
+
+    // Run Thumbnail preLoaded callbacks 
     this['EVENTS'].runEvent('THUMBNAIL_PRELOAD', this)
 
-
-
-
-    //------------------
-    // Remember the time in which 
-    // the thumbnail was loaded
-    //------------------
-    var d = new Date();
-    this.thumbnailLoadTime_ = d.getTime();
-
-
+    // Remember the time in which the thumbnail was loaded
+    this.thumbLoadTime_ = (new Date()).getTime();
 
     //------------------
     // This is here because the xiv.ViewBoxTabs may not fully adjust themselves
@@ -455,123 +277,228 @@ xiv.ViewBox.prototype.loadThumbnail = function (Thumbnail) {
     //------------------
     this.updateStyle();
 
+    // Adjust view layoyt manager
+    this.adjustViewLayoutManager_();
 
-
-    //------------------
     // Hide children
-    //------------------
-    this.ViewLayoutManager_.setViewPlanes(this.Displayer_.ViewPlanes, this.Displayer_.Interactors);
-    this.ViewLayoutManager_.animateViewLayoutChange(false);
-    this.ViewLayoutManager_.setViewLayout('none');
     this.hideChildElements_();
 
-
-
-    //------------------
     // Move content divider to bottom.
-    //------------------
     this.ContentDivider_.slideTo(this.ContentDivider_.getLowerLimit(), false);
-
-
-
-    //------------------    
+   
     // Feed view planes into xiv.ViewLayoutManager and set 
     // the default xiv.ViewLayout (most likely '3D')
-    //------------------
+    window.console.log("HERE", onloadPlane);
     this.ViewLayoutMenu_.setViewLayout(onloadPlane);
 
-
-
-    //------------------
     // Turn back on animations.
-    //------------------
     this.ViewLayoutManager_.animateViewLayoutChange(true);
     
-    
-
-    //------------------
     // Show/hide the slicer view menu depending on the 
-    // Thumbnail's getViewable()
-    //------------------    
-    this.SlicerViewMenu_.getElement().style.visibility = (thumb.getViewable()['category'].toLowerCase() === 'slicer') ? 'visible' : 'hidden';
+    // Thumbnail's getViewable()   
+    this.SlicerViewMenu_.getElement().style.visibility = 
+	(this.Thumbnail_.getViewable()['category'].toLowerCase() === 
+	 'slicer') ? 'visible' : 'hidden';
 
-
-    this.Displayer_.load(thumb.getViewable());    
+    // Load into displayer
+    this.Displayer_.load(this.Thumbnail_.getViewable());    
 }
  
 
 
 /**
+ * As stated.
+* @private
+*/
+xiv.ViewBox.prototype.adjustViewLayoutManager_ = function(){
+    this.ViewLayoutManager_.setViewPlanes(this.Displayer_.ViewPlanes, 
+					  this.Displayer_.Interactors);
+    this.ViewLayoutManager_.animateViewLayoutChange(false);
+    window.console.log("HERE");
+    this.ViewLayoutManager_.setViewLayout('none');
+}
+
+
+
+/**
  * Load the xiv.Tabs associated with the object's xiv.Thumbnail.
- * 
  * @private
  */
 xiv.ViewBox.prototype.loadTabs_ = function () {  
 
-    
-    //------------------
     // Clear existing tabs.
-    //------------------
     this.ViewBoxTabs_.reset();
-    
-    
 
-    //------------------
     // Info Tab.
-    //------------------
-    this.ViewBoxTabs_.setTabContents('Info', this.Displayer_.createInfoTabContents(this.Thumbnail_.getViewable()));
-    
+    this.ViewBoxTabs_.setTabContents('Info', 
+	this.Displayer_.createInfoTabContents(this.Thumbnail_.getViewable()));
 
-
-    //------------------
     // Slicer View Tab.
-    //------------------
     if (this.Thumbnail_.getViewable()['category'] == 'Slicer') {
-	this.ViewBoxTabs_.setTabContents('Slicer Views', this.SlicerViewMenu_.getThumbnailGallery());
+	this.ViewBoxTabs_.setTabContents('Slicer Views', 
+			this.SlicerViewMenu_.getThumbnailGallery());
     }
 
-
-
-    //------------------
     // Controller Menu into Tabs
-    //------------------
-    var controllerMenu = this.Displayer_.ControllerMenu;    
-    for (var key in controllerMenu){
+    var controllerMenu = /**@type {!utils.xtk.ControllerMenu}*/ 
+    this.Displayer_.ControllerMenu;    
+    goog.object.forEach(controllerMenu, function(menuObj, key){
 	// Only input object that have contents in them.
-	if (Object.keys(controllerMenu[key]).length !== 0){
-	    this.ViewBoxTabs_.setTabContents(key, controllerMenu[key]);
+	if (goog.object.getCount(menuObj) !== 0){
+	    this.ViewBoxTabs_.setTabContents(key, menuObj);
 	}   
-    }
+    }.bind(this))
 
-
-
-    //------------------
     // Sync style.
-    //------------------
     this.updateStyle();
-
-   
 }
 
 
+/**
+ * As stated.
+ * @private
+ */
+xiv.ViewBox.prototype.initComponents_ = function() {
+    /**
+     * @type {!xiv.ViewLayoutManager}
+     * @protected
+     */
+    this.ViewLayoutManager_ = new xiv.ViewLayoutManager();
+
+
+    /**
+     * @type {!xiv.SlicerViewMenu}
+     * @private
+     */
+    this.SlicerViewMenu_ = new xiv.SlicerViewMenu(this);
+    goog.dom.append(this.getElement(), this.SlicerViewMenu_.getElement());
+
+
+    /**
+     * @type {!xiv.ViewLayoutMenu}
+     * @private
+     */
+    this.ViewLayoutMenu_ = new xiv.ViewLayoutMenu(
+	this.ViewLayoutManager_.getViewLayouts());
+    goog.dom.append(this.getElement(), this.ViewLayoutMenu_.getElement());
+
+
+    /**
+     * @type {!xiv.ContentDivider}
+     * @private
+     */	
+    this.ContentDivider_ = new xiv.ContentDivider();
+    goog.dom.append(this.getElement(), this.ContentDivider_.getContainment());
+    goog.dom.append(this.getElement(), this.ContentDivider_.getElement());
+
+
+    /**
+     * @type {xiv.ViewBoxTabs}
+     * @private
+     */	
+    this.ViewBoxTabs_ = new xiv.ViewBoxTabs(); 
+    goog.dom.append(this.getElement(), this.ViewBoxTabs_.getElement());
+
+    this.initDisplayer_();
+}
+
+
+/**
+ * Initializes the 'xiv.Displayer' object which allows
+ * various viewable content to be displayed, based on 
+ * the 'loadFramework' internal variable.
+ * @private
+ */
+xiv.ViewBox.prototype.initDisplayer_ = function(){
+    // Retrieve the loadFramework.
+    switch (this.loadFramework_){
+    case 'XTK': 
+	this.Displayer_ = new xiv.XtkDisplayer(this);
+	break;
+    }
+    goog.dom.append(this.getElement(), this.Displayer_.getElement());
+
+    // Onload callbacks
+    this.Displayer_.onLoaded = this.onDisplayerLoaded_.bind(this)
+}
+
+
+/**
+ * Show child elements of the xiv.ViewBox. 
+ * @private
+ */
+xiv.ViewBox.prototype.showChildElements_ = function() {
+    goog.array.forEach(this.getElement().childNodes, function(childElt){
+	goog.dom.classes.remove(childElt, xiv.ViewBox.HIDDEN_CLASS);
+    })
+}
+
+
+/**
+ * Hide child elements of the xiv.ViewBox.  
+ * @private
+ */
+xiv.ViewBox.prototype.hideChildElements_ = function() {
+    goog.array.forEach(this.getElement().childNodes, function(childElt){
+	if (this.doNotHide_ && (this.doNotHide_.length > 0) && 
+	    (this.doNotHide_.indexOf(childElt) === -1)) {
+	    goog.dom.classes.add(childElt, xiv.ViewBox.HIDDEN_CLASS);
+	}
+    }.bind(this))
+}
+
+
+/**
+* As stated.
+* @private
+*/
+xiv.ViewBox.prototype.setComponentCallbacks_ = function() {
+    this.setContentDividerCallbacks_();
+    this.setViewBoxTabsCallbacks_();
+    this.setViewLayoutMenuCallbacks_();
+}
+
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.ViewBox.prototype.setContentDividerCallbacks_ = function () {
+    this.ContentDivider_['EVENTS'].onEvent('DRAG', 
+	this.onContentDividerDragging_.bind(this));
+    this.ContentDivider_['EVENTS'].onEvent('DRAGEND',
+	this.onContentDividerDragEnd_.bind(this));
+}
+
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.ViewBox.prototype.setViewBoxTabsCallbacks_ = function () {
+    this.ViewBoxTabs_['EVENTS'].onEvent('ACTIVATED', 
+	this.onViewBoxTabActivated_.bind(this));
+    this.ViewBoxTabs_['EVENTS'].onEvent('DEACTIVATED', 
+         this.onViewBoxTabDeactivated_.bind(this));
+}
 
 
 /**
  * Updates the various compoents of the xiv.ViewBox when the
  * user interacts with the xiv.ViewLayout menu.  Specifically,
  * the xiv.ViewLayoutManager.
- *
  * @private
  */
 xiv.ViewBox.prototype.setViewLayoutMenuCallbacks_ = function () {
-
 
     //------------------
     // When a menu Item is clicked.
     //------------------
     this.ViewLayoutMenu_.onMenuItemClicked( function() {
-	this.ViewLayoutManager_.set3DBackgroundColor(this.Displayer_.BackgroundColors);
-	this.ViewLayoutManager_.setViewLayout(this.ViewLayoutMenu_.getSelectedViewLayout());
+	this.ViewLayoutManager_.set3DBackgroundColor(
+	    this.Displayer_.BackgroundColors);
+	this.ViewLayoutManager_.setViewLayout(
+	    this.ViewLayoutMenu_.getSelectedViewLayout());
     }.bind(this));
 
 
@@ -579,7 +506,8 @@ xiv.ViewBox.prototype.setViewLayoutMenuCallbacks_ = function () {
     //------------------
     // Callback when all panels are visible
     //------------------
-    this.ViewLayoutManager_.onMultipleViewPlanesVisible(function(visiblePanels){ 
+    this.ViewLayoutManager_.onMultipleViewPlanesVisible(
+	function(visiblePanels){ 
 	this.Displayer_.XtkPlaneManager_.colorSliders();
     }.bind(this))
 
@@ -618,6 +546,7 @@ xiv.ViewBox.prototype.setViewLayoutMenuCallbacks_ = function () {
     // Callback when a plane is double clicked.
     //------------------
     this.ViewLayoutManager_.onPlaneDoubleClicked(function(anatomicalPlane){ 
+	window.console.log("HERE", anatomicalPlane);
 	this.ViewLayoutMenu_.setViewLayout(anatomicalPlane);
 	this.Displayer_.updateStyle()
 
@@ -627,189 +556,163 @@ xiv.ViewBox.prototype.setViewLayoutMenuCallbacks_ = function () {
 
 
 /**
- * Callback for when the xiv.ContentDivider is dragged.
- *
+ * Callback for when the displayer is loaded.
  * @private
  */
-xiv.ViewBox.prototype.onContentDividerDragged_ = function() {	
+xiv.ViewBox.prototype.onDisplayerLoaded_ = function(){
+    this.loadState_ = 'loaded';
 
-    //
+    if (this.getElement().hasAttribute('originalbordercolor')){
+	this.getElement().style.borderColor = 
+	    this.getElement().getAttribute('originalbordercolor');
+    }
+    window.console.log("HERE", this.Displayer_.getViewLayout());
+    this.ViewLayoutMenu_.setViewLayout(this.Displayer_.getViewLayout());
+    this.showChildElements_();
+    this.loadTabs_();
+
+    // Thumbnail loaded callbacks
+    this['EVENTS'].runEvent('THUMBNAIL_LOADED', this)
+}
+
+
+
+/**
+ * Callback for when the xiv.ContentDivider is dragged.
+ * @private
+ */
+xiv.ViewBox.prototype.onContentDividerDragging_ = function() {	
+
     // Deactivate tabs if the content divider slides to
     // to the bottom of the xiv.ViewBox.
-    //
-    if (utils.style.dims(this.ContentDivider_.getElement(), 'top') < this.ContentDivider_.getLowerLimit()) {
+    if (utils.style.dims(this.ContentDivider_.getElement(), 'top') < 
+	this.ContentDivider_.getLowerLimit()) {
 	this.ViewBoxTabs_.setActive(this.ViewBoxTabs_.getLastActiveTab());
     } else {
-	window.console.log("CONTENT DIVIDER DRAGGED");
+	//window.console.log("CONTENT DIVIDER DRAGGED");
 	this.ViewBoxTabs_.setActive(-1);
     }
 
-    //
     // Update the position of the tabs and the style
     // of the xiv.ViewBox.
-    //
-    var contentDividerDims = utils.style.dims(this.ContentDivider_.getElement());
-    var tabTop = contentDividerDims['top'] + contentDividerDims['height'];
+    var contentDividerDims = /**@type {!Object.<string, number>}*/
+    utils.style.dims(this.ContentDivider_.getElement());
+    var tabTop = /**@type {!number}*/
+    contentDividerDims['top'] + contentDividerDims['height'];
     this.ViewBoxTabs_.updateStyle({ 'top': tabTop});
     this.updateStyle();
 }
 
 
 
-
 /**
- * Allows for the xiv.ViewBox widgets to be re-dimensioned / activated
- * when the xiv.ContentDivider is dragged.
- *
+ * Callback for when the xiv.ContentDivider is finished dragging.
  * @private
  */
-xiv.ViewBox.prototype.linkContentDividerToViewBox_ = function () {
-	
-    var isAnimated = true;
-
-
-    this.ContentDivider_['EVENTS'].onEvent('DRAG', 
-	this.onContentDividerDragged_.bind(this))
-
-
-    this.ContentDivider_['EVENTS'].onEvent('DRAGEND', function() {
-	this.updateStyle();
-    }.bind(this))
-
-
-    this.ViewBoxTabs_.setActivateCallbacks(function() {
-	//
-	// Only raise the tabs up if they're completely lowered.
-	//
-	if (this.ContentDivider_.getPosition() >= this.ContentDivider_.getLowerLimit()){
-	    this.ContentDivider_.slideTo(this.ContentDivider_.getUpperLimit(), isAnimated);
-	}
-    }.bind(this));
-
-
-    this.ViewBoxTabs_.setDeactivateCallbacks(function(){
-	this.ContentDivider_.slideTo(this.ContentDivider_.getLowerLimit(), isAnimated);
-    }.bind(this));		
+xiv.ViewBox.prototype.onContentDividerDragEnd_ = function() {
+    this.updateStyle();
 }
 
 
 
+/**
+ * Callback for when a ViewBoxTab is activated.
+ * @private
+ */
+xiv.ViewBox.prototype.onViewBoxTabActivated_ = function() {
+    // Only raise the tabs up if they're completely lowered.
+    if (this.ContentDivider_.getPosition() >= 
+	this.ContentDivider_.getLowerLimit()){
+	this.ContentDivider_.slideTo(
+	    this.ContentDivider_.getUpperLimit(), true);
+    }
+}
+
 
 /**
-* Widely used general style update for a variety of purpsoes: 
-* modal and window resizing, and any change to the dimensions of the
-* xiv.ViewBox components.
-*
-* @param {Object=} opt_args The optional style args to apply to the ViewBox.
-* @public
-*/
+ * Callback for when a ViewBoxTab is deactivated.
+ * @private
+ */
+xiv.ViewBox.prototype.onViewBoxTabDeactivated_ = function() {
+    this.ContentDivider_.slideTo(
+	this.ContentDivider_.getLowerLimit(), true);
+}
+
+
+/**
+ * @inheritDoc
+ */
 xiv.ViewBox.prototype.updateStyle = function (opt_args) {
  
-
-    //------------------
-    // Get the dimensions of the view box.
-    //------------------
-    widgetDims = utils.style.dims(this.getElement());
-
-
-
-    //------------------
     // Merge any new arguments and update.
-    //------------------
-    opt_args = (opt_args) ? opt_args : widgetDims;
-    utils.style.setStyle(this.getElement(), opt_args);
-
-
-
-    //------------------
-    // ONLOAD ONLY: The xiv.ContentDivider dictates the position of all of the
-    // other widgets in the xiv.ViewBox.
-    //
-    // The first thing that needs to happen is to detect a change in the 
-    // contiainment zone of the content divider (i.e. this.ContentDivider_.getContainment()).
-    // If there is a change (arbitrarily determined by width) and if the divider 
-    // is not dragging, then we determine the containment and top part of the divider.
-    //------------------
-    if (!this.ContentDivider_.isDragging()) {
-	
-	//
-	//  If there's a change in the width of the widget, proceed.
-	//
-	var dimChangeWidth = !(utils.style.dims(this.ContentDivider_.getContainment(), 'width') === widgetDims['width']);
-
-	if (dimChangeWidth) {
-	    
-	    //
-	    //  Determine the top of the content divider and its containment.
-	    //
-	    var t = xiv.ViewBox.MIN_HOLDER_HEIGHT;	
-	    var h = widgetDims['height'] - t - utils.style.dims(this.ContentDivider_.getElement(), 'height') - xiv.ViewBox.MIN_TAB_HEIGHT + 3;
-	
-	    utils.style.setStyle(this.ContentDivider_.getElement(), {
-		'top': xiv.prototype.minContentDividerTop(widgetDims['height']) - 1
-	    });
-
-
-	    utils.style.setStyle(this.ContentDivider_.getContainment(), {
-		'top': t, 
-		'height': h, 
-		'width': widgetDims['width']
-	    })
-	}
+    if (opt_args) {
+	utils.style.setStyle(this.getElement(), opt_args);
     }
 
+    // Get the dimensions of the view box.
+    var widgetDims = /**@type {!Object.<string, number>}*/
+    utils.style.dims(this.getElement());
     
-
-    //------------------
-    // Dimension calculations.
-    //
-    // NOTE: It's necessary that they be placed
-    // in this part of the function.
-    //------------------
-    var contentDividerDims = utils.style.dims(this.ContentDivider_.getElement());
-    var contentDividerHeight = contentDividerDims['height'];
-    var tabTop = contentDividerDims['top'] + contentDividerHeight;
-    var tabHeight = widgetDims['height'] - tabTop;
-    var xtkHolderDims = {};
+    this.updateStyle_ContentDivider_(widgetDims);
+    this.updateStyle_components_(widgetDims);
+}
 
 
+/**
+ * As stated.
+ * @param {!Object.<string, number>} widgetDims The widget dimensions.
+ * @private
+ */
+xiv.ViewBox.prototype.updateStyle_ContentDivider_ = function(widgetDims){
+    if (this.ContentDivider_.isDragging()) {
+	return;
+    }
 
-    //------------------
-    // Calculate the holder dimensions.
-    //------------------
-    xtkHolderDims['height'] = contentDividerDims['top'];
-    xtkHolderDims['top'] = 0;
+    var ViewBoxWidthChanged = /*@type {!boolean}*/ 
+    !(utils.style.dims(this.ContentDivider_.getContainment(), 'width') === 
+						     widgetDims['width']);
+    if (ViewBoxWidthChanged) {
+	var contentDiv_min_Top = /*@type {number}*/
+	widgetDims['height'] - 
+	    utils.style.dims(this.ContentDivider_.getElement(), 'height') - 
+	    xiv.ViewBox.MIN_TAB_HEIGHT;
+	
+	utils.style.setStyle(this.ContentDivider_.getElement(), {
+	    'top': contentDiv_min_Top - 1
+	});
+	utils.style.setStyle(this.ContentDivider_.getContainment(), {
+	    'top': xiv.ViewBox.MIN_HOLDER_HEIGHT, 
+	    'height': contentDiv_min_Top - xiv.ViewBox.MIN_HOLDER_HEIGHT + 3, 
+	    'width': widgetDims['width']
+	})
+    }
+}
 
-    
 
-    //----------------------------------
+/**
+ * As stated.
+ * @param {!Object.<string, number>} widgetDims The widget dimensions.
+ * @private
+ */
+xiv.ViewBox.prototype.updateStyle_components_ = function (widgetDims) {
+
+    var contDiv_Dims = /** @type {!Object.<string, number>}*/
+	utils.style.dims(this.ContentDivider_.getElement());
+
     // Tabs
-    //----------------------------------
     this.ViewBoxTabs_.updateStyle({ 
 	'position': 'absolute', 
-	'top': tabTop
+	'top': contDiv_Dims['top'] + contDiv_Dims['height']
     });
-    
-
-
-    //----------------------------------
+ 
     // xiv.ViewLayout
-    //----------------------------------
-    //utils.dom.debug("view box");
     this.ViewLayoutManager_.implementViewLayout();
 
-
-
-    
-    //----------------------------------
-    // Holder
-    //----------------------------------
+    // Displayer
     this.Displayer_.updateStyle({
-        'top': xtkHolderDims['top'],
  	'width': widgetDims['width'],
- 	'height': xtkHolderDims['height']
+ 	'height': contDiv_Dims['top']
     });
-        
 }
 
 

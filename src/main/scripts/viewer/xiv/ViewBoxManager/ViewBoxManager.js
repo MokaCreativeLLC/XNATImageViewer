@@ -1,4 +1,3 @@
-
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
@@ -110,6 +109,7 @@ xiv.ViewBoxManager.HANDLE_CLASS =
 /**
  * Event types.
  * @enum {string}
+ * @public
  */
 xiv.ViewBoxManager.EventType = {
   THUMBNAIL_PRELOAD: goog.events.getUniqueId('thumbnail_preload'),
@@ -707,8 +707,9 @@ xiv.ViewBoxManager.prototype.getFirstEmpty = function() {
 	    return ViewBox;
 	}
 	else{
-	    ViewBoxesByLoad[ViewBox.thumbnailLoadTime] = ViewBox;
-	    loadTimes.push(ViewBox.thumbnailLoadTime);
+	    var loadTime = /**@type {number}*/ ViewBox.getThumbnailLoadTime()
+	    ViewBoxesByLoad[loadTime] = ViewBox;
+	    loadTimes.push(loadTime);
 	}
     }.bind(this))
 

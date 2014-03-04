@@ -913,17 +913,15 @@ utils.xtk.ControllerMenu.prototype.makeSliderRow = function(labelTitle, callback
     // Make slider value label.
     //------------------
     value = this.makeNumberDisplay(document.body);
-
- 
-    value.innerHTML = (slider.getValue) ? slider.getValue().toFixed(2) : (1).toFixed(2);
+    value.innerHTML = (slider.getValue) ? slider.getValue().toFixed(2) : 
+	(1).toFixed(2);
     if (opt_args && opt_args['type'] === 'twothumb') { 
 
 	// Make a slight adjustment to the two thumb value display.
-	utils.style.setStyle(value, {
-	    'margin-top': '-.5em',
-	    'height': '2em'
-	});
-	value.innerHTML = "s: " + slider.getValue() + "<br>e: " + (slider.getValue() + slider.getExtent());
+	value.style.marginTop = '-.5em';
+	value.style.height = '2em';
+	value.innerHTML = "s: " + slider.getValue() + "<br>e: " +
+	    (slider.getValue() + slider.getExtent());
     } 
 
 
@@ -1033,10 +1031,13 @@ utils.xtk.ControllerMenu.prototype.makeSlider = function(opt_parent, opt_args) {
     //------------------
     // Set slider classes.
     //------------------
-    goog.dom.classes.add(slider.getElement(), utils.xtk.ControllerMenu.SLIDER_WIDGET_CLASS);
-    goog.dom.classes.add(slider.getThumb(), utils.xtk.ControllerMenu.SLIDER_THUMB_CLASS);
-    goog.dom.classes.add(slider.getTrack(),utils.xtk.ControllerMenu.SLIDER_TRACK_CLASS);
-    slider.setThumbHoverClass(utils.xtk.ControllerMenu.THUMB_HOVER_CLASS);
+    goog.dom.classes.add(slider.getElement(), 
+			 utils.xtk.ControllerMenu.SLIDER_WIDGET_CLASS);
+    goog.dom.classes.add(slider.getThumb(), 
+			 utils.xtk.ControllerMenu.SLIDER_THUMB_CLASS);
+    goog.dom.classes.add(slider.getTrack(),
+			 utils.xtk.ControllerMenu.SLIDER_TRACK_CLASS);
+    slider.setHoverClasses(utils.xtk.ControllerMenu.THUMB_HOVER_CLASS);
 
 
 
@@ -1181,17 +1182,16 @@ utils.xtk.ControllerMenu.prototype.makeTwoThumbSlider = function(opt_parent, opt
 
 /**
  * As stated.
- *
  * @param {Element=}
  * @return {Element}
  */
 utils.xtk.ControllerMenu.prototype.makeCheckbox = function(opt_parent){
 
-    var checkbox = goog.dom.createDom('input', { 
+    var checkbox = /**@type {Element}*/ goog.dom.createDom('input', { 
 	'id': 'CheckBox'+ goog.string.createUniqueString(),
 	'class': utils.xtk.ControllerMenu.BUTTON_CLASS
     });    
-    goog.dom.append(this.getParent(opt_parent), checkBox);
+    goog.dom.append(this.getParent(opt_parent), checkbox);
 
     checkbox.type = 'checkbox';
 

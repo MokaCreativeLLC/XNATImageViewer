@@ -8,6 +8,7 @@ goog.addDependency('../../../xiv/Widget/Widget.js', ['xiv.Widget'], [
 goog.addDependency('../../../xiv/xiv.js', ['xiv'], [ 
     'goog.dom',
     'goog.array',
+    'goog.object',
     'goog.window',
     'X.loader',
     'X.parserIMA',
@@ -119,23 +120,20 @@ goog.addDependency('../../../xiv/ViewLayoutManager/ViewLayoutManager.js', ['xiv.
 
 
 goog.addDependency('../../../xiv/ViewBox/ViewBox.js', ['xiv.ViewBox'], [
-'goog.fx',
-'goog.fx.DragDrop',
 'goog.string',
-'goog.dom',
 'goog.events',
-'utils.dom',
-'utils.style',
-'utils.array',
-'utils.fx',
+'goog.dom', 
+'goog.array',
+'goog.object',
 'utils.events.EventManager',
-'xiv',
+'utils.style',
 'xiv.Widget',
 'xiv.ViewLayoutManager',
 'xiv.ViewLayoutMenu',
 'xiv.ContentDivider',
 'xiv.ViewBoxTabs',
-'xiv.XtkDisplayer'
+'xiv.XtkDisplayer',
+'xiv.SlicerViewMenu'
 ]);
 
 
@@ -196,20 +194,20 @@ goog.addDependency('../../../xiv/ContentDivider/ContentDivider.js', ['xiv.Conten
 ]);
 
 
-goog.addDependency('../../../xiv/ViewBoxTabs/ViewBoxTabs.js', ['xiv.ViewBoxTabs'], [
-'goog.events',
-'goog.array',
+goog.addDependency('../../../xiv/ViewBoxTabs/ViewBoxTabs.js', 
+['xiv.ViewBoxTabs'], [
+'goog.object',
 'goog.string',
-'goog.ui.TabPane',
 'goog.dom',
+'goog.array',
+'goog.ui.TabPane',
+'goog.ui.TabPane.TabPage',
+'goog.events',
 'utils.convert',
 'utils.ui.ScrollableContainer',
-'utils.dom',
-'utils.fx',
 'utils.style',
-'xiv.ViewBox',
+'utils.events.EventManager',
 'xiv.Widget',
-'xiv',
 ]);
 
 

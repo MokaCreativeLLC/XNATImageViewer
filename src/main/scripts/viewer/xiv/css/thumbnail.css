@@ -18,7 +18,7 @@
     left: 0px;
     cursor: pointer;
     background-color: rgb(0,0,0);
-    z-Index: 100000;
+    z-index: 2;
     opacity: .85;
     width: 150px;
     background-color: rgba(0,0,0,0);

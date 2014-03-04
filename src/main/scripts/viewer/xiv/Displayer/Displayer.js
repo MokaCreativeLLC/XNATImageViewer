@@ -121,7 +121,7 @@ xiv.Displayer.prototype.createLabelValuePair_ = function(parent, label, value) {
 	'id': 'InfoTabDataLabel',
 	'class': xiv.Displayer.TABCONTENT_INFO_LABEL_CLASS
     }, (label + ":"));
-    goog.dom.append(parent, lab);
+    goog.dom.append(parent, lab_);
    
 
 

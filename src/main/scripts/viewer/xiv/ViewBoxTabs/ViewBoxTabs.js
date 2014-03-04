@@ -3,94 +3,67 @@
  */
 
 // goog
+goog.require('goog.object');
 goog.require('goog.events');
 goog.require('goog.array');
 goog.require('goog.string');
 goog.require('goog.ui.TabPane');
+goog.require('goog.ui.TabPane.TabPage');
 goog.require('goog.dom');
 
 // utils
 goog.require('utils.convert');
 goog.require('utils.ui.ScrollableContainer');
-goog.require('utils.dom');
-goog.require('utils.fx');
 goog.require('utils.style');
+goog.require('utils.events.EventManager');
 
 // xiv
-goog.require('xiv.ViewBox');
 goog.require('xiv.Widget');
-goog.require('xiv');
-
-
 
 
 
 /**
  * xiv.ViewBoxTabs are the tabs that occur at the bottom
- * of the xiv.ViewBox.  They are only visible when a viewable is in the xiv.ViewBox.
-*  These tabs are multi-purpose and could be used for information, object togling, 
- * image adjusting, etc.
- * 
+ * of the xiv.ViewBox.  They are only visible when a viewable is in the 
+ * xiv.ViewBox. These tabs are multi-purpose and could be used for 
+ * information, object togling, image adjusting, etc.
  * @constructor
  * @extends {xiv.Widget}
  */
 goog.provide('xiv.ViewBoxTabs');
 xiv.ViewBoxTabs = function () {
-    xiv.Widget.call(this, 'Tabs');
+    goog.base(this, 'Tabs');
 
     /**
      * @type {!goog.ui.TabPane}
      * @private
      */
     this.googTabPane_ = new goog.ui.TabPane(this.getElement());
-    this.activateCallbacks_ = [];
-    this.deactivateCallbacks_ = [];
+
+    // events
+    utils.events.EventManager.addEventManager(this, xiv.ViewBoxTabs.EventType);
+
 }
 goog.inherits(xiv.ViewBoxTabs, xiv.Widget);
 goog.exportSymbol('xiv.ViewBoxTabs', xiv.ViewBoxTabs)
 
 
 
-
 /**
- * @type {number}
- * @private
+ * Event types.
+ * @enum {string}
+ * @public
  */
-xiv.ViewBoxTabs.prototype.lastActiveTab_ = 0;
-
-
-
-	
-/**
- * @type {number}
- * @private
- */
-xiv.ViewBoxTabs.prototype.tabCount_ = 0;
-
-
-
-
-/**
- * @type {?Array.function}
- * @private
- */
-xiv.ViewBoxTabs.prototype.activateCallbacks_ = null;
-
-
-
-    
-/**
- * @type {?Array.function}
- * @private
- */
-xiv.ViewBoxTabs.prototype.deactivateCallbacks_ = null;
-
+xiv.ViewBoxTabs.EventType = {
+  ACTIVATED: goog.events.getUniqueId('viewboxtab_activated'),
+  DEACTIVATED: goog.events.getUniqueId('viewboxtab_deactivated'),
+}
 
 
 /**
  * @private
  * @const
- * @enum {string}
+ * @dict
  */
 xiv.ViewBoxTabs.iconSrc_ = {
     'Info':  'Icons/InfoIcon.png',
@@ -100,43 +73,121 @@ xiv.ViewBoxTabs.iconSrc_ = {
 }
 
 
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ViewBoxTabs.CSS_CLASS_PREFIX =
+    goog.getCssName('xiv-viewboxtabs');
 
 
 /**
+ * @type {string} 
+ * @const
+ */
+xiv.ViewBoxTabs.ELEMENT_CLASS =
+    goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, '');
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ViewBoxTabs.TAB_CLASS =
+    goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, 'tab');
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ViewBoxTabs.ACTIVE_TAB_CLASS =  
+    goog.getCssName(xiv.ViewBoxTabs.TAB_CLASS, 'active');
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ViewBoxTabs.HOVERED_TAB_CLASS =  
+    goog.getCssName(xiv.ViewBoxTabs.TAB_CLASS, 'hovered');
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ViewBoxTabs.TABPAGE_CLASS = 
+    goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, 'tabpage');
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ViewBoxTabs.SCROLLGALLERY_CLASS = 
+    goog.getCssName(xiv.ViewBoxTabs.TABPAGE_CLASS, 'scrollgallery');
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ViewBoxTabs.ACTIVE_TABPAGE_CLASS =
+    goog.getCssName(xiv.ViewBoxTabs.TABPAGE_CLASS, 'active');
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ViewBoxTabs.TABICON_CLASS = 
+    goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, 'tabicon');
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ViewBoxTabs.MOUSEOVER_TABICON_CLASS = 
+    goog.getCssName(xiv.ViewBoxTabs.TABICON_CLASS, 'mouseover');
+
+
+/**
+ * @type {!string}
+ * @private
+ */
+xiv.ViewBoxTabs.prototype.iconRoot_ = '';
+
+
+/**
+ * @type {!number}
+ * @private
+ */
+xiv.ViewBoxTabs.prototype.lastActiveTab_ = 0;
+
+
+/**
+ * @type {Object}
+ * @private
+ */
+xiv.ViewBoxTabs.prototype.Tabs_;
+
+
+
+/**
+ * As stated.
  * @type {number}
+ * @public
  */
 xiv.ViewBoxTabs.prototype.getLastActiveTab = function(){
     return this.lastActiveTab_;
 }
 
 
-
-
 /**
- * @param {Object}
- */
-xiv.ViewBoxTabs.prototype.setActivateCallbacks = function(callback) {
-    this.activateCallbacks_.push(callback);		
-}
-
-
-
-
-/**
- * @param {Object}
- */
-xiv.ViewBoxTabs.prototype.setDeactivateCallbacks = function(callback) {
-    this.deactivateCallbacks_.push(callback);		
-}
-
-
-
-
-/**
- * Adds multiple tabs by calling on the internal
- * 'addTab' function.
- *
- * @param {Array.<string>}
+ * Adds multiple tabs by calling on the internal 'addTab' function.
+ * @param {Array.<string>} tabTitles The titles of the tabs to add.
+ * @public
  */
 xiv.ViewBoxTabs.prototype.addTabs = function(tabTitles) {
     goog.array.forEach(tabTitles, function(tabTitle){
@@ -145,266 +196,256 @@ xiv.ViewBoxTabs.prototype.addTabs = function(tabTitles) {
 }
 
 
+/**
+ * Clears all of the tabs.
+ * @public
+ */
+xiv.ViewBoxTabs.prototype.reset = function() {	
+    var count = /**@type {!number}*/ goog.object.getCount(this.Tabs_);
+    while (count > 0) {
+	this.googTabPane_.removePage(count - 1)
+	count--;
+    }
+    
+    goog.object.forEach(this.Tabs_, function(tabObj, key){	
+	goog.object.forEach(tabObj, function(tabObj2, key2){
+	    delete tabObj2;
+	}.bind(this))
+    }.bind(this))
+    this.Tabs_ = {};
+}
+   
+
+/**
+ * As stated..
+ * @param {!string} tabTitle The title of the tab to add.
+ * @return {!Element} The created element.
+ * @private
+ */
+xiv.ViewBoxTabs.prototype.createTabElt_ = function(tabTitle) {
+    return goog.dom.createDom('div', {
+	'id': 'Tab_' + goog.string.createUniqueString(),
+	'class' : xiv.ViewBoxTabs.TAB_CLASS,
+	'title': tabTitle
+    });
+}
 
 
 /**
- * Clears a tab of it contents and removes it.  Clears
- * all of no tabtitle provided in the argument.
- *
- * @param {string=} opt_tabtitle
- * @public
+ * As stated..
+ * @param {!string} tabTitle The title of the tab icon to add.
+ * @return {!Element} The created element.
+ * @private
  */
-xiv.ViewBoxTabs.prototype.reset = function(opt_tabtitle) {
+xiv.ViewBoxTabs.prototype.createTabIcon_ = function(tabTitle) {
+    return goog.dom.createDom('img', {
+	'id' : 'TabIcon_' + goog.string.createUniqueString(),
+	'class' : xiv.ViewBoxTabs.TABICON_CLASS,
+	'src': this.iconUrl_ + 
+	    xiv.ViewBoxTabs.iconSrc_[goog.string.removeAll(tabTitle)]
+    });
+}
 
-    console.log("RESET");
-    //------------------
-    // Remove all if no title specified.
-    //------------------
-    if (!opt_tabtitle){
-	
-	//
-	// Remove from google object.
-	//
-	while (this.tabCount_ > 0) {
-	    this.googTabPane_.removePage(this.tabCount_ - 1)
-	    this.tabCount_--;
-	}
 
-	//
-	// Remove tab from dom.
-	//
-	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.getElement()), function(tab, i) { 
-	    goog.dom.removeNode(tab);
-	    delete tab;
-	})
-	// Remove tab page from dom.
-	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.getElement()), function(tab, i) { 
-	    goog.dom.removeNode(tab);
-	    delete tab;
-	})
+/**
+ * As stated..
+ * @param {!string} tabTitle The title of the tab page to add.
+ * @return {!Element} The created element.
+ * @private
+ */
+xiv.ViewBoxTabs.prototype.createTabPage_ = function(tabTitle) {
+    return goog.dom.createDom('div', {
+	'id' : 'TabPage_' + goog.string.createUniqueString(),
+	'class': xiv.ViewBoxTabs.TABPAGE_CLASS,
+	'label': tabTitle
+    });
+}
 
-	//
-	// Remove tab icon from dom.
-	//
-	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABICON_CLASS, this.getElement()), function(tab, i) { 
-	    goog.dom.removeNode(tab);
-	    delete tab;
-	})
+
+/**
+ * As stated.
+ * @param {!string} tabTitle The tab title.
+ * @param {!Element} tab The tab element.
+ * @param {!Element} tabIcon The tab element icon.
+ * @param {!Element} content The tabPage content element.
+ * @param {!goog.ui.TabPane.TabPage} googTab The google TabPage.
+ * @private
+ */
+xiv.ViewBoxTabs.prototype.storeTab_ = 
+function(tabTitle, tab, tabIcon, content, googTab){
+    this.Tabs_ = (this.Tabs_) ? this.Tabs_ : {};
+    this.Tabs_[tabTitle] = {
+	'TabPage': googTab,
+	'content': content,
+	'tab': tab,
+	'icon': tabIcon
     }
 }
 
 
+/**
+ * As stated.
+ * @return {!Array.Element} The elements..
+ * @private
+ */
+xiv.ViewBoxTabs.prototype.getTabElements = function() {
+    var elts = /**@type {!Array.Element}*/ [];
+    goog.object.forEach(this.Tabs_, function(tabObj, key){
+	elts.push(tabObj['tab']);
+    });
+    return elts;
+}
+
+
+/**
+ * As stated.
+ * @return {!Array.Element} The elements..
+ * @private
+ */
+xiv.ViewBoxTabs.prototype.getTabContents = function() {
+    var elts = /**@type {!Array.Element}*/ [];
+    goog.object.forEach(this.Tabs_, function(tabObj, key){
+	elts.push(tabObj['content']);
+    });
+    return elts;
+}
 
 
 
 /**
  * Adds a tab.  Utilises the tabObject_ object to create
  * tabs, their icons and pages.
- *
- * @type {function(Object)}
+ * @param {!string} tabTitle The title of the tab to add.
+ * @public
  */
 xiv.ViewBoxTabs.prototype.addTab = function(tabTitle) {
+   
+    // Check exists, error out.
+    if (this.Tabs_[tabTile]) {
+	throw new Error(tabTitle ' is an already existing tab!');
+    }
 
-    //------------------
-    //  Tab		
-    //------------------
-    var tab = goog.dom.createDom('div', {
-	'id': 'Tab_' + goog.string.createUniqueString(),
-	'class' : xiv.ViewBoxTabs.TAB_CLASS,
-	'title': tabTitle
-    });
+    // create Tab
+    var tab = /**@type {!Element}*/ this.createTabElt_(tabTitle);
+    goog.dom.append(this.getElement(), tab);
 
-    
+    //  create Tab icon		
+    var tabIcon = /**@type {!Element}*/ this.createTabIcon_(tabTitle);
+    goog.dom.append(tab, tabIcon);
+    if (tabIcon.src.toString().indexOf('undefined') > -1 ){ 
+	tabIcon.innerHTML = tabTitle}
 
-    //------------------
-    //  Tab icon	
-    //------------------	
-    var tabIcon = goog.dom.createDom('img', {
-	'id' : 'TabIcon_' + goog.string.createUniqueString(),
-	'class' : xiv.ViewBoxTabs.TABICON_CLASS,
-	'src': xiv.ICON_URL + xiv.ViewBoxTabs.iconSrc_[goog.string.removeAll(tabTitle)]
-    });
-    if (tabIcon.src.toString().indexOf('undefined') > -1 ){ tabIcon.innerHTML = tabTitle}
+    //  create Tab page	
+    var content = /**@type {!Element}*/ this.createTabPage_(tabTitle);
+    utils.style.setStyle(content, utils.style.dims(this.getElement(), 'width'))
+    goog.dom.append(this.getElement().parentNode, content);
 
+    // create Create goog TabPage object
+    var googTab = /**@type {!goog.ui.TabPane.TabPage}*/ 
+    new goog.ui.TabPane.TabPage(content, tabTitle)
 
-    
-    //------------------
-    //  Tab page
-    //------------------	
-    var tabPage = goog.dom.createDom('div', {
-	'id' : 'TabPage_' + goog.string.createUniqueString(),
-	'class': xiv.ViewBoxTabs.TABPAGE_CLASS,
-	'label': tabTitle
-    });
-    utils.style.setStyle(tabPage, utils.style.dims(this.getElement(), 'width'))
-    
+    // Add to tabPane
+    this.googTabPane_.addPage(googTab);
 
+    // store
+    this.storeTab_(tabTitle, tab, tabIcon, content, googTab);
 
-    //
-    // Appends
-    //
-    goog.append(this.getElement(), tab);
-    goog.append(tab, tabIcon);
-    goog.append(this.getElement().parentNode, tabPage);
-
-
-
-    this.googTabPane_.addPage(new goog.ui.TabPane.TabPage(tabPage));	
-
-
-
-    //------------------
-    // UI / UX event definition.
-    //------------------
+    // style
     this.updateStyle();
-    this.clearEventListeners();
+
+    // set events
+    this.clearEventListeners_();
     this.setDefaultClickEvents();
     this.setDefaultHoverEvents();
     this.setActive(-1);
-
-    this.tabCount_++;
 }
 
 
 
-
 /**
- * Search for a tab based on the the argument provided
- * returns either the tab element or unefined.
- *
- * @param {string | number} value: Tab name to search for or the tab position.
- * @return {Element | undefined}
+ * Cycle through each tab, hightlighting the tab 
+ * associated with activeTabNum, not hightlting the others.
+ * @param {number} activeTabNum The reference active tab number.
+ * @private
  */
-xiv.ViewBoxTabs.prototype.getTabPage = function (value) {
-    
-    var retVal = undefined;
-    
-
-    //------------------
-    // First check if the argument is a string. 
-    // Then,look for tab labels.
-    //------------------
-    if (typeof value === 'string') {
-	value = value.toLowerCase();
-	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.getElement()), function(tabPage, i) { 			
-	    if (tabPage.label.toLowerCase().indexOf(value) > -1 && !retVal) { retVal = tabPage; }
-	})
-
- 
-    //------------------
-    // Otherwise retreive that tab number.
-    //------------------
-    } else if (typeof value === 'number') {
-	goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.getElement()), function(tabPage, i) { 			
-	    if (i === value) { retVal = tabPage;}
-	})			
-    }
-
-    
-    return retVal;
-}
-
-
-
-
-
-
-
-/**
- * Conducts the necessary CSS / stylesheet adjustments
- * when a tab is activated, or clicked.
- *
- * @param {number} The tab number to activate.
- */
-xiv.ViewBoxTabs.prototype.setActive = function (activeTabNum) {	
-    
-    var tabFadeIn = 500;
-
-
-
-    //------------------
-    // Make sure the goog.ui.TabPane select method is called.
-    //------------------
-    this.googTabPane_.setSelectedIndex(activeTabNum);
-
-
-
-    //------------------
-    // Cycle through each tab, hightlighting the tab 
-    // associated with activeTabNum, not hightlting the others.
-    //------------------
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.getElement()), function(tab, i) { 
+xiv.ViewBoxTabs.prototype.activateTabElt_ = function (activeTabNum) {
+    goog.array.forEach(this.getTabElements(), function(tab, i) { 
 	if (i === activeTabNum) {
 	    tab.setAttribute('isActive', true);
 	    goog.dom.classes.add(tab, xiv.ViewBoxTabs.ACTIVE_TAB_CLASS);
-	   // utils.fx.fadeInFromZero(tab, tabFadeIn);
 	}
 	else {
-
-	    //
 	    // Determine if current tab is the one to setActive or not
-	    //
 	    tab.setAttribute('isActive', false);
 	    goog.dom.classes.remove(tab, xiv.ViewBoxTabs.ACTIVE_TAB_CLASS);
 	    goog.dom.classes.set(tab, xiv.ViewBoxTabs.TAB_CLASS);
 	}
-    })
+    })	
+}
 
 
-
-    //------------------
-    // If there's an active tab, make the tab page border more prominent.
-    //------------------
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TABPAGE_CLASS, this.getElement()), function(tabPage) {
-	if (activeTabNum > -1){
+/**
+ * If there's an active tab, make the tab page border more prominent.
+ * @param {number} activeTabNum The reference active tab number.
+ * @private
+ */
+xiv.ViewBoxTabs.prototype.activateTabPage_ = function (activeTabNum) {
+    goog.array.forEach(this.getTabContents(), function(tabPage, i) {
+	if (activeTabNum === i){
 	    goog.dom.classes.add(tabPage, xiv.ViewBoxTabs.ACTIVE_TABPAGE_CLASS);
 	    //utils.fx.fadeInFromZero(tabPage, tabFadeIn);
 	} else {
 	    goog.dom.classes.set(tabPage, xiv.ViewBoxTabs.TABPAGE_CLASS);
 	}	
-    })
+    })	
 }
 
 
 
+/**
+ * Conducts the necessary CSS / stylesheet adjustments
+ * when a tab is activated or clicked.
+ * @param {number} activeTabNum The reference active tab number.
+ * @public
+ */
+xiv.ViewBoxTabs.prototype.setActive = function (activeTabNum) {	
+    // Call goog.ui.TabPane select method.
+    this.googTabPane_.setSelectedIndex(activeTabNum);
+    this.activateTabElt_(activeTabNum);
+    this.activateTabPage_(activeTabNum);
+}
+
 
 /**
  * Clears all event listening callbacks for tabs.
- *
  * @private
  */
-xiv.ViewBoxTabs.prototype.clearEventListeners = function(){
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.getElement()), function(tab, i) { 
+xiv.ViewBoxTabs.prototype.clearEventListeners_ = function(){
+    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, 
+				this.getElement()), function(tab, i) { 
 	goog.events.removeAll(tab);
     })
 }
 
 
-
 /**
  * Sets the default click events when a user clicks on a tab
  * (i.e. tab activation and tab deactivation).
- *
  * @private
  */
 xiv.ViewBoxTabs.prototype.setDefaultClickEvents = function() {
-    
 
-    //------------------
     // Cycle through each tab...
-    //------------------
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.getElement()), function(tab, i) { 
-
+    goog.array.forEach(this.getTabElements(), function(tab, i) { 
 	goog.events.listen(tab, goog.events.EventType.MOUSEUP, function(event) {
-
-	    //
+	    
 	    // When a tab is clicked and it moves up
 	    // in the viewer (activation)
-	    //
-	    if (tab.getAttribute('isActive') === false || tab.getAttribute('isActive') === 'false') {
+	    if (tab.getAttribute('isActive') === false || 
+		tab.getAttribute('isActive') === 'false') {
 		this.setActive(i);
 		this.lastActiveTab_ = i;
-		goog.array.forEach(this.activateCallbacks_, function(callback){ callback();})
+		this['EVENTS'].runEvent('ACTIVATED', this)
 
 
 	    //
@@ -415,7 +456,7 @@ xiv.ViewBoxTabs.prototype.setDefaultClickEvents = function() {
 		//
 		// Run deactiveate callbacks.
 		//
-		goog.array.forEach(this.deactivateCallbacks_, function(callback){ callback();})
+		this['EVENTS'].runEvent('DEACTIVATED', this)
 		//
 		// Deactivate all tabs.
 		//
@@ -440,25 +481,31 @@ xiv.ViewBoxTabs.prototype.setDefaultHoverEvents = function() {
     //------------------
     // Cycle through each tab...
     //------------------
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.getElement()), function(tab, i) { 
+    goog.array.forEach(goog.dom.getElementsByClass(
+	xiv.ViewBoxTabs.TAB_CLASS, this.getElement()), function(tab, i) { 
 
 	//
 	// Set tab hover
 	//	
-	goog.events.listen(tab, goog.events.EventType.MOUSEOVER, function(event) { 
+	goog.events.listen(tab, goog.events.EventType.MOUSEOVER, 
+			   function(event) { 
 	    
 	    //
 	    // Only change style of inactive tabs
 	    //
-	    if ((tab.getAttribute('isActive') === false || tab.getAttribute('isActive') === 'false')) {
+	    if ((tab.getAttribute('isActive') === false || 
+		 tab.getAttribute('isActive') === 'false')) {
 		goog.dom.classes.add(tab, xiv.ViewBoxTabs.HOVERED_TAB_CLASS);
 	    }
 
 	    //
-	    // Set TabIcon style change (opacity) -- applies whether active or inactive
+	    // Set TabIcon style change (opacity) -- applies whether active 
+	    // or inactive
 	    //
-	    goog.array.forEach(goog.dom.getElementsByClass(this.TABICON_CLASS, tab), function(icon){
-		goog.dom.classes.add(icon, xiv.ViewBoxTabs.MOUSEOVER_TABICON_CLASS);
+	    goog.array.forEach(goog.dom.getElementsByClass(
+		this.TABICON_CLASS, tab), function(icon){
+		goog.dom.classes.add(icon, 
+				     xiv.ViewBoxTabs.MOUSEOVER_TABICON_CLASS);
 	    }.bind(this))
 	}.bind(this))
 
@@ -471,15 +518,18 @@ xiv.ViewBoxTabs.prototype.setDefaultHoverEvents = function() {
 	    //
 	    // Only change style of inactive tabs
 	    //
-	    if ((tab.getAttribute('isActive') === false || tab.getAttribute('isActive') === 'false')) {
+	    if ((tab.getAttribute('isActive') === false || 
+		 tab.getAttribute('isActive') === 'false')) {
 		goog.dom.classes.remove(tab, xiv.ViewBoxTabs.HOVERED_TAB_CLASS);
 	    }
 
 	    //
 	    // TabIcon style change (opacity) -- applies whether active or inactive
 	    //
-	    goog.array.forEach(goog.dom.getElementsByClass(this.TABICON_CLASS, tab), function(icon){
-		goog.dom.classes.remove(icon, xiv.ViewBoxTabs.MOUSEOVER_TABICON_CLASS);
+	    goog.array.forEach(goog.dom.getElementsByClass(
+		this.TABICON_CLASS, tab), function(icon){
+		goog.dom.classes.remove(icon, 
+			xiv.ViewBoxTabs.MOUSEOVER_TABICON_CLASS);
 	    }.bind(this))
 	}.bind(this))
 
@@ -491,9 +541,7 @@ xiv.ViewBoxTabs.prototype.setDefaultHoverEvents = function() {
 
 
 /**
- * Standard updateStyle function for xiv.ViewBoxTabs.
- *
- * @param {Object=}
+ * @inheritDoc
  */
 xiv.ViewBoxTabs.prototype.updateStyle = function (opt_args) {
 
@@ -511,7 +559,8 @@ xiv.ViewBoxTabs.prototype.updateStyle = function (opt_args) {
     // For calculating the tabPageHeight.  
     // Don't proceed if there are no tabs.
     //------------------
-    if (goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, this.getElement()).length > 0) {
+    if (goog.dom.getElementsByClass(xiv.ViewBoxTabs.TAB_CLASS, 
+				    this.getElement()).length > 0) {
 
 
 	//
@@ -549,30 +598,17 @@ xiv.ViewBoxTabs.prototype.updateStyle = function (opt_args) {
  * Adds either an object or an element to the contents
  * of a tab page.  The contents is always a utils.ui.ScrollableContainer, which
  * can accept either Objects of Elements as part of its input method.
- *
  * @param {!string} tabName The name of the tab.
- * @param {!Object|!Element|!utils.ui.ScrollableContainer} contents The contents.
+ * @param {!Object|!Element|!utils.ui.ScrollableContainer} contents The 
+ *    contents.
  */
 xiv.ViewBoxTabs.prototype.setTabContents = function (tabName, contents) {
-  
-    var tabPage = this.getTabPage(tabName);
-    var scrollableContainer = undefined;
-
-
-
-    //------------------
     // Add the tab page if it's not there.
-    //------------------
-    if (tabPage === undefined){
-	this.addTab(tabName);
-	tabPage = this.getTabPage(tabName);
-    }
+    if (!this.Tabs_[tabName]){ this.addTab(tabName); }
+    var tabPage = /**@type {!Element}*/ this.Tabs_[tabName]['content'];
+    var scrollableContainer = /**@type {utils.ui.ScrollableContainer}*/ null;
 
-    
-
-    //------------------
     // Make or use existing scrollable container...
-    //------------------
     if (contents instanceof utils.ui.ScrollableContainer) {
 	//console.log("ITS A SCROLLABLE CONTAINER");
 	scrollableContainer = contents;
@@ -581,30 +617,17 @@ xiv.ViewBoxTabs.prototype.setTabContents = function (tabName, contents) {
     else {
 	scrollableContainer = new utils.ui.ScrollableContainer()
 	tabPage.appendChild(scrollableContainer.getElement());
-	window.console.log("CONTENTS", contents);
 	scrollableContainer.addContents(contents);
-	//window.console.log(scrollableContainer.getContentsDict());
 	scrollableContainer.setZippysExpanded(false);
+	//window.console.log("CONTENTS", contents);
+	//window.console.log(scrollableContainer.getContentsDict());
     }
 
-
-
-    //------------------
     // Set the scrollable container class.
-    //------------------
-    goog.dom.classes.add(scrollableContainer.getElement(), xiv.ViewBoxTabs.SCROLLGALLERY_CLASS);
+    goog.dom.classes.add(scrollableContainer.getElement(), 
+			 xiv.ViewBoxTabs.SCROLLGALLERY_CLASS);
 }
 
 
 
 
-xiv.ViewBoxTabs.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-viewboxtabs');
-xiv.ViewBoxTabs.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, '');
-xiv.ViewBoxTabs.TAB_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, 'tab');
-xiv.ViewBoxTabs.ACTIVE_TAB_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TAB_CLASS, 'active');
-xiv.ViewBoxTabs.HOVERED_TAB_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TAB_CLASS, 'hovered');
-xiv.ViewBoxTabs.TABPAGE_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, 'tabpage');
-xiv.ViewBoxTabs.SCROLLGALLERY_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TABPAGE_CLASS, 'scrollgallery');
-xiv.ViewBoxTabs.ACTIVE_TABPAGE_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TABPAGE_CLASS, 'active');
-xiv.ViewBoxTabs.TABICON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.CSS_CLASS_PREFIX, 'tabicon');
-xiv.ViewBoxTabs.MOUSEOVER_TABICON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewBoxTabs.TABICON_CLASS, 'mouseover');

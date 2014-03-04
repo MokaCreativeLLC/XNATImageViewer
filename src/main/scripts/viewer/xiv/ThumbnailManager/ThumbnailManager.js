@@ -381,7 +381,9 @@ xiv.ThumbnailManager.prototype.createDragElement_ = function(srcElt) {
 
     var dragEl = /**@type {!Element}*/ originalThumbnail.cloneNode(true);
     dragEl.setAttribute('id', xiv.ThumbnailManager.DRAGGER_ID);
-    goog.dom.classes.set(dragEl, xiv.Thumbnail.DRAGGING_CLASS);
+    dragEl.removeAttribute("style");
+    goog.dom.classes.add(dragEl, xiv.Thumbnail.DRAGGING_CLASS);
+
     return dragEl;
 }
 
@@ -426,6 +428,7 @@ xiv.ThumbnailManager.prototype.dragEnd_ = function (event) {
     var dragThumbnail = /**@type {!Element}*/
 	goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, 
 				    utils.ui.Thumbnail.CSS_CLASS_PREFIX);
+
     var originalThumbnail = /**@type {!Element}*/
 	goog.dom.getElement(dragThumbnail.getAttribute('thumbnailid'))
     var Thumb = /**@type {!xiv.Thumbnail}*/
@@ -445,7 +448,7 @@ xiv.ThumbnailManager.prototype.dragEnd_ = function (event) {
     //*************************************************************
     if (dragThumbnail.dropTarget) {
 	this.thumbnailDroppedIntoTarget_(originalThumbnail, 
-			dragThumbnail.dropTarget).bind(this);
+					 dragThumbnail.dropTarget);
     }
 }
 
@@ -493,7 +496,6 @@ xiv.ThumbnailManager.prototype.drop_ = function(event) {
     document.body.appendChild(dragClone);
     goog.dom.removeNode(thumbDragger);
     delete thumbDragger;
-
 
 
     //------------------

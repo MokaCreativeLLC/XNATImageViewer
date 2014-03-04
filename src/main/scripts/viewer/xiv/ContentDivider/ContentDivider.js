@@ -46,7 +46,8 @@ xiv.ContentDivider = function () {
      * @type {!Element}
      */
     this.containment_ = goog.dom.createDom("div", {
-	'id' : 'xiv.ContentDividerContainment_' + goog.string.createUniqueString(),
+	'id' : 'xiv.ContentDividerContainment_' + 
+	    goog.string.createUniqueString(),
 	'class': xiv.ContentDivider.CONTAINMENT_CLASS
     });
     
@@ -91,6 +92,43 @@ goog.exportSymbol('xiv.ContentDivider', xiv.ContentDivider);
 
 
 
+/**
+ * @const
+ * @public
+ */
+xiv.ContentDivider.CONTENT_DIVIDER_HEIGHT = 4
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ContentDivider.CSS_CLASS_PREFIX = goog.getCssName('xiv-contentdivider');
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ContentDivider.ELEMENT_CLASS =  
+    goog.getCssName(xiv.ContentDivider.CSS_CLASS_PREFIX, '');
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ContentDivider.CONTAINMENT_CLASS =  
+goog.getCssName(xiv.ContentDivider.CSS_CLASS_PREFIX, 'containment');
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ContentDivider.ICON_CLASS =  
+    goog.getCssName(xiv.ContentDivider.CSS_CLASS_PREFIX, 'icon');
+
 
 /**
  * Event types.
@@ -101,6 +139,9 @@ xiv.ContentDivider.EventType = {
   DRAGSTART: goog.events.getUniqueId('dragstart'),
   DRAG: goog.events.getUniqueId('drag'),
 };
+
+
+
 
 
 
@@ -193,7 +234,8 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
     //------------------
     // On Mousedown...
     //------------------
-    goog.events.listen(this.getElement(), goog.events.EventType.MOUSEDOWN, function(e) {
+    goog.events.listen(this.getElement(), goog.events.EventType.MOUSEDOWN, 
+		       function(e) {
 	
 	//
 	// Stop propagation.
@@ -205,7 +247,9 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
 	// Params.
 	//
 	var cDims = utils.style.dims(this.containment_);
-	var d = new goog.fx.Dragger(this.getElement(), null, new goog.math.Rect(0, cDims.top, 0, cDims.height - xiv.CONTENT_DIVIDER_HEIGHT));
+	var d = new goog.fx.Dragger(this.getElement(), null, 
+		new goog.math.Rect(0, cDims.top, 0, 
+				   cDims.height - xiv.CONTENT_DIVIDER_HEIGHT));
 	this.dragging_ = true;	
 
 
@@ -214,7 +258,7 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
 	//
 	d.addEventListener(goog.fx.Dragger.EventType.START, function(e) {
 	    this.dragging_ = true;
-	    goog.array.forEach(this.dragStartCallbacks_, function(callback) { callback(this.getElement(), e) });	
+	    this['EVENTS'].runEvent('DRAGSTART', this);	
 	}.bind(this));
 
 	
@@ -223,7 +267,7 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
 	//
 	d.addEventListener(goog.fx.Dragger.EventType.DRAG, function(e) {
 	    utils.dom.stopPropagation(e);
-	    goog.array.forEach(this.dragCallbacks_, function(callback) { callback(this.getElement(), e) });	
+	    this['EVENTS'].runEvent('DRAG', this);	
 	}.bind(this));
 	
 
@@ -233,7 +277,7 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
 	d.addEventListener(goog.fx.Dragger.EventType.END, function(e) {
 	    this.dragging_ = false;
 	    d.dispose();
-	    goog.array.forEach(this.dragEndCallbacks_, function(callback) { callback(this.getElement(), e)});	
+	    this['EVENTS'].runEvent('DRAGEND', this);	
 	}.bind(this));
 
 
@@ -257,23 +301,26 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
 xiv.ContentDivider.prototype.slideTo = function(newTop, opt_animate) {
     
     var dims = utils.style.dims(this.getElement());
-    var slide = new goog.fx.dom.Slide(this.getElement(), [dims.left, dims.top], [0, newTop], xiv.ANIM_MED, goog.fx.easing.easeOut);
-
-
+    var slide = new goog.fx.dom.Slide(this.getElement(), 
+				      [dims.left, dims.top], [0, newTop], 
+				      xiv.ANIM_MED, goog.fx.easing.easeOut);
 
     //------------------
     // Callbacks dor the animation events (BEGIN, ANIMATE, END).
     //------------------
     goog.events.listen(slide, goog.fx.Animation.EventType.BEGIN, function() {
-	goog.array.forEach(this.dragStartCallbacks_, function(callback) { callback(this.getElement()) }.bind(this));			
-    }.bind(this));
-    goog.events.listen(slide, goog.fx.Animation.EventType.ANIMATE, function() {
-	goog.array.forEach(this.dragCallbacks_, function(callback) { callback(this.getElement()) }.bind(this));			
-    }.bind(this));
-    goog.events.listen(slide, goog.fx.Animation.EventType.END, function() {
-	goog.array.forEach(this.dragEndCallbacks_, function(callback) { callback(this.getElement()) }.bind(this));			
+	this['EVENTS'].runEvent('DRAGSTART', this);		
     }.bind(this));
 
+
+    goog.events.listen(slide, goog.fx.Animation.EventType.ANIMATE, function() {
+	this['EVENTS'].runEvent('DRAG', this);			
+    }.bind(this));
+
+
+    goog.events.listen(slide, goog.fx.Animation.EventType.END, function() {
+	this['EVENTS'].runEvent('DRAGEND', this);		
+    }.bind(this));
 
 
     //------------------
@@ -299,7 +346,3 @@ xiv.ContentDivider.prototype.updateStyle = function (opt_args) {
 
 
 
-xiv.ContentDivider.CSS_CLASS_PREFIX =  /**@type {string} @const*/ goog.getCssName('xiv-contentdivider');
-xiv.ContentDivider.ELEMENT_CLASS =  /**@type {string} @const*/  goog.getCssName(xiv.ContentDivider.CSS_CLASS_PREFIX, '');
-xiv.ContentDivider.CONTAINMENT_CLASS =  /**@type {string} @const*/  goog.getCssName(xiv.ContentDivider.CSS_CLASS_PREFIX, 'containment');
-xiv.ContentDivider.ICON_CLASS =  /**@type {string} @const*/  goog.getCssName(xiv.ContentDivider.CSS_CLASS_PREFIX, 'icon');
