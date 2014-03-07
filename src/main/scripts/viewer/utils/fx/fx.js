@@ -115,16 +115,24 @@ utils.fx.fadeOutAndRemove = function (element, opt_time, opt_callback) {
 /**
  * Fades an element to a given opacity.
  * @param {!Element} element Element to fade. 
- * @param {number=} time Time for animation to occur.
- * @param {number=} opacity The opacity to fade to.
+ * @param {number=} opt_time Time for animation to occur.  Defaults to google
+ *    defaults.
+ * @param {number=} opt_opacity The opacity to fade to.
  * @param {function=} opt_callback Callback when animation is complete.
+ * @param {number=} opt_startOp The opacity to start from.  Calculates it 
+ *    otherwise.
  * @public
  */
-utils.fx.fadeTo = function (element, time, opacity, callback) {
-    var prevOp = /**@type {!number}*/ element.style.opacity ? 
-	parseInt(element.style.opacity, 10) : 1;
+utils.fx.fadeTo = function (element, opt_time, opt_opacity, callback, 
+			    opt_startOp) {
+
+    if (!opt_startOp){
+	opt_startOp = /**@type {!number}*/ element.style.opacity ? 
+	    parseInt(element.style.opacity, 10) : 1;
+    }
+
     var f = /**@type {!goog.fx.dom.Fade}*/  
-    new goog.fx.dom.Fade(element, prevOp, opacity, time);
+    new goog.fx.dom.Fade(element, opt_startOp, opt_opacity, opt_time);
     if (callback) {
 	f.addEventListener(goog.fx.Transition.EventType.END, function(e){ 
 	    callback(e);

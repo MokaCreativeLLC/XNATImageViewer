@@ -22,21 +22,19 @@ goog.require('xiv.Widget');
 /**
  * 'xiv.Displayer' is a parent class that allows visualization
  * frameworks to display and render images within the xiv.ViewBox.
- * Every xiv.ViewBox object contains a 'xiv.Displayer' which is the element/class
- * that visualizes the imaging information. Currently, the defaulted
- * child class of the displayer is 'XTK', though this hierarchy is 
+ * Every xiv.ViewBox object contains a 'xiv.Displayer' which is the
+ * element/class that visualizes the imaging information. Currently, the 
+ * defaulted child class of the displayer is 'XTK', though this hierarchy is 
  * set it place to allow for a number of visualization toolkits to
  * be in use.
  *
  * @constructor
- * @param {!string} opt_id The id to associate with the object's element.
- * @param {string=} opt_args The optional args to set.
  * @extends {xiv.Widget}
  */
 goog.provide('xiv.Displayer');
-xiv.Displayer = function (opt_id, opt_args) {
+xiv.Displayer = function () {
 
-    goog.base(this, opt_id ? opt_id : 'xiv.Displayer', opt_args);
+    goog.base(this);
 
 
     /**
@@ -49,6 +47,34 @@ xiv.Displayer = function (opt_id, opt_args) {
 goog.inherits(xiv.Displayer, xiv.Widget);
 goog.exportSymbol('xiv.Displayer', xiv.Displayer);
 
+
+
+/**
+ * @type {!string} 
+ * @const
+ * @expose
+ */
+xiv.Displayer.prototype.ID_PREFIX =  'xiv.Displayer';
+
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.Displayer.CSS_CLASS_PREFIX =
+goog.string.toSelectorCase(
+    utils.string.getLettersOnly(xiv.Displayer.ID_PREFIX || 
+				xiv.Displayer.prototype.ID_PREFIX));
+
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.Displayer.ELEMENT_CLASS = 
+goog.getCssName(xiv.Displayer.CSS_CLASS_PREFIX, '');
 
 
 

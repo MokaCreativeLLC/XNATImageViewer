@@ -1,6 +1,7 @@
 
 
-goog.addDependency('../../../xiv/Widget/Widget.js', ['xiv.Widget'], [ 
+goog.addDependency('../../../xiv/Widget/Widget.js', ['xiv.Widget'], [
+    'goog.string',
     'utils.style', 
     'utils.dom'
 ]); 
@@ -20,6 +21,7 @@ goog.addDependency('../../../xiv/xiv.js', ['xiv'], [
 
 
 goog.addDependency('../../../xiv/Modal/Modal.js', ['xiv.Modal'], [
+    'goog.object',
     'goog.dom',
     'goog.dom.fullscreen',
     'goog.array',
@@ -69,6 +71,7 @@ goog.addDependency('../../../xiv/ThumbnailManager/ThumbnailManager.js',
 
 goog.addDependency('../../../xiv/Thumbnail/Thumbnail.js', ['xiv.Thumbnail'], [
     'goog.dom',
+    'goog.string',
     'utils.ui.Thumbnail',
 ]);
 
@@ -90,6 +93,7 @@ goog.addDependency('../../../xiv/ViewBoxManager/ViewBoxManager.js',
 'utils.style',
 'utils.fx',
 'utils.events.EventManager',
+'xiv.Widget',
 'xiv.ViewBox'
 ]);
 
@@ -113,7 +117,6 @@ goog.addDependency('../../../xiv/ViewLayoutManager/ViewLayoutManager.js', ['xiv.
 'utils.style',
 'xiv.XtkPlane',
 'xiv.ViewBox',
-'xiv',
 'xiv.ViewLayout',
 ]);
 
@@ -132,7 +135,7 @@ goog.addDependency('../../../xiv/ViewBox/ViewBox.js', ['xiv.ViewBox'], [
 'xiv.ViewLayoutMenu',
 'xiv.ContentDivider',
 'xiv.ViewBoxTabs',
-'xiv.XtkDisplayer',
+'xiv.Displayer.Xtk',
 'xiv.SlicerViewMenu'
 ]);
 
@@ -180,9 +183,11 @@ goog.addDependency('../../../xiv/ViewLayoutMenu/ViewLayoutMenu.js', ['xiv.ViewLa
 
 
 
-goog.addDependency('../../../xiv/ContentDivider/ContentDivider.js', ['xiv.ContentDivider'], [
+goog.addDependency('../../../xiv/ContentDivider/ContentDivider.js', 
+['xiv.ContentDivider'], [
 'goog.events',
 'goog.array',
+'goog.string',
 'goog.dom',
 'goog.fx',
 'utils.dom',
@@ -190,7 +195,6 @@ goog.addDependency('../../../xiv/ContentDivider/ContentDivider.js', ['xiv.Conten
 'utils.events.EventManager',
 'xiv.ViewBoxTabs',
 'xiv.Widget',
-'xiv',
 ]);
 
 
@@ -212,7 +216,7 @@ goog.addDependency('../../../xiv/ViewBoxTabs/ViewBoxTabs.js',
 
 
 
-goog.addDependency('../../../xiv/XtkDisplayer/XtkDisplayer.js', ['xiv.XtkDisplayer'], [
+goog.addDependency('../../../xiv/Displayer/Xtk/Xtk.js', ['xiv.Displayer.Xtk'], [
 'goog.string',
 'goog.dom',
 'goog.array',

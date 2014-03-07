@@ -3,7 +3,7 @@
  */
 
 
-.xiv-xtkplane {
+.xiv-xtk-plane {
     position: absolute;
     height: 50%;
     width: 50%;
@@ -17,7 +17,7 @@
 
 
 
-.xiv-xtkplane-indexbox {
+.xiv-xtk-plane-indexbox {
     position: absolute;
     top: 5px;
     left: 0;
@@ -31,7 +31,7 @@
 
 
 
-.xiv-xtkplane-label-north, .xiv-xtkplane-label-south, .xiv-xtkplane-label-east, .xiv-xtkplane-label-west  {
+.xiv-xtk-plane-label-north, .xiv-xtk-plane-label-south, .xiv-xtk-plane-label-east, .xiv-xtk-plane-label-west  {
     position: absolute;
     font-size: 8px;
     color: #fff;
@@ -41,26 +41,26 @@
 
 
 
-.xiv-xtkplane-label-north {
+.xiv-xtk-plane-label-north {
     left: 50%;
     top: 10%;
 }
 
 
 
-.xiv-xtkplane-label-south = {
+.xiv-xtk-plane-label-south = {
     left: 50%;
     top: 85%;
 }
 
 
-.xiv-xtkplane-label-east = {
+.xiv-xtk-plane-label-east = {
     left: 10%;
     top: 50%;
 }
 
 
-.xiv-xtkplane-label-west = {
+.xiv-xtk-plane-label-west = {
     left: 85%;
     top: 50%;
 }
@@ -70,7 +70,7 @@
 
 
 
-.xiv-xtkplane-slider-widget {
+.xiv-xtk-plane-slider-widget {
     position: absolute;
     left: 5%;
     top: 90%;
@@ -81,7 +81,7 @@
 
 
 
-.xiv-xtkplane-slider-thumb {
+.xiv-xtk-plane-slider-thumb {
     position: absolute;
     top: 11px;
     width: 6px;
@@ -92,11 +92,11 @@
 }
 
 
-.xiv-xtkplane-slider-thumb-hovered {
+.xiv-xtk-plane-slider-thumb-hovered {
     box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, .55);
 }
 
-.xiv-xtkplane-slider-track {
+.xiv-xtk-plane-slider-track {
     position: absolute;
     height: 2px;
     top: 14px;
@@ -108,21 +108,21 @@
 
 
 
-.xiv-xtkplane-slider-track-x {
+.xiv-xtk-plane-slider-track-x {
    background: rgb(255,0,0);
 }
 
 
-.xiv-xtkplane-slider-track-y {
+.xiv-xtk-plane-slider-track-y {
    background: rgb(0,255,0);
 }
 
 
-.xiv-xtkplane-slider-track-z {
+.xiv-xtk-plane-slider-track-z {
    background: rgb(0,0,255);
 }
 
 
-.xiv-xtkplane-slider-track-v {
+.xiv-xtk-plane-slider-track-v {
 
 }

@@ -27,9 +27,7 @@ goog.require('utils.events.EventManager');
 goog.provide('xiv.SlicerViewMenu');
 xiv.SlicerViewMenu = function () {
 
-    goog.base(this, 'xiv.SlicerViewMenu', {
-	'class': xiv.SlicerViewMenu.ELEMENT_CLASS
-    });
+    goog.base(this);
     utils.fx.fadeOut(this.getElement(), 0);
 
 
@@ -83,6 +81,34 @@ xiv.SlicerViewMenu = function () {
 }
 goog.inherits(xiv.SlicerViewMenu, xiv.Widget);
 goog.exportSymbol('xiv.SlicerViewMenu', xiv.SlicerViewMenu);
+
+
+
+/**
+ * @type {!string} 
+ * @const
+ * @expose
+ */
+xiv.SlicerViewMenu.ID_PREFIX =  'xiv.SlicerViewMenu';
+
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.SlicerViewMenu.CSS_CLASS_PREFIX =
+goog.string.toSelectorCase(
+    utils.string.getLettersOnly(xiv.SlicerViewMenu.ID_PREFIX));
+
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.SlicerViewMenu.ELEMENT_CLASS = 
+goog.getCssName(xiv.SlicerViewMenu.CSS_CLASS_PREFIX, '');
 
 
 

@@ -24,9 +24,8 @@ goog.require('xiv.Widget');
 
 
 /**
- * xiv.XtkPlane is a class that represents the ViewPlane (X, Y, Z or V) responsible
- * for visualizing XObjects in 2D or 3D space.
- *
+ * xiv.XtkPlane is a class that represents the ViewPlane (X, Y, Z or V) 
+ * responsible for visualizing XObjects in 2D or 3D space.
  * @constructor
  * @param {!string}
  * @extends {xiv.Widget}
@@ -34,8 +33,7 @@ goog.require('xiv.Widget');
 goog.provide('xiv.XtkPlane');
 xiv.XtkPlane = function(id) {
 
-    xiv.Widget.call(this, 'xiv.XtkPlane');
-    goog.dom.classes.set(this.getElement(), xiv.XtkPlane.ELEMENT_CLASS);
+    goog.base(this);
 
 
     /**
@@ -149,6 +147,34 @@ xiv.XtkPlane = function(id) {
 }
 goog.inherits(xiv.XtkPlane, xiv.Widget);
 goog.exportSymbol('xiv.XtkPlane', xiv.XtkPlane);
+
+
+
+/**
+ * @type {!string} 
+ * @const
+ * @expose
+ */
+xiv.XtkPlane.ID_PREFIX =  'xiv.XtkPlane';
+
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.XtkPlane.CSS_CLASS_PREFIX =
+goog.string.toSelectorCase(
+    utils.string.getLettersOnly(xiv.XtkPlane.ID_PREFIX));
+
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.XtkPlane.ELEMENT_CLASS = 
+goog.getCssName(xiv.XtkPlane.CSS_CLASS_PREFIX, '');
 
 
 

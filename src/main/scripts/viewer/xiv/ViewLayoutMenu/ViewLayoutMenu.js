@@ -37,9 +37,8 @@ goog.require('xiv.Widget');
 goog.provide('xiv.ViewLayoutMenu');
 xiv.ViewLayoutMenu = function (viewLayouts) {
   		
-    goog.base(this, 'xiv.ViewLayoutMenu', {
+    goog.base(this, {
 	'title': "Select View Plane",
-	'class': xiv.ViewLayoutMenu.ELEMENT_CLASS
     });
 
 
@@ -173,16 +172,93 @@ goog.exportSymbol('xiv.ViewLayoutMenu', xiv.ViewLayoutMenu)
 
 
 
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.ViewLayoutMenu.ID_PREFIX =  'xiv.ViewLayoutMenu';
 
-xiv.ViewLayoutMenu.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-viewlayoutmenu');
-xiv.ViewLayoutMenu.ELEMENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewLayoutMenu.CSS_CLASS_PREFIX, '');
-xiv.ViewLayoutMenu.MENUHOLDER_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewLayoutMenu.CSS_CLASS_PREFIX, 'menuholder');
-xiv.ViewLayoutMenu.ICON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewLayoutMenu.CSS_CLASS_PREFIX, 'icon');
-xiv.ViewLayoutMenu.ICON_HOVERED_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewLayoutMenu.ICON_CLASS, 'hovered');
-xiv.ViewLayoutMenu.MENU_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewLayoutMenu.CSS_CLASS_PREFIX, 'menu');
-xiv.ViewLayoutMenu.MENUITEM_CONTENT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewLayoutMenu.CSS_CLASS_PREFIX, 'menuitem');
-xiv.ViewLayoutMenu.MENUITEM_CONTENT_HIGHLIGHT_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewLayoutMenu.MENUITEM_CONTENT_CLASS, 'highlight');
-xiv.ViewLayoutMenu.MENUITEM_ICON_CLASS = /**@type {string} @const*/ goog.getCssName(xiv.ViewLayoutMenu.MENUITEM_CONTENT_CLASS, 'icon');
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.ViewLayoutMenu.CSS_CLASS_PREFIX =
+goog.string.toSelectorCase(utils.string.getLettersOnly(
+    xiv.ViewLayoutMenu.ID_PREFIX));
+
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.ViewLayoutMenu.ELEMENT_CLASS = 
+    goog.getCssName(xiv.ViewLayoutMenu.CSS_CLASS_PREFIX, '');
+
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.ViewLayoutMenu.MENUHOLDER_CLASS = 
+    goog.getCssName(xiv.ViewLayoutMenu.CSS_CLASS_PREFIX, 'menuholder');
+
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.ViewLayoutMenu.ICON_CLASS = 
+    goog.getCssName(xiv.ViewLayoutMenu.CSS_CLASS_PREFIX, 'icon');
+
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.ViewLayoutMenu.ICON_HOVERED_CLASS = 
+    goog.getCssName(xiv.ViewLayoutMenu.ICON_CLASS, 'hovered');
+
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.ViewLayoutMenu.MENU_CLASS = 
+    goog.getCssName(xiv.ViewLayoutMenu.CSS_CLASS_PREFIX, 'menu');
+
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.ViewLayoutMenu.MENUITEM_CONTENT_CLASS = 
+    goog.getCssName(xiv.ViewLayoutMenu.CSS_CLASS_PREFIX, 'menuitem');
+
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.ViewLayoutMenu.MENUITEM_CONTENT_HIGHLIGHT_CLASS = 
+    goog.getCssName(xiv.ViewLayoutMenu.MENUITEM_CONTENT_CLASS, 'highlight');
+
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.ViewLayoutMenu.MENUITEM_ICON_CLASS = 
+    goog.getCssName(xiv.ViewLayoutMenu.MENUITEM_CONTENT_CLASS, 'icon');
 
 
 
@@ -571,7 +647,8 @@ xiv.ViewLayoutMenu.prototype.animateMenu  = function (startPos, endPos, opt_call
     // Fade in when moving in the realm of the viewer
     //------------------
     if (startPos[0] < endPos[0]) {
-	utils.fx.fadeInFromZero(this.menuHolder_, xiv.ViewLayoutMenu.animationDuration);
+	utils.fx.fadeInFromZero(this.menuHolder_, 
+				xiv.ViewLayoutMenu.animationDuration);
     } else {
 	easing = goog.fx.easing.easeIn;
 	utils.fx.fadeOut(this.menuHolder_, xiv.ViewLayoutMenu.animationDuration);
@@ -582,7 +659,8 @@ xiv.ViewLayoutMenu.prototype.animateMenu  = function (startPos, endPos, opt_call
     //------------------
     // Define Slide animation
     //------------------
-    var slide = new goog.fx.dom.Slide(this.menuHolder_, startPos, endPos, xiv.ViewLayoutMenu.animationDuration, easing)
+    var slide = new goog.fx.dom.Slide(this.menuHolder_, 
+		startPos, endPos, xiv.ViewLayoutMenu.animationDuration, easing)
 
 
 

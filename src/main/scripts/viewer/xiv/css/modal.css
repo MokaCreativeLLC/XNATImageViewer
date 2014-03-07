@@ -16,8 +16,6 @@
     left: 10%;
     height: 80%;
     width: 80%;
-    overflow-x: hidden;
-    overflow-y: hidden;
     z-index: 2;
 }
 
@@ -55,7 +53,7 @@
 }
 
 
-.xiv-modal-full-screen-button, .xiv-modal-windowed-button {
+.xiv-modal-fullscreen-button, .xiv-modal-windowed-button {
     position: absolute; 
     cursor: pointer;
     top: 29px;
@@ -80,27 +78,10 @@
 }
 
 
-.xiv-modal-add-xnat-folders-button {
-    position: absolute; 
-    cursor: pointer;
-    top: 30px;
-    left: 13px;
-    width: 167px;
-    height: 20px;
-    z-index: 1000;
-    color: white;
-    background-color: rgb(60,60,60);
-    text-align: center;
-    vertical-align: middle;
-    line-height: 20px;  
-}
 
 
-
-
-
-.xiv-modal-insert-column-button, .xiv-modal-remove-column-button,
-.xiv-modal-insert-row-button, .xiv-modal-remove-row-button {
+.xiv-modal-insertcolumn-button, .xiv-modal-removecolumn-button,
+.xiv-modal-insertrow-button, .xiv-modal-removerow-button {
     position: absolute;
     cursor: pointer; 
     z-index: 2;
@@ -108,7 +89,7 @@
 
 
 
-.xiv-modal-insert-column-button, .xiv-modal-remove-column-button {
+.xiv-modal-insertcolumn-button, .xiv-modal-removecolumn-button {
     left: 100%;
     top: 50%;
     margin-left: -19px;
@@ -117,19 +98,19 @@
 }
 
 
-.xiv-modal-insert-column-button {
+.xiv-modal-insertcolumn-button {
     margin-top: -10px;    
 }
 
 
-.xiv-modal-remove-column-button {
+.xiv-modal-removecolumn-button {
     margin-top: 10px;
 }
 
 
 
 
-.xiv-modal-insert-row-button, .xiv-modal-remove-row-button {
+.xiv-modal-insertrow-button, .xiv-modal-removerow-button {
     top: 100%;
     left: 50%;
     margin-top: -19px;
@@ -139,11 +120,11 @@
 
 
 
-.xiv-modal-insert-row-button {
+.xiv-modal-insertrow-button {
     margin-left: -10px;    
 }
 
 
-.xiv-modal-remove-row-button {
+.xiv-modal-removerow-button {
     margin-left: 10px;
 }

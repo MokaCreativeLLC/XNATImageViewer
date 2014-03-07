@@ -84,12 +84,8 @@ xiv.startViewer = function (windowMode, xnatServerRoot, dataPath, imagePath) {
 			      utils.xnat.Path.getQueryPrefix(xnatServerRoot),
 			      imagePath);
 
-    // First add and load the current data path
-    imageViewer.addDataPath(dataPath); 
-    imageViewer.loadViewables(imageViewer.getDataPaths()[0]);
+    imageViewer.loadExperiment(dataPath);
     imageViewer.loadProjectTree();
-
-    // Show the modal
     imageViewer.showModal();
 };
 goog.exportSymbol('xiv.startViewer', xiv.startViewer)
@@ -152,6 +148,17 @@ xiv.prototype.showModal = function(){
 
 
 /**
+ * As stated.
+ * @return {!xiv.Modal} The Modal class.
+ * @public
+ */
+xiv.prototype.getModal = function(){
+    return this.Modal_;
+}
+
+
+
+/**
  * Hides the XNAT Image Viewer.
  * @param {function=} opt_callback The callback once the hide animation
  *     finishes.
@@ -169,14 +176,14 @@ xiv.prototype.hideModal = function(opt_callback){
  * @public
  */
 xiv.prototype.addDataPath = function(path) {
-
     this.dataPaths_ = this.dataPaths_ ? this.dataPaths_ : [];
-    
     var updatedPath = /**@type {!string}*/ 
     (path[0] !== "/") ? "/" + path : path;
-
     if (this.dataPaths_.indexOf(this.queryPrefix_ + updatedPath) === -1) {
-	this.dataPaths_.push(this.queryPrefix_ + updatedPath); 
+	var finalPath = /**@type {!string}*/ 
+	(updatedPath.indexOf(this.queryPrefix_) === -1) ?
+	    this.queryPrefix_ + updatedPath : updatedPath;
+	this.dataPaths_.push(finalPath); 
     }
 }
 
@@ -214,42 +221,64 @@ xiv.prototype.destroy = function () {
  */
 xiv.prototype.loadProjectTree = function() {
 
-    var startingLoadPath = /**@type {!sting} */ this.getDataPaths()[0];
-    var sharedLevel = /**@type {!sting} */ '';
+    var startPath = /**@type {!string}*/ this.getDataPaths()[0];
 
-    // Query the project tree based on the stored path.
-    var projTree = /**@type {!utils.xnat.ProjectTree}*/
-    new utils.xnat.ProjectTree(startingLoadPath);
+    // when tree loading is finished...
+    (new utils.xnat.ProjectTree(startPath)).load( 
+	function(projTree){
+	    window.console.log("PROJECT TREE");
+	    // Get the experiments in the tree
+	    var expts = /**@type {Array.string}*/ 
+	    projTree.getLevelUris('experiments');
+	    
+	    // get the skip index
+	    var skipInd = /**@type {!number}*/ expts.indexOf(startPath);
 
-    var allExpt = /**@type {!Array.string}*/
-    projTree.getLevelUris('experiments')
+	    // Collapse further added zippys
+	    this.collapseAdditionalZippys_();
 
-    var storedExptInd = /**@type {!number}*/
-    allExpt.indexOf(startingLoadPath);
+	    // store and add experiments not loaded.
+	    goog.array.forEach(expts, function(expt, i) {
+		if (i == skipInd) {return};
+		this.loadExperiment(expt);
+	    }.bind(this))
+	    
+	    // store the tree
+	    this.setProjectTree(projTree);
 
-    var i = /**@type {!number}*/ 0;
-
-    // Store the tree
-    projTree.load(function(projTree){
-	allExpt = projTree.getLevelUris('experiments')
-	storedExptInd = allExpt.indexOf(startingLoadPath);
-	for (i=0; i<allExpt.length; i++){
-	    if (i != storedExptInd){
-		this.addDataPath(allExpt[i]);
-
-		// Close the zippys at the deepest shared XNAT level
-		sharedLevel = 
-		    utils.xnat.Path.getDeepestSharedXnatLevel(
-			startingLoadPath, 
-			allExpt[i]);
-		//window.console.log("DEEPEST SHARED", sharedLevel);
-		this.loadViewables(allExpt[i], sharedLevel);
-	    }
-	}
-	this.setProjectTree(projTree);
     }.bind(this))	
 }
 
+
+
+/**
+ * As stated.
+ * @param {!string} exptUrl The experiment url to load the vieables from.
+ * @public
+ */
+xiv.prototype.loadExperiment = function(exptUrl) {
+    this.addDataPath(exptUrl);
+    this.fetchViewables(this.getDataPaths()
+			[this.getDataPaths().length - 1]);
+}
+
+
+
+/**
+ * Sets the events to collapse any added zippys.
+ * @private
+ */
+xiv.prototype.collapseAdditionalZippys_ = function() {
+    this.getModal().getThumbnailManager().
+	getThumbnailGallery().getZippyTree()['EVENTS'].
+	onEvent('NODEADDED', function(currNode){
+	    var prevDur = /**@type {!number}*/
+	    currNode.getZippy().animationDuration;
+	    currNode.getZippy().animationDuration = 0;
+	    currNode.getZippy().setExpanded(false);
+	    currNode.getZippy().animationDuration = prevDur;
+	})
+}
 
 
 
@@ -305,64 +334,31 @@ xiv.prototype.makeModalPopup_ = function(){
 /**
  * Gets the viewables from the xnat server.
  * @param {!string} viewablesUri The uri to retrieve the viewables from.
- * @param {string=} opt_zippyMinimizedLevel To XNAT level where to minimize
- *    the zippys of the viewables.  If not provided, all zippys of the 
- *    viewers will be expanded. 
+ * @param {function=} opt_doneCallback To the optional callback to run.
  * @public
  */
-xiv.prototype.loadViewables = function(viewablesUri, opt_zippyMinimizedLevel){
-    //goog.array.forEach(this.dataPaths_, function(viewablesUri){
+xiv.prototype.fetchViewables = function(viewablesUri, opt_doneCallback){
     utils.xnat.getViewables(viewablesUri, function(viewable){
 	this.storeViewable_(viewable);
-	//window.console.log("LOAD VIEWABLES", opt_zippyMinimizedLevel);
-	this.addViewableToModal_(viewable, opt_zippyMinimizedLevel);
-    }.bind(this))
-    //}.bind(this))
+	this.addViewableToModal(viewable);
+    }.bind(this), opt_doneCallback)
 }
 
 
 
 /**
- * Adds a thumbnail to the modal.
- * @param {!string | !array.<string>} key
- * @param {string=} opt_zippyMinimizedLevel To XNAT level where to minimize
- *    the zippys of the viewables.  If not provided, all zippys of the 
- *    viewers will be expanded. 
- * @private
+ * Adds a viewable to the modal.
+ * @param {utils.xnat.Viewable} Viewable
+ * @public
  */
-xiv.prototype.addViewableToModal_ = function(Viewable, opt_zippyMinimizedLevel){
+xiv.prototype.addViewableToModal = function(Viewable){
     //window.console.log(Viewable, key)
-    var folders = /**@type {!Array.string}*/ 
-    xiv.extractViewableFolders_(Viewable);
-    var minFolderInd = /**@type {number}*/ undefined;
-    //window.console.log(Viewable, folders);
+    //window.console.log(Viewable);
     //window.console.log(Viewable['thumbnailUrl']);
-
-
-    // For folder minimization
-    if (opt_zippyMinimizedLevel){
-	var folderAbbrev = /**@type {!string}*/
-	utils.xnat.folderAbbrev[opt_zippyMinimizedLevel];
-	goog.array.forEach(folders, function(folder, i){
-	    //window.console.log(opt_zippyMinimizedLevel, folder, folderAbbrev, 
-	    //folder.indexOf(folderAbbrev));
-	    if (folder.indexOf(folderAbbrev) == 0){
-		// go one above the shared folder.
-		minFolderInd = ((i + 1) >= folders.length) ? undefined : i + 1;	
-	    }
-	})
-	//window.console.log("MINIMIZE FOLDER INDEX", opt_zippyMinimizedLevel,
-	//		   minFolderInd);
-    }
-    
-    
-    this.Modal_.getThumbnailManager().createAndAddThumbnail(Viewable, folders);
+    this.Modal_.getThumbnailManager().createAndAddThumbnail(Viewable, 
+				xiv.extractViewableFolders_(Viewable), 
+			        true);
     this.Modal_.getThumbnailManager().setHoverParent(this.Modal_.getElement());
-
-    if (minFolderInd !== undefined) {
-	this.Modal_.getThumbnailManager().getThumbnailGallery().
-	    setZippyExpanded(folders[minFolderInd], false)
-    }
 }
 
 
@@ -372,7 +368,8 @@ xiv.prototype.addViewableToModal_ = function(Viewable, opt_zippyMinimizedLevel){
  * @private
  */
 xiv.prototype.createModal_ = function(){
-    this.Modal_ = /**@type {!xiv.Modal}*/ new xiv.Modal(this.iconUrl_);
+    this.Modal_ = /**@type {!xiv.Modal}*/ new xiv.Modal();
+    this.Modal_.setIconBaseUrl(this.iconUrl_);
     this.Modal_.setMode('windowed');
     this.setModalButtonCallbacks_();
     window.onresize = function () { 
@@ -422,9 +419,7 @@ xiv.extractViewableFolders_ = function(Viewable){
 	}
     };
 
-    //
     // Apply Viewable category
-    //
     folders.push(Viewable['category']);
     return folders;
 }

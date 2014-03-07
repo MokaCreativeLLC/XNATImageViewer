@@ -5,6 +5,7 @@
 
 // goog
 goog.require('goog.dom');
+goog.require('goog.string');
 
 // utils
 goog.require('utils.ui.Thumbnail');
@@ -20,14 +21,19 @@ goog.require('utils.ui.Thumbnail');
  */
 goog.provide('xiv.Thumbnail');
 xiv.Thumbnail = function (Viewable_) {
-    utils.ui.Thumbnail.call(this);
-    goog.dom.classes.add(this.getElement(), xiv.Thumbnail.CSS_CLASS_PREFIX);
+    goog.base(this);
+
+
     /**
      * @type {utils.xnat.Viewable}
      */    
     this.Viewable_ = Viewable_;
+
+
     //window.console.log("THUMB1:", Viewable_, this.Viewable_['thumbnailUrl']);
     //window.console.log("THUMB2:", Viewable_, this.Viewable_['files']);
+
+
     this.setImage(this.Viewable_['thumbnailUrl']);
     this.createText_();
     this.createHoverable()
@@ -42,8 +48,18 @@ goog.exportSymbol('xiv.Thumbnail', xiv.Thumbnail);
 /**
  * @type {!string} 
  * @const
- */
-xiv.Thumbnail.CSS_CLASS_PREFIX =  goog.getCssName('xiv-thumbnail');
+*/
+xiv.Thumbnail.ID_PREFIX =  'xiv.Thumbnail';
+
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.Thumbnail.CSS_CLASS_PREFIX =
+goog.string.toSelectorCase(utils.string.getLettersOnly(
+    xiv.Thumbnail.ID_PREFIX));
 
 
 

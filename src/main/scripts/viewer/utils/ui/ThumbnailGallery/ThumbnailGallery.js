@@ -14,6 +14,7 @@ goog.require('utils.style');
 goog.require('utils.dom');
 goog.require('utils.ui.Thumbnail');
 goog.require('utils.ui.ScrollableContainer');
+goog.require('utils.ui.ZippyTree');
 
 
 
@@ -30,6 +31,19 @@ utils.ui.ThumbnailGallery = function () {
     this.getElement().setAttribute('id', "utils.ui.ThumbnailGallery" + '_' + 
 				   goog.string.createUniqueString());
     this.setDefaultClasses_();    
+
+
+    /**
+     * @private
+     * @type {!utils.ui.ZippyTree}
+     */
+    this.ZippyTree_ = new utils.ui.ZippyTree();
+    this.ZippyTree_.toggleFadeInFx(true);
+    this.ZippyTree_['EVENTS'].onEvent('CONTENTADDED', function(){
+	this.mapSliderToContents();
+    }.bind(this))
+    goog.dom.append(this.getScrollArea(), this.ZippyTree_.getElement());
+    
 }
 goog.inherits(utils.ui.ThumbnailGallery, utils.ui.ScrollableContainer);
 goog.exportSymbol('utils.ui.ThumbnailGallery', utils.ui.ThumbnailGallery);
@@ -42,7 +56,7 @@ goog.exportSymbol('utils.ui.ThumbnailGallery', utils.ui.ThumbnailGallery);
 * @const
 */ 
 utils.ui.ThumbnailGallery.CSS_CLASS_PREFIX = 
-    goog.getCssName('utils-ui-scrollablethumbnailgallery');
+    goog.getCssName('utils-ui-thumbnailgallery');
 
 
 
@@ -106,13 +120,29 @@ utils.ui.ThumbnailGallery.THUMBNAILGALLERY_CLASS =
 		    'thumbnailgallery');
 
 
-
-
 /**
  * @type {Object<string, utils.ui.Thumbnail>}
  * @private
  */
 utils.ui.ThumbnailGallery.prototype.Thumbs_;
+
+
+
+/**
+ * @type {utils.ui.ZippyTree}
+ * @private
+ */
+utils.ui.ThumbnailGallery.prototype.ZippyTree_;
+
+
+
+/**
+ * @return {utils.ui.ZippyTree}
+ * @private
+ */
+utils.ui.ThumbnailGallery.prototype.getZippyTree = function(){
+    return this.ZippyTree_;
+}
 
 
 
@@ -157,9 +187,6 @@ utils.ui.ThumbnailGallery.prototype.createThumbnail = function(imageUrl,
  * @param {!utils.ui.Thumbnail} thumbnail The thumbnail object to add to the 
  *   scrollable container.
  * @param {string= | Array.<string>=} opt_folders The optional zippy structure.
- * @param {!number} opt_minFolderInd The optional index of the 
- *     zippy structure to minimize.  All are expanded otherwise
- * folder name to put the thumbnail in.  Otherwise it goes to the parent.
  * @public
  */
 utils.ui.ThumbnailGallery.prototype.addThumbnail = 
@@ -168,17 +195,13 @@ function(thumbnail, opt_folders) {
     this.bindToMouseWheel(thumbnail.getHoverable(), 
 			  this.onHoverAndScroll_.bind(this));
     // Track thumbnail.
-    if (!this.Thumbs_){
-	this.Thumbs_ = {};
-    }
+    this.Thumbs_ = this.Thumbs_ ? this.Thumbs_ : {};
     this.Thumbs_[thumbnail.getElement().getAttribute('id')] = thumbnail;
-    // Set folders
 
     //window.console.log(opt_folders, "\n\nMIN", opt_minFolderInd);
-    this.addElementAndFolders(thumbnail.getElement(), 
-			      (opt_folders === undefined) ? ['parentFolder'] : 
-			      goog.isArray(opt_folders) ? opt_folders : 
-			      [opt_folders])
+    
+    
+    this.ZippyTree_.addContent(thumbnail.getElement(), opt_folders);
 }
 
 

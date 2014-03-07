@@ -6,7 +6,7 @@
 
 
 
-.xiv-contentdivider {
+.xiv-content-divider {
     position: absolute;
     top: 90%;
     left: 0px;
@@ -23,7 +23,7 @@
 
 
 
-.xiv-contentdivider-containment {
+.xiv-content-divider-containment {
     visibility: hidden;
     position: absolute;
     pointer-events: none;
@@ -39,7 +39,7 @@
 
 
 
-.xiv-contentdivider-icon {
+.xiv-content-divider-icon {
     position: absolute;	
     opacity: .3;
     left: 50%;
@@ -51,7 +51,7 @@
 
 
 
-.xiv-contentdivider-boundary {
+.xiv-content-divider-boundary {
     top: 0px;
     left: 0px;
     width: 650px;

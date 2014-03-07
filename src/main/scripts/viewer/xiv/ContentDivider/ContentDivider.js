@@ -35,14 +35,12 @@ goog.require('xiv.ViewBoxTabs');
 goog.provide('xiv.ContentDivider');
 xiv.ContentDivider = function () {
     
-    goog.base(this, 'xiv.ContentDivider', {
-	'class': xiv.ContentDivider.ELEMENT_CLASS
-    });
+    goog.base(this);
     
 
 
     /**
-     * @expose
+     * @private
      * @type {!Element}
      */
     this.containment_ = goog.dom.createDom("div", {
@@ -63,26 +61,14 @@ xiv.ContentDivider = function () {
 	'class':  xiv.ContentDivider.ICON_CLASS
     });		
     
-
-
-    //
     // Event manager
-    //
     utils.events.EventManager.addEventManager(this, 
 					      xiv.ContentDivider.EventType);
 
-
-
-    //
     // Appends
-    //
     goog.dom.append(this.getElement(), this.icon_);
 
-
-
-    //
     // Inits
-    //
     this.setDefaultDragMethods_();
     this.updateStyle();
     
@@ -100,10 +86,30 @@ xiv.ContentDivider.CONTENT_DIVIDER_HEIGHT = 4
 
 
 /**
- * @type {string} 
  * @const
+ * @public
  */
-xiv.ContentDivider.CSS_CLASS_PREFIX = goog.getCssName('xiv-contentdivider');
+xiv.ContentDivider.ANIM_MED = 400
+
+
+
+/**
+ * @type {!string} 
+ * @const
+ * @expose
+ */
+xiv.ContentDivider.ID_PREFIX =  'xiv.ContentDivider';
+
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.ContentDivider.CSS_CLASS_PREFIX =
+goog.string.toSelectorCase(utils.string.getLettersOnly(
+    xiv.ContentDivider.ID_PREFIX));
+
 
 
 /**
@@ -122,12 +128,14 @@ xiv.ContentDivider.CONTAINMENT_CLASS =
 goog.getCssName(xiv.ContentDivider.CSS_CLASS_PREFIX, 'containment');
 
 
+
 /**
  * @type {string} 
  * @const
  */
 xiv.ContentDivider.ICON_CLASS =  
     goog.getCssName(xiv.ContentDivider.CSS_CLASS_PREFIX, 'icon');
+
 
 
 /**
@@ -142,17 +150,11 @@ xiv.ContentDivider.EventType = {
 
 
 
-
-
-
-
 /**
  * @type {!boolean}
  * @private
  */
 xiv.ContentDivider.prototype.dragging_ = false;
-
-
 
 
 
@@ -267,6 +269,7 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
 	//
 	d.addEventListener(goog.fx.Dragger.EventType.DRAG, function(e) {
 	    utils.dom.stopPropagation(e);
+	    window.console.log("DRAG");
 	    this['EVENTS'].runEvent('DRAG', this);	
 	}.bind(this));
 	
@@ -303,7 +306,8 @@ xiv.ContentDivider.prototype.slideTo = function(newTop, opt_animate) {
     var dims = utils.style.dims(this.getElement());
     var slide = new goog.fx.dom.Slide(this.getElement(), 
 				      [dims.left, dims.top], [0, newTop], 
-				      xiv.ANIM_MED, goog.fx.easing.easeOut);
+				      xiv.ContentDivider.ANIM_MED, 
+				      goog.fx.easing.easeOut);
 
     //------------------
     // Callbacks dor the animation events (BEGIN, ANIMATE, END).
@@ -314,7 +318,8 @@ xiv.ContentDivider.prototype.slideTo = function(newTop, opt_animate) {
 
 
     goog.events.listen(slide, goog.fx.Animation.EventType.ANIMATE, function() {
-	this['EVENTS'].runEvent('DRAG', this);			
+	window.console.log('DRAG');
+      this['EVENTS'].runEvent('DRAG', this);			
     }.bind(this));
 
 

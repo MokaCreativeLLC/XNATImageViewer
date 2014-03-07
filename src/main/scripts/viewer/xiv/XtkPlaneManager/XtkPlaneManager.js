@@ -23,7 +23,7 @@ goog.require('xiv.XtkPlane');
  * the nuances of managing several Xtk planes: 
  *
  * @constructor
- @ @param {xiv.XtkDisplayer}
+ @ @param {xiv.Displayer.Xtk}
  */
 goog.provide('xiv.XtkPlaneManager');
 xiv.XtkPlaneManager = function(xtkDisplayer) {

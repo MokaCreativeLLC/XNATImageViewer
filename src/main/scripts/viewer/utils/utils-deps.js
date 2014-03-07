@@ -152,6 +152,22 @@ goog.addDependency('../../../utils/ui/ScrollableContainer/ScrollableContainer.js
 ]); 
 
 
+
+
+
+
+
+goog.addDependency('../../../utils/ui/ZippyNode/ZippyNode.js', 
+['utils.ui.ZippyNode'], [
+
+]);
+
+
+goog.addDependency('../../../utils/ui/ZippyTree/ZippyTree.js', 
+['utils.ui.ZippyTree'], [
+    'utils.ui.ZippyNode'
+]);
+
 goog.addDependency('../../../utils/ui/Thumbnail/Thumbnail.js', 
 ['utils.ui.Thumbnail'], [
 'goog.dom',

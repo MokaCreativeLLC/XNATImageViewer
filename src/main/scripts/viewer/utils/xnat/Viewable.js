@@ -97,17 +97,26 @@ utils.xnat.Viewable.applyProperties = function(obj){
  * viewables contained within it, applying 'callback' whenever a viewable is
  * acquired.
  * @param {!string} viewableFolderUrl The url of the viewable folders.
- * @param {!function} callback The callback to apply.
+ * @param {!function} runCallback The callback to apply.
+ * @param {function=} opt_doneCallback The optional callback applied to each 
+ *     when retrieval is complete.
  * @public
  */
-utils.xnat.Viewable.loopFolderContents = function(viewableFolderUrl, callback) {
+utils.xnat.Viewable.loopFolderContents = 
+function(viewableFolderUrl, runCallback, opt_doneCallback) {
     utils.xnat.jsonGet(viewableFolderUrl, function(viewablesJson){
 	//window.console.log(viewablesJson);
 	goog.array.forEach(viewablesJson, function(viewable){
 	    //window.console.log("VIEWABLE:", viewable);
-	    callback(viewable)
+	    runCallback(viewable)
 	})
+
+	if (opt_doneCallback){
+	    //window.console.log("done callback", opt_doneCallback);
+	    opt_doneCallback();
+	}
     })
+
 }
 
 
@@ -213,10 +222,14 @@ utils.xnat.Viewable.prototype.getFiles = function(opt_callback){
  * the viewables that are generated are subclasses of utils.xnat.Viewable.
  * @param {!string} url
  * @param {!utils.xnat.Viewable} anonViewable
- * @param {function=} opt_callback
+ * @param {function=} opt_runCallback The optional callback applied to each 
+ *     viewable.
+ * @param {function=} opt_doneCallback The optional callback applied to each 
+ *     when retrieval is complete.
  * @public
  */
-utils.xnat.Viewable.getViewables = function(url, anonViewable, opt_callback){
+utils.xnat.Viewable.getViewables = 
+function(url, anonViewable, opt_runCallback, opt_doneCallback) {
     
     var pathObj = /** @type {!utils.xnat.Path} */ new utils.xnat.Path(url);
     var queryFolder = /** @type {!string} */ 
@@ -227,9 +240,9 @@ utils.xnat.Viewable.getViewables = function(url, anonViewable, opt_callback){
     utils.xnat.Viewable.loopFolderContents(queryFolder, function(scanJson){
 	//window.console.log(scanJson, pathObj);
 	viewable = new anonViewable(pathObj.pathByLevel('experiments'), 
-				    scanJson, opt_callback)
+				    scanJson, opt_runCallback)
 	//window.console.log(viewable);
 	// sort list (shared, with custom parameters)
 	delete pathObj;
-    })
+    }, opt_doneCallback)
 }

@@ -20,7 +20,7 @@ goog.require('xiv.ViewLayoutManager');
 goog.require('xiv.ViewLayoutMenu');
 goog.require('xiv.ContentDivider');
 goog.require('xiv.ViewBoxTabs');
-goog.require('xiv.XtkDisplayer');
+goog.require('xiv.Displayer.Xtk');
 goog.require('xiv.SlicerViewMenu');
 
 
@@ -36,12 +36,10 @@ goog.require('xiv.SlicerViewMenu');
  * to the xiv.Displayer. 
  * @constructor
  * @extends {xiv.Widget}
- * @param {Object=} opt_args Optional arguments to define the ViewBox.
  */
 goog.provide('xiv.ViewBox');
-xiv.ViewBox = function (opt_args) {
-    goog.base(this, 'xiv.ViewBox');
-    goog.dom.classes.set(this.getElement(), xiv.ViewBox.ELEMENT_CLASS);
+xiv.ViewBox = function () {
+    goog.base(this);
     
     // inits
     this.initComponents_();
@@ -59,11 +57,24 @@ goog.inherits(xiv.ViewBox, xiv.Widget);
 goog.exportSymbol('xiv.ViewBox', xiv.ViewBox);
 
 
+
 /**
- * @type {string} 
+ * @type {!string} 
  * @const
+ * @expose
  */
-xiv.ViewBox.CSS_CLASS_PREFIX = goog.getCssName('xiv-viewbox');
+xiv.ViewBox.ID_PREFIX =  'xiv.ViewBox';
+
+
+
+/**
+ * @type {!string} 
+ * @const
+*/
+xiv.ViewBox.CSS_CLASS_PREFIX =
+goog.string.toSelectorCase(
+xiv.ViewBox.ID_PREFIX.toLowerCase().replace('.', '-'))
+
 
 
 /**
@@ -74,6 +85,7 @@ xiv.ViewBox.ELEMENT_CLASS =
 goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, '');
 
 
+
 /**
  * @type {string} 
  * @const
@@ -82,12 +94,14 @@ xiv.ViewBox.HIDDEN_CLASS =
 goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, 'hidden');
 
 
+
 /**
  * @type {string} 
  * @const
  */
 xiv.ViewBox.DRAG_AND_DROP_HANDLE_CLASS = 
 goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, 'draganddrophandle');
+
 
 
 /**
@@ -105,6 +119,7 @@ goog.getCssName(xiv.ViewBox.CSS_CLASS_PREFIX, 'dragging');
 xiv.ViewBox.MIN_HOLDER_HEIGHT = 200;
 
 
+
 /**
  * @type {number} 
  * @const
@@ -117,6 +132,7 @@ xiv.ViewBox.SCAN_TAB_LABEL_HEIGHT =  15;
  * @const
  */
 xiv.ViewBox.SCAN_TAB_LABEL_WIDTH = 50;
+
 
 
 /**
@@ -139,11 +155,13 @@ xiv.ViewBox.EventType = {
 }
 
 
+
 /**
  * @type {number}
  * @private
  */
 xiv.ViewBox.prototype.thumbLoadTime_;
+
 
 
 /**
@@ -153,11 +171,13 @@ xiv.ViewBox.prototype.thumbLoadTime_;
 xiv.ViewBox.prototype.Displayer_;
 
 
+
 /**
  * @type {xiv.Thumbnail}
  * @private
  */
 xiv.ViewBox.prototype.Thumbnail_;
+
 
 
 /**
@@ -167,11 +187,13 @@ xiv.ViewBox.prototype.Thumbnail_;
 xiv.ViewBox.prototype.doNotHide_;
 
 
+
 /**
  * @type {!String}
  * @private
  */
 xiv.ViewBox.prototype.loadFramework_ = 'XTK';
+
 
 
 /**
@@ -181,6 +203,7 @@ xiv.ViewBox.prototype.loadFramework_ = 'XTK';
 xiv.ViewBox.prototype.loadState_ = 'empty';
 
 
+
 /**
  * @return {!string} The load state of the viewer.
  * @public
@@ -188,6 +211,7 @@ xiv.ViewBox.prototype.loadState_ = 'empty';
 xiv.ViewBox.prototype.getLoadState = function() {
     return this.loadState_;
 }
+
 
 
 /**
@@ -200,6 +224,7 @@ xiv.ViewBox.prototype.getSlicerViewMenu =  function() {
 }
 
 
+
 /**
  * @return {?xiv.Thumbnail} The current thumbnail associated with the ViewBox.
  * @public
@@ -207,6 +232,7 @@ xiv.ViewBox.prototype.getSlicerViewMenu =  function() {
 xiv.ViewBox.prototype.getThumbnail = function(){
     return this.Thumbnail_;
 }
+
 
 
 /**
@@ -218,6 +244,19 @@ xiv.ViewBox.prototype.getThumbnail = function(){
 xiv.ViewBox.prototype.getThumbnailLoadTime =  function() {
     return this.thumbLoadTime_;
 }
+
+
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.ViewBox.prototype.updateIconSrcFolder = function() {
+    window.console.log("\n\nUPDATE ICON SRC");
+    this.ViewBoxTabs_.setIconBaseUrl(this.iconBaseUrl);
+}
+
 
 
 /**
@@ -232,6 +271,7 @@ xiv.ViewBox.prototype.doNotHide = function(element){
 };
 
 
+
 /**
  * Allows for external communication to set
  * the viewscheme within the xiv.ViewBox by communicating
@@ -243,6 +283,7 @@ xiv.ViewBox.prototype.setViewLayout = function(viewPlane) {
     window.console.log("HERE", viewPlane);
     this.ViewLayoutMenu_.setViewLayout(viewPlane);
 }
+
 
 
 /**
@@ -306,6 +347,9 @@ xiv.ViewBox.prototype.loadThumbnail = function (Thumbnail) {
  
 
 
+
+
+
 /**
  * As stated.
 * @private
@@ -314,7 +358,6 @@ xiv.ViewBox.prototype.adjustViewLayoutManager_ = function(){
     this.ViewLayoutManager_.setViewPlanes(this.Displayer_.ViewPlanes, 
 					  this.Displayer_.Interactors);
     this.ViewLayoutManager_.animateViewLayoutChange(false);
-    window.console.log("HERE");
     this.ViewLayoutManager_.setViewLayout('none');
 }
 
@@ -352,6 +395,7 @@ xiv.ViewBox.prototype.loadTabs_ = function () {
     // Sync style.
     this.updateStyle();
 }
+
 
 
 /**
@@ -403,6 +447,7 @@ xiv.ViewBox.prototype.initComponents_ = function() {
 }
 
 
+
 /**
  * Initializes the 'xiv.Displayer' object which allows
  * various viewable content to be displayed, based on 
@@ -413,7 +458,7 @@ xiv.ViewBox.prototype.initDisplayer_ = function(){
     // Retrieve the loadFramework.
     switch (this.loadFramework_){
     case 'XTK': 
-	this.Displayer_ = new xiv.XtkDisplayer(this);
+	this.Displayer_ = new xiv.Displayer.Xtk(this);
 	break;
     }
     goog.dom.append(this.getElement(), this.Displayer_.getElement());
@@ -421,6 +466,7 @@ xiv.ViewBox.prototype.initDisplayer_ = function(){
     // Onload callbacks
     this.Displayer_.onLoaded = this.onDisplayerLoaded_.bind(this)
 }
+
 
 
 /**
@@ -432,6 +478,7 @@ xiv.ViewBox.prototype.showChildElements_ = function() {
 	goog.dom.classes.remove(childElt, xiv.ViewBox.HIDDEN_CLASS);
     })
 }
+
 
 
 /**
@@ -448,6 +495,7 @@ xiv.ViewBox.prototype.hideChildElements_ = function() {
 }
 
 
+
 /**
 * As stated.
 * @private
@@ -457,6 +505,7 @@ xiv.ViewBox.prototype.setComponentCallbacks_ = function() {
     this.setViewBoxTabsCallbacks_();
     this.setViewLayoutMenuCallbacks_();
 }
+
 
 
 /**
@@ -471,6 +520,7 @@ xiv.ViewBox.prototype.setContentDividerCallbacks_ = function () {
 }
 
 
+
 /**
  * As stated.
  * @private
@@ -481,6 +531,7 @@ xiv.ViewBox.prototype.setViewBoxTabsCallbacks_ = function () {
     this.ViewBoxTabs_['EVENTS'].onEvent('DEACTIVATED', 
          this.onViewBoxTabDeactivated_.bind(this));
 }
+
 
 
 /**
@@ -629,6 +680,7 @@ xiv.ViewBox.prototype.onViewBoxTabActivated_ = function() {
 }
 
 
+
 /**
  * Callback for when a ViewBoxTab is deactivated.
  * @private
@@ -637,6 +689,7 @@ xiv.ViewBox.prototype.onViewBoxTabDeactivated_ = function() {
     this.ContentDivider_.slideTo(
 	this.ContentDivider_.getLowerLimit(), true);
 }
+
 
 
 /**
@@ -656,6 +709,7 @@ xiv.ViewBox.prototype.updateStyle = function (opt_args) {
     this.updateStyle_ContentDivider_(widgetDims);
     this.updateStyle_components_(widgetDims);
 }
+
 
 
 /**
@@ -687,6 +741,7 @@ xiv.ViewBox.prototype.updateStyle_ContentDivider_ = function(widgetDims){
 	})
     }
 }
+
 
 
 /**

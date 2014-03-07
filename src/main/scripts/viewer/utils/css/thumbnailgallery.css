@@ -4,7 +4,7 @@
 
 
 
-.utils-ui-scrollablethumbnailgallery {
+.utils-ui-thumbnailgallery {
     cursor: pointer;
     position: absolute;
 }
@@ -12,7 +12,7 @@
 
 
 
-.utils-ui-scrollablethumbnailgallery-thumbnail {
+.utils-ui-thumbnailgallery-thumbnail {
     position: relative;
     width: 100%;
     height: 176px;
@@ -22,7 +22,7 @@
 }
 
 
-.utils-ui-scrollablethumbnailgallery-thumbnail-image {
+.utils-ui-thumbnailgallery-thumbnail-image {
     position: absolute;
     width: 160px;
     height: 160px;
@@ -38,7 +38,7 @@
 }
 
 
-.utils-ui-scrollablethumbnailgallery-thumbnail-displaytext {
+.utils-ui-thumbnailgallery-thumbnail-displaytext {
     position: absolute;
     height: 70px;
     top: 8px;
@@ -51,7 +51,7 @@
 }
 
 
-.utils-ui-scrollablethumbnailgallery-thumbnailgallery {
+.utils-ui-thumbnailgallery-thumbnailgallery {
     top: 2.5%;
     height: 95%;
 }

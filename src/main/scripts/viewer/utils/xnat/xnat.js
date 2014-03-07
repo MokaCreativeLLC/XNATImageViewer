@@ -110,20 +110,31 @@ utils.xnat.get = function(url, callback, opt_getType){
 
 
 /**
- * Retrieves viewables, one-by-one, for manipulation in the opt_callback
- * argument.
+ * Retrieves viewables, one-by-one, for manipulation in the opt_runCallback
+ * argument, and when complete the opt_doneCallback.
  * @param {!string} url The url to retrieve the viewables from.
- * @param {function=} opt_callback The optional callback applied to each 
+ * @param {function=} opt_runCallback The optional callback applied to each 
  *     viewable.
+ * @param {function=} opt_doneCallback The optional callback applied to each 
+ *     when retrieval is complete.
  */
-utils.xnat.getViewables = function (url, opt_callback){
+utils.xnat.getViewables = function (url, opt_runCallback, opt_doneCallback){
     utils.xnat.VIEWABLE_TYPES = {
 	'Scan': utils.xnat.Viewable.Scan,
 	'Slicer': utils.xnat.Viewable.Slicer,
     }
-    for (var viewableType in utils.xnat.VIEWABLE_TYPES){
-	utils.xnat.Viewable.getViewables(url, 
-		utils.xnat.VIEWABLE_TYPES[viewableType], opt_callback)
-    }
+
+    var typeCount = /**@type {!number}*/
+	goog.object.getCount(utils.xnat.VIEWABLE_TYPES);
+    var typesGotten = /**@type {!number}*/ 0;
+
+    goog.object.forEach(utils.xnat.VIEWABLE_TYPES, function(vType){
+      utils.xnat.Viewable.getViewables(url, vType, opt_runCallback, function(){
+	 typesGotten++;
+	 if ((typesGotten === typeCount) && opt_doneCallback) { 
+	     opt_doneCallback(); 
+	 }
+      })
+    });
 }
 

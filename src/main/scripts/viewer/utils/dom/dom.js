@@ -70,6 +70,26 @@ utils.dom.createBasicHoverButtonSet = function(idPrefixes, opt_iconSrcFolder,
 
 
 /**
+ * Creates a child image into the div. 
+ * @param {!Element} div The div image to apply the child to.  
+ * @param {!string} src The image src.
+ * @public
+ */
+utils.dom.createDivChildImage = function(div, src){
+    var imgElt = /**@type {!Element}*/ goog.dom.createDom('img', {
+	'src': src
+    })
+    // Restyle image to fit in div
+    imgElt.style.backgroundSize = 'contain';
+    imgElt.style.maxWidth = '100%';
+    imgElt.style.maxHeight = '100%';
+    goog.dom.append(div, imgElt)
+    imgElt.onclick = imgElt.parentNode.onclick;
+}
+
+
+
+/**
  * Creates a basic button.  
  * @param {!string} idPrefix The id prefix of the button.  
  * @param {Object.<string, string | number>=} opt_attrs The optional 
@@ -104,15 +124,7 @@ utils.dom.createBasicHoverButton = function(idPrefix,
     // Make an 'img' element if there's a 'src' attrib.
     //
     if (opt_attrs && opt_attrs['src']){
-	var imgElt = /**@type {!Element}*/ goog.dom.createDom('img', {
-	    'src': opt_attrs['src']
-	})
-	// Restyle image to fit in div
-	imgElt.style.backgroundSize = 'contain';
-	imgElt.style.maxWidth = '100%';
-	imgElt.style.maxHeight = '100%';
-	goog.dom.append(buttonDiv, imgElt)
-	imgElt.onclick = imgElt.parentNode.onclick;
+	utils.dom.createDivChildImage(buttonDiv, opt_attrs['src']);
     }
     //
     // Set the opacity values
@@ -158,21 +170,18 @@ utils.dom.createUniqueDom = function (type, idPrefix, opt_attrs) {
     if (opt_attrs && !goog.isObject(opt_attrs)){
 	throw new TypeError('Object expected!');
     }
-    /**
-     * @dict
-     */
+
     var opt_attrs = /**@type {!Object}*/ 
     opt_attrs && goog.isObject(opt_attrs) ? opt_attrs : {}
 
-    //
-    // Allow only letters in the id prefix
-    //
-    var id = /**@type {!string}*/ utils.string.getLettersOnly(idPrefix);
+    
+    // id
     opt_attrs['id'] = opt_attrs['id'] ? opt_attrs['id'] : 
-	goog.string.toSelectorCase(id) 
-	+ '_' + goog.string.createUniqueString();
+	idPrefix + '_' + goog.string.createUniqueString();
+
+    // class
     opt_attrs['class'] = opt_attrs['class'] ? opt_attrs['class'] : 
-	goog.string.toSelectorCase(id);
+	goog.string.toSelectorCase(idPrefix.replace(/\./g,'-').toLowerCase());
     return goog.dom.createDom(type, opt_attrs);
 }
 

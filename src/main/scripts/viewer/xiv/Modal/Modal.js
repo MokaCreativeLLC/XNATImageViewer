@@ -4,6 +4,7 @@
  */
 
 // goog
+goog.require('goog.object');
 goog.require('goog.dom');
 goog.require('goog.dom.fullscreen');
 goog.require('goog.array');
@@ -33,14 +34,12 @@ goog.require('xiv.ViewBoxManager');
 /**
  * xiv.Modal is the central class where all of the xiv.Widgets meet.
  * @constructor
- * @param {string=} opt_iconUrl The url for the icons.  Defaults to ''.
  * @extends {xiv.Widget}
  */
 
 goog.provide('xiv.Modal');
-xiv.Modal = function (opt_iconUrl) {
-    goog.base(this, xiv.Modal.ID_PREFIX);   
-    this.setIconUrl_(opt_iconUrl);
+xiv.Modal = function () {
+    goog.base(this);   
     this.createComponents_();
     this.adjustStyleToMode_();
 }
@@ -137,7 +136,8 @@ xiv.Modal.EXPANDBUTTON_W = 30;
 /**
  * @type {!string} 
  * @const
-*/
+ * @expose
+ */
 xiv.Modal.ID_PREFIX =  'xiv.Modal';
 
 
@@ -147,7 +147,7 @@ xiv.Modal.ID_PREFIX =  'xiv.Modal';
  * @const
 */
 xiv.Modal.CSS_CLASS_PREFIX =
-goog.string.toSelectorCase(utils.string.getLettersOnly(xiv.Modal.ID_PREFIX));
+goog.string.toSelectorCase(xiv.Modal.ID_PREFIX.toLowerCase().replace(/\./g,'-'));
 
 
 
@@ -193,22 +193,6 @@ goog.getCssName(xiv.Modal.COLUMNMENU_CLASS, 'button');
 */
 xiv.Modal.ROWMENU_BUTTON_CLASS =  
 goog.getCssName(xiv.Modal.ROWMENU_CLASS, 'button');
-
-
-    
-/**
- * @type {string}
- * @private
- */  
-xiv.Modal.prototype.iconUrl_;
-
-
-
-/**
- * @type {string}
- * @private
- */  
-xiv.Modal.prototype.rootIconUrl_;
 
 
 
@@ -259,14 +243,6 @@ xiv.Modal.prototype.mode_ = 'windowed';
  * @private
  */
 xiv.Modal.prototype.previousMode_;
-
-
-
-/**
- * @type {string}
- * @private
- */	
-xiv.Modal.prototype.iconUrl_;
 
 
 
@@ -328,30 +304,6 @@ xiv.Modal.prototype.getThumbnailManager = function() {
 xiv.Modal.prototype.getButtons = function() {
   return this.buttons_;
 }
-
-
-
-/**
- * As stated.
- * @param {!string} iconUrl The iconUrl to set.
- * @public
- */
-xiv.Modal.prototype.setIconUrl = function(iconUrl) {
-    this.iconUrl_ = iconUrl;
-}
-
-
-
-/**
- * As stated.
- * @return {!string} The iconUrl to set.
- * @public
- */
-xiv.Modal.prototype.getIconUrl = function(iconUrl) {
-    return this.iconUrl_;
-}
-
-
 
 
 /**
@@ -426,6 +378,21 @@ xiv.Modal.prototype.animateModal  = function (opt_callback) {
     // Play
     animQueue.play();
     this.fadeInHiddenViewers_();
+}
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.Modal.prototype.updateIconSrcFolder = function() {
+    goog.object.forEach(this.buttons_, function(button, key){
+	goog.dom.removeChildren(button)
+	utils.dom.createDivChildImage(button, 
+			goog.string.path.join(this.iconUrl, 
+				goog.string.toSelectorCase(key) + '.png'));
+    }.bind(this))
+    this.ViewBoxManager_.setIconBaseUrl(this.iconBaseUrl);
 }
 
 
@@ -790,22 +757,6 @@ xiv.Modal.prototype.updateStyle_buttons_ = function(){
 
 
 /**
- * Sets the icon url to derive the images from.
- * @param {!string} opt_iconUrl The url to derive the icon images from.
- * @private
- */
-xiv.Modal.prototype.setIconUrl_ = function(opt_iconUrl) {
-    //window.console.log(opt_iconUrl);
-    if (opt_iconUrl && goog.isString(opt_iconUrl)){
-	this.rootIconUrl_ = opt_iconUrl;
-	this.iconUrl_ = goog.string.path.join(opt_iconUrl, 
-			xiv.Modal.ID_PREFIX.replace('.','/'));
-    }
-}
-
-
-
-/**
  * Creates The compenents of the modal.
  * @private
  */
@@ -823,7 +774,8 @@ xiv.Modal.prototype.createComponents_ = function() {
  * @private
  */
 xiv.Modal.prototype.createBackground_ = function() {
-    this.background_ = utils.dom.createUniqueDom('div', 'xiv.Modal.Background');
+    this.background_ = /**@type {!Element}*/
+    utils.dom.createUniqueDom('div', this.constructor.ID_PREFIX + '.Background');
     goog.dom.append(this.getElement(), this.background_);
 }
 
@@ -834,7 +786,7 @@ xiv.Modal.prototype.createBackground_ = function() {
  * @private
  */
 xiv.Modal.prototype.createButtons_ = function() {
-    this.buttons_ = xiv.Modal.generateButtons_(this.iconUrl_);
+    this.buttons_ = xiv.Modal.generateButtons_(this.iconUrl);
     goog.object.forEach(this.buttons_, function(button, key){
 	goog.dom.append(this.getElement(), button);
     }.bind(this))
@@ -866,7 +818,6 @@ xiv.Modal.prototype.createThumbnailManager_ = function() {
  */
 xiv.Modal.prototype.createViewBoxManager_ = function() {
     this.ViewBoxManager_ = new xiv.ViewBoxManager();
-    this.ViewBoxManager_.setIconUrl(this.rootIconUrl_);
     this.ViewBoxManager_.setViewBoxesParent(this.getElement());   
     this.setViewBoxManagerCallbacks_();
 }
@@ -969,23 +920,28 @@ xiv.Modal.generateButtons_ = function(iconUrl){
     if (!goog.isString(iconUrl)){
 	throw new TypeError('String expected!');
     }
-    var keyMap =/**@dict*/{};
-    var buttonsWithOriginalKeys =/**@dict*/{};
-    var updatedKeys =/**@type {!Array.string}*/[];
-    var updatedKey = /**@type {!string}*/'';
-    var key = /**@type {!string}*/'';
-    var modKey = /**@type {!string}*/'';
-    for (key in xiv.Modal.buttonTypes){
-	updatedKey = utils.string.getLettersOnly(xiv.Modal.ID_PREFIX) 
-			 + goog.string.toTitleCase(key) + 'Button';
-	updatedKeys.push(updatedKey);
-	keyMap[key] = updatedKey;
-    }
+
+    // Generate new button IDs
+    var buttonIds =/**@type {!Object}*/{};
+    goog.object.forEach(xiv.Modal.buttonTypes, function(buttonType, key){
+	buttonIds[key] = xiv.Modal.ID_PREFIX + '.' + 
+			 goog.string.toTitleCase(key) + 'Button';
+    }.bind(this))
+
+
+    // Make buttons
     var buttons = /**@type {!Object.<string, Element>}*/
-    utils.dom.createBasicHoverButtonSet(updatedKeys, iconUrl);
-    for (key in keyMap){
-	buttonsWithOriginalKeys[key] = buttons[keyMap[key]];
-    }
+    utils.dom.createBasicHoverButtonSet(goog.object.getValues(buttonIds), 
+					iconUrl);
+
+    // Make object that maps old keys to buttons.
+    var buttonsWithOriginalKeys =/**@dict*/{};
+    goog.object.forEach(buttonIds, function(newKey, oldKey){
+	buttonsWithOriginalKeys[oldKey] = buttons[newKey];
+	goog.dom.classes.set(buttons[newKey], 
+	    goog.getCssName(xiv.Modal.CSS_CLASS_PREFIX, 
+			oldKey.toLowerCase() + '-' + 'button'));
+    })
     return buttonsWithOriginalKeys
 }
 

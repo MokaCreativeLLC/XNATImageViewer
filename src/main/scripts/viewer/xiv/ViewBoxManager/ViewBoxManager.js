@@ -20,7 +20,7 @@ goog.require('utils.fx');
 goog.require('utils.events.EventManager');
 
 // xiv
-goog.require('xiv');
+goog.require('xiv.Widget');
 goog.require('xiv.ViewBox');
 
 
@@ -33,16 +33,32 @@ goog.require('xiv.ViewBox');
  * deleting a xiv.ViewBox in the xiv.Modal, and it also tracks
  * the xiv.ViewBox locations within the modal using a multi-dimenesional
  * array.
- *
+ * @extends {xiv.Widget}
  * @constructor
  */
 goog.provide('xiv.ViewBoxManager');
 xiv.ViewBoxManager = function () {
+    goog.base(this);
+
+    // delete the Widget element (we don't need it).
+    var elt = /**@type {!Element}*/ this.getElement();
+    goog.dom.removeNode(elt);
+    delete elt;
+
     // events
     utils.events.EventManager.addEventManager(this, 
 					      xiv.ViewBoxManager.EventType);
 }
+goog.inherits(xiv.ViewBoxManager, xiv.Widget);
 goog.exportSymbol('xiv.ViewBoxManager', xiv.ViewBoxManager);
+
+
+/**
+ * @type {!string} 
+ * @const
+ * @expose
+ */
+xiv.ViewBoxManager.ID_PREFIX =  'xiv.ViewBoxManager';
 
 
 
@@ -67,14 +83,6 @@ xiv.ViewBoxManager.ANIM_MED =  300;
  * @const
 */
 xiv.ViewBoxManager.ANIM_SLOW =  600;
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-xiv.ViewBoxManager.ID_PREFIX =  'xiv.ViewBoxManager';
 
 
 
@@ -121,6 +129,15 @@ xiv.ViewBoxManager.EventType = {
 
 
 /**
+ * @enum (string}
+ */
+xiv.ViewBoxManager.ICON_SRC = {
+    HANDLE: 'Toggle-DragAndDrop.png'
+}
+
+
+
+/**
  * @type {Array.<Array.<xiv.ViewBox>>}
  * @private
  */
@@ -161,53 +178,21 @@ xiv.ViewBoxManager.prototype.ViewBoxesParent_ = document.body;
 
 
 /**
- * @type {!string}
- * @private
- */  
-xiv.ViewBoxManager.prototype.iconUrl_ = '';
-
-
-
-/**
- * Sets the icon url to derive any images from.
- * @param {!string} opt_iconUrl The url to derive the icon images from.
- * @private
+ * @inheritDoc
  */
-xiv.ViewBoxManager.prototype.setIconUrl = function(opt_iconUrl) {
-    var prevIconUrl = /**@type {!string}*/ this.iconUrl_;
-    //window.console.log(opt_iconUrl);
-    if (opt_iconUrl && goog.isString(opt_iconUrl)){
-	this.iconUrl_ = goog.string.path.join(opt_iconUrl, 
-			xiv.ViewBoxManager.ID_PREFIX.replace('.','/'));
-    }
-    this.modifyHandleSrc_(prevIconUrl);
-}
-
-
-
-/**
- * Sets the icon url to derive any images from.
- * @param {!string} prevIconUrl The previous iconUrl.
- * @private
- */
-xiv.ViewBoxManager.prototype.modifyHandleSrc_ = function(prevIconUrl) {
-    // replace the drag/drop handle src
+xiv.ViewBoxManager.prototype.updateIconSrcFolder = function() {
     this.loop(function(ViewBox){
-	if (prevIconUrl.length === 0){
-	    this.dragDropHandles_[ViewBox.getElement().id].src = 
-		this.iconUrl_ + 
-		this.dragDropHandles_[ViewBox.getElement().id].src;	
-	} else {
-	    this.dragDropHandles_[ViewBox.getElement().id].src = 
-		this.dragDropHandles_[ViewBox.getElement().id].src.replace(
-		    prevIconUrl_, this.iconUrl_)
-	}
+	this.dragDropHandles_[ViewBox.getElement().id].src = 
+	goog.string.path.join(this.iconUrl,	
+			this.dragDropHandles_[ViewBox.getElement().id].src)
+	ViewBox.setIconBaseUrl(this.iconBaseUrl);
     }.bind(this))
 }
 
 
 
 /**
+ * As stated.
  * param {Object=} opt_arg1 The first argument to apply.
  * param {Object=} opt_arg2 The second argument to apply.
  * @private
@@ -530,8 +515,10 @@ xiv.ViewBoxManager.prototype.createViewBox_ = function() {
 
     var ViewBox = /**@type {!xiv.ViewBox}*/ new xiv.ViewBox();
     goog.dom.append(this.ViewBoxesParent_, ViewBox.getElement());
+    ViewBox.setIconBaseUrl(this.iconBaseUrl);
     this.addDragDropHandle_(ViewBox);
     this.setViewBoxEvents_(ViewBox);
+    
     return ViewBox;    
 }
 
@@ -546,9 +533,10 @@ xiv.ViewBoxManager.prototype.addDragDropHandle_ = function(ViewBox) {
     goog.dom.createDom("img",  {
 	'id': 'DragAndDropHandle',
 	'class' : xiv.ViewBoxManager.HANDLE_CLASS,
-	'src' : this.iconUrl_ + '/' + 'Toggle-DragAndDrop.png'
+	'src' : this.iconUrl + '/' + xiv.ViewBoxManager.ICON_SRC['HANDLE']
     });
-    dragDropHandle.setAttribute(xiv.ViewBoxManager.VIEW_BOX_ATTR, ViewBox.getElement().id); 
+    dragDropHandle.setAttribute(xiv.ViewBoxManager.VIEW_BOX_ATTR, 
+				ViewBox.getElement().id); 
     goog.dom.append(this.ViewBoxesParent_, dragDropHandle)
 
     // Add to class property.

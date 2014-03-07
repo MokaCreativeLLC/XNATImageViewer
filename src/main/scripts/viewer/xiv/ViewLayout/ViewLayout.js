@@ -2,22 +2,14 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-/**
- * Google closure includes.
- */
+// goog
 goog.require('goog.string');
 goog.require('goog.array');
 
-
-/**
- * utils includes.
- */
+// utils
 goog.require('utils.string');
 
-
-/**
- * xiv includes.
- */
+// xiv
 goog.require('xiv');
 
 
