@@ -363,38 +363,59 @@ xiv.ViewBox.prototype.adjustViewLayoutManager_ = function(){
 
 
 
+
 /**
  * Load the xiv.Tabs associated with the object's xiv.Thumbnail.
  * @private
  */
-xiv.ViewBox.prototype.loadTabs_ = function () {  
-
-    // Clear existing tabs.
+xiv.ViewBox.prototype.loadTabs_ = function() {  
     this.ViewBoxTabs_.reset();
-
-    // Info Tab.
-    this.ViewBoxTabs_.setTabContents('Info', 
-	this.Displayer_.createInfoTabContents(this.Thumbnail_.getViewable()));
-
-    // Slicer View Tab.
+    this.loadTab_Info_();
     if (this.Thumbnail_.getViewable()['category'] == 'Slicer') {
-	this.ViewBoxTabs_.setTabContents('Slicer Views', 
-			this.SlicerViewMenu_.getThumbnailGallery());
+	this.loadTab_SlicerViews();
     }
+    this.loadTabs_Controllers_();
 
-    // Controller Menu into Tabs
-    var controllerMenu = /**@type {!utils.xtk.ControllerMenu}*/ 
-    this.Displayer_.ControllerMenu;    
-    goog.object.forEach(controllerMenu, function(menuObj, key){
-	// Only input object that have contents in them.
-	if (goog.object.getCount(menuObj) !== 0){
-	    this.ViewBoxTabs_.setTabContents(key, menuObj);
-	}   
-    }.bind(this))
-
-    // Sync style.
     this.updateStyle();
 }
+
+
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.ViewBox.prototype.loadTab_Info_ = function() {
+    this.ViewBoxTabs_.setTabContents('Info', 
+      this.Displayer_.createInfoTabContents(this.Thumbnail_.getViewable()));
+}
+
+
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.ViewBox.prototype.loadTab_SlicerViews_ = function() {
+    this.ViewBoxTabs_.setTabContents('Slicer Views', 
+		this.SlicerViewMenu_.getThumbnailGallery());
+}
+
+
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.ViewBox.prototype.loadTabs_Controllers_ = function() {
+    goog.object.forEach(this.Displayer_.getControllerMenu(), 
+	function(menuElt, key){
+	    if (menuElt){
+	        this.ViewBoxTabs_.setTabContents(key, menuElt);
+	    }
+	}.bind(this))
+}
+
 
 
 

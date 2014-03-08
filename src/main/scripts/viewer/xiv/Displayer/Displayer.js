@@ -105,7 +105,8 @@ xiv.Displayer.prototype.getXnatProperties =  function () {
  */
 xiv.Displayer.prototype.createInfoTabContents = function (xnatProperties) {	
     return (xnatProperties['category'].toLowerCase() === 'slicer') ? 
-	this.createSlicerTab_(xnatProperties) : this.createDicomTab_(xnatProperties);
+	this.createSlicerTab_(xnatProperties) : 
+	this.createDicomTab_(xnatProperties);
 }
 
 
@@ -213,7 +214,8 @@ xiv.Displayer.prototype.createDicomTab_ = function(xnatProperties) {
     // Get usable keys from the 'sessionInfo' argument.
     //
     for (var key in sessionInfo) {
-	if (sessionInfo[key] && sessionInfo[key]['label'] && sessionInfo[key]['value']) {
+	if (sessionInfo[key] && sessionInfo[key]['label'] && 
+	    sessionInfo[key]['value']) {
 	    keys.push(key);
 	}
     }
@@ -234,10 +236,12 @@ xiv.Displayer.prototype.createDicomTab_ = function(xnatProperties) {
     //
     goog.array.forEach(reorderedKeys, function(key){
 
-	currLabel = goog.string.toTitleCase(goog.string.trim(sessionInfo[key]['label']));
+	currLabel = goog.string.toTitleCase(goog.string.trim(
+	    sessionInfo[key]['label']));
 	currValue = sessionInfo[key]['value'];
 	currTop = prevBottom + 6;
-	labelValuePair = this.createLabelValuePair_(contents, currLabel, currValue[0]);
+	labelValuePair = this.createLabelValuePair_(contents, 
+						    currLabel, currValue[0]);
 	
 	//
 	// Add "highImportance" class to high importance keys
@@ -246,14 +250,16 @@ xiv.Displayer.prototype.createDicomTab_ = function(xnatProperties) {
 	utils.style.setStyle(labelValuePair, {'top': currTop});
 	goog.array.forEach(highImportanceKeys, function(highImportanceKey){
 	    if (currLabel.toLowerCase() === highImportanceKey.toLowerCase()) {
-		goog.dom.classes.add(labelValuePair, xiv.Displayer.TABCONTENT_INFO_HIGHIMPORTANCE_CLASS);
+		goog.dom.classes.add(labelValuePair, 
+		xiv.Displayer.TABCONTENT_INFO_HIGHIMPORTANCE_CLASS);
 	    }
 	})
 
 	//
 	// Calculate the hieghts of the label/value pairs.
 	//
-	currDims = utils.style.getComputedStyle(labelValuePair, ['height', 'top']);
+	currDims = utils.style.getComputedStyle(labelValuePair, 
+						['height', 'top']);
 	prevBottom = 0;
 	for (dim in currDims){ 
 	    prevBottom += utils.convert.toInt(currDims[dim]); 

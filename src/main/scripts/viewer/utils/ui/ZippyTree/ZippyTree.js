@@ -3,6 +3,9 @@
  */
 
 // goog
+goog.require('goog.array');
+goog.require('goog.events');
+goog.require('goog.string');
 goog.require('goog.object');
 goog.require('goog.dom');
 goog.require('goog.ui.AnimatedZippy');
@@ -12,12 +15,15 @@ goog.require('goog.fx.dom.FadeIn');
 goog.require('goog.ui.Zippy');
 
 // utils
+goog.require('utils.style');
 goog.require('utils.events.EventManager');
 goog.require('utils.ui.ZippyNode');
 
 
 
 /**
+ * A tree-based collection of ZippyNodes for representing a Zippy-based folder
+ * hierarchy in a tree structure.
  * @constructor
  * @extends {utils.ui.ZippyNode}
  */
@@ -34,55 +40,35 @@ utils.ui.ZippyTree = function () {
 	'class': this.constructor.ELEMENT_CLASS,
     })
 
-    // PARENT CONSTRUCTOR
-    goog.base(this, '', this.element_); 
 
-    // Hide the header
+    //---------------------------------------------
+    // These calls need to happen after the element_ is created!!
+    goog.base(this, '', this.element_); 
+    // Hide the header because it inherits from ZippyNode -- we don't need it.
     goog.dom.classes.add(this.getHeader(), utils.ui.ZippyTree.ROOT_NODE_CLASS);
+    //---------------------------------------------
+
+
+    /**
+     * @type {!Array}
+     * @private
+     */
+    this.secondaryQueue_ = [];
+
+
+    /**
+     * @type {!goog.fx.AnimationSerialQueue}
+     * @private
+     */
+    this.AnimQueue_= new goog.fx.AnimationSerialQueue();
+    goog.events.listen(this.AnimQueue_, 'end', this.continueAnim_.bind(this));
 
     // Events
     utils.events.EventManager.addEventManager(this, 
 					      utils.ui.ZippyTree.EventType);
-
-
-    this.secondaryQueue_ = [];
-    this.AnimQueue_= new goog.fx.AnimationSerialQueue();
-
-    goog.events.listen(this.AnimQueue_, 'end', this.continueAnim_.bind(this));
 }
 goog.inherits(utils.ui.ZippyTree, utils.ui.ZippyNode);
 goog.exportSymbol('utils.ui.ZippyTree', utils.ui.ZippyTree);
-
-
-
-/**
-* @public
-*/
-utils.ui.ZippyTree.prototype.runFadeIn = function() {
-    return;
-}
-
-
-/**
-* @private
-*/
-utils.ui.ZippyTree.prototype.continueAnim_ = function() {
-    window.console.log("ANIM DONE", this.AnimQueue_.isPlaying());
-    this.AnimQueue_.disposeInternal();
-    while(this.secondaryQueue_.length){
-
-	//window.console.log("Adding anim");
-	var anim = this.secondaryQueue_[0];
-	
-	this.AnimQueue_.add(anim);
-	//window.console.log(anim);
-	goog.array.removeAt(this.secondaryQueue_, 0);
-
-    }
-    goog.events.listen(this.AnimQueue_, 'end', this.continueAnim_.bind(this));
-    //window.console.log("PLAYTING");
-    this.AnimQueue_.play();
-}
 
 
 
@@ -146,7 +132,7 @@ goog.getCssName(utils.ui.ZippyTree.CSS_CLASS_PREFIX, 'rootnode');
  * @const
  * @type {!number}
  */
-utils.ui.ZippyTree.FADE_TIME = 70;
+utils.ui.ZippyTree.FADE_TIME = 120;
 
 
 
@@ -167,12 +153,97 @@ utils.ui.ZippyTree.prototype.fadeInFx_ = false;
 
 
 /**
+ * @type {!number}
+ * @private
+ */
+utils.ui.ZippyTree.prototype.isEmpty_ = true;
+
+
+
+/**
+ * The starting opacity of newly created nodes.  Only valid if fadeInFx is
+ * toggled.
+ * @type {!number}
+ * @private
+ */
+utils.ui.ZippyTree.prototype.initOp_ = 1;
+
+
+
+/**
+ * The fade duration.  Only valid if fadeInFx is toggled.
+ * @type {!number}
+ * @private
+ */
+utils.ui.ZippyTree.prototype.fadeDur_ = 0;
+
+
+
+/**
  * As stated.
- * @param {!boolean} Toggler.
+ * @return {!boolean}
+ * @public
+ */
+utils.ui.ZippyTree.prototype.isEmpty = function() {
+    return goog.dom.getChildren(this.getContentHolder()).length === 0;
+};
+
+
+
+
+/**
+ * As stated.
+ * @return {!boolean}
+ * @public
+ */
+utils.ui.ZippyTree.prototype.contractAll = function() {
+    this.traverse(function(node){
+	node.getZippy().setExpanded(false);
+    }, this)
+};
+
+
+
+/**
+ * As stated.
+ * @return {!boolean}
+ * @public
+ */
+utils.ui.ZippyTree.prototype.expandAll = function() {
+    this.traverse(function(node){
+	node.getZippy().setExpanded(true);
+    }, this)
+};
+
+
+
+/**
+ * Traverses the tree recursively, running a callback on each node.
+ * @param {!Function} callback The callback to apply.
+ * @param {!utils.ui.ZippyNode} currNode The current node.
+ * @return {!boolean}
+ * @public
+ */
+utils.ui.ZippyTree.prototype.traverse = function(callback, currNode) {
+    goog.object.forEach(currNode.getNodes(), function(node){
+	callback(node);
+	this.traverse(callback, node);
+    }.bind(this))
+};
+
+
+
+
+/**
+ * Toggles whether to apply the fade in effects.
+ * @param {!boolean} b Toggler.
  * @public
  */
 utils.ui.ZippyTree.prototype.toggleFadeInFx = function(b) {
-    return this.fadeInFx_ = (b === true);
+    this.fadeInFx_ = (b === true);
+    this.initOp_ = /**@type {!number}*/ this.fadeInFx_ ? 0 : 1;
+    this.fadeDur_ = /**@type {!number}*/ 
+    this.fadeInFx_ ? utils.ui.ZippyTree.FADE_TIME : 0;
 }
 
 
@@ -188,17 +259,34 @@ utils.ui.ZippyTree.prototype.getElement = function() {
 
 
 
-
 /**
- * 
- * @param {!Element} element
- * @param {string= | Array.string=} opt_folders
- * @param {function=} opt_callback
+ * Main function for adding contents to the tree -- recursive.
+ * @param {!Element | !Array.Elements} elements The elements to add.
+ * @param {string= | Array.string=} opt_folders The folders where the elements
+ *    belong.
  * @public
  */
-utils.ui.ZippyTree.prototype.addContent = 
-function(element, opt_folders) {
+utils.ui.ZippyTree.prototype.addContents = function(elements, opt_folders) {
+    if (!goog.isArray(elements) || goog.dom.isElement(elements)){
+	this.addContent_(elements, opt_folders);
+	return;
+    }
+    goog.array.forEach(elements, function(elt){
+	this.addContents(elt, opt_folders);
+    }.bind(this));
+}
 
+
+
+/**
+ * Main function for adding content to the tree: the elements and its folder 
+ * hierarchy.
+ * @param {!Element} element The element to add.
+ * @param {string= | Array.string=} opt_folders The folders where the element
+ *    belongs.
+ * @private
+ */
+utils.ui.ZippyTree.prototype.addContent_ = function(element, opt_folders) {
     //window.console.log("ADD CONTENT", element);
     if (!opt_folders){
 	goog.dom.append(this.element_, element);
@@ -217,137 +305,172 @@ function(element, opt_folders) {
 
 
 /**
- * @param {!string | !Array.string} folders
- * @param {!Element} element
+ * Creates a branch within the tree in a recursive manner.
+ * @param {!string | !Array.string} fldrs The folder or folders that create
+ *    the tree nodes.
+ * @param {!utils.ui.ZippyNode} pNode The parent node that initiaties
+ *    further 'createBranch_' calls.
+ * @param {Element=} opt_elt The element to add at the end of the branch.
  * @private
  */
-utils.ui.ZippyTree.prototype.createBranch_ = function(folders, 
-						      opt_parentNode,
-						      opt_contentElt) {
+utils.ui.ZippyTree.prototype.createBranch_ = function(fldrs, pNode, opt_elt) {
     
-    var opt_parentNode = opt_parentNode ? opt_parentNode : this;
-    var contentHolder = /**@type {!Element}*/ opt_parentNode.getContentHolder();
-    var initOpacity = this.fadeInFx_ ? 0 : 1;
-    var fadeInTime = this.fadeInFx_ ? utils.ui.ZippyTree.FADE_TIME : 0;
+    var contHold = /**@type {!Element}*/ pNode.getContentHolder();
 
-
-
-    // If at the end of the hierarchy, then add to contentHolder.
-    if (folders.length == 0 && opt_contentElt){
-
-	if (opt_contentElt) {
-	    utils.style.setStyle(opt_contentElt, {'position': 'relative'});
-	    opt_contentElt.style.opacity = initOpacity;
-	    goog.dom.append(contentHolder, opt_contentElt);
-	    var anim = new goog.fx.dom.FadeIn(opt_contentElt, fadeInTime);
-	    if (!this.AnimQueue_.isPlaying()){		
-		this.AnimQueue_.add(anim)
-	    } else{
-		this.secondaryQueue_.push(anim);
-	    }
-	}
-	
-	this.indentNodes_();
-	
-	if (!this.AnimQueue_.isPlaying()){
-	    this.AnimQueue_.play();
-	} 
-
-	this['EVENTS'].runEvent('CONTENTADDED');
-
+    // If at end of branch
+    if (fldrs.length == 0 && opt_elt){
+	this.onEndOfBranch_(contHold, opt_elt);
 	return;
     }
 
-    // Get existing nodes.
-    var currNode = /**@type {utils.ui.ZippyNode}*/ undefined;
-    if (opt_parentNode.getNodes()[folders[0]]){
-	currNode = opt_parentNode.getNodes()[folders[0]];
-	// Modify folders...
-	var newFolders = /**@type {!Array.string}*/
-	(folders.length > 1) ? folders.slice(1) : [];
-	this.createBranch_(newFolders, currNode, opt_contentElt);
-    }
-    
-    // Otherwise, create new node...
-    else {
+    // Otherwise, recurse
+    this.createBranch_(
+	// Slice off top index of folders .
+	(fldrs.length > 1) ? fldrs.slice(1) : [], 
 
-	contentHolder.style.opacity = initOpacity;
+	// Get existing or create new node.
+	pNode.getNodes()[fldrs[0]] ? pNode.getNodes()[fldrs[0]] : 
+	this.createNode_(fldrs[0], contHold, pNode),
 
-	currNode = /**@type {!utils.ui.ZippyNode}*/
-	new utils.ui.ZippyNode(folders[0], contentHolder);
-	opt_parentNode.getNodes()[folders[0]] = currNode;
-
-	var header = currNode.getHeader();
-	header.style.opacity = initOpacity;
-	contentHolder.style.opacity = 1;
-	
-	var anim = new goog.fx.dom.FadeIn(header, fadeInTime);
-	if (!this.AnimQueue_.isPlaying()){
-	    window.console.log("add header anim");
-	    this.AnimQueue_.add(anim)
-	} else {
-	    window.console.log("add header queue anim");
-	    this.secondaryQueue_.push(anim);
-	}
-
-	// Modify folders...
-	var newFolders = /**@type {!Array.string}*/
-	(folders.length > 1) ? folders.slice(1) : [];
-	this.createBranch_(newFolders, currNode, opt_contentElt);
-	this.indentNodes_();
-	
-	this['EVENTS'].runEvent('NODEADDED', currNode);
-    }
-
-
+	// maintain the end element.
+	opt_elt); 
 }
 
 
 
 /**
- * Indents the zippy headers based on their depth.
+ * Conducts node creation specific for the ZippyTree.
+ * @param {!string} title The node title.
+ * @param {!Element} parent The parent element.
+ * @param {!utils.ui.ZippyNode} pNode The parent node.
+ * @return {utils.ui.ZippyNode} The created node.
+ * @private
+ */
+utils.ui.ZippyNode.prototype.createNode_ = function(title, parent, pNode) {
+
+    parent.style.opacity = this.initOp_;
+    var node = /**@type {!utils.ui.ZippyNode}*/
+    new utils.ui.ZippyNode(title, parent);
+
+    pNode.getNodes()[title] = node;
+
+    node.getHeader().style.opacity = this.initOp_;
+    parent.style.opacity = 1;
+
+    this.createFadeAnim_(node.getHeader());
+    this.indentNodes_();
+    this['EVENTS'].runEvent('NODEADDED', node);
+
+    return node;
+}
+
+
+
+/**
+ * Creates an animation for fading in nodes.
+ * @param {!Element} elt The element to fade in.
+ * @private
+ */
+utils.ui.ZippyTree.prototype.createFadeAnim_ = function(elt) {
+    var anim = /** @type {goog.fx.dom.FadeIn} */
+    new goog.fx.dom.FadeIn(elt, this.fadeDur_);
+    if (!this.AnimQueue_.isPlaying()){		
+	this.AnimQueue_.add(anim)
+    } else {
+	this.secondaryQueue_.push(anim);
+    }
+}
+
+
+
+/**
+ * Method for when an end of branch is reached.  Called from 'createBranch_'.
+ * @param {!Element} contHold The contentHolder element.
+ * @param {Element=} opt_elt The optional element to add at the end of the 
+ *    branch.
+ * @private
+ */
+utils.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
+    // Add the contentElt to the given node , if it exists.
+    if (opt_elt) {
+	// IMPORTANT!
+	utils.style.setStyle(opt_elt, {'position': 'relative'});
+	opt_elt.style.opacity = this.initOp_;
+	// IMPORTANT!
+	goog.dom.append(contHold, opt_elt);
+	this.createFadeAnim_(opt_elt);
+    }
+    this.indentNodes_();
+    if (!this.AnimQueue_.isPlaying()) { this.AnimQueue_.play() }; 
+    this['EVENTS'].runEvent('CONTENTADDED');
+}
+
+
+
+/**
+ * Recursively indents the treeNodes based on their depth.
+ * @param {!utils.ui.ZippyNode} currNode The node to run the indentation 
+ *    calculation on.
+ * @param {!number} currDepth The depth of the currNode.
  * @private
  */
 utils.ui.ZippyTree.prototype.indentNodes_ = function(currNode, currDepth){
 
     var currNodeset = /**@type {Object.<string, goog.ui.ZippyNode>}*/ 
     currNode ? currNode.getNodes(): this.getNodes();    
+    currDepth = currDepth ? currDepth : 0; 
 
-    //if (currNode){ window.console.log('\n\n',currNode.title_)}
-    //window.console.log("NODE COUNT", goog.object.getCount(currNodeset));
-   var currDepth = /**@type {!number}*/ currDepth ? currDepth : 0; 
-
-
+    // If at the end of the tree...
     if (!currNodeset || (goog.object.getCount(currNodeset) == 0)){ 
-
-	var holder = currNode.getContentHolder();
 	currDepth--;
-	goog.array.forEach(holder.childNodes, function(node){
-	node.style.width = (100 - (this.maxDepth_ * 
-			     this.constructor.INDENT_PCT)).toString() + '%';
-	node.style.left = (currDepth  * 
-			     this.constructor.INDENT_PCT).toString() + '%';
-	
-	}.bind(this))
-	return 
+	this.indentNodeElements_(currNode.getContentHolder().childNodes, 
+				 currDepth)
+	return; 
+    }
 
-    };
-
-
-
+    // Otherwise, recurse for each sub-node...
     goog.object.forEach(currNodeset, function(loopNode){
-	var header = /**@type {!utils.ui.ZippyNode}*/ loopNode.getHeader();
-	header.style.width = (100 - (this.maxDepth_ * 
-			     this.constructor.INDENT_PCT)).toString() + '%';
-	header.style.left = (currDepth * 
-			     this.constructor.INDENT_PCT).toString() + '%';
-	//window.console.log(header.id, currDepth);
+	this.indentNodeElements_(loopNode.getHeader(), currDepth)
 	this.indentNodes_(loopNode, currDepth+1);
     }.bind(this))
-
 }
 
 
 
+/**
+ * Performs indent calculations on a given element.
+ * @param {!Element | !Array.Element} The element or elements to indent.
+ * @param {!number} depth The depth of the element.
+ * @private
+ */
+utils.ui.ZippyTree.prototype.indentNodeElements_ = function(elts, depth) {
+    elts = goog.dom.isElement(elts) ? [elts] : elts;
+    goog.array.forEach(elts, function(elt) {
+	elt.style.width = (100 - (this.maxDepth_ * 
+			      this.constructor.INDENT_PCT)).toString() + '%';
+	elt.style.left = (depth * this.constructor.INDENT_PCT).toString() + '%';
+    }.bind(this))
+}
 
 
+
+/**
+ * When the fade in animation finishes, continues the animation on by querying
+ * from the secondary queue.
+ * @private
+ */
+utils.ui.ZippyTree.prototype.continueAnim_ = function() {
+    this.AnimQueue_.disposeInternal();
+
+    // Add animations in the secondary queue to the AnimQueue
+    while(this.secondaryQueue_.length){
+	this.AnimQueue_.add(this.secondaryQueue_[0]);
+	goog.array.removeAt(this.secondaryQueue_, 0);
+    }
+
+    // Reset the 'end' listener -- it appears to get disposed as well.
+    goog.events.listen(this.AnimQueue_, 'end', this.continueAnim_.bind(this));
+
+    // Play
+    this.AnimQueue_.play();
+}

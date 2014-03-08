@@ -16,6 +16,7 @@ goog.require('utils.xtk');
 goog.require('utils.dom');
 goog.require('utils.array');
 goog.require('utils.style');
+goog.require('utils.ui.ZippyTree');
 
 
 
@@ -32,26 +33,17 @@ goog.provide('utils.xtk.ControllerMenu');
 utils.xtk.ControllerMenu = function() {
 
     /**
-     * @const 
-     * @type {!Array.<string>}
-     */
-    this.visibilityRowSpacing = ['0%','27%','35%', '55%', '88%'];
-
+     * @private
+     * @type {!utils.ui.ZippyTree}
+     */ 
+    this.menu2D_ = new utils.ui.ZippyTree();
 
 
     /**
      * @private
-     * @type {!Object}
+     * @type {!utils.ui.ZippyTree}
      */ 
-    this.menu2D_ = {};
-
-
-    /**
-     * @private
-     * @type {!Object}
-     */ 
-    this.menu3D_ = {};
-
+    this.menu3D_ = new utils.ui.ZippyTree();
 
 
     /**
@@ -65,11 +57,17 @@ utils.xtk.ControllerMenu = function() {
      * @private
      * @type {!Array.function}
      */ 
-    this.onVolumeToggled2D_ = []
+    this.onVolumeToggled2D_ = [];
 }
 goog.exportSymbol('utils.xtk.ControllerMenu', utils.xtk.ControllerMenu);
 
 
+
+/**
+ * @const 
+ * @type {!Array.<string>}
+ */
+utils.xtk.ControllerMenu.rowSpacing = ['0%','27%','35%', '55%', '88%'];
 
 
 utils.xtk.ControllerMenu.CSS_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xtkutils-controllermenu');
@@ -94,15 +92,19 @@ utils.xtk.ControllerMenu.THUMB_HOVER_CLASS = /** @const @type {String} */ goog.g
 
 
 /**
- * @return {Object.<string, Object>}
+ * @return {Object.<string, Object | null>}
  * @public
  */
-utils.xtk.ControllerMenu.prototype.__defineGetter__('Menu', function(){
+utils.xtk.ControllerMenu.prototype.getMenuAsObject = function(){
+
+    this.menu2D_.contractAll();
+    this.menu3D_.contractAll();
+
     return {
-	'2D Menu' : this.menu2D_,
-	'3D Menu' : this.menu3D_
+	'2D Menu' : this.menu2D_.isEmpty() ? null : this.menu2D_.getElement(),
+	'3D Menu' : this.menu3D_.isEmpty() ? null : this.menu3D_.getElement(),
     }
-})
+}
 
 
 
@@ -198,50 +200,6 @@ utils.xtk.ControllerMenu.prototype.makeControllerMenu = function(viewables) {
     } 
 }
 
-
-
-
-/**
- * Modifies the 'menuObject' by adding the folders in 'folderArr'
- * the elements in 'elts' 
- *
- * @param {!Object, !Array.String, !Element | !Array.Element}
- */
-utils.xtk.ControllerMenu.prototype.insertInMenu = function(menuObject, folderArr, elts) {
-
-    var currMenuObject = menuObject;
-
-
-
-    //------------------
-    // Convert 'elts' arg to array if need be.
-    //------------------
-    elts = (goog.isArray(elts)) ? elts : [elts];
-
-
-
-    //------------------
-    // Traverse to current menu level
-    //------------------
-    goog.array.forEach(folderArr, function(folder){
-
-	//
-	// Create folder in currMenuObject
-	//
-	if (!currMenuObject[folder]) { 
-	    currMenuObject[folder] = {}; 
-	    currMenuObject[folder]['parentFolder'] = []; 
-	}
-	currMenuObject = currMenuObject[folder];
-    })
-
-
-
-    //------------------
-    // Add elements to curr menu level.
-    //------------------
-    currMenuObject['parentFolder'].push(elts);
-}
 
 
 
@@ -579,8 +537,16 @@ utils.xtk.ControllerMenu.prototype.makeStandardVisibilityControls3D = function(f
     //------------------
     this.menuMap_[folderName3D] = {};
     this.menuMap_[folderName3D]['display all'] = displayAll['button'];
-    this.menuMap_[folderName3D]['master opacity'] = masterOpacity['slider']['slider']; 
-    this.insertInMenu(this.menu3D_, [folderName3D], this.makeRow([displayAll['label'], displayAll['button'], masterOpacity['label'], masterOpacity['slider']['element'],  masterOpacity['value']], this.visibilityRowSpacing));
+    this.menuMap_[folderName3D]['master opacity'] = 
+	masterOpacity['slider']['slider']; 
+
+    this.menu3D_.addContents( 
+	this.makeRow([displayAll['label'], 
+		      displayAll['button'], 
+		      masterOpacity['label'], 
+		      masterOpacity['slider']['element'],  
+		      masterOpacity['value']], 
+		     utils.xtk.ControllerMenu.rowSpacing), [folderName3D]);
 
 
 
@@ -604,11 +570,17 @@ utils.xtk.ControllerMenu.prototype.makeStandardVisibilityControls3D = function(f
 	visible = this.makeVisible_(fileName, displayAll['button'], displayAll['button']);
 	this.menuMap_[fileName]['visible'] = visible['button'];
 
-	opacity = this.makeOpacity_(fileName, masterOpacity['slider']['slider']);
+	opacity = 
+	    this.makeOpacity_(fileName, masterOpacity['slider']['slider']);
 	this.menuMap_[fileName]['opacity'] = opacity['slider']['slider'];
-	this.insertInMenu(this.menu3D_, [folderName3D, fileName], this.makeRow([visible['label'], visible['button'], 
-										opacity['label'], opacity['slider']['element'], opacity['value']], 
-									       this.visibilityRowSpacing));
+
+
+	this.menu3D_.addContents(  
+	    this.makeRow([visible['label'], visible['button'], 
+			  opacity['label'], opacity['slider']['element'], 
+			  opacity['value']], 
+			  utils.xtk.ControllerMenu.rowSpacing),
+	    [folderName3D, fileName]);
 
     }.bind(this))
 }
@@ -666,12 +638,20 @@ utils.xtk.ControllerMenu.prototype.addVolumes = function(xtkObjects){
 	this.menuMap_[fileName]['volume rendering'] = volumeRendering['button'];
 	this.menuMap_[fileName]['toggle2d'] = toggle2d['button']; 
 
-	this.insertInMenu(this.menu3D_, [folderName3D, fileName], this.makeRow([volumeRendering['label'], 
-										volumeRendering['button'], 
-										threshold['label'], 
-										threshold['slider']['element'], 
-										threshold['value']], this.visibilityRowSpacing ));	
-	this.insertInMenu(this.menu2D_, [folderName2D], this.makeRow([toggle2d['button'] , toggle2d['label']], ['10px', '8%']));	
+	this.menu3D_.addContents( 
+	    this.makeRow([volumeRendering['label'], 
+			  volumeRendering['button'], 
+			  threshold['label'],		
+			  threshold['slider']['element'], 
+			  threshold['value']], 
+			 utils.xtk.ControllerMenu.rowSpacing), 
+	    [folderName3D, fileName]);
+	
+	this.menu2D_.addContents(
+	    this.makeRow([toggle2d['button'] , 
+			  toggle2d['label']], ['10px', '8%']), 
+	    [folderName2D])
+	
     }.bind(this))
 }
 
@@ -744,11 +724,11 @@ utils.xtk.ControllerMenu.prototype.addDicoms = function(xtkObjects){
 	this.menuMap_[fileName]['threshold'] = threshold['slider']['slider'];
 	this.menuMap_[fileName]['volume rendering'] = volumeRendering['button'];
 
-	this.insertInMenu(this.menu3D_, [folderName3D, fileName], this.makeRow([volumeRendering['label'], 
-										volumeRendering['button'], 
-										threshold['label'], 
-										threshold['slider']['element'], 
-										threshold['value']], this.visibilityRowSpacing ));		
+	this.menu3D_.addContents(this.makeRow([volumeRendering['label'], 
+		volumeRendering['button'], threshold['label'], 
+		threshold['slider']['element'], threshold['value']], 
+		utils.xtk.ControllerMenu.rowSpacing ), 
+				 [folderName3D, fileName]);		
     }.bind(this))
 }
 
@@ -795,7 +775,13 @@ utils.xtk.ControllerMenu.prototype.addFiber = function(xtkObjects){
     this.menuMap_[folderName3D]['display all'] = displayAll['button'];
     this.menuMap_[folderName3D]['master opacity'] = masterOpacity['slider']; 
 
-    this.insertInMenu(this.menu3D_, [folderName3D], this.makeRow([displayAll['label'], displayAll['button'], masterOpacity['label'], masterOpacity['slider']['element'],  masterOpacity['value']], this.visibilityRowSpacing));
+    this.menu3D_.addContents(
+	this.makeRow([displayAll['label'], 
+		      displayAll['button'], 
+		      masterOpacity['label'], 
+		      masterOpacity['slider']['element'],  
+		      masterOpacity['value']], 
+		     utils.xtk.ControllerMenu.rowSpacing),  [folderName3D]);
 
 
 
@@ -817,9 +803,12 @@ utils.xtk.ControllerMenu.prototype.addFiber = function(xtkObjects){
 	//
 	// Visible and opacity are the same row.
 	//
-	this.insertInMenu(this.menu3D_, [folderName3D, fileName], this.makeRow([visible['label'], visible['button'], 
-										opacity['label'], opacity['slider']['element'], opacity['value']], 
-									        this.visibilityRowSpacing));
+	this.menu3D_.addContents(
+	    this.makeRow([visible['label'], visible['button'], 
+			  opacity['label'], opacity['slider']['element'], 
+			  opacity['value']], 
+			 utils.xtk.ControllerMenu.rowSpacing), 
+	    [folderName3D, fileName]);
     }.bind(this))
 }
 

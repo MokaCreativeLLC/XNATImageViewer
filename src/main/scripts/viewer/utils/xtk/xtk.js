@@ -47,7 +47,6 @@ utils.xtk.volumeExtensions_ = [
 
 
 
-
 /**
  * @const
  * @type {Array.<string>}
@@ -56,9 +55,32 @@ utils.xtk.volumeExtensions_ = [
 utils.xtk.dicomExtensions_ = [
     'dicom', 
     'dcm',
-    'ima'
+    'ima',
 ];
 
+
+
+/**
+ * @const
+ * @type {Array.<string>}
+ * 
+ */
+utils.xtk.analyzeExtensions_ = [
+    'hdr',
+    'img'
+];
+
+
+
+/**
+ * @const
+ * @type {Array.<string>}
+ * 
+ */
+utils.xtk.niftiExtensions_ = [
+    'nii',
+    'nii.gz'
+];
 
 
 
@@ -70,7 +92,8 @@ utils.xtk.dicomExtensions_ = [
 utils.xtk.imageExtensions_ = [
     'jpeg',
     'jpg',
-    'png'
+    'png',
+    'img'
 ];
 
 
@@ -191,7 +214,6 @@ utils.xtk.isImage = function(ext) {
 /**
  * Scans the 'ext' argument to determine if the extension
  * at hand is a DICOM set.
- *
  * @param {string} ext The extension to check.
  * @return {boolean} Whether the extension matches the category.
  */
@@ -199,6 +221,29 @@ utils.xtk.isDicom = function(ext) {
      return (this.dicomExtensions_.indexOf(ext) > -1 ) ?  true: false;
 }
 
+
+
+/**
+ * Scans the 'ext' argument to determine if the extension
+ * at hand is an Analyze set.
+ * @param {string} ext The extension to check.
+ * @return {boolean} Whether the extension matches the category.
+ */
+utils.xtk.isAnalyze = function(ext) {
+     return (this.analyzeExtensions_.indexOf(ext) > -1 ) ?  true: false;
+}
+
+
+
+/**
+ * Scans the 'ext' argument to determine if the extension
+ * at hand is a NIFTI set.
+ * @param {string} ext The extension to check.
+ * @return {boolean} Whether the extension matches the category.
+ */
+utils.xtk.isNifti = function(ext) {
+     return (this.niftiExtensions_.indexOf(ext) > -1 ) ?  true: false;
+}
 
 
 
@@ -238,6 +283,8 @@ utils.xtk.getEmptyViewablesObject = function(){
 	'fibers': [],
 	'volumes': [],
 	'dicoms': [],
+	'analyze': [],
+	'nifti': [],
 	'meshes':[],
 	'annotations': [],
 	'images':[]
@@ -250,7 +297,8 @@ utils.xtk.getEmptyViewablesObject = function(){
  * Returns the type of the object associated with the given file type. 
  * The object type will be either 'volume', 'mesh', or 'fiber'.
  *
- * @param {!string | !Array.<string>} fileCollection The files to categorize based on X.Objects.
+ * @param {!string | !Array.<string>} fileCollection The files to 
+ *    categorize based on X.Objects.
  * @return {!string | !Array.<string>}
  */
 
@@ -294,7 +342,7 @@ utils.xtk.getViewables = function(fileCollection) {
 
 	} else if (this.isDicom(ext)) {
 	    viewableTypes['dicoms'].push(fileCollection[i]);
-	
+
 	} else if (this.isMesh(ext)){
 	    viewableTypes['meshes'].push(fileCollection[i]);
 
@@ -312,6 +360,18 @@ utils.xtk.getViewables = function(fileCollection) {
     //-------------------------	
     // Rerturn the constructed 'viewableTypes' object.
     //-------------------------	
+    window.console.log("VIEWABLE TYPES", viewableTypes);
+
+
+    //----------------
+    // Cull Empty Viewables
+    //----------------
+    goog.object.forEach(viewableTypes, function(vbl, key){
+	if (!vbl.length){
+	    goog.object.remove(viewableTypes, key); 
+	}
+    })
+    window.console.log("VIEWABLE TYPES - culled", viewableTypes);
     return viewableTypes
 }
 
@@ -327,7 +387,12 @@ utils.xtk.getViewables = function(fileCollection) {
  * @return {X.Object}
  */
 utils.xtk.createXObject = function(fileCollection) {
-    var ext = (goog.isArray(fileCollection)) ? utils.string.getFileExtension(fileCollection[0]) : utils.string.getFileExtension(fileCollection);
+
+    //window.console.log("FILE COLLECT", fileCollection);
+
+    var ext = (goog.isArray(fileCollection)) ? 
+	utils.string.getFileExtension(fileCollection[0]) : 
+	utils.string.getFileExtension(fileCollection);
     var obj = this.generateXtkObjectFromExtension(ext);  
     
 	

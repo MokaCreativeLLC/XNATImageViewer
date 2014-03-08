@@ -32,7 +32,7 @@ utils.ui.ThumbnailGallery = function () {
 				   goog.string.createUniqueString());
     this.setDefaultClasses_();    
 
-
+    
     /**
      * @private
      * @type {!utils.ui.ZippyTree}
@@ -201,7 +201,7 @@ function(thumbnail, opt_folders) {
     //window.console.log(opt_folders, "\n\nMIN", opt_minFolderInd);
     
     
-    this.ZippyTree_.addContent(thumbnail.getElement(), opt_folders);
+    this.ZippyTree_.addContents(thumbnail.getElement(), opt_folders);
 }
 
 

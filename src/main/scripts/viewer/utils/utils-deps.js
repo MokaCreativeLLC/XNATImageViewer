@@ -151,21 +151,35 @@ goog.addDependency('../../../utils/ui/ScrollableContainer/ScrollableContainer.js
 'utils.string'
 ]); 
 
-
-
-
-
-
-
 goog.addDependency('../../../utils/ui/ZippyNode/ZippyNode.js', 
 ['utils.ui.ZippyNode'], [
-
+'goog.events',
+'goog.dom.classes',
+'goog.string',
+'goog.dom',
+'goog.ui.AnimatedZippy',
+'goog.ui.Zippy.Events',
+'goog.ui.Zippy',
+'utils.string',
+'utils.events.EventManager'
 ]);
 
 
 goog.addDependency('../../../utils/ui/ZippyTree/ZippyTree.js', 
 ['utils.ui.ZippyTree'], [
-    'utils.ui.ZippyNode'
+'goog.array',
+'goog.events',
+'goog.string',
+'goog.object',
+'goog.dom',
+'goog.ui.AnimatedZippy',
+'goog.ui.Zippy.Events',
+'goog.fx.AnimationSerialQueue',
+'goog.fx.dom.FadeIn',
+'goog.ui.Zippy',
+'utils.style',
+'utils.events.EventManager',
+'utils.ui.ZippyNode'
 ]);
 
 goog.addDependency('../../../utils/ui/Thumbnail/Thumbnail.js', 

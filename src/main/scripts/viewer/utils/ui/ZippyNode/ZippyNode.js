@@ -3,6 +3,8 @@
  */
 
 // goog
+goog.require('goog.events');
+goog.require('goog.dom.classes');
 goog.require('goog.string');
 goog.require('goog.dom');
 goog.require('goog.ui.AnimatedZippy');
@@ -16,6 +18,8 @@ goog.require('utils.events.EventManager');
 
 
 /**
+ * A ZippyNode represents a collection of elements releveant to creating
+ * a Zippy folder hierarchy (ZippyTree).  
  * @param {!string} The title of the node.
  * @param {!element} The parent element of the zippy.
  * @constructor
@@ -87,9 +91,6 @@ utils.ui.ZippyNode = function (title, parentElement) {
 					      utils.ui.ZippyNode.EventType);
     this.setZippyEvets_Hover_();
     this.setZippyEvents_ExpandAndCollapse_();
-
-
-
 }
 goog.exportSymbol('utils.ui.ZippyNode', utils.ui.ZippyNode);
 
@@ -216,50 +217,47 @@ goog.getCssName(utils.ui.ZippyNode.CSS_CLASS_PREFIX,
 
 /**
  * As stated.
- * @param {!string} zippyTitle The key of the zippy.
+ * @param {!string} title The title of the zippy.
  * @return {!Element} The header label.
  * @private
  */
-utils.ui.ZippyNode.createZippyHeaderLabel_ = function(zippyTitle){
+utils.ui.ZippyNode.createZippyHeaderLabel_ = function(title){
     return goog.dom.createDom('div', {
-	'id': "ZippyHeaderLabel_" + zippyTitle + '_' + 
+	'id': "ZippyHeaderLabel_" + title + '_' + 
 	    goog.string.createUniqueString(),
 	'class': utils.ui.ZippyNode.ZIPPY_HEADER_LABEL_CLASS
-
-    }, utils.string.truncateString(zippyTitle, 
-		              utils.ui.ZippyNode.MAX_LABEL_LENGTH))
+    }, utils.string.truncateString(title, 
+       utils.ui.ZippyNode.MAX_LABEL_LENGTH))
 }
-
 
 
 
 /**
  * As stated.
- * @param {!string} zippyTitle The key of the zippy.
+ * @param {!string} title The title of the zippy.
  * @return {!Element} The described element.
  * @private
  */
-utils.ui.ZippyNode.createZippyExpandIcon_ = 
-function(zippyTitle){
-     return goog.dom.createDom('div', {
-	 'id': "ZippyExpandIcon_" + zippyTitle + '_' + 
-	     goog.string.createUniqueString(),
-	 'class': utils.ui.ZippyNode.ZIPPY_ICON_CLASS
-     }, '+');
+utils.ui.ZippyNode.createZippyExpandIcon_ = function(title){
+    return goog.dom.createDom('div', {
+	'id': "ZippyExpandIcon_" + title + '_' + 
+	    goog.string.createUniqueString(),
+	'class': utils.ui.ZippyNode.ZIPPY_ICON_CLASS
+    }, '+');
 }
 
 
 
 /**
  * As stated.
- * @param {!string} zippyTitle The key of the zippy.
+ * @param {!string} title The title of the zippy.
  * @return {!Element} The described element.
  * @private
  */
 utils.ui.ZippyNode.createZippyContentHolder_ = 
-function(zippyTitle){
+function(title){
     return goog.dom.createDom('div', {
-	'id': "ZippyContent_"+zippyTitle+'_'+goog.string.createUniqueString(),
+	'id': "ZippyContent_" + title + '_' + goog.string.createUniqueString(),
 	'class': utils.ui.ZippyNode.ZIPPY_CONTENT_CLASS
     });
 }
@@ -268,20 +266,15 @@ function(zippyTitle){
 
 /**
  * As stated.
- * @param {!string} zippyTitle The key of the zippy.
+ * @param {!string} title The key of the zippy.
  * @return {!Element} The header element.
  * @private
  */
-utils.ui.ZippyNode.createZippyHeader_ = function(zippyTitle) {
-
-    // Make header
-    var header = /**@type {!Element} */ goog.dom.createDom('div', {
-	'id': "ZippyHeader_" + zippyTitle + '_' + 
-	    goog.string.createUniqueString(),
+utils.ui.ZippyNode.createZippyHeader_ = function(title) {
+    return goog.dom.createDom('div', {
+	'id': "ZippyHeader_" + title  + '_' + goog.string.createUniqueString(),
 	'class': utils.ui.ZippyNode.ZIPPY_HEADER_CLASS
     });
-
-    return header;
 }
 
 
@@ -310,7 +303,9 @@ utils.ui.ZippyNode.prototype.getNodes = function() {
  * @return {!Element}
  * @public
  */
-utils.ui.ZippyNode.prototype.getHeader = function () { return this.header_ };
+utils.ui.ZippyNode.prototype.getHeader = function () { 
+    return this.header_ 
+};
 
 
 
@@ -320,7 +315,8 @@ utils.ui.ZippyNode.prototype.getHeader = function () { return this.header_ };
  * @public
  */
 utils.ui.ZippyNode.prototype.getContentHolder = function () { 
-    return this.contentHolder_ };
+    return this.contentHolder_ 
+};
 
 
 
@@ -330,7 +326,7 @@ utils.ui.ZippyNode.prototype.getContentHolder = function () {
  * @public
  */
 utils.ui.ZippyNode.prototype.getHeaderLabel = function () { 
-    return this.headerLabel_ 
+    return this.headerLabel_; 
 };
 
 
@@ -340,7 +336,9 @@ utils.ui.ZippyNode.prototype.getHeaderLabel = function () {
  * @return {!goog.ui.AnimatedZippy | !goog.ui.Zippy}
  * @public
  */
-utils.ui.ZippyNode.prototype.getZippy = function () { return this.zippy_ };
+utils.ui.ZippyNode.prototype.getZippy = function () { 
+    return this.zippy_; 
+};
 
 
 
@@ -359,36 +357,6 @@ utils.ui.ZippyNode.prototype.setAnimated = function(animated){
 
 /**
  * As stated.
- * @publi
- */
-utils.ui.ZippyNode.prototype.render = function () {
-    var fadeSplit = /**@type {!number}*/.5;
-    var time1 = /**@type {!number}*/ utils.ui.ZippyNode.FADE_TIME * fadeSplit;
-    var time2 = /**@type {!number}*/ utils.ui.ZippyNode.FADE_TIME - time1;
-
-    // Render zippy
-    utils.fx.fadeTo(this.header_, time1, fadeSplit, function(){
-	utils.fx.fadeTo(this.header_, time2, 1, null, fadeSplit);
-	this.renderContents();
-    }.bind(this), 0);
-}
-
-
-
-/**
- * Toggles whether to fade in elements when created.
- * @param {!boolean} fade The toggle option.
- * @public
- */
-utils.ui.ZippyNode.prototype.toggleFadeInOnCreate = function (fade) {
-    this.fadeInOnCreate_ = fade;
-}
-
-
-
-/**
- * As stated.
- * @param {!string} storageKey The storage key.
  * @private
  */
 utils.ui.ZippyNode.prototype.setZippyEvents_ExpandAndCollapse_ = function() {
@@ -418,11 +386,11 @@ utils.ui.ZippyNode.prototype.setZippyEvets_Hover_ = function() {
 
 
 /**
- * As stated.
+ * Callback for when a zippy is expanded.
  * @private
  */
 utils.ui.ZippyNode.prototype.onZippyExpanded_ = function(){
-    this.expandIcon_.innerHTML =  "-";
+    this.expandIcon_.innerHTML = '-';
     utils.style.setStyle(this.expandIcon_, { 'margin-left': '-1em' });
     this['EVENTS'].runEvent('EXPANDED', this);
 }
@@ -434,7 +402,7 @@ utils.ui.ZippyNode.prototype.onZippyExpanded_ = function(){
  * @private
  */
 utils.ui.ZippyNode.prototype.onZippyCollapsed_ = function(){
-    this.expandIcon_.innerHTML =  "+";
+    this.expandIcon_.innerHTML = '+';
     utils.style.setStyle(this.expandIcon_, { 'margin-left': '-1.1em' });
     this['EVENTS'].runEvent('COLLAPSED', this);
 }

@@ -280,6 +280,19 @@ utils.style.dims = function (elt, property) {
 
 
 
+/**
+ * Gets the stylesheet from the document.
+ * @public
+ */
+utils.style.getStyleSheet = function(unique_title){
+  for(var i=0; i<document.styleSheets.length; i++) {
+    var sheet = document.styleSheets[i];
+    if(sheet.title == unique_title) {
+      return sheet;
+    }
+  }
+}
+
 
 
 /**

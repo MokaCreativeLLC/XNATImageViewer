@@ -376,11 +376,12 @@ xiv.XtkPlaneManager.prototype.destroyAllRenderers = function() {
  *
  * @type {function(XObject|Array.<XObject>, String|xiv.XtkPlane, function)}
  */
-xiv.XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, callback) {
+xiv.XtkPlaneManager.prototype.loadInRenderer = 
+function(renderables, xtkPlane, callback) {
 
-    var that = this;
     renderables = goog.isArray(renderables) ? renderables : [renderables];
-    xtkPlane = (typeof xtkPlane === 'string') ? this.anatomicalToViewPlane(xtkPlane) : xtkPlane;
+    xtkPlane = goog.isString(xtkPlane) ? 
+	this.anatomicalToViewPlane(xtkPlane) : xtkPlane;
 
 
 
@@ -388,7 +389,8 @@ xiv.XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, c
     // Need to reset the renderer if loading 
     // in 2D render (i.e. a an X.volume object)
     //------------------
-    if (xtkPlane.id_ !== 'v' || xtkPlane.Renderer_ === undefined) { xtkPlane.resetRenderer(); }
+    if (xtkPlane.id_ !== 'v' || xtkPlane.Renderer_ === undefined) 
+    { xtkPlane.resetRenderer(); }
 
     
 
@@ -397,7 +399,7 @@ xiv.XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, c
     //------------------
     xtkPlane.setRendererOnShowtime(function() { 
 	if (callback) { callback(renderables, xtkPlane); }
-    })
+    }.bind(this))
 
 
 
@@ -410,7 +412,8 @@ xiv.XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, c
 	if (xtkPlane.id_ !== 'v'){
 
 	    // Only render the selected volume in 2D renderers
-	    if ((renderable.isSelectedVolume === undefined) || (renderable.isSelectedVolume === true)){
+	    if ((renderable.isSelectedVolume === undefined) || 
+		(renderable.isSelectedVolume === true)){
 		xtkPlane.addToRenderer(renderable);
 	    }
 	}
@@ -435,10 +438,14 @@ xiv.XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, c
     //------------------
     if (this.cameraSettings_[xtkPlane.id_] !== undefined){
 
-	window.console.log("SETTING CAMERA", this.cameraSettings_[xtkPlane.id_]);
-	xtkPlane.Renderer_.camera.position = this.cameraSettings_[xtkPlane.id_]['position'];
-	xtkPlane.Renderer_.camera.up =  this.cameraSettings_[xtkPlane.id_]['up'];
-	xtkPlane.Renderer_.camera.focus =  this.cameraSettings_[xtkPlane.id_]['focus'];
+	window.console.log("SETTING CAMERA", 
+			   this.cameraSettings_[xtkPlane.id_]);
+	xtkPlane.Renderer_.camera.position = 
+	    this.cameraSettings_[xtkPlane.id_]['position'];
+	xtkPlane.Renderer_.camera.up =  
+	    this.cameraSettings_[xtkPlane.id_]['up'];
+	xtkPlane.Renderer_.camera.focus =  
+	    this.cameraSettings_[xtkPlane.id_]['focus'];
 
     } else {
 	if (xtkPlane.id_ === 'v' && this.applyGenericCameraSettings){
@@ -469,10 +476,9 @@ xiv.XtkPlaneManager.prototype.loadInRenderer = function(renderables, xtkPlane, c
  * @param {boolean=} opt_suspendCallbacks Suspends the 'onLoaded' callback.
  * @param {String=} opt_onloadPlane The optional plane to render first.
  */
-xiv.XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs, opt_suspendCallbacks, opt_onloadPlane) {
+xiv.XtkPlaneManager.prototype.loadInRenderers = 
+    function (renderables, planeStrs, opt_suspendCallbacks, opt_onloadPlane) {
 
- 
-    var that = this;
     var renderCount = 0; 
     var xtkPlanes = [];
     var culledViewPlanes;
@@ -496,7 +502,9 @@ xiv.XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs
 	    break;
 	}
     }
-    goog.array.forEach(planeStrs, function(planeStr) {xtkPlanes.push(that.anatomicalToViewPlane(planeStr))});
+    goog.array.forEach(planeStrs, function(planeStr) {
+	xtkPlanes.push(this.anatomicalToViewPlane(planeStr))
+    }.bind(this));
     
 
 
@@ -505,10 +513,13 @@ xiv.XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs
     //
     // NOTE: 2D renderers will get reset in 'loadInRenderer'. The reason
     // for this is that 2D renderers need a reset every time a new 
-    // volume is loaded in -- so this may be within a scene that's already loaded 
+    // volume is loaded in -- so this may be within a scene that's already loade
     // into the displayer and 3D plane, when the viewer toggles the 2D volume.
     //------------------
-    goog.array.forEach(xtkPlanes, function(xtkPlane) { if (xtkPlane === that.XtkPlaneV_) {xtkPlane.resetRenderer()}});
+    goog.array.forEach(xtkPlanes, function(xtkPlane) { 
+	if (xtkPlane === this.XtkPlaneV_) {
+	    xtkPlane.resetRenderer()}
+    });
 
 
 
@@ -519,8 +530,9 @@ xiv.XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs
     // NOTE: This 'chained' approach was chosen because XTK did not
     // kick back any errors.
     //------------------
-    onloadPlane = opt_onloadPlane ? that.anatomicalToViewPlane(opt_onloadPlane) : xtkPlanes[0];
-    //onloadPlane = that.anatomicalToViewPlane('Sagittal');
+    onloadPlane = opt_onloadPlane ? 
+	this.anatomicalToViewPlane(opt_onloadPlane) : xtkPlanes[0];
+    //onloadPlane = this.anatomicalToViewPlane('Sagittal');
     index = xtkPlanes.indexOf(onloadPlane);
     culledViewPlanes = xtkPlanes;
     if (index > -1) { culledViewPlanes.splice(index, 1); }
@@ -530,30 +542,31 @@ xiv.XtkPlaneManager.prototype.loadInRenderers = function (renderables, planeStrs
     //------------------
     // Add object and render in onloadPlane first.
     //------------------
-    //console.log("ONLOAD PLANE", onloadPlane, xtkPlanes);
+    console.log("ONLOAD PLANE", onloadPlane, xtkPlanes);
     //return;
-    that.loadInRenderer(renderables, onloadPlane, function(){
+    this.loadInRenderer(renderables, onloadPlane, function(){
 
-	//
+
 	// When onloadPlane is finished rendering,
 	// then loop through the rest.  (No errors thrown in Xtk this way.)
-	//
 	goog.array.forEach(culledViewPlanes, function(xtkPlane){
-	    that.loadInRenderer(renderables, xtkPlane, function(){
+	    this.loadInRenderer(renderables, xtkPlane, function(){
 		renderCount++;
 		if (renderCount === culledViewPlanes.length) {
 		    window.console.log("All View Planes rendered...");
 		    
 		    if (opt_suspendCallbacks !== true){
-			goog.array.forEach(that.allRenderedCallbacks_, function(callback){
+			goog.array.forEach(
+			    this.allRenderedCallbacks_, function(callback){
 			    callback();
-			})
+			}.bind(this))
 		    }
 		}
-	    })
-	})
-	that.updateStyle();
-    })
+	    }.bind(this))
+	}.bind(this))
+
+	this.updateStyle();
+    }.bind(this))
 }
 
 

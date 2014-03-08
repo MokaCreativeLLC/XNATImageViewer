@@ -200,12 +200,13 @@ xiv.Displayer.Xtk.prototype.__defineSetter__('onLoaded', function (callback) {
 
 
 /**
- * @return {Object} The controller menu to control the properties of the loaded X.Objects.
+ * @return {Object} The controller menu to control the properties of the 
+ *    loaded X.Objects.
  * @public
  */ 
-xiv.Displayer.Xtk.prototype.__defineGetter__('ControllerMenu',  function(){
-    return this.ControllerMenu_.Menu;
-})
+xiv.Displayer.Xtk.prototype.getControllerMenu =  function(){
+    return this.ControllerMenu_.getMenuAsObject();
+}
 
 
 
@@ -422,6 +423,7 @@ xiv.Displayer.Xtk.prototype.load = function (xnatProperties) {
 	this.loadSlicer_(this.xnatProperties_['files']);
 	break;
     default:
+	window.console.log(this.xnatProperties_);
 	this.loadFiles_(this.xnatProperties_['files']);
     }
 
@@ -455,8 +457,7 @@ xiv.Displayer.Xtk.prototype.loadFiles_ = function (fileUris) {
 xiv.Displayer.Xtk.prototype.loadViewables_ = function (viewables) {
 
 
-    var renderablePlanes = (viewables['volumes'].length > 0 || viewables['dicoms'].length > 0) ? 
-	['Sagittal', 'Coronal', 'Transverse', '3D'] : ['3D']; 
+    var renderablePlanes = ['Sagittal', 'Coronal', 'Transverse', '3D']; 
 
 
 
@@ -503,35 +504,42 @@ xiv.Displayer.Xtk.prototype.loadViewables_ = function (viewables) {
  * private variable 'this.currentViewables_' and their settings in 
  * 'this.currentViewablesSettings_'
  *
- * @param {!Object} viewables The viewables to derive the X.Objects from.
+ * @param {!Object} vbls The vbls to derive the X.Objects from.
  * @private
  */
-xiv.Displayer.Xtk.prototype.makeXtkObjects_ = function(viewables){
-    for (var key in viewables){
+xiv.Displayer.Xtk.prototype.makeXtkObjects_ = function(vbls){
+
+    window.console.log("MAKE XTK", vbls);
+    
+    goog.object.forEach(vbls, function(vbl, key){
 	switch (key){
 	case 'volumes':
 	case 'fibers':
 	case 'meshes':
-            if (!viewables[key]) break;
-            goog.array.forEach(viewables[key], function(volOrFiberOrMesh){
+            if (!vbl) break;
+            goog.array.forEach(vbl, function(volOrFiberOrMesh){
 		this.storeViewables_(key, 
-				     this.makeXtkObject_(volOrFiberOrMesh['file'], volOrFiberOrMesh['properties']), 
+		 this.makeXtkObject_(volOrFiberOrMesh['file'], 
+				     volOrFiberOrMesh['properties']), 
 				     volOrFiberOrMesh);
             }.bind(this))
             break;
 	case 'dicoms':
-	    this.storeViewables_(key, 
-				 this.makeXtkObject_(viewables[key]), viewables[key]);
+	case 'analyze':
+	case 'nifti':
+
+	    window.console.log("HERE", key);
+	    this.storeViewables_(key, this.makeXtkObject_(vbl), vbl);
 	    break;
 	case 'annotations':
-	    goog.array.forEach(viewables[key], function(annotationObj){
+	    goog.array.forEach(vbl, function(annotationObj){
 		this.storeViewables_(key, utils.xtk.makeAnnotation(annotationObj), 
 				     {'properties': annotationObj});
 	    }.bind(this))
 
 	    break;
 	}
-    }
+    }.bind(this))
 }
 
 

@@ -80,6 +80,7 @@ xiv.ViewBoxTabs.EventType = {
 
 /**
  * @dict
+ * @const
  */
 xiv.ViewBoxTabs.ICON_SRC = {
     'Info':  'InfoIcon.png',
@@ -342,20 +343,25 @@ xiv.ViewBoxTabs.prototype.addTab = function(tabTitle) {
 xiv.ViewBoxTabs.prototype.setTabContents = function (tabName, contents) {
     // Add the tab page if it's not there.
     if (!this.Tabs_[tabName]){ this.addTab(tabName); }
-    var tabPage = /**@type {!Element}*/ this.Tabs_[tabName]['content'];
+
     var scrollableContainer = /**@type {utils.ui.ScrollableContainer}*/ null;
 
     // Make or use existing scrollable container...
     if (contents instanceof utils.ui.ScrollableContainer) {
 	//console.log("ITS A SCROLLABLE CONTAINER");
 	scrollableContainer = contents;
-	tabPage.appendChild(scrollableContainer.getElement());
+	this.Tabs_[tabName]['content'].appendChild(
+	    scrollableContainer.getElement());
     }
     else {
 	scrollableContainer = new utils.ui.ScrollableContainer()
-	tabPage.appendChild(scrollableContainer.getElement());
+	this.Tabs_[tabName]['content'].appendChild(
+	    scrollableContainer.getElement());
 	scrollableContainer.addContents(contents);
-	scrollableContainer.setZippysExpanded(false);
+	
+	// Keep this around so you can modify the scrollbar
+	//scrollableContainer.setZippysExpanded(false);
+
 	//window.console.log("CONTENTS", contents);
 	//window.console.log(scrollableContainer.getContentsDict());
     }
