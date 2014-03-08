@@ -253,8 +253,8 @@ xiv.ViewBox.prototype.getThumbnailLoadTime =  function() {
  * @inheritDoc
  */
 xiv.ViewBox.prototype.updateIconSrcFolder = function() {
-    window.console.log("\n\nUPDATE ICON SRC");
     this.ViewBoxTabs_.setIconBaseUrl(this.iconBaseUrl);
+    this.ContentDivider_.setIconBaseUrl(this.iconBaseUrl);
 }
 
 
@@ -325,6 +325,7 @@ xiv.ViewBox.prototype.loadThumbnail = function (Thumbnail) {
     this.hideChildElements_();
 
     // Move content divider to bottom.
+    window.console.log("SLIDE 1", this.ContentDivider_.getLowerLimit());
     this.ContentDivider_.slideTo(this.ContentDivider_.getLowerLimit(), false);
    
     // Feed view planes into xiv.ViewLayoutManager and set 
@@ -386,7 +387,7 @@ xiv.ViewBox.prototype.loadTabs_ = function() {
  * @private
  */
 xiv.ViewBox.prototype.loadTab_Info_ = function() {
-    this.ViewBoxTabs_.setTabContents('Info', 
+    this.ViewBoxTabs_.setTabPageContents('Info', 
       this.Displayer_.createInfoTabContents(this.Thumbnail_.getViewable()));
 }
 
@@ -397,7 +398,7 @@ xiv.ViewBox.prototype.loadTab_Info_ = function() {
  * @private
  */
 xiv.ViewBox.prototype.loadTab_SlicerViews_ = function() {
-    this.ViewBoxTabs_.setTabContents('Slicer Views', 
+    this.ViewBoxTabs_.setTabPageContents('Slicer Views', 
 		this.SlicerViewMenu_.getThumbnailGallery());
 }
 
@@ -411,7 +412,7 @@ xiv.ViewBox.prototype.loadTabs_Controllers_ = function() {
     goog.object.forEach(this.Displayer_.getControllerMenu(), 
 	function(menuElt, key){
 	    if (menuElt){
-	        this.ViewBoxTabs_.setTabContents(key, menuElt);
+	        this.ViewBoxTabs_.setTabPageContents(key, menuElt);
 	    }
 	}.bind(this))
 }
@@ -547,10 +548,8 @@ xiv.ViewBox.prototype.setContentDividerCallbacks_ = function () {
  * @private
  */
 xiv.ViewBox.prototype.setViewBoxTabsCallbacks_ = function () {
-    this.ViewBoxTabs_['EVENTS'].onEvent('ACTIVATED', 
-	this.onViewBoxTabActivated_.bind(this));
-    this.ViewBoxTabs_['EVENTS'].onEvent('DEACTIVATED', 
-         this.onViewBoxTabDeactivated_.bind(this));
+    this.ViewBoxTabs_['EVENTS'].onEvent('CLICKED', 
+	this.onViewBoxTabClicked_.bind(this));
 }
 
 
@@ -655,14 +654,19 @@ xiv.ViewBox.prototype.onDisplayerLoaded_ = function(){
  */
 xiv.ViewBox.prototype.onContentDividerDragging_ = function() {	
 
-    // Deactivate tabs if the content divider slides to
-    // to the bottom of the xiv.ViewBox.
-    if (utils.style.dims(this.ContentDivider_.getElement(), 'top') < 
-	this.ContentDivider_.getLowerLimit()) {
-	this.ViewBoxTabs_.setActive(this.ViewBoxTabs_.getLastActiveTab());
-    } else {
-	//window.console.log("CONTENT DIVIDER DRAGGED");
-	this.ViewBoxTabs_.setActive(-1);
+    // Maintain active tab if dragging up
+    var dragDir = /**@type {!string}*/ this.ContentDivider_.getDragDirection();
+
+    //window.console.log("DRAG DIR!", dragDir);
+    if (dragDir == 'up') {
+	var lastTab = /**@type {!number}*/
+	this.ViewBoxTabs_.getLastActiveTab();
+	this.ViewBoxTabs_.activate(this.ViewBoxTabs_.getLastActiveTab());
+    }
+
+    // Deactivate if drag down to lowest position.
+    else if ((dragDir === 'down') && this.ContentDivider_.isNearLowerLimit()) {
+	this.ViewBoxTabs_.deactivateAll();
     }
 
     // Update the position of the tabs and the style
@@ -691,24 +695,11 @@ xiv.ViewBox.prototype.onContentDividerDragEnd_ = function() {
  * Callback for when a ViewBoxTab is activated.
  * @private
  */
-xiv.ViewBox.prototype.onViewBoxTabActivated_ = function() {
-    // Only raise the tabs up if they're completely lowered.
-    if (this.ContentDivider_.getPosition() >= 
-	this.ContentDivider_.getLowerLimit()){
-	this.ContentDivider_.slideTo(
-	    this.ContentDivider_.getUpperLimit(), true);
-    }
-}
-
-
-
-/**
- * Callback for when a ViewBoxTab is deactivated.
- * @private
- */
-xiv.ViewBox.prototype.onViewBoxTabDeactivated_ = function() {
-    this.ContentDivider_.slideTo(
-	this.ContentDivider_.getLowerLimit(), true);
+xiv.ViewBox.prototype.onViewBoxTabClicked_ = function() {
+    window.console.log("SLIDE 2", this.ContentDivider_.getUpperLimit());
+    this.ContentDivider_.slideTo(this.ContentDivider_.getUpperLimit(), true);
+    window.console.log("SLIDE 3", this.ContentDivider_.getLowerLimit());
+    this.ContentDivider_.slideTo(this.ContentDivider_.getLowerLimit(), true);
 }
 
 
@@ -760,6 +751,9 @@ xiv.ViewBox.prototype.updateStyle_ContentDivider_ = function(widgetDims){
 	    'height': contentDiv_min_Top - xiv.ViewBox.MIN_HOLDER_HEIGHT + 3, 
 	    'width': widgetDims['width']
 	})
+
+	window.console.log(this.ContentDivider_.getElement(),  
+			   contentDiv_min_Top - 1);
     }
 }
 
@@ -785,7 +779,7 @@ xiv.ViewBox.prototype.updateStyle_components_ = function (widgetDims) {
     this.ViewLayoutManager_.implementViewLayout();
 
     // Displayer
-    this.Displayer_.updateStyle({
+    utils.style.setStyle(this.Displayer_.getElement(), {
  	'width': widgetDims['width'],
  	'height': contDiv_Dims['top']
     });

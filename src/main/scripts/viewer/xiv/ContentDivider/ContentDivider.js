@@ -11,6 +11,7 @@ goog.require('goog.array');
 
 // utils
 goog.require('utils.dom');
+goog.require('utils.string');
 goog.require('utils.style');
 goog.require('utils.events.EventManager');
 
@@ -57,9 +58,10 @@ xiv.ContentDivider = function () {
      */
     this.icon_ = goog.dom.createDom("img", {
 	'id' : 'xiv.ContentDividerIcon_' + goog.string.createUniqueString(),
-	'src' : xiv.ICON_URL + 'Icons/Toggle-ContentDivider.png',
-	'class':  xiv.ContentDivider.ICON_CLASS
+	'class':  xiv.ContentDivider.ICON_CLASS,
+	'src': 'Toggle-ContentDivider.png',
     });		
+
     
     // Event manager
     utils.events.EventManager.addEventManager(this, 
@@ -75,6 +77,17 @@ xiv.ContentDivider = function () {
 }
 goog.inherits(xiv.ContentDivider, xiv.Widget);
 goog.exportSymbol('xiv.ContentDivider', xiv.ContentDivider);
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.ContentDivider.prototype.updateIconSrcFolder = function() {
+    this.icon_.src = goog.string.path.join(this.iconUrl, 
+					utils.string.basename(this.icon_.src));
+}
+
 
 
 
@@ -107,8 +120,7 @@ xiv.ContentDivider.ID_PREFIX =  'xiv.ContentDivider';
  * @const
 */
 xiv.ContentDivider.CSS_CLASS_PREFIX =
-goog.string.toSelectorCase(utils.string.getLettersOnly(
-    xiv.ContentDivider.ID_PREFIX));
+    xiv.ContentDivider.ID_PREFIX.toLowerCase().replace(/\./g,'-');
 
 
 
@@ -159,6 +171,39 @@ xiv.ContentDivider.prototype.dragging_ = false;
 
 
 /**
+ * @type {!number}
+ * @private
+ */
+xiv.ContentDivider.prototype.prevY_ = 0;
+
+
+
+/**
+ * @type {!number}
+ * @private
+ */
+xiv.ContentDivider.prototype.currY_ = 0;
+
+
+
+/**
+ * @return {!string}  The drag direction
+ * @public
+ */
+xiv.ContentDivider.prototype.getDragDirection = function() {
+    var diff = /**@type {number}*/  this.currY_ - this.prevY_;
+    if (diff > 0) {
+	return 'down';
+    }
+    else if (diff == 0) { 
+	return 'neutral'; 
+    }
+    return 'up';
+}
+
+
+
+/**
  * @return {!Element}  The divider's containment element.
  * @public
  */
@@ -200,7 +245,7 @@ xiv.ContentDivider.prototype.getUpperLimit = function() {
  * @return {!number} The position value (top, px) of the divider.
  * @public
  */
-xiv.ContentDivider.prototype.getPosition = function() {
+xiv.ContentDivider.prototype.getY = function() {
     return utils.style.dims(this.getElement(), 'top'); 
 } 
 
@@ -214,7 +259,7 @@ xiv.ContentDivider.prototype.getPosition = function() {
  * which is defined by the containment_ element's top + height.
  *
  * @return {!number}
- * @piblic
+ * @public
  */
 xiv.ContentDivider.prototype.getLowerLimit = function() {
     return utils.style.dims(this.containment_, 'top') + 
@@ -239,54 +284,48 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
     goog.events.listen(this.getElement(), goog.events.EventType.MOUSEDOWN, 
 		       function(e) {
 	
-	//
 	// Stop propagation.
-	//
 	utils.dom.stopPropagation(e);
 	
 
-	//
 	// Params.
-	//
 	var cDims = utils.style.dims(this.containment_);
 	var d = new goog.fx.Dragger(this.getElement(), null, 
-		new goog.math.Rect(0, cDims.top, 0, 
-				   cDims.height - xiv.CONTENT_DIVIDER_HEIGHT));
+		new goog.math.Rect(0, cDims['top'], 0, 
+			cDims['height'] 
+		        - xiv.ContentDivider.CONTENT_DIVIDER_HEIGHT));
 	this.dragging_ = true;	
 
 
-	//
 	// Clear params when done dragging.
-	//
 	d.addEventListener(goog.fx.Dragger.EventType.START, function(e) {
 	    this.dragging_ = true;
+	    this.prevY_ = this.getY();
+	    this.currY_ = this.prevY_;
 	    this['EVENTS'].runEvent('DRAGSTART', this);	
 	}.bind(this));
 
 	
-	//
 	// Run drag callbacks on drag.
-	//
 	d.addEventListener(goog.fx.Dragger.EventType.DRAG, function(e) {
 	    utils.dom.stopPropagation(e);
-	    window.console.log("DRAG");
+
+
+	    this.prevY_ = this.currY_;
+	    this.currY_ = this.getY();
 	    this['EVENTS'].runEvent('DRAG', this);	
 	}.bind(this));
 	
 
-	//
 	// Clear params when done dragging.
-	//
 	d.addEventListener(goog.fx.Dragger.EventType.END, function(e) {
 	    this.dragging_ = false;
+	    this['EVENTS'].runEvent('DRAGEND', this);
 	    d.dispose();
-	    this['EVENTS'].runEvent('DRAGEND', this);	
 	}.bind(this));
 
 
-	//
 	// Call goog.fx.Dragger.startDrag
-	//
 	d.startDrag(e);	
     }.bind(this));
 }
@@ -303,6 +342,7 @@ xiv.ContentDivider.prototype.setDefaultDragMethods_ = function() {
  */
 xiv.ContentDivider.prototype.slideTo = function(newTop, opt_animate) {
     
+    window.console.log("SLIDE TO", newTop);
     var dims = utils.style.dims(this.getElement());
     var slide = new goog.fx.dom.Slide(this.getElement(), 
 				      [dims.left, dims.top], [0, newTop], 
@@ -313,13 +353,19 @@ xiv.ContentDivider.prototype.slideTo = function(newTop, opt_animate) {
     // Callbacks dor the animation events (BEGIN, ANIMATE, END).
     //------------------
     goog.events.listen(slide, goog.fx.Animation.EventType.BEGIN, function() {
+
+	this.prevY_ = this.getY();
+	this.currY_ = this.prevY_;
 	this['EVENTS'].runEvent('DRAGSTART', this);		
     }.bind(this));
 
 
     goog.events.listen(slide, goog.fx.Animation.EventType.ANIMATE, function() {
-	window.console.log('DRAG');
-      this['EVENTS'].runEvent('DRAG', this);			
+
+	this.prevY_ = this.currY_;
+	this.currY_ = this.getY();
+	window.console.log('DRAG', this.currY_, this.prevY_);
+	this['EVENTS'].runEvent('DRAG', this);			
     }.bind(this));
 
 
@@ -336,14 +382,26 @@ xiv.ContentDivider.prototype.slideTo = function(newTop, opt_animate) {
 
 
 
+/**
+ * Determines if the divider is within 3 pixels of the lower limit.
+ * @return {!boolean} Whether at or near lower limit.
+ * @public
+ */
+xiv.ContentDivider.prototype.isNearLowerLimit = function() {
+    return Math.abs(utils.style.dims(this.getElement(), 'top') -
+		    this.getLowerLimit()) < 3
+}
+
+
 
 /**
  * @inheritDoc
  */
 xiv.ContentDivider.prototype.updateStyle = function (opt_args) {
+
+    window.console.log(opt_args);
     if (opt_args) { 
 	this.setArgs(opt_args) 
-	utils.style.setStyle(this.getElement(), this.currArgs().elementCSS);
     }
 }
 

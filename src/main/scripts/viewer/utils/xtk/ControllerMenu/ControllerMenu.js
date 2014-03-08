@@ -101,8 +101,8 @@ utils.xtk.ControllerMenu.prototype.getMenuAsObject = function(){
     this.menu3D_.contractAll();
 
     return {
-	'2D Menu' : this.menu2D_.isEmpty() ? null : this.menu2D_.getElement(),
-	'3D Menu' : this.menu3D_.isEmpty() ? null : this.menu3D_.getElement(),
+	'2D' : this.menu2D_.isEmpty() ? null : this.menu2D_.getElement(),
+	'3D' : this.menu3D_.isEmpty() ? null : this.menu3D_.getElement(),
     }
 }
 
