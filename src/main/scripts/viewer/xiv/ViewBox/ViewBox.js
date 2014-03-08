@@ -695,11 +695,22 @@ xiv.ViewBox.prototype.onContentDividerDragEnd_ = function() {
  * Callback for when a ViewBoxTab is activated.
  * @private
  */
-xiv.ViewBox.prototype.onViewBoxTabClicked_ = function() {
-    window.console.log("SLIDE 2", this.ContentDivider_.getUpperLimit());
-    this.ContentDivider_.slideTo(this.ContentDivider_.getUpperLimit(), true);
-    window.console.log("SLIDE 3", this.ContentDivider_.getLowerLimit());
-    this.ContentDivider_.slideTo(this.ContentDivider_.getLowerLimit(), true);
+xiv.ViewBox.prototype.onViewBoxTabClicked_ = function(clickInd) {
+    
+    if (this.ContentDivider_.isNearLowerLimit()) {
+	this.ContentDivider_.slideTo(this.ContentDivider_.getUpperLimit(), 
+				     true);
+    }
+    else {
+	window.console.log("Not: ", clickInd);
+	if (clickInd === this.ViewBoxTabs_.getLastActiveTab()){
+	    this.ContentDivider_.slideTo(this.ContentDivider_.getLowerLimit(), 
+					 true);
+	}
+    }
+    
+    //window.console.log("SLIDE 3", this.ContentDivider_.getLowerLimit());
+    //this.ContentDivider_.slideTo(this.ContentDivider_.getLowerLimit(), true);
 }
 
 

@@ -55,8 +55,7 @@ goog.exportSymbol('xiv.ViewBoxTabs', xiv.ViewBoxTabs)
  * @public
  */
 xiv.ViewBoxTabs.EventType = {
-  ACTIVATED: goog.events.getUniqueId('viewboxtab_activated'),
-  DEACTIVATED: goog.events.getUniqueId('viewboxtab_deactivated'),
+  CLICKED: goog.events.getUniqueId('viewboxtab_clicked'),
 }
 
 
@@ -341,7 +340,6 @@ xiv.ViewBoxTabs.prototype.addTab = function(tabTitle) {
     this.clearEventListeners_();
     this.setClickEvents_();
     this.setHoverEvents_();
-    this.activate(0);
     this.deactivateAll();
 }
 
@@ -591,6 +589,7 @@ xiv.ViewBoxTabs.prototype.clearEventListeners_ = function(){
 }
 
 
+
 /**
  * Sets the default click events when a user clicks on a tab
  * (i.e. tab activation and tab deactivation).
@@ -601,11 +600,13 @@ xiv.ViewBoxTabs.prototype.setClickEvents_ = function() {
     goog.array.forEach(this.getTabElements(), function(tab, i) { 
 	goog.events.listen(tab, goog.events.EventType.MOUSEUP, function(event) {
 	    window.console.log("CLICK", i);
+	    this.deactivateAll();
+	    this['EVENTS'].runEvent('CLICKED', i);
 	    this.activate(i);
-	    this['EVENTS'].runEvent('ACTIVATED', this);
 	}.bind(this))
     }.bind(this))	
 }
+
 
 
 /**
@@ -616,11 +617,9 @@ xiv.ViewBoxTabs.prototype.setClickEvents_ = function() {
  */
 xiv.ViewBoxTabs.prototype.setTabMouseOver_ = function(tab, i) {
     goog.events.listen(tab, goog.events.EventType.MOUSEOVER, function() { 
-	// Only change style of inactive tabs
-	if ((tab.getAttribute('isActive') === false || 
-	     tab.getAttribute('isActive') === 'false')) {
-	    goog.dom.classes.add(tab, xiv.ViewBoxTabs.HOVERED_TAB_CLASS);
-	}
+
+	goog.dom.classes.add(tab, xiv.ViewBoxTabs.HOVERED_TAB_CLASS);
+	
 
 	// Set TabIcon style change (opacity) -- applies whether active 
 	// or inactive
@@ -633,6 +632,7 @@ xiv.ViewBoxTabs.prototype.setTabMouseOver_ = function(tab, i) {
 }
 
 
+
 /**
  * As stated.
  * @param {!Element} tab The tab to apply the event listener to.
@@ -641,19 +641,18 @@ xiv.ViewBoxTabs.prototype.setTabMouseOver_ = function(tab, i) {
  */
 xiv.ViewBoxTabs.prototype.setTabMouseOut_ = function(tab, i) {
     goog.events.listen(tab, goog.events.EventType.MOUSEOUT, function(e) { 
-	// Only change style of inactive tabs
-	if ((tab.getAttribute('isActive') === false || 
-	     tab.getAttribute('isActive') == 'false')) {
-	    goog.dom.classes.remove(tab, xiv.ViewBoxTabs.HOVERED_TAB_CLASS);
-	}
 
+	goog.dom.classes.remove(tab, xiv.ViewBoxTabs.HOVERED_TAB_CLASS);
+	
 	// TabIcon style change (opacity) -- applies whether active or inactive
-	goog.array.forEach(this.getTabIcons(), function(icon){
+	goog.array.forEach(goog.dom.getElementsByClass(
+	    this.TABICON_CLASS, tab), function(icon){
 		goog.dom.classes.remove(icon, 
-				 xiv.ViewBoxTabs.MOUSEOVER_TABICON_CLASS);
+				     xiv.ViewBoxTabs.MOUSEOVER_TABICON_CLASS);
 	    }.bind(this))
     }.bind(this))
 }
+
 
 
 /**
@@ -668,6 +667,7 @@ xiv.ViewBoxTabs.prototype.setHoverEvents_ = function() {
 	this.setTabMouseOut_(tab, i);
     }.bind(this))	
 }
+
 
 
 /**
