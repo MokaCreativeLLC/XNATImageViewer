@@ -1,0 +1,40 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.xiv-ui-viewbox {
+    top: 0px;
+    left: 80px;
+    width: 500px;
+    height: 500px;
+    border: solid rgba(90,90,90,1) 1px;
+    position: absolute;
+    overflow: hidden;
+}
+
+
+.xiv-ui-viewbox-hidden {
+    visibility: hidden;
+}
+
+
+.xiv-ui-viewbox-draganddrophandle {
+    position: absolute; 
+    cursor: pointer;
+    width: 6px;
+    height: 13px;
+    opacity: .4;
+    z-index: 1000;
+    margin-left: -10px;
+}
+
+
+.xiv-ui-viewbox-dragging {
+    z-Index: 100000;
+    opacity: .55;
+    border: solid rgba(255,255,255,1) 1px;
+    background-color: rgba(0,0,0, .5);
+    overflow: hidden;
+}
