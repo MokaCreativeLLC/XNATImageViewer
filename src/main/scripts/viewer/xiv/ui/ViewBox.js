@@ -64,6 +64,27 @@ xiv.ui.ViewBox = function () {
 	    'background': 'rgb(205,25,48)',
 	}, 'Hello World 2.'))
 
+
+    /**
+     * @type {1moka.ui.Resizeable}
+     * @private
+     */
+    this.TabsResizeable_ = new moka.ui.Resizeable(
+	this.ViewBoxTabs_.getElement(), 'ALL')
+    this.TabsResizeable_.setContainment(20, 20, 300, 300, true);
+    this.TabsResizeable_.setMinSize(50, 50);
+
+    moka.style.setStyle(this.ViewBoxTabs_.getElement(), {
+	'position': 'absolute',
+	'left': 40,
+	'top': 40,
+	'height': 200,
+	'width': 100,
+    })
+
+
+
+
     /*
     var a = goog.dom.createDom('div', {
 	'id': "ASDFASDF",

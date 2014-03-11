@@ -6,14 +6,14 @@ See the COPYING file for details.
 /* Copyright 2007 Google Inc.  All Rights Reserved. */
 /**/
 
-.moka-ui-resizable-handle {
+.moka-ui-resizeable-handle {
   position: absolute;
   font-size: 0.1px;
   z-index: 49;
 }
 
 
-.moka-ui-resizable-right {
+.moka-ui-resizeable-right {
   position: absolute;
   right: 0px;
   top: 0px;
@@ -23,7 +23,7 @@ See the COPYING file for details.
 }
 
 
-.moka-ui-resizable-bottom-right {
+.moka-ui-resizeable-bottom-right {
   position: absolute;
   right: 1px;
   bottom: 1px;
@@ -33,7 +33,7 @@ See the COPYING file for details.
   z-index: 50;
 }
 
-.moka-ui-resizable-bottom {
+.moka-ui-resizeable-bottom {
   position: absolute;
   left: 0px;
   bottom: 0px;
@@ -43,7 +43,7 @@ See the COPYING file for details.
 }
 
 
-.moka-ui-resizable-bottom-left {
+.moka-ui-resizeable-bottom-left {
   position: absolute;
   left: 1px;
   bottom: 1px;
@@ -54,7 +54,7 @@ See the COPYING file for details.
 }
 
 
-.moka-ui-resizable-left {
+.moka-ui-resizeable-left {
   position: absolute;
   left: 0px;
   top: 0px;
@@ -64,7 +64,7 @@ See the COPYING file for details.
 }
 
 
-.moka-ui-resizable-top-left {
+.moka-ui-resizeable-top-left {
   position: absolute;
   left: 1px;
   top: 1px;
@@ -76,7 +76,7 @@ See the COPYING file for details.
 
 
 
-.moka-ui-resizable-top {
+.moka-ui-resizeable-top {
   position: absolute;
   left: 0px;
   top: 0px;
@@ -88,7 +88,7 @@ See the COPYING file for details.
 }
 
 
-.moka-ui-resizable-top-right {
+.moka-ui-resizeable-top-right {
   position: absolute;
   right: 1px;
   top: 1px;
@@ -99,7 +99,7 @@ See the COPYING file for details.
 }
 
 
-.moka-ui-resizable-ghost {
+.moka-ui-resizeable-ghost {
   position: absolute;
   left: 0px;
   top: 0px;

@@ -35,7 +35,9 @@ xiv.ui.ViewBoxTabs = function () {
     goog.base(this);
     moka.style.setStyle(this.getElement(), {
 	'top': '50%',
-	'left': '25%'
+	'left': '25%',
+	'width': '50%',
+	'height': 100
     })
 
 
@@ -46,17 +48,13 @@ xiv.ui.ViewBoxTabs = function () {
     this.googTabPane_ = new goog.ui.TabPane(this.getElement());
 
     // events
-    moka.events.EventManager.addEventManager(this, xiv.ui.ViewBoxTabs.EventType);
+    moka.events.EventManager.addEventManager(this, 
+					     xiv.ui.ViewBoxTabs.EventType);
 
 
-    var resizeable = new moka.ui.Resizeable(this.getElement(), {
-	maxWidth: 400,
-	minWidth: 100,
-	maxHeight: 400,
-	minHeight: 100,
-    })
 
-    resizeable.setContinuousResize(true);
+
+
 }
 goog.inherits(xiv.ui.ViewBoxTabs, moka.ui.Component);
 goog.exportSymbol('xiv.ui.ViewBoxTabs', xiv.ui.ViewBoxTabs)
@@ -88,7 +86,7 @@ xiv.ui.ViewBoxTabs.ICON_SRC = {
 /**
  * @type {!string} 
  * @const
-*/
+ */
 xiv.ui.ViewBoxTabs.ID_PREFIX =  'xiv.ui.ViewBoxTabs';
 
 
@@ -96,7 +94,7 @@ xiv.ui.ViewBoxTabs.ID_PREFIX =  'xiv.ui.ViewBoxTabs';
 /**
  * @type {!string} 
  * @const
-*/
+ */
 xiv.ui.ViewBoxTabs.CSS_CLASS_PREFIX =
 goog.string.toSelectorCase(
     xiv.ui.ViewBoxTabs.ID_PREFIX.toLowerCase().replace(/\./g,'-'));
