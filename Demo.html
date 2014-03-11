@@ -5,42 +5,44 @@
 
 
 
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/menu.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/menuitem.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/menuseparator.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/menubutton.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/custombutton.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/utils/css/genericslider.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/utils/css/scrollablecontainer.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/utils/css/zippynode.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/utils/css/zippytree.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/utils/css/thumbnail.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/viewlayoutmenu.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/viewbox.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/modal.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/thumbnail.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/thumbnailmanager.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/viewboxmanager.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/xtkplane.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/contentdivider.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/displayer.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/viewboxtabs.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/viewlayouts.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/utils/xtk/css/controllermenu.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/lib/closure-library/closure/goog/css/menu.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/lib/closure-library/closure/goog/css/menuitem.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/lib/closure-library/closure/goog/css/menuseparator.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/lib/closure-library/closure/goog/css/menubutton.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/lib/closure-library/closure/goog/css/custombutton.css">
+
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/lib/moka/ui/css/genericslider.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/lib/moka/ui/css/scrollablecontainer.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/lib/moka/ui/css/zippynode.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/lib/moka/ui/css/zippytree.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/lib/moka/ui/css/thumbnail.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/lib/moka/ui/css/resizeable.css">
+
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/viewbox.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/modal.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/thumbnail.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/thumbnailmanager.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/viewboxmanager.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/xtkplane.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/displayer.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/viewboxtabs.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/viewlayouts.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/controllermenu.css">
 
 
-<script src="src/main/scripts/viewer/sample-data/XNAT_IMAGE_VIEWER_DEMO_DATA.js"></script>
-<script src="src/main/scripts/viewer/closure-library/closure/goog/base.js"></script>
-<script src="src/main/scripts/viewer/utils/lib/X/xtk-deps.js"></script>
+<script src="src/main/scripts/viewer/xiv/sample-data/XNAT_IMAGE_VIEWER_DEMO_DATA.js"></script>
 
+<!-- lib -->
+<script src="src/main/scripts/viewer/xiv/lib/closure-library/closure/goog/base.js"></script>
+<script src="src/main/scripts/viewer/xiv/lib/X/xtk-deps.js"></script>
+<script src="src/main/scripts/viewer/xiv/lib/_custom/X/xtk-custom-deps.js"></script>
+<script src="src/main/scripts/viewer/xiv/lib/gxnat/gxnat-deps.js"></script>
+<script src="src/main/scripts/viewer/xiv/lib/moka/moka-deps.js"></script>
+<!-- lib -->
 
-<!-- XTK CUSOM DEPS -->
-<script src="src/main/scripts/viewer/utils/xtk-customizations/xtk-custom-deps.js"></script>
-<!-- XTK CUSOM DEPS -->
-
-<script src="src/main/scripts/viewer/utils/utils-deps.js"></script>
+<!-- xiv -->
 <script src="src/main/scripts/viewer/xiv/xiv-deps.js"></script>
-
+<!-- xiv -->
 
 
 <!-- /XIViewer.vm -->
@@ -55,6 +57,7 @@
 <script>
 
 goog.require('xiv');
+
 
 var mode = 'demo';
 var modalState = 'popup';

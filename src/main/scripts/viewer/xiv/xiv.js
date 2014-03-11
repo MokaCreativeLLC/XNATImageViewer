@@ -11,17 +11,16 @@ goog.require('goog.window');
 
 // xtk
 goog.require('X.loader');
+goog.require('X.parserIMA'); // custom
 
-// utils
-goog.require('utils.fx');
-goog.require('utils.xnat');
-goog.require('utils.xnat.Path');
-goog.require('utils.xnat.ProjectTree');
+// lib
+goog.require('moka.fx');
+goog.require('gxnat');
+goog.require('gxnat.Path');
+goog.require('gxnat.ProjectTree');
 
 // xiv
-goog.require('X.parserIMA'); // custom
-goog.require('xiv.Modal');
-
+goog.require('xiv.ui.Modal');
 
 
 
@@ -34,7 +33,9 @@ goog.require('xiv.Modal');
  * @constructor
  */
 goog.provide('xiv');
-var xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
+xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
+
+
 
     /** 
      * @private
@@ -80,8 +81,8 @@ xiv.startViewer = function (windowMode, xnatServerRoot, dataPath, imagePath) {
     xiv.loadCustomExtensions_();
     xiv.adjustDocumentStyle_();
     var imageViewer = new xiv(windowMode, 
-                               xnatServerRoot,  
-			      utils.xnat.Path.getQueryPrefix(xnatServerRoot),
+                              xnatServerRoot,  
+			      gxnat.Path.getQueryPrefix(xnatServerRoot),
 			      imagePath);
 
     imageViewer.loadExperiment(dataPath);
@@ -101,7 +102,7 @@ xiv.ANIM_TIME = 300;
 
 
 /** 
- * @type {xiv.Modal} 
+ * @type {xiv.ui.Modal} 
  * @private
  */
 xiv.prototype.Modal_;
@@ -109,7 +110,7 @@ xiv.prototype.Modal_;
 
 
 /**
- * @type {utils.xnat.ProjectTree}
+ * @type {gxnat.ProjectTree}
  * @private
  */
 xiv.prototype.ProjectTree_;
@@ -125,7 +126,7 @@ xiv.prototype.dataPaths_;
 
 
 /**
- * @type {Object.<string, Array.<utils.xnat.Viewable>>}
+ * @type {Object.<string, Array.<gxnat.Viewable>>}
  * @private
  */
 xiv.prototype.Viewables_;
@@ -141,15 +142,18 @@ xiv.prototype.showModal = function(){
     this.Modal_.getElement().style.opacity = 0;
     goog.dom.append(document.body, this.Modal_.getElement());
     // Important that this be here;
-    this.Modal_.getViewBoxManager().insertColumn(false);
-    utils.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME);
+
+    if(this.Modal_.getViewBoxManager()){
+	this.Modal_.getViewBoxManager().insertColumn(false);
+    }
+    moka.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME);
 }
 
 
 
 /**
  * As stated.
- * @return {!xiv.Modal} The Modal class.
+ * @return {!xiv.ui.Modal} The Modal class.
  * @public
  */
 xiv.prototype.getModal = function(){
@@ -165,7 +169,7 @@ xiv.prototype.getModal = function(){
  * @public
  */
 xiv.prototype.hideModal = function(opt_callback){
-    utils.fx.fadeOut(this.Modal_.getElement(), xiv.ANIM_TIME, opt_callback);
+    moka.fx.fadeOut(this.Modal_.getElement(), xiv.ANIM_TIME, opt_callback);
 }
 
 
@@ -224,7 +228,7 @@ xiv.prototype.loadProjectTree = function() {
     var startPath = /**@type {!string}*/ this.getDataPaths()[0];
 
     // when tree loading is finished...
-    (new utils.xnat.ProjectTree(startPath)).load( 
+    (new gxnat.ProjectTree(startPath)).load( 
 	function(projTree){
 	    window.console.log("PROJECT TREE");
 	    // Get the experiments in the tree
@@ -269,22 +273,24 @@ xiv.prototype.loadExperiment = function(exptUrl) {
  * @private
  */
 xiv.prototype.collapseAdditionalZippys_ = function() {
-    this.getModal().getThumbnailManager().
-	getThumbnailGallery().getZippyTree()['EVENTS'].
-	onEvent('NODEADDED', function(currNode){
-	    var prevDur = /**@type {!number}*/
-	    currNode.getZippy().animationDuration;
-	    currNode.getZippy().animationDuration = 0;
-	    currNode.getZippy().setExpanded(false);
-	    currNode.getZippy().animationDuration = prevDur;
-	})
+    if (this.getModal().getThumbnailManager()){
+	this.getModal().getThumbnailManager().
+	    getThumbnailGallery().getZippyTree()['EVENTS'].
+	    onEvent('NODEADDED', function(currNode){
+		var prevDur = /**@type {!number}*/
+		currNode.getZippy().animationDuration;
+		currNode.getZippy().animationDuration = 0;
+		currNode.getZippy().setExpanded(false);
+		currNode.getZippy().animationDuration = prevDur;
+	    })
+    }
 }
 
 
 
 /**
  * As stated.
- * @param {!utils.xnat.ProjectTree}
+ * @param {!gxnat.ProjectTree}
  * @public
  */
 xiv.prototype.setProjectTree = function(tree){
@@ -339,7 +345,7 @@ xiv.prototype.makeModalPopup_ = function(){
  * @public
  */
 xiv.prototype.fetchViewables = function(viewablesUri, opt_doneCallback){
-    utils.xnat.getViewables(viewablesUri, function(viewable){
+    gxnat.getViewables(viewablesUri, function(viewable){
 	this.storeViewable_(viewable);
 	this.addViewableToModal(viewable);
     }.bind(this), opt_doneCallback)
@@ -349,13 +355,16 @@ xiv.prototype.fetchViewables = function(viewablesUri, opt_doneCallback){
 
 /**
  * Adds a viewable to the modal.
- * @param {utils.xnat.Viewable} Viewable The Viewable to add.
+ * @param {gxnat.Viewable} Viewable The Viewable to add.
  * @public
  */
 xiv.prototype.addViewableToModal = function(Viewable){
     //window.console.log(Viewable, key)
     //window.console.log(Viewable);
     //window.console.log(Viewable['thumbnailUrl']);
+
+    if (!this.Modal_.getThumbnailManager()) { return };
+
     this.Modal_.getThumbnailManager().createAndAddThumbnail(
 	Viewable, // The viewable
 	xiv.extractViewableFolders_(Viewable), // The folder tree
@@ -371,7 +380,9 @@ xiv.prototype.addViewableToModal = function(Viewable){
  * @private
  */
 xiv.prototype.createModal_ = function(){
-    this.Modal_ = /**@type {!xiv.Modal}*/ new xiv.Modal();
+
+    window.console.log(xiv.ui);
+    this.Modal_ = /**@type {!xiv.ui.Modal}*/ new xiv.ui.Modal();
     this.Modal_.setIconBaseUrl(this.iconUrl_);
     this.Modal_.setMode('windowed');
     this.setModalButtonCallbacks_();
@@ -384,7 +395,7 @@ xiv.prototype.createModal_ = function(){
 
 /**
  * Stores the viewable in an object, using its path as a key.
- * @param {!utils.xnat.Viewable} viweable The utils.xnat.Viewable object to 
+ * @param {!gxnat.Viewable} viweable The gxnat.Viewable object to 
  *    store.
  * @param {!string} path The XNAT path associated with the Viewable.
  * @private
@@ -402,22 +413,22 @@ xiv.prototype.storeViewable_ = function(viewable, path) {
 /**
  * Extracts the folders in the provided path and returns a set of folders
  * for querying thumbnails. 
- * @param {utils.xnat.Viewable} Viewable
+ * @param {gxnat.Viewable} Viewable
  * @private
  */
 xiv.extractViewableFolders_ = function(Viewable){
-    var pathObj =  /**@type {!utils.xnat.Path}*/
-    new utils.xnat.Path(Viewable['experimentUrl']);
+    var pathObj =  /**@type {!gxnat.Path}*/
+    new gxnat.Path(Viewable['experimentUrl']);
     
     var folders = /**@type {!Array.string}*/ [];
     var key = /**@type {!string}*/ '';
-    var keyValid = /**@type {string}*/ utils.xnat.folderAbbrev[key];
+    var keyValid = /**@type {string}*/ gxnat.folderAbbrev[key];
 
     //window.console.log("PATH OBJ", pathObj, "key valid", keyValid);
     for (key in pathObj){ 
 	if (goog.isDefAndNotNull(pathObj[key]) && 
-	    key !== 'prefix' && utils.xnat.folderAbbrev.hasOwnProperty(key)){
-	    folders.push(utils.xnat.folderAbbrev[key] 
+	    key !== 'prefix' && gxnat.folderAbbrev.hasOwnProperty(key)){
+	    folders.push(gxnat.folderAbbrev[key] 
 			 + ": " + pathObj[key]) 
 	}
     };

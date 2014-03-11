@@ -65,7 +65,7 @@ def convertDemoToPopup(demoPath):
         #
         # Replace the appropriate paths
         #
-        line = line.replace('src/main/scripts/viewer/', '').strip()
+        line = line.replace('src/main/scripts/viewer/xiv', '').strip()
         
 
         #
@@ -183,7 +183,7 @@ def main():
         imageViewerHome + '/src/main/templates/screens/XImgView.vm', 
     ] 
     popupTargets = [
-        imageViewerHome +   '/src/main/scripts/viewer/popup.html'
+        imageViewerHome +   '/src/main/scripts/viewer/xiv/popup.html'
     ]
 
 

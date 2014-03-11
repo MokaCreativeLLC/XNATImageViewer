@@ -1,0 +1,15 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.xiv-ui-viewboxmanager-handle{
+    position: absolute; 
+    cursor: pointer;
+    width: 6px;
+    height: 13px;
+    opacity: .4;
+    z-index: 1000;
+    margin-left: -10px;
+}

@@ -26,14 +26,14 @@ def main():
 
  
     origins= {
-        'scripts':  imageViewerHome + '/src/main/scripts/viewer',
+        'scripts':  imageViewerHome + '/src/main/scripts/viewer/xiv',
         'images' : imageViewerHome + '/src/main/images/viewer',
         'vm' : imageViewerHome + '/src/main/templates/screens/XImgView.vm',
         'hook' : imageViewerHome + '/src/main/templates/screens/xnat_imageSessionData/actionsBox/ViewInXImgView.vm',        
     }
 
     targets = {
-        'scripts' : apacheXnat + '/scripts/viewer',
+        'scripts' : apacheXnat + '/scripts/viewer/xiv',
         'images' : apacheXnat + '/images/viewer',
         'vm' : apacheXnat + '/templates/screens/XImgView.vm',
         'hook' : apacheXnat + '/templates/screens/xnat_imageSessionData/actionsBox/ViewInXImgView.vm',
