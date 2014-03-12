@@ -71,8 +71,9 @@ xiv.ui.ViewBox = function () {
      */
     this.TabsResizeable_ = new moka.ui.Resizeable(
 	this.ViewBoxTabs_.getElement(), 'ALL')
-    this.TabsResizeable_.setContainment(20, 20, 300, 300, true);
+    this.TabsResizeable_.setBounds(20, 20, 300, 300, true);
     this.TabsResizeable_.setMinSize(50, 50);
+    this.TabsResizeable_.showBoundaryElt();
 
     moka.style.setStyle(this.ViewBoxTabs_.getElement(), {
 	'position': 'absolute',

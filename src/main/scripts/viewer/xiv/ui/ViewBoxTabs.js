@@ -594,8 +594,8 @@ xiv.ui.ViewBoxTabs.prototype.updateStyle = function () {
 	if (!this.getElement().parentNode){ return };
 
 	    
-	var contHeight = Math.floor(pHght - 
-	    ((isNaN(tabTop) ? 0 : tabTop) + this.tabHeight_));
+	var eltSize = goog.style.getSize(this.getElement());
+
 	
 	var borderMgn = parseInt(moka.style.getComputedStyle(tObj['tab'], 
 						'border-bottom-width'));
@@ -605,8 +605,11 @@ xiv.ui.ViewBoxTabs.prototype.updateStyle = function () {
 	// Resize tab content height
 	moka.style.setStyle(tObj['content'], {
 	    'top': this.tabHeight_ - borderMgn,
-	    'height': contHeight,
 	})
+
+	// 100% - tabHeight
+	tObj['content'].style.height = 'calc(100% - ' + 
+	    this.tabHeight_.toString() + 'px)',
 
 	i++;
     }.bind(this))
