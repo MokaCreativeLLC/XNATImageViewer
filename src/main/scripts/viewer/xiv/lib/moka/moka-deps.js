@@ -177,24 +177,30 @@ goog.addDependency('../../../moka/ui/ThumbnailGallery.js',
 
 goog.addDependency('../../../moka/ui/Tabs.js', 
 ['moka.ui.Tabs'], [
-    'goog.object',
-    'goog.string',
     'goog.dom',
+    'goog.object',
+    'goog.events',
     'goog.array',
+    'goog.events',
+    'goog.string',
     'goog.ui.TabPane',
     'goog.ui.TabPane.TabPage',
-    'goog.events',
-    'moka.ui.Component',
-    'moka.convert',
-    'moka.ui.ScrollableContainer',
     'moka.style',
-    'moka.events.EventManager'
+    'moka.ui.Component',
+    'moka.ui.ScrollableContainer'
 ]);
 
 
 
 goog.addDependency('../../../moka/ui/ZipTabs.js', 
 ['moka.ui.ZipTabs'], [
+    'goog.array',
+    'goog.events',
+    'goog.string',
+    'goog.style',
+    'goog.dom',
+    'goog.math.Coordinate',
+    'goog.math.Size',
     'moka.ui.Tabs',
     'moka.ui.Resizable'
 ]);

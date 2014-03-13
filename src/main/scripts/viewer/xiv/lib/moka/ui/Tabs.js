@@ -7,16 +7,15 @@ goog.require('goog.dom');
 goog.require('goog.object');
 goog.require('goog.events');
 goog.require('goog.array');
+goog.require('goog.events');
 goog.require('goog.string');
 goog.require('goog.ui.TabPane');
 goog.require('goog.ui.TabPane.TabPage');
 
 // moka
-goog.require('moka.ui.Component');
-goog.require('moka.convert');
 goog.require('moka.style');
+goog.require('moka.ui.Component');
 goog.require('moka.ui.ScrollableContainer');
-goog.require('moka.events.EventManager');
 
 
 
@@ -63,7 +62,7 @@ goog.string.toSelectorCase(
 
 
 /**
- * @type {string} 
+ * @type {!string} 
  * @const
  */
 moka.ui.Tabs.ELEMENT_CLASS =
@@ -72,7 +71,7 @@ moka.ui.Tabs.ELEMENT_CLASS =
 
 
 /**
- * @type {string} 
+ * @type {!string} 
  * @const
  */
 moka.ui.Tabs.TAB_CLASS =
@@ -80,7 +79,7 @@ moka.ui.Tabs.TAB_CLASS =
 
 
 /**
- * @type {string} 
+ * @type {!string} 
  * @const
  */
 moka.ui.Tabs.ACTIVE_TAB_CLASS =  
@@ -89,7 +88,7 @@ moka.ui.Tabs.ACTIVE_TAB_CLASS =
 
 
 /**
- * @type {string} 
+ * @type {!string} 
  * @const
  */
 moka.ui.Tabs.HOVERED_TAB_CLASS =  
@@ -98,7 +97,7 @@ moka.ui.Tabs.HOVERED_TAB_CLASS =
 
 
 /**
- * @type {string} 
+ * @type {!string} 
  * @const
  */
 moka.ui.Tabs.TABPAGE_CLASS = 
@@ -107,7 +106,7 @@ moka.ui.Tabs.TABPAGE_CLASS =
 
 
 /**
- * @type {string} 
+ * @type {!string} 
  * @const
  */
 moka.ui.Tabs.SCROLLGALLERY_CLASS = 
@@ -116,7 +115,7 @@ moka.ui.Tabs.SCROLLGALLERY_CLASS =
 
 
 /**
- * @type {string} 
+ * @type {!string} 
  * @const
  */
 moka.ui.Tabs.ACTIVE_TABPAGE_CLASS =
@@ -124,7 +123,7 @@ moka.ui.Tabs.ACTIVE_TABPAGE_CLASS =
 
 
 /**
- * @type {string} 
+ * @type {!string} 
  * @const
  */
 moka.ui.Tabs.TABICON_CLASS = 
@@ -133,7 +132,7 @@ moka.ui.Tabs.TABICON_CLASS =
 
 
 /**
- * @type {string} 
+ * @type {!string} 
  * @const
  */
 moka.ui.Tabs.MOUSEOVER_TABICON_CLASS = 
@@ -174,7 +173,7 @@ moka.ui.Tabs.prototype.Tabs_;
 
 
 /**
- * @type {number}
+ * @type {!number}
  * @private
  */
 moka.ui.Tabs.prototype.tabHeight_ = 15;
@@ -183,7 +182,7 @@ moka.ui.Tabs.prototype.tabHeight_ = 15;
 
 /**
  * As stated.
- * @param {!number}
+ * @param {!number} h
  * @public
  */
 moka.ui.Tabs.prototype.setTabHeight = function(h){
@@ -193,7 +192,6 @@ moka.ui.Tabs.prototype.setTabHeight = function(h){
 
 
 /**
- * As stated.
  * @return {!number}
  * @public
  */
@@ -204,8 +202,7 @@ moka.ui.Tabs.prototype.getTabHeight = function(){
 
 
 /**
- * As stated.
- * @type {number}
+ * @return {!number} The index of the last active tab.
  * @public
  */
 moka.ui.Tabs.prototype.getLastActiveTab = function(){
@@ -215,8 +212,7 @@ moka.ui.Tabs.prototype.getLastActiveTab = function(){
 
 
 /**
- * As stated.
- * @type {number}
+ * @return {!number} The index of the previous active tab (before last active).
  * @public
  */
 moka.ui.Tabs.prototype.getPreviousActiveTab = function(){
@@ -237,8 +233,10 @@ moka.ui.Tabs.prototype.addTabs = function(tabTitles) {
 }
 
 
+
 /**
  * Clears all of the tabs.
+ *
  * @public
  */
 moka.ui.Tabs.prototype.reset = function() {	
@@ -247,7 +245,6 @@ moka.ui.Tabs.prototype.reset = function() {
 	this.googTabPane_.removePage(count - 1)
 	count--;
     }
-    
     goog.object.forEach(this.Tabs_, function(tabObj, key){	
 	goog.object.forEach(tabObj, function(tabObj2, key2){
 	    delete tabObj2;
@@ -260,6 +257,7 @@ moka.ui.Tabs.prototype.reset = function() {
 /**
  * Conducts the necessary CSS / stylesheet adjustments
  * when a tab is activated or clicked.
+ *
  * @param {!number} activeTabNum The reference active tab number.
  * @public
  */
@@ -274,24 +272,11 @@ moka.ui.Tabs.prototype.setActive = function (activeTabNum) {
 
 
 
-/**
- * As stated.
- * @return {!Array.Element} The elements.
- * @public
- */
-moka.ui.Tabs.prototype.getTabIndex = function() {
-    var elts = /**@type {!Array.Element}*/ [];
-    goog.object.forEach(this.Tabs_, function(tabObj, key){
-	elts.push(tabObj['tab']);
-    });
-    return elts;
-}
-
-
 
 /**
  * As stated.
- * @return {!Array.Element} The elements.
+ *
+ * @return {!Array.Element} The tab elements.
  * @public
  */
 moka.ui.Tabs.prototype.getTabElements = function() {
@@ -306,7 +291,8 @@ moka.ui.Tabs.prototype.getTabElements = function() {
 
 /**
  * As stated.
- * @return {!Array.Element} The elements.
+ *
+ * @return {!Array.Element} The page elements.
  * @public
  */
 moka.ui.Tabs.prototype.getTabPage = function() {
@@ -321,7 +307,8 @@ moka.ui.Tabs.prototype.getTabPage = function() {
 
 /**
  * As stated.
- * @return {!Array.Element} The elements..
+ *
+ * @return {!Array.Element} The icon elements.
  * @public
  */
 moka.ui.Tabs.prototype.getTabIcons = function() {
@@ -337,7 +324,9 @@ moka.ui.Tabs.prototype.getTabIcons = function() {
 /**
  * Adds a tab.  Utilises the tabObject_ object to create
  * tabs, their icons and pages.
+ *
  * @param {!string} tabTitle The title of the tab to add.
+ * @throws {Error} If tab with tabTitle already exists.
  * @public
  */
 moka.ui.Tabs.prototype.addTab = function(tabTitle) {
@@ -374,7 +363,6 @@ moka.ui.Tabs.prototype.addTab = function(tabTitle) {
     // store
     this.storeTab_(tabTitle, tab, tabIcon, content, googTab);
 
-
     // style
     this.updateStyle();
 
@@ -392,6 +380,7 @@ moka.ui.Tabs.prototype.addTab = function(tabTitle) {
  * Adds either an object or an element to the contents
  * of a tab page.  The contents is always a moka.ui.ScrollableContainer, which
  * can accept either Objects of Elements as part of its input method.
+ *
  * @param {!string} tabName The name of the tab.
  * @param {!Object|!Element|!moka.ui.ScrollableContainer} contents The 
  *    contents.
@@ -405,7 +394,6 @@ moka.ui.Tabs.prototype.setTabPageContents = function (tabName, contents) {
 
     // Make or use existing scrollable container...
     if (contents instanceof moka.ui.ScrollableContainer) {
-	//console.log("ITS A SCROLLABLE CONTAINER");
 	scrollableContainer = contents;
 	this.Tabs_[tabName]['content'].appendChild(
 	    scrollableContainer.getElement());
@@ -427,22 +415,6 @@ moka.ui.Tabs.prototype.setTabPageContents = function (tabName, contents) {
 
 
 /**
- * @inheritDoc
- */
-moka.ui.Tabs.prototype.updateIconSrcFolder = function() {
-    goog.object.forEach(this.Tabs_, function(tabObj, key){
-	//window.console.log(tabObj['icon'], tabObj['icon'].src);
-	if (tabObj['icon'].childNodes[0].tagName.toLowerCase() == 'img'){
-	    tabObj['icon'].childNodes[0].src = goog.string.path.join(
-		this.iconUrl, tabObj['icon'].src);
-	}
-    }.bind(this))
-}
-
-
-
-/**
- * As stated..
  * @param {!string} tabTitle The title of the tab to add.
  * @return {!Element} The created element.
  * @private
@@ -457,7 +429,6 @@ moka.ui.Tabs.prototype.createTabElt_ = function(tabTitle) {
 
 
 /**
- * As stated..
  * @param {!string} tabTitle The title of the tab to set the image for.
  * @return {!string} The src of the image.
  * @private
@@ -476,7 +447,6 @@ moka.ui.Tabs.prototype.setTabIconImage_ = function(tabTitle, src) {
 
 
 /**
- * As stated..
  * @param {!string} tabTitle The title of the tab icon to add.
  * @return {!Element} The created element.
  * @private
@@ -500,7 +470,6 @@ moka.ui.Tabs.prototype.createTabIcon_ = function(tabTitle) {
 
 
 /**
- * As stated..
  * @param {!string} tabTitle The title of the tab page to add.
  * @return {!Element} The created element.
  * @private
@@ -515,7 +484,6 @@ moka.ui.Tabs.prototype.createTabPage_ = function(tabTitle) {
 
 
 /**
- * As stated.
  * @param {!string} tabTitle The tab title.
  * @param {!Element} tab The tab element.
  * @param {!Element} tabIcon The tab element icon.
@@ -539,6 +507,7 @@ function(tabTitle, tab, tabIcon, content, googTab){
 /**
  * Conducts the necessary CSS / stylesheet adjustments
  * when a tab is deactivated.
+ *
  * @param {!number} ind The tab index to deactivate.
  * @public
  */
@@ -548,7 +517,7 @@ moka.ui.Tabs.prototype.deactivate = function (ind) {
 	    this.deactivateTabElt_(tabElt);
 	}
     }.bind(this))
-a
+
     goog.array.forEach(this.getTabPage(), function(tabCont, i){
 	if (i === ind) {
 	    this.deactivateTabPage_(tabCont);
@@ -560,7 +529,8 @@ a
 
 /**
  * Conducts the necessary CSS / stylesheet adjustments
- * when a tab is deactivated.
+ * when all tabs are deactivated.
+ *
  * @public
  */
 moka.ui.Tabs.prototype.deactivateAll = function () { 
@@ -583,20 +553,17 @@ moka.ui.Tabs.prototype.updateStyle = function () {
 
     if (!this.getElement().parentNode) { return };
     
-    // Need to do this
+    // Need to do this -- google takes it over.
     goog.dom.classes.add(this.getElement(), moka.ui.Tabs.ELEMENT_CLASS);
 
 
     var i = /**@type {!number}*/ 0;
     var tCount = /**@type {!number}*/ goog.object.getCount(this.Tabs_);
     var wPct = /**@type {!number}*/ 100/tCount; 
-    var pHght = /**@type {!number}*/ pHght = /**@type {!number}*/ 
-	    moka.style.dims(this.getElement().parentNode, 'height');
-    var tabTop = parseInt(moka.style.getComputedStyle(this.getElement(), 
-						      'top'), 10);
-    //window.console.log(tabTop);
+    var pHght = /**@type {!number}*/ 
+	    parseInt(this.getElement().parentNode.style.height, 10);
+    var borderMgn = /**@type {!number}*/ 0;
     
-
     goog.object.forEach(this.Tabs_, function(tObj){
 
 	// Resize tab wPcts
@@ -609,21 +576,13 @@ moka.ui.Tabs.prototype.updateStyle = function () {
 	// Exit out if no parent node.
 	if (!this.getElement().parentNode){ return };
 
-	    
-	var eltSize = goog.style.getSize(this.getElement());
-
-	
-	var borderMgn = parseInt(moka.style.getComputedStyle(tObj['tab'], 
+	borderMgn = parseInt(moka.style.getComputedStyle(tObj['tab'], 
 						'border-bottom-width'));
 	borderMgn = (!borderMgn || isNaN(borderMgn) || 
 		     !goog.isNumber(borderMgn)) ? 0 : borderMgn; 
 
-	// Resize tab content height
-	moka.style.setStyle(tObj['content'], {
-	    'top': this.tabHeight_ - borderMgn,
-	})
-
-	// 100% - tabHeight
+	tObj['content'].style.top = 
+	    (this.tabHeight_ - borderMgn).toString() + 'px';
 	tObj['content'].style.height = 'calc(100% - ' + 
 	    this.tabHeight_.toString() + 'px)',
 
@@ -634,7 +593,6 @@ moka.ui.Tabs.prototype.updateStyle = function () {
 
 
 /**
- * As sated.
  * @private
  */
 moka.ui.Tabs.prototype.deactivateTabElt_ = function (tabElt) {
@@ -645,13 +603,11 @@ moka.ui.Tabs.prototype.deactivateTabElt_ = function (tabElt) {
 
 
 /**
- * As stated.
  * @private
  */
 moka.ui.Tabs.prototype.deactivateTabPage_ = function (tabCont) {
     goog.dom.classes.set(tabCont, moka.ui.Tabs.TABPAGE_CLASS);
 }
-
 
 
 
@@ -662,7 +618,7 @@ moka.ui.Tabs.prototype.deactivateTabPage_ = function (tabCont) {
  * @private
  */
 moka.ui.Tabs.prototype.setActiveTabElt_ = function (ind) {
-    window.console.log("ACTIVATE TAB ELT", ind);
+    //window.console.log("ACTIVATE TAB ELT", ind);
     goog.array.forEach(this.getTabElements(), function(tab, i) { 
 	if (i === ind) {
 	    tab.setAttribute('isActive', true);
@@ -672,8 +628,10 @@ moka.ui.Tabs.prototype.setActiveTabElt_ = function (ind) {
 }
 
 
+
 /**
  * If there's an active tab, make the tab page border more prominent.
+ *
  * @param {number} ind The reference active tab number.
  * @private
  */
@@ -681,7 +639,6 @@ moka.ui.Tabs.prototype.setActiveTabPage_ = function (ind) {
     goog.array.forEach(this.getTabPage(), function(tabPage, i) {
 	if (ind === i){
 	    goog.dom.classes.add(tabPage, moka.ui.Tabs.ACTIVE_TABPAGE_CLASS);
-	    //moka.fx.fadeInFromZero(tabPage, tabFadeIn);
 	}	
     })	
 }
@@ -689,6 +646,7 @@ moka.ui.Tabs.prototype.setActiveTabPage_ = function (ind) {
 
 /**
  * Clears all event listening callbacks for tabs.
+ *
  * @private
  */
 moka.ui.Tabs.prototype.clearEventListeners_ = function(){
@@ -703,6 +661,7 @@ moka.ui.Tabs.prototype.clearEventListeners_ = function(){
 /**
  * Sets the default click events when a user clicks on a tab
  * (i.e. tab activation and tab deactivation).
+ *
  * @private
  */
 moka.ui.Tabs.prototype.setClickEvents_ = function() {
@@ -719,7 +678,21 @@ moka.ui.Tabs.prototype.setClickEvents_ = function() {
 
 
 /**
- * As stated.
+ * Sets the default hover events, such as highlighting, when
+ * the mouse hover's over the tab.
+ *
+ * @private
+ */
+moka.ui.Tabs.prototype.setHoverEvents_ = function() {
+    goog.array.forEach(this.getTabElements(), function(tab, i) { 
+	this.setTabMouseOver_(tab, i);
+	this.setTabMouseOut_(tab, i);
+    }.bind(this))	
+}
+
+
+
+/**
  * @param {!Element} tab The tab to apply the event listener to.
  * @param {!number} i The index of the tab.
  * @private
@@ -741,7 +714,6 @@ moka.ui.Tabs.prototype.setTabMouseOver_ = function(tab, i) {
 
 
 /**
- * As stated.
  * @param {!Element} tab The tab to apply the event listener to.
  * @param {!number} i The index of the tab.
  * @private
@@ -756,21 +728,6 @@ moka.ui.Tabs.prototype.setTabMouseOut_ = function(tab, i) {
 				    moka.ui.Tabs.MOUSEOVER_TABICON_CLASS);
 	    }.bind(this))
     }.bind(this))
-}
-
-
-
-/**
- * Sets the default hover events, such as highlighting, when
- * the mouse hover's over the tab.
- * @private
- */
-moka.ui.Tabs.prototype.setHoverEvents_ = function() {
-    // Cycle through each tab...
-    goog.array.forEach(this.getTabElements(), function(tab, i) { 
-	this.setTabMouseOver_(tab, i);
-	this.setTabMouseOut_(tab, i);
-    }.bind(this))	
 }
 
 
