@@ -9,17 +9,20 @@ goog.require('goog.dom');
 goog.require('goog.events');
 goog.require('goog.array');
 goog.require('goog.object');
+goog.require('goog.style');
 
 // utils
 goog.require('moka.ui.Component');
 goog.require('moka.style');
 goog.require('moka.events.EventManager');
 goog.require('moka.ui.Resizeable');
+goog.require('moka.ui.ZipTabs');
+
 
 // xiv
 //goog.require('xiv.ui.ViewLayoutManager');
 //goog.require('xiv.ui.ViewLayoutMenu');
-goog.require('xiv.ui.ViewBoxTabs');
+
 //goog.require('xiv.ui.Displayer.Xtk');
 //goog.require('xiv.ui.SlicerViewMenu');
 
@@ -51,64 +54,20 @@ xiv.ui.ViewBox = function () {
     this.setComponentCallbacks_();
 
 
-    this.ViewBoxTabs_.setTabPageContents('TestTab1', 
+    this.Tabs_.setTabPageContents('TestTab1', 
 	goog.dom.createDom('div', {
 	    'color': 'rgb(255,255,255)',
 	    'background': 'rgb(205,25,48)',
 	}, 'Hello World.'))
 
 
-    this.ViewBoxTabs_.setTabPageContents('TestTab2',
+    this.Tabs_.setTabPageContents('TestTab2',
 	goog.dom.createDom('div', {
 	    'color': 'rgb(255,255,255)',
 	    'background': 'rgb(205,25,48)',
 	}, 'Hello World 2.'))
 
 
-    /**
-     * @type {1moka.ui.Resizeable}
-     * @private
-     */
-    this.TabsResizeable_ = new moka.ui.Resizeable(
-	this.ViewBoxTabs_.getElement(), 'ALL')
-    this.TabsResizeable_.setBounds(20, 20, 300, 300, true);
-    this.TabsResizeable_.setMinSize(50, 50);
-    this.TabsResizeable_.showBoundaryElt();
-
-    moka.style.setStyle(this.ViewBoxTabs_.getElement(), {
-	'position': 'absolute',
-	'left': 40,
-	'top': 40,
-	'height': 200,
-	'width': 100,
-    })
-
-
-
-
-    /*
-    var a = goog.dom.createDom('div', {
-	'id': "ASDFASDF",
-    })
-    moka.style.setStyle(a, {	
-	'position': 'absolute',
-	'color': 'rgb(255,255,255)',
-	'background-color': 'rgb(205,25,48)',
-	'top': 40,
-	'left': 40,
-	'height': 100,
-	'width': 100
-    })
-    goog.dom.append(this.getElement(), a);
-    this.resizeable = new moka.ui.Resizeable(a , {
-	maxWidth: 400,
-	minWidth: 100,
-	maxHeight: 400,
-	minHeight: 100,
-    })
-    goog.dom.append(this.resizeable.getElement(), 
-		    this.ViewBoxTabs_.getElement());
-    */
     //window.console.log(resizeable, resizeable.getElement());
     // style
     //this.doNotHide(this.SlicerViewMenu_.getElement());
@@ -202,7 +161,7 @@ xiv.ui.ViewBox.SCAN_TAB_LABEL_WIDTH = 50;
  * @type {number} 
  * @const
  */
-xiv.ui.ViewBox.MIN_TAB_HEIGHT =  15;
+xiv.ui.ViewBox.MIN_TAB_H_PCT = .2;
 
 
 
@@ -317,8 +276,8 @@ xiv.ui.ViewBox.prototype.getThumbnailLoadTime =  function() {
  */
 xiv.ui.ViewBox.prototype.updateIconSrcFolder = function() {
 
-    if (this.ViewBoxTabs_){
-	this.ViewBoxTabs_.setIconBaseUrl(this.iconBaseUrl);
+    if (this.Tabs_){
+	this.Tabs_.setIconBaseUrl(this.iconBaseUrl);
     }
 }
 
@@ -353,9 +312,7 @@ xiv.ui.ViewBox.prototype.setViewLayout = function(viewPlane) {
 
 /**
  * Loads a thumbnail into the viewer by communicating
- * to the various internal components that handle viewing:
- * xiv.ui.ViewLayoutManager, xiv.ui.Displayer, xiv.ui.ViewLayoutMenu, xiv.ui.ViewBoxTabs, 
- * etc.
+ * to the various internal components.
  * @param {!xiv.ui.Thumbnail} thumb The thumbnail to load into the viewer.
  * @public
  */
@@ -377,7 +334,7 @@ xiv.ui.ViewBox.prototype.loadThumbnail = function (Thumbnail) {
     this.thumbLoadTime_ = (new Date()).getTime();
 
     //------------------
-    // This is here because the xiv.ui.ViewBoxTabs may not fully adjust themselves
+    // This is here because the moka.ui.ZipTabs may not fully adjust themselves
     // properly during the initiation process.  It's especially relevant
     // when multiple xiv.ui.ViewBoxes are open.
     //------------------
@@ -435,7 +392,7 @@ xiv.ui.ViewBox.prototype.adjustViewLayoutManager_ = function(){
  * @private
  */
 xiv.ui.ViewBox.prototype.loadTabs_ = function() {  
-    this.ViewBoxTabs_.reset();
+    this.Tabs_.reset();
     this.loadTab_Info_();
     if (this.Thumbnail_.getViewable()['category'] == 'Slicer') {
 	this.loadTab_SlicerViews();
@@ -452,7 +409,7 @@ xiv.ui.ViewBox.prototype.loadTabs_ = function() {
  * @private
  */
 xiv.ui.ViewBox.prototype.loadTab_Info_ = function() {
-    this.ViewBoxTabs_.setTabPageContents('Info', 
+    this.Tabs_.setTabPageContents('Info', 
       this.Displayer_.createInfoTabContents(this.Thumbnail_.getViewable()));
 }
 
@@ -463,7 +420,7 @@ xiv.ui.ViewBox.prototype.loadTab_Info_ = function() {
  * @private
  */
 xiv.ui.ViewBox.prototype.loadTab_SlicerViews_ = function() {
-    this.ViewBoxTabs_.setTabPageContents('Slicer Views', 
+    this.Tabs_.setTabPageContents('Slicer Views', 
 		this.SlicerViewMenu_.getThumbnailGallery());
 }
 
@@ -477,7 +434,7 @@ xiv.ui.ViewBox.prototype.loadTabs_Controllers_ = function() {
     goog.object.forEach(this.Displayer_.getControllerMenu(), 
 	function(menuElt, key){
 	    if (menuElt){
-	        this.ViewBoxTabs_.setTabPageContents(key, menuElt);
+	        this.Tabs_.setTabPageContents(key, menuElt);
 	    }
 	}.bind(this))
 }
@@ -504,11 +461,11 @@ xiv.ui.ViewBox.prototype.createSubComponents = function() {
 */
 xiv.ui.ViewBox.prototype.createTabs_ = function(){
     /**
-     * @type {xiv.ui.ViewBoxTabs}
+     * @type {moka.ui.ZipTabs}
      * @private
      */	
-    this.ViewBoxTabs_ = new xiv.ui.ViewBoxTabs(); 
-    goog.dom.append(this.getElement(), this.ViewBoxTabs_.getElement());
+    this.Tabs_ = new moka.ui.ZipTabs('bottom'); 
+    goog.dom.append(this.getElement(), this.Tabs_.getElement());
 }
 
 
@@ -611,7 +568,7 @@ xiv.ui.ViewBox.prototype.hideChildElements_ = function() {
 * @private
 */
 xiv.ui.ViewBox.prototype.setComponentCallbacks_ = function() {
-    this.setViewBoxTabsCallbacks_();
+    this.setTabsCallbacks_();
     //this.setViewLayoutMenuCallbacks_();
 }
 
@@ -634,9 +591,8 @@ xiv.ui.ViewBox.prototype.setViewBoxBorderCallbacks_ = function () {
  * As stated.
  * @private
  */
-xiv.ui.ViewBox.prototype.setViewBoxTabsCallbacks_ = function () {
-    this.ViewBoxTabs_['EVENTS'].onEvent('CLICKED', 
-	this.onViewBoxTabClicked_.bind(this));
+xiv.ui.ViewBox.prototype.setTabsCallbacks_ = function () {
+
 }
 
 
@@ -745,12 +701,12 @@ xiv.ui.ViewBox.prototype.onViewBoxBorderDragging_ = function() {
 
     // Going up.
     if (dragDir < 0) {
-	this.ViewBoxTabs_.activate(this.ViewBoxTabs_.getLastActiveTab());
+	this.Tabs_.activate(this.Tabs_.getLastActiveTab());
     }
 
     // Going down.
     else if ((dragDir > 0) && this.ViewBoxBorder_.isNearBottomLimit()) {
-	this.ViewBoxTabs_.deactivateAll();
+	this.Tabs_.deactivateAll();
     }
 
     // Update the position of the tabs and the style
@@ -759,7 +715,7 @@ xiv.ui.ViewBox.prototype.onViewBoxBorderDragging_ = function() {
     moka.style.dims(this.ViewBoxBorder_.getElement());
     var tabTop = /**@type {!number}*/
     contentDividerDims['top'] + contentDividerDims['height'];
-    this.ViewBoxTabs_.updateStyle({ 'top': tabTop});
+    this.Tabs_.updateStyle({ 'top': tabTop});
     this.updateStyle();
 }
 
@@ -775,25 +731,7 @@ xiv.ui.ViewBox.prototype.onViewBoxBorderDragEnd_ = function() {
 
 
 
-/**
- * Callback for when a ViewBoxTab is activated.
- * @param {!number} clickInd The clicked tab index.
- * @private
- */
-xiv.ui.ViewBox.prototype.onViewBoxTabClicked_ = function(clickInd) {
-    return;
-    if (this.ViewBoxBorder_.isNearBottomLimit()) {
-	this.ViewBoxBorder_.slideTo(this.ViewBoxBorder_.getTopLimit(), 
-				     true);
-    }
-    else {
-	window.console.log("Not: ", clickInd);
-	if (clickInd === this.ViewBoxTabs_.getLastActiveTab()){
-	    this.ViewBoxBorder_.slideTo(this.ViewBoxBorder_.getBottomLimit(), 
-	    true);
-	}
-    }    
-}
+
 
 
 
@@ -824,11 +762,19 @@ xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
  */
 xiv.ui.ViewBox.prototype.updateStyle_components_ = function (widgetDims) {
 
-   
-
-
-    // Tabs
-    this.ViewBoxTabs_.updateStyle();
+    var size = goog.style.getSize(this.getElement());
+    
+    // Tabs;
+    if (size.width <= 0) {
+	this.Tabs_.getResizeable().setBounds(0, 0, size.width, size.height);
+    } else {
+	this.Tabs_.getResizeable().setBounds(0, 
+		size.width * xiv.ui.ViewBox.MIN_TAB_H_PCT, 
+					     size.width, size.height);
+    }
+    this.Tabs_.getResizeable().showBoundaryElt();
+    this.Tabs_.deactivateAll();
+    this.Tabs_.updateStyle();
  
     return;
     // xiv.ui.ViewLayout
@@ -837,6 +783,6 @@ xiv.ui.ViewBox.prototype.updateStyle_components_ = function (widgetDims) {
     // Displayer
     moka.style.setStyle(this.Displayer_.getElement(), {
  	'width': widgetDims['width'],
- 	'height': moka.style.dims(this.ViewBoxTabs_.getElement(), 'top')
+ 	'height': moka.style.dims(this.Tabs_.getElement(), 'top')
     });
 }

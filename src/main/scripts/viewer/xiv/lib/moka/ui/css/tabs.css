@@ -1,12 +1,10 @@
-/*
- * Standard styling for the ViewboxTabs
- *
+/**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
 
 
-.xiv-ui-viewboxtabs {
+.moka-ui-tabs {
     width: 40%;
     position: absolute;
     left: 0px;
@@ -17,7 +15,7 @@
 
 
 	
-.xiv-ui-viewboxtabs-tab {
+.moka-ui-tabs-tab {
   box-sizing:border-box;
   -moz-box-sizing:border-box;
   -webkit-box-sizing:border-box;
@@ -39,7 +37,7 @@
 }
 
 
-.xiv-ui-viewboxtabs-tab-active, .xiv-ui-viewboxtabs-tab-hovered {
+.moka-ui-tabs-tab-active, .moka-ui-tabs-tab-hovered {
     border-top-color: rgb(120, 120, 120);
     border-right-color: rgb(120, 120, 120);
     border-left-color: rgb(120, 120, 120);
@@ -47,12 +45,12 @@
 }
 
 
-.xiv-ui-viewboxtabs-tab-active {
+.moka-ui-tabs-tab-active {
     z-index: 3;
 }
 
 	
-.xiv-ui-viewboxtabs-tabicon {
+.moka-ui-tabs-tabicon {
     position: absolute;
     height: 11px;
     opacity: .65;
@@ -69,12 +67,12 @@
 
 
 
-.xiv-ui-viewboxtabs-tabicon-mouseover {
+.moka-ui-tabs-tabicon-mouseover {
     opacity: 1;
 }
 
 	
-.xiv-ui-viewboxtabs-tabpage {
+.moka-ui-tabs-tabpage {
   box-sizing:border-box;
   -moz-box-sizing:border-box;
   -webkit-box-sizing:border-box;
@@ -88,14 +86,14 @@
 }
 
 
-.xiv-ui-viewboxtabs-tabpage-active {
+.moka-ui-tabs-tabpage-active {
     border: solid 1px rgb(120, 120, 120);
     visibility: visible;
     z-index: 2;
 }
 
 
-.xiv-ui-viewboxtabs-tabpage-scrollgallery {
+.moka-ui-tabs-tabpage-scrollgallery {
     top: 15px;
     width: 100%;
     height: 92%;

@@ -75,7 +75,8 @@ goog.addDependency('../../../moka/ui/Resizeable.js',
     'goog.fx.Dragger.EventType',
     'goog.math.Size',
     'goog.style',
-    'goog.ui.Component'  
+    'goog.ui.Component',  
+    'goog.fx.dom.Slide'
 ]);
 
 
@@ -145,13 +146,13 @@ goog.addDependency('../../../moka/ui/ZippyTree.js',
 
 goog.addDependency('../../../moka/ui/Thumbnail.js', 
 ['moka.ui.Thumbnail'], [
-'goog.dom',
-'goog.array',
-'goog.events',
-'goog.string',
-'moka.dom',
-'moka.style',
-'moka.events.EventManager'
+    'goog.dom',
+    'goog.array',
+    'goog.events',
+    'goog.string',
+    'moka.dom',
+    'moka.style',
+    'moka.events.EventManager'
 ]);
 
 
@@ -169,8 +170,29 @@ goog.addDependency('../../../moka/ui/ThumbnailGallery.js',
 
 
 
+goog.addDependency('../../../moka/ui/Tabs.js', 
+['moka.ui.Tabs'], [
+    'goog.object',
+    'goog.string',
+    'goog.dom',
+    'goog.array',
+    'goog.ui.TabPane',
+    'goog.ui.TabPane.TabPage',
+    'goog.events',
+    'moka.ui.Component',
+    'moka.convert',
+    'moka.ui.ScrollableContainer',
+    'moka.style',
+    'moka.events.EventManager'
+]);
 
 
+
+goog.addDependency('../../../moka/ui/ZipTabs.js', 
+['moka.ui.ZipTabs'], [
+    'moka.ui.Tabs',
+    'moka.ui.Resizeable'
+]);
 
 
 

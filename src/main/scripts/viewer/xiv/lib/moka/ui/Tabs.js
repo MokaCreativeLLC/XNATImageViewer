@@ -23,22 +23,17 @@ goog.require('moka.events.EventManager');
 
 
 /**
- * xiv.ui.ViewBoxTabs are the tabs that occur at the bottom
+ * moka.ui.Tabs are the tabs that occur at the bottom
  * of the xiv.ui.ViewBox.  They are only visible when a viewable is in the 
  * xiv.ui.ViewBox. These tabs are multi-purpose and could be used for 
  * information, object togling, image adjusting, etc.
  * @constructor
  * @extends {moka.ui.Component}
  */
-goog.provide('xiv.ui.ViewBoxTabs');
-xiv.ui.ViewBoxTabs = function () {
+goog.provide('moka.ui.Tabs');
+moka.ui.Tabs = function () {
     goog.base(this);
-    moka.style.setStyle(this.getElement(), {
-	'top': '50%',
-	'left': '25%',
-	'width': '50%',
-	'height': 100
-    })
+
 
 
     /**
@@ -49,15 +44,11 @@ xiv.ui.ViewBoxTabs = function () {
 
     // events
     moka.events.EventManager.addEventManager(this, 
-					     xiv.ui.ViewBoxTabs.EventType);
-
-
-
-
+					     moka.ui.Tabs.EventType);
 
 }
-goog.inherits(xiv.ui.ViewBoxTabs, moka.ui.Component);
-goog.exportSymbol('xiv.ui.ViewBoxTabs', xiv.ui.ViewBoxTabs)
+goog.inherits(moka.ui.Tabs, moka.ui.Component);
+goog.exportSymbol('moka.ui.Tabs', moka.ui.Tabs)
 
 
 
@@ -66,20 +57,18 @@ goog.exportSymbol('xiv.ui.ViewBoxTabs', xiv.ui.ViewBoxTabs)
  * @enum {string}
  * @public
  */
-xiv.ui.ViewBoxTabs.EventType = {
+moka.ui.Tabs.EventType = {
   CLICKED: goog.events.getUniqueId('viewboxtab_clicked'),
 }
 
 
 
+
 /**
- * @dict
+ * @type {!string} 
  * @const
  */
-xiv.ui.ViewBoxTabs.ICON_SRC = {
-    'Info':  'InfoIcon.png',
-    'Slicer Views': 'SlicerViews.png',
-}
+moka.ui.Tabs.ID_PREFIX =  'moka.ui.Tabs';
 
 
 
@@ -87,17 +76,9 @@ xiv.ui.ViewBoxTabs.ICON_SRC = {
  * @type {!string} 
  * @const
  */
-xiv.ui.ViewBoxTabs.ID_PREFIX =  'xiv.ui.ViewBoxTabs';
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-xiv.ui.ViewBoxTabs.CSS_CLASS_PREFIX =
+moka.ui.Tabs.CSS_CLASS_PREFIX =
 goog.string.toSelectorCase(
-    xiv.ui.ViewBoxTabs.ID_PREFIX.toLowerCase().replace(/\./g,'-'));
+    moka.ui.Tabs.ID_PREFIX.toLowerCase().replace(/\./g,'-'));
 
 
 
@@ -105,8 +86,8 @@ goog.string.toSelectorCase(
  * @type {string} 
  * @const
  */
-xiv.ui.ViewBoxTabs.ELEMENT_CLASS =
-    goog.getCssName(xiv.ui.ViewBoxTabs.CSS_CLASS_PREFIX, '');
+moka.ui.Tabs.ELEMENT_CLASS =
+    goog.getCssName(moka.ui.Tabs.CSS_CLASS_PREFIX, '');
 
 
 
@@ -114,25 +95,16 @@ xiv.ui.ViewBoxTabs.ELEMENT_CLASS =
  * @type {string} 
  * @const
  */
-xiv.ui.ViewBoxTabs.TAB_CLASS =
-    goog.getCssName(xiv.ui.ViewBoxTabs.CSS_CLASS_PREFIX, 'tab');
+moka.ui.Tabs.TAB_CLASS =
+    goog.getCssName(moka.ui.Tabs.CSS_CLASS_PREFIX, 'tab');
 
 
 /**
  * @type {string} 
  * @const
  */
-xiv.ui.ViewBoxTabs.ACTIVE_TAB_CLASS =  
-    goog.getCssName(xiv.ui.ViewBoxTabs.TAB_CLASS, 'active');
-
-
-
-/**
- * @type {string} 
- * @const
- */
-xiv.ui.ViewBoxTabs.HOVERED_TAB_CLASS =  
-    goog.getCssName(xiv.ui.ViewBoxTabs.TAB_CLASS, 'hovered');
+moka.ui.Tabs.ACTIVE_TAB_CLASS =  
+    goog.getCssName(moka.ui.Tabs.TAB_CLASS, 'active');
 
 
 
@@ -140,8 +112,8 @@ xiv.ui.ViewBoxTabs.HOVERED_TAB_CLASS =
  * @type {string} 
  * @const
  */
-xiv.ui.ViewBoxTabs.TABPAGE_CLASS = 
-    goog.getCssName(xiv.ui.ViewBoxTabs.CSS_CLASS_PREFIX, 'tabpage');
+moka.ui.Tabs.HOVERED_TAB_CLASS =  
+    goog.getCssName(moka.ui.Tabs.TAB_CLASS, 'hovered');
 
 
 
@@ -149,8 +121,8 @@ xiv.ui.ViewBoxTabs.TABPAGE_CLASS =
  * @type {string} 
  * @const
  */
-xiv.ui.ViewBoxTabs.SCROLLGALLERY_CLASS = 
-    goog.getCssName(xiv.ui.ViewBoxTabs.TABPAGE_CLASS, 'scrollgallery');
+moka.ui.Tabs.TABPAGE_CLASS = 
+    goog.getCssName(moka.ui.Tabs.CSS_CLASS_PREFIX, 'tabpage');
 
 
 
@@ -158,16 +130,8 @@ xiv.ui.ViewBoxTabs.SCROLLGALLERY_CLASS =
  * @type {string} 
  * @const
  */
-xiv.ui.ViewBoxTabs.ACTIVE_TABPAGE_CLASS =
-    goog.getCssName(xiv.ui.ViewBoxTabs.TABPAGE_CLASS, 'active');
-
-
-/**
- * @type {string} 
- * @const
- */
-xiv.ui.ViewBoxTabs.TABICON_CLASS = 
-    goog.getCssName(xiv.ui.ViewBoxTabs.CSS_CLASS_PREFIX, 'tabicon');
+moka.ui.Tabs.SCROLLGALLERY_CLASS = 
+    goog.getCssName(moka.ui.Tabs.TABPAGE_CLASS, 'scrollgallery');
 
 
 
@@ -175,8 +139,25 @@ xiv.ui.ViewBoxTabs.TABICON_CLASS =
  * @type {string} 
  * @const
  */
-xiv.ui.ViewBoxTabs.MOUSEOVER_TABICON_CLASS = 
-    goog.getCssName(xiv.ui.ViewBoxTabs.TABICON_CLASS, 'mouseover');
+moka.ui.Tabs.ACTIVE_TABPAGE_CLASS =
+    goog.getCssName(moka.ui.Tabs.TABPAGE_CLASS, 'active');
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+moka.ui.Tabs.TABICON_CLASS = 
+    goog.getCssName(moka.ui.Tabs.CSS_CLASS_PREFIX, 'tabicon');
+
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+moka.ui.Tabs.MOUSEOVER_TABICON_CLASS = 
+    goog.getCssName(moka.ui.Tabs.TABICON_CLASS, 'mouseover');
 
 
 
@@ -184,7 +165,7 @@ xiv.ui.ViewBoxTabs.MOUSEOVER_TABICON_CLASS =
  * @type {!string}
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.iconRoot_ = '';
+moka.ui.Tabs.prototype.iconRoot_ = '';
 
 
 
@@ -192,7 +173,7 @@ xiv.ui.ViewBoxTabs.prototype.iconRoot_ = '';
  * @type {!number}
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.lastActiveTab_ = 0;
+moka.ui.Tabs.prototype.lastActiveTab_ = 0;
 
 
 
@@ -200,7 +181,7 @@ xiv.ui.ViewBoxTabs.prototype.lastActiveTab_ = 0;
  * @type {Object}
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.Tabs_;
+moka.ui.Tabs.prototype.Tabs_;
 
 
 
@@ -208,7 +189,7 @@ xiv.ui.ViewBoxTabs.prototype.Tabs_;
  * @type {number}
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.tabHeight_ = 15;
+moka.ui.Tabs.prototype.tabHeight_ = 15;
 
 
 
@@ -217,11 +198,20 @@ xiv.ui.ViewBoxTabs.prototype.tabHeight_ = 15;
  * @param {!number}
  * @public
  */
-xiv.ui.ViewBoxTabs.prototype.setTabHeight = function(h){
+moka.ui.Tabs.prototype.setTabHeight = function(h){
     this.tabHeight_ = (goog.isNumber(h) && (h > -1)) ? h : this.tabHeight_;
     this.updateStyle();
 }
 
+
+/**
+ * As stated.
+ * @return {!number}
+ * @public
+ */
+moka.ui.Tabs.prototype.getTabHeight = function(){
+    return this.tabHeight_;
+}
 
 
 
@@ -230,7 +220,7 @@ xiv.ui.ViewBoxTabs.prototype.setTabHeight = function(h){
  * @type {number}
  * @public
  */
-xiv.ui.ViewBoxTabs.prototype.getLastActiveTab = function(){
+moka.ui.Tabs.prototype.getLastActiveTab = function(){
     return this.lastActiveTab_;
 }
 
@@ -241,7 +231,7 @@ xiv.ui.ViewBoxTabs.prototype.getLastActiveTab = function(){
  * @param {!Array.string} tabTitles The titles of the tabs to add.
  * @public
  */
-xiv.ui.ViewBoxTabs.prototype.addTabs = function(tabTitles) {
+moka.ui.Tabs.prototype.addTabs = function(tabTitles) {
     goog.array.forEach(tabTitles, function(tabTitle){
 	this.addTab(tabTitle);
     }.bind(this))
@@ -252,7 +242,7 @@ xiv.ui.ViewBoxTabs.prototype.addTabs = function(tabTitles) {
  * Clears all of the tabs.
  * @public
  */
-xiv.ui.ViewBoxTabs.prototype.reset = function() {	
+moka.ui.Tabs.prototype.reset = function() {	
     var count = /**@type {!number}*/ goog.object.getCount(this.Tabs_);
     while (count > 0) {
 	this.googTabPane_.removePage(count - 1)
@@ -274,7 +264,7 @@ xiv.ui.ViewBoxTabs.prototype.reset = function() {
  * @param {number} activeTabNum The reference active tab number.
  * @public
  */
-xiv.ui.ViewBoxTabs.prototype.activate = function (activeTabNum) {	
+moka.ui.Tabs.prototype.activate = function (activeTabNum) {	
     // Call goog.ui.TabPane select method.
     this.lastActiveTab_ = activeTabNum;
     this.googTabPane_.setSelectedIndex(activeTabNum);
@@ -289,7 +279,7 @@ xiv.ui.ViewBoxTabs.prototype.activate = function (activeTabNum) {
  * @return {!Array.Element} The elements.
  * @public
  */
-xiv.ui.ViewBoxTabs.prototype.getTabElements = function() {
+moka.ui.Tabs.prototype.getTabElements = function() {
     var elts = /**@type {!Array.Element}*/ [];
     goog.object.forEach(this.Tabs_, function(tabObj, key){
 	elts.push(tabObj['tab']);
@@ -304,7 +294,7 @@ xiv.ui.ViewBoxTabs.prototype.getTabElements = function() {
  * @return {!Array.Element} The elements.
  * @public
  */
-xiv.ui.ViewBoxTabs.prototype.getTabPage = function() {
+moka.ui.Tabs.prototype.getTabPage = function() {
     var elts = /**@type {!Array.Element}*/ [];
     goog.object.forEach(this.Tabs_, function(tabObj, key){
 	elts.push(tabObj['content']);
@@ -319,7 +309,7 @@ xiv.ui.ViewBoxTabs.prototype.getTabPage = function() {
  * @return {!Array.Element} The elements..
  * @public
  */
-xiv.ui.ViewBoxTabs.prototype.getTabIcons = function() {
+moka.ui.Tabs.prototype.getTabIcons = function() {
     var elts = /**@type {!Array.Element}*/ [];
     goog.object.forEach(this.Tabs_, function(tabObj, key){
 	elts.push(tabObj['icon']);
@@ -335,7 +325,7 @@ xiv.ui.ViewBoxTabs.prototype.getTabIcons = function() {
  * @param {!string} tabTitle The title of the tab to add.
  * @public
  */
-xiv.ui.ViewBoxTabs.prototype.addTab = function(tabTitle) {
+moka.ui.Tabs.prototype.addTab = function(tabTitle) {
 
     this.Tabs_ = (this.Tabs_) ? this.Tabs_ : {};
 
@@ -378,6 +368,7 @@ xiv.ui.ViewBoxTabs.prototype.addTab = function(tabTitle) {
     this.setClickEvents_();
     this.setHoverEvents_();
     this.deactivateAll();
+    this.activate(0);
 }
 
 
@@ -391,7 +382,7 @@ xiv.ui.ViewBoxTabs.prototype.addTab = function(tabTitle) {
  *    contents.
  * @public
  */
-xiv.ui.ViewBoxTabs.prototype.setTabPageContents = function (tabName, contents) {
+moka.ui.Tabs.prototype.setTabPageContents = function (tabName, contents) {
     // Add the tab page if it's not there.
     if (!this.Tabs_ || !this.Tabs_[tabName]){ this.addTab(tabName) };
 
@@ -415,7 +406,7 @@ xiv.ui.ViewBoxTabs.prototype.setTabPageContents = function (tabName, contents) {
 
     // Set the scrollable container class.
     goog.dom.classes.add(scrollableContainer.getElement(), 
-			 xiv.ui.ViewBoxTabs.SCROLLGALLERY_CLASS);
+			 moka.ui.Tabs.SCROLLGALLERY_CLASS);
 }
 
 
@@ -423,7 +414,7 @@ xiv.ui.ViewBoxTabs.prototype.setTabPageContents = function (tabName, contents) {
 /**
  * @inheritDoc
  */
-xiv.ui.ViewBoxTabs.prototype.updateIconSrcFolder = function() {
+moka.ui.Tabs.prototype.updateIconSrcFolder = function() {
     goog.object.forEach(this.Tabs_, function(tabObj, key){
 	//window.console.log(tabObj['icon'], tabObj['icon'].src);
 	if (tabObj['icon'].childNodes[0].tagName.toLowerCase() == 'img'){
@@ -441,13 +432,32 @@ xiv.ui.ViewBoxTabs.prototype.updateIconSrcFolder = function() {
  * @return {!Element} The created element.
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.createTabElt_ = function(tabTitle) {
+moka.ui.Tabs.prototype.createTabElt_ = function(tabTitle) {
     return goog.dom.createDom('div', {
 	'id': 'Tab_' + goog.string.createUniqueString(),
-	'class' : xiv.ui.ViewBoxTabs.TAB_CLASS,
+	'class' : moka.ui.Tabs.TAB_CLASS,
 	'title': tabTitle,
     });
 }
+
+
+/**
+ * As stated..
+ * @param {!string} tabTitle The title of the tab to set the image for.
+ * @return {!string} The src of the image.
+ * @private
+ */
+moka.ui.Tabs.prototype.setTabIconImage_ = function(tabTitle, src) {
+    //window.console.log("ICON", this.iconUrl);
+    if (!this.Tabs_[tabTitle]) {
+	throw new Error("Invalid tab!");
+    }
+    goog.dom.removeChildren(this.Tabs_[tabTitle]['icon']);
+    goog.dom.append(this.Tabs_[tabTitle]['icon'], goog.dom.createDom('img', {
+	'src' : src
+    }))
+}
+
 
 
 /**
@@ -456,29 +466,19 @@ xiv.ui.ViewBoxTabs.prototype.createTabElt_ = function(tabTitle) {
  * @return {!Element} The created element.
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.createTabIcon_ = function(tabTitle) {
+moka.ui.Tabs.prototype.createTabIcon_ = function(tabTitle) {
     //window.console.log("ICON", this.iconUrl);
 
     var icon = /**@type {!Element}*/ goog.dom.createDom('div', {
 	'id' : 'TabIcon_' + goog.string.createUniqueString(),
-	'class' : xiv.ui.ViewBoxTabs.TABICON_CLASS,
+	'class' : moka.ui.Tabs.TABICON_CLASS,
     });
 
-    
-    if (this.constructor.ICON_SRC[tabTitle]) {
-	goog.dom.append(icon, goog.dom.createDom('img', {
-	    'src': goog.string.path.join(this.iconUrl, 
-					 this.constructor.ICON_SRC[tabTitle]),
-	    'class' : xiv.ui.ViewBoxTabs.TABICON_CLASS,
-	}))
-    } 
+    goog.dom.append(icon, goog.dom.createDom('div', {
+	'class' : moka.ui.Tabs.TABICON_CLASS
+    }, tabTitle))
 
-    // If there's no stored image resort to title...
-    else {
-	goog.dom.append(icon, goog.dom.createDom('div', {
-	    'class' : xiv.ui.ViewBoxTabs.TABICON_CLASS
-	}, tabTitle))
-    }	
+    
     return icon;
 }
 
@@ -490,10 +490,10 @@ xiv.ui.ViewBoxTabs.prototype.createTabIcon_ = function(tabTitle) {
  * @return {!Element} The created element.
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.createTabPage_ = function(tabTitle) {
+moka.ui.Tabs.prototype.createTabPage_ = function(tabTitle) {
     return goog.dom.createDom('div', {
 	'id' : 'TabPage_' + goog.string.createUniqueString(),
-	'class': xiv.ui.ViewBoxTabs.TABPAGE_CLASS,
+	'class': moka.ui.Tabs.TABPAGE_CLASS,
 	'label': tabTitle
     });
 }
@@ -508,7 +508,7 @@ xiv.ui.ViewBoxTabs.prototype.createTabPage_ = function(tabTitle) {
  * @param {!goog.ui.TabPane.TabPage} googTab The google TabPage.
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.storeTab_ = 
+moka.ui.Tabs.prototype.storeTab_ = 
 function(tabTitle, tab, tabIcon, content, googTab){
     this.Tabs_ = (this.Tabs_) ? this.Tabs_ : {};
     this.Tabs_[tabTitle] = {
@@ -527,7 +527,7 @@ function(tabTitle, tab, tabIcon, content, googTab){
  * @param {!number} ind The tab index to deactivate.
  * @public
  */
-xiv.ui.ViewBoxTabs.prototype.deactivate = function (ind) { 
+moka.ui.Tabs.prototype.deactivate = function (ind) { 
     goog.array.forEach(this.getTabElements(), function(tabElt, i){
 	if (i === ind) {
 	    this.deactivateTabElt_(tabElt);
@@ -548,7 +548,7 @@ xiv.ui.ViewBoxTabs.prototype.deactivate = function (ind) {
  * when a tab is deactivated.
  * @public
  */
-xiv.ui.ViewBoxTabs.prototype.deactivateAll = function () { 
+moka.ui.Tabs.prototype.deactivateAll = function () { 
     goog.array.forEach(this.getTabElements(), function(tabElt, i){
 	this.deactivateTabElt_(tabElt);
     }.bind(this))
@@ -563,12 +563,12 @@ xiv.ui.ViewBoxTabs.prototype.deactivateAll = function () {
 /**
  * @inheritDoc
  */
-xiv.ui.ViewBoxTabs.prototype.updateStyle = function () {
+moka.ui.Tabs.prototype.updateStyle = function () {
 
-
-
+    if (!this.getElement().parentNode) { return };
+    
     // Need to do this
-    goog.dom.classes.add(this.getElement(), xiv.ui.ViewBoxTabs.ELEMENT_CLASS);
+    goog.dom.classes.add(this.getElement(), moka.ui.Tabs.ELEMENT_CLASS);
 
 
     var i = /**@type {!number}*/ 0;
@@ -578,7 +578,7 @@ xiv.ui.ViewBoxTabs.prototype.updateStyle = function () {
 	    moka.style.dims(this.getElement().parentNode, 'height');
     var tabTop = parseInt(moka.style.getComputedStyle(this.getElement(), 
 						      'top'), 10);
-    window.console.log(tabTop);
+    //window.console.log(tabTop);
     
 
     goog.object.forEach(this.Tabs_, function(tObj){
@@ -621,9 +621,9 @@ xiv.ui.ViewBoxTabs.prototype.updateStyle = function () {
  * As sated.
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.deactivateTabElt_ = function (tabElt) {
-    goog.dom.classes.remove(tabElt, xiv.ui.ViewBoxTabs.ACTIVE_TAB_CLASS);
-    goog.dom.classes.set(tabElt, xiv.ui.ViewBoxTabs.TAB_CLASS);
+moka.ui.Tabs.prototype.deactivateTabElt_ = function (tabElt) {
+    goog.dom.classes.remove(tabElt, moka.ui.Tabs.ACTIVE_TAB_CLASS);
+    goog.dom.classes.set(tabElt, moka.ui.Tabs.TAB_CLASS);
 }
 
 
@@ -632,8 +632,8 @@ xiv.ui.ViewBoxTabs.prototype.deactivateTabElt_ = function (tabElt) {
  * As stated.
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.deactivateTabPage_ = function (tabCont) {
-    goog.dom.classes.set(tabCont, xiv.ui.ViewBoxTabs.TABPAGE_CLASS);
+moka.ui.Tabs.prototype.deactivateTabPage_ = function (tabCont) {
+    goog.dom.classes.set(tabCont, moka.ui.Tabs.TABPAGE_CLASS);
 }
 
 
@@ -645,12 +645,12 @@ xiv.ui.ViewBoxTabs.prototype.deactivateTabPage_ = function (tabCont) {
  * @param {number} ind The reference active tab number.
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.activateTabElt_ = function (ind) {
+moka.ui.Tabs.prototype.activateTabElt_ = function (ind) {
     window.console.log("ACTIVATE TAB ELT", ind);
     goog.array.forEach(this.getTabElements(), function(tab, i) { 
 	if (i === ind) {
 	    tab.setAttribute('isActive', true);
-	    goog.dom.classes.add(tab, xiv.ui.ViewBoxTabs.ACTIVE_TAB_CLASS);
+	    goog.dom.classes.add(tab, moka.ui.Tabs.ACTIVE_TAB_CLASS);
 	}
     })	
 }
@@ -661,10 +661,10 @@ xiv.ui.ViewBoxTabs.prototype.activateTabElt_ = function (ind) {
  * @param {number} ind The reference active tab number.
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.activateTabPage_ = function (ind) {
+moka.ui.Tabs.prototype.activateTabPage_ = function (ind) {
     goog.array.forEach(this.getTabPage(), function(tabPage, i) {
 	if (ind === i){
-	    goog.dom.classes.add(tabPage, xiv.ui.ViewBoxTabs.ACTIVE_TABPAGE_CLASS);
+	    goog.dom.classes.add(tabPage, moka.ui.Tabs.ACTIVE_TABPAGE_CLASS);
 	    //moka.fx.fadeInFromZero(tabPage, tabFadeIn);
 	}	
     })	
@@ -675,8 +675,8 @@ xiv.ui.ViewBoxTabs.prototype.activateTabPage_ = function (ind) {
  * Clears all event listening callbacks for tabs.
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.clearEventListeners_ = function(){
-    goog.array.forEach(goog.dom.getElementsByClass(xiv.ui.ViewBoxTabs.TAB_CLASS, 
+moka.ui.Tabs.prototype.clearEventListeners_ = function(){
+    goog.array.forEach(goog.dom.getElementsByClass(moka.ui.Tabs.TAB_CLASS, 
 				this.getElement()), function(tab, i) { 
 	goog.events.removeAll(tab);
     })
@@ -689,7 +689,7 @@ xiv.ui.ViewBoxTabs.prototype.clearEventListeners_ = function(){
  * (i.e. tab activation and tab deactivation).
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.setClickEvents_ = function() {
+moka.ui.Tabs.prototype.setClickEvents_ = function() {
     // Cycle through each tab...
     goog.array.forEach(this.getTabElements(), function(tab, i) { 
 	goog.events.listen(tab, goog.events.EventType.MOUSEUP, function(event) {
@@ -709,16 +709,16 @@ xiv.ui.ViewBoxTabs.prototype.setClickEvents_ = function() {
  * @param {!number} i The index of the tab.
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.setTabMouseOver_ = function(tab, i) {
+moka.ui.Tabs.prototype.setTabMouseOver_ = function(tab, i) {
     goog.events.listen(tab, goog.events.EventType.MOUSEOVER, function() { 
-	goog.dom.classes.add(tab, xiv.ui.ViewBoxTabs.HOVERED_TAB_CLASS);
+	goog.dom.classes.add(tab, moka.ui.Tabs.HOVERED_TAB_CLASS);
 	
 	// Set TabIcon style change (opacity) -- applies whether active 
 	// or inactive
 	goog.array.forEach(goog.dom.getElementsByClass(
 	    this.TABICON_CLASS, tab), function(icon){
 		goog.dom.classes.add(icon, 
-			xiv.ui.ViewBoxTabs.MOUSEOVER_TABICON_CLASS);
+			moka.ui.Tabs.MOUSEOVER_TABICON_CLASS);
 	    }.bind(this))
     }.bind(this))
 }
@@ -731,14 +731,14 @@ xiv.ui.ViewBoxTabs.prototype.setTabMouseOver_ = function(tab, i) {
  * @param {!number} i The index of the tab.
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.setTabMouseOut_ = function(tab, i) {
+moka.ui.Tabs.prototype.setTabMouseOut_ = function(tab, i) {
     goog.events.listen(tab, goog.events.EventType.MOUSEOUT, function(e) { 
-	goog.dom.classes.remove(tab, xiv.ui.ViewBoxTabs.HOVERED_TAB_CLASS);
+	goog.dom.classes.remove(tab, moka.ui.Tabs.HOVERED_TAB_CLASS);
 	// TabIcon style change (opacity) -- applies whether active or inactive
 	goog.array.forEach(goog.dom.getElementsByClass(
 	    this.TABICON_CLASS, tab), function(icon){
 		goog.dom.classes.remove(icon, 
-				    xiv.ui.ViewBoxTabs.MOUSEOVER_TABICON_CLASS);
+				    moka.ui.Tabs.MOUSEOVER_TABICON_CLASS);
 	    }.bind(this))
     }.bind(this))
 }
@@ -750,7 +750,7 @@ xiv.ui.ViewBoxTabs.prototype.setTabMouseOut_ = function(tab, i) {
  * the mouse hover's over the tab.
  * @private
  */
-xiv.ui.ViewBoxTabs.prototype.setHoverEvents_ = function() {
+moka.ui.Tabs.prototype.setHoverEvents_ = function() {
     // Cycle through each tab...
     goog.array.forEach(this.getTabElements(), function(tab, i) { 
 	this.setTabMouseOver_(tab, i);

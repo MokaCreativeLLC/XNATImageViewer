@@ -95,29 +95,16 @@ goog.addDependency('../../../../ui/ViewBox.js',
     'goog.dom', 
     'goog.array',
     'goog.object',
+    'goog.style',
     'moka.ui.Component',
     'moka.events.EventManager',
     'moka.style',
     //'xiv.ui.ViewLayoutManager',
     //'xiv.ui.ViewLayoutMenu',
-    'xiv.ui.ViewBoxTabs',
+    'moka.ui.ZipTabs',
     //'xiv.ui.Displayer.Xtk',
     //'xiv.ui.SlicerViewMenu'
 ]);
 
 
-goog.addDependency('../../../../ui/ViewBoxTabs.js', 
-['xiv.ui.ViewBoxTabs'], [
-    'goog.object',
-    'goog.string',
-    'goog.dom',
-    'goog.array',
-    'goog.ui.TabPane',
-    'goog.ui.TabPane.TabPage',
-    'goog.events',
-    'moka.ui.Component',
-    'moka.convert',
-    'moka.ui.ScrollableContainer',
-    'moka.style',
-    'moka.events.EventManager'
-]);
+
