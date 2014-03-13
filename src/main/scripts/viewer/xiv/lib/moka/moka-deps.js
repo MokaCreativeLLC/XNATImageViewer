@@ -68,15 +68,20 @@ goog.addDependency('../../../moka/ui/Component.js', ['moka.ui.Component'], [
 
 
 
-goog.addDependency('../../../moka/ui/Resizeable.js', 
-['moka.ui.Resizeable'], [
+goog.addDependency('../../../moka/ui/Resizable.js', 
+['moka.ui.Resizable'], [
+    'goog.dom',
+    'goog.string',
     'goog.object',
+    'goog.array',
+    'goog.style',
+    'goog.math.Size',
+    'goog.math.Coordinate', 
     'goog.fx.Dragger',
     'goog.fx.Dragger.EventType',
-    'goog.math.Size',
-    'goog.style',
-    'goog.ui.Component',  
-    'goog.fx.dom.Slide'
+    'goog.fx.dom.Slide', 
+    'moka.ui.Component',
+    'moka.style'
 ]);
 
 
@@ -191,7 +196,7 @@ goog.addDependency('../../../moka/ui/Tabs.js',
 goog.addDependency('../../../moka/ui/ZipTabs.js', 
 ['moka.ui.ZipTabs'], [
     'moka.ui.Tabs',
-    'moka.ui.Resizeable'
+    'moka.ui.Resizable'
 ]);
 
 

@@ -15,14 +15,12 @@ goog.require('goog.style');
 goog.require('moka.ui.Component');
 goog.require('moka.style');
 goog.require('moka.events.EventManager');
-goog.require('moka.ui.Resizeable');
 goog.require('moka.ui.ZipTabs');
 
 
 // xiv
 //goog.require('xiv.ui.ViewLayoutManager');
 //goog.require('xiv.ui.ViewLayoutMenu');
-
 //goog.require('xiv.ui.Displayer.Xtk');
 //goog.require('xiv.ui.SlicerViewMenu');
 
@@ -54,21 +52,21 @@ xiv.ui.ViewBox = function () {
     this.setComponentCallbacks_();
 
 
-    this.Tabs_.setTabPageContents('TestTab1', 
+    this.ZipTabs_.setTabPageContents('TestTab1', 
 	goog.dom.createDom('div', {
 	    'color': 'rgb(255,255,255)',
 	    'background': 'rgb(205,25,48)',
 	}, 'Hello World.'))
 
 
-    this.Tabs_.setTabPageContents('TestTab2',
+    this.ZipTabs_.setTabPageContents('TestTab2',
 	goog.dom.createDom('div', {
 	    'color': 'rgb(255,255,255)',
 	    'background': 'rgb(205,25,48)',
 	}, 'Hello World 2.'))
 
 
-    //window.console.log(resizeable, resizeable.getElement());
+    //window.console.log(resizable, resizable.getElement());
     // style
     //this.doNotHide(this.SlicerViewMenu_.getElement());
     //this.hideChildElements_();
@@ -130,8 +128,17 @@ goog.getCssName(xiv.ui.ViewBox.CSS_CLASS_PREFIX, 'draganddrophandle');
  * @type {string} 
  * @const
  */
-xiv.ui.ViewBox.DRAGGING_CLASS = 
-goog.getCssName(xiv.ui.ViewBox.CSS_CLASS_PREFIX, 'dragging');
+xiv.ui.ViewBox.DRAGGER_CLASS = 
+goog.getCssName(xiv.ui.ViewBox.CSS_CLASS_PREFIX, 'dragger');
+
+
+/**
+ * @type {string} 
+ * @const
+ */
+xiv.ui.ViewBox.DRAGGER_HANDLE_CLASS = 
+goog.getCssName(xiv.ui.ViewBox.DRAGGER_CLASS, 'handle');
+
 
 
 /**
@@ -276,8 +283,8 @@ xiv.ui.ViewBox.prototype.getThumbnailLoadTime =  function() {
  */
 xiv.ui.ViewBox.prototype.updateIconSrcFolder = function() {
 
-    if (this.Tabs_){
-	this.Tabs_.setIconBaseUrl(this.iconBaseUrl);
+    if (this.ZipTabs_){
+	this.ZipTabs_.setIconBaseUrl(this.iconBaseUrl);
     }
 }
 
@@ -392,7 +399,7 @@ xiv.ui.ViewBox.prototype.adjustViewLayoutManager_ = function(){
  * @private
  */
 xiv.ui.ViewBox.prototype.loadTabs_ = function() {  
-    this.Tabs_.reset();
+    this.ZipTabs_.reset();
     this.loadTab_Info_();
     if (this.Thumbnail_.getViewable()['category'] == 'Slicer') {
 	this.loadTab_SlicerViews();
@@ -409,7 +416,7 @@ xiv.ui.ViewBox.prototype.loadTabs_ = function() {
  * @private
  */
 xiv.ui.ViewBox.prototype.loadTab_Info_ = function() {
-    this.Tabs_.setTabPageContents('Info', 
+    this.ZipTabs_.setTabPageContents('Info', 
       this.Displayer_.createInfoTabContents(this.Thumbnail_.getViewable()));
 }
 
@@ -420,7 +427,7 @@ xiv.ui.ViewBox.prototype.loadTab_Info_ = function() {
  * @private
  */
 xiv.ui.ViewBox.prototype.loadTab_SlicerViews_ = function() {
-    this.Tabs_.setTabPageContents('Slicer Views', 
+    this.ZipTabs_.setTabPageContents('Slicer Views', 
 		this.SlicerViewMenu_.getThumbnailGallery());
 }
 
@@ -434,7 +441,7 @@ xiv.ui.ViewBox.prototype.loadTabs_Controllers_ = function() {
     goog.object.forEach(this.Displayer_.getControllerMenu(), 
 	function(menuElt, key){
 	    if (menuElt){
-	        this.Tabs_.setTabPageContents(key, menuElt);
+	        this.ZipTabs_.setTabPageContents(key, menuElt);
 	    }
 	}.bind(this))
 }
@@ -464,8 +471,17 @@ xiv.ui.ViewBox.prototype.createTabs_ = function(){
      * @type {moka.ui.ZipTabs}
      * @private
      */	
-    this.Tabs_ = new moka.ui.ZipTabs('bottom'); 
-    goog.dom.append(this.getElement(), this.Tabs_.getElement());
+    this.ZipTabs_ = new moka.ui.ZipTabs('BOTTOM'); 
+    goog.dom.append(this.getElement(), this.ZipTabs_.getElement());
+
+    // Add dragger CSS and handle.
+    var dragger = /**@type {!Element}*/
+    this.ZipTabs_.getResizable().getDragElt('TOP');
+    goog.dom.classes.add(dragger, xiv.ui.ViewBox.DRAGGER_CLASS);
+    goog.dom.append(dragger, goog.dom.createDom('div', {
+	'id': 'DraggerHandle_' + goog.string.createUniqueString(),
+	'class': xiv.ui.ViewBox.DRAGGER_HANDLE_CLASS
+    }));
 }
 
 
@@ -578,21 +594,12 @@ xiv.ui.ViewBox.prototype.setComponentCallbacks_ = function() {
  * As stated.
  * @private
  */
-xiv.ui.ViewBox.prototype.setViewBoxBorderCallbacks_ = function () {
-    this.ViewBoxBorder_['EVENTS'].onEvent('MOVE', 
-	this.onViewBoxBorderDragging_.bind(this));
-    this.ViewBoxBorder_['EVENTS'].onEvent('MOVEEND',
-	this.onViewBoxBorderDragEnd_.bind(this));
-}
-
-
-
-/**
- * As stated.
- * @private
- */
 xiv.ui.ViewBox.prototype.setTabsCallbacks_ = function () {
-
+    goog.events.listen(this.ZipTabs_.getResizable(), 
+		       moka.ui.Resizable.EventType.RESIZE,
+        function(e) {
+	    this.onTabsResize_();    
+	}.bind(this));
 }
 
 
@@ -695,42 +702,9 @@ xiv.ui.ViewBox.prototype.onDisplayerLoaded_ = function(){
  * Callback for when the xiv.ui.ViewBoxBorder is dragged.
  * @private
  */
-xiv.ui.ViewBox.prototype.onViewBoxBorderDragging_ = function() {	
-
-    var dragDir = /**@type {!number}*/ this.ViewBoxBorder_.getDragVelocity_Y();
-
-    // Going up.
-    if (dragDir < 0) {
-	this.Tabs_.activate(this.Tabs_.getLastActiveTab());
-    }
-
-    // Going down.
-    else if ((dragDir > 0) && this.ViewBoxBorder_.isNearBottomLimit()) {
-	this.Tabs_.deactivateAll();
-    }
-
-    // Update the position of the tabs and the style
-    // of the xiv.ui.ViewBox.
-    var contentDividerDims = /**@type {!Object.<string, number>}*/
-    moka.style.dims(this.ViewBoxBorder_.getElement());
-    var tabTop = /**@type {!number}*/
-    contentDividerDims['top'] + contentDividerDims['height'];
-    this.Tabs_.updateStyle({ 'top': tabTop});
+xiv.ui.ViewBox.prototype.onTabsResize_ = function() {	
     this.updateStyle();
 }
-
-
-
-/**
- * Callback for when the xiv.ui.ViewBoxBorder is finished dragging.
- * @private
- */
-xiv.ui.ViewBox.prototype.onViewBoxBorderDragEnd_ = function() {
-    this.updateStyle();
-}
-
-
-
 
 
 
@@ -739,50 +713,63 @@ xiv.ui.ViewBox.prototype.onViewBoxBorderDragEnd_ = function() {
  * @inheritDoc
  */
 xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
- 
     // Merge any new arguments and update.
     if (opt_args) {
 	moka.style.setStyle(this.getElement(), opt_args);
     }
 
-    // Get the dimensions of the view box.
-    var widgetDims = /**@type {!Object.<string, number>}*/
-    moka.style.dims(this.getElement());
+    var size = /**@type {!goog.math.Size}*/ 
+    goog.style.getSize(this.getElement());
+    var pos = /**@type {!goog.math.Coordinate}*/ 
+    goog.style.getPosition(this.getElement());
 
-    //this.updateStyle_self_(widgetDims);
-    this.updateStyle_components_(widgetDims);
+    this.updateStyle_Tabs_(size, pos);
+    //this.updateStyle_ViewLayoutManager_(size, pos);
+    //this.updateStyle_Displayer_(size, pos);
 }
 
 
 
 /**
  * As stated.
- * @param {!Object.<string, number>} widgetDims The widget dimensions.
+ * @param {!goog.math.Size} size
+ * @param {!goog.math.Coordinate} pos
  * @private
  */
-xiv.ui.ViewBox.prototype.updateStyle_components_ = function (widgetDims) {
-
-    var size = goog.style.getSize(this.getElement());
-    
-    // Tabs;
+xiv.ui.ViewBox.prototype.updateStyle_Tabs_ = function (size, pos) {
     if (size.width <= 0) {
-	this.Tabs_.getResizeable().setBounds(0, 0, size.width, size.height);
+	this.ZipTabs_.getResizable().setBounds(0, 0, size.width, size.height);
     } else {
-	this.Tabs_.getResizeable().setBounds(0, 
+	this.ZipTabs_.getResizable().setBounds(0, 
 		size.width * xiv.ui.ViewBox.MIN_TAB_H_PCT, 
 					     size.width, size.height);
     }
-    this.Tabs_.getResizeable().showBoundaryElt();
-    this.Tabs_.deactivateAll();
-    this.Tabs_.updateStyle();
- 
-    return;
-    // xiv.ui.ViewLayout
-    this.ViewLayoutManager_.implementViewLayout();
+    //this.ZipTabs_.getResizable().showBoundaryElt();
+    //this.ZipTabs_.deactivateAll();
+    this.ZipTabs_.updateStyle();
+}
 
-    // Displayer
-    moka.style.setStyle(this.Displayer_.getElement(), {
- 	'width': widgetDims['width'],
- 	'height': moka.style.dims(this.Tabs_.getElement(), 'top')
-    });
+
+
+/**
+ * As stated.
+ * @param {!goog.math.Size} size
+ * @param {!goog.math.Coordinate} pos
+ * @private
+ */
+xiv.ui.ViewBox.prototype.updateStyle_ViewLayoutManager_ = function (size, pos) {
+    this.ViewLayoutManager_.implementViewLayout();
+}
+
+
+
+/**
+ * As stated.
+ * @param {!goog.math.Size} size
+ * @param {!goog.math.Coordinate} pos
+ * @private
+ */
+xiv.ui.ViewBox.prototype.updateStyle_Displayer_ = function (size, pos) {
+    goog.style.setSize(this.Displayer_.getElement(), size.width,  
+		       parseInt(this.ZipTabs_.getElement().style.top, 10))
 }

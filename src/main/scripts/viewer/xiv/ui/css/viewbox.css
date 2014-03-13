@@ -31,10 +31,19 @@
 }
 
 
-.xiv-ui-viewbox-dragging {
-    z-Index: 100000;
-    opacity: .55;
-    border: solid rgba(255,255,255,1) 1px;
-    background-color: rgba(0,0,0, .5);
-    overflow: hidden;
+.xiv-ui-viewbox-dragger {
+    background-color: rgb(40,40,40);
+    height: 6px;
+    top: -2px;
+}
+
+
+.xiv-ui-viewbox-dragger-handle {
+    position: absolute;
+    top: calc(50% - 1px);
+    left: calc(50% - 15px);
+    width: 30px;
+    height: 2px;
+    background-color: rgb(80,80,80);
+    
 }

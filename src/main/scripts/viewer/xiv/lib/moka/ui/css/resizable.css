@@ -6,14 +6,14 @@ See the COPYING file for details.
 /* Copyright 2007 Google Inc.  All Rights Reserved. */
 /**/
 
-.moka-ui-resizeable-handle {
+.moka-ui-resizable-handle {
   position: absolute;
   font-size: 0.1px;
   z-index: 49;
 }
 
 
-.moka-ui-resizeable-right {
+.moka-ui-resizable-right {
   position: absolute;
   right: 0px;
   top: 0px;
@@ -23,7 +23,7 @@ See the COPYING file for details.
 }
 
 
-.moka-ui-resizeable-bottom-right {
+.moka-ui-resizable-bottom-right {
   position: absolute;
   right: 1px;
   bottom: 1px;
@@ -33,7 +33,7 @@ See the COPYING file for details.
   z-index: 50;
 }
 
-.moka-ui-resizeable-bottom {
+.moka-ui-resizable-bottom {
   position: absolute;
   left: 0px;
   bottom: 0px;
@@ -43,7 +43,7 @@ See the COPYING file for details.
 }
 
 
-.moka-ui-resizeable-bottom-left {
+.moka-ui-resizable-bottom-left {
   position: absolute;
   left: 1px;
   bottom: 1px;
@@ -54,7 +54,7 @@ See the COPYING file for details.
 }
 
 
-.moka-ui-resizeable-left {
+.moka-ui-resizable-left {
   position: absolute;
   left: 0px;
   top: 0px;
@@ -64,7 +64,7 @@ See the COPYING file for details.
 }
 
 
-.moka-ui-resizeable-top-left {
+.moka-ui-resizable-top-left {
   position: absolute;
   left: 1px;
   top: 1px;
@@ -76,19 +76,18 @@ See the COPYING file for details.
 
 
 
-.moka-ui-resizeable-top {
+.moka-ui-resizable-top {
   position: absolute;
   left: 0px;
   top: 0px;
-  margin-top: -7px;
+  margin-top: -4px;
   width: 100%;
   height: 7px;
-  background-color: 'rgb(255,255,0)';
   cursor: ns-resize;
 }
 
 
-.moka-ui-resizeable-top-right {
+.moka-ui-resizable-top-right {
   position: absolute;
   right: 1px;
   top: 1px;
@@ -99,7 +98,7 @@ See the COPYING file for details.
 }
 
 
-.moka-ui-resizeable-ghost {
+.moka-ui-resizable-ghost {
   position: absolute;
   left: 0px;
   top: 0px;
@@ -111,7 +110,7 @@ See the COPYING file for details.
 
 
 
-.moka-ui-resizeable-boundary {
+.moka-ui-resizable-boundary {
   position: absolute;
   border: 1px dotted rgb(255,0,0);
   background-color: rgba(255, 120, 120, .5);

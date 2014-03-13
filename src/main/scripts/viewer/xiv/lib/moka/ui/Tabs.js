@@ -13,7 +13,6 @@ goog.require('goog.ui.TabPane.TabPage');
 
 // moka
 goog.require('moka.ui.Component');
-goog.require('moka.ui.Resizeable');
 goog.require('moka.convert');
 goog.require('moka.style');
 goog.require('moka.ui.ScrollableContainer');
@@ -34,33 +33,14 @@ goog.provide('moka.ui.Tabs');
 moka.ui.Tabs = function () {
     goog.base(this);
 
-
-
     /**
      * @type {!goog.ui.TabPane}
      * @private
      */
     this.googTabPane_ = new goog.ui.TabPane(this.getElement());
-
-    // events
-    moka.events.EventManager.addEventManager(this, 
-					     moka.ui.Tabs.EventType);
-
 }
 goog.inherits(moka.ui.Tabs, moka.ui.Component);
 goog.exportSymbol('moka.ui.Tabs', moka.ui.Tabs)
-
-
-
-/**
- * Event types.
- * @enum {string}
- * @public
- */
-moka.ui.Tabs.EventType = {
-  CLICKED: goog.events.getUniqueId('viewboxtab_clicked'),
-}
-
 
 
 
@@ -178,6 +158,14 @@ moka.ui.Tabs.prototype.lastActiveTab_ = 0;
 
 
 /**
+ * @type {!number}
+ * @private
+ */
+moka.ui.Tabs.prototype.prevActiveTab_ = 0;
+
+
+
+/**
  * @type {Object}
  * @private
  */
@@ -227,6 +215,17 @@ moka.ui.Tabs.prototype.getLastActiveTab = function(){
 
 
 /**
+ * As stated.
+ * @type {number}
+ * @public
+ */
+moka.ui.Tabs.prototype.getPreviousActiveTab = function(){
+    return this.prevActiveTab_;
+}
+
+
+
+/**
  * Adds multiple tabs by calling on the internal 'addTab' function.
  * @param {!Array.string} tabTitles The titles of the tabs to add.
  * @public
@@ -261,15 +260,31 @@ moka.ui.Tabs.prototype.reset = function() {
 /**
  * Conducts the necessary CSS / stylesheet adjustments
  * when a tab is activated or clicked.
- * @param {number} activeTabNum The reference active tab number.
+ * @param {!number} activeTabNum The reference active tab number.
  * @public
  */
-moka.ui.Tabs.prototype.activate = function (activeTabNum) {	
+moka.ui.Tabs.prototype.setActive = function (activeTabNum) {	
     // Call goog.ui.TabPane select method.
+    this.prevActiveTab_ = this.lastActiveTab_;
     this.lastActiveTab_ = activeTabNum;
     this.googTabPane_.setSelectedIndex(activeTabNum);
-    this.activateTabElt_(activeTabNum);
-    this.activateTabPage_(activeTabNum);
+    this.setActiveTabElt_(activeTabNum);
+    this.setActiveTabPage_(activeTabNum);
+}
+
+
+
+/**
+ * As stated.
+ * @return {!Array.Element} The elements.
+ * @public
+ */
+moka.ui.Tabs.prototype.getTabIndex = function() {
+    var elts = /**@type {!Array.Element}*/ [];
+    goog.object.forEach(this.Tabs_, function(tabObj, key){
+	elts.push(tabObj['tab']);
+    });
+    return elts;
 }
 
 
@@ -368,7 +383,7 @@ moka.ui.Tabs.prototype.addTab = function(tabTitle) {
     this.setClickEvents_();
     this.setHoverEvents_();
     this.deactivateAll();
-    this.activate(0);
+    this.setActive(0);
 }
 
 
@@ -533,7 +548,7 @@ moka.ui.Tabs.prototype.deactivate = function (ind) {
 	    this.deactivateTabElt_(tabElt);
 	}
     }.bind(this))
-
+a
     goog.array.forEach(this.getTabPage(), function(tabCont, i){
 	if (i === ind) {
 	    this.deactivateTabPage_(tabCont);
@@ -549,6 +564,7 @@ moka.ui.Tabs.prototype.deactivate = function (ind) {
  * @public
  */
 moka.ui.Tabs.prototype.deactivateAll = function () { 
+
     goog.array.forEach(this.getTabElements(), function(tabElt, i){
 	this.deactivateTabElt_(tabElt);
     }.bind(this))
@@ -645,7 +661,7 @@ moka.ui.Tabs.prototype.deactivateTabPage_ = function (tabCont) {
  * @param {number} ind The reference active tab number.
  * @private
  */
-moka.ui.Tabs.prototype.activateTabElt_ = function (ind) {
+moka.ui.Tabs.prototype.setActiveTabElt_ = function (ind) {
     window.console.log("ACTIVATE TAB ELT", ind);
     goog.array.forEach(this.getTabElements(), function(tab, i) { 
 	if (i === ind) {
@@ -661,7 +677,7 @@ moka.ui.Tabs.prototype.activateTabElt_ = function (ind) {
  * @param {number} ind The reference active tab number.
  * @private
  */
-moka.ui.Tabs.prototype.activateTabPage_ = function (ind) {
+moka.ui.Tabs.prototype.setActiveTabPage_ = function (ind) {
     goog.array.forEach(this.getTabPage(), function(tabPage, i) {
 	if (ind === i){
 	    goog.dom.classes.add(tabPage, moka.ui.Tabs.ACTIVE_TABPAGE_CLASS);
@@ -695,8 +711,7 @@ moka.ui.Tabs.prototype.setClickEvents_ = function() {
 	goog.events.listen(tab, goog.events.EventType.MOUSEUP, function(event) {
 	    window.console.log("CLICK", i);
 	    this.deactivateAll();
-	    this['EVENTS'].runEvent('CLICKED', i);
-	    this.activate(i);
+	    this.setActive(i);
 	}.bind(this))
     }.bind(this))	
 }
