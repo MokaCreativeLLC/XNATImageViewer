@@ -25,8 +25,6 @@ goog.require('moka.ui.ZipTabs');
 //goog.require('xiv.ui.SlicerViewMenu');
 
 
-
-
 /**
  * Viewing box for viewable types (images, 3d volumes and meshes, 
  * Slicer scenes). xiv.ui.ViewBoxes accept xiv.thumbnails, either dropped or 
