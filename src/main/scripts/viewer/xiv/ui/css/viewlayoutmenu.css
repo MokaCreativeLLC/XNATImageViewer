@@ -7,8 +7,8 @@
 
 
 .xiv-ui-viewlayoutmenu, .xiv-ui-viewlayoutmenu-icon {
-    height: 17px; 
-    width: 17px; 
+    height: 13px; 
+    width: 13px; 
     cursor: pointer;
     position: absolute;
     z-index: 1000002;
@@ -26,6 +26,7 @@
     margin-left: 1px;
     opacity: .5; 
     z-index: 10000;
+    content:url('../../../../../images/viewer/xiv/ui/ViewLayoutMenu/menu.png');
 }
 
 

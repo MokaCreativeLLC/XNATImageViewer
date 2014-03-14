@@ -20,7 +20,6 @@ goog.require('moka.style');
 goog.require('moka.fx');
 
 // xiv
-goog.require('xiv');
 goog.require('moka.ui.Component');
 
 
@@ -31,144 +30,107 @@ goog.require('moka.ui.Component');
  * view planes of the viewable data.
  *
  * @constructor
- * @param {!Object.<string, xiv.ui.ViewLayout>}
  * @extends {moka.ui.Component}
  */
 goog.provide('xiv.ui.ViewLayoutMenu');
-xiv.ui.ViewLayoutMenu = function (viewLayouts) {
-  		
-    goog.base(this, {
-	'title': "Select View Plane",
-    });
-
+xiv.ui.ViewLayoutMenu = function () {	
+    goog.base(this);
+    this.getElement().title = 'Select View Plane';
 
 
     /**
      * @private
-     * @type {!Object.<string, xiv.ui.ViewLayout>}
+     * @type {Element}
      */
-    this.viewLayouts_ = viewLayouts;
-
-
-    //------------------
-    // Define MenuHolder element, and apply its class.
-    //------------------
     this.menuHolder_ = goog.dom.createDom("div", {
-	'id' : "shortMenuDiv",
+	'id' : this.constructor.ID_PREFIX + 
+	    '_Holder_' + goog.string.createUniqueString(),
 	'class': xiv.ui.ViewLayoutMenu.MENUHOLDER_CLASS
     })
+    goog.dom.append(this.getElement(), this.menuHolder_);
 
 
-
-    //------------------
-    // Define the icon of the menu and apply its class.
-    //------------------
+    /**
+     * @private
+     * @type {Element}
+     */
     this.icon_ = goog.dom.createDom("img", {
-	'id': "menuIcon",
-	'src': xiv.ICON_URL + "ViewLayoutMenu/Menu.png",
+	'id': this.constructor.ID_PREFIX + 
+	    '_Icon_' + goog.string.createUniqueString(),
 	'class': xiv.ui.ViewLayoutMenu.ICON_CLASS
     });	
-
-    
-    //
-    // Append
-    //
-    goog.dom.append(this.getElement(), this.menuHolder_);
     goog.dom.append(this.getElement(), this.icon_);
 
 
-
-    //------------------
-    // Establish the closure menu
-    //------------------
+    /**
+     * @private
+     * @type {!goog.ui.Menu}
+     */   
     this.menu_ = new goog.ui.Menu();
-    this.menu_.setId('viewLayoutClosureMenu');
-   
-
-    
-    //------------------
-    // Clear Callbacks
-    //------------------
-    this.clearCallbacks();
+    this.menu_.setId('ViewLayoutMenu');
 
 
-
-    //------------------
-    // Clear objects and arrays.
-    //------------------
+    /**
+     * @private
+     * @type {?Array.<goog.ui.MenuItem>}
+     */
     this.menuItems_ = [];
-    this.selectMenuItemCallbacks_ = [];
 
 
+    goog.array.forEach(xiv.ui.ViewLayoutMenu.Layouts, function(title, i){
 
-    //------------------
-    // Add Menu Items (i.e. the view plane selectors) to menu.
-    //------------------
-    var i = 0;
-    for (key in this.viewLayouts_) {
-
-
-	//
-	// Add MenuItem (a closure class)
-	//
-	var title = this.viewLayouts_[key].title;
-	if (title === 'none') continue;
 	var item = new goog.ui.MenuItem(title)
 	item.setId(title);
 	this.menuItems_.push(item);
 	this.menu_.addItem(item);
 	
 
-	//
 	// Adjust MenuItem class for the
 	// image viewer's purposes.
-	//
-	var childNodes = goog.dom.getElementsByClass('goog-menuitem-content', this.menu_.getElement());
+	var childNodes = goog.dom.getElementsByClass('goog-menuitem-content', 
+						     this.menu_.getElement());
 	content = childNodes[i];
-	goog.dom.classes.add(content, xiv.ui.ViewLayoutMenu.MENUITEM_CONTENT_CLASS);
+	goog.dom.classes.add(content, 
+			     xiv.ui.ViewLayoutMenu.MENUITEM_CONTENT_CLASS);
 	content.title = title;
 	content.setAttribute('viewlayoutid', title);
 
-
-	//
 	// Set the icon of the menu item (the anatomical 
 	// plane.
-	//
 	contentIcon = goog.dom.createDom("img", {
 	    'id': "contentIcon_" + goog.string.createUniqueString(),
-	    'src' : this.viewLayouts_[key]['src'],
 	    'class' : xiv.ui.ViewLayoutMenu.MENUITEM_ICON_CLASS
 	});
 	goog.dom.append(content, contentIcon);
-
-	i++;
-    }
+    }.bind(this))
     this.menu_.render(this.menuHolder_);
-    goog.dom.classes.add(this.menu_.getElement(), xiv.ui.ViewLayoutMenu.MENU_CLASS);
+    goog.dom.classes.add(this.menu_.getElement(), 
+			 xiv.ui.ViewLayoutMenu.MENU_CLASS);
 
 
-
-    //------------------
-    // Menu Interaction
-    //------------------
-    this.setMenuInteraction();  
-  
-
-
-    //------------------
-    // Set default highlighted index of the menu.
-    //------------------
-    this.setHighlightedIndex(0);
-
-
-
-    //------------------
-    // Hide menu
-    //------------------
-    goog.style.showElement(this.menuHolder_, false);
+    //this.setMenuInteraction();  
+    //this.setHighlightedIndex(0);
 }
 goog.inherits(xiv.ui.ViewLayoutMenu, moka.ui.Component);
 goog.exportSymbol('xiv.ui.ViewLayoutMenu', xiv.ui.ViewLayoutMenu)
+
+
+
+
+/**
+ * @type {!Array.string} 
+ * @const
+*/
+xiv.ui.ViewLayoutMenu.Layouts  = [
+    'SAGITTAL',
+    'CORONAL',
+    'TRANSVERSE',
+    'THREE_D',
+    'CONVENTIONAL',
+    'FOUR_UP'
+]
+
+
 
 
 
@@ -185,8 +147,8 @@ xiv.ui.ViewLayoutMenu.ID_PREFIX =  'xiv.ui.ViewLayoutMenu';
  * @const
 */
 xiv.ui.ViewLayoutMenu.CSS_CLASS_PREFIX =
-goog.string.toSelectorCase(moka.string.getLettersOnly(
-    xiv.ui.ViewLayoutMenu.ID_PREFIX));
+goog.string.toSelectorCase(xiv.ui.ViewLayoutMenu.ID_PREFIX.toLowerCase().
+			   replace(/\./g,'-'));
 
 
 
@@ -276,36 +238,10 @@ xiv.ui.ViewLayoutMenu.animationDuration = 700
  * @const
  * @type {number}
  */	
-xiv.ui.ViewLayoutMenu.mouseoutHide = xiv.ui.ViewLayoutMenu.animationDuration + 800; 
+xiv.ui.ViewLayoutMenu.mouseoutHide = 
+    xiv.ui.ViewLayoutMenu.animationDuration + 800; 
 
 
-
-
-/**
- * @private
- * @type {Element}
- */	
-xiv.ui.ViewLayoutMenu.prototype.menuHolder_ = undefined; 
-
-
-
-
-/**
- * @private
- * @type {Element}
- */	
-xiv.ui.ViewLayoutMenu.prototype.icon_ = undefined;;
-
-
-
-
-/**
- * Closure menu
- *
- * @type {goog.ui.Menu}
- * @private
- */
-xiv.ui.ViewLayoutMenu.prototype.menu_ = undefined;
 
 
 
@@ -332,15 +268,6 @@ xiv.ui.ViewLayoutMenu.prototype.currViewLayout_ = undefined;
  */
 xiv.ui.ViewLayoutMenu.prototype.menuVisible_ = false;
 
-
-
-
-
-/**
- * @private
- * @type {?Array.<goog.ui.MenuItem>}
- */
-xiv.ui.ViewLayoutMenu.prototype.menuItems_ = null;
 
 
 

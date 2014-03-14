@@ -20,7 +20,7 @@ goog.require('moka.ui.ZipTabs');
 
 // xiv
 //goog.require('xiv.ui.ViewLayoutManager');
-//goog.require('xiv.ui.ViewLayoutMenu');
+goog.require('xiv.ui.ViewLayoutMenu');
 //goog.require('xiv.ui.Displayer.Xtk');
 //goog.require('xiv.ui.SlicerViewMenu');
 
@@ -309,7 +309,6 @@ xiv.ui.ViewBox.prototype.doNotHide = function(element){
  * @public
  */
 xiv.ui.ViewBox.prototype.setViewLayout = function(viewPlane) {
-    window.console.log("HERE", viewPlane);
     this.ViewLayoutMenu_.setViewLayout(viewPlane);
 }
 
@@ -452,8 +451,9 @@ xiv.ui.ViewBox.prototype.loadTabs_Controllers_ = function() {
  */
 xiv.ui.ViewBox.prototype.createSubComponents = function() {
     this.createTabs_();
+    this.createViewLayoutMenu_();
     //this.createSlicerViewMenu_();
-    //this.createViewLayoutMenu_();
+    
     //this.createViewLayoutManager_();
     //this.createDisplayer_();
 }
@@ -507,8 +507,7 @@ xiv.ui.ViewBox.prototype.createViewLayoutMenu_ = function(){
      * @type {!xiv.ui.ViewLayoutMenu}
      * @private
      */
-    this.ViewLayoutMenu_ = new xiv.ui.ViewLayoutMenu(
-	this.ViewLayoutManager_.getViewLayouts());
+    this.ViewLayoutMenu_ = new xiv.ui.ViewLayoutMenu();
     goog.dom.append(this.getElement(), this.ViewLayoutMenu_.getElement());
 }
 

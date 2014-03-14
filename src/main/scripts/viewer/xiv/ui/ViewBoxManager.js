@@ -553,8 +553,8 @@ xiv.ui.ViewBoxManager.prototype.addDragDropHandle_ = function(ViewBox) {
     var dragDropHandle = /**@type {!Element}*/ 
     goog.dom.createDom("img",  {
 	'id': 'DragAndDropHandle',
-	'class' : xiv.ui.ViewBoxManager.HANDLE_CLASS,
-	'src' : this.iconUrl + '/' + xiv.ui.ViewBoxManager.ICON_SRC['HANDLE']
+	'class' : xiv.ui.ViewBoxManager.HANDLE_CLASS
+	//'src' : this.iconUrl + '/' + xiv.ui.ViewBoxManager.ICON_SRC['HANDLE']
     });
     dragDropHandle.setAttribute(xiv.ui.ViewBoxManager.VIEW_BOX_ATTR, 
 				ViewBox.getElement().id); 

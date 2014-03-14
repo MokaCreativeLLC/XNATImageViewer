@@ -36,12 +36,14 @@ goog.require('xiv.ui.ViewBoxManager');
  * @constructor
  * @extends {moka.ui.Component}
  */
-
 goog.provide('xiv.ui.Modal');
 xiv.ui.Modal = function () {
     goog.base(this);   
     this.createSubComponents();
     this.adjustStyleToMode_();
+    if(this.getViewBoxManager()){
+	this.getViewBoxManager().insertColumn(false);
+    }
 }
 goog.inherits(xiv.ui.Modal, moka.ui.Component);
 goog.exportSymbol('xiv.ui.Modal', xiv.ui.Modal);
@@ -535,13 +537,14 @@ xiv.ui.Modal.prototype.setStartingDimensionParams_ = function() {
     this._dims['ViewBox']['cols'] = this.ViewBoxManager_.columnCount();
     this._dims['ViewBox']['rows'] = this.ViewBoxManager_.rowCount();
 
-
     this._dims['ThumbnailGallery'] = {};
     this._dims['ThumbnailGallery']['width'] = 
 	parseInt(moka.style.getComputedStyle(
 	this.ThumbnailManager_.getThumbnailGallery().getElement(), 'width'),
 	10);
 
+    window.console.log('THUMB', this._dims['ThumbnailGallery']['width'],
+		      goog.style.getSize(this.ThumbnailManager_.getThumbnailGallery().getElement()));
     //window.console.log("WIDTH", this._dims['ThumbnailGallery']['width']);
     //window.console.log('PRELIM CALC',
 	//this.ThumbnailManager_.getThumbnailGallery().getElement(),
@@ -559,7 +562,7 @@ xiv.ui.Modal.prototype.deriveViewBoxDims_ = function() {
     // Determine the the modal width based on prescribed proportions
     this._dims['ViewBox']['height'] = 
 	(this._dims['height'] - ((this._dims['ViewBox']['rows'] + 1) * 
-		    xiv.ui.Modal.EXPANDBUTTON_W)) / this._dims['ViewBox']['rows'];
+		  xiv.ui.Modal.EXPANDBUTTON_W)) / this._dims['ViewBox']['rows'];
     this._dims['ViewBox']['width'] = xiv.ui.Modal.VIEWBOX_DIM_RATIO * 
 	this._dims['ViewBox']['height'];
 }
@@ -572,10 +575,17 @@ xiv.ui.Modal.prototype.deriveViewBoxDims_ = function() {
  */ 
 xiv.ui.Modal.prototype.derivePelimModalDims_ = function() {
     this._dims['width'] = this._dims['ThumbnailGallery']['width']; 
+    window.console.log(this._dims['width']);
+
     this._dims['width'] += this._dims['ViewBox']['width']  * 
 	this._dims['ViewBox']['cols']; 
+
+    window.console.log(this._dims['width']);
+
     this._dims['width'] += xiv.ui.Modal.VIEWBOX_VERT_MGN * 
 	this._dims['ViewBox']['cols'] + xiv.ui.Modal.EXPANDBUTTON_W;
+
+    window.console.log(this._dims['width']);
 }
 
 
@@ -703,6 +713,7 @@ xiv.ui.Modal.prototype.updateStyle = function () {
     moka.style.setStyle(this.getElement(), this._dims);
     this.updateStyle_ThumbnailGallery_();
     this.updateStyle_ViewBoxes_();
+    window.console.log("DIMS", this._dims);
     this.updateStyle_buttons_();
     this.highlightInUseThumbnails();
 }
@@ -1089,7 +1100,8 @@ xiv.ui.Modal.prototype.onThumbnailLoaded_ = function(ViewBox){
  *     true).
  * @private
  */
-xiv.ui.Modal.prototype.onViewBoxesChanged_ = function(newViewBoxSet, opt_animate) {
+xiv.ui.Modal.prototype.onViewBoxesChanged_ = 
+function(newViewBoxSet, opt_animate) {
     if (opt_animate) {
 	// Fade out the new viewboxes.
 	if (newViewBoxSet) {

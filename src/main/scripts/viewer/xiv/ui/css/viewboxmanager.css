@@ -12,4 +12,5 @@
     opacity: .4;
     z-index: 1000;
     margin-left: -10px;
+    content:url('../../../../../images/viewer/xiv/ui/ViewBoxManager/handle.png');
 }

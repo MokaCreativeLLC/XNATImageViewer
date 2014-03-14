@@ -13,14 +13,14 @@ goog.require('goog.window');
 goog.require('X.loader');
 goog.require('X.parserIMA'); // custom
 
-// lib
+// moka
 goog.require('moka.fx');
+
+// gxnat
 goog.require('gxnat');
 goog.require('gxnat.Path');
 goog.require('gxnat.ProjectTree');
 
-// xiv
-goog.require('xiv.ui.Modal');
 
 
 
@@ -34,7 +34,6 @@ goog.require('xiv.ui.Modal');
  */
 goog.provide('xiv');
 xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
-
 
 
     /** 
@@ -51,45 +50,13 @@ xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
     this.queryPrefix_ = xnatQueryPrefix;
 
 
-
     /** 
      * @private
      * @type {!string} 
      */
     this.iconUrl_ =  goog.isString(opt_iconUrl) ? opt_iconUrl : '';
-    
-
-
-    this.createModal_();
 };
 goog.exportSymbol('xiv', xiv);
-
-
-
-
-/**
- * The main start function to load up the XNAT Image Viewer.  Sets global URIs
- * (so as to load the thumbnails from a given experiment) and brings up the 
- * modal accordingly.
- * @public
- * @param {!string} windowMode
- * @param {!string} xnatServerRoot
- * @param {!string} dataPath
- * @param {!string} imagePath
- */
-xiv.startViewer = function (windowMode, xnatServerRoot, dataPath, imagePath) {
-    xiv.loadCustomExtensions_();
-    xiv.adjustDocumentStyle_();
-    var imageViewer = new xiv(windowMode, 
-                              xnatServerRoot,  
-			      gxnat.Path.getQueryPrefix(xnatServerRoot),
-			      imagePath);
-
-    imageViewer.loadExperiment(dataPath);
-    imageViewer.loadProjectTree();
-    imageViewer.showModal();
-};
-goog.exportSymbol('xiv.startViewer', xiv.startViewer)
 
 
 
@@ -98,6 +65,14 @@ goog.exportSymbol('xiv.startViewer', xiv.startViewer)
  * @const
  */
 xiv.ANIM_TIME = 300;
+
+
+
+/** 
+ * @type {Object} 
+ * @private
+ */
+xiv.prototype.modalType_;
 
 
 
@@ -133,6 +108,14 @@ xiv.prototype.Viewables_;
 
 
 
+/**
+ * @param {!Object} The modal type to set (e.g. xiv.ui.Modal).
+ * @public
+ */
+xiv.prototype.setModalType = function(modalType){
+    this.modalType_ = modalType;
+}
+
 
 /**
  * Begins the XNAT Image Viewer.
@@ -141,11 +124,9 @@ xiv.prototype.Viewables_;
 xiv.prototype.showModal = function(){
     this.Modal_.getElement().style.opacity = 0;
     goog.dom.append(document.body, this.Modal_.getElement());
+    this.Modal_.updateStyle();
     // Important that this be here;
 
-    if(this.Modal_.getViewBoxManager()){
-	this.Modal_.getViewBoxManager().insertColumn(false);
-    }
     moka.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME);
 }
 
@@ -211,9 +192,11 @@ xiv.prototype.getDataPaths = function() {
 xiv.prototype.destroy = function () {
     this.hideModal(function (){
 	xiv.revertDocumentStyle_();
+	this.Modal_.disposeInternal();
 	this.Modal_.getElement().parentNode.removeChild(
 	    this.Modal_.getElement());
 	delete this.Modal_.getElement();
+	this.Modal_ = null;
     }.bind(this));
 }
 
@@ -377,12 +360,11 @@ xiv.prototype.addViewableToModal = function(Viewable){
 
 /**
  * Creates the modal element.
- * @private
+ * @param {!xiv.ui.Modal}
+ * @public
  */
-xiv.prototype.createModal_ = function(){
-
-    window.console.log(xiv.ui);
-    this.Modal_ = /**@type {!xiv.ui.Modal}*/ new xiv.ui.Modal();
+xiv.prototype.createModal = function(modalType){
+    this.Modal_ = /**@type {!xiv.ui.Modal}*/ new this.modalType_();
     this.Modal_.setIconBaseUrl(this.iconUrl_);
     this.Modal_.setMode('windowed');
     this.setModalButtonCallbacks_();
@@ -441,18 +423,18 @@ xiv.extractViewableFolders_ = function(Viewable){
 
 
 /**
- * @private
+ * @public
  */
-xiv.loadCustomExtensions_ = function() {
+xiv.loadCustomExtensions = function() {
     X.loader.extensions['IMA'] = [X.parserIMA, null];
 }
 
 
 
 /**
- * @private
+ * @public
  */
-xiv.adjustDocumentStyle_ = function() {
+xiv.adjustDocumentStyle = function() {
     document.body.style.overflow = 'hidden';
 }
 
