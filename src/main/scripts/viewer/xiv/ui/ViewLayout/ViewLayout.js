@@ -30,8 +30,10 @@ xiv.ui.ViewLayout = function(viewSchemeName, cssSuffixes) {
 
     this.id = viewSchemeName;
     this.title = viewSchemeName;
-    this.src = xiv.ICON_URL + "ViewLayouts/" + goog.string.toTitleCase(this.id) +  "-white.png";
-    this.cssPrefix = goog.getCssName(xiv.ui.ViewLayout.VIEWSCHEME_CLASS_PREFIX, cssId);
+    this.src = xiv.ICON_URL + "ViewLayouts/" + 
+	goog.string.toTitleCase(this.id) +  "-white.png";
+    this.cssPrefix = goog.getCssName(
+	xiv.ui.ViewLayout.VIEWSCHEME_CLASS_PREFIX, cssId);
 
 
     this.cssSheets = {};

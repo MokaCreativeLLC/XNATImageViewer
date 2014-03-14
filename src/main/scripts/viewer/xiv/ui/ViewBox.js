@@ -16,11 +16,12 @@ goog.require('moka.ui.Component');
 goog.require('moka.style');
 goog.require('moka.events.EventManager');
 goog.require('moka.ui.ZipTabs');
+goog.require('moka.ui.IconRotateMenu');
 
 
 // xiv
 //goog.require('xiv.ui.ViewLayoutManager');
-goog.require('xiv.ui.ViewLayoutMenu');
+
 //goog.require('xiv.ui.Displayer.Xtk');
 //goog.require('xiv.ui.SlicerViewMenu');
 
@@ -31,7 +32,7 @@ goog.require('xiv.ui.ViewLayoutMenu');
  * clicked in, and load them based on their characteristics.
  * xiv.ui.ViewBox is also a communicator class in the sense that it gets
  * various interaction and visualization classes to talk to one another.  F
- * or instance, it links the xiv.ui.ViewLayoutMenu to the 
+ * or instance, it links the moka.ui.IconRotateMenu to the 
  * xiv.ui.ViewLayoutManager 
  * to the xiv.ui.Displayer. 
  * @constructor
@@ -47,7 +48,7 @@ xiv.ui.ViewBox = function () {
 
     // events
     moka.events.EventManager.addEventManager(this, xiv.ui.ViewBox.EventType);
-    this.setComponentCallbacks_();
+    this.setComponentEvents_();
 
 
     this.ZipTabs_.setTabPageContents('TestTab1', 
@@ -304,7 +305,7 @@ xiv.ui.ViewBox.prototype.doNotHide = function(element){
 /**
  * Allows for external communication to set
  * the viewscheme within the xiv.ui.ViewBox by communicating
- * to its xiv.ui.ViewLayoutMenu object.
+ * to its moka.ui.IconRotateMenu object.
  * @param {!string} viewPlane Sets the view layout associated with the argument.
  * @public
  */
@@ -504,10 +505,10 @@ xiv.ui.ViewBox.prototype.createViewLayoutManager_ = function(){
 */
 xiv.ui.ViewBox.prototype.createViewLayoutMenu_ = function(){
     /**
-     * @type {!xiv.ui.ViewLayoutMenu}
+     * @type {!moka.ui.IconRotateMenu}
      * @private
      */
-    this.ViewLayoutMenu_ = new xiv.ui.ViewLayoutMenu();
+    this.ViewLayoutMenu_ = new moka.ui.IconRotateMenu();
     goog.dom.append(this.getElement(), this.ViewLayoutMenu_.getElement());
 }
 
@@ -580,9 +581,9 @@ xiv.ui.ViewBox.prototype.hideChildElements_ = function() {
 * As stated.
 * @private
 */
-xiv.ui.ViewBox.prototype.setComponentCallbacks_ = function() {
-    this.setTabsCallbacks_();
-    //this.setViewLayoutMenuCallbacks_();
+xiv.ui.ViewBox.prototype.setComponentEvents_ = function() {
+    this.setTabsEvents_();
+    this.setViewLayoutMenuEvents_();
 }
 
 
@@ -591,7 +592,7 @@ xiv.ui.ViewBox.prototype.setComponentCallbacks_ = function() {
  * As stated.
  * @private
  */
-xiv.ui.ViewBox.prototype.setTabsCallbacks_ = function () {
+xiv.ui.ViewBox.prototype.setTabsEvents_ = function () {
     goog.events.listen(this.ZipTabs_.getResizable(), 
 		       moka.ui.Resizable.EventType.RESIZE,
         function(e) {
@@ -607,7 +608,18 @@ xiv.ui.ViewBox.prototype.setTabsCallbacks_ = function () {
  * the xiv.ui.ViewLayoutManager.
  * @private
  */
-xiv.ui.ViewBox.prototype.setViewLayoutMenuCallbacks_ = function () {
+xiv.ui.ViewBox.prototype.setViewLayoutMenuEvents_ = function () {
+
+
+    goog.events.listen(this.ViewLayoutMenu_, 
+		       moka.ui.IconRotateMenu.EventType.ITEM_SELECTED,
+        function(e) {
+	    window.console.log("ITEM SELECTED!", e.title, e.index);
+	    window.console.log('trigger ViewLayoutHandler_ here!');
+	    //this.ViewLayoutHandler_.setLayout(e.title)
+	}.bind(this));
+
+    return;
 
     //------------------
     // When a menu Item is clicked.

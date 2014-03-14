@@ -1205,7 +1205,6 @@ moka.ui.Resizable.prototype.manageGhostElement_ = function() {
 
 
 /** 
- * @param {!goog.fx.Dragger} dragger
  * @inheritDoc 
  */
 moka.ui.Resizable.prototype.disposeInternal = function() {

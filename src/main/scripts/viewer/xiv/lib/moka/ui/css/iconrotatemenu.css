@@ -1,12 +1,10 @@
-/*
- * Standard styling for the viewlayout menu
- *
+/**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
 
 
-.xiv-ui-viewlayoutmenu, .xiv-ui-viewlayoutmenu-icon {
+.moka-ui-iconrotatemenu, .moka-ui-iconrotatemenu-icon {
     height: 13px; 
     width: 13px; 
     cursor: pointer;
@@ -15,27 +13,26 @@
 }
 
 
-.xiv-ui-viewlayoutmenu {
+.moka-ui-iconrotatemenu {
     left:  2px;
     top: 2px;
     z-index: 10000;    
 }
 
 
-.xiv-ui-viewlayoutmenu-icon {
+.moka-ui-iconrotatemenu-icon {
     margin-left: 1px;
     opacity: .5; 
     z-index: 10000;
-    content:url('../../../../../images/viewer/xiv/ui/ViewLayoutMenu/menu.png');
 }
 
 
-.xiv-ui-viewlayoutmenu-icon-hovered {
+.moka-ui-iconrotatemenu-icon-hovered {
     opacity: 1; 
 }
 
 
-.xiv-ui-viewlayoutmenu-menuholder {
+.moka-ui-iconrotatemenu-menuholder {
     position : absolute;
     left: 0px;
     top: 25px;	
@@ -44,7 +41,7 @@
 }
 
 
-.xiv-ui-viewlayoutmenu-menu {
+.moka-ui-iconrotatemenu-menu {
   background-color: rgb(125,125,125);
   border: solid 1px rgb(50,50,50);
   z-index: 20000; 
@@ -53,7 +50,7 @@
 }
 
 
-.xiv-ui-viewlayoutmenu-menuitem {
+.moka-ui-iconrotatemenu-menuitem {
     overflow: visible;
     margin-left: 13px;
     margin-top: 7px;
@@ -61,11 +58,11 @@
 }
 
 
-.xiv-ui-viewlayoutmenu-menuitem-highlight {
+.moka-ui-iconrotatemenu-menuitem-highlight {
     color: white;
 }
 
-.xiv-ui-viewlayoutmenu-menuitem-icon {
+.moka-ui-iconrotatemenu-menuitem-icon {
     position: absolute;
     margin-top: -8px;
     left: 5px;

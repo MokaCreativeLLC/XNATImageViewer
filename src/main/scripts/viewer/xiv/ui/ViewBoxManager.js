@@ -205,9 +205,6 @@ xiv.ui.ViewBoxManager.prototype.setIconBaseUrl = function(url) {
  */
 xiv.ui.ViewBoxManager.prototype.updateIconSrcFolder = function() {
     this.loop(function(ViewBox){
-	this.dragDropHandles_[ViewBox.getElement().id].src = 
-	goog.string.path.join(this.iconUrl,	
-			this.dragDropHandles_[ViewBox.getElement().id].src)
 	ViewBox.setIconBaseUrl(this.iconBaseUrl);
     }.bind(this))
 }
@@ -554,7 +551,6 @@ xiv.ui.ViewBoxManager.prototype.addDragDropHandle_ = function(ViewBox) {
     goog.dom.createDom("img",  {
 	'id': 'DragAndDropHandle',
 	'class' : xiv.ui.ViewBoxManager.HANDLE_CLASS
-	//'src' : this.iconUrl + '/' + xiv.ui.ViewBoxManager.ICON_SRC['HANDLE']
     });
     dragDropHandle.setAttribute(xiv.ui.ViewBoxManager.VIEW_BOX_ATTR, 
 				ViewBox.getElement().id); 

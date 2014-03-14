@@ -3,25 +3,6 @@ goog.addDependency('../../../../ui/ui.js',
 ]);
 
 
-goog.addDependency('../../../../ui/ViewLayoutMenu.js', 
-['xiv.ui.ViewLayoutMenu'], [
-    'goog.ui.MenuButton',
-    'goog.style',
-    'goog.ui.MenuItem',
-    'goog.array',
-    'goog.ui.Menu',
-    'goog.async.Delay',
-    'goog.events',
-    'goog.dom',
-    'goog.fx',
-    'moka.ui.Component',
-    'moka.dom',
-    'moka.style',
-    'moka.fx',
-    'moka.ui.Component'
-]);
-
-
 goog.addDependency('../../../../ui/ViewBox.js', 
 ['xiv.ui.ViewBox'], [
     'goog.string',
@@ -34,7 +15,7 @@ goog.addDependency('../../../../ui/ViewBox.js',
     'moka.events.EventManager',
     'moka.style',
     //'xiv.ui.ViewLayoutManager',
-    'xiv.ui.ViewLayoutMenu',
+    'moka.ui.IconRotateMenu',
     'moka.ui.ZipTabs',
     //'xiv.ui.Displayer.Xtk',
     //'xiv.ui.SlicerViewMenu'

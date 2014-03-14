@@ -207,6 +207,23 @@ goog.addDependency('../../../moka/ui/ZipTabs.js',
 
 
 
+goog.addDependency('../../../moka/ui/IconRotateMenu.js', 
+['moka.ui.IconRotateMenu'], [
+    'goog.ui.MenuButton',
+    'goog.style',
+    'goog.ui.MenuItem',
+    'goog.array',
+    'goog.ui.Menu',
+    'goog.async.Delay',
+    'goog.events',
+    'goog.dom',
+    'goog.fx',
+    'moka.ui.Component',
+    'moka.dom',
+    'moka.style',
+    'moka.fx',
+    'moka.ui.Component'
+]);
 
 
 
