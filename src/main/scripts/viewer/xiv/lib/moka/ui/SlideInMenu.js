@@ -49,7 +49,7 @@ moka.ui.SlideInMenu = function () {
     this.holder_ = goog.dom.createDom("div", {
 	'id' : this.constructor.ID_PREFIX + 
 	    '_Holder_' + goog.string.createUniqueString(),
-	'class': moka.ui.SlideInMenu.MENUHOLDER_CLASS
+	'class': moka.ui.SlideInMenu.CSS.MENUHOLDER
     })
     goog.dom.append(this.getElement(), this.holder_);
 
@@ -61,7 +61,7 @@ moka.ui.SlideInMenu = function () {
     this.icon_ = goog.dom.createDom("img", {
 	'id': this.constructor.ID_PREFIX + 
 	    '_Icon_' + goog.string.createUniqueString(),
-	'class': moka.ui.SlideInMenu.ICON_CLASS
+	'class': moka.ui.SlideInMenu.CSS.ICON
     });	
     goog.dom.append(this.getElement(), this.icon_);
 
@@ -79,7 +79,7 @@ moka.ui.SlideInMenu = function () {
     this.menu_.render(this.holder_); 
     // must come after the render
     goog.dom.classes.add(this.menu_.getElement(), 
-			 moka.ui.SlideInMenu.MENU_CLASS);
+			 moka.ui.SlideInMenu.CSS.MENU);
 }
 goog.inherits(moka.ui.SlideInMenu, moka.ui.Component);
 goog.exportSymbol('moka.ui.SlideInMenu', moka.ui.SlideInMenu)
@@ -117,84 +117,18 @@ moka.ui.SlideInMenu.ID_PREFIX =  'moka.ui.SlideInMenu';
 
 
 /**
- * @type {!string} 
- * @const
-*/
-moka.ui.SlideInMenu.CSS_CLASS_PREFIX =
-goog.string.toSelectorCase(moka.ui.SlideInMenu.ID_PREFIX.toLowerCase().
-			   replace(/\./g,'-'));
-
-
-
-/**
- * @type {!string} 
- * @const
-*/
-moka.ui.SlideInMenu.ELEMENT_CLASS = 
-    goog.getCssName(moka.ui.SlideInMenu.CSS_CLASS_PREFIX, '');
-
-
-
-/**
- * @type {!string} 
- * @const
-*/
-moka.ui.SlideInMenu.MENUHOLDER_CLASS = 
-    goog.getCssName(moka.ui.SlideInMenu.CSS_CLASS_PREFIX, 'menuholder');
-
-
-
-/**
- * @type {!string} 
- * @const
-*/
-moka.ui.SlideInMenu.ICON_CLASS = 
-    goog.getCssName(moka.ui.SlideInMenu.CSS_CLASS_PREFIX, 'icon');
-
-
-
-/**
- * @type {!string} 
- * @const
-*/
-moka.ui.SlideInMenu.ICON_HOVERED_CLASS = 
-    goog.getCssName(moka.ui.SlideInMenu.ICON_CLASS, 'hovered');
-
-
-
-/**
- * @type {!string} 
- * @const
-*/
-moka.ui.SlideInMenu.MENU_CLASS = 
-    goog.getCssName(moka.ui.SlideInMenu.CSS_CLASS_PREFIX, 'menu');
-
-
-
-/**
- * @type {!string} 
- * @const
-*/
-moka.ui.SlideInMenu.MENUITEM_CONTENT_CLASS = 
-    goog.getCssName(moka.ui.SlideInMenu.CSS_CLASS_PREFIX, 'menuitem');
-
-
-
-/**
- * @type {!string} 
- * @const
-*/
-moka.ui.SlideInMenu.MENUITEM_CONTENT_HIGHLIGHT_CLASS = 
-    goog.getCssName(moka.ui.SlideInMenu.MENUITEM_CONTENT_CLASS, 'highlight');
-
-
-
-/**
- * @type {!string} 
- * @const
-*/
-moka.ui.SlideInMenu.MENUITEM_ICON_CLASS = 
-    goog.getCssName(moka.ui.SlideInMenu.MENUITEM_CONTENT_CLASS, 'icon');
+ * @enum {string}
+ * @public
+ */
+moka.ui.SlideInMenu.CSS_SUFFIX = {
+    ICON: 'icon',
+    ICON_HOVERED: 'icon-hovered',
+    MENU: 'menu',
+    MENUHOLDER: 'menuholder',
+    MENUITEM: 'menuitem',
+    MENUITEM_HIGHLIGHT: 'menuitem-highlight',
+    MENUITEM_ICON: 'menuitem-icon'
+}
 
 
 
@@ -504,7 +438,7 @@ moka.ui.SlideInMenu.prototype.setHighlightedIndex = function(index) {
     // Highlight the menuitem.
     goog.dom.classes.add(
 	this.menuItems_[this.getTitleFromIndex(index)].CONTENT, 
-		moka.ui.SlideInMenu.MENUITEM_CONTENT_HIGHLIGHT_CLASS);
+		moka.ui.SlideInMenu.CSS.MENUITEM_HIGHLIGHT);
 
     // Adjust icon src, if needed.
     if (this.matchMenuIconToSelected_){
@@ -527,7 +461,7 @@ moka.ui.SlideInMenu.prototype.setHighlightedIndex = function(index) {
 moka.ui.SlideInMenu.prototype.deselectAll = function() {
     goog.object.forEach(this.menuItems_, function(itemCol, key){
 	goog.dom.classes.remove(itemCol.CONTENT, 
-		moka.ui.SlideInMenu.MENUITEM_CONTENT_HIGHLIGHT_CLASS);	
+		moka.ui.SlideInMenu.CSS.MENUITEM_HIGHLIGHT);	
     }.bind(this))
 }
 
@@ -564,14 +498,14 @@ moka.ui.SlideInMenu.prototype.addMenuItem = function(itemTitles,
 	// Modify the content element.
 	content = item.getContentElement();
 	goog.dom.classes.add(content,
-			     moka.ui.SlideInMenu.MENUITEM_CONTENT_CLASS);
+			     moka.ui.SlideInMenu.CSS.MENUITEM_CONTENT);
 	content.title = title;
 
 	// Set the icon.
 	icon = goog.dom.createDom("img", {
 	    'id':  moka.ui.SlideInMenu.ID_PREFIX + '_MenuItemIcon_' + 
 		goog.string.createUniqueString(),
-	    'class' : moka.ui.SlideInMenu.MENUITEM_ICON_CLASS
+	    'class' : moka.ui.SlideInMenu.CSS.ICON
 	});
 
 	// Set the icon src, if available.
@@ -690,7 +624,7 @@ moka.ui.SlideInMenu.prototype.setMenuEvents_ = function() {
 
     // Mouseover / Mouseout hover over the main icon.
     moka.style.setHoverClass(this.icon_, 
-			      moka.ui.SlideInMenu.ICON_HOVERED_CLASS);
+			      moka.ui.SlideInMenu.CSS.ICON_HOVERED);
 
     // Onclick: Menu items (i.e. the view planes) - select-
     goog.events.listen(this.menu_, 'action', function(e) {

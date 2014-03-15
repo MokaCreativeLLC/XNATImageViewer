@@ -55,25 +55,6 @@ moka.ui.Tabs.ID_PREFIX =  'moka.ui.Tabs';
  * @type {!string} 
  * @const
  */
-moka.ui.Tabs.CSS_CLASS_PREFIX =
-goog.string.toSelectorCase(
-    moka.ui.Tabs.ID_PREFIX.toLowerCase().replace(/\./g,'-'));
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-moka.ui.Tabs.ELEMENT_CLASS =
-    goog.getCssName(moka.ui.Tabs.CSS_CLASS_PREFIX, '');
-
-
-
-/**
- * @type {!string} 
- * @const
- */
 moka.ui.Tabs.TAB_CLASS =
     goog.getCssName(moka.ui.Tabs.CSS_CLASS_PREFIX, 'tab');
 

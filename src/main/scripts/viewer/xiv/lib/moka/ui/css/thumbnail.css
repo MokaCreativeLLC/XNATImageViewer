@@ -53,7 +53,7 @@
 }
 
 
-.moka-ui-thumbnail-displaytext {
+.moka-ui-thumbnail-text {
     position: absolute;
     height: 70px;
     top: 8px;
@@ -67,7 +67,7 @@
 }
 
 
-.moka-ui-thumbnail-displaytext-mouseover {
+.moka-ui-thumbnail-text-mouseover {
     color : rgb(255,255,255);
 }
 
@@ -83,7 +83,7 @@
 * Active state
 ********/
 
-.moka-ui-thumbnail-displaytext-active {
+.moka-ui-thumbnail-text-active {
     color : rgb(230,230,230);
 }
 

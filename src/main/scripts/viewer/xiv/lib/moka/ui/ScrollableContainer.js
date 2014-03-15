@@ -15,6 +15,7 @@ goog.require('moka.convert');
 goog.require('moka.style');
 goog.require('moka.string');
 goog.require('moka.ui.GenericSlider');
+goog.require('moka.ui.Component');
 
 
 
@@ -25,21 +26,12 @@ goog.require('moka.ui.GenericSlider');
  * goog.ui.Zippy (for condensing contents and creating folders) and 
  * moka.ui.GenericSlider for scrolling through the contents.
  * @constructor
+ * @extends {moka.ui.Component}
  */
 goog.provide('moka.ui.ScrollableContainer');
 moka.ui.ScrollableContainer = function (opt_args) {
-
-
-    /**
-     * @type {!Element}
-     * @private
-     */
-    this.element_ = goog.dom.createDom('div', {
-	'id': 'ScrollableContainer_' + goog.string.createUniqueString(),
-	'class': moka.ui.ScrollableContainer.ELEMENT_CLASS
-    });
-
-
+    goog.base(this);
+ 
 
     /**
      * @type {!Element}
@@ -47,7 +39,7 @@ moka.ui.ScrollableContainer = function (opt_args) {
      */
     this.scrollArea_ = goog.dom.createDom("div", {
 	'id': 'ScrollArea_' + goog.string.createUniqueString(),
-	'class' :  moka.ui.ScrollableContainer.SCROLL_AREA_CLASS
+	'class' :  moka.ui.ScrollableContainer.CSS.SCROLLAREA
     });
     goog.dom.append(this.element_, this.scrollArea_);
 
@@ -70,15 +62,8 @@ moka.ui.ScrollableContainer = function (opt_args) {
     this.updateStyle();
     this.mapSliderToContents();
 }
+goog.inherits(moka.ui.ScrollableContainer, moka.ui.Component);
 goog.exportSymbol('moka.ui.ScrollableContainer', moka.ui.ScrollableContainer);
-
-
-
-/**
- * @const
- * @type {!number}
- */
-moka.ui.ScrollableContainer.MAX_LABEL_LENGTH = 30;
 
 
 
@@ -92,85 +77,25 @@ moka.ui.ScrollableContainer.ID_PREFIX = 'moka.ui.ScrollableContainer';
 
 
 /**
- * @type {!string} 
- * @expose 
+ * @enum {string} 
  * @const
  */ 
-moka.ui.ScrollableContainer.CSS_CLASS_PREFIX = 
-    goog.getCssName(
-      moka.ui.ScrollableContainer.ID_PREFIX.replace(/\./g,'-').toLowerCase());
+moka.ui.ScrollableContainer.CSS_SUFFIX = {
+    SCROLLAREA : 'scrollarea', 
+    SLIDER : 'slider', 
+    SLIDER_THUMB: 'slider-thumb',
+    SLIDER_TRACK: 'slider-track',
+    SLIDER_THUMB_HOVERED: 'slider-thumb-hovered',
+    SLIDER_TRACK_HOVERED: 'slider-track-hovered',
+}
 
 
 
 /**
- * @type {!string} 
- * @expose 
  * @const
- */ 
-moka.ui.ScrollableContainer.ELEMENT_CLASS =  
-    goog.getCssName(moka.ui.ScrollableContainer.CSS_CLASS_PREFIX, '');
-
-
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ScrollableContainer.SCROLL_AREA_CLASS =  
-    goog.getCssName(moka.ui.ScrollableContainer.CSS_CLASS_PREFIX, 
-		    'scrollarea');
-
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ScrollableContainer.SLIDER_ELEMENT_CLASS =  
-goog.getCssName(moka.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'slider-widget');
-
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ScrollableContainer.SLIDER_THUMB_CLASS =  
-goog.getCssName(moka.ui.ScrollableContainer.CSS_CLASS_PREFIX, 'slider-thumb');
-
-
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ScrollableContainer.SLIDER_THUMB_HOVERED_CLASS =  
-goog.getCssName(moka.ui.ScrollableContainer.CSS_CLASS_PREFIX, 
-		'slider-thumb-hovered');
-
-
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ScrollableContainer.SLIDER_TRACK_HOVERED_CLASS =  
-goog.getCssName(moka.ui.ScrollableContainer.CSS_CLASS_PREFIX, 
-		'slider-track-hovered');
-
-
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ScrollableContainer.SLIDER_TRACK_CLASS =  
-goog.getCssName(moka.ui.ScrollableContainer.CSS_CLASS_PREFIX, 
-		'slider-track');
+ * @type {!number}
+ */
+moka.ui.ScrollableContainer.MAX_LABEL_LENGTH = 30;
 
 
 
@@ -231,36 +156,19 @@ moka.ui.ScrollableContainer.prototype.updateStyle = function (opt_args) {
 
 
 /**
- * Binds the mouse wheel scroll events appropriated for the slider through
- * the provided elements.
- * @param {!Element} element The element to listen for the mousewheel event 
- *     that triggers the slider to move.
- * @param {function=} opt_callback (Optional) The callback to fire as the 
- *     mousewheel scrolls.
- * @public
- */
-moka.ui.ScrollableContainer.prototype.bindToMouseWheel = function(element, 
-								opt_callback) {
-    this.Slider_.bindToMouseWheel(element, opt_callback);
-}
-
-
-
-
-/**
  * Sets the default styles for the various components.
  * @private
  */
 moka.ui.ScrollableContainer.prototype.setSliderStyles_ = function(){
     goog.dom.classes.add(this.Slider_.getElement(), 
-			 moka.ui.ScrollableContainer.SLIDER_ELEMENT_CLASS);
+			 moka.ui.ScrollableContainer.CSS.SLIDER);
     goog.dom.classes.add(this.Slider_.getThumb(), 
-			 moka.ui.ScrollableContainer.SLIDER_THUMB_CLASS);
+			 moka.ui.ScrollableContainer.CSS.SLIDER_THUMB);
     goog.dom.classes.add(this.Slider_.getTrack(), 
-			 moka.ui.ScrollableContainer.SLIDER_TRACK_CLASS);
+			 moka.ui.ScrollableContainer.CSS.SLIDER_TRACK);
     this.Slider_.setHoverClasses(
-	moka.ui.ScrollableContainer.SLIDER_THUMB_HOVERED_CLASS,
-	moka.ui.ScrollableContainer.SLIDER_TRACK_HOVERED_CLASS);
+	moka.ui.ScrollableContainer.CSS.SLIDER_THUMB_HOVERED,
+	moka.ui.ScrollableContainer.CSS.SLIDER_TRACK_HOVERED);
 }
 
 
@@ -312,8 +220,8 @@ moka.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 
 	// Move the scroll area to the top (as the slider's thumbnail
 	// is at the top).
-	var sendVal = /**@type {!number}*/
-	    Math.abs(this.Slider_.getValue() - 100);
+	var sendVal = /**@type {!number}*/ this.Slider_.getMaximum() - 
+	    this.Slider_.getValue();
 	var remap = /**@type {!number}*/
 	    moka.convert.remap1D(sendVal, beforeRange, afterRange);
 	var t = /**@type {!number}*/ remap['remappedVal'];
@@ -340,7 +248,7 @@ moka.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
  * @private
  */
 moka.ui.ScrollableContainer.prototype.setSliderCallbacks_ = function() {
-    this.Slider_['EVENTS'].onEvent('SLIDE', 
+    goog.events.listen(this.Slider_, moka.ui.GenericSlider.EventType.SLIDE,
 				   this.mapSliderToContents.bind(this));  
     this.Slider_.bindToMouseWheel(this.element_);
 }

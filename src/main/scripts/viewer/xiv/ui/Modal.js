@@ -543,8 +543,7 @@ xiv.ui.Modal.prototype.setStartingDimensionParams_ = function() {
 	this.ThumbnailHandler_.getThumbnailGallery().getElement(), 'width'),
 	10);
 
-    window.console.log('THUMB', this._dims['ThumbnailGallery']['width'],
-		      goog.style.getSize(this.ThumbnailHandler_.getThumbnailGallery().getElement()));
+
     //window.console.log("WIDTH", this._dims['ThumbnailGallery']['width']);
     //window.console.log('PRELIM CALC',
 	//this.ThumbnailHandler_.getThumbnailGallery().getElement(),
@@ -575,17 +574,17 @@ xiv.ui.Modal.prototype.deriveViewBoxDims_ = function() {
  */ 
 xiv.ui.Modal.prototype.derivePelimModalDims_ = function() {
     this._dims['width'] = this._dims['ThumbnailGallery']['width']; 
-    window.console.log(this._dims['width']);
+    //window.console.log(this._dims['width']);
 
     this._dims['width'] += this._dims['ViewBox']['width']  * 
 	this._dims['ViewBox']['cols']; 
 
-    window.console.log(this._dims['width']);
+    //window.console.log(this._dims['width']);
 
     this._dims['width'] += xiv.ui.Modal.VIEWBOX_VERT_MGN * 
 	this._dims['ViewBox']['cols'] + xiv.ui.Modal.EXPANDBUTTON_W;
 
-    window.console.log(this._dims['width']);
+    //window.console.log(this._dims['width']);
 }
 
 
@@ -713,7 +712,7 @@ xiv.ui.Modal.prototype.updateStyle = function () {
     moka.style.setStyle(this.getElement(), this._dims);
     this.updateStyle_ThumbnailGallery_();
     this.updateStyle_ViewBoxes_();
-    window.console.log("DIMS", this._dims);
+    //window.console.log("DIMS", this._dims);
     this.updateStyle_buttons_();
     this.highlightInUseThumbnails();
 }
@@ -791,7 +790,7 @@ xiv.ui.Modal.prototype.createBackground_ = function() {
     moka.dom.createUniqueDom('div', 
 			      this.constructor.ID_PREFIX + '.Background');
 
-    window.console.log("ELEMENT", this.getElement());
+    //window.console.log("ELEMENT", this.getElement());
     goog.dom.append(this.getElement(), this.background_);
 }
 
@@ -976,14 +975,23 @@ xiv.ui.Modal.generateButtons_ = function(iconUrl){
  * @private
  */
 xiv.ui.Modal.prototype.setThumbnailHandlerCallbacks_ = function(){
-    this.ThumbnailHandler_['EVENTS'].onEvent('MOUSEOVER', 
+
+
+    goog.events.listen(this.ThumbnailHandler_, 
+		       xiv.ui.ThumbnailHandler.EventType.MOUSEOVER,
 					 this.onThumbnailMouseover_.bind(this));
-    this.ThumbnailHandler_['EVENTS'].onEvent('MOUSEOUT',  
+
+    goog.events.listen(this.ThumbnailHandler_, 
+		       xiv.ui.ThumbnailHandler.EventType.MOUSEOUT, 
 					 this.onThumbnailMouseout_.bind(this));
-    this.ThumbnailHandler_['EVENTS'].onEvent('THUMBNAILDROP', 
-			this.onThumbnailDropped_.bind(this)); 
-    this.ThumbnailHandler_['EVENTS'].onEvent('THUMBNAILCLICK', 
-			this.onThumbnailClicked_.bind(this));
+
+    goog.events.listen(this.ThumbnailHandler_, 
+		       xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_DROP, 
+		       this.onThumbnailDropped_.bind(this));
+
+    goog.events.listen(this.ThumbnailHandler_, 
+		       xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_CLICK, 
+		       this.onThumbnailClicked_.bind(this));
 }
 
 

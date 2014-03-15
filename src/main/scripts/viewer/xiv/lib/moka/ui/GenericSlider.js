@@ -14,8 +14,6 @@ goog.require('goog.object');
 
 // moka
 goog.require('moka.dom');
-goog.require('moka.events.EventManager');
-
 
 
 
@@ -60,10 +58,6 @@ moka.ui.GenericSlider = function (opt_args) {
      */
     this.thumb_ = this.findThumbElement_();
 
-
-    // Events
-    moka.events.EventManager.addEventManager(this, 
-					      moka.ui.GenericSlider.EventType);
 
     // Other init calls.
     this.initEvents_();
@@ -140,6 +134,14 @@ moka.ui.GenericSlider.prototype.MouseWheelHandlers_;
 
 
 /**
+ * @param {!boolean}
+ * @private
+ */
+moka.ui.GenericSlider.prototype.updating_ = false;
+
+
+
+/**
  * @return {!Element} The div that encapsulates the entire slider.
  * @public
  */
@@ -174,12 +176,10 @@ moka.ui.GenericSlider.prototype.getThumb = function(){
  * the provided element.
  * @param {!Element} element The element to listen for the mousewheel event 
  *    that triggers the slider to move.
- * @param {function=} opt_callback (Optional) The callback that occurs as the
- *    mousewheel scrolls.
  * @public
  */
 moka.ui.GenericSlider.prototype.bindToMouseWheel = 
-function (element, opt_callback) {
+function (element) {
 
     /**
      * @type {!goog.events.MouseWheelHandler} 
@@ -191,10 +191,6 @@ function (element, opt_callback) {
 
     if (!this.MouseWheelHandlers_ || (this.MouseWheelHandlers_.length === 0)) {
 	this.MouseWheelHandlers_ = [];
-    }
-
-    if (opt_callback){
-	this['EVENTS'].onEvent('MOUSEWHEEL', opt_callback);
     }
 
     this.MouseWheelHandlers_.push(mouseWheelHandler);
@@ -209,13 +205,12 @@ function (element, opt_callback) {
  * @public
  */
 moka.ui.GenericSlider.prototype.updateStyle = function () {
-    //window.console.log("update style");
-    this['EVENTS'].setEventSuspended('SLIDE', true);
+    this.updating_ = true;
     var pos = /**@type {!number}*/ this.getValue();
     if (pos < this.getMaximum()) this.setValue(pos + 1);
     else this.setValue(pos - 1);
-    this.setValue(pos);    
-    this['EVENTS'].setEventSuspended('SLIDE', false);
+    this.setValue(pos);   
+    this.updating_ = false;
 }
 
 
@@ -262,7 +257,10 @@ moka.ui.GenericSlider.prototype.initEvents_ = function() {
     moka.ui.GenericSlider.superClass_.addEventListener.call(this, 
 			goog.ui.Component.EventType.CHANGE, function (e) {
 	moka.dom.stopPropagation(e);
-	this['EVENTS'].runEvent('SLIDE');
+			    if (this.updating_) { return };
+			    this.dispatchEvent({
+				type: moka.ui.GenericSlider.EventType.SLIDE
+			    });
     }.bind(this));
 
     this.initHoverEvents_();
@@ -299,8 +297,10 @@ moka.ui.GenericSlider.prototype.findThumbElement_ = function() {
  */
 moka.ui.GenericSlider.prototype.onMouseWheelScroll_ = function (event) {
     //window.console.log("mousewheel scroll");
-    this.setValue(Math.round(this.getValue() + event.deltaY / 3));
-    this['EVENTS'].runEvent('MOUSEWHEEL');
+    this.setValue(Math.round(this.getValue() - event.deltaY / 3));
+    this.dispatchEvent({
+	type: moka.ui.GenericSlider.EventType.MOUSEWHEEL
+    });
     event.preventDefault();
 }
 
@@ -444,8 +444,9 @@ moka.ui.GenericSlider.prototype.setDragHoverEvents_ = function(){
     this.onThumbnailDragEnd_.bind(this), this);
     
     // Drag set...
-    this['EVENTS'].onEvent('SLIDE', function(){ 
-	if (this.isSliding_){
+    goog.events.listen(this, moka.ui.GenericSlider.EventType.SLIDE, 
+    function(e){ 
+	if (this.isSliding_ && !this.updating_){
 	    goog.object.forEach(this.hoverables_, function(hoverable, key){
 		// Apply the hover class
 		this.getClassModifier_(key, goog.dom.classes.add)();
@@ -527,4 +528,15 @@ moka.ui.GenericSlider.prototype.onThumbnailDragEnd_ = function (e) {
 
 
 
-
+/** 
+ * @inheritDoc 
+ */
+moka.ui.GenericSlider.prototype.disposeInternal = function() {
+    moka.ui.GenericSlider.superClass_.disposeInternal.call(this);
+    goog.dom.removeNode(this.thumb_);
+    this.thumb_ = {};
+    goog.dom.removeNode(this.track_);
+    this.track_= {};
+    this.MouseWheelHandlers_ = [];
+    this.updating_ = null;
+};

@@ -12,7 +12,7 @@ goog.require('goog.string');
 // moka
 goog.require('moka.dom');
 goog.require('moka.style');
-goog.require('moka.events.EventManager');
+goog.require('moka.ui.Component');
 
 
 
@@ -24,19 +24,11 @@ goog.require('moka.events.EventManager');
  * setter methods.
  *
  * @constructor
+ * @extends {moka.ui.Component}
  */
 goog.provide('moka.ui.Thumbnail');
 moka.ui.Thumbnail = function () {
-
-
-    /**
-     * @type {!Element}
-     * @private
-     */	
-    this.element_ = goog.dom.createDom('div', {
-	'id': 'moka.ui.Thumbnail_' + goog.string.createUniqueString()
-    });
-    this.element_.setAttribute('thumbnailid', this.element_.getAttribute('id'));
+    goog.base(this);
 
 
     /**
@@ -59,21 +51,14 @@ moka.ui.Thumbnail = function () {
     goog.dom.append(this.element_, this.text_);
 
 
-    //
-    // Events
-    //
-    moka.events.EventManager.addEventManager(this, 
-					      moka.ui.Thumbnail.EventType);
-
-
-    //
     // Other init functions.
-    //
-    this.initEvents_();
+    window.console.log(this);
+    this.setEvents_();
     this.setClasses_();
     this.setHoverListeners_(true);
     this.mouseOut();    
 }
+goog.inherits(moka.ui.Thumbnail, moka.ui.Component);
 goog.exportSymbol('moka.ui.Thumbnail', moka.ui.Thumbnail);
 
 
@@ -92,128 +77,31 @@ moka.ui.Thumbnail.EventType = {
 
 
 /**
- * @type {string} 
- * @expose 
+ * @type {!string} 
+ * @expose
  * @const
  */
-moka.ui.Thumbnail.CSS_CLASS_PREFIX =  
-    goog.getCssName('moka-ui-thumbnail');
+moka.ui.Thumbnail.ID_PREFIX = 'moka.ui.Thumbnail';
 
 
 
 /**
- * @type {string} 
- * @expose 
+ * @enum {string}
  * @const
- */
-moka.ui.Thumbnail.ELEMENT_CLASS =  
-    goog.getCssName(moka.ui.Thumbnail.CSS_CLASS_PREFIX, '');
-
-
-
-/**
- * @type {string} 
- * @expose 
- * @const
- */
-moka.ui.Thumbnail.IMAGE_CLASS =  
-    goog.getCssName(moka.ui.Thumbnail.CSS_CLASS_PREFIX, 'image');
-
-
-/**
- * @type {string} 
- * @expose 
- * @const
- */
-moka.ui.Thumbnail.TEXT_CLASS =  
-    goog.getCssName(moka.ui.Thumbnail.CSS_CLASS_PREFIX, 'displaytext');
-
-
-
-/**
- * @type {string} 
- * @expose 
- * @const
- */
-moka.ui.Thumbnail.SELECTED_CLASS =  
-    goog.getCssName(moka.ui.Thumbnail.CSS_CLASS_PREFIX, 'selected');
-
-
-
-/**
- * @type {string} 
- * @expose 
- * @const
- */
-moka.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS = 
-    goog.getCssName(moka.ui.Thumbnail.ELEMENT_CLASS, 'mouseover');
-
-
-/**
- * @type {string} 
- * @expose 
- * @const
- */
-moka.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS =  
-    goog.getCssName(moka.ui.Thumbnail.IMAGE_CLASS, 'mouseover');
-
-
-/**
- * @type {string} 
- * @expose 
- * @const
- */
-moka.ui.Thumbnail.TEXT_MOUSEOVER_CLASS =  
-    goog.getCssName(moka.ui.Thumbnail.TEXT_CLASS, 'mouseover');
-
-
-
-/**
- * @type {string} 
- * @expose 
- * @const
- */
-moka.ui.Thumbnail.ELEMENT_ACTIVE_CLASS =  
-    goog.getCssName(moka.ui.Thumbnail.ELEMENT_CLASS, 'highlight');
-
-
-/**
- * @type {string} 
- * @expose 
- * @const
- */
-moka.ui.Thumbnail.ELEMENT_ACTIVE_CLASS =  
-    goog.getCssName(moka.ui.Thumbnail.ELEMENT_CLASS, 'active');
-
-
-
-/**
- * @type {string} 
- * @expose 
- * @const
- */
-moka.ui.Thumbnail.IMAGE_ACTIVE_CLASS =  
-    goog.getCssName(moka.ui.Thumbnail.IMAGE_CLASS, 'active');
-
-
-
-/**
- * @type {string} 
- * @expose 
- * @const
- */
-moka.ui.Thumbnail.TEXT_ACTIVE_CLASS =  
-    goog.getCssName(moka.ui.Thumbnail.TEXT_CLASS, 'active');
-
-
-
-/**
- * @type {string} 
- * @expose 
- * @const
- */
-moka.ui.Thumbnail.HOVER_CLONE_CLASS =  
-    goog.getCssName(moka.ui.Thumbnail.ELEMENT_CLASS, 'hoverclone');
+ */ 
+moka.ui.Thumbnail.CSS_SUFFIX = {
+    IMAGE: 'image',
+    TEXT: 'text',
+    SELECTED: 'selected',
+    MOUSEOVER: 'mouseover',
+    IMAGE_MOUSEOVER: 'image-mouseover',
+    TEXT_MOUSEOVER: 'text-mouseover',
+    HIGHLIGHT: 'highlight',
+    ACTIVE: 'active',
+    IMAGE_ACTIVE: 'image-active',
+    TEXT_ACTIVE: 'text-active',
+    HOVERCLONE: 'hoverclone'
+}
 
 
 
@@ -300,7 +188,7 @@ moka.ui.Thumbnail.prototype.isActive = function() {
  */	
 moka.ui.Thumbnail.prototype.setImage = function(url){
     this.image_.src = url;
-    goog.dom.classes.set(this.image_, moka.ui.Thumbnail.IMAGE_CLASS);
+    goog.dom.classes.set(this.image_, moka.ui.Thumbnail.CSS.IMAGE);
 };
 
 
@@ -358,12 +246,12 @@ moka.ui.Thumbnail.prototype.createHoverable = function(opt_parent,
 				 this.element_.getAttribute('id'));
     this.hoverable_.style.visibility = 'hidden';
     goog.dom.classes.add(this.hoverable_, 
-			 moka.ui.Thumbnail.HOVER_CLONE_CLASS);
+			 moka.ui.Thumbnail.CSS.HOVERCLONE);
 
     this.setHoverListeners_(true);
     if (opt_parent){ opt_parent.appendChild(this.hoverable_) }
 
-    this.initEvents_();
+    this.setEvents_();
 }    
 
 
@@ -385,24 +273,24 @@ moka.ui.Thumbnail.prototype.setActive = function(active, opt_highlightBg) {
     if (this.isActive_){
 	if (opt_highlightBg) { 
 	    goog.dom.classes.add(this.element_, 
-				 moka.ui.Thumbnail.ELEMENT_HIGHLIGHT_CLASS); 
+				 moka.ui.Thumbnail.CSS.HIGHLIGHT); 
 	}
 	goog.dom.classes.add(this.element_, 
-			     moka.ui.Thumbnail.ELEMENT_ACTIVE_CLASS);
+			     moka.ui.Thumbnail.CSS.ACTIVE);
 	goog.dom.classes.add(this.text_, 
-			     moka.ui.Thumbnail.TEXT_ACTIVE_CLASS);		
+			     moka.ui.Thumbnail.CSS.TEXT_ACTIVE);		
 	goog.dom.classes.add(this.image_, 
-			     moka.ui.Thumbnail.IMAGE_ACTIVE_CLASS);		
+			     moka.ui.Thumbnail.CSS.IMAGE_ACTIVE);		
 	
     } else {
 	goog.dom.classes.remove(this.element_, 
-				moka.ui.Thumbnail.ELEMENT_HIGHLIGHT_CLASS);
+				moka.ui.Thumbnail.CSS.HIGHLIGHT);
 	goog.dom.classes.remove(this.element_, 
-				moka.ui.Thumbnail.ELEMENT_ACTIVE_CLASS);
+				moka.ui.Thumbnail.CSS.ACTIVE);
 	goog.dom.classes.remove(this.text_, 
-				moka.ui.Thumbnail.TEXT_ACTIVE_CLASS);		
+				moka.ui.Thumbnail.CSS.TEXT_ACTIVE);		
 	goog.dom.classes.remove(this.image_, 
-				moka.ui.Thumbnail.IMAGE_ACTIVE_CLASS);
+				moka.ui.Thumbnail.CSS.IMAGE_ACTIVE);
     }
 }
 
@@ -472,15 +360,18 @@ moka.ui.Thumbnail.prototype.mouseOver = function() {
     //window.console.log("MOUSEOVER");
     var hoverNode = /**@type {!Element}*/ this.getHoverable();
     goog.dom.classes.add(hoverNode, 
-			 moka.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS);	
+			 moka.ui.Thumbnail.CSS.MOUSEOVER);	
     goog.dom.classes.add(hoverNode.childNodes[1], 
-			 moka.ui.Thumbnail.TEXT_MOUSEOVER_CLASS);		
+			 moka.ui.Thumbnail.CSS.TEXT_MOUSEOVER);		
     goog.dom.classes.add(hoverNode.childNodes[0], 
-			 moka.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS);
+			 moka.ui.Thumbnail.CSS.IMAGE_MOUSEOVER);
     if (hoverNode !== this.element_) {
 	this.repositionHoverable();
     }
-    this['EVENTS'].runEvent('MOUSEOVER');
+
+    this.dispatchEvent({
+	type: moka.ui.Thumbnail.EventType.MOUSEOVER
+    });
 }
 
 
@@ -498,17 +389,19 @@ moka.ui.Thumbnail.prototype.mouseOut = function() {
 	
 	//window.console.log("MOUSEPUT_2");
 	goog.dom.classes.remove(hoverNode, 
-				moka.ui.Thumbnail.ELEMENT_MOUSEOVER_CLASS);
+				moka.ui.Thumbnail.CSS.MOUSEOVER);
 	goog.dom.classes.remove(hoverNode.childNodes[1], 
-				moka.ui.Thumbnail.TEXT_MOUSEOVER_CLASS);
+				moka.ui.Thumbnail.CSS.TEXT_MOUSEOVER);
 	goog.dom.classes.remove(hoverNode.childNodes[0], 
-				moka.ui.Thumbnail.IMAGE_MOUSEOVER_CLASS);
+				moka.ui.Thumbnail.CSS.IMAGE_MOUSEOVER);
 
 	hoverNode.style.visibility = (hoverNode !== this.element_) ? 'hidden' : 
 	    'visible';
 	
     }
-    this['EVENTS'].runEvent('MOUSEOUT');
+    this.dispatchEvent({
+	type: moka.ui.Thumbnail.EventType.MOUSEOUT
+    });
 }
 
 
@@ -545,11 +438,18 @@ moka.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
  * Initializes the events associated with the thumbnail.
  * @private
  */	
-moka.ui.Thumbnail.prototype.initEvents_ = function() {
-    this['EVENTS'].clearEvent('CLICK');
+moka.ui.Thumbnail.prototype.setEvents_ = function() {
+
+    if (goog.events.hasListener(this.getHoverable(), 
+			      moka.ui.Thumbnail.EventType.CLICK)){
+	goog.events.unlistenByKey(moka.ui.Thumbnail.EventType.CLICK);
+	
+    }
     goog.events.listen(this.getHoverable(), 
 		       goog.events.EventType.CLICK, function(){
-			   this['EVENTS'].runEvent('CLICK');
+			 this.dispatchEvent({
+			     type: moka.ui.Thumbnail.EventType.CLICK
+			 });
     }.bind(this));	   
 }
 
@@ -560,9 +460,9 @@ moka.ui.Thumbnail.prototype.initEvents_ = function() {
  * @private
  */
 moka.ui.Thumbnail.prototype.setClasses_ = function() {
-    goog.dom.classes.set(this.element_, moka.ui.Thumbnail.ELEMENT_CLASS);
-    goog.dom.classes.set(this.image_, moka.ui.Thumbnail.IMAGECLASS);
-    goog.dom.classes.set(this.text_, moka.ui.Thumbnail.TEXT_CLASS);
+    goog.dom.classes.set(this.getElement(), moka.ui.Thumbnail.ELEMENT_CLASS);
+    goog.dom.classes.set(this.image_, moka.ui.Thumbnail.CSS.IMAGE);
+    goog.dom.classes.set(this.text_, moka.ui.Thumbnail.CSS.TEXT);
 }
 
 

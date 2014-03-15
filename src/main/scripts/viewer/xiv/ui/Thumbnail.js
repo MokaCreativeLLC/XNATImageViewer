@@ -26,18 +26,18 @@ xiv.ui.Thumbnail = function (Viewable_) {
 
     /**
      * @type {gxnat.Viewable}
+     * @private
      */    
     this.Viewable_ = Viewable_;
-
 
     //window.console.log("THUMB1:", Viewable_, this.Viewable_['thumbnailUrl']);
     //window.console.log("THUMB2:", Viewable_, this.Viewable_['files']);
 
-
     this.setImage(this.Viewable_['thumbnailUrl']);
     this.createText_();
-    this.createHoverable()
-    goog.dom.classes.add(this.hoverable_, xiv.ui.Thumbnail.CSS_CLASS_PREFIX);
+    this.createHoverable();
+    goog.dom.classes.add(this.getHoverable(), 
+			 xiv.ui.Thumbnail.CSS_CLASS_PREFIX);
        
 }
 goog.inherits(xiv.ui.Thumbnail, moka.ui.Thumbnail);

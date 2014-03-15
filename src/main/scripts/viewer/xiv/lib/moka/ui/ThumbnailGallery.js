@@ -28,8 +28,7 @@ goog.require('moka.ui.ZippyTree');
 goog.provide('moka.ui.ThumbnailGallery');
 moka.ui.ThumbnailGallery = function () {
     goog.base(this);
-    this.getElement().setAttribute('id', "moka.ui.ThumbnailGallery" + '_' + 
-				   goog.string.createUniqueString());
+
     this.setDefaultClasses_();    
 
     
@@ -39,9 +38,10 @@ moka.ui.ThumbnailGallery = function () {
      */
     this.ZippyTree_ = new moka.ui.ZippyTree();
     this.ZippyTree_.toggleFadeInFx(true);
-    this.ZippyTree_['EVENTS'].onEvent('CONTENTADDED', function(){
-	this.mapSliderToContents();
-    }.bind(this))
+    goog.events.listen(this.ZippyTree_,
+       moka.ui.ZippyTree.EventType.CONTENTADDED, function() {
+	  this.mapSliderToContents();
+       }.bind(this))
     goog.dom.append(this.getScrollArea(), this.ZippyTree_.getElement());
     
 }
@@ -51,73 +51,26 @@ goog.exportSymbol('moka.ui.ThumbnailGallery', moka.ui.ThumbnailGallery);
 
 
 /**
-* @type {string} 
-* @expose 
-* @const
-*/ 
-moka.ui.ThumbnailGallery.CSS_CLASS_PREFIX = 
-    goog.getCssName('moka-ui-thumbnailgallery');
+ * @type {!string} 
+ * @expose
+ * @const
+ */
+moka.ui.ThumbnailGallery.ID_PREFIX = 'moka.ui.ThumbnailGallery';
 
 
 
 /**
-* @type {string} 
-* @expose 
-* @const
-*/ 
-moka.ui.ThumbnailGallery.ELEMENT_CLASS = 
-    goog.getCssName(moka.ui.ThumbnailGallery.CSS_CLASS_PREFIX, '');
+ * @type {!Array.string} 
+ * @const
+ */ 
+moka.ui.ThumbnailGallery.CSS_SUFFIX = {
+    DIALOG : 'dialog',
+    THUMBNAIL: 'thumbnail', 
+    THUMBNAIL_IMAGE: 'thumbnail-image',
+    THUMBNAIL_DISPLAYTEXT: 'thumbnail-text', 
 
+}
 
-
-/**
-* @type {string} 
-* @expose 
-* @const
-*/ 
-moka.ui.ThumbnailGallery.DIALOG_CLASS = 
-    goog.getCssName(moka.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 'dialog');
-
-
-
-/**
-* @type {string} 
-* @expose 
-* @const
-*/ 
-moka.ui.ThumbnailGallery.THUMBNAIL_CLASS = 
-    goog.getCssName(moka.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 'thumbnail');
-
-
-
-/**
-* @type {string} 
-* @expose 
-* @const
-*/ 
-moka.ui.ThumbnailGallery.THUMBNAIL_IMAGE_CLASS = 
-    goog.getCssName(moka.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 
-		    'thumbnail-image');
-
-
-
-
-/**
-* @type {string} 
-* @expose 
-* @const*/ 
-moka.ui.ThumbnailGallery.THUMBNAIL_TEXT_CLASS = 
-    goog.getCssName(moka.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 
-		    'thumbnail-displaytext');
-
-/**
-* @type {string} 
-* @expose 
-* @const
-*/ 
-moka.ui.ThumbnailGallery.THUMBNAILGALLERY_CLASS = 
-    goog.getCssName(moka.ui.ThumbnailGallery.CSS_CLASS_PREFIX, 
-		    'thumbnailgallery');
 
 
 /**
@@ -191,9 +144,13 @@ moka.ui.ThumbnailGallery.prototype.createThumbnail = function(imageUrl,
  */
 moka.ui.ThumbnailGallery.prototype.addThumbnail = 
 function(thumbnail, opt_folders) {
+
+    window.console.log('Add thumbnail');
     // Bind clone to mouse wheel.
-    this.bindToMouseWheel(thumbnail.getHoverable(), 
-			  this.onHoverAndScroll_.bind(this));
+    this.getSlider().bindToMouseWheel(thumbnail.getHoverable());
+    goog.events.listen(this.getSlider(), 
+		     moka.ui.GenericSlider.EventType.MOUSEWHEEL, 
+			 this.onHoverAndScroll_.bind(this));
     // Track thumbnail.
     this.Thumbs_ = this.Thumbs_ ? this.Thumbs_ : {};
     this.Thumbs_[thumbnail.getElement().getAttribute('id')] = thumbnail;
@@ -257,11 +214,10 @@ moka.ui.ThumbnailGallery.prototype.clearHoverThumb_ = function(){
 */
 moka.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){    
 
-    //window.console.log('onHoverAndScroll');
     var mouseElt = /**@type {!Element} */
     document.elementFromPoint(event.clientX, event.clientY);
     var mouseThumb = /**@type {!Element} */
-    goog.dom.getAncestorByClass(mouseElt, moka.ui.Thumbnail.CSS_CLASS_PREFIX);
+    goog.dom.getAncestorByClass(mouseElt, moka.ui.Thumbnail.ELEMENT_CLASS);
 
     // Exit out if not over a thumbnail or thumbnail's hoverable.
     if (!mouseThumb) { 
@@ -393,13 +349,13 @@ moka.ui.ThumbnailGallery.prototype.setDefaultClasses_ = function() {
     //------------------  
     var tempThumb = /**@type {!moka.ui.Thumbnail}*/ new moka.ui.Thumbnail();
     this.thumbnailClasses_ = goog.dom.classes.get(tempThumb.getElement());
-    this.thumbnailClasses_.push(moka.ui.ThumbnailGallery.THUMBNAIL_CLASS);
+    this.thumbnailClasses_.push(moka.ui.ThumbnailGallery.CSS.THUMBNAIL);
     this.thumbnailImageClasses_ = goog.dom.classes.get(tempThumb.getImage());
     this.thumbnailImageClasses_.push(
-	moka.ui.ThumbnailGallery.THUMBNAIL_IMAGE_CLASS);
+	moka.ui.ThumbnailGallery.CSS.THUMBNAIL_IMAGE);
     this.thumbnailTextClasses_ = goog.dom.classes.get(tempThumb.getText());
     this.thumbnailTextClasses_.push(
-	moka.ui.ThumbnailGallery.THUMBNAIL_TEXT_CLASS);
+	moka.ui.ThumbnailGallery.CSS.THUMBNAIL_TEXT);
     goog.dom.removeNode(tempThumb.getElement());
     delete tempThumb;
 }

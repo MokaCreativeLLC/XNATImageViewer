@@ -3,7 +3,7 @@
  */
 
 
-.moka-ui-zippynode-zippyheader {
+.moka-ui-zippynode-header {
     position: relative;
     background-color: rgb(50,50,50);
     left: 0px;
@@ -20,35 +20,35 @@
 
 
 
-.moka-ui-zippynode-zippyheader-mouseover {
+.moka-ui-zippynode-header-mouseover {
     background-color: rgb(90,90,90);
     color: rgb(255,255,255);
 }
 
 
 
-.moka-ui-zippynode-zippyheaderlabel, .moka-ui-zippynode-zippyexpandicon {
+.moka-ui-zippynode-header-label, .moka-ui-zippynode-expandicon {
     position: absolute;
     margin-left: .3em;
     background-color: none;
 }
 
 
-.moka-ui-zippynode-zippyexpandicon {
+.moka-ui-zippynode-expandicon {
     right: .5em;
     margin-left: -10px;
     color: rgb(0,0,0);
 }
 
 
-.moka-ui-zippynode-zippyexpandicon-mouseover {
+.moka-ui-zippynode-expandicon-mouseover {
     color: rgb(0,0,0);
 }
 
 
 
 
-.moka-ui-zippynode-zippycontent {
+.moka-ui-zippynode-content {
     overflow: visible;
     width: 100%;
     top: 20px;

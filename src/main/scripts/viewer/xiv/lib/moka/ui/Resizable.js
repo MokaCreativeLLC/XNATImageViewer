@@ -183,25 +183,6 @@ moka.ui.Resizable.ID_PREFIX =  'moka.ui.Resizable';
 
 
 /**
- * @type {!string} 
- * @const
- */
-moka.ui.Resizable.CSS_CLASS_PREFIX =
-goog.string.toSelectorCase(
-    moka.ui.Resizable.ID_PREFIX.toLowerCase().replace(/\./g,'-'));
-
-
-
-/**
- * @type {string} 
- * @const
- */
-moka.ui.Resizable.ELEMENT_CLASS =
-    goog.getCssName(moka.ui.Resizable.CSS_CLASS_PREFIX, '');
-
-
-
-/**
  * @type {string} 
  * @const
  */

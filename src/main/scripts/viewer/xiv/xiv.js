@@ -267,15 +267,16 @@ xiv.prototype.loadExperiment = function(exptUrl, opt_callback) {
  * @private
  */
 xiv.prototype.collapseAdditionalZippys_ = function() {
-    if (this.getModal().getThumbnailHandler()){
-	this.getModal().getThumbnailHandler().
-	    getThumbnailGallery().getZippyTree()['EVENTS'].
-	    onEvent('NODEADDED', function(currNode){
+    if (this.getModal().getThumbnailHandler()) {
+
+    goog.events.listen(this.getModal().getThumbnailHandler().
+	    getThumbnailGallery().getZippyTree(),
+       moka.ui.ZippyTree.EventType.NODEADDED, function(e) {
 		var prevDur = /**@type {!number}*/
-		currNode.getZippy().animationDuration;
-		currNode.getZippy().animationDuration = 0;
-		currNode.getZippy().setExpanded(false);
-		currNode.getZippy().animationDuration = prevDur;
+		e.currNode.getZippy().animationDuration;
+		e.currNode.getZippy().animationDuration = 0;
+		e.currNode.getZippy().setExpanded(false);
+		e.currNode.getZippy().animationDuration = prevDur;
 	    })
     }
 }
@@ -353,16 +354,14 @@ xiv.prototype.fetchViewables = function(viewablesUri, opt_doneCallback){
  * @public
  */
 xiv.prototype.addViewableToModal = function(Viewable){
-    //window.console.log(Viewable, key)
-    //window.console.log(Viewable);
-    //window.console.log(Viewable['thumbnailUrl']);
+
+    window.console.log(Viewable);
 
     if (!this.Modal_.getThumbnailHandler()) { return };
 
     this.Modal_.getThumbnailHandler().createAndAddThumbnail(
 	Viewable, // The viewable
-	xiv.extractViewableFolders_(Viewable), // The folder tree
-	true // Toggle animation fx
+	xiv.extractViewableFolders_(Viewable) // The folder tree
     );
     this.Modal_.getThumbnailHandler().setHoverParent(this.Modal_.getElement());
 }

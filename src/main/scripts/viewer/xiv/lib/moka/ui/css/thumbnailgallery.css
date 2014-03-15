@@ -7,6 +7,7 @@
 .moka-ui-thumbnailgallery {
     cursor: pointer;
     position: absolute;
+    overflow: hidden;
 }
 
 
@@ -38,7 +39,7 @@
 }
 
 
-.moka-ui-thumbnailgallery-thumbnail-displaytext {
+.moka-ui-thumbnailgallery-thumbnail-text {
     position: absolute;
     height: 70px;
     top: 8px;
@@ -48,10 +49,4 @@
     color : rgb(255,255,255);  
     line-height: 17px;
 	
-}
-
-
-.moka-ui-thumbnailgallery-thumbnailgallery {
-    top: 2.5%;
-    height: 95%;
 }

@@ -16,7 +16,6 @@ goog.require('goog.ui.Zippy');
 
 // moka
 goog.require('moka.style');
-goog.require('moka.events.EventManager');
 goog.require('moka.ui.ZippyNode');
 
 
@@ -29,12 +28,13 @@ goog.require('moka.ui.ZippyNode');
  */
 goog.provide('moka.ui.ZippyTree');
 moka.ui.ZippyTree = function () {
+    // goog.base called later...
 
     /**
      * @type {!Element}
      * @private
      */
-    this.element_ = goog.dom.createDom('div', {
+    this.rootElt_ = goog.dom.createDom('div', {
 	'id': this.constructor.ID_PREFIX + '_' + 
 	goog.string.createUniqueString(),
 	'class': this.constructor.ELEMENT_CLASS,
@@ -43,9 +43,9 @@ moka.ui.ZippyTree = function () {
 
     //---------------------------------------------
     // These calls need to happen after the element_ is created!!
-    goog.base(this, '', this.element_); 
+    goog.base(this, '', this.rootElt_); 
     // Hide the header because it inherits from ZippyNode -- we don't need it.
-    goog.dom.classes.add(this.getHeader(), moka.ui.ZippyTree.ROOT_NODE_CLASS);
+    goog.dom.classes.add(this.getHeader(), moka.ui.ZippyTree.CSS.ROOT_NODE);
     //---------------------------------------------
 
 
@@ -62,10 +62,6 @@ moka.ui.ZippyTree = function () {
      */
     this.AnimQueue_= new goog.fx.AnimationSerialQueue();
     goog.events.listen(this.AnimQueue_, 'end', this.continueAnim_.bind(this));
-
-    // Events
-    moka.events.EventManager.addEventManager(this, 
-					      moka.ui.ZippyTree.EventType);
 }
 goog.inherits(moka.ui.ZippyTree, moka.ui.ZippyNode);
 goog.exportSymbol('moka.ui.ZippyTree', moka.ui.ZippyTree);
@@ -84,15 +80,6 @@ moka.ui.ZippyTree.EventType = {
 
 
 /**
- * @type {!string} 
- * @const
- * @expose
- */
-moka.ui.ZippyTree.ID_PREFIX =  'moka.ui.ZippyTree';
-
-
-
-/**
  * @const
  * @type {!number}
  */
@@ -103,28 +90,19 @@ moka.ui.ZippyTree.INDENT_PCT = 5;
 /**
  * @type {!string} 
  * @const
-*/
-moka.ui.ZippyTree.CSS_CLASS_PREFIX =
-goog.string.toSelectorCase(moka.ui.ZippyTree.ID_PREFIX.toLowerCase().
-			   replace(/\./g,'-'));
+ * @expose
+ */
+moka.ui.ZippyTree.ID_PREFIX =  'moka.ui.ZippyTree';
 
 
 
 /**
- * @type {!string} 
+ * @enum {string} 
  * @const
 */
-moka.ui.ZippyTree.ELEMENT_CLASS =  
-goog.getCssName(moka.ui.ZippyTree.CSS_CLASS_PREFIX, '');
-
-
-
-/**
- * @type {!string} 
- * @const
-*/
-moka.ui.ZippyTree.ROOT_NODE_CLASS =  
-goog.getCssName(moka.ui.ZippyTree.CSS_CLASS_PREFIX, 'rootnode');
+moka.ui.ZippyTree.CSS_SUFFIX = {
+    ROOT_NODE: 'rootnode'
+}
 
 
 
@@ -254,7 +232,7 @@ moka.ui.ZippyTree.prototype.toggleFadeInFx = function(b) {
  * @public
  */
 moka.ui.ZippyTree.prototype.getElement = function() {
-    return this.element_
+    return this.rootElt_
 }
 
 
@@ -268,10 +246,12 @@ moka.ui.ZippyTree.prototype.getElement = function() {
  */
 moka.ui.ZippyTree.prototype.addContents = function(elements, opt_folders) {
     if (!goog.isArray(elements) || goog.dom.isElement(elements)){
+	window.console.log('add contents 2', elements);
 	this.addContent_(elements, opt_folders);
 	return;
     }
     goog.array.forEach(elements, function(elt){
+	window.console.log('add contents', elements);
 	this.addContents(elt, opt_folders);
     }.bind(this));
 }
@@ -287,9 +267,9 @@ moka.ui.ZippyTree.prototype.addContents = function(elements, opt_folders) {
  * @private
  */
 moka.ui.ZippyTree.prototype.addContent_ = function(element, opt_folders) {
-    //window.console.log("ADD CONTENT", element);
+    window.console.log("ADD CONTENT", element);
     if (!opt_folders){
-	goog.dom.append(this.element_, element);
+	goog.dom.append(this.rootElt_, element);
     } else {
 	if (opt_folders){
 	    opt_folders = goog.isString(opt_folders)?[opt_folders]: opt_folders;
@@ -347,7 +327,7 @@ moka.ui.ZippyTree.prototype.createBranch_ = function(fldrs, pNode, opt_elt) {
  * @private
  */
 moka.ui.ZippyNode.prototype.createNode_ = function(title, parent, pNode) {
-
+    window.console.log('\n\nPARENT', parent);
     parent.style.opacity = this.initOp_;
     var node = /**@type {!moka.ui.ZippyNode}*/
     new moka.ui.ZippyNode(title, parent);
@@ -359,8 +339,10 @@ moka.ui.ZippyNode.prototype.createNode_ = function(title, parent, pNode) {
 
     this.createFadeAnim_(node.getHeader());
     this.indentNodes_();
-    this['EVENTS'].runEvent('NODEADDED', node);
-
+    this.dispatchEvent({
+	type: moka.ui.ZippyTree.EventType.NODEADDED,
+	currNode: node
+    });
     return node;
 }
 
@@ -397,12 +379,15 @@ moka.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
 	moka.style.setStyle(opt_elt, {'position': 'relative'});
 	opt_elt.style.opacity = this.initOp_;
 	// IMPORTANT!
+	window.console.log(contHold);
 	goog.dom.append(contHold, opt_elt);
 	this.createFadeAnim_(opt_elt);
     }
     this.indentNodes_();
     if (!this.AnimQueue_.isPlaying()) { this.AnimQueue_.play() }; 
-    this['EVENTS'].runEvent('CONTENTADDED');
+    this.dispatchEvent({
+	type: moka.ui.ZippyTree.EventType.CONTENTADDED
+    });
 }
 
 

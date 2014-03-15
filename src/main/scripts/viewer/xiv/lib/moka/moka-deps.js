@@ -61,6 +61,7 @@ goog.addDependency('../../../moka/string/string.js', ['moka.string'], [
 goog.addDependency('../../../moka/ui/Component.js', ['moka.ui.Component'], [
     'goog.ui.Component',
     'goog.string',
+    'goog.object',
     'moka.style', 
     'moka.dom'
 ]);
@@ -97,7 +98,6 @@ goog.addDependency('../../../moka/ui/GenericSlider.js',
 'goog.events',
 'goog.object',
 'moka.dom',
-'moka.events.EventManager'
 ]);  
 
 
@@ -115,7 +115,8 @@ goog.addDependency('../../../moka/ui/ScrollableContainer.js',
 'moka.ui.GenericSlider',
 'moka.convert',
 'moka.style',
-'moka.string'
+'moka.string',
+'moka.ui.Component'
 ]); 
 
 goog.addDependency('../../../moka/ui/ZippyNode.js', 
@@ -128,7 +129,7 @@ goog.addDependency('../../../moka/ui/ZippyNode.js',
 'goog.ui.Zippy.Events',
 'goog.ui.Zippy',
 'moka.string',
-'moka.events.EventManager'
+'moka.ui.Component'
 ]);
 
 
@@ -145,7 +146,6 @@ goog.addDependency('../../../moka/ui/ZippyTree.js',
 'goog.fx.dom.FadeIn',
 'goog.ui.Zippy',
 'moka.style',
-'moka.events.EventManager',
 'moka.ui.ZippyNode'
 ]);
 
@@ -157,7 +157,7 @@ goog.addDependency('../../../moka/ui/Thumbnail.js',
     'goog.string',
     'moka.dom',
     'moka.style',
-    'moka.events.EventManager'
+    'moka.ui.Component'
 ]);
 
 
@@ -170,7 +170,8 @@ goog.addDependency('../../../moka/ui/ThumbnailGallery.js',
     'moka.dom',
     'moka.style',
     'moka.ui.Thumbnail',
-    'moka.ui.ScrollableContainer'
+    'moka.ui.ScrollableContainer',
+    'moka.ui.Component'
 ]);
 
 
@@ -202,7 +203,7 @@ goog.addDependency('../../../moka/ui/ZipTabs.js',
     'goog.math.Coordinate',
     'goog.math.Size',
     'moka.ui.Tabs',
-    'moka.ui.Resizable'
+    'moka.ui.Resizable',
 ]);
 
 

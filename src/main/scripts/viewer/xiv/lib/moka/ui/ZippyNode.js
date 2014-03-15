@@ -14,6 +14,7 @@ goog.require('goog.ui.Zippy');
 // moka
 goog.require('moka.string');
 goog.require('moka.events.EventManager');
+goog.require('moka.ui.Component');
 
 
 
@@ -23,9 +24,11 @@ goog.require('moka.events.EventManager');
  * @param {!string} The title of the node.
  * @param {!element} The parent element of the zippy.
  * @constructor
+ * @extends {moka.ui.Component}
  */
 goog.provide('moka.ui.ZippyNode');
 moka.ui.ZippyNode = function (title, parentElement) {
+    goog.base(this);
 
     /**
      * @type {!string}
@@ -86,12 +89,11 @@ moka.ui.ZippyNode = function (title, parentElement) {
      */
     this.Nodes_ = {};
 
-    // Events
-    moka.events.EventManager.addEventManager(this, 
-					      moka.ui.ZippyNode.EventType);
+
     this.setZippyEvets_Hover_();
     this.setZippyEvents_ExpandAndCollapse_();
 }
+goog.inherits(moka.ui.ZippyNode, moka.ui.Component);
 goog.exportSymbol('moka.ui.ZippyNode', moka.ui.ZippyNode);
 
 
@@ -112,106 +114,23 @@ moka.ui.ZippyNode.EventType = {
  * @expose 
  * @const
  */ 
-moka.ui.ZippyNode.CSS_CLASS_PREFIX = 
-    goog.getCssName('moka-ui-zippynode');
+moka.ui.ZippyNode.ID_PREFIX = 'moka.ui.ZippyNode';
 
 
 
 /**
- * @type {!string} 
- * @expose 
+ * @enum {string}
  * @const
  */ 
-moka.ui.ZippyNode.ZIPPY_HEADER_CLASS =  
-goog.getCssName(moka.ui.ZippyNode.CSS_CLASS_PREFIX, 
-		'zippyheader');
-
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ZippyNode.ZIPPY_HEADER_SUB_CLASS =  
-goog.getCssName(moka.ui.ZippyNode.CSS_CLASS_PREFIX, 
-		'zippyheader-sub');
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ZippyNode.ZIPPY_HEADER_LABEL_CLASS =  
-goog.getCssName(moka.ui.ZippyNode.CSS_CLASS_PREFIX, 
-		'zippyheaderlabel');
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ZippyNode.ZIPPY_HEADER_LABEL_SUB_CLASS =  
-goog.getCssName(moka.ui.ZippyNode.CSS_CLASS_PREFIX, 
-		'zippyheaderlabel-sub');
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ZippyNode.ZIPPY_ICON_CLASS =  
-goog.getCssName(moka.ui.ZippyNode.CSS_CLASS_PREFIX, 
-		'zippyexpandicon');
-
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ZippyNode.ZIPPY_ICON_SUB_CLASS =  
-goog.getCssName(moka.ui.ZippyNode.CSS_CLASS_PREFIX, 
-		'zippyexpandicon-sub');
-
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ZippyNode.ZIPPY_CONTENT_CLASS =  
-goog.getCssName(moka.ui.ZippyNode.CSS_CLASS_PREFIX, 'zippycontent');
-
-
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ZippyNode.ZIPPY_CONTENT_SUB_CLASS =  
-goog.getCssName(moka.ui.ZippyNode.CSS_CLASS_PREFIX, 
-		'zippycontent-sub');
-
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ZippyNode.ZIPPY_HEADER_MOUSEOVER_CLASS =  
-goog.getCssName(moka.ui.ZippyNode.CSS_CLASS_PREFIX, 
-		'zippyheader-mouseover');
-
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ZippyNode.ZIPPY_ICON_MOUSEOVER_CLASS = 
-goog.getCssName(moka.ui.ZippyNode.CSS_CLASS_PREFIX, 
-		'zippyexpandicon-mouseover');
+moka.ui.ZippyNode.CSS_SUFFIX = {
+    HEADER: 'header',
+    HEADER_MOUSEOVER: 'header-mouseover',
+    HEADER_LABEL: 'header-label',
+    EXPAND_ICON: 'expandicon',
+    EXPAND_ICON_MOUSEOVER: 'expandicon-mouseover',
+    CONTENT: 'content',
+    CONTENT: 'content-sub'
+}
 
 
 
@@ -225,7 +144,7 @@ moka.ui.ZippyNode.createZippyHeaderLabel_ = function(title){
     return goog.dom.createDom('div', {
 	'id': "ZippyHeaderLabel_" + title + '_' + 
 	    goog.string.createUniqueString(),
-	'class': moka.ui.ZippyNode.ZIPPY_HEADER_LABEL_CLASS
+	'class': moka.ui.ZippyNode.CSS.HEADER_LABEL
     }, moka.string.truncateString(title, 
        moka.ui.ZippyNode.MAX_LABEL_LENGTH))
 }
@@ -242,7 +161,7 @@ moka.ui.ZippyNode.createZippyExpandIcon_ = function(title){
     return goog.dom.createDom('div', {
 	'id': "ZippyExpandIcon_" + title + '_' + 
 	    goog.string.createUniqueString(),
-	'class': moka.ui.ZippyNode.ZIPPY_ICON_CLASS
+	'class': moka.ui.ZippyNode.CSS.EXPAND_ICON
     }, '+');
 }
 
@@ -258,7 +177,7 @@ moka.ui.ZippyNode.createZippyContentHolder_ =
 function(title){
     return goog.dom.createDom('div', {
 	'id': "ZippyContent_" + title + '_' + goog.string.createUniqueString(),
-	'class': moka.ui.ZippyNode.ZIPPY_CONTENT_CLASS
+	'class': moka.ui.ZippyNode.CSS.CONTENT
     });
 }
 
@@ -273,7 +192,7 @@ function(title){
 moka.ui.ZippyNode.createZippyHeader_ = function(title) {
     return goog.dom.createDom('div', {
 	'id': "ZippyHeader_" + title  + '_' + goog.string.createUniqueString(),
-	'class': moka.ui.ZippyNode.ZIPPY_HEADER_CLASS
+	'class': moka.ui.ZippyNode.CSS.HEADER
     });
 }
 
@@ -392,7 +311,9 @@ moka.ui.ZippyNode.prototype.setZippyEvets_Hover_ = function() {
 moka.ui.ZippyNode.prototype.onZippyExpanded_ = function(){
     this.expandIcon_.innerHTML = '-';
     moka.style.setStyle(this.expandIcon_, { 'margin-left': '-1em' });
-    this['EVENTS'].runEvent('EXPANDED', this);
+    this.dispatchEvent({
+	type: moka.ui.ZippyNode.EventType.EXPANDED
+    });
 }
 
 
@@ -404,7 +325,9 @@ moka.ui.ZippyNode.prototype.onZippyExpanded_ = function(){
 moka.ui.ZippyNode.prototype.onZippyCollapsed_ = function(){
     this.expandIcon_.innerHTML = '+';
     moka.style.setStyle(this.expandIcon_, { 'margin-left': '-1.1em' });
-    this['EVENTS'].runEvent('COLLAPSED', this);
+    this.dispatchEvent({
+	type: moka.ui.ZippyNode.EventType.COLLAPSED
+    });
 }
 
 
@@ -415,9 +338,9 @@ moka.ui.ZippyNode.prototype.onZippyCollapsed_ = function(){
  */
 moka.ui.ZippyNode.prototype.onZippyMouseOver_ = function(){
     goog.dom.classes.add(this.header_, 
-			 moka.ui.ZippyNode.ZIPPY_HEADER_MOUSEOVER_CLASS);
+			 moka.ui.ZippyNode.CSS.HEADER_MOUSEOVER);
     goog.dom.classes.add(this.expandIcon_, 
-			 moka.ui.ZippyNode.ZIPPY_ICON_MOUSEOVER_CLASS);
+			 moka.ui.ZippyNode.CSS.EXPAND_ICON_MOUSEOVER);
 }
 
 
@@ -428,8 +351,8 @@ moka.ui.ZippyNode.prototype.onZippyMouseOver_ = function(){
  */
 moka.ui.ZippyNode.prototype.onZippyMouseOut_ = function(){
     goog.dom.classes.remove(this.header_, 
-			    moka.ui.ZippyNode.ZIPPY_HEADER_MOUSEOVER_CLASS);
+			    moka.ui.ZippyNode.CSS.HEADER_MOUSEOVER);
     goog.dom.classes.remove(this.expandIcon_, 
-			    moka.ui.ZippyNode.ZIPPY_ICON_MOUSEOVER_CLASS);
+			    moka.ui.ZippyNode.CSS.EXPAND_ICON_MOUSEOVER);
 }
 
