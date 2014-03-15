@@ -1,0 +1,14 @@
+/*#
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.xiv-ui-viewboxhandler-handle{
+    position: relative; 
+    cursor: pointer;
+    width: 6px;
+    height: 13px;
+    opacity: .5;
+    content:url('../../../../../images/viewer/xiv/ui/ViewBoxManager/handle.png');
+}
