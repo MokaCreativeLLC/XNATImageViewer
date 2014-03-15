@@ -29,6 +29,12 @@ xiv.ui.layouts.Conventional = function() {
     this.addPlane(new xiv.ui.layouts.Plane('Y'));
     this.addPlane(new xiv.ui.layouts.Plane('Z'));
     this.addPlane(new xiv.ui.layouts.Plane('V'));
+
+    //window.console.log(this.planes_['X'].getElement());
+    goog.dom.append(this.getElement(), this.planes_['X'].getElement());
+    goog.dom.append(this.getElement(), this.planes_['Y'].getElement());
+    goog.dom.append(this.getElement(), this.planes_['Z'].getElement());
+    goog.dom.append(this.getElement(), this.planes_['V'].getElement());
 }
 goog.inherits(xiv.ui.layouts.Conventional, xiv.ui.layouts.Layout);
 goog.exportSymbol('xiv.ui.layouts.Conventional', xiv.ui.layouts.Conventional);
