@@ -245,7 +245,7 @@ xiv.ui.ThumbnailHandler.prototype.addThumbnail = function(thumbnail, folders){
     this.thumbs_[thumbnail.getElement().getAttribute('id')] = thumbnail;
 
     // Add to gallery
-    window.console.log(folders);
+    //window.console.log(folders);
     this.ThumbnailGallery_.addThumbnail(thumbnail, folders);    
 
     // Add also to the drag drop tracking group.
@@ -317,7 +317,7 @@ xiv.ui.ThumbnailHandler.prototype.getThumbnailByElement = function(element) {
  */
 xiv.ui.ThumbnailHandler.prototype.createThumbnailGallery_ = function() {
 
-    window.console.log('\n\nCREATE THUMBNAIL GALLERY');
+    //window.console.log('\n\nCREATE THUMBNAIL GALLERY');
     this.ThumbnailGallery_ = new moka.ui.ThumbnailGallery();
     goog.dom.classes.add(this.ThumbnailGallery_.getElement(), 
 			 xiv.ui.ThumbnailHandler.THUMBNAILGALLERY_CLASS);

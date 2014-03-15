@@ -14,13 +14,12 @@ goog.require('goog.style');
 // utils
 goog.require('moka.ui.Component');
 goog.require('moka.style');
-goog.require('moka.events.EventManager');
 goog.require('moka.ui.ZipTabs');
 goog.require('moka.ui.SlideInMenu');
 
 
 // xiv
-//goog.require('xiv.ui.ViewLayoutHandler');
+goog.require('xiv.ui.layouts.LayoutHandler');
 //goog.require('xiv.ui.Displayer.Xtk');
 //goog.require('xiv.ui.SlicerViewMenu');
 
@@ -32,7 +31,7 @@ goog.require('moka.ui.SlideInMenu');
  * xiv.ui.ViewBox is also a communicator class in the sense that it gets
  * various interaction and visualization classes to talk to one another.  F
  * or instance, it links the moka.ui.SlideInMenu to the 
- * xiv.ui.ViewLayoutHandler 
+ * xiv.ui.layouts.LayoutHandler 
  * to the xiv.ui.Displayer. 
  * @constructor
  * @extends {moka.ui.Component}
@@ -72,13 +71,23 @@ xiv.ui.ViewBox = function () {
     //this.doNotHide(this.SlicerViewMenu_.getElement());
     //this.hideChildElements_();
     
-
-
-
     this.updateStyle();
 }
 goog.inherits(xiv.ui.ViewBox, moka.ui.Component);
 goog.exportSymbol('xiv.ui.ViewBox', xiv.ui.ViewBox);
+
+
+
+/**
+ * Event types.
+ * @enum {string}
+ * @public
+ */
+xiv.ui.ViewBox.EventType = {
+  THUMBNAIL_PRELOAD: goog.events.getUniqueId('thumbnail_preload'),
+  THUMBNAIL_LOADED: goog.events.getUniqueId('thumbnail_load'),
+  THUMBNAIL_LOADERROR: goog.events.getUniqueId('thumbnail_loaderror'),
+}
 
 
 
@@ -92,75 +101,20 @@ xiv.ui.ViewBox.ID_PREFIX =  'xiv.ui.ViewBox';
 
 
 /**
- * @type {!string} 
- * @const
-*/
-xiv.ui.ViewBox.CSS_CLASS_PREFIX =
-goog.string.toSelectorCase(xiv.ui.ViewBox.ID_PREFIX.toLowerCase().
-			   replace(/\./g,'-'));
-
-
-
-/**
- * @type {string} 
- * @const
+ * @enum {string}
+ * @public
  */
-xiv.ui.ViewBox.ELEMENT_CLASS = 
-goog.getCssName(xiv.ui.ViewBox.CSS_CLASS_PREFIX, '');
-
-
-
-/**
- * @type {string} 
- * @const
- */
-xiv.ui.ViewBox.HIDDEN_CLASS = 
-goog.getCssName(xiv.ui.ViewBox.CSS_CLASS_PREFIX, 'hidden');
-
-
-
-/**
- * @type {string} 
- * @const
- */
-xiv.ui.ViewBox.DRAG_AND_DROP_HANDLE_CLASS = 
-goog.getCssName(xiv.ui.ViewBox.CSS_CLASS_PREFIX, 'draganddrophandle');
-
-
-
-/**
- * @type {string} 
- * @const
- */
-xiv.ui.ViewBox.TAB_DRAGGER_CLASS = 
-goog.getCssName(xiv.ui.ViewBox.CSS_CLASS_PREFIX, 'tabdragger');
-
-
-
-/**
- * @type {string} 
- * @const
- */
-xiv.ui.ViewBox.TAB_DRAGGER_HANDLE_CLASS = 
-goog.getCssName(xiv.ui.ViewBox.DRAGGER_CLASS, 'tabhandle');
-
-
-
-/**
- * @type {string} 
- * @const
- */
-xiv.ui.ViewBox.VIEWLAYOUTMENU_CLASS = 
-goog.getCssName(xiv.ui.ViewBox.CSS_CLASS_PREFIX, 'viewlayoutmenu');
-
-
-/**
- * @type {!string}
- * @expose 
- * @const
- */
-xiv.ui.ViewBox.MENU_TOP_LEFT_CLASS =  
-    goog.getCssName(xiv.ui.ViewBox.CSS_CLASS_PREFIX, 'menu-top-left');
+xiv.ui.ViewBox.CSS_SUFFIX = {
+    HIDDEN: 'hidden',
+    DRAGANDDROPHANDLE: 'draganddrophandle',
+    TABDRAGGER: 'tabdragger',
+    TABDRAGGER_HANDLE: 'tabdragger-handle',
+    VIEWLAYOUTMENU: 'viewlayoutmenu',
+    MENU_TOP_LEFT:  'menu-top-left',
+    VIEWLAYOUTHANDLER: 'viewlayouthandler',
+    TABS: 'ziptabs',
+    VIEWFRAME: 'viewframe',
+}
 
 
 
@@ -192,19 +146,6 @@ xiv.ui.ViewBox.SCAN_TAB_LABEL_WIDTH = 50;
  * @const
  */
 xiv.ui.ViewBox.MIN_TAB_H_PCT = .2;
-
-
-
-/**
- * Event types.
- * @enum {string}
- * @public
- */
-xiv.ui.ViewBox.EventType = {
-  THUMBNAIL_PRELOAD: goog.events.getUniqueId('thumbnail_preload'),
-  THUMBNAIL_LOADED: goog.events.getUniqueId('thumbnail_load'),
-  THUMBNAIL_LOADERROR: goog.events.getUniqueId('thumbnail_loaderror'),
-}
 
 
 
@@ -285,6 +226,16 @@ xiv.ui.ViewBox.prototype.getMenus = function() {
  */
 xiv.ui.ViewBox.prototype.getLoadState = function() {
     return this.loadState_;
+}
+
+
+
+/**
+ * @return {!xiv.ui.layouts.LayoutHandler} 
+ * @public
+ */
+xiv.ui.ViewBox.prototype.getLayoutHandler =  function() {
+    return this.LayoutHandler_;
 }
 
 
@@ -380,7 +331,9 @@ xiv.ui.ViewBox.prototype.loadThumbnail = function (Thumbnail) {
     this.Thumbnail_ = Thumbnail;
 
     // Run Thumbnail preLoaded callbacks 
-    this['EVENTS'].runEvent('THUMBNAIL_PRELOAD', this)
+    this.dispatchEvent({
+	type: xiv.ui.ViewBox.EventType.THUMBNAIL_PRELOAD
+    })
 
     // Remember the time in which the thumbnail was loaded
     this.thumbLoadTime_ = (new Date()).getTime();
@@ -393,7 +346,7 @@ xiv.ui.ViewBox.prototype.loadThumbnail = function (Thumbnail) {
     this.updateStyle();
 
     // Adjust view layoyt manager
-    this.adjustViewLayoutHandler_();
+    this.adjustLayoutHandler_();
 
     // Hide children
     this.hideChildElements_();
@@ -402,13 +355,13 @@ xiv.ui.ViewBox.prototype.loadThumbnail = function (Thumbnail) {
     //window.console.log("SLIDE 1", this.ViewBoxBorder_.getBottomLimit());
     //this.ViewBoxBorder_.slideTo(this.ViewBoxBorder_.getBottomLimit(), false);
    
-    // Feed view planes into xiv.ui.ViewLayoutHandler and set 
+    // Feed view planes into xiv.ui.layouts.LayoutHandler and set 
     // the default xiv.ui.ViewLayout (most likely '3D')
     window.console.log("HERE", onloadPlane);
     this.ViewLayoutMenu_.setViewLayout(onloadPlane);
 
     // Turn back on animations.
-    this.ViewLayoutHandler_.animateViewLayoutChange(true);
+    this.LayoutHandler_.animateViewLayoutChange(true);
     
     // Show/hide the slicer view menu depending on the 
     // Thumbnail's getViewable()   
@@ -429,11 +382,11 @@ xiv.ui.ViewBox.prototype.loadThumbnail = function (Thumbnail) {
  * As stated.
 * @private
 */
-xiv.ui.ViewBox.prototype.adjustViewLayoutHandler_ = function(){
-    this.ViewLayoutHandler_.setViewPlanes(this.Displayer_.ViewPlanes, 
+xiv.ui.ViewBox.prototype.adjustLayoutHandler_ = function(){
+    this.LayoutHandler_.setViewPlanes(this.Displayer_.ViewPlanes, 
 					  this.Displayer_.Interactors);
-    this.ViewLayoutHandler_.animateViewLayoutChange(false);
-    this.ViewLayoutHandler_.setViewLayout('none');
+    this.LayoutHandler_.animateViewLayoutChange(false);
+    this.LayoutHandler_.setViewLayout('none');
 }
 
 
@@ -498,12 +451,31 @@ xiv.ui.ViewBox.prototype.loadTabs_Controllers_ = function() {
  * @inheritDoc
  */
 xiv.ui.ViewBox.prototype.createSubComponents = function() {
+    this.createViewFrameElt_();
     this.createTabs_();
     this.createViewLayoutMenu_();
+    this.createLayoutHandler_();
     //this.createSlicerViewMenu_();
-    
-    //this.createViewLayoutHandler_();
     //this.createDisplayer_();
+}
+
+
+
+/**
+* As stated.
+* @private
+*/
+xiv.ui.ViewBox.prototype.createViewFrameElt_ = function(){
+    /**
+     * @type {!Element}
+     * @private
+     */	
+    this.viewFrameElt_ = goog.dom.createDom('div', {
+	'id': xiv.ui.ViewBox.ID_PREFIX + '_ViewFrame_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.ViewBox.CSS.VIEWFRAME
+    }); 
+    goog.dom.append(this.getElement(), this.viewFrameElt_);
 }
 
 
@@ -518,15 +490,19 @@ xiv.ui.ViewBox.prototype.createTabs_ = function(){
      * @private
      */	
     this.ZipTabs_ = new moka.ui.ZipTabs('BOTTOM'); 
-    goog.dom.append(this.getElement(), this.ZipTabs_.getElement());
+    goog.dom.append(this.viewFrameElt_, this.ZipTabs_.getElement());
+    goog.dom.classes.add(this.ZipTabs_.getElement(), 
+			 xiv.ui.ViewBox.CSS.TABS);
+
 
     // Add dragger CSS and handle.
     var dragger = /**@type {!Element}*/
     this.ZipTabs_.getResizable().getDragElt('TOP');
-    goog.dom.classes.add(dragger, xiv.ui.ViewBox.DRAGGER_CLASS);
+    goog.dom.classes.add(dragger, xiv.ui.ViewBox.CSS.TABDRAGGER);
     goog.dom.append(dragger, goog.dom.createDom('div', {
-	'id': 'DraggerHandle_' + goog.string.createUniqueString(),
-	'class': xiv.ui.ViewBox.DRAGGER_HANDLE_CLASS
+	'id': xiv.ui.ViewBox.ID_PREFIX + '_DraggerHandle_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.ViewBox.CSS.TABDRAGGER_HANDLE
     }));
 }
 
@@ -536,12 +512,15 @@ xiv.ui.ViewBox.prototype.createTabs_ = function(){
 * As stated.
 * @private
 */
-xiv.ui.ViewBox.prototype.createViewLayoutHandler_ = function(){
+xiv.ui.ViewBox.prototype.createLayoutHandler_ = function(){
     /**
-     * @type {!xiv.ui.ViewLayoutHandler}
+     * @type {!xiv.ui.layouts.LayoutHandler}
      * @protected
      */
-    this.ViewLayoutHandler_ = new xiv.ui.ViewLayoutHandler();
+    this.LayoutHandler_ = new xiv.ui.layouts.LayoutHandler();
+    goog.dom.append(this.viewFrameElt_, this.LayoutHandler_.getElement());
+    goog.dom.classes.add(this.LayoutHandler_.getElement(), 
+			 xiv.ui.ViewBox.CSS.VIEWLAYOUTHANDLER);
 }
 
 
@@ -554,7 +533,7 @@ xiv.ui.ViewBox.prototype.addMenu_topLeft_ = function() {
     this.menus_.LEFT = goog.dom.createDom("div",  {
 	'id': xiv.ui.ViewBox.ID_PREFIX + 
 	    '_menu_top_left_' + goog.string.createUniqueString(),
-	'class' : xiv.ui.ViewBox.MENU_TOP_LEFT_CLASS,
+	'class' : xiv.ui.ViewBox.CSS.MENU_TOP_LEFT,
 	'viewbox': this.getElement().id
     });
     goog.dom.append(this.getElement(), this.menus_.LEFT);
@@ -616,7 +595,7 @@ xiv.ui.ViewBox.prototype.createViewLayoutMenu_ = function(){
     this.addToMenu('LEFT', this.ViewLayoutMenu_.getElement());
 
     goog.dom.classes.add(this.ViewLayoutMenu_.getElement(), 
-	xiv.ui.ViewBox.VIEWLAYOUTMENU_CLASS);
+	xiv.ui.ViewBox.CSS.VIEWLAYOUTMENU);
 
     this.ViewLayoutMenu_.setMenuIconSrc(
 	'/xnat/images/viewer/xiv/ui/ViewLayoutMenu/menu.png')
@@ -691,7 +670,7 @@ xiv.ui.ViewBox.prototype.createDisplayer_ = function(){
  */
 xiv.ui.ViewBox.prototype.showChildElements_ = function() {
     goog.array.forEach(this.getElement().childNodes, function(childElt){
-	goog.dom.classes.remove(childElt, xiv.ui.ViewBox.HIDDEN_CLASS);
+	goog.dom.classes.remove(childElt, xiv.ui.ViewBox.CSS.HIDDEN);
     })
 }
 
@@ -705,7 +684,7 @@ xiv.ui.ViewBox.prototype.hideChildElements_ = function() {
     goog.array.forEach(this.getElement().childNodes, function(childElt){
 	if (this.doNotHide_ && (this.doNotHide_.length > 0) && 
 	    (this.doNotHide_.indexOf(childElt) === -1)) {
-	    goog.dom.classes.add(childElt, xiv.ui.ViewBox.HIDDEN_CLASS);
+	    goog.dom.classes.add(childElt, xiv.ui.ViewBox.CSS.HIDDEN);
 	}
     }.bind(this))
 }
@@ -740,7 +719,7 @@ xiv.ui.ViewBox.prototype.setTabsEvents_ = function () {
 /**
  * Updates the various compoents of the xiv.ui.ViewBox when the
  * user interacts with the xiv.ui.ViewLayout menu.  Specifically,
- * the xiv.ui.ViewLayoutHandler.
+ * the xiv.ui.layouts.LayoutHandler.
  * @private
  */
 xiv.ui.ViewBox.prototype.setViewLayoutMenuEvents_ = function () {
@@ -750,7 +729,7 @@ xiv.ui.ViewBox.prototype.setViewLayoutMenuEvents_ = function () {
 		       moka.ui.SlideInMenu.EventType.ITEM_SELECTED,
         function(e) {
 	    window.console.log("ITEM SELECTED!", e.title, e.index);
-	    window.console.log('trigger ViewLayoutHandler_ here!');
+	    window.console.log('trigger LayoutHandler_ here!');
 	}.bind(this));
 
     return;
@@ -759,9 +738,9 @@ xiv.ui.ViewBox.prototype.setViewLayoutMenuEvents_ = function () {
     // When a menu Item is clicked.
     //------------------
     this.ViewLayoutMenu_.onMenuItemClicked( function() {
-	this.ViewLayoutHandler_.set3DBackgroundColor(
+	this.LayoutHandler_.set3DBackgroundColor(
 	    this.Displayer_.BackgroundColors);
-	this.ViewLayoutHandler_.setViewLayout(
+	this.LayoutHandler_.setViewLayout(
 	    this.ViewLayoutMenu_.getSelectedViewLayout());
     }.bind(this));
 
@@ -770,7 +749,7 @@ xiv.ui.ViewBox.prototype.setViewLayoutMenuEvents_ = function () {
     //------------------
     // Callback when all panels are visible
     //------------------
-    this.ViewLayoutHandler_.onMultipleViewPlanesVisible(
+    this.LayoutHandler_.onMultipleViewPlanesVisible(
 	function(visiblePanels){ 
 	this.Displayer_.XtkPlaneManager_.colorSliders();
     }.bind(this))
@@ -780,7 +759,7 @@ xiv.ui.ViewBox.prototype.setViewLayoutMenuEvents_ = function () {
     //------------------
     // Callback when one panel is visible
     //------------------
-    this.ViewLayoutHandler_.onOneViewPlaneVisible(function(visiblePanel){ 
+    this.LayoutHandler_.onOneViewPlaneVisible(function(visiblePanel){ 
 	this.Displayer_.XtkPlaneManager_.uncolorSliders();
     }.bind(this))
 
@@ -790,7 +769,7 @@ xiv.ui.ViewBox.prototype.setViewLayoutMenuEvents_ = function () {
     // Once the view scheme is set, 
     // update the displayer style.
     //------------------
-    this.ViewLayoutHandler_.onViewLayoutChanged(function(){ 
+    this.LayoutHandler_.onViewLayoutChanged(function(){ 
 	this.Displayer_.updateStyle()
     }.bind(this));
 
@@ -800,7 +779,7 @@ xiv.ui.ViewBox.prototype.setViewLayoutMenuEvents_ = function () {
     // For when the view scheme animates, 
     // update the xiv.ui.Displayer style.
     //------------------
-    this.ViewLayoutHandler_.onViewLayoutAnimate(function(){ 
+    this.LayoutHandler_.onViewLayoutAnimate(function(){ 
 	this.Displayer_.updateStyle()
     }.bind(this));
 
@@ -809,7 +788,7 @@ xiv.ui.ViewBox.prototype.setViewLayoutMenuEvents_ = function () {
     //------------------
     // Callback when a plane is double clicked.
     //------------------
-    this.ViewLayoutHandler_.onPlaneDoubleClicked(function(anatomicalPlane){ 
+    this.LayoutHandler_.onPlaneDoubleClicked(function(anatomicalPlane){ 
 	window.console.log("HERE", anatomicalPlane);
 	this.ViewLayoutMenu_.setViewLayout(anatomicalPlane);
 	this.Displayer_.updateStyle()
@@ -836,7 +815,9 @@ xiv.ui.ViewBox.prototype.onDisplayerLoaded_ = function(){
     this.loadTabs_();
 
     // Thumbnail loaded callbacks
-    this['EVENTS'].runEvent('THUMBNAIL_LOADED', this)
+    this.dispatchEvent({
+	type: xiv.ui.ViewBox.EventType.THUMBNAIL_LOADED
+    })
 }
 
 
@@ -867,7 +848,7 @@ xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
     goog.style.getPosition(this.getElement());
 
     this.updateStyle_Tabs_(size, pos);
-    //this.updateStyle_ViewLayoutHandler_(size, pos);
+    this.updateStyle_LayoutHandler_(size, pos);
     //this.updateStyle_Displayer_(size, pos);
 }
 
@@ -880,12 +861,29 @@ xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
  * @private
  */
 xiv.ui.ViewBox.prototype.updateStyle_Tabs_ = function (size, pos) {
+
+
+    var menuWidth = /**@type {number}*/
+    goog.style.getSize(this.menus_.LEFT).width;
+    var tabWidth = /**@type {number}*/ size.width;
+
+
+    window.console.log(size.width, 'MENU WIDTH',
+		       goog.style.getSize(this.menus_.LEFT).width)
+
+
     if (size.width <= 0) {
-	this.ZipTabs_.getResizable().setBounds(0, 0, size.width, size.height);
+	this.ZipTabs_.getResizable().setBounds(
+	    0,  // topLeft X
+	    0,   // topLeft Y
+	    tabWidth,  // botRight X
+	    size.height);  //botRight Y
     } else {
-	this.ZipTabs_.getResizable().setBounds(0, 
-		size.width * xiv.ui.ViewBox.MIN_TAB_H_PCT, 
-					     size.width, size.height);
+	this.ZipTabs_.getResizable().setBounds(
+	    0,  // topLeft X
+	    size.height * xiv.ui.ViewBox.MIN_TAB_H_PCT, // topLeft Y
+	    tabWidth, // botRight X
+	    size.height);  // botRightY
     }
     //this.ZipTabs_.getResizable().showBoundaryElt();
     //this.ZipTabs_.deactivateAll();
@@ -900,8 +898,19 @@ xiv.ui.ViewBox.prototype.updateStyle_Tabs_ = function (size, pos) {
  * @param {!goog.math.Coordinate} pos
  * @private
  */
-xiv.ui.ViewBox.prototype.updateStyle_ViewLayoutHandler_ = function (size, pos) {
-    this.ViewLayoutHandler_.implementViewLayout();
+xiv.ui.ViewBox.prototype.updateStyle_LayoutHandler_ = function (size, pos) {
+    this.LayoutHandler_.getElement().style.height = 
+       (// The size of the ViewBox
+        size.height -
+
+	 // The top of the zip tabs
+	parseInt(this.ZipTabs_.getElement().style.height, 10) - 
+
+	 // The tab drag handle
+	goog.style.getSize(
+	    this.ZipTabs_.getResizable().getDragElt('TOP')).height
+	
+	).toString() + 'px';	
 }
 
 

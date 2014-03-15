@@ -52,7 +52,7 @@ moka.ui.Thumbnail = function () {
 
 
     // Other init functions.
-    window.console.log(this);
+    //window.console.log(this);
     this.setEvents_();
     this.setClasses_();
     this.setHoverListeners_(true);

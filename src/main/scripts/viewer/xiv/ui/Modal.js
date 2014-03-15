@@ -32,7 +32,7 @@ goog.require('xiv.ui.ViewBoxHandler');
 
 
 /**
- * xiv.ui.Modal is the central class where all of the moka.ui.Components meet.
+ * xiv.ui.Modal is the central class where various moka.ui.Components meet.
  * @constructor
  * @extends {moka.ui.Component}
  */
@@ -47,6 +47,47 @@ xiv.ui.Modal = function () {
 }
 goog.inherits(xiv.ui.Modal, moka.ui.Component);
 goog.exportSymbol('xiv.ui.Modal', xiv.ui.Modal);
+
+
+
+/**
+ * @type {!string} 
+ * @const
+ * @expose
+ */
+xiv.ui.Modal.ID_PREFIX =  'xiv.ui.Modal';
+
+
+
+/**
+ * @enum {string}
+ */
+xiv.ui.Modal.CSS_SUFFIX = {
+    BLACK_BG: 'background-black',
+    COLUMNMENU : 'columnmenu',
+    ROWMENU : 'rowmenu',
+    COLUMNMENU_BUTTON : 'button',
+    ROWMENU_BUTTON : 'button',
+}
+
+
+
+/**
+ * @const
+ * @dict
+ */
+xiv.ui.Modal.buttonTypes = {
+    'close': 'Close XNAT Image Viewer.',
+    'fullScreen': 'Enter full-screen mode.',
+    'popup': 'Popup to new window.',
+    'windowed': 'Exit full-screen mode.',
+    'removeRow': 'Remove ViewBox row',
+    'removeColumn': 'Remove ViewBox column',
+    'insertColumn': 'Insert ViewBox column',
+    'insertRow' : 'Insert ViewBox row',
+    //'addXnatFolders' : 'Add more XNAT folders.'
+}
+
 
 
 
@@ -136,70 +177,6 @@ xiv.ui.Modal.EXPANDBUTTON_W = 30;
 
 
 /**
- * @type {!string} 
- * @const
- * @expose
- */
-xiv.ui.Modal.ID_PREFIX =  'xiv.ui.Modal';
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-xiv.ui.Modal.CSS_CLASS_PREFIX =
-    goog.string.toSelectorCase(xiv.ui.Modal.ID_PREFIX.toLowerCase().
-			       replace(/\./g,'-'));
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-xiv.ui.Modal.BLACK_BG_CLASS =  
-goog.getCssName(xiv.ui.Modal.CSS_CLASS_PREFIX, 'background-black');
-
-
-
-/**
- * @type {!string} 
- * @const
-*/
-xiv.ui.Modal.COLUMNMENU_CLASS = 
-goog.getCssName(xiv.ui.Modal.CSS_CLASS_PREFIX, 'columnmenu');
-
-
-
-/**
- * @type {!string} 
- * @const
-*/
-xiv.ui.Modal.ROWMENU_CLASS =  
-goog.getCssName(xiv.ui.Modal.CSS_CLASS_PREFIX, 'rowmenu');
-
-
-
-/**
- * @type {!string} 
- * @const
-*/
-xiv.ui.Modal.COLUMNMENU_BUTTON_CLASS =  
-goog.getCssName(xiv.ui.Modal.COLUMNMENU_CLASS, 'button');
-
-
-
-/**
- * @type {!string} 
- * @const
-*/
-xiv.ui.Modal.ROWMENU_BUTTON_CLASS =  
-goog.getCssName(xiv.ui.Modal.ROWMENU_CLASS, 'button');
-
-
-
-/**
  * @type {Element}
  * @private
  */	
@@ -255,25 +232,6 @@ xiv.ui.Modal.prototype.previousMode_;
  * @private
  */
 xiv.ui.Modal.hideableButtonKeys_ = ['popup', 'close'];
-
-
-
-/**
- * @const
- * @dict
- */
-xiv.ui.Modal.buttonTypes = {
-    'close': 'Close XNAT Image Viewer.',
-    'fullScreen': 'Enter full-screen mode.',
-    'popup': 'Popup to new window.',
-    'windowed': 'Exit full-screen mode.',
-    'removeRow': 'Remove ViewBox row',
-    'removeColumn': 'Remove ViewBox column',
-    'insertColumn': 'Insert ViewBox column',
-    'insertRow' : 'Insert ViewBox row',
-    //'addXnatFolders' : 'Add more XNAT folders.'
-}
-
 
 
  
@@ -918,14 +876,14 @@ xiv.ui.Modal.prototype.adjustStyleToMode_ = function(){
 
     if (this.mode_ === 'popup' || this.mode_ === 'fullScreen'){
 	goog.dom.classes.add(this.background_, 
-			     xiv.ui.Modal.BLACK_BG_CLASS); 
+			     xiv.ui.Modal.CSS.BLACK_BG); 
 	goog.array.forEach(xiv.ui.Modal.hideableButtonKeys_, function(key){
 	    this.buttons_[key].style.visibility = 'hidden';
 	}.bind(this))
 
     } else {
 	goog.dom.classes.remove(this.background_, 
-				xiv.ui.Modal.BLACK_BG_CLASS);
+				xiv.ui.Modal.CSS.BLACK_BG);
 	goog.array.forEach(xiv.ui.Modal.hideableButtonKeys_, function(key){
 	    this.buttons_[key].style.visibility = 'visible';
 	}.bind(this))
@@ -936,12 +894,10 @@ xiv.ui.Modal.prototype.adjustStyleToMode_ = function(){
 
 /**
  * As stated.
+ * @param {!string} iconUrl
  * @private
  */
 xiv.ui.Modal.generateButtons_ = function(iconUrl){
-    if (!goog.isString(iconUrl)){
-	throw new TypeError('String expected!');
-    }
 
     // Generate new button IDs
     var buttonIds =/**@type {!Object}*/{};
@@ -1063,11 +1019,19 @@ function(viewBoxElement, thumbnailElement) {
  */
 xiv.ui.Modal.prototype.setViewBoxHandlerCallbacks_ = function(){
 
-    this.ViewBoxHandler_['EVENTS'].onEvent('THUMBNAIL_PRELOAD', 
-					 this.onThumbnailPreload_.bind(this))
-    this.ViewBoxHandler_['EVENTS'].onEvent('THUMBNAIL_LOADED', 
+    // preload
+    goog.events.listen(this.ViewBoxHandler_,
+		     xiv.ui.ViewBoxHandler.EventType.THUMBNAIL_PRELOAD,
+					 this.onThumbnailPreload_.bind(this));
+    
+    // loaded
+    goog.events.listen(this.ViewBoxHandler_,
+		     xiv.ui.ViewBoxHandler.EventType.THUMBNAIL_LOADED,
 					 this.onThumbnailLoaded_.bind(this))
-    this.ViewBoxHandler_['EVENTS'].onEvent('VIEWBOXES_CHANGED', 
+
+    // changed
+    goog.events.listen(this.ViewBoxHandler_,
+		     xiv.ui.ViewBoxHandler.EventType.VIEWBOXES_CHANGED,
 					 this.onViewBoxesChanged_.bind(this))
 }
 
@@ -1101,20 +1065,17 @@ xiv.ui.Modal.prototype.onThumbnailLoaded_ = function(ViewBox){
 
 /**
  * Callback function for the LOADED event on the hovered ViewBox.
- * @param {Array.<xiv.ui.ViewBox>} newViewBoxSet The ViewBoxes that have been
- *     changed.
- * @param {boolean=} opt_animage Whether to animate the change (defaults to 
- *     true).
+ * @param {Event} e The event.
  * @private
  */
-xiv.ui.Modal.prototype.onViewBoxesChanged_ = 
-function(newViewBoxSet, opt_animate) {
-    if (opt_animate) {
+xiv.ui.Modal.prototype.onViewBoxesChanged_ = function(e) {
+
+    window.console.log("VIEW BOXES CHANGED");
+    if (e.animate) {
 	// Fade out the new viewboxes.
-	if (newViewBoxSet) {
-	    goog.array.forEach(newViewBoxSet, function(newViewBox) {
-		moka.style.setStyle(newViewBox.getElement(), 
-				     {'opacity': 0})
+	if (e.newSet) {
+	    goog.array.forEach(e.newSet, function(newViewBox) {
+		moka.style.setStyle(newViewBox.getElement(), {'opacity': 0})
 	    })
 	}
 	// Animate the modal

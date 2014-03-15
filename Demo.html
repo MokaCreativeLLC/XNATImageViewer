@@ -27,10 +27,10 @@
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/thumbnail.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/thumbnailhandler.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/viewboxhandler.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/xtkplane.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/displayer.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/viewlayouts.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/xtkcontrollermenu.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/layouts/layouthandler.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/layouts/layout.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/layouts/conventional.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/layouts/plane.css">
 
 
 <script src="src/main/scripts/viewer/xiv/sample-data/XNAT_IMAGE_VIEWER_DEMO_DATA.js"></script>
@@ -115,7 +115,7 @@ function launchXImgView() {
 
     // Loads a given experiment, followed by the project tree.
     XnatImageViewer.loadExperiment(dataPath, function() {
-       //XnatImageViewer.loadProjectTree.bind(XnatImageViewer)
+        XnatImageViewer.loadProjectTree();
     });
 
     // Shows the modal.

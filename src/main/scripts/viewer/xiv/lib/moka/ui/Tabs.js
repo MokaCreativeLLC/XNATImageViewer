@@ -37,6 +37,8 @@ moka.ui.Tabs = function () {
      * @private
      */
     this.googTabPane_ = new goog.ui.TabPane(this.getElement());
+
+    window.console.log(this.constructor.CSS, moka.ui.Tabs.CSS);
 }
 goog.inherits(moka.ui.Tabs, moka.ui.Component);
 goog.exportSymbol('moka.ui.Tabs', moka.ui.Tabs)
@@ -52,72 +54,19 @@ moka.ui.Tabs.ID_PREFIX =  'moka.ui.Tabs';
 
 
 /**
- * @type {!string} 
+ * @enum {string} 
  * @const
- */
-moka.ui.Tabs.TAB_CLASS =
-    goog.getCssName(moka.ui.Tabs.CSS_CLASS_PREFIX, 'tab');
-
-
-/**
- * @type {!string} 
- * @const
- */
-moka.ui.Tabs.ACTIVE_TAB_CLASS =  
-    goog.getCssName(moka.ui.Tabs.TAB_CLASS, 'active');
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-moka.ui.Tabs.HOVERED_TAB_CLASS =  
-    goog.getCssName(moka.ui.Tabs.TAB_CLASS, 'hovered');
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-moka.ui.Tabs.TABPAGE_CLASS = 
-    goog.getCssName(moka.ui.Tabs.CSS_CLASS_PREFIX, 'tabpage');
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-moka.ui.Tabs.SCROLLGALLERY_CLASS = 
-    goog.getCssName(moka.ui.Tabs.TABPAGE_CLASS, 'scrollgallery');
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-moka.ui.Tabs.ACTIVE_TABPAGE_CLASS =
-    goog.getCssName(moka.ui.Tabs.TABPAGE_CLASS, 'active');
-
-
-/**
- * @type {!string} 
- * @const
- */
-moka.ui.Tabs.TABICON_CLASS = 
-    goog.getCssName(moka.ui.Tabs.CSS_CLASS_PREFIX, 'tabicon');
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-moka.ui.Tabs.MOUSEOVER_TABICON_CLASS = 
-    goog.getCssName(moka.ui.Tabs.TABICON_CLASS, 'mouseover');
+ */ 
+moka.ui.Tabs.CSS_SUFFIX = {
+    TAB: 'tab',
+    TAB_ACTIVE: 'tab-active',
+    TAB_HOVERED: 'tab-hovered',
+    TABPAGE: 'tabpage',
+    TABPAGE_ACTIVE: 'tabpage-active',
+    TABICON: 'tabicon',
+    TABICON_MOUSEOVER: 'tabicon-mouseover',
+    SCROLLGALLERY: 'scrollgallery'
+}
 
 
 
@@ -390,7 +339,7 @@ moka.ui.Tabs.prototype.setTabPageContents = function (tabName, contents) {
 
     // Set the scrollable container class.
     goog.dom.classes.add(scrollableContainer.getElement(), 
-			 moka.ui.Tabs.SCROLLGALLERY_CLASS);
+			 moka.ui.Tabs.CSS.SCROLLGALLERY);
 }
 
 
@@ -403,7 +352,7 @@ moka.ui.Tabs.prototype.setTabPageContents = function (tabName, contents) {
 moka.ui.Tabs.prototype.createTabElt_ = function(tabTitle) {
     return goog.dom.createDom('div', {
 	'id': 'Tab_' + goog.string.createUniqueString(),
-	'class' : moka.ui.Tabs.TAB_CLASS,
+	'class' : moka.ui.Tabs.CSS.TAB,
 	'title': tabTitle,
     });
 }
@@ -437,11 +386,11 @@ moka.ui.Tabs.prototype.createTabIcon_ = function(tabTitle) {
 
     var icon = /**@type {!Element}*/ goog.dom.createDom('div', {
 	'id' : 'TabIcon_' + goog.string.createUniqueString(),
-	'class' : moka.ui.Tabs.TABICON_CLASS,
+	'class' : moka.ui.Tabs.CSS.TABICON,
     });
 
     goog.dom.append(icon, goog.dom.createDom('div', {
-	'class' : moka.ui.Tabs.TABICON_CLASS
+	'class' : moka.ui.Tabs.CSS.TABICON
     }, tabTitle))
 
     
@@ -458,7 +407,7 @@ moka.ui.Tabs.prototype.createTabIcon_ = function(tabTitle) {
 moka.ui.Tabs.prototype.createTabPage_ = function(tabTitle) {
     return goog.dom.createDom('div', {
 	'id' : 'TabPage_' + goog.string.createUniqueString(),
-	'class': moka.ui.Tabs.TABPAGE_CLASS,
+	'class': moka.ui.Tabs.CSS.TABPAGE,
 	'label': tabTitle
     });
 }
@@ -577,8 +526,8 @@ moka.ui.Tabs.prototype.updateStyle = function () {
  * @private
  */
 moka.ui.Tabs.prototype.deactivateTabElt_ = function (tabElt) {
-    goog.dom.classes.remove(tabElt, moka.ui.Tabs.ACTIVE_TAB_CLASS);
-    goog.dom.classes.set(tabElt, moka.ui.Tabs.TAB_CLASS);
+    goog.dom.classes.remove(tabElt, moka.ui.Tabs.CSS.TAB_ACTIVE);
+    goog.dom.classes.set(tabElt, moka.ui.Tabs.CSS.TAB);
 }
 
 
@@ -587,7 +536,7 @@ moka.ui.Tabs.prototype.deactivateTabElt_ = function (tabElt) {
  * @private
  */
 moka.ui.Tabs.prototype.deactivateTabPage_ = function (tabCont) {
-    goog.dom.classes.set(tabCont, moka.ui.Tabs.TABPAGE_CLASS);
+    goog.dom.classes.set(tabCont, moka.ui.Tabs.CSS.TABPAGE);
 }
 
 
@@ -603,7 +552,7 @@ moka.ui.Tabs.prototype.setActiveTabElt_ = function (ind) {
     goog.array.forEach(this.getTabElements(), function(tab, i) { 
 	if (i === ind) {
 	    tab.setAttribute('isActive', true);
-	    goog.dom.classes.add(tab, moka.ui.Tabs.ACTIVE_TAB_CLASS);
+	    goog.dom.classes.add(tab, moka.ui.Tabs.CSS.TAB_ACTIVE);
 	}
     })	
 }
@@ -619,7 +568,7 @@ moka.ui.Tabs.prototype.setActiveTabElt_ = function (ind) {
 moka.ui.Tabs.prototype.setActiveTabPage_ = function (ind) {
     goog.array.forEach(this.getTabPage(), function(tabPage, i) {
 	if (ind === i){
-	    goog.dom.classes.add(tabPage, moka.ui.Tabs.ACTIVE_TABPAGE_CLASS);
+	    goog.dom.classes.add(tabPage, moka.ui.Tabs.CSS.TABPAGE_ACTIVE);
 	}	
     })	
 }
@@ -631,7 +580,7 @@ moka.ui.Tabs.prototype.setActiveTabPage_ = function (ind) {
  * @private
  */
 moka.ui.Tabs.prototype.clearEventListeners_ = function(){
-    goog.array.forEach(goog.dom.getElementsByClass(moka.ui.Tabs.TAB_CLASS, 
+    goog.array.forEach(goog.dom.getElementsByClass(moka.ui.Tabs.CSS.TAB, 
 				this.getElement()), function(tab, i) { 
 	goog.events.removeAll(tab);
     })
@@ -680,14 +629,14 @@ moka.ui.Tabs.prototype.setHoverEvents_ = function() {
  */
 moka.ui.Tabs.prototype.setTabMouseOver_ = function(tab, i) {
     goog.events.listen(tab, goog.events.EventType.MOUSEOVER, function() { 
-	goog.dom.classes.add(tab, moka.ui.Tabs.HOVERED_TAB_CLASS);
+	goog.dom.classes.add(tab, moka.ui.Tabs.CSS.TAB_HOVERED);
 	
 	// Set TabIcon style change (opacity) -- applies whether active 
 	// or inactive
 	goog.array.forEach(goog.dom.getElementsByClass(
 	    this.TABICON_CLASS, tab), function(icon){
 		goog.dom.classes.add(icon, 
-			moka.ui.Tabs.MOUSEOVER_TABICON_CLASS);
+			moka.ui.Tabs.CSS.TABICON_MOUSEOVER);
 	    }.bind(this))
     }.bind(this))
 }
@@ -701,12 +650,12 @@ moka.ui.Tabs.prototype.setTabMouseOver_ = function(tab, i) {
  */
 moka.ui.Tabs.prototype.setTabMouseOut_ = function(tab, i) {
     goog.events.listen(tab, goog.events.EventType.MOUSEOUT, function(e) { 
-	goog.dom.classes.remove(tab, moka.ui.Tabs.HOVERED_TAB_CLASS);
+	goog.dom.classes.remove(tab, moka.ui.Tabs.CSS.TAB_HOVERED);
 	// TabIcon style change (opacity) -- applies whether active or inactive
 	goog.array.forEach(goog.dom.getElementsByClass(
-	    this.TABICON_CLASS, tab), function(icon){
+	    moka.ui.Tabs.CSS.TABICON, tab), function(icon){
 		goog.dom.classes.remove(icon, 
-				    moka.ui.Tabs.MOUSEOVER_TABICON_CLASS);
+				    moka.ui.Tabs.CSS.TABICON_MOUSEOVER);
 	    }.bind(this))
     }.bind(this))
 }

@@ -23,7 +23,6 @@ goog.require('gxnat.ProjectTree');
 
 
 
-
 /**
  * The main XNAT Image Viewer class.
  * @param {!string} mode
@@ -215,6 +214,7 @@ xiv.prototype.destroy = function () {
  * @public
  */
 xiv.prototype.loadProjectTree = function() {
+
     if (this.projectTreeLoadedStarted_) { return }
     this.projectTreeLoadedStarted_ = true;
 
@@ -223,7 +223,7 @@ xiv.prototype.loadProjectTree = function() {
     // when tree loading is finished...
     (new gxnat.ProjectTree(startPath)).load( 
 	function(projTree){
-	    window.console.log("PROJECT TREE");
+	    //window.console.log("PROJECT TREE");
 	    // Get the experiments in the tree
 	    var expts = /**@type {Array.string}*/ 
 	    projTree.getLevelUris('experiments');
@@ -355,7 +355,7 @@ xiv.prototype.fetchViewables = function(viewablesUri, opt_doneCallback){
  */
 xiv.prototype.addViewableToModal = function(Viewable){
 
-    window.console.log(Viewable);
+    //window.console.log(Viewable);
 
     if (!this.Modal_.getThumbnailHandler()) { return };
 

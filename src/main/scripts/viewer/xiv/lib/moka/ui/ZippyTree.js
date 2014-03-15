@@ -246,12 +246,12 @@ moka.ui.ZippyTree.prototype.getElement = function() {
  */
 moka.ui.ZippyTree.prototype.addContents = function(elements, opt_folders) {
     if (!goog.isArray(elements) || goog.dom.isElement(elements)){
-	window.console.log('add contents 2', elements);
+	//window.console.log('add contents 2', elements);
 	this.addContent_(elements, opt_folders);
 	return;
     }
     goog.array.forEach(elements, function(elt){
-	window.console.log('add contents', elements);
+	//window.console.log('add contents', elements);
 	this.addContents(elt, opt_folders);
     }.bind(this));
 }
@@ -267,7 +267,7 @@ moka.ui.ZippyTree.prototype.addContents = function(elements, opt_folders) {
  * @private
  */
 moka.ui.ZippyTree.prototype.addContent_ = function(element, opt_folders) {
-    window.console.log("ADD CONTENT", element);
+    //window.console.log("ADD CONTENT", element);
     if (!opt_folders){
 	goog.dom.append(this.rootElt_, element);
     } else {
@@ -327,7 +327,7 @@ moka.ui.ZippyTree.prototype.createBranch_ = function(fldrs, pNode, opt_elt) {
  * @private
  */
 moka.ui.ZippyNode.prototype.createNode_ = function(title, parent, pNode) {
-    window.console.log('\n\nPARENT', parent);
+    //window.console.log('\n\nPARENT', parent);
     parent.style.opacity = this.initOp_;
     var node = /**@type {!moka.ui.ZippyNode}*/
     new moka.ui.ZippyNode(title, parent);
@@ -379,7 +379,7 @@ moka.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
 	moka.style.setStyle(opt_elt, {'position': 'relative'});
 	opt_elt.style.opacity = this.initOp_;
 	// IMPORTANT!
-	window.console.log(contHold);
+	//window.console.log(contHold);
 	goog.dom.append(contHold, opt_elt);
 	this.createFadeAnim_(opt_elt);
     }

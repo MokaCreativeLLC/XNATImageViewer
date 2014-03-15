@@ -86,6 +86,24 @@ moka.ui.Resizable.EventType = {
 
 
 /**
+ * @type {!string} 
+ * @const
+ */
+moka.ui.Resizable.ID_PREFIX =  'moka.ui.Resizable';
+
+
+
+/**
+ * @enum {string} 
+ * @const
+ */ 
+moka.ui.Resizable.CSS_SUFFIX = {
+    BOUNDARY: 'boundary', 
+}
+
+
+ 
+/**
  * @dict
  * @public
  */
@@ -171,23 +189,6 @@ moka.ui.Resizable.ANIM_MED = 500;
  * @const
  */
 moka.ui.Resizable.BOUND_THRESHOLD = 4;
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-moka.ui.Resizable.ID_PREFIX =  'moka.ui.Resizable';
-
-
-
-/**
- * @type {string} 
- * @const
- */
-moka.ui.Resizable.BOUNDARY_CLASS =
-    goog.getCssName(moka.ui.Resizable.CSS_CLASS_PREFIX, 'boundary');
 
 
 
@@ -579,7 +580,7 @@ moka.ui.Resizable.prototype.createBoundaryElt_ = function(){
     if (!this.boundaryElt_){
 	this.boundaryElt_ = goog.dom.createDom('div');
 	goog.dom.classes.add(this.boundaryElt_, 
-			     moka.ui.Resizable.BOUNDARY_CLASS);
+			     moka.ui.Resizable.CSS.BOUNDARY);
 	goog.dom.append(this.getElement().parentNode, this.boundaryElt_);
     }
     moka.style.setStyle(this.boundaryElt_, {

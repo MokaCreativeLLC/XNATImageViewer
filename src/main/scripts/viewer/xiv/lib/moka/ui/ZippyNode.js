@@ -99,22 +99,21 @@ goog.exportSymbol('moka.ui.ZippyNode', moka.ui.ZippyNode);
 
 
 /**
- * Event types.
+ * @type {!string} 
+ * @expose 
+ * @const
+ */ 
+moka.ui.ZippyNode.ID_PREFIX = 'moka.ui.ZippyNode';
+
+
+
+/**
  * @enum {string}
  */
 moka.ui.ZippyNode.EventType = {
   EXPANDED: goog.events.getUniqueId('expanded'),
   COLLAPSED: goog.events.getUniqueId('contracted'),
 };
-
-
-
-/**
- * @type {!string} 
- * @expose 
- * @const
- */ 
-moka.ui.ZippyNode.ID_PREFIX = 'moka.ui.ZippyNode';
 
 
 

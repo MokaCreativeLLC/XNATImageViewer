@@ -3,6 +3,54 @@ goog.addDependency('../../../../ui/ui.js',
 ]);
 
 
+
+
+
+goog.addDependency('../../../../ui/layouts/layouts.js', 
+['xiv.ui.layouts'], [
+]);
+
+goog.addDependency('../../../../ui/layouts/LayoutHandler.js', 
+['xiv.ui.layouts.LayoutHandler'], [
+    'goog.fx.dom.BgColorTransform',
+    'goog.fx.dom.FadeInAndShow',
+    'goog.events',
+    'goog.fx.AnimationParallelQueue',
+    'goog.fx.dom.FadeOut',
+    'goog.array',
+    'goog.fx.Animation',
+    'goog.fx.dom.Slide',
+    'goog.fx.dom.Resize',
+    'goog.dom',
+    'moka.string',
+    'moka.fx',
+    'moka.dom',
+    'moka.array',
+    'moka.style',
+    'xiv.ui.layouts.Layout',
+    'xiv.ui.layouts.Conventional'
+]);
+
+
+
+goog.addDependency('../../../../ui/layouts/Plane.js', 
+['xiv.ui.layouts.Plane'], [
+]);
+
+
+goog.addDependency('../../../../ui/layouts/Layout.js', 
+['xiv.ui.layouts.Layout'], [
+    'moka.ui.Component',
+    'xiv.ui.layouts.Plane'
+]);
+
+
+goog.addDependency('../../../../ui/layouts/Conventional.js', 
+['xiv.ui.layouts.Conventional'], [
+    'xiv.ui.layouts.Layout'
+]);
+
+
 goog.addDependency('../../../../ui/ViewBox.js', 
 ['xiv.ui.ViewBox'], [
     'goog.string',
@@ -14,9 +62,9 @@ goog.addDependency('../../../../ui/ViewBox.js',
     'moka.ui.Component',
     'moka.events.EventManager',
     'moka.style',
-    //'xiv.ui.ViewLayoutHandler',
     'moka.ui.SlideInMenu',
     'moka.ui.ZipTabs',
+    'xiv.ui.layouts.LayoutHandler'
     //'xiv.ui.Displayer.Xtk',
     //'xiv.ui.SlicerViewMenu'
 ]);
@@ -109,16 +157,6 @@ goog.addDependency('../../../../ui/ThumbnailHandler.js',
     'moka.ui.Thumbnail',
     'xiv.ui.Thumbnail'
 ]);
-
-
-
-
-
-
-
-
-
-
 
 
 

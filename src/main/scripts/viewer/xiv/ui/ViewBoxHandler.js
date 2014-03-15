@@ -21,6 +21,7 @@ goog.require('moka.events.EventManager');
 
 // xiv
 goog.require('xiv.ui.ViewBox');
+goog.require('moka.ui.Component');
 
 
 
@@ -33,27 +34,53 @@ goog.require('xiv.ui.ViewBox');
  * the xiv.ui.ViewBox locations within the modal using a multi-dimenesional
  * array.
  * @constructor
+ * @extends {moka.ui.Component}
  */
 goog.provide('xiv.ui.ViewBoxHandler');
 xiv.ui.ViewBoxHandler = function () {
-    // events
-    moka.events.EventManager.addEventManager(this, 
-					      xiv.ui.ViewBoxHandler.EventType);
+    goog.base(this);
 }
+goog.inherits(xiv.ui.ViewBoxHandler, moka.ui.Component);
 goog.exportSymbol('xiv.ui.ViewBoxHandler', xiv.ui.ViewBoxHandler);
 
 
 
 /**
- * @type {!string} 
+ * Event types.
+ * @enum {string}
+ * @public
+ */
+xiv.ui.ViewBoxHandler.CSS_SUFFIX = {
+    HANDLE: 'handle',
+    VIEWBOXDRAGCLONE: 'viewboxdragclone'
+}
+
+
+
+/**
+ * Event types.
+ * @enum {string}
+ * @public
+ */
+xiv.ui.ViewBoxHandler.EventType = {
+  THUMBNAIL_PRELOAD: goog.events.getUniqueId('thumbnail_preload'),
+  THUMBNAIL_LOADED: goog.events.getUniqueId('thumbnail_load'),
+  THUMBNAIL_LOADERROR: goog.events.getUniqueId('thumbnail_loaderror'),
+  VIEWBOXES_CHANGED: goog.events.getUniqueId('viewboxes_changed')
+}
+
+
+
+/**
+ * @type {!number} 
  * @const
-*/
+ */
 xiv.ui.ViewBoxHandler.ANIM_FAST =  150;
 
 
 
 /**
- * @type {!string} 
+ * @type {!number} 
  * @const
 */
 xiv.ui.ViewBoxHandler.ANIM_MED =  300;
@@ -61,7 +88,7 @@ xiv.ui.ViewBoxHandler.ANIM_MED =  300;
 
 
 /**
- * @type {!string} 
+ * @type {!number} 
  * @const
 */
 xiv.ui.ViewBoxHandler.ANIM_SLOW =  600;
@@ -82,53 +109,6 @@ xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR =  'viewboxid';
  * @expose
  */
 xiv.ui.ViewBoxHandler.ID_PREFIX =  'xiv.ui.ViewBoxHandler';
-
-
-
-/**
- * @type {!string}
- * @expose 
- * @const
- */
-xiv.ui.ViewBoxHandler.CSS_CLASS_PREFIX = 
-goog.string.toSelectorCase(xiv.ui.ViewBoxHandler.ID_PREFIX.toLowerCase().
-			   replace(/\./g,'-'));
-
-
-
-/**
- * @type {!string}
- * @expose 
- * @const
- */
-xiv.ui.ViewBoxHandler.HANDLE_CLASS =  
-    goog.getCssName(xiv.ui.ViewBoxHandler.CSS_CLASS_PREFIX, 'handle');
-
-
-
-/**
- * @type {!string}
- * @expose 
- * @const
- */
-xiv.ui.ViewBoxHandler.VIEWBOX_DRAG_CLONE_CLASS =
-    goog.getCssName(xiv.ui.ViewBoxHandler.CSS_CLASS_PREFIX, 'viewboxdragclone');
-
-
-
-/**
- * Event types.
- * @enum {string}
- * @public
- */
-xiv.ui.ViewBoxHandler.EventType = {
-  THUMBNAIL_PRELOAD: goog.events.getUniqueId('thumbnail_preload'),
-  THUMBNAIL_LOADED: goog.events.getUniqueId('thumbnail_load'),
-  THUMBNAIL_LOADERROR: goog.events.getUniqueId('thumbnail_loaderror'),
-  VIEWBOXES_CHANGED: goog.events.getUniqueId('viewboxes_changed')
-}
-
-
 
 
 
@@ -218,13 +198,18 @@ xiv.ui.ViewBoxHandler.prototype.updateIconSrcFolder = function() {
 
 /**
  * As stated.
- * param {Object=} opt_arg1 The first argument to apply.
- * param {Object=} opt_arg2 The second argument to apply.
+ * param {Array.<xiv.ui.ViewBox>=} opt_newSet The new ViewBox set 
+ *    added (optional).
+ * param {boolean=} opt_animate The animate argument (optional).
  * @private
  */
 xiv.ui.ViewBoxHandler.prototype.onViewBoxesChanged_ = 
-function(opt_arg1, opt_arg2) {
-    this['EVENTS'].runEvent('VIEWBOXES_CHANGED', opt_arg1, opt_arg2);		
+function(opt_newSet, opt_animate) {
+    this.dispatchEvent({
+	type: xiv.ui.ViewBoxHandler.EventType.VIEWBOXES_CHANGED,
+	newSet: opt_newSet,
+	animate: opt_animate
+    });		
 }
 
 
@@ -556,7 +541,7 @@ xiv.ui.ViewBoxHandler.prototype.addDragDropHandle_ = function(ViewBox) {
     goog.dom.createDom("img",  {
 	'id': xiv.ui.ViewBoxHandler.ID_PREFIX + 
 	    '_dragHandle_' + goog.string.createUniqueString(),
-	'class' : xiv.ui.ViewBoxHandler.HANDLE_CLASS
+	'class' : xiv.ui.ViewBoxHandler.CSS.HANDLE
     });
     dragDropHandle.setAttribute(xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR, 
 				ViewBox.getElement().id); 
@@ -577,18 +562,30 @@ xiv.ui.ViewBoxHandler.prototype.addDragDropHandle_ = function(ViewBox) {
  * @private
  */
 xiv.ui.ViewBoxHandler.prototype.setViewBoxEvents_ = function(ViewBox) {
-    goog.array.forEach(this['EVENTS'].getEventCallbacks('THUMBNAIL_LOADED'), 
-		       function(callback) {
-	ViewBox['EVENTS'].onEvent('THUMBNAIL_LOADED', callback);
-    });
-    goog.array.forEach(this['EVENTS'].getEventCallbacks('THUMBNAIL_PRELOAD'), 
-		       function(callback) {
-	ViewBox['EVENTS'].onEvent('THUMBNAIL_PRELOAD', callback);
-    });
-    goog.array.forEach(this['EVENTS'].getEventCallbacks('THUMBNAIL_LOADERROR'), 
-		       function(callback) {
-	ViewBox['EVENTS'].onEvent('THUMBNAIL_LOADERROR', callback);
-    });
+
+    // Onload
+    goog.events.listen(ViewBox, xiv.ui.ViewBox.EventType.THUMBNAIL_LOADED, 
+	function(e){
+	    this.dispatchEvent({
+		type: xiv.ui.ViewBoxHandler.EventType.THUMBNAIL_LOADED
+	    })
+	}.bind(this))
+   
+    // Preload
+    goog.events.listen(ViewBox, xiv.ui.ViewBox.EventType.THUMBNAIL_PRELOAD, 
+	function(e){
+	    this.dispatchEvent({
+		type: xiv.ui.ViewBoxHandler.EventType.THUMBNAIL_PRELOAD
+	    })
+	}.bind(this))
+
+    // Error
+    goog.events.listen(ViewBox, xiv.ui.ViewBox.EventType.THUMBNAIL_LOADERROR, 
+	function(e){
+	    this.dispatchEvent({
+		type: xiv.ui.ViewBoxHandler.EventType.THUMBNAIL_LOADERROR
+	    })
+	}.bind(this))
 }
 
 
@@ -924,7 +921,7 @@ xiv.ui.ViewBoxHandler.prototype.makeDragClone_ =
 function(ViewBoxElement, opt_parent) {
     var dragElement = /**@type {!Element}*/ ViewBoxElement.cloneNode(false);
     goog.dom.classes.set(dragElement, 
-			 xiv.ui.ViewBoxHandler.VIEWBOX_DRAG_CLONE_CLASS);
+			 xiv.ui.ViewBoxHandler.CSS.VIEWBOXDRAGCLONE);
     opt_parent && opt_parent.appendChild(dragElement);
     return dragElement;
 }

@@ -14,6 +14,7 @@ goog.require('goog.object');
 
 // moka
 goog.require('moka.dom');
+goog.require('moka.ui.Component');
 
 
 
@@ -29,7 +30,11 @@ goog.require('moka.dom');
 goog.provide('moka.ui.GenericSlider');
 moka.ui.GenericSlider = function (opt_args) {	 
     goog.base(this);
-	
+
+    // We do this because we're not inheriting from moka.ui.component.
+    // This is basically a hacked substitute for multiple inheritance.
+    moka.ui.Component.validateIdPrefix(this);
+    moka.ui.Component.createCssMap(this);
 
     /**
      * @type {!Element}
@@ -83,45 +88,20 @@ moka.ui.GenericSlider.EventType = {
  * @type {!string} 
  * @const
  */
-moka.ui.GenericSlider.CSS_CLASS_PREFIX =  
-goog.getCssName('moka-ui-genericslider');
+moka.ui.GenericSlider.ID_PREFIX =  'moka.ui.GenericSlider';
 
 
 
 /**
- * @type {!string} 
+ * @enum {string} 
  * @const
- */
-moka.ui.GenericSlider.TRACK_CLASS = 
-goog.getCssName(moka.ui.GenericSlider.CSS_CLASS_PREFIX, 'track');
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-moka.ui.GenericSlider.TRACK_HOVERED_CLASS = 
-goog.getCssName(moka.ui.GenericSlider.TRACK_CLASS, 'hovered');
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-moka.ui.GenericSlider.THUMB_CLASS =  
-goog.getCssName(moka.ui.GenericSlider.CSS_CLASS_PREFIX, 'thumb');
-
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-moka.ui.GenericSlider.THUMB_HOVERED_CLASS =  
-goog.getCssName(moka.ui.GenericSlider.THUMB_CLASS, 'hovered');
+ */ 
+moka.ui.GenericSlider.CSS_SUFFIX = {
+    TRACK: 'track', 
+    TRACK_HOVERED: 'track-hovered', 
+    THUMB: 'thumb',
+    THUMB_HOVERED: 'thumb-hovered'
+}
 
 
 
@@ -243,9 +223,9 @@ moka.ui.GenericSlider.prototype.setCssClasses_ = function(orientation) {
 				   ]);
     }
 
-    addRemove(this.element_, moka.ui.GenericSlider.CSS_CLASS_PREFIX);
-    addRemove(this.track_, moka.ui.GenericSlider.TRACK_CLASS);
-    addRemove(this.thumb_, moka.ui.GenericSlider.THUMB_CLASS);  
+    addRemove(this.element_, moka.ui.GenericSlider.ELEMENT_CLASS);
+    addRemove(this.track_, moka.ui.GenericSlider.CSS.TRACK);
+    addRemove(this.thumb_, moka.ui.GenericSlider.CSS.THUMB);  
 }
 
 
@@ -469,9 +449,9 @@ moka.ui.GenericSlider.prototype.initHoverables_ = function(){
     this.hoverables_['thumb']['element'] = this.thumb_;    
     this.hoverables_['track']['element'] = this.track_;
     this.hoverables_['thumb']['classes'] = 
-	[moka.ui.GenericSlider.THUMB_HOVERED_CLASS];
+	[moka.ui.GenericSlider.CSS.THUMB_HOVERED];
     this.hoverables_['track']['classes'] = 
-	[moka.ui.GenericSlider.TRACK_HOVERED_CLASS];
+	[moka.ui.GenericSlider.CSS.TRACK_HOVERED];
 
     goog.object.forEach(this.hoverables_, function(hoverable){
 	hoverable['MOUSEOVER'] = [];

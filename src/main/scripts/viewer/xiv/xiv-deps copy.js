@@ -253,7 +253,7 @@ goog.addDependency('../../../../ui/Displayer/Displayer.js',
     'goog.dom',
     'goog.array',
     'moka.ui.Component',
-    'moka.convert',
+      'moka.convert',
     'moka.style',
 ]);
 

@@ -108,25 +108,6 @@ moka.ui.ZipTabs.ID_PREFIX =  'moka.ui.ZipTabs';
 
 
 /**
- * @type {!string} 
- * @const
- */
-moka.ui.ZipTabs.CSS_CLASS_PREFIX =
-goog.string.toSelectorCase(
-    moka.ui.ZipTabs.ID_PREFIX.toLowerCase().replace(/\./g,'-'));
-
-
-
-/**
- * @type {string} 
- * @const
- */
-moka.ui.ZipTabs.ELEMENT_CLASS =
-    goog.getCssName(moka.ui.ZipTabs.CSS_CLASS_PREFIX, '');
-
-
-
-/**
  * @param {string}
  * @private
  */
@@ -294,7 +275,7 @@ moka.ui.ZipTabs.prototype.updateStyle = function(){
     switch (this.orientation_) {
     case 'TOP':
     case 'BOTTOM':
-	moka.style.setStyle(this.getElement(), {'width': '100%'});
+	//moka.style.setStyle(this.getElement(), {'width': '100%'});
 	this.getResizable().setMinHeight(this.getTabHeight());
 	break;
 

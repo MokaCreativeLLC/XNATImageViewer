@@ -87,32 +87,20 @@ goog.exportSymbol('moka.ui.SlideInMenu', moka.ui.SlideInMenu)
 
 
 /**
+ * @type {!string} 
+ * @const
+*/
+moka.ui.SlideInMenu.ID_PREFIX =  'moka.ui.SlideInMenu';
+
+
+
+/**
  * @enum {string}
  * @public
  */
 moka.ui.SlideInMenu.EventType = {
     ITEM_SELECTED: 'item_selected',
 };
-
-
-
-/**
- * @type {!Object}
- * @public
- */
-moka.ui.menuItemCollection = {
-    ITEM : null,
-    CONTENT: null,
-    ICON: null
-}
-
-
-
-/**
- * @type {!string} 
- * @const
-*/
-moka.ui.SlideInMenu.ID_PREFIX =  'moka.ui.SlideInMenu';
 
 
 
@@ -128,6 +116,18 @@ moka.ui.SlideInMenu.CSS_SUFFIX = {
     MENUITEM: 'menuitem',
     MENUITEM_HIGHLIGHT: 'menuitem-highlight',
     MENUITEM_ICON: 'menuitem-icon'
+};
+
+
+
+/**
+ * @type {!Object}
+ * @public
+ */
+moka.ui.menuItemCollection = {
+    ITEM : null,
+    CONTENT: null,
+    ICON: null
 }
 
 
@@ -497,15 +497,14 @@ moka.ui.SlideInMenu.prototype.addMenuItem = function(itemTitles,
 
 	// Modify the content element.
 	content = item.getContentElement();
-	goog.dom.classes.add(content,
-			     moka.ui.SlideInMenu.CSS.MENUITEM_CONTENT);
+	goog.dom.classes.add(content, moka.ui.SlideInMenu.CSS.MENUITEM);
 	content.title = title;
 
 	// Set the icon.
 	icon = goog.dom.createDom("img", {
 	    'id':  moka.ui.SlideInMenu.ID_PREFIX + '_MenuItemIcon_' + 
 		goog.string.createUniqueString(),
-	    'class' : moka.ui.SlideInMenu.CSS.ICON
+	    'class' : moka.ui.SlideInMenu.CSS.MENUITEM_ICON
 	});
 
 	// Set the icon src, if available.
@@ -580,7 +579,7 @@ function(opt_callback, opt_animTime) {
     this.holder_.style.visibility = 'visible';
     moka.ui.SlideInMenu.runAnimations_(moka.ui.SlideInMenu.createAnimIn_(
 	this.holder_, this.hidePos_, this.showPos_, opt_animTime), function(){
-	    window.console.log(this.holder_);
+	    //window.console.log(this.holder_);
 	    this.menuVisible_ = true;
 	    if (goog.isDef(opt_callback)){
 		opt_callback();
