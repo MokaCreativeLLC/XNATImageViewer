@@ -840,15 +840,10 @@ xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
     // Merge any new arguments and update.
     if (opt_args) {
 	moka.style.setStyle(this.getElement(), opt_args);
-    }
-
-    var size = /**@type {!goog.math.Size}*/ 
-    goog.style.getSize(this.getElement());
-    var pos = /**@type {!goog.math.Coordinate}*/ 
-    goog.style.getPosition(this.getElement());
-
-    this.updateStyle_Tabs_(size, pos);
-    this.updateStyle_LayoutHandler_(size, pos);
+    }    
+    goog.base(this, 'updateStyle');
+    this.updateStyle_Tabs_();
+    this.updateStyle_LayoutHandler_();
     //this.updateStyle_Displayer_(size, pos);
 }
 
@@ -856,34 +851,32 @@ xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
 
 /**
  * As stated.
- * @param {!goog.math.Size} size
- * @param {!goog.math.Coordinate} pos
  * @private
  */
-xiv.ui.ViewBox.prototype.updateStyle_Tabs_ = function (size, pos) {
+xiv.ui.ViewBox.prototype.updateStyle_Tabs_ = function () {
 
 
     var menuWidth = /**@type {number}*/
     goog.style.getSize(this.menus_.LEFT).width;
-    var tabWidth = /**@type {number}*/ size.width;
+    var tabWidth = /**@type {number}*/ this.currSize.width;
 
 
-    window.console.log(size.width, 'MENU WIDTH',
+    window.console.log(this.currSize.width, 'MENU WIDTH',
 		       goog.style.getSize(this.menus_.LEFT).width)
 
 
-    if (size.width <= 0) {
+    if (this.currSize.width <= 0) {
 	this.ZipTabs_.getResizable().setBounds(
 	    0,  // topLeft X
 	    0,   // topLeft Y
 	    tabWidth,  // botRight X
-	    size.height);  //botRight Y
+	    this.currSize.height);  //botRight Y
     } else {
 	this.ZipTabs_.getResizable().setBounds(
 	    0,  // topLeft X
-	    size.height * xiv.ui.ViewBox.MIN_TAB_H_PCT, // topLeft Y
+	    this.currSize.height * xiv.ui.ViewBox.MIN_TAB_H_PCT, // topLeft Y
 	    tabWidth, // botRight X
-	    size.height);  // botRightY
+	    this.currSize.height);  // botRightY
     }
     //this.ZipTabs_.getResizable().showBoundaryElt();
     //this.ZipTabs_.deactivateAll();
@@ -894,14 +887,12 @@ xiv.ui.ViewBox.prototype.updateStyle_Tabs_ = function (size, pos) {
 
 /**
  * As stated.
- * @param {!goog.math.Size} size
- * @param {!goog.math.Coordinate} pos
  * @private
  */
-xiv.ui.ViewBox.prototype.updateStyle_LayoutHandler_ = function (size, pos) {
+xiv.ui.ViewBox.prototype.updateStyle_LayoutHandler_ = function () {
     this.LayoutHandler_.getElement().style.height = 
        (// The size of the ViewBox
-        size.height -
+        this.currSize.height -
 
 	 // The top of the zip tabs
 	parseInt(this.ZipTabs_.getElement().style.height, 10) - 
@@ -910,18 +901,18 @@ xiv.ui.ViewBox.prototype.updateStyle_LayoutHandler_ = function (size, pos) {
 	goog.style.getSize(
 	    this.ZipTabs_.getResizable().getDragElt('TOP')).height
 	
-	).toString() + 'px';	
+	).toString() + 'px';
+
+    this.LayoutHandler_.updateStyle();
 }
 
 
 
 /**
  * As stated.
- * @param {!goog.math.Size} size
- * @param {!goog.math.Coordinate} pos
  * @private
  */
-xiv.ui.ViewBox.prototype.updateStyle_Displayer_ = function (size, pos) {
-    goog.style.setSize(this.Displayer_.getElement(), size.width,  
+xiv.ui.ViewBox.prototype.updateStyle_Displayer_ = function () {
+    goog.style.setSize(this.Displayer_.getElement(), this.currSize.width,  
 		       parseInt(this.ZipTabs_.getElement().style.top, 10))
 }

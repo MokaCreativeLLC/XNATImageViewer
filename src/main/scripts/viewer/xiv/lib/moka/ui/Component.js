@@ -152,6 +152,21 @@ moka.ui.Component.prototype.iconUrl = '';
 
 
 
+/**
+ * @type {goog.math.Size}
+ * @protected
+ */ 
+moka.ui.Component.prototype.currSize;
+
+
+
+/**
+ * @type {goog.math.Size}
+ * @protected
+ */ 
+moka.ui.Component.prototype.currPos;
+
+
 
 /**
  * Sets the icon url to derive any images from.
@@ -197,4 +212,16 @@ moka.ui.Component.prototype.getIconUrl = function() {
  */
 moka.ui.Component.prototype.createSubComponents = function() {
     // do nothing
+}
+
+
+
+
+/**
+ * Generic function for style updates and resizing.
+ * @protected
+ */
+moka.ui.Component.prototype.updateStyle = function() {
+    this.currSize = goog.style.getSize(this.getElement());
+    this.currPos = goog.style.getPosition(this.getElement());
 }

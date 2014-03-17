@@ -1,0 +1,18 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.xiv-ui-layouts-xyzvlayout {
+    position: absolute;
+}
+
+
+.xiv-ui-layouts-xyzvlayout-x,  .xiv-ui-layouts-xyzvlayout-y, 
+.xiv-ui-layouts-xyzvlayout-z, .xiv-ui-layouts-xyzvlayout-v {
+    position: absolute;
+  box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -webkit-box-sizing:border-box;
+}

@@ -1,0 +1,57 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.xiv-ui-layouts-conventional {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+
+.xiv-ui-layouts-conventional-x,  .xiv-ui-layouts-conventional-y, 
+.xiv-ui-layouts-conventional-z, .xiv-ui-layouts-conventional-v {
+    position: absolute;
+  box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -webkit-box-sizing:border-box;
+}
+
+
+.xiv-ui-layouts-conventional-v {
+    border-bottom: solid 1px rgb(90,90,90);
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 65%; 
+}
+
+
+
+.xiv-ui-layouts-conventional-x,  .xiv-ui-layouts-conventional-y, 
+.xiv-ui-layouts-conventional-z {
+    top: 65%;
+    height: 35%;
+    width: 33.33%;
+}
+
+
+.xiv-ui-layouts-conventional-x {
+    border-right: solid 1px rgb(90,90,90);
+    left: 0px;
+}
+
+
+.xiv-ui-layouts-conventional-y {
+    border-right: solid 1px rgb(90,90,90);
+    left: 33.33%; 
+}
+
+
+.xiv-ui-layouts-conventional-z {
+    left: 66.66%; 
+}
+
+

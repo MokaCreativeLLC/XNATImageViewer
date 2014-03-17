@@ -67,9 +67,19 @@ xiv.ui.layouts.Layout.CSS_SUFFIX = {}
 
 
 /**
+ * @type {Object.<string, xiv.ui.layout.Plane>}
+ * @protected
+ */
+xiv.ui.layouts.Layout.prototype.Planes = {};
+
+
+
+/**
  * @return {Object.<string, xiv.ui.layout.Plane>}
  */
-xiv.ui.layouts.Layout.prototype.planes_;
+xiv.ui.layouts.Layout.prototype.getPlanes = function(){
+    return this.Planes;
+};
 
 
 
@@ -86,7 +96,17 @@ xiv.ui.layouts.Layout.prototype.getTitle = function(){
  * @param {!xiv.ui.layout.Plane} plane
  */
 xiv.ui.layouts.Layout.prototype.addPlane = function(plane){
-    this.planes_ = this.planes_ ? this.planes_ : {};
-    this.planes_[plane.getTitle()] = plane;
-    window.console.log("PLANES", this.planes_);
+    this.Planes = this.Planes ? this.Planes : {};
+    this.Planes[plane.getTitle()] = plane;
+    window.console.log("PLANES", this.Planes);
 }
+
+
+
+/**
+* @inheritDoc
+*/
+xiv.ui.layouts.Layout.prototype.updateStyle = function(){
+    goog.base(this, 'updateStyle');
+}
+

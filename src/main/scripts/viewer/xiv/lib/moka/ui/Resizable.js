@@ -519,12 +519,14 @@ moka.ui.Resizable.prototype.getBottomLimit = function() {
 
 /**
  * As stated.
+ * @param {!Object} opt_styleObj Additional style attributes to apply.
  * @return {!Object} The limits object.
  * @public
  */
-moka.ui.Resizable.prototype.showBoundaryElt = function() {
+moka.ui.Resizable.prototype.showBoundaryElt = function(opt_styleHelper) {
     this.createBoundaryElt_();
     this.boundaryElt_.style.visibility = 'visible';
+    moka.style.setStyle(this.boundaryElt_, opt_styleHelper);
 };
 
 
@@ -613,8 +615,28 @@ moka.ui.Resizable.prototype.setMinHeight = function(minH) {
  * @param {!number} minW
  * @public
  */
-moka.ui.Resizable.prototype.setMinWith = function(minW) {
+moka.ui.Resizable.prototype.setMinWidth = function(minW) {
     this.minWidth_ = minW
+};
+
+
+
+/**
+ * @return {!number}
+ * @public
+ */
+moka.ui.Resizable.prototype.getMinHeight = function() {
+    return this.minHeight_;
+};
+
+
+
+/**
+ * @return {!number}
+ * @public
+ */
+moka.ui.Resizable.prototype.getMinWidth = function() {
+    return this.minWidth_;
 };
 
 
@@ -623,23 +645,26 @@ moka.ui.Resizable.prototype.setMinWith = function(minW) {
  * Allows the user to set the resize directions specified in 
  * moka.ui.Resizable.Directions.
  * 
- * @param {!Array.<string> | !string} dirs The directions.
+ * @param {!Array.<string> | !string} opt_dirs The directions.  Defaults to 
+ *    'DEFAULT', which is Bottom, 
  * @public
  */
-moka.ui.Resizable.prototype.setResizeDirections = function(dirs){
+moka.ui.Resizable.prototype.setResizeDirections = function(opt_dirs){
 
-    if (goog.isString(dirs)){
-	if (dirs.toUpperCase() == 'ALL'){
-	    dirs = goog.object.getKeys(moka.ui.Resizable.Directions)
-	} else if (dirs.toUpperCase() == 'DEFAULT') {
-	    dirs = moka.ui.Resizable.defaultDirections;
+    opt_dirs = opt_dirs || 'DEFAULT';
+
+    if (goog.isString(opt_dirs)){
+	if (opt_dirs.toUpperCase() == 'ALL'){
+	    opt_dirs = goog.object.getKeys(moka.ui.Resizable.Directions)
+	} else if (opt_dirs.toUpperCase() == 'DEFAULT') {
+	    opt_dirs = moka.ui.Resizable.defaultDirections;
 	} else {
-	    dirs =  [dirs];
+	    opt_dirs =  [opt_dirs];
 	}
     }
 
     // Loop
-    goog.array.forEach(dirs, function(dir, i){
+    goog.array.forEach(opt_dirs, function(dir, i){
 	// Make sure each value is a string.
 	if (!goog.isString(dir)) { throw new Error('String required!') };
 	// Make sure value is a valid direction.
@@ -973,7 +998,7 @@ function(element, size, pos, isDispatch) {
 	this.dispatchEvent({
 	    type: moka.ui.Resizable.EventType.RESIZE,
 	    size: newSize.clone(),
-	    direction: newPos.clone()
+	    pos: newPos.clone()
 	});
     }
     goog.style.setBorderBoxSize(element, newSize);
@@ -1149,7 +1174,7 @@ function(size, dragger, pos, draggerSize) {
  */
 moka.ui.Resizable.prototype.cropTo_left_ = function(size, pos) {
     pos.x = Math.max(pos.x, this.topLeftLimit_.x);
-    pos.x = Math.min(pos.x, this.bottomRightLimit_.x - size.width);
+    pos.x = Math.min(pos.x, this.bottomRightLimit_.x);
     this.atBounds_.LEFT = (pos.x == this.topLeftLimit_.x) ? 1 : 0;   
 }
 

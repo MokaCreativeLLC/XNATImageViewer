@@ -4,11 +4,11 @@ goog.addDependency('../../../../ui/ui.js',
 
 
 
-
-
 goog.addDependency('../../../../ui/layouts/layouts.js', 
 ['xiv.ui.layouts'], [
 ]);
+
+
 
 goog.addDependency('../../../../ui/layouts/LayoutHandler.js', 
 ['xiv.ui.layouts.LayoutHandler'], [
@@ -45,11 +45,21 @@ goog.addDependency('../../../../ui/layouts/Layout.js',
 ]);
 
 
-goog.addDependency('../../../../ui/layouts/Conventional.js', 
-['xiv.ui.layouts.Conventional'], [
+goog.addDependency('../../../../ui/layouts/XyzvLayout.js', 
+['xiv.ui.layouts.XyzvLayout'], [
     'xiv.ui.layouts.Layout'
 ]);
 
+goog.addDependency('../../../../ui/layouts/Conventional.js', 
+['xiv.ui.layouts.Conventional'], [
+    'xiv.ui.layouts.XyzvLayout'
+]);
+
+
+goog.addDependency('../../../../ui/layouts/FourUp.js', 
+['xiv.ui.layouts.FourUp'], [
+    'xiv.ui.layouts.XyzvLayout'
+]);
 
 goog.addDependency('../../../../ui/ViewBox.js', 
 ['xiv.ui.ViewBox'], [

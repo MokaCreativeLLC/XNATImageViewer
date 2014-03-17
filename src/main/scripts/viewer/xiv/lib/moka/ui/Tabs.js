@@ -37,8 +37,6 @@ moka.ui.Tabs = function () {
      * @private
      */
     this.googTabPane_ = new goog.ui.TabPane(this.getElement());
-
-    window.console.log(this.constructor.CSS, moka.ui.Tabs.CSS);
 }
 goog.inherits(moka.ui.Tabs, moka.ui.Component);
 goog.exportSymbol('moka.ui.Tabs', moka.ui.Tabs)

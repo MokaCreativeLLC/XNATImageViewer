@@ -25,6 +25,7 @@ goog.require('moka.ui.Component');
 // xiv
 goog.require('xiv.ui.layouts.Layout');
 goog.require('xiv.ui.layouts.Conventional');
+goog.require('xiv.ui.layouts.FourUp');
 
 
 
@@ -40,10 +41,9 @@ goog.provide('xiv.ui.layouts.LayoutHandler');
 xiv.ui.layouts.LayoutHandler = function() {
     goog.base(this);
 
-    this.addLayout(new xiv.ui.layouts.Conventional());
-    window.console.log(this.layouts_);
-    goog.dom.append(this.getElement(), 
-		    this.layouts_['Conventional'].getElement())
+    this.addLayout(new xiv.ui.layouts.FourUp());
+    //this.addLayout(new xiv.ui.layouts.Conventional());
+
 }
 goog.inherits(xiv.ui.layouts.LayoutHandler, moka.ui.Component);
 goog.exportSymbol('xiv.ui.layouts.LayoutHandler', xiv.ui.layouts.LayoutHandler);
@@ -83,7 +83,7 @@ xiv.ui.layouts.LayoutHandler.CSS_SUFFIX = {}
 * @private
 * @type {Object.<string, xiv.ui.layouts.Layout>}
 */ 
-xiv.ui.layouts.LayoutHandler.prototype.layouts_;  
+xiv.ui.layouts.LayoutHandler.prototype.Layouts_;  
 
 
 
@@ -120,7 +120,7 @@ xiv.ui.layouts.LayoutHandler.prototype.animateLayoutChange = function(bool){
 * @return {Object.<string, xiv.ui.layouts.Layout>}
 */ 
 xiv.ui.layouts.LayoutHandler.prototype.getLayouts = function(){
-    return this.layouts_;
+    return this.Layouts_;
 };
 
 
@@ -140,9 +140,11 @@ xiv.ui.layouts.LayoutHandler.prototype.getCurrentLayout = function(){
  * @param {!xiv.ui.layouts.Layout} layout
  */ 
 xiv.ui.layouts.LayoutHandler.prototype.addLayout = function(layout) {
-    this.layouts_ = this.layouts_ ? this.layouts_ : {}
-    this.layouts_[layout.getTitle()] = layout;
-    window.console.log("ADD LAYOUT", this.layouts_);
+    this.Layouts_ = this.Layouts_ ? this.Layouts_ : {}
+    this.Layouts_[layout.getTitle()] = layout;
+    window.console.log("ADD LAYOUT", this.Layouts_);
+
+    goog.dom.append(this.getElement(), layout.getElement())
 }
 
 
@@ -196,4 +198,17 @@ function() {
 xiv.ui.layouts.LayoutHandler.prototype.setPlanesDoubleClicked_ = 
 function(callback){
  
+}
+
+
+
+
+/**
+* @inheritDoc
+*/
+xiv.ui.layouts.LayoutHandler.prototype.updateStyle = function(){
+    goog.base(this, 'updateStyle');
+    goog.object.forEach(this.Layouts_, function(layout){
+	layout.updateStyle();
+    })
 }
