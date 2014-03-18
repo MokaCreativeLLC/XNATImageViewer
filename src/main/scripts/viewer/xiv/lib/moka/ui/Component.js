@@ -216,6 +216,54 @@ moka.ui.Component.prototype.createSubComponents = function() {
 
 
 
+/**
+ * @type {Array.<moka.ui.Component>}
+ * @public
+ */
+moka.ui.Component.prototype.subComponents_;
+
+
+
+/**
+ * @return {Array.<moka.ui.Component>)
+ * @public
+ */
+moka.ui.Component.prototype.getSubComponents = function(){
+    return this.subComponents_;
+}
+
+ 
+
+/**
+ * @param {Object} An objects constructor.
+ * @return {Array.<moka.ui.Component>)
+ * @public
+ */
+moka.ui.Component.prototype.getSubComponentsByType = function(obj){
+    var arrObj = [];
+    goog.array.forEach( this.subComponents_, function(subC){
+	if (subC instanceof obj){
+	    arrObj.push(subC);
+	}
+    })
+    return arrObj;
+}
+
+
+
+
+/**
+ * @param {!moka.ui.Component) subComponent
+ * @public
+ */
+moka.ui.Component.prototype.addSubComponent = function(subComponent){
+    this.subComponents_ = this.subComponents_ ? this.subComponents_ : [];
+    this.subComponents_.push(subComponent);
+    goog.dom.append(this.getElement(), subComponent.getElement());
+}
+
+
+
 
 /**
  * Generic function for style updates and resizing.

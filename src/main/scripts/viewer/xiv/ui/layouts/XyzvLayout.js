@@ -25,6 +25,11 @@ xiv.ui.layouts.XyzvLayout = function() {
     goog.base(this);
 
     this.addPlanes_();
+
+    this.addPlaneSliders_();
+    this.addFrameNumbers_();
+    //this.addCrossHairs_();
+
     this.setupPlane_X();
     this.setupPlane_Y();
     this.setupPlane_Z();
@@ -71,7 +76,7 @@ xiv.ui.layouts.XyzvLayout.PLANES = {
     X: 'x',
     Y: 'y',
     Z: 'z',
-    V: 'v',
+    V: 'v'
 }
 
 
@@ -92,28 +97,8 @@ xiv.ui.layouts.XyzvLayout.CSS_SUFFIX = {
     SLIDER_TRACK_X: 'slider-track-x',
     SLIDER_TRACK_Y: 'slider-track-y',
     SLIDER_TRACK_Z: 'slider-track-z',
-}
 
-
-
-/**
- * @private
- */
-xiv.ui.layouts.XyzvLayout.prototype.addPlanes_ = function(){
-    var planeTitle = /**@type {!string}*/ '';
-    goog.object.forEach(xiv.ui.layouts.XyzvLayout.PLANES, 
-
-	function(title, key){
-
-	    window.console.log(xiv.ui.layouts.XyzvLayout.CSS);
-
-	    planeTitle = title.toUpperCase();
-	    this.addPlane(new xiv.ui.layouts.Plane(planeTitle));
-	    goog.dom.append(this.getElement(), 
-			    this.Planes[planeTitle].getElement());
-	    goog.dom.classes.add(this.Planes[planeTitle].getElement(), 
-				 xiv.ui.layouts.XyzvLayout.CSS[key])
-	}.bind(this))
+    FRAMENUMBER: 'framenumber',
 }
 
 
@@ -127,26 +112,118 @@ xiv.ui.layouts.XyzvLayout.prototype.resizeMargin = 0;
 
 
 /**
+ * @private
+ */
+xiv.ui.layouts.XyzvLayout.prototype.addPlanes_ = function(){
+    var planeTitle = /**@type {!string}*/ '';
+    goog.object.forEach(xiv.ui.layouts.XyzvLayout.PLANES, 
+	function(title, key){
+	    planeTitle = title.toUpperCase();
+	    this.addPlane(new xiv.ui.layouts.Plane(planeTitle));
+	    goog.dom.append(this.getElement(), 
+			    this.Planes[planeTitle].getElement());
+	    goog.dom.classes.add(this.Planes[planeTitle].getElement(), 
+				 xiv.ui.layouts.XyzvLayout.CSS[key])
+	}.bind(this))
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.layouts.XyzvLayout.prototype.addPlaneSliders_ = function(){    
+    this.loopXyz(function(Plane, key) {			
+	    var slider = /**@type {!moka.ui.GenericSlider}*/
+	    new moka.ui.GenericSlider('horizontal');
+
+	    slider.getElement().id = key + "_PlaneSlider_" +
+		goog.string.createUniqueString();
+
+	    Plane.addSubComponent(slider);
+
+	    goog.dom.classes.addRemove(slider.getElement(), null,
+				       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER]);
+	    
+	    goog.dom.classes.addRemove(slider.getThumb(), null,
+			[xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB]);
+
+	    goog.dom.classes.addRemove(slider.getTrack(), null,
+			[xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK ,
+			 goog.getCssName(
+			     xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK, 
+			 key.toLowerCase())]);
+			 
+            slider.setHoverClasses(
+	        xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB_HOVERED);
+
+    }.bind(this));
+};
+
+
+
+/**
+ * @private
+ */
+xiv.ui.layouts.XyzvLayout.prototype.addFrameNumbers_ = function(){
+    this.loopXyz(function(Plane, key) {	
+		
+	var numberElt = /**@type {!Element}*/
+	goog.dom.createDom('div', {});
+	numberElt.style.color = 'rgba(255,255,255)';
+
+	goog.dom.append(Plane.getElement(), numberElt);
+
+	goog.events.listen(
+	    Plane.getSubComponentsByType(moka.ui.GenericSlider)[0], 
+	    moka.ui.GenericSlider.EventType.SLIDE, function(e){
+		numberElt.innerHTML = e.value.toString() + '/' + 
+		    e.maximum.toString();
+	}.bind(this))
+
+	goog.dom.classes.addRemove(numberElt, null,
+			[xiv.ui.layouts.XyzvLayout.CSS.FRAMENUMBER]);
+
+    }.bind(this));
+};
+
+
+
+/**
+ * @param {!Function}
+ * @protected
+ */
+xiv.ui.layouts.XyzvLayout.prototype.loopXyz = function(callback){
+    goog.object.forEach(xiv.ui.layouts.XyzvLayout.PLANES, 
+	function(plane, key) {	
+	    plane = plane.toUpperCase();
+	    if (plane == 'V') { return };
+	    callback(this.Planes[plane], plane);
+	}.bind(this))
+};
+
+
+
+/**
+ * @param {!Function}
+ * @protected
+ */
+xiv.ui.layouts.XyzvLayout.prototype.loop = function(callback){
+    goog.object.forEach(xiv.ui.layouts.XyzvLayout.PLANES, 
+	function(plane, key) {	
+	    plane = plane.toUpperCase();
+	    callback(this.Planes[plane], plane);
+	}.bind(this))
+};
+
+
+
+/**
  * Sets up the relevant plane.  
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupPlane_X = function(){
-    var slider = new moka.ui.GenericSlider('horizontal');
-
-    goog.dom.append(this.Planes['X'].getElement(), 
-		    slider.getElement());
-
-    goog.dom.classes.addRemove(slider.getElement(), null,
-			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER]);
-
-    goog.dom.classes.addRemove(slider.getThumb(), null,
-			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB]);
-
-    goog.dom.classes.addRemove(slider.getTrack(), null,
-			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK ,
-				xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK_X]);
-
-    slider.setHoverClasses(xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB_HOVERED);
+ 
 };
 
 
@@ -156,22 +233,7 @@ xiv.ui.layouts.XyzvLayout.prototype.setupPlane_X = function(){
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupPlane_Y = function(){
-    var slider = new moka.ui.GenericSlider('horizontal');
 
-    goog.dom.append(this.Planes['Y'].getElement(), 
-		    slider.getElement());
-
-    goog.dom.classes.addRemove(slider.getElement(), null,
-			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER]);
-
-    goog.dom.classes.addRemove(slider.getThumb(), null,
-			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB]);
-
-    goog.dom.classes.addRemove(slider.getTrack(), null,
-			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK ,
-				xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK_Y]);
-
-    slider.setHoverClasses(xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB_HOVERED);
 };
 
 
@@ -181,22 +243,7 @@ xiv.ui.layouts.XyzvLayout.prototype.setupPlane_Y = function(){
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupPlane_Z = function(){
-    var slider = new moka.ui.GenericSlider('horizontal');
 
-    goog.dom.append(this.Planes['Z'].getElement(), 
-		    slider.getElement());
-
-    goog.dom.classes.addRemove(slider.getElement(), null,
-			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER]);
-
-    goog.dom.classes.addRemove(slider.getThumb(), null,
-			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB]);
-
-    goog.dom.classes.addRemove(slider.getTrack(), null,
-			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK ,
-				xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK_Z]);
-
-    slider.setHoverClasses(xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB_HOVERED);
 };
 
 

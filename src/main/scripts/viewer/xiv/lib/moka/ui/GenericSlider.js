@@ -241,7 +241,10 @@ moka.ui.GenericSlider.prototype.initEvents_ = function() {
 	moka.dom.stopPropagation(e);
 			    if (this.updating_) { return };
 			    this.dispatchEvent({
-				type: moka.ui.GenericSlider.EventType.SLIDE
+				type: moka.ui.GenericSlider.EventType.SLIDE,
+				value: this.getValue(),
+				minimum: this.getMinimum(),
+				maximum: this.getMaximum()
 			    });
     }.bind(this));
 
