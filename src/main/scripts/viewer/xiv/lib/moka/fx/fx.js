@@ -4,6 +4,7 @@
 
 // goog
 goog.require('goog.events');
+goog.require('goog.color');
 goog.require('goog.fx.dom');
 goog.require('goog.fx.Transition');
 goog.require('goog.fx.dom.Fade');
@@ -145,129 +146,188 @@ moka.fx.fadeTo = function (element, opt_time, opt_opacity, callback,
 
 
 /**
- * Generates a 'goog.fx.dom' based on the provided arguments 'startDim'
- * and 'endDim'.  Parses and analyzes both 'startDim' and 'endDim' to 
- * generate the appropriate kind of animation, then returns an object
- * of animations categorised by type.
- * @param {Element} elt
- * @param {Object.<string, string|number>} startDim The start dimensions.
- * @param {Object.<string, string|number>} endDim The end dimensions.
- * @param {number} duration The duration to create the animations from.
- * @return {Object.<string, goog.fx.Animation>}
- * @public
+ * @const
+ * @expose
  */
-moka.fx.createAnimsFromDims = function(elt, startDim, endDim, duration) {
-
-    var animations = /**@type{Object.<string, goog.fx.dom.PredefinedEffect>}*/ 
-    {};
-    var easing = /**@type{goog.fx.easing.easeOut}*/ 
-    goog.fx.easing.easeOut;
-
-
-    //------------------
-    // Assess for Fade out - visibility change.
-    //------------------
-    if (startDim['visibility'] !== endDim['visibility']) {
-	var fadeIn = /**@type{boolean}*/(startDim['visibility'] === 'hidden' && 
-		      endDim['visibility'] === 'visible') ? true : false;
-	if (fadeIn) {
-	    animations['fadein'] = new goog.fx.dom.FadeInAndShow(elt, duration) 
-	} else {
-	    animations['fadeout'] = 
-		new goog.fx.dom.FadeOutAndHide(elt, duration);
-	}
-    }
+moka.fx.animGenStyles = [
+    'left',
+    'top',
+    'width',
+    'height',
+    'opacity',
+    'background-color',
+    'color',
+    'z-index'
+]
 
 
 
-    //------------------
-    // Assess for Resize.
-    //------------------
-    if (startDim['height'] !== endDim['height'] || startDim['width'] 
-	!== endDim['width']) {
-	// Filter out Nan values.
-	if (!isNaN(startDim['height']) && !isNaN(endDim['height']) && 
-	    !isNaN(startDim['width']) && !isNaN(endDim['width'])) {
-	    //window.console.log("RESIZE", elt, [startDim['width']
-	    //startDim['height']],  [endDim['width'], endDim['height']]);
-	    var resize = /**@type{goog.fx.dom.Resize}*/ 
-	    new goog.fx.dom.Resize(elt, [startDim['width'], 
-					 startDim['height']],  
-				   [endDim['width'], endDim['height']], 
-				   duration, easing);
-	    animations['resize'] = resize;
-	}
-    }
+/**
+ * As stated.
+ * @param {!Element} elt The element to generate the animations for.
+ * @param {!Object.<string, string|number>} startDims The start 
+ *    dimensions.
+ * @param {!Object.<string, string|number>} endDims The end dimensions.
+ * @param {!number} duration The animation durations.
+ * @return {goog.fx.dom.Animation}
+ */ 
+moka.fx.generateAnim_Slide = function(elt, startDim, endDim, duration){
 
-
-
-    //------------------
-    // Assess for Slide.
-    //------------------
-    if (startDim['top'] !== endDim['top'] || 
-	startDim['left'] !== endDim['left']) {
+    if (goog.object.containsKey(startDim, 'left') || 
+	goog.object.containsKey(endDim, 'left')   || 
+	goog.object.containsKey(startDim, 'top')  || 
+	goog.object.containsKey(endDim, 'top'))    {
+	
 	// Filter out Nan values.
 	if (!isNaN(startDim['top']) && !isNaN(endDim['top']) 
 	    && !isNaN(startDim['left']) && !isNaN(endDim['left'])) {
 	    //console.log("SLIDE", elt, [startDim['left'], startDim['top']],  
 	    //[endDim['left'], endDim['top']]);
-	    var slide = /**@type{goog.fx.dom.Slide}*/
-	    new goog.fx.dom.Slide(elt, [startDim['left'], 
-					startDim['top']],  
-				  [endDim['left'], endDim['top']], 
-				  duration, easing);
-	    animations['slide'] = slide;
+	    return new goog.fx.dom.Slide(elt, 
+		[startDim['left'], startDim['top']],  
+		[endDim['left'], endDim['top']], duration, 
+					 goog.fx.easing.easeOut);
 	}
+
     }
-
-
-
-    //------------------
-    // Assess for BgColor.
-    //------------------
-    if (startDim['background-color'] !== endDim['background-color']) {
-	
-	var startBG = /**@type{!string | !Array.number}*/
-	startDim['background-color'];
-	var endBG = /**@type{!string | !Array.number}*/
-	endDim['background-color']
-	var bothBG = [startBG, endBG]
-	
-	//
-	// TODO: Need to clean these values
-	//
-	goog.array.forEach(bothBG, function(bg, i){
-	    if (bg === 'transparent'){
-		bothBG[i] = 'rgb(0,0,0)';
-	    }
-	})
-	startBG = bothBG[0];
-	endBG = bothBG[1];
-	//console.log(startBG, endBG)
-
-	var startColor = /**@type{!Array.number}*/
-	(typeof startBG === 'string') ? 
-	    moka.convert.rgbToArray(startBG).slice(0, 3) : 
-	    (startBG).slice(0, 3)
-	var endColor = /**@type{!Array.number}*/ (typeof endBG === 'string') ? 
-	    moka.convert.rgbToArray(endBG).slice(0, 3) : (endBG).slice(0, 3);
-
-	if (startColor !== endColor && startColor !== undefined && 
-	    endColor !== undefined) {
-	    animations['bgcolortransform'] = 
-		new goog.fx.dom.BgColorTransform(elt, startColor, endColor, 
-						 duration, easing);
-	}
-    }
-
-
-
-    //------------------
-    // Return animations.
-    //------------------
-    return animations;
 }
 
+
+
+
+/**
+ * As stated.
+ * @param {!Element} elt The element to generate the animations for.
+ * @param {!Object.<string, string|number>} startDims The start 
+ *    dimensions.
+ * @param {!Object.<string, string|number>} endDims The end dimensions.
+ * @param {!number} duration The animation durations.
+ * @return {goog.fx.dom.Animation}
+ */
+moka.fx.generateAnim_Resize = function(elt, startDim, endDim, duration){
+
+    if (goog.object.containsKey(startDim, 'height') || 
+	goog.object.containsKey(endDim, 'height')   || 
+	goog.object.containsKey(startDim, 'width')  || 
+	goog.object.containsKey(endDim, 'width'))    {
+	
+	// Filter out Nan values.
+	if (!isNaN(startDim['height']) && !isNaN(endDim['height']) && 
+	    !isNaN(startDim['width']) && !isNaN(endDim['width'])) {
+	    //window.console.log("RESIZE", elt, [startDim['width']
+	    //startDim['height']],  [endDim['width'], endDim['height']]);
+	    return new goog.fx.dom.Resize(elt, 
+		[startDim['width'], startDim['height']],  
+		[endDim['width'], endDim['height']], 
+					  duration, goog.fx.easing.easeOut);
+	}
+
+
+    }
+}
+
+
+
+/**
+ * As stated.
+ * @param {!Element} elt The element to generate the animations for.
+ * @param {!Object.<string, string|number>} startDims The start 
+ *    dimensions.
+ * @param {!Object.<string, string|number>} endDims The end dimensions.
+ * @param {!number} duration The animation durations.
+ * @return {goog.fx.dom.Animation}
+ */
+moka.fx.generateAnim_Fade = function(elt, startDim, endDim, duration){
+    if (goog.object.containsKey(startDim, 'opacity') || 
+	goog.object.containsKey(endDim, 'opacity')) {
+	    goog.array.forEach([startDim, endDim], function(dim){
+		// Set undefined values
+		if (!goog.object.containsKey(dim, 'opacity')){
+		    dim['opacity'] = 1;
+		}
+		// Make sure we have numbers
+		if (!goog.isNumber(dim['opacity'])){
+		    dim['opacity'] = parseInt(dim['opacity'], 10);
+		}
+	    })
+	    // Only create animation if dims inequality.
+	    if (startDim['opacity'] !== endDim['opacity']){
+		return new goog.fx.dom.Fade(elt, startDim['opacity'],
+					    endDim['opacity'],
+					    duration);
+	    }
+    }
+}
+
+
+
+
+/**
+ * As stated.
+ * @param {!Element} elt The element to generate the animations for.
+ * @param {!Object.<string, string|number>} startDims The start 
+ *    dimensions.
+ * @param {!Object.<string, string|number>} endDims The end dimensions.
+ * @param {!number} duration The animation durations.
+ * @return {goog.fx.dom.Animation}
+ */ 
+moka.fx.generateAnim_RemoveAddFade = function(elt, startDim, endDim, duration){
+    if (goog.object.containsKey(startDim, 'visibility') || 
+	goog.object.containsKey(endDim, 'visibility')) {  
+
+	// Set any undefined values
+	goog.array.forEach([startDim, endDim], function(dim){
+	    if (!goog.object.containsKey(dim, 'visibility')){
+		dim['visibility'] = 'visible';
+	    }
+	}) 
+
+	if (startDim['visibility'] !== endDim['visibility']) {
+	    return (startDim['visibility'] === 'hidden') ? 
+		new goog.fx.dom.FadeInAndShow(elt, duration) :
+		new goog.fx.dom.FadeOutAndHide(elt, duration);
+	}
+    }
+}
+
+
+
+/**
+ * As stated.
+ * @param {!Element} elt The element to generate the animations for.
+ * @param {!Object.<string, string|number>} startDims The start 
+ *    dimensions.
+ * @param {!Object.<string, string|number>} endDims The end dimensions.
+ * @param {!number} duration The animation durations.
+ * @return {goog.fx.dom.Animation}
+ */ 
+moka.fx.generateAnim_BgColorTrans = function(elt, startDim, endDim, duration) {
+
+    if (goog.object.containsKey(startDim, 'background-color') || 
+	goog.object.containsKey(endDim, 'background-color')) {   
+
+	// Set any undefined values
+	goog.array.forEach([startDim, endDim], function(dim){
+	    if (!goog.object.containsKey(dim, 'background-color')){
+		dim['background-color'] = 'rgb(255,255,255)';
+	    }
+	})
+
+	var startColor = /**@type{!string | !Array.number}*/
+	goog.color.parse(startDim['background-color']);
+	var endColor = /**@type{!string | !Array.number}*/
+	goog.color.parse(endDim['background-color']);    
+
+	// Only return animation if there's a change.
+	if (startColor.hex !== endColor.hex) {
+	    return new goog.fx.dom.BgColorTransform(
+		elt, 
+		goog.color.hexToRgb(startColor), 
+		goog.color.hexToRgb(endColor), 
+		duration, goog.fx.easing.easeOut);
+	}
+    }
+}
 
 
 
@@ -276,70 +336,143 @@ moka.fx.createAnimsFromDims = function(elt, startDim, endDim, duration) {
  * between the 'startDims' and 'endDims' arguments.  Utilizes
  * 'moka.fx.createAnimsFromDims' to get the animations,
  * then adds them to a parallel queue and plays them.
- * @param {!Array.Element} elts The array of elements to parallel animate.
- * @param {!Array.<Object.<string, string|number>>} startDims The start 
+ * @param {!Element} elt The element to generate the animations for.
+ * @param {!Object.<string, string|number>} startDims The start 
  *    dimensions.
- * @param {!Array.<Object.<string, string|number>>} endDims The end dimensions.
- * @param {!number} duration The duration to create the animations from.
- * @param {function=} opt_onbegin Callback when animation starts.
- * @param {function=} opt_onanimate Callback when animation is running.
- * @param {function=} opt_onent Callback when animation ends.
- * @return {Object.<string, goog.fx.Animation>}
+ * @param {!Object.<string, string|number>} endDims The end dimensions.
+ * @param {!number} duration The animation durations.
+ * @return {Array.<goog.fx.dom.Animation>}
  * @public
  */
-moka.fx.parallelAnimate  = function (elts, startDims, endDims, duration, 
-				      opt_onbegin, opt_onanimate, opt_onend) {
+moka.fx.generateAnimations = function (elt, startDim, endDim, duration) {
+    
+    var anims = /**@type {!Array.<goog.fx.Animation>}*/ [];
 
-    var animQueue = /**@type {!goog.fx.AnimationParallelQueue}*/ 
-    new goog.fx.AnimationParallelQueue();  
-    var animCallbackApplied = /**@type {!boolean}*/ 
-    false;
+    goog.array.forEach(moka.fx.animGenStyles, function(style){
+	switch(style){
+	    // we only need one, otherwise it'll create a repeat.
+	case 'left':  
+	    window.console.log("HERE!");
+	    anims.push(
+		moka.fx.generateAnim_Slide(elt, startDim, endDim, duration));
+	    break;
 
- 
-    //------------------
-    // Apply animation states and add to queue.
-    //------------------
-    goog.array.forEach(elts, function(elt, i) {
-	//window.console.log(elt, i, startDims[i], endDims[i]);
-	var anims = /**@type{Object.<string, goog.fx.Animation>}*/
-	moka.fx.createAnimsFromDims(elt, startDims[i], endDims[i], duration);
-	var key = /**@type {!string}*/ '';
-	for (key in anims) { 
-	    animQueue.add(anims[key]) 
-	}
+	    // we only need one, otherwise it'll create a repeat.
+	case 'height':
+	    anims.push(
+		moka.fx.generateAnim_Resize(elt, startDim, endDim, duration));
+	    break;
 
 
-	// Animate callbacks cannot be conductd in the 
-	// animQueue so we have to apply it to one of the
-	// internal animations.
-	if (!animCallbackApplied && key in anims) {
-	    goog.events.listen(anims[key], goog.fx.Animation.EventType.ANIMATE,
-			       function() {
-				   opt_onanimate();
-			       })
-	    animCallbackApplied = true;
+	case 'opacity':
+	    anims.push(
+		moka.fx.generateAnim_Fade(elt, startDim, endDim, duration));
+	    break;
+	case 'visibility':
+	    anims.push(
+		moka.fx.generateAnim_RemoveAddFade(elt, 
+						   startDim, endDim, duration));
+	    break;
+	case 'background-color':
+	    anims.push(
+		moka.fx.generateAnim_BgColorTrans(elt, 
+						   startDim, endDim, duration));
+	    break;
 	}
     })
 
 
-    //------------------
-    // Start / End Callbacks.
-    //------------------
-    if (opt_onbegin) {
+    // Clean out undefined values.
+    // Not so elegant :-/
+    var anims2 = /**@type {!Array.<goog.fx.Animation>}*/ [];
+    goog.array.forEach(anims, function(anim){
+	if (anim){
+	    anims2.push(anim);
+	}
+    })
+    delete anims;
+    return anims2;
+}
+
+
+
+/**
+ * Creates a parallel animation set based on the arguments.
+ * 
+ * @param {!Array.<goog.fx.dom.Animation>} anims The animations.
+ * @param {Function=} opt_onBegin Callback when animation starts.
+ * @param {Function=} opt_onAnimate Callback when animation is running.
+ * @param {Function=} opt_onEnd Callback when animation ends.
+ * @public
+ */
+moka.fx.parallelAnimate = 
+function (anims, opt_onBegin, opt_onAnimate, opt_onEnd) {
+    var animQueue = /**@type {!goog.fx.AnimationParallelQueue}*/ 
+    new goog.fx.AnimationParallelQueue();  
+
+    goog.array.forEach(anims, function(anim){
+	if (opt_onAnimate){
+	    goog.events.listen(anim, goog.fx.Animation.EventType.ANIMATE,
+			       opt_onAnimate);
+	}
+	animQueue.add(anim);
+    });
+
+
+    if (opt_onBegin) {
 	goog.events.listen(animQueue, goog.fx.Animation.EventType.BEGIN, 
-			   function() { opt_onbegin();})
+			   opt_onBegin)
     }
 
-    if (opt_onend) {
-	goog.events.listen(animQueue, goog.fx.Animation.EventType.END, 
-			   function() { opt_onend();})
+    goog.events.listen(animQueue, goog.fx.Animation.EventType.END, 
+	function() { 
+	    if (opt_onEnd) { opt_onEnd() };
+	    animQueue.disposeInternal();
+	    animQueue = null;
+	    delete animQueue;
+	})
+
+    animQueue.play();
+}
+
+
+
+/**
+ * Creates a parallel animation set based on the arguments.
+ * 
+ * @param {!Array.<goog.fx.dom.Animation>} anims The animations.
+ * @param {Function=} opt_onBegin Callback when animation starts.
+ * @param {Function=} opt_onAnimate Callback when animation is running.
+ * @param {Function=} opt_onEnd Callback when animation ends.
+ * @public
+ */
+moka.fx.serialAnimate = 
+function (anims, opt_onBegin, opt_onAnimate, opt_onEnd) {
+    var animQueue = /**@type {!goog.fx.AnimationParallelQueue}*/ 
+    new goog.fx.AnimationSerialQueue();  
+
+    goog.array.forEach(anims, function(anim){
+	if (opt_onAnimate){
+	    goog.events.listen(anim, goog.fx.Animation.EventType.ANIMATE,
+			       opt_onAnimate);
+	}
+	animQueue.add(anim);
+    });
+
+
+    if (opt_onBegin) {
+	goog.events.listen(animQueue, goog.fx.Animation.EventType.BEGIN, 
+			   opt_onBegin)
     }
 
+    goog.events.listen(animQueue, goog.fx.Animation.EventType.END, 
+	function() { 
+	    if (opt_onEnd) { opt_onEnd() };
+	    animQueue.disposeInternal();
+	    animQueue = null;
+	    delete animQueue;
+	})
 
-
-    //------------------
-    // Play animation.
-    //------------------
     animQueue.play();
 }
 

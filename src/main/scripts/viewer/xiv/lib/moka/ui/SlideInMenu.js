@@ -600,7 +600,7 @@ function(opt_callback, opt_animTime) {
 	this.holder_, this.showPos_, this.hidePos_, opt_animTime), function() {
 	    this.menuVisible_ = false;
 	    this.holder_.style.visibility = 'hidden';
-	    window.console.log(this.holder_);
+	    //window.console.log(this.holder_);
 	    if (goog.isDef(opt_callback)){
 		opt_callback();
 	    }

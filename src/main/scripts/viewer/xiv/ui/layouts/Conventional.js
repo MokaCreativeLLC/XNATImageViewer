@@ -90,6 +90,8 @@ xiv.ui.layouts.Conventional.prototype.bottomPlaneWidth_ = 0;
  * @inheritDoc
  */
 xiv.ui.layouts.Conventional.prototype.setupPlane_X = function(){
+    goog.base(this, 'setupPlane_X');
+    
     goog.dom.classes.add(this.Planes['X'].getElement(), 
 			 xiv.ui.layouts.Conventional.CSS.X);
 
@@ -113,6 +115,8 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_X = function(){
  * @inheritDoc
  */
 xiv.ui.layouts.Conventional.prototype.setupPlane_Y = function(){
+    goog.base(this, 'setupPlane_Y');
+
     goog.dom.classes.add(this.Planes['Y'].getElement(), 
 			 xiv.ui.layouts.Conventional.CSS.Y);
     this.Planes['Y'].setResizeDirections(['RIGHT', 'TOP_RIGHT']);
@@ -134,6 +138,7 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_Y = function(){
  * @inheritDoc
  */
 xiv.ui.layouts.Conventional.prototype.setupPlane_Z = function(){
+    goog.base(this, 'setupPlane_Z');
     goog.dom.classes.add(this.Planes['Z'].getElement(), 
 			 xiv.ui.layouts.Conventional.CSS.Z);
 }
@@ -144,6 +149,7 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_Z = function(){
  * @inheritDoc
  */
 xiv.ui.layouts.Conventional.prototype.setupPlane_V = function(){
+    goog.base(this, 'setupPlane_V');
     goog.dom.classes.add(this.Planes['V'].getElement(), 
 			 xiv.ui.layouts.Conventional.CSS.V);
 
@@ -264,6 +270,7 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_X = function() {
  * @inheritDoc
  */
 xiv.ui.layouts.Conventional.prototype.updateStyle_Y = function() {
+    window.console.log(this.Planes);
     this.Planes['Y'].getResizable().setMinHeight(this.resizeMargin);
     this.Planes['Y'].getResizable().setMinWidth(this.resizeMargin);
     this.Planes['Y'].getResizable().setBounds(

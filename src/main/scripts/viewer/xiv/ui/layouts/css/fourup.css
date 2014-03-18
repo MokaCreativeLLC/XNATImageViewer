@@ -14,9 +14,6 @@
 .xiv-ui-layouts-fourup-x,  .xiv-ui-layouts-fourup-y, 
 .xiv-ui-layouts-fourup-z, .xiv-ui-layouts-fourup-v {
     position: absolute;
-  box-sizing:border-box;
-  -moz-box-sizing:border-box;
-  -webkit-box-sizing:border-box;
   width: 50%;
   height: 50%;
 }
@@ -31,8 +28,6 @@
 
 
 .xiv-ui-layouts-fourup-x {
-    border-right: solid 2px rgb(50,50,50);
-    border-top: solid 2px rgb(50,50,50);
     left: 0%;
     top: 50%;
 }
@@ -46,7 +41,6 @@
 
 
 .xiv-ui-layouts-fourup-z {
-    border-right: solid 2px rgb(50,50,50);
     left: 0%;
     top: 0%;
 }

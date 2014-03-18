@@ -28,22 +28,23 @@ goog.require('moka.ui.ZippyTree');
 goog.provide('moka.ui.ThumbnailGallery');
 moka.ui.ThumbnailGallery = function () {
     goog.base(this);
-
     this.setDefaultClasses_();    
 
-    
     /**
      * @private
      * @type {!moka.ui.ZippyTree}
      */
     this.ZippyTree_ = new moka.ui.ZippyTree();
+    goog.dom.append(this.getScrollArea(), this.ZippyTree_.getElement());
+    
+    // Do fade in effects when zippy tree contents is added.
     this.ZippyTree_.toggleFadeInFx(true);
+
+    // Remap slider each time content is added.
     goog.events.listen(this.ZippyTree_,
        moka.ui.ZippyTree.EventType.CONTENTADDED, function() {
 	  this.mapSliderToContents();
        }.bind(this))
-    goog.dom.append(this.getScrollArea(), this.ZippyTree_.getElement());
-    
 }
 goog.inherits(moka.ui.ThumbnailGallery, moka.ui.ScrollableContainer);
 goog.exportSymbol('moka.ui.ThumbnailGallery', moka.ui.ThumbnailGallery);
@@ -144,8 +145,8 @@ moka.ui.ThumbnailGallery.prototype.createThumbnail = function(imageUrl,
  */
 moka.ui.ThumbnailGallery.prototype.addThumbnail = 
 function(thumbnail, opt_folders) {
+    //window.console.log('Add thumbnail', thumbnail, opt_folders);
 
-    window.console.log('Add thumbnail');
     // Bind clone to mouse wheel.
     this.getSlider().bindToMouseWheel(thumbnail.getHoverable());
     goog.events.listen(this.getSlider(), 
@@ -200,7 +201,7 @@ moka.ui.ThumbnailGallery.prototype.storedHoverThumbId_;
  */
 moka.ui.ThumbnailGallery.prototype.clearHoverThumb_ = function(){ 
     goog.object.forEach(this.Thumbs_, function(thumb){
-	thumb.mouseOut();
+	thumb.onMouseOut();
     })
     this.storedHoverThumbId_ = null;
 }
@@ -219,6 +220,7 @@ moka.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){
     var mouseThumb = /**@type {!Element} */
     goog.dom.getAncestorByClass(mouseElt, moka.ui.Thumbnail.ELEMENT_CLASS);
 
+
     // Exit out if not over a thumbnail or thumbnail's hoverable.
     if (!mouseThumb) { 
 	this.clearHoverThumb_();
@@ -226,14 +228,18 @@ moka.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){
     }
 
     var hoverThumbId = /**@type{!string}*/ 
-    mouseThumb.getAttribute('thumbnailid');
+    mouseThumb.id.replace(moka.ui.Thumbnail.HOVERABLE_PREFIX, '');
+
     if (this.storedHoverThumbId_ !== hoverThumbId) {
+
 	this.clearHoverThumb_();
 	this.storedHoverThumbId_ = hoverThumbId;
-	this.Thumbs_[this.storedHoverThumbId_].mouseOver();
-	//window.console.log(this.storedHoverThumbId_) 
+	//window.console.log(this.storedHoverThumbId_) ;
+	//window.console.log(this.Thumbs_);
 	//window.console.log(
 	//this.Thumbs_[this.storedHoverThumbId_].getHoverable())
+	this.Thumbs_[this.storedHoverThumbId_].onMouseOver();
+
     }
     this.Thumbs_[this.storedHoverThumbId_].repositionHoverable();
 };

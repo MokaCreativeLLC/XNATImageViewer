@@ -10,7 +10,6 @@ goog.require('goog.array');
 goog.require('moka.string');
 
 // xiv
-goog.require('xiv.ui.layouts.Layout');
 goog.require('xiv.ui.layouts.XyzvLayout');
 
 
@@ -90,6 +89,8 @@ xiv.ui.layouts.FourUp.prototype.bottomPlaneWidth_ = 0;
  * @inheritDoc
  */
 xiv.ui.layouts.FourUp.prototype.setupPlane_X = function(){
+    goog.base(this, 'setupPlane_X');
+
     goog.dom.classes.add(this.Planes['X'].getElement(), 
 			 xiv.ui.layouts.FourUp.CSS.X);
 
@@ -112,6 +113,8 @@ xiv.ui.layouts.FourUp.prototype.setupPlane_X = function(){
  * @inheritDoc
  */
 xiv.ui.layouts.FourUp.prototype.setupPlane_Y = function(){
+    goog.base(this, 'setupPlane_Y');
+
     goog.dom.classes.add(this.Planes['Y'].getElement(), 
 			 xiv.ui.layouts.FourUp.CSS.Y);
 }
@@ -122,6 +125,8 @@ xiv.ui.layouts.FourUp.prototype.setupPlane_Y = function(){
  * @inheritDoc
  */
 xiv.ui.layouts.FourUp.prototype.setupPlane_Z = function(){
+    goog.base(this, 'setupPlane_Z');
+
     goog.dom.classes.add(this.Planes['Z'].getElement(), 
 			 xiv.ui.layouts.FourUp.CSS.Z);
 }
@@ -132,6 +137,8 @@ xiv.ui.layouts.FourUp.prototype.setupPlane_Z = function(){
  * @inheritDoc
  */
 xiv.ui.layouts.FourUp.prototype.setupPlane_V = function(){
+    goog.base(this, 'setupPlane_V');
+
     goog.dom.classes.add(this.Planes['V'].getElement(), 
 			 xiv.ui.layouts.FourUp.CSS.V);
 
@@ -239,8 +246,7 @@ xiv.ui.layouts.FourUp.prototype.updateStyle_V = function() {
 	this.resizeMargin, 0, // topLeft X, topLeft Y
 	this.currSize.width, // botRight X
 	this.currSize.height - this.resizeMargin);// botRightY
-
-    this.Planes['V'].getResizable().showBoundaryElt();
+    //this.Planes['V'].getResizable().showBoundaryElt();
 }
 
 

@@ -14,7 +14,6 @@ goog.require('xiv.ui.layouts.Plane');
 
 
 
-
 /**
  * xiv.ui.layouts.XyzvLayout
  *
@@ -26,12 +25,10 @@ xiv.ui.layouts.XyzvLayout = function() {
     goog.base(this);
 
     this.addPlanes_();
-
     this.setupPlane_X();
     this.setupPlane_Y();
     this.setupPlane_Z();
     this.setupPlane_V();
-
     this.updateStyle();
 }
 goog.inherits(xiv.ui.layouts.XyzvLayout, xiv.ui.layouts.Layout);
@@ -70,11 +67,31 @@ xiv.ui.layouts.XyzvLayout.ID_PREFIX =  'xiv.ui.layouts.XyzvLayout';
  * @enum {string}
  * @public
  */
+xiv.ui.layouts.XyzvLayout.PLANES = {
+    X: 'x',
+    Y: 'y',
+    Z: 'z',
+    V: 'v',
+}
+
+
+
+/**
+ * @enum {string}
+ * @public
+ */
 xiv.ui.layouts.XyzvLayout.CSS_SUFFIX = {
     X: 'x',
     Y: 'y',
     Z: 'z',
-    V: 'v'
+    V: 'v',
+    SLIDER: 'slider',
+    SLIDER_THUMB: 'slider-thumb',
+    SLIDER_THUMB_HOVERED: 'slider-thumb-hovered',
+    SLIDER_TRACK: 'slider-track',
+    SLIDER_TRACK_X: 'slider-track-x',
+    SLIDER_TRACK_Y: 'slider-track-y',
+    SLIDER_TRACK_Z: 'slider-track-z',
 }
 
 
@@ -84,8 +101,12 @@ xiv.ui.layouts.XyzvLayout.CSS_SUFFIX = {
  */
 xiv.ui.layouts.XyzvLayout.prototype.addPlanes_ = function(){
     var planeTitle = /**@type {!string}*/ '';
-    goog.object.forEach(xiv.ui.layouts.XyzvLayout.CSS_SUFFIX, 
+    goog.object.forEach(xiv.ui.layouts.XyzvLayout.PLANES, 
+
 	function(title, key){
+
+	    window.console.log(xiv.ui.layouts.XyzvLayout.CSS);
+
 	    planeTitle = title.toUpperCase();
 	    this.addPlane(new xiv.ui.layouts.Plane(planeTitle));
 	    goog.dom.append(this.getElement(), 
@@ -106,34 +127,87 @@ xiv.ui.layouts.XyzvLayout.prototype.resizeMargin = 0;
 
 
 /**
- * Sets up the relevant plane.  Must be implemented by subclass.
+ * Sets up the relevant plane.  
  * @protected
  */
-xiv.ui.layouts.XyzvLayout.prototype.setupPlane_X = goog.nullFunction;
+xiv.ui.layouts.XyzvLayout.prototype.setupPlane_X = function(){
+    var slider = new moka.ui.GenericSlider('horizontal');
+
+    goog.dom.append(this.Planes['X'].getElement(), 
+		    slider.getElement());
+
+    goog.dom.classes.addRemove(slider.getElement(), null,
+			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER]);
+
+    goog.dom.classes.addRemove(slider.getThumb(), null,
+			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB]);
+
+    goog.dom.classes.addRemove(slider.getTrack(), null,
+			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK ,
+				xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK_X]);
+
+    slider.setHoverClasses(xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB_HOVERED);
+};
 
 
 
 /**
- * Sets up the relevant plane.  Must be implemented by subclass.
+ * Sets up the relevant plane.  
  * @protected
  */
-xiv.ui.layouts.XyzvLayout.prototype.setupPlane_Y = goog.nullFunction;
+xiv.ui.layouts.XyzvLayout.prototype.setupPlane_Y = function(){
+    var slider = new moka.ui.GenericSlider('horizontal');
+
+    goog.dom.append(this.Planes['Y'].getElement(), 
+		    slider.getElement());
+
+    goog.dom.classes.addRemove(slider.getElement(), null,
+			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER]);
+
+    goog.dom.classes.addRemove(slider.getThumb(), null,
+			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB]);
+
+    goog.dom.classes.addRemove(slider.getTrack(), null,
+			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK ,
+				xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK_Y]);
+
+    slider.setHoverClasses(xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB_HOVERED);
+};
 
 
 
 /**
- * Sets up the relevant plane.  Must be implemented by subclass.
+ * Sets up the relevant plane.  
  * @protected
  */
-xiv.ui.layouts.XyzvLayout.prototype.setupPlane_Z = goog.nullFunction;
+xiv.ui.layouts.XyzvLayout.prototype.setupPlane_Z = function(){
+    var slider = new moka.ui.GenericSlider('horizontal');
+
+    goog.dom.append(this.Planes['Z'].getElement(), 
+		    slider.getElement());
+
+    goog.dom.classes.addRemove(slider.getElement(), null,
+			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER]);
+
+    goog.dom.classes.addRemove(slider.getThumb(), null,
+			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB]);
+
+    goog.dom.classes.addRemove(slider.getTrack(), null,
+			       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK ,
+				xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK_Z]);
+
+    slider.setHoverClasses(xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB_HOVERED);
+};
 
 
 
 /**
- * Sets up the relevant plane.  Must be implemented by subclass.
+ * Sets up the relevant plane.  
  * @protected
  */
-xiv.ui.layouts.XyzvLayout.prototype.setupPlane_V = goog.nullFunction;
+xiv.ui.layouts.XyzvLayout.prototype.setupPlane_V = function(){
+
+};
 
 
 

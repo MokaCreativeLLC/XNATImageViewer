@@ -351,15 +351,22 @@ moka.ui.ZippyNode.prototype.createNode_ = function(title, parent, pNode) {
 /**
  * Creates an animation for fading in nodes.
  * @param {!Element} elt The element to fade in.
+ * @param {Function=} opt_callback The optional callback once faded in.
  * @private
  */
-moka.ui.ZippyTree.prototype.createFadeAnim_ = function(elt) {
+moka.ui.ZippyTree.prototype.createFadeAnim_ = function(elt, opt_callback) {
     var anim = /** @type {goog.fx.dom.FadeIn} */
     new goog.fx.dom.FadeIn(elt, this.fadeDur_);
     if (!this.AnimQueue_.isPlaying()){		
 	this.AnimQueue_.add(anim)
     } else {
 	this.secondaryQueue_.push(anim);
+    }
+
+    if (opt_callback){
+	anim.addEventListener(goog.fx.Transition.EventType.END, function(e){ 
+	    opt_callback(e);
+	})
     }
 }
 
@@ -381,13 +388,15 @@ moka.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
 	// IMPORTANT!
 	//window.console.log(contHold);
 	goog.dom.append(contHold, opt_elt);
-	this.createFadeAnim_(opt_elt);
+	this.createFadeAnim_(opt_elt, function(){
+	    this.dispatchEvent({
+		type: moka.ui.ZippyTree.EventType.CONTENTADDED
+	    });
+	}.bind(this));
     }
     this.indentNodes_();
     if (!this.AnimQueue_.isPlaying()) { this.AnimQueue_.play() }; 
-    this.dispatchEvent({
-	type: moka.ui.ZippyTree.EventType.CONTENTADDED
-    });
+
 }
 
 

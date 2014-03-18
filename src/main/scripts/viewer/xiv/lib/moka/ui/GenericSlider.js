@@ -41,7 +41,8 @@ moka.ui.GenericSlider = function (opt_args) {
      * @protected
      */
     this.element_ = goog.dom.createDom('div', {
-	'id': 'moka.ui.GenericSlider_Widget' + goog.string.createUniqueString()
+	'id': moka.ui.GenericSlider.ID_PREFIX + 
+	    '_Widget_' + goog.string.createUniqueString()
     });
     // Applies the 'Slider' properties to the element
     this.decorate(this.element_);
@@ -52,7 +53,8 @@ moka.ui.GenericSlider = function (opt_args) {
      * @private
      */
     this.track_ = goog.dom.createDom("div", {
-	'id': 'moka.ui.GenericSlider_Track' + goog.string.createUniqueString()
+	'id': moka.ui.GenericSlider.ID_PREFIX + 
+	    '_Track_' + goog.string.createUniqueString()
     });
     this.element_.appendChild(this.track_);
 
@@ -223,7 +225,7 @@ moka.ui.GenericSlider.prototype.setCssClasses_ = function(orientation) {
 				   ]);
     }
 
-    addRemove(this.element_, moka.ui.GenericSlider.ELEMENT_CLASS);
+    addRemove(this.element_, moka.ui.GenericSlider.CSS.ELEMENT);
     addRemove(this.track_, moka.ui.GenericSlider.CSS.TRACK);
     addRemove(this.thumb_, moka.ui.GenericSlider.CSS.THUMB);  
 }
@@ -344,7 +346,7 @@ moka.ui.GenericSlider.prototype.initHoverEvents_ = function(){
     this.initHoverables_();
     this.setBasicHoverEvents_();
     this.setUniqueHoverEvents_();
-    this.setDragHoverEvents_()
+    this.setDragHoverEvents_();
 }
 
 
@@ -358,13 +360,17 @@ moka.ui.GenericSlider.prototype.initHoverEvents_ = function(){
 moka.ui.GenericSlider.prototype.setBasicHoverEvents_ = function(){
     var elt = /**@type {!Element} */ undefined;
 
+
+
     goog.object.forEach(this.hoverables_, function(hoverable, key){
 	elt = hoverable['element'];
-
 	// Mouseover
 	hoverable['MOUSEOVER'].push(
-	    goog.events.listen(elt, goog.events.EventType.MOUSEOVER, 
-		       this.getClassModifier_(key, goog.dom.classes.add)));
+	    goog.events.listen(elt, goog.events.EventType.MOUSEOVER,
+			       function(){
+		       this.getClassModifier_(key, goog.dom.classes.add)
+				   }.bind(this)
+			       ));
 
 	// Mouseout
 	hoverable['MOUSEOUT'].push(

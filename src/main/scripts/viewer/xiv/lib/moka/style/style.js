@@ -231,8 +231,8 @@ moka.style.dims = function (elt, property) {
 	    var p = /**@type {!goog.math.Coordinate}*/ 
 	    goog.style.getRelativePosition(elt, elt.parentNode);
 	    var posObj = /**@type {!Object.<string, number>}*/{
-		left: moka.convert.toInt(elt.style.left) || p.x,
-		top: moka.convert.toInt(elt.style.top) || p.y
+		'left': moka.convert.toInt(elt.style.left) || p.x,
+		'top': moka.convert.toInt(elt.style.top) || p.y
 	    };
 
 	    return posObj[property];

@@ -56,7 +56,7 @@ moka.ui.Thumbnail = function () {
     this.setEvents_();
     this.setClasses_();
     this.setHoverListeners_(true);
-    this.mouseOut();    
+    this.onMouseOut();    
 }
 goog.inherits(moka.ui.Thumbnail, moka.ui.Component);
 goog.exportSymbol('moka.ui.Thumbnail', moka.ui.Thumbnail);
@@ -102,6 +102,15 @@ moka.ui.Thumbnail.CSS_SUFFIX = {
     TEXT_ACTIVE: 'text-active',
     HOVERCLONE: 'hoverclone'
 }
+
+
+
+/**
+ * @type {!string} 
+ * @expose
+ * @const
+ */
+moka.ui.Thumbnail.HOVERABLE_PREFIX = 'HOVERABLE_';
 
 
 
@@ -240,9 +249,7 @@ moka.ui.Thumbnail.prototype.createHoverable = function(opt_parent,
 
     this.hoverable_ = (opt_element) ? opt_element : 
 	this.element_.cloneNode(true);
-    this.hoverable_.setAttribute('id', 'HOVERABLE' + 
-				 this.element_.getAttribute('id'));
-    this.hoverable_.setAttribute('thumbnailid', 
+    this.hoverable_.setAttribute('id', moka.ui.Thumbnail.HOVERABLE_PREFIX + 
 				 this.element_.getAttribute('id'));
     this.hoverable_.style.visibility = 'hidden';
     goog.dom.classes.add(this.hoverable_, 
@@ -324,9 +331,9 @@ moka.ui.Thumbnail.prototype.repositionHoverable = function(){
     // Find the common ancestor
     var commonAncestor = /**@type {Element}*/
     goog.dom.findCommonAncestor(this.element_, hoverNode);
-    var thumbnailDims = /**@type {Object}*/
-    moka.style.getPositionRelativeToAncestor(
-	this.element_, commonAncestor);
+    var thumbPos = /**@type {!goog.math.Coordinate}*/
+    goog.style.getRelativePosition(this.element_, commonAncestor);
+    
     var imgClone = /**@type {Element}*/ 
     hoverNode.getElementsByTagName('img')[0];
     var textClone = /**@type {Element}*/ 
@@ -342,8 +349,8 @@ moka.ui.Thumbnail.prototype.repositionHoverable = function(){
 	this.element_.clientWidth;
     moka.style.setStyle(hoverNode, {
 	'position': 'absolute',
-	'top': thumbnailDims['top'], 
-	'left': thumbnailDims['left'],
+	'left': thumbPos.x,
+	'top': thumbPos.y, 
 	'width':  cloneWidth,
 	'visibility': 'visible'
     });
@@ -356,7 +363,7 @@ moka.ui.Thumbnail.prototype.repositionHoverable = function(){
  * hovers over the moka.ui.Thumbnail.
  * @private
  */
-moka.ui.Thumbnail.prototype.mouseOver = function() {
+moka.ui.Thumbnail.prototype.onMouseOver = function() {
     //window.console.log("MOUSEOVER");
     var hoverNode = /**@type {!Element}*/ this.getHoverable();
     goog.dom.classes.add(hoverNode, 
@@ -382,7 +389,7 @@ moka.ui.Thumbnail.prototype.mouseOver = function() {
  * moka.ui.Thumbnail.
  * @public
  */
-moka.ui.Thumbnail.prototype.mouseOut = function() {
+moka.ui.Thumbnail.prototype.onMouseOut = function() {
     //window.console.log("MOUSEPUT");
     var hoverNode = /**@type {!Element}*/ this.getHoverable();
     if (hoverNode && hoverNode.childNodes.length > 1) { 
@@ -417,17 +424,17 @@ moka.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
     if (set) {
 	goog.events.listen(hoverNode, 
 			   goog.events.EventType.MOUSEOVER, 
-			   this.mouseOver.bind(this));
+			   this.onMouseOver.bind(this));
 	goog.events.listen(hoverNode, 
 			   goog.events.EventType.MOUSEOUT, 
-			   this.mouseOut.bind(this));
+			   this.onMouseOut.bind(this));
     } else {
 	goog.events.unlisten(hoverNode, 
 			     goog.events.EventType.MOUSEOVER, 
-			     this.mouseOver.bind(this));
+			     this.onMouseOver.bind(this));
 	goog.events.unlisten(hoverNode, 
 			     goog.events.EventType.MOUSEOUT, 
-			     this.mouseOut.bind(this));
+			     this.onMouseOut.bind(this));
     }
 }
 

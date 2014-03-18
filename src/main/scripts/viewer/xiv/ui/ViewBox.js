@@ -307,8 +307,8 @@ xiv.ui.ViewBox.prototype.doNotHide = function(element){
  * @param {!string} viewPlane Sets the view layout associated with the argument.
  * @public
  */
-xiv.ui.ViewBox.prototype.setViewLayout = function(viewPlane) {
-    this.ViewLayoutMenu_.setViewLayout(viewPlane);
+xiv.ui.ViewBox.prototype.setLayout = function(viewPlane) {
+    this.LayoutMenu_.setLayout(viewPlane);
 }
 
 
@@ -356,12 +356,12 @@ xiv.ui.ViewBox.prototype.loadThumbnail = function (Thumbnail) {
     //this.ViewBoxBorder_.slideTo(this.ViewBoxBorder_.getBottomLimit(), false);
    
     // Feed view planes into xiv.ui.layouts.LayoutHandler and set 
-    // the default xiv.ui.ViewLayout (most likely '3D')
+    // the default xiv.ui.Layout (most likely '3D')
     window.console.log("HERE", onloadPlane);
-    this.ViewLayoutMenu_.setViewLayout(onloadPlane);
+    this.LayoutMenu_.setLayout(onloadPlane);
 
     // Turn back on animations.
-    this.LayoutHandler_.animateViewLayoutChange(true);
+    this.LayoutHandler_.animateLayoutChange(true);
     
     // Show/hide the slicer view menu depending on the 
     // Thumbnail's getViewable()   
@@ -385,8 +385,8 @@ xiv.ui.ViewBox.prototype.loadThumbnail = function (Thumbnail) {
 xiv.ui.ViewBox.prototype.adjustLayoutHandler_ = function(){
     this.LayoutHandler_.setViewPlanes(this.Displayer_.ViewPlanes, 
 					  this.Displayer_.Interactors);
-    this.LayoutHandler_.animateViewLayoutChange(false);
-    this.LayoutHandler_.setViewLayout('none');
+    this.LayoutHandler_.animateLayoutChange(false);
+    this.LayoutHandler_.setLayout('none');
 }
 
 
@@ -446,15 +446,16 @@ xiv.ui.ViewBox.prototype.loadTabs_Controllers_ = function() {
 
 
 
-
 /**
  * @inheritDoc
  */
 xiv.ui.ViewBox.prototype.createSubComponents = function() {
     this.createViewFrameElt_();
     this.createTabs_();
-    this.createViewLayoutMenu_();
+    this.createLayoutMenu_();
     this.createLayoutHandler_();
+    this.syncLayoutMenuToLayoutHandler_();
+    
     //this.createSlicerViewMenu_();
     //this.createDisplayer_();
 }
@@ -504,23 +505,6 @@ xiv.ui.ViewBox.prototype.createTabs_ = function(){
 	    goog.string.createUniqueString(),
 	'class': xiv.ui.ViewBox.CSS.TABDRAGGER_HANDLE
     }));
-}
-
-
-
-/**
-* As stated.
-* @private
-*/
-xiv.ui.ViewBox.prototype.createLayoutHandler_ = function(){
-    /**
-     * @type {!xiv.ui.layouts.LayoutHandler}
-     * @protected
-     */
-    this.LayoutHandler_ = new xiv.ui.layouts.LayoutHandler();
-    goog.dom.append(this.viewFrameElt_, this.LayoutHandler_.getElement());
-    goog.dom.classes.add(this.LayoutHandler_.getElement(), 
-			 xiv.ui.ViewBox.CSS.VIEWLAYOUTHANDLER);
 }
 
 
@@ -586,45 +570,91 @@ xiv.ui.ViewBox.prototype.addToMenu = function(menuLoc, element, opt_insertInd){
 * As stated.
 * @private
 */
-xiv.ui.ViewBox.prototype.createViewLayoutMenu_ = function(){
+xiv.ui.ViewBox.prototype.createLayoutMenu_ = function(){
     /**
      * @type {!moka.ui.SlideInMenu}
      * @private
      */
-    this.ViewLayoutMenu_ = new moka.ui.SlideInMenu();
-    this.addToMenu('LEFT', this.ViewLayoutMenu_.getElement());
+    this.LayoutMenu_ = new moka.ui.SlideInMenu();
+    this.addToMenu('LEFT', this.LayoutMenu_.getElement());
 
-    goog.dom.classes.add(this.ViewLayoutMenu_.getElement(), 
+    goog.dom.classes.add(this.LayoutMenu_.getElement(), 
 	xiv.ui.ViewBox.CSS.VIEWLAYOUTMENU);
 
-    this.ViewLayoutMenu_.setMenuIconSrc(
-	'/xnat/images/viewer/xiv/ui/ViewLayoutMenu/menu.png')
-    moka.ui.SlideInMenu.Layouts  = {
-	'SAGITTAL' : 'Sagittal',
-	'CORONAL': 'Coronal',
-	'TRANSVERSE': 'Transverse',
-	'THREE_D': '3D',
-	'CONVENTIONAL': 'Conventional',
-	'FOUR_UP': 'Four-Up',
-    }
-    this.ViewLayoutMenu_.addMenuItem(goog.object.getValues(
-	moka.ui.SlideInMenu.Layouts), [
-	    '/xnat/images/viewer/xiv/ui/ViewLayout/sagittal.png',
-	    '/xnat/images/viewer/xiv/ui/ViewLayout/coronal.png',
-	    '/xnat/images/viewer/xiv/ui/ViewLayout/transverse.png',
-	    '/xnat/images/viewer/xiv/ui/ViewLayout/3d.png',
-	    '/xnat/images/viewer/xiv/ui/ViewLayout/conventional.png',
-	    '/xnat/images/viewer/xiv/ui/ViewLayout/four-up.png',
-	]);
-
-
-    this.ViewLayoutMenu_.setHidePosition(-40, 0);
-    this.ViewLayoutMenu_.setShowPosition(24,0);
-    this.ViewLayoutMenu_.matchMenuIconToSelected(true);
-    this.ViewLayoutMenu_.matchMenuTitleToSelected(true);
-
-    goog.dom.append(this.getElement(), this.ViewLayoutMenu_.getMenuHolder());
+    this.LayoutMenu_.setHidePosition(-40, 0);
+    this.LayoutMenu_.setShowPosition(24,0);
+    this.LayoutMenu_.matchMenuIconToSelected(true);
+    this.LayoutMenu_.matchMenuTitleToSelected(true);
+    goog.dom.append(this.getElement(), this.LayoutMenu_.getMenuHolder());
 }
+
+
+
+/**
+* As stated.
+* @private
+*/
+xiv.ui.ViewBox.prototype.createLayoutHandler_ = function(){
+    /**
+     * @type {!xiv.ui.layouts.LayoutHandler}
+     * @protected
+     */
+    this.LayoutHandler_ = new xiv.ui.layouts.LayoutHandler();
+    goog.dom.append(this.viewFrameElt_, this.LayoutHandler_.getElement());
+    goog.dom.classes.add(this.LayoutHandler_.getElement(), 
+			 xiv.ui.ViewBox.CSS.VIEWLAYOUTHANDLER);
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
+    this.LayoutMenu_.setMenuIconSrc(
+	'/xnat/images/viewer/xiv/ui/LayoutMenu/menu.png');
+
+    // Add icons and title to LayoutMenu
+    // Add object and title to LayoutHandler
+    goog.object.forEach({
+	'Sagittal': {
+	    OBJ: xiv.ui.layouts.Sagittal,
+	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/sagittal.png'
+	},
+	'Coronal': {
+	    OBJ: xiv.ui.layouts.Coronal,
+	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/coronal.png'
+	},
+	'Transverse': {
+	    OBJ: xiv.ui.layouts.Transverse,
+	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/transverse.png'
+	},
+	'3d': {
+	    OBJ: xiv.ui.layouts.ThreeD,
+	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/3d.png'
+	},
+	'Four-Up': {
+	    OBJ: xiv.ui.layouts.FourUp,
+	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/four-up.png'
+	},
+	'Conventional': {
+	    OBJ: xiv.ui.layouts.Conventional,
+	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/conventional.png'
+	},
+    }, function(val, key){
+	this.LayoutMenu_.addMenuItem(key, val.ICON);
+	this.LayoutHandler_.addLayout(key, val.OBJ);
+    }.bind(this))
+
+    // Set the layout when a menu item is clicked.
+    goog.events.listen(this.LayoutMenu_, 
+	moka.ui.SlideInMenu.EventType.ITEM_SELECTED,function(e) {
+	    //window.console.log("ITEM SELECTED!", e.title, e.index);
+	    //window.console.log('trigger LayoutHandler_ here!');
+	    this.LayoutHandler_.setLayout(e.title);
+	}.bind(this));
+}
+
 
 
 
@@ -697,7 +727,7 @@ xiv.ui.ViewBox.prototype.hideChildElements_ = function() {
 */
 xiv.ui.ViewBox.prototype.setComponentEvents_ = function() {
     this.setTabsEvents_();
-    this.setViewLayoutMenuEvents_();
+    //this.setLayoutMenuEvents_();
 }
 
 
@@ -718,30 +748,23 @@ xiv.ui.ViewBox.prototype.setTabsEvents_ = function () {
 
 /**
  * Updates the various compoents of the xiv.ui.ViewBox when the
- * user interacts with the xiv.ui.ViewLayout menu.  Specifically,
+ * user interacts with the xiv.ui.Layout menu.  Specifically,
  * the xiv.ui.layouts.LayoutHandler.
  * @private
  */
-xiv.ui.ViewBox.prototype.setViewLayoutMenuEvents_ = function () {
+xiv.ui.ViewBox.prototype.setLayoutMenuEvents_ = function () {
 
-
-    goog.events.listen(this.ViewLayoutMenu_, 
-		       moka.ui.SlideInMenu.EventType.ITEM_SELECTED,
-        function(e) {
-	    window.console.log("ITEM SELECTED!", e.title, e.index);
-	    window.console.log('trigger LayoutHandler_ here!');
-	}.bind(this));
 
     return;
 
     //------------------
     // When a menu Item is clicked.
     //------------------
-    this.ViewLayoutMenu_.onMenuItemClicked( function() {
+    this.LayoutMenu_.onMenuItemClicked( function() {
 	this.LayoutHandler_.set3DBackgroundColor(
 	    this.Displayer_.BackgroundColors);
-	this.LayoutHandler_.setViewLayout(
-	    this.ViewLayoutMenu_.getSelectedViewLayout());
+	this.LayoutHandler_.setLayout(
+	    this.LayoutMenu_.getSelectedLayout());
     }.bind(this));
 
 
@@ -769,7 +792,7 @@ xiv.ui.ViewBox.prototype.setViewLayoutMenuEvents_ = function () {
     // Once the view scheme is set, 
     // update the displayer style.
     //------------------
-    this.LayoutHandler_.onViewLayoutChanged(function(){ 
+    this.LayoutHandler_.onLayoutChanged(function(){ 
 	this.Displayer_.updateStyle()
     }.bind(this));
 
@@ -779,7 +802,7 @@ xiv.ui.ViewBox.prototype.setViewLayoutMenuEvents_ = function () {
     // For when the view scheme animates, 
     // update the xiv.ui.Displayer style.
     //------------------
-    this.LayoutHandler_.onViewLayoutAnimate(function(){ 
+    this.LayoutHandler_.onLayoutAnimate(function(){ 
 	this.Displayer_.updateStyle()
     }.bind(this));
 
@@ -790,7 +813,7 @@ xiv.ui.ViewBox.prototype.setViewLayoutMenuEvents_ = function () {
     //------------------
     this.LayoutHandler_.onPlaneDoubleClicked(function(anatomicalPlane){ 
 	window.console.log("HERE", anatomicalPlane);
-	this.ViewLayoutMenu_.setViewLayout(anatomicalPlane);
+	this.LayoutMenu_.setLayout(anatomicalPlane);
 	this.Displayer_.updateStyle()
 
     }.bind(this));
@@ -809,8 +832,8 @@ xiv.ui.ViewBox.prototype.onDisplayerLoaded_ = function(){
 	this.getElement().style.borderColor = 
 	    this.getElement().getAttribute('originalbordercolor');
     }
-    window.console.log("HERE", this.Displayer_.getViewLayout());
-    this.ViewLayoutMenu_.setViewLayout(this.Displayer_.getViewLayout());
+    window.console.log("HERE", this.Displayer_.getLayout());
+    this.LayoutMenu_.setLayout(this.Displayer_.getLayout());
     this.showChildElements_();
     this.loadTabs_();
 

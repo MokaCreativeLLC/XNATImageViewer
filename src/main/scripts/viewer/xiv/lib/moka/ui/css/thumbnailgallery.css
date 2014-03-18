@@ -5,7 +5,6 @@
 
 
 .moka-ui-thumbnailgallery {
-    cursor: pointer;
     position: absolute;
     overflow: hidden;
 }

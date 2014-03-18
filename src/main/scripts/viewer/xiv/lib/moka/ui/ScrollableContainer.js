@@ -57,7 +57,7 @@ moka.ui.ScrollableContainer = function (opt_args) {
     //------------------
     // Set Slider UI and callbacks
     //------------------
-    this.setSliderCallbacks_();
+    this.setSliderEvents_();
     this.setSliderStyles_();
     this.updateStyle();
     this.mapSliderToContents();
@@ -180,24 +180,19 @@ moka.ui.ScrollableContainer.prototype.setSliderStyles_ = function(){
  * @protected
  */
 moka.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
-
     
-    var widgetHeight = /**@type {!number}*/
-    moka.style.dims(this.element_, 'height');
+    var widgetHeight = /**@type {!number}*/ 
+    goog.style.getSize(this.element_).height;
 
     var scrollAreaHeight = /**@type {!number}*/
-    moka.convert.toInt(moka.style.getComputedStyle(
-	this.scrollArea_, 'height'));
-
+    goog.style.getSize(this.scrollArea_).height
+	
     var beforeRange = /**@type {!Array.number}*/
     [this.Slider_.getMinimum(), this.Slider_.getMaximum()];
 
     var afterRange = /**@type {!Array.number}*/
     [0, scrollAreaHeight - widgetHeight];
 
-    var sliderThumb = /**@type {!Element}*/ this.Slider_.getThumb();
-
-    //window.console.log("mapslider", widgetHeight, scrollAreaHeight);
     //------------------
     // If there's the scrollArea (contents) is greater
     // than the height of the container element, then we 
@@ -209,10 +204,15 @@ moka.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 	// The slider thumbnail's height is a function of
 	// how much scroll area is hidden.  Want to make sure the height
 	// is proportional to the contents.
-	moka.style.setStyle(sliderThumb, {
+	moka.style.setStyle(this.Slider_.getThumb(), {
 	    'opacity': 1,
 	    'height': widgetHeight * (widgetHeight / scrollAreaHeight)
 	});
+
+	//window.console.log("\n\nmapslider", widgetHeight, scrollAreaHeight);
+	//window.console.log("Range", beforeRange, afterRange);
+	//window.console.log("NEW HEIGHT", 
+	//widgetHeight * (widgetHeight / scrollAreaHeight))
 
 	// Enable the slider
 	this.Slider_.setEnabled(true);
@@ -234,7 +234,7 @@ moka.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
     //------------------	
     }
     else {
-	moka.style.setStyle(sliderThumb, { 'opacity': 0});
+	this.Slider_.getThumb().style.opacity = 0;
 	this.Slider_.setEnabled(false);
 	this.Slider_.setValue(100);
     }	
@@ -247,7 +247,7 @@ moka.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
  * Sets the slider callbacks.
  * @private
  */
-moka.ui.ScrollableContainer.prototype.setSliderCallbacks_ = function() {
+moka.ui.ScrollableContainer.prototype.setSliderEvents_ = function() {
     goog.events.listen(this.Slider_, moka.ui.GenericSlider.EventType.SLIDE,
 				   this.mapSliderToContents.bind(this));  
     this.Slider_.bindToMouseWheel(this.element_);

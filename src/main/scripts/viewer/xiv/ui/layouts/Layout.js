@@ -33,6 +33,13 @@ xiv.ui.layouts.Layout = function() {
 
     }
     goog.base(this);
+
+
+    /**
+     * @type {Object.<string, xiv.ui.layout.Plane>}
+     * @protected
+     */
+    this.Planes = {};
 }
 goog.inherits(xiv.ui.layouts.Layout, moka.ui.Component);
 goog.exportSymbol('xiv.ui.layouts.Layout', xiv.ui.layouts.Layout);
@@ -67,14 +74,6 @@ xiv.ui.layouts.Layout.CSS_SUFFIX = {}
 
 
 /**
- * @type {Object.<string, xiv.ui.layout.Plane>}
- * @protected
- */
-xiv.ui.layouts.Layout.prototype.Planes = {};
-
-
-
-/**
  * @return {Object.<string, xiv.ui.layout.Plane>}
  */
 xiv.ui.layouts.Layout.prototype.getPlanes = function(){
@@ -98,7 +97,7 @@ xiv.ui.layouts.Layout.prototype.getTitle = function(){
 xiv.ui.layouts.Layout.prototype.addPlane = function(plane){
     this.Planes = this.Planes ? this.Planes : {};
     this.Planes[plane.getTitle()] = plane;
-    window.console.log("PLANES", this.Planes);
+    //window.console.log("PLANES", plane, this.Planes);
 }
 
 
