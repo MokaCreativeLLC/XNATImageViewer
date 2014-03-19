@@ -20,10 +20,3 @@ xiv.renderer.XtkPlane3D = function () {
 goog.inherits(xiv.renderer.XtkPlane3D, xiv.renderer.XtkPlane);
 goog.exportSymbol('xiv.renderer.XtkPlane3D', xiv.renderer.XtkPlane3D);
 
-
-
-/**
- * @const
- * @type {!X.renderer3D}
- */
-xiv.renderer.XtkPlane3D.prototype.XRenderer = X.renderer3D;
