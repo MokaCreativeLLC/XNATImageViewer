@@ -44,9 +44,6 @@ goog.provide('xiv.ui.layouts.LayoutHandler');
 xiv.ui.layouts.LayoutHandler = function() {
     goog.base(this);
 
-    //this.addLayout(new xiv.ui.layouts.FourUp());
-    //this.addLayout(new xiv.ui.layouts.Conventional());
-
     /**
      * Layouts.
      * @dict
@@ -145,23 +142,22 @@ xiv.ui.layouts.LayoutHandler.prototype.animateLayoutChange = function(bool){
 
 
 
-
 /**
-* @public
-* @return {Object.<string, xiv.ui.layouts.Layout>}
+* @return {xiv.ui.layouts.Layout}
 */ 
-xiv.ui.layouts.LayoutHandler.prototype.getLayouts = function(){
-    return this.Layouts_;
+xiv.ui.layouts.LayoutHandler.prototype.getCurrentLayout = function(){
+    return this.Layouts_[this.currLayoutTitle_];
 };
 
 
 
-
 /**
-* @type {xiv.ui.layouts.Layout}
-*/ 
-xiv.ui.layouts.LayoutHandler.prototype.getCurrentLayout = function(){
-    return this.currLayoutTitle_;
+ * @param {!string} planeTitle
+ * @return {xiv.ui.layouts.Plane}
+ */ 
+xiv.ui.layouts.LayoutHandler.prototype.getCurrentLayoutPlane = 
+function(planeTitle){
+    return this.Layouts_[this.currLayoutTitle_].getPlaneByTitle(planeTitle);
 };
 
 
@@ -441,4 +437,25 @@ xiv.ui.layouts.LayoutHandler.prototype.updateStyle = function(){
     goog.object.forEach(this.Layouts_, function(layout){
 	layout.updateStyle();
     })
+}
+
+
+
+
+/**
+* @inheritDoc
+*/
+xiv.ui.layouts.LayoutHandler.prototype.disposeInternal = function(){
+    goog.base(this, 'disposeInternal');
+
+    goog.object.forEach(this.Layouts_, function(layout){
+	layout.disposeInternal();
+	layout = null;
+    })
+    delete this.Layouts_;
+
+
+    delete this.LayoutObjects_ = {};
+    delete this.currLayoutTitle_;
+    delete this.prevLayoutTitle_;
 }

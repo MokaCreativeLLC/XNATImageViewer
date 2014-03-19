@@ -12,7 +12,6 @@ goog.require('goog.fx.DragDrop');
 goog.require('goog.fx.DragDropGroup');
 
 // utils
-goog.require('moka.events.EventManager');
 goog.require('moka.string');
 goog.require('moka.fx');
 goog.require('moka.ui.Thumbnail');
@@ -39,7 +38,7 @@ xiv.ui.ThumbnailHandler = function () {
      * @dict
      * @private
      */    
-    this.thumbs_ = {};
+    this.Thumbs_ = {};
 
     
     /**
@@ -73,8 +72,31 @@ goog.exportSymbol('xiv.ui.ThumbnailHandler', xiv.ui.ThumbnailHandler);
 xiv.ui.ThumbnailHandler.EventType = {
   MOUSEOVER: goog.events.getUniqueId('mouseover'),
   MOUSEOUT: goog.events.getUniqueId('mouseout'),
+  THUMBNAIL_DRAG_OVER: goog.events.getUniqueId('thumbnail-drag-over'),
+  THUMBNAIL_DRAG_OUT: goog.events.getUniqueId('thumbnail-drag-out'),
   THUMBNAIL_CLICK: goog.events.getUniqueId('thumbnailclick'),
-  THUMBNAIL_DROP: goog.events.getUniqueId('thumbnaildrop'),
+  THUMBNAIL_DROPPED_INTO_TARGET: 
+    goog.events.getUniqueId('thumbnail-dropped-into-target')
+};
+
+
+
+/**
+ * @type {!string} 
+ * @expose
+ * @const
+ */
+xiv.ui.ThumbnailHandler.ID_PREFIX = 'xiv.ui.ThumbnailHandler';
+
+
+
+/**
+ * @enum {string}
+ * @public
+ */
+xiv.ui.ThumbnailHandler.CSS_SUFFIX = {
+    THUMBNAILGALLERY: 'thumbnailgallery',
+    THUMBNAIL_DRAGGING: 'thumbnail-dragging',
 };
 
 
@@ -89,19 +111,9 @@ xiv.ui.ThumbnailHandler.ANIM_MED = 300;
 
 /**
  * @type {!string} 
- * @expose
  * @const
  */
-xiv.ui.ThumbnailHandler.ORIGINAL_BORDER_ATTR = 'originalbordercolor' + 
-    goog.string.createUniqueString();
-
-
-
-/**
- * @type {!string} 
- * @const
- */
-xiv.ui.ThumbnailHandler.DRAGGER_ID = 'THUMBNAIL_DRAGGER' + 
+xiv.ui.ThumbnailHandler.DRAGGER_ID = 'THUMBNAIL_DRAGGER_' + 
     goog.string.createUniqueString();
 
 
@@ -114,36 +126,6 @@ xiv.ui.ThumbnailHandler.DRAGGER_FADER_ID =
     xiv.ui.ThumbnailHandler.DRAGGER_ID + '_FADER' + 
     goog.string.createUniqueString();
 
-
-
-/**
- * @type {!string} 
- * @expose
- * @const
- */
-xiv.ui.ThumbnailHandler.ID_PREFIX = 'xiv.ui.ThumbnailHandler';
-
-
-
-/**
- * @type {!string}
- * @expose 
- * @const
- */
-xiv.ui.ThumbnailHandler.CSS_CLASS_PREFIX = 
-goog.string.toSelectorCase(xiv.ui.ThumbnailHandler.ID_PREFIX.toLowerCase().
-			   replace(/\./g,'-'));
-
-
-
-/**
- * @type {!string}
- * @expose 
- * @const
- */
-xiv.ui.ThumbnailHandler.THUMBNAILGALLERY_CLASS =  
-    goog.getCssName(xiv.ui.ThumbnailHandler.CSS_CLASS_PREFIX, 
-		    'thumbnailgallery');
 
 
 
@@ -167,7 +149,9 @@ xiv.ui.ThumbnailHandler.prototype.getThumbnailGallery = function() {
 
 
 /**
- * Sets the thumbnail's hover parent.
+ * Sets the thumbnail's hover (mouseover) parent.  This allows for a more
+ * seamless UX when scrolling and overing over a thumbnail.
+ * 
  * @param {!Element} elt The hover parent of the thumbnails.
  * @public
  */
@@ -181,13 +165,14 @@ xiv.ui.ThumbnailHandler.prototype.setHoverParent = function(elt){
 
 /**
  * Loops through all The thumbnails, applying a callback to them.
+ *
  * @param {!function} The callback to apply in the loop.
  * @public
  */
 xiv.ui.ThumbnailHandler.prototype.loop = function(callback){
-    for (key in this.thumbs_) {
+    for (key in this.Thumbs_) {
 	if (goog.isFunction(callback)) {
-	    callback(this.thumbs_[key]);
+	    callback(this.Thumbs_[key]);
 	}
     }
 }
@@ -196,6 +181,7 @@ xiv.ui.ThumbnailHandler.prototype.loop = function(callback){
 
 /**
  * Returns a newly created xiv.ui.Thumbnail object. 
+ *
  * @param {gxnat.Viewable} _Viewable The Viewable object to derive the 
  *     Thumbnail from.
  * @param {!string | !Array.string} folders The folders which the thumbnails 
@@ -211,6 +197,7 @@ function(_Viewable, folders) {
 
 /**
  * Returns a newly created xiv.ui.Thumbnail object. 
+ *
  * @param {gxnat.Viewable} _Viewable The Viewable object to derive the
  *    Thumbnail from.
  * @returns {xiv.ui.Thumbnail}
@@ -223,7 +210,8 @@ xiv.ui.ThumbnailHandler.prototype.createThumbnail = function(_Viewable) {
     goog.events.listen(thumbnail, moka.ui.Thumbnail.EventType.CLICK, function(){
 	//window.console.log("THUM", thumbnail);
 	this.dispatchEvent({
-	    type: xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_CLICK
+	    type: xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_CLICK,
+	    thumbnail: thumbnail
 	});
     }.bind(this))
     return thumbnail;
@@ -242,7 +230,7 @@ xiv.ui.ThumbnailHandler.prototype.createThumbnail = function(_Viewable) {
 xiv.ui.ThumbnailHandler.prototype.addThumbnail = function(thumbnail, folders){
 
     // Add to private array.
-    this.thumbs_[thumbnail.getElement().getAttribute('id')] = thumbnail;
+    this.Thumbs_[thumbnail.getElement().getAttribute('id')] = thumbnail;
 
     // Add to gallery
     //window.console.log(folders);
@@ -256,18 +244,27 @@ xiv.ui.ThumbnailHandler.prototype.addThumbnail = function(thumbnail, folders){
     // then highlight the view box that the 
     // thumbnail was dropped into when we hover over it.
     //------------------
-
     goog.events.listen(this, xiv.ui.ThumbnailHandler.EventType.MOUSEOVER, 
 		       function(callback){
 	goog.events.listen(thumbnail, xiv.ui.Thumbnail.EventType.MOUSEOVER, 
 			   callback);
     }.bind(this))
+
     goog.events.listen(this, xiv.ui.ThumbnailHandler.EventType.MOUSEOUT,  
 			   function(callback){
 	goog.events.listen(thumbnail, xiv.ui.Thumbnail.EventType.MOUSEOUT, 
 			   callback);
     }.bind(this))
+}
 
+
+
+/**
+ * As stated.
+ * @public
+ */
+xiv.ui.ThumbnailHandler.prototype.clearThumbnailDropTargets = function(target) {
+    this.thumbnailTargetGroup_.removeItems();
 }
 
 
@@ -275,25 +272,26 @@ xiv.ui.ThumbnailHandler.prototype.addThumbnail = function(thumbnail, folders){
 /**
  * Adds a target element to the group.  Manages its border change in the 
  * DragDrop process.
+ *
  * @param {Element} target The target element to add.
  * @public
  */
-xiv.ui.ThumbnailHandler.prototype.addDragDropTarget = function(target) {
+xiv.ui.ThumbnailHandler.prototype.addThumbnailDropTarget = function(target) {
     this.thumbnailTargetGroup_.addItem(target);
-    target.setAttribute(xiv.ui.ThumbnailHandler.ORIGINAL_BORDER_ATTR, 
-			target.style.borderColor);
 }
 
 
 
 /**
  * Adds an array of elements to the target group.
+ *
  * @param {!Array.<Element>} targetArr The target elements to add.
  * @public
  */
-xiv.ui.ThumbnailHandler.prototype.addDragDropTargets = function(targetArr) {
+xiv.ui.ThumbnailHandler.prototype.addThumbnailDropTargets = 
+function(targetArr) {
     goog.array.forEach(targetArr, function (target) {
-	this.addDragDropTarget(target);
+	this.addThumbnailDropTarget(target);
     }.bind(this)) 
 }
 
@@ -302,11 +300,12 @@ xiv.ui.ThumbnailHandler.prototype.addDragDropTargets = function(targetArr) {
 /**
  * Returns the xiv.ui.Thumbnail class when the argument is its element. 
  * @param {Element} The element to search the stored Thumbnail objects for.
- * @returns {xiv.ui.Thumbnail} The Thumbnail object which the element belongs to.
+ * @returns {xiv.ui.Thumbnail} The Thumbnail object which the element belongs 
+ * to.
  * @public
  */
 xiv.ui.ThumbnailHandler.prototype.getThumbnailByElement = function(element) {
-    return this.thumbs_[element.id];
+    return this.Thumbs_[element.id];
 }
 
 
@@ -316,11 +315,10 @@ xiv.ui.ThumbnailHandler.prototype.getThumbnailByElement = function(element) {
  * @private
  */
 xiv.ui.ThumbnailHandler.prototype.createThumbnailGallery_ = function() {
-
     //window.console.log('\n\nCREATE THUMBNAIL GALLERY');
     this.ThumbnailGallery_ = new moka.ui.ThumbnailGallery();
     goog.dom.classes.add(this.ThumbnailGallery_.getElement(), 
-			 xiv.ui.ThumbnailHandler.THUMBNAILGALLERY_CLASS);
+			 xiv.ui.ThumbnailHandler.CSS.THUMBNAILGALLERY);
 } 
 
 
@@ -338,17 +336,21 @@ xiv.ui.ThumbnailHandler.prototype.initDragDrop_ = function(){
     this.thumbnailDragDropGroup_.createDragElement = 
 	this.createDragElement_.bind(this);
  
-    // Dragger events
+    // Drag over
     goog.events.listen(this.thumbnailDragDropGroup_, 
-		       'dragover', this.dragOver_.bind(this));
+		       'dragover', this.onDragOver_.bind(this));
+
+    // Drag end
     goog.events.listen(this.thumbnailDragDropGroup_, 
-		       'dragend', this.dragEnd_.bind(this));
+		       'dragend', this.onDragEnd_.bind(this));
+
+    // Drag out
     goog.events.listen(this.thumbnailDragDropGroup_, 
-		       'dragout', this.dragOut_.bind(this));
+		       'dragout', this.onDragOut_.bind(this));
 
     // target events
     goog.events.listen(this.thumbnailTargetGroup_, 
-		       'drop', this.drop_.bind(this));
+		       'drop', this.onDrop_.bind(this));
 
     // Set targets
     this.thumbnailDragDropGroup_.addTarget(this.thumbnailTargetGroup_);
@@ -367,36 +369,33 @@ xiv.ui.ThumbnailHandler.prototype.initDragDrop_ = function(){
  * for instance, the "dragging" clone would be just the text.
  * Instead we want the entire xiv.ui.Thumbnail (text, image and all) to
  * be cloned.
+ *
  * @param {!Element} srcElt The source element of the thumbnail to derive the
  *     drag element from.
  * @return {!Element} The drag element.
  * @private
  */
 xiv.ui.ThumbnailHandler.prototype.createDragElement_ = function(srcElt) {
-    //window.console.log("CREATE DRAG ELEMENT");
+    // Get the thumbnail ID from the ancestor.
+    var thumbId = /**@type {!string}*/  goog.dom.getAncestorByTagNameAndClass(
+	srcElt, 'div', xiv.ui.Thumbnail.ELEMENT_CLASS).id.replace(
+	    moka.ui.Thumbnail.HOVERABLE_PREFIX, '');
 
-    while (srcElt) {
-	if (srcElt.getAttribute('thumbnailid')) {
-	    break;
-	}
-	srcElt = srcElt.parentNode;
+    // Exit out of the id is not stored.
+    if (!goog.object.containsKey(this.Thumbs_, thumbId)) {
+	return;
     }
-    //window.console.log(srcElt, this.thumbs_);
     
-    var originalThumbnail = /**@type {!Element}*/ goog.dom.getElement(
-	srcElt.getAttribute('thumbnailid'));  
-    //window.console.log(originalThumbnail);
-    var Thumb = /**@type {!Element}*/
-    this.thumbs_[originalThumbnail.getAttribute('id')];
+    // Set the thumbnail to an 'active' stated.
+    this.Thumbs_[thumbId].setActive(true, true);
 
-    if (!Thumb) { return;}
-    Thumb.setActive(true, true);
-
-    var dragEl = /**@type {!Element}*/ originalThumbnail.cloneNode(true);
-    dragEl.setAttribute('id', xiv.ui.ThumbnailHandler.DRAGGER_ID);
-    dragEl.removeAttribute("style");
-    goog.dom.classes.add(dragEl, xiv.ui.Thumbnail.DRAGGING_CLASS);
-
+    // Create  and return the drag element
+    var dragEl = /**@type {!Element}*/ 
+	this.Thumbs_[thumbId].getElement().cloneNode(true);
+    dragEl.setAttribute('id', xiv.ui.ThumbnailHandler.DRAGGER_ID + 
+		       dragEl.id);
+    goog.dom.classes.add(dragEl, 
+			 xiv.ui.ThumbnailHandler.CSS.THUMBNAIL_DRAGGING);
     return dragEl;
 }
 
@@ -407,22 +406,24 @@ xiv.ui.ThumbnailHandler.prototype.createDragElement_ = function(srcElt) {
  * @param {!Event} event Dummy event.
  * @private
  */
-xiv.ui.ThumbnailHandler.prototype.dragOver_ = function (event) {
-    event.dropTargetItem.element.style.borderColor = 
-	'rgb(255,255,255)';
+xiv.ui.ThumbnailHandler.prototype.onDragOver_ = function (event) {
+    this.dispatchEvent({
+	type: xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_DRAG_OVER,
+	thumbnailTargetElement: event.dropTargetItem.element
+    });
 }
 
 
 
 /**
- * Reverts thumbnaiil to old border.
  * @param {!Event} event Dummy event.
  * @private
  */
-xiv.ui.ThumbnailHandler.prototype.dragOut_ = function (event) {
-    event.dropTargetItem.element.style.borderColor = 
-	event.dropTargetItem.element.getAttribute(
-	    xiv.ui.ThumbnailHandler.ORIGINAL_BORDER_ATTR);
+xiv.ui.ThumbnailHandler.prototype.onDragOut_ = function (event) {
+    this.dispatchEvent({
+	type: xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_DRAG_OUT,
+	thumbnailTargetElement: event.dropTargetItem.element
+    });
 }
 
 
@@ -432,59 +433,28 @@ xiv.ui.ThumbnailHandler.prototype.dragOut_ = function (event) {
  * @param {!Event} event Dummy event.
  * @private
  */
-xiv.ui.ThumbnailHandler.prototype.dragEnd_ = function (event) {
-    
-    //------------------
-    // Get the origin thumbnail Element, from which the cloned xiv.ui.Thumbnail 
-    // came.  This is conducted through a class query.
-    //------------------
-    var dragThumbnail = /**@type {!Element}*/
-	goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, 
-				    moka.ui.Thumbnail.CSS_CLASS_PREFIX);
+xiv.ui.ThumbnailHandler.prototype.onDragEnd_ = function (event) {
 
+    // Get the top trag element
+    var dragThumbnails = /**@type {!Element}*/
+	goog.dom.getElementsByClass(
+	    xiv.ui.ThumbnailHandler.CSS.THUMBNAIL_DRAGGING);
+
+    // Fade out the draggers
+    goog.array.forEach(dragThumbnails, function(elt){
+	moka.fx.fadeOut(elt, xiv.ui.ThumbnailHandler.ANIM_MED, function(){ 
+	    goog.dom.removeNode(elt);
+	})
+    })
+
+    // Get the thumbnail Object
     var originalThumbnail = /**@type {!Element}*/
-	goog.dom.getElement(dragThumbnail.getAttribute('thumbnailid'))
-    var Thumb = /**@type {!xiv.ui.Thumbnail}*/
-    this.getThumbnailByElement(originalThumbnail);
+	this.Thumbs_[dragThumbnails[0].id.replace(
+	    xiv.ui.ThumbnailHandler.DRAGGER_ID, '')];
 
-    //------------------
-    // Deactivate that thumb as dragging activates it.  If it is dropped
-    // into a xiv.ui.ViewBox, it will get reactivated  if successfully loaded.
-    //------------------
-    Thumb.setActive(false, true);
+    // Deactivate that thumb 
+    originalThumbnail.setActive(false, true);
 
-
-    //*************************************************************
-    //
-    // THIS IS WHERE THE THUMBNAIL IS LOADED INTO THE VIEW BOX.
-    //
-    //*************************************************************
-    if (dragThumbnail.dropTarget) {
-	this.thumbnailDroppedIntoTarget_(originalThumbnail, 
-					 dragThumbnail.dropTarget);
-    }
-}
-
-
-
-/**
- * Runs the event callbacks when a thumbnail has been dropped into its target.
- * @param {!xiv.ui.Thumbnail} thumbnail The dragged thumbnail.
- * @param {!Element} target The thumbnail's target element.
- * @private
- */
-xiv.ui.ThumbnailHandler.prototype.thumbnailDroppedIntoTarget_ = 
-function(thumbnail, target) {
-    var thumbDraggerFader = /**@type {!Element}*/
-    goog.dom.getElement(xiv.ui.ThumbnailHandler.DRAGGER_FADER_ID);
-    moka.fx.fadeOutAndRemove(thumbDraggerFader,
-			      xiv.ui.ThumbnailHandler.ANIM_MED, 
-			      function(){ delete thumbDraggerFader })
-    this.dispatchEvent({
-	type: xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_DROP,
-	thumbnail: thumbnail,
-	thumbnailTarget: target
-    });
 }
 
 
@@ -494,35 +464,33 @@ function(thumbnail, target) {
  * @param {!Event} Dummy event.
  * @private
  */
-xiv.ui.ThumbnailHandler.prototype.drop_ = function(event) {
+xiv.ui.ThumbnailHandler.prototype.onDrop_ = function(event) {
 
     var dragThumbnail = /**@type {!Element}*/
-	goog.dom.getAncestorByClass(event.dragSourceItem.currentDragElement_, 
-				    moka.ui.Thumbnail.CSS_CLASS_PREFIX);
-    var thumbDragger = /**@type {!Element}*/
-    goog.dom.getElement(xiv.ui.ThumbnailHandler.DRAGGER_ID); 
+	goog.dom.getElementByClass(
+	    xiv.ui.ThumbnailHandler.CSS.THUMBNAIL_DRAGGING);
+
+
+    // Clone the dragger element so we can fade the clone out..
+    // not super necessary but nice effect.
+    dragThumbnail.style.opacity = 0;
     var dragClone = /**@type {!Element}*/
-    thumbDragger.cloneNode(true);
-
-
-    //------------------
-    // Clone the dragger element so we can fade the clone out
-    // in the 'dragEnd' function.
-    //------------------
-    dragClone.setAttribute('id', xiv.ui.ThumbnailHandler.DRAGGER_FADER_ID);
+    dragThumbnail.cloneNode(true);
+    dragClone.style.opacity = 1;
     document.body.appendChild(dragClone);
-    goog.dom.removeNode(thumbDragger);
-    delete thumbDragger;
+    goog.dom.removeNode(dragThumbnail);
 
 
-    //------------------
-    // We don't do the drop callbacks here
-    // because the "drop" event occurs before the
-    // "dragEnd" event.  Rather than implement asnyc handling
-    // of the two, the xiv.ui.ViewBox 'loadxiv.ui.Thumbnail' call will occur
-    // at dragEnd if there's a dropTarget for original xiv.ui.Thumbnail
-    //------------------
-    dragThumbnail.dropTarget = event.dropTargetItem.element;
+    // If we're at the target, dispatch event.
+    if (event.dropTargetItem.element) {
+	this.dispatchEvent({
+	    type: 
+	    xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_DROPPED_INTO_TARGET,
+	    Thumbnail: this.Thumbs_[dragThumbnail.id.replace(
+		xiv.ui.ThumbnailHandler.DRAGGER_ID, '')],
+	    targetElement: event.dropTargetItem.element
+	});
+    }
 }
 
 
@@ -531,6 +499,7 @@ xiv.ui.ThumbnailHandler.prototype.drop_ = function(event) {
  * Adds the element of the xiv.ui.Thumbnail class to 
  * the DragDropGroup (not to be confused with the xiv.ui.Thumbnail
  * class itself).
+ *
  * @param {xiv.ui.Thumbnail} The Thumbnail to add.
  * @private
  */

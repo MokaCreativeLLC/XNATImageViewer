@@ -53,22 +53,13 @@ xiv.ui.Thumbnail.ID_PREFIX =  'xiv.ui.Thumbnail';
 
 
 
-/**
- * @type {!string} 
- * @const
-*/
-xiv.ui.Thumbnail.CSS_CLASS_PREFIX =
-goog.string.toSelectorCase(xiv.ui.Thumbnail.ID_PREFIX.toLowerCase().
-			   replace(/\./g,'-'));
-
-
 
 /**
- * @type {!string} 
- * @const
+ * @enum {string}
+ * @public
  */
-xiv.ui.Thumbnail.DRAGGING_CLASS = 
-    goog.getCssName(xiv.ui.Thumbnail.CSS_CLASS_PREFIX, 'dragging');
+xiv.ui.Thumbnail.CSS_SUFFIX = {};
+
 
 
 

@@ -107,7 +107,6 @@ moka.ui.Thumbnail.CSS_SUFFIX = {
 
 /**
  * @type {!string} 
- * @expose
  * @const
  */
 moka.ui.Thumbnail.HOVERABLE_PREFIX = 'HOVERABLE_';

@@ -942,12 +942,20 @@ xiv.ui.Modal.prototype.setThumbnailHandlerCallbacks_ = function(){
 					 this.onThumbnailMouseout_.bind(this));
 
     goog.events.listen(this.ThumbnailHandler_, 
-		       xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_DROP, 
-		       this.onThumbnailDropped_.bind(this));
-
-    goog.events.listen(this.ThumbnailHandler_, 
 		       xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_CLICK, 
 		       this.onThumbnailClicked_.bind(this));
+
+    goog.events.listen(this.ThumbnailHandler_, 
+		       xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_DRAG_OVER, 
+		       this.onThumbnailDragOver_.bind(this));
+
+    goog.events.listen(this.ThumbnailHandler_, 
+		       xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_DRAG_OUT, 
+		       this.onThumbnailDragOut_.bind(this));
+
+    goog.events.listen(this.ThumbnailHandler_, 
+	xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_DROPPED_INTO_TARGET, 
+		       this.onThumbnailDroppedIntoViewBox_.bind(this));
 }
 
 
@@ -986,29 +994,48 @@ xiv.ui.Modal.prototype.onThumbnailMouseout_ = function(Thumbnail){
 
 
 /**
- * Callback function for the CLICKED event on the hovered thumbnail.
- * @param {xiv.ui.Thumbnail} Thumbnail The xiv.ui.Thumbnail that fired the event.
+ * @param {Event} e The event object. 
  * @private
  */
-xiv.ui.Modal.prototype.onThumbnailClicked_ = function(Thumbnail){
-    this.ViewBoxHandler_.getFirstEmpty().loadThumbnail(Thumbnail);
+xiv.ui.Modal.prototype.onThumbnailDragOut_ = function(e){
+    this.ViewBoxHandler_.getViewBoxByElement(
+	e.thumbnailTargetElement).unhighlight();
+}
+
+
+/**
+ * @param {Event} e The event object. 
+ * @private
+ */
+xiv.ui.Modal.prototype.onThumbnailDragOver_ = function(e){
+    this.ViewBoxHandler_.getViewBoxByElement(
+	e.thumbnailTargetElement).highlight();
 }
 
 
 
 /**
- * Callback function for the Dropped event on the hovered thumbnail.
- * @param {!Element} viewBoxElement The view box element.
- * @param {!Element} thumbnailElement The thumbnail element that was dropped.
+ * Callback function for the CLICKED event on the hovered thumbnail.
+ * @param {Event} e The event object. 
  * @private
  */
-xiv.ui.Modal.prototype.onThumbnailDropped_ = 
-function(viewBoxElement, thumbnailElement) {
-    var _ViewBox = /**@type {!xiv.ui.ViewBox}*/
-    this.ViewBoxHandler_.getViewBoxByElement(viewBoxElement);
-    var _Thumb = /**@type {!xiv.ui.Thumbnail}*/
-	this.ThumbnailHandler_.getThumbnailByElement(thumbnailElement);
-    _ViewBox.loadThumbnail(_Thumb);
+xiv.ui.Modal.prototype.onThumbnailClicked_ = function(e){
+    this.ViewBoxHandler_.getFirstEmpty().loadThumbnail(e.thumbnail);
+}
+
+
+
+/**
+ * Callback function for the Dropped event on the thumbnail.
+ *
+ * @param {Event} e The event object.
+ * @private
+ */
+xiv.ui.Modal.prototype.onThumbnailDroppedIntoViewBox_ = function(e) {
+    var ViewBox = /**@type {!xiv.ui.ViewBox}*/ 
+    this.ViewBoxHandler_.getViewBoxByElement(e.targetElement);
+    ViewBox.load(e.Thumbnail.getViewable());
+    ViewBox.unhighlight();
 }
 
 
@@ -1083,7 +1110,9 @@ xiv.ui.Modal.prototype.onViewBoxesChanged_ = function(e) {
     } else {
 	this.updateStyle();
     }	
-    this.ThumbnailHandler_.addDragDropTargets(
+
+    this.ThumbnailHandler_.clearThumbnailDropTargets();
+    this.ThumbnailHandler_.addThumbnailDropTargets(
 	this.ViewBoxHandler_.getViewBoxElements());
 }
 

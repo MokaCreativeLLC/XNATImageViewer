@@ -83,6 +83,15 @@ xiv.ui.layouts.Layout.prototype.getPlanes = function(){
 
 
 /**
+ * @param {!string} planeTitle
+ * @return {xiv.ui.layout.Plane}
+ */
+xiv.ui.layouts.Layout.prototype.getPlaneByTitle = function(title){
+    return this.Planes[title];
+};
+
+
+/**
  * @return {!string}
  */
 xiv.ui.layouts.Layout.prototype.getTitle = function(){

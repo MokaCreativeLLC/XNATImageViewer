@@ -426,11 +426,6 @@ function(renderables, xtkPlane, callback) {
 
 
 
-    //------------------
-    // Reset the slider.
-    //------------------
-    xtkPlane.resetSlider();
-
 
 
     //------------------
@@ -571,36 +566,6 @@ xiv.ui.XtkPlaneManager.prototype.loadInRenderers =
 
 
 
-
-/**
- * Colors sliders for differentiation in 
- * viewSchemes that involve multiple panels.
- */
-xiv.ui.XtkPlaneManager.prototype.colorSliders = function(){
-    this.loopAll(function(xtkPlane){
-	if (xtkPlane.Slider_){
-	    goog.dom.classes.add(xtkPlane.Slider_.getTrack(), 
-				 goog.getCssName(xiv.ui.XtkPlane.SLIDER_TRACK_CLASS, 
-						 xtkPlane.getId()));
-	}
-    })
-}
-
-
-
-/**
- * One panel view schemes don't need color differentiation
- * so it defaults to the old color (which is gray)
- */
-xiv.ui.XtkPlaneManager.prototype.uncolorSliders = function(){
-    this.loopAll(function(xtkPlane){
-	if (xtkPlane.Slider_){
-	    goog.dom.classes.remove(xtkPlane.Slider_.getTrack(),
-				    goog.getCssName(xiv.ui.XtkPlane.SLIDER_TRACK_CLASS, 
-						    xtkPlane.getId()));
-	}
-    }) 
-}
 
 
 

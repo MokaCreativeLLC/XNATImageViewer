@@ -1,3 +1,38 @@
+goog.addDependency('../../../../renderer/renderer.js', 
+['xiv.renderer'], []);
+
+
+goog.addDependency('../../../../renderer/Engine.js', 
+['xiv.renderer.Engine'], [
+    'goog.events.EventTarget'
+]);
+
+
+goog.addDependency('../../../../renderer/XtkEngine.js', 
+['xiv.renderer.XtkEngine'], [
+    'xiv.renderer.Engine'
+]);
+
+
+goog.addDependency('../../../../renderer/XtkPlane.js', 
+['xiv.renderer.XtkPlane'], [
+    'goog.events.EventTarget'
+]);
+
+
+goog.addDependency('../../../../renderer/XtkPlane2D.js', 
+['xiv.renderer.XtkPlane2D'], [
+    'xiv.renderer.XtkPlane'
+]);
+
+
+goog.addDependency('../../../../renderer/XtkPlane3D.js', 
+['xiv.renderer.XtkPlane3D'], [
+    'xiv.renderer.XtkPlane'
+]);
+
+
+
 goog.addDependency('../../../../ui/ui.js', 
 ['xiv.ui'], [
 ]);

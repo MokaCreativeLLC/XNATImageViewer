@@ -20,7 +20,7 @@ goog.require('moka.ui.SlideInMenu');
 
 // xiv
 goog.require('xiv.ui.layouts.LayoutHandler');
-//goog.require('xiv.ui.Displayer.Xtk');
+goog.require('xiv.renderer.XtkEngine');
 //goog.require('xiv.ui.SlicerViewMenu');
 
 
@@ -41,14 +41,77 @@ goog.provide('xiv.ui.ViewBox');
 xiv.ui.ViewBox = function () {
     goog.base(this);
 
+
+    /**
+     * @type {Array.<gxnat.Viewable>}
+     * @private
+     */
+    this.currViewables_ = [];
+
+
+    /**
+     * @struct
+     * @private
+     */
+    this.menus_ = {
+	TOP: null,
+	LEFT: null,
+	BOTTOM: null,
+	RIGHT: null
+    };
     // menu
     this.addMenu_topLeft_();
 
-    // inits
-    this.createSubComponents();
+
+
+    /**
+     * @type {!Element}
+     * @private
+     */	
+    this.viewFrameElt_ = goog.dom.createDom('div', {
+	'id': xiv.ui.ViewBox.ID_PREFIX + '_ViewFrame_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.ViewBox.CSS.VIEWFRAME
+    });
+
+
+
+    /**
+     * @type {!xiv.ui.layouts.LayoutHandler}
+     * @protected
+     */
+    this.LayoutHandler_ = new xiv.ui.layouts.LayoutHandler();
+
+
+
+    /**
+     * @type {moka.ui.ZipTabs}
+     * @private
+     */	
+    this.ZipTabs_ = new moka.ui.ZipTabs('BOTTOM'); 
+
+
+
+    /**
+     * @type {!moka.ui.SlideInMenu}
+     * @private
+     */
+    this.LayoutMenu_ = new moka.ui.SlideInMenu();
+
+
+
+    /**
+     * @type {xiv.renderer.Engine}
+     */
+    this.Renderer_ = new xiv.renderer.XtkEngine();
+
+
+
+    
+    this.initSubComponents_();
+
 
     // events
-    moka.events.EventManager.addEventManager(this, xiv.ui.ViewBox.EventType);
     this.setComponentEvents_();
 
 
@@ -114,6 +177,7 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     VIEWLAYOUTHANDLER: 'viewlayouthandler',
     TABS: 'ziptabs',
     VIEWFRAME: 'viewframe',
+    COMPONENT_HIGHLIGHT: 'component-highlight'
 }
 
 
@@ -158,22 +222,6 @@ xiv.ui.ViewBox.prototype.thumbLoadTime_;
 
 
 /**
- * @type {Displayer}
- * @private
- */
-xiv.ui.ViewBox.prototype.Displayer_;
-
-
-
-/**
- * @type {xiv.ui.Thumbnail}
- * @private
- */
-xiv.ui.ViewBox.prototype.Thumbnail_;
-
-
-
-/**
  * @type {Array.<Element>}
  * @private
  */
@@ -185,28 +233,11 @@ xiv.ui.ViewBox.prototype.doNotHide_;
  * @type {!String}
  * @private
  */
-xiv.ui.ViewBox.prototype.loadFramework_ = 'XTK';
-
-
-
-/**
- * @type {!String}
- * @private
- */
 xiv.ui.ViewBox.prototype.loadState_ = 'empty';
 
 
 
-/**
- * @type {Object}
- * @private
- */
-xiv.ui.ViewBox.prototype.menus_ = {
-    TOP: null,
-    LEFT: null,
-    BOTTOM: null,
-    RIGHT: null
-};
+
 
 
 
@@ -267,6 +298,39 @@ xiv.ui.ViewBox.prototype.getThumbnail = function(){
  *     loaded into the ViewBox.
  * @public
  */
+xiv.ui.ViewBox.prototype.highlight =  function() {
+    //this.getElement().style.border = 'solid 1px rgb(25,255,255)';
+    goog.dom.classes.add(this.LayoutHandler_.getElement(), 
+			 xiv.ui.ViewBox.CSS.COMPONENT_HIGHLIGHT);
+    goog.dom.classes.add(this.menus_.LEFT, 
+			 xiv.ui.ViewBox.CSS.COMPONENT_HIGHLIGHT);
+    goog.dom.classes.add(this.ZipTabs_, 
+			 xiv.ui.ViewBox.CSS.COMPONENT_HIGHLIGHT);
+}
+
+
+
+/**
+ * @public
+ */
+xiv.ui.ViewBox.prototype.unhighlight =  function() {
+    goog.dom.classes.remove(this.LayoutHandler_.getElement(), 
+			 xiv.ui.ViewBox.CSS.COMPONENT_HIGHLIGHT);
+    goog.dom.classes.remove(this.menus_.LEFT, 
+			 xiv.ui.ViewBox.CSS.COMPONENT_HIGHLIGHT);
+    goog.dom.classes.remove(this.ZipTabs_, 
+			 xiv.ui.ViewBox.CSS.COMPONENT_HIGHLIGHT);
+}
+
+
+
+
+/**
+ * Get the associated thumbnail load time for this object.
+ * @return {number} The date (in millseconds) when the last thumbnail was 
+ *     loaded into the ViewBox.
+ * @public
+ */
 xiv.ui.ViewBox.prototype.getThumbnailLoadTime =  function() {
     return this.thumbLoadTime_;
 }
@@ -314,63 +378,114 @@ xiv.ui.ViewBox.prototype.setLayout = function(viewPlane) {
 
 
 /**
- * Loads a thumbnail into the viewer by communicating
- * to the various internal components.
- * @param {!xiv.ui.Thumbnail} thumb The thumbnail to load into the viewer.
+ * @dict
+ * @const
+ */
+xiv.ui.ViewBox.defaultLayout = {
+    'Scan' : 'Four-Up',
+    'Scans' : 'Four-Up',
+    'Slicer' : 'Conventional'
+}
+
+
+
+xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
+    this.LayoutHandler_.showProgBarLayout(true);
+}
+
+
+
+xiv.ui.ViewBox.prototype.onRenderStart_ = function(e){
+    this.LayoutHandler_.updateProgBarLayout(e.pctComplete);
+}
+
+
+
+
+xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
+    this.LayoutHandler_.hideProgBarLayout(true);
+    this.syncLayoutComponentsToRenderer_();
+
+    goog.events.unlisten(this.Renderer_, 
+			 xiv.renderer.EventType.RENDER_START, 
+			 this.onRenderStart_.bind(this));
+
+    goog.events.unlisten(this.Renderer_, 
+			 xiv.renderer.EventType.RENDERING, 
+			 this.onRendering_.bind(this));
+
+    goog.events.unlisten(this.Renderer_, 
+			 xiv.renderer.EventType.RENDER_END, 
+			 this.onRenderEnd_.bind(this));
+    
+}
+
+
+
+/**
+ * Loads a gxnat.Viewable object into the appropriate renderers.
+ *
+ * @param {!gxnat.Viewable} viewable.
  * @public
  */
-xiv.ui.ViewBox.prototype.loadThumbnail = function (Thumbnail) {
+xiv.ui.ViewBox.prototype.load = function (viewable) {
 
-    var onloadPlane =  /**@type {!string}*/ '3D';
-    var controllerMenu = /**@type {xiv.ui.XtkControllerMenu}*/ undefined;
+
+    if (!goog.array.contains(this.currViewables_, viewable)){
+	this.currViewables_.push(viewable);	
+    }
+
     
-    // Set load state.
-    this.loadState_ = 'loading';
+    /**
+    if (this.needsPreloadWorkflow_(viewable)){
+	this.runPreloadWorklow_(viewable);
+	return;
+    }
+    */
+    window.console.log(viewable);
 
-    // Track the thumbnail internally.
-    this.Thumbnail_ = Thumbnail;
+    if (this.currViewables_.length == 1) {
+	this.LayoutHandler_.setLayout(
+	    xiv.ui.ViewBox.defaultLayout[viewable['category']]);
+    }
 
-    // Run Thumbnail preLoaded callbacks 
-    this.dispatchEvent({
-	type: xiv.ui.ViewBox.EventType.THUMBNAIL_PRELOAD
-    })
+    
+    // Set plane containers
+    goog.object.forEach(this.Renderer_.getPlanes(), 
+	function(plane, key) { 
+	    var layoutPlane = this.LayoutHandler_.getCurrentLayoutPlane(key);
+	    //window.console.log("LAYOUT PLANE", layoutPlane, key);
+	    if (layoutPlane) {
+		plane.init(layoutPlane.getElement());
+	    }
+	}.bind(this))
+
+
+    window.console.log(xiv.renderer.XtkEngine.getViewables(viewable['files']));
+
+
+    // Add to renderer
+    this.Renderer_.render(viewable['files']);
+
+    return;
+
+    //
+    goog.events.listen(this.Renderer_, 
+		       xiv.renderer.EventType.RENDER_START, 
+		       this.onRenderStart_.bind(this));
+
+    goog.events.listen(this.Renderer_, 
+		       xiv.renderer.EventType.RENDERING, 
+		       this.onRendering_.bind(this));
+
+    goog.events.listen(this.Renderer_, 
+		       xiv.renderer.EventType.RENDER_END, 
+		       this.onRenderEnd_.bind(this));
+
+
 
     // Remember the time in which the thumbnail was loaded
-    this.thumbLoadTime_ = (new Date()).getTime();
-
-    //------------------
-    // This is here because the moka.ui.ZipTabs may not fully adjust themselves
-    // properly during the initiation process.  It's especially relevant
-    // when multiple xiv.ui.ViewBoxes are open.
-    //------------------
-    this.updateStyle();
-
-    // Adjust view layoyt manager
-    this.adjustLayoutHandler_();
-
-    // Hide children
-    this.hideChildElements_();
-
-    // Move content divider to bottom.
-    //window.console.log("SLIDE 1", this.ViewBoxBorder_.getBottomLimit());
-    //this.ViewBoxBorder_.slideTo(this.ViewBoxBorder_.getBottomLimit(), false);
-   
-    // Feed view planes into xiv.ui.layouts.LayoutHandler and set 
-    // the default xiv.ui.Layout (most likely '3D')
-    window.console.log("HERE", onloadPlane);
-    this.LayoutMenu_.setLayout(onloadPlane);
-
-    // Turn back on animations.
-    this.LayoutHandler_.animateLayoutChange(true);
-    
-    // Show/hide the slicer view menu depending on the 
-    // Thumbnail's getViewable()   
-    this.SlicerViewMenu_.getElement().style.visibility = 
-	(this.Thumbnail_.getViewable()['category'].toLowerCase() === 
-	 'slicer') ? 'visible' : 'hidden';
-
-    // Load into displayer
-    this.Displayer_.load(this.Thumbnail_.getViewable());    
+    this.thumbLoadTime_ = (new Date()).getTime();    
 }
  
 
@@ -449,15 +564,15 @@ xiv.ui.ViewBox.prototype.loadTabs_Controllers_ = function() {
 /**
  * @inheritDoc
  */
-xiv.ui.ViewBox.prototype.createSubComponents = function() {
-    this.createViewFrameElt_();
-    this.createTabs_();
-    this.createLayoutMenu_();
-    this.createLayoutHandler_();
+xiv.ui.ViewBox.prototype.initSubComponents_ = function() {
+    this.initViewFrameElt_();
+    this.initTabs_();
+    this.initLayoutMenu_();
+    this.initLayoutHandler_();
     this.syncLayoutMenuToLayoutHandler_();
     
-    //this.createSlicerViewMenu_();
-    //this.createDisplayer_();
+    //this.initSlicerViewMenu_();
+    this.initRenderer_();
 }
 
 
@@ -466,16 +581,7 @@ xiv.ui.ViewBox.prototype.createSubComponents = function() {
 * As stated.
 * @private
 */
-xiv.ui.ViewBox.prototype.createViewFrameElt_ = function(){
-    /**
-     * @type {!Element}
-     * @private
-     */	
-    this.viewFrameElt_ = goog.dom.createDom('div', {
-	'id': xiv.ui.ViewBox.ID_PREFIX + '_ViewFrame_' + 
-	    goog.string.createUniqueString(),
-	'class': xiv.ui.ViewBox.CSS.VIEWFRAME
-    }); 
+xiv.ui.ViewBox.prototype.initViewFrameElt_ = function(){ 
     goog.dom.append(this.getElement(), this.viewFrameElt_);
 }
 
@@ -485,12 +591,8 @@ xiv.ui.ViewBox.prototype.createViewFrameElt_ = function(){
 * As stated.
 * @private
 */
-xiv.ui.ViewBox.prototype.createTabs_ = function(){
-    /**
-     * @type {moka.ui.ZipTabs}
-     * @private
-     */	
-    this.ZipTabs_ = new moka.ui.ZipTabs('BOTTOM'); 
+xiv.ui.ViewBox.prototype.initTabs_ = function(){
+
     goog.dom.append(this.viewFrameElt_, this.ZipTabs_.getElement());
     goog.dom.classes.add(this.ZipTabs_.getElement(), 
 			 xiv.ui.ViewBox.CSS.TABS);
@@ -570,12 +672,8 @@ xiv.ui.ViewBox.prototype.addToMenu = function(menuLoc, element, opt_insertInd){
 * As stated.
 * @private
 */
-xiv.ui.ViewBox.prototype.createLayoutMenu_ = function(){
-    /**
-     * @type {!moka.ui.SlideInMenu}
-     * @private
-     */
-    this.LayoutMenu_ = new moka.ui.SlideInMenu();
+xiv.ui.ViewBox.prototype.initLayoutMenu_ = function(){
+
     this.addToMenu('LEFT', this.LayoutMenu_.getElement());
 
     goog.dom.classes.add(this.LayoutMenu_.getElement(), 
@@ -594,12 +692,7 @@ xiv.ui.ViewBox.prototype.createLayoutMenu_ = function(){
 * As stated.
 * @private
 */
-xiv.ui.ViewBox.prototype.createLayoutHandler_ = function(){
-    /**
-     * @type {!xiv.ui.layouts.LayoutHandler}
-     * @protected
-     */
-    this.LayoutHandler_ = new xiv.ui.layouts.LayoutHandler();
+xiv.ui.ViewBox.prototype.initLayoutHandler_ = function(){
     goog.dom.append(this.viewFrameElt_, this.LayoutHandler_.getElement());
     goog.dom.classes.add(this.LayoutHandler_.getElement(), 
 			 xiv.ui.ViewBox.CSS.VIEWLAYOUTHANDLER);
@@ -649,7 +742,7 @@ xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
     // Set the layout when a menu item is clicked.
     goog.events.listen(this.LayoutMenu_, 
 	moka.ui.SlideInMenu.EventType.ITEM_SELECTED,function(e) {
-	    //window.console.log("ITEM SELECTED!", e.title, e.index);
+	    window.console.log("ITEM SELECTED!", e.title, e.index);
 	    //window.console.log('trigger LayoutHandler_ here!');
 	    this.LayoutHandler_.setLayout(e.title);
 	}.bind(this));
@@ -662,7 +755,7 @@ xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
 * As stated.
 * @private
 */
-xiv.ui.ViewBox.prototype.createSlicerViewMenu_ = function(){
+xiv.ui.ViewBox.prototype.initSlicerViewMenu_ = function(){
     /**
      * @type {!xiv.ui.SlicerViewMenu}
      * @private
@@ -679,17 +772,10 @@ xiv.ui.ViewBox.prototype.createSlicerViewMenu_ = function(){
  * the 'loadFramework' internal variable.
  * @private
  */
-xiv.ui.ViewBox.prototype.createDisplayer_ = function(){
-    // Retrieve the loadFramework.
-    switch (this.loadFramework_){
-    case 'XTK': 
-	this.Displayer_ = new xiv.ui.Displayer.Xtk(this);
-	break;
-    }
-    goog.dom.append(this.getElement(), this.Displayer_.getElement());
+xiv.ui.ViewBox.prototype.initRenderer_ = function(){
 
-    // Onload callbacks
-    this.Displayer_.onLoaded = this.onDisplayerLoaded_.bind(this)
+
+
 }
 
 
@@ -806,17 +892,6 @@ xiv.ui.ViewBox.prototype.setLayoutMenuEvents_ = function () {
 	this.Displayer_.updateStyle()
     }.bind(this));
 
-
-
-    //------------------
-    // Callback when a plane is double clicked.
-    //------------------
-    this.LayoutHandler_.onPlaneDoubleClicked(function(anatomicalPlane){ 
-	window.console.log("HERE", anatomicalPlane);
-	this.LayoutMenu_.setLayout(anatomicalPlane);
-	this.Displayer_.updateStyle()
-
-    }.bind(this));
 }
 
 
@@ -931,11 +1006,34 @@ xiv.ui.ViewBox.prototype.updateStyle_LayoutHandler_ = function () {
 
 
 
+
+
 /**
  * As stated.
  * @private
  */
-xiv.ui.ViewBox.prototype.updateStyle_Displayer_ = function () {
-    goog.style.setSize(this.Displayer_.getElement(), this.currSize.width,  
-		       parseInt(this.ZipTabs_.getElement().style.top, 10))
+xiv.ui.ViewBox.prototype.disposeInternal = function () {
+    goog.base(this, 'disposeInternal');
+
+
+    goog.dom.remove(this.viewFrameElt_);
+
+    goog.dispose(this.LayoutHandler_.disposeInternal());
+    delete this.LayoutHandler_;
+
+    goog.dispose(this.LayoutMenu_.disposeInternal());
+    delete this.LayoutMenu_;
+
+    goog.dispose(this.ZipTabs_.disposeInternal());
+    delete this.ZipTabs_;
+
+    this.Renderer_.dispose();
+    delete this.Renderer_();
+  
+    delete this.currViewables_;
+    delete this.menus_;
+
+    window.console.log("TODO: " + 
+		       "NEED TO DELETE ALL EVENT LISTENERS IN THE VIEW BOX!");
+
 }

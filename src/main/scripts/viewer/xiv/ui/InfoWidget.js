@@ -20,9 +20,9 @@ goog.require('moka.ui.Component');
 
 
 /**
- * 'xiv.ui.Displayer' is a parent class that allows visualization
+ * 'xiv.ui.InfoWidget' is a parent class that allows visualization
  * frameworks to display and render images within the xiv.ui.ViewBox.
- * Every xiv.ui.ViewBox object contains a 'xiv.ui.Displayer' which is the
+ * Every xiv.ui.ViewBox object contains a 'xiv.ui.InfoWidget' which is the
  * element/class that visualizes the imaging information. Currently, the 
  * defaulted child class of the displayer is 'XTK', though this hierarchy is 
  * set it place to allow for a number of visualization toolkits to
@@ -31,21 +31,19 @@ goog.require('moka.ui.Component');
  * @constructor
  * @extends {moka.ui.Component}
  */
-goog.provide('xiv.ui.Displayer');
-xiv.ui.Displayer = function () {
-
+goog.provide('xiv.ui.InfoWidget');
+xiv.ui.InfoWidget = function () {
     goog.base(this);
-
 
     /**
      * @private
-     * @type {?gxnat.viewableProperties} 
+     * @type {gxnat.Viewable} 
      */ 
-    this.xnatProperties_ = null;
+    this.xnatProperties_;
 
 }
-goog.inherits(xiv.ui.Displayer, moka.ui.Component);
-goog.exportSymbol('xiv.ui.Displayer', xiv.ui.Displayer);
+goog.inherits(xiv.ui.InfoWidget, moka.ui.Component);
+goog.exportSymbol('xiv.ui.InfoWidget', xiv.ui.InfoWidget);
 
 
 
@@ -54,42 +52,18 @@ goog.exportSymbol('xiv.ui.Displayer', xiv.ui.Displayer);
  * @const
  * @expose
  */
-xiv.ui.Displayer.prototype.ID_PREFIX =  'xiv.ui.Displayer';
+xiv.ui.InfoWidget.prototype.ID_PREFIX =  'xiv.ui.InfoWidget';
 
 
 
 /**
- * @type {!string} 
+ * @enum {string}  
  * @const
-*/
-xiv.ui.Displayer.CSS_CLASS_PREFIX =
-goog.string.toSelectorCase(
-    moka.string.getLettersOnly(xiv.ui.Displayer.ID_PREFIX || 
-				xiv.ui.Displayer.prototype.ID_PREFIX));
+ */ 
+xiv.ui.InfoWidget.CSS_PREFIX = {
 
 
-
-/**
- * @type {string} 
- * @const
- */
-xiv.ui.Displayer.ELEMENT_CLASS = 
-goog.getCssName(xiv.ui.Displayer.CSS_CLASS_PREFIX, '');
-
-
-
-/**  
- * Returns the XnatProperties.
- *
- * @return {!gxnat.viewableProperties} 
- *    The gxnat.viewableProperties object associated 
- *    with the Displayer.
- * @public
- */
-xiv.ui.Displayer.prototype.getXnatProperties =  function () {
-    return this.xnatProperties_;
 }
-
 
 
 
@@ -103,24 +77,13 @@ xiv.ui.Displayer.prototype.getXnatProperties =  function () {
  * @return {!Element} The tab as a div element.
  * @public
  */
-xiv.ui.Displayer.prototype.createInfoTabContents = function (xnatProperties) {	
+xiv.ui.InfoWidget.prototype.createInfoTabContents = function (xnatProperties) {	
     return (xnatProperties['category'].toLowerCase() === 'slicer') ? 
 	this.createSlicerTab_(xnatProperties) : 
 	this.createDicomTab_(xnatProperties);
 }
 
 
-
-
-/**  
- * Stores the xnatProperties accordingly.
- *
- * @param {!gxnat.viewableProperties} xnatProperties The xnat properties to load.
- * @public
- */
-xiv.ui.Displayer.prototype.load = function (xnatProperties) {
-    this.xnatProperties_ = xnatProperties;
-}
 
 
 
@@ -137,28 +100,18 @@ xiv.ui.Displayer.prototype.load = function (xnatProperties) {
  * @param {!string} value The value of the label text.
  * @return {Element} The label-value pair as a DOM element.
  */
-xiv.ui.Displayer.prototype.createLabelValuePair_ = function(parent, label, value) {
+xiv.ui.InfoWidget.prototype.createLabelValuePair_ = function(parent, label, value) {
 
 
-    //------------------
-    // Create the label element (child of 'parent').
-    // Set its innerHTML.
-    //------------------
     var lab_ = goog.dom.createDom("div", {
 	'id': 'InfoTabDataLabel',
-	'class': xiv.ui.Displayer.TABCONTENT_INFO_LABEL_CLASS
+	'class': xiv.ui.InfoWidget.TABCONTENT_INFO_LABEL_CLASS
     }, (label + ":"));
     goog.dom.append(parent, lab_);
    
-
-
-    //------------------
-    // Create the value element (child of 'label').
-    // Set its innerHTML.
-    //------------------    
     var val_ = goog.dom.createDom("div", {
 	'id': 'InfoTabDataValue',
-	'class': xiv.ui.Displayer.TABCONTENT_INFO_VALUE_CLASS
+	'class': xiv.ui.InfoWidget.TABCONTENT_INFO_VALUE_CLASS
     }, value);
     goog.dom.append(lab_, val_)
     
@@ -183,7 +136,7 @@ xiv.ui.Displayer.prototype.createLabelValuePair_ = function(parent, label, value
  *    to derive the tab from.
  * @return {!Element} The tab as a div element.
  */
-xiv.ui.Displayer.prototype.createDicomTab_ = function(xnatProperties) {
+xiv.ui.InfoWidget.prototype.createDicomTab_ = function(xnatProperties) {
     
     var highImportanceKeys = ["Scan", "Format", "type"]; 
     var sessionInfo = xnatProperties['sessionInfo'];
@@ -205,7 +158,7 @@ xiv.ui.Displayer.prototype.createDicomTab_ = function(xnatProperties) {
     //
     contents = goog.dom.createDom("div", {
 	'id': 'InfoTabContents',
-	'class': xiv.ui.Displayer.TABCONTENT_INFO_CLASS
+	'class': xiv.ui.InfoWidget.TABCONTENT_INFO_CLASS
     });
     goog.dom.append(this.getElement().parentNode, contents);
 
@@ -251,7 +204,7 @@ xiv.ui.Displayer.prototype.createDicomTab_ = function(xnatProperties) {
 	goog.array.forEach(highImportanceKeys, function(highImportanceKey){
 	    if (currLabel.toLowerCase() === highImportanceKey.toLowerCase()) {
 		goog.dom.classes.add(labelValuePair, 
-		xiv.ui.Displayer.TABCONTENT_INFO_HIGHIMPORTANCE_CLASS);
+		xiv.ui.InfoWidget.TABCONTENT_INFO_HIGHIMPORTANCE_CLASS);
 	    }
 	})
 
@@ -299,7 +252,7 @@ xiv.ui.Displayer.prototype.createDicomTab_ = function(xnatProperties) {
  *    to derive the tab from.
  * @return {!Element} The tab as a div element.
  */
-xiv.ui.Displayer.prototype.createSlicerTab_ = function(xnatProperties) {
+xiv.ui.InfoWidget.prototype.createSlicerTab_ = function(xnatProperties) {
     var highImportanceKeys = ["Name"]; 
     var prevBottom = 0;
     var counter = 0;
@@ -318,7 +271,7 @@ xiv.ui.Displayer.prototype.createSlicerTab_ = function(xnatProperties) {
     //------------------
     contents = goog.dom.createDom("div", {
 	'id': 'InfoTabContents',
-	'class': xiv.ui.Displayer.TABCONTENT_INFO_CLASS
+	'class': xiv.ui.InfoWidget.TABCONTENT_INFO_CLASS
     });
     goog.dom.append(this.getElement().parentNode, contents);
 
@@ -351,7 +304,7 @@ xiv.ui.Displayer.prototype.createSlicerTab_ = function(xnatProperties) {
 	moka.style.setStyle(labelValuePair, {'top': currTop});
 	goog.array.forEach(highImportanceKeys, function(highImportanceKey){
 	    if (currLabel === highImportanceKey) {
-		goog.dom.classes.add(labelValuePair, xiv.ui.Displayer.TABCONTENT_INFO_HIGHIMPORTANCE_CLASS);
+		goog.dom.classes.add(labelValuePair, xiv.ui.InfoWidget.TABCONTENT_INFO_HIGHIMPORTANCE_CLASS);
 	    }
 	})
 
@@ -382,20 +335,3 @@ xiv.ui.Displayer.prototype.createSlicerTab_ = function(xnatProperties) {
 
 
 
-xiv.ui.Displayer.CSS_CLASS_PREFIX = /**@type {string} @expose @const*/ 
-goog.getCssName('xiv-displayer');
-
-xiv.ui.Displayer.TABCONTENT_CLASS = /**@type {string} @expose @const*/ 
-goog.getCssName(xiv.ui.Displayer.CSS_CLASS_PREFIX, 'tabcontent');
-
-xiv.ui.Displayer.TABCONTENT_INFO_CLASS = /**@type {string} @expose @const*/ 
-goog.getCssName(xiv.ui.Displayer.TABCONTENT_CLASS, 'info');
-
-xiv.ui.Displayer.TABCONTENT_INFO_LABEL_CLASS = /**@type {string} @expose @const*/
-goog.getCssName(xiv.ui.Displayer.TABCONTENT_INFO_CLASS, 'label');
-
-xiv.ui.Displayer.TABCONTENT_INFO_VALUE_CLASS = /**@type {string} @expose @const*/ 
-goog.getCssName(xiv.ui.Displayer.TABCONTENT_INFO_CLASS, 'value');
-
-xiv.ui.Displayer.TABCONTENT_INFO_HIGHIMPORTANCE_CLASS = /**@type {string} @expose @const*/ 
-goog.getCssName(xiv.ui.Displayer.TABCONTENT_INFO_CLASS, 'highimportance');
