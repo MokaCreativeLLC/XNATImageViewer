@@ -50,11 +50,28 @@ xiv.renderer.XtkEngine = function () {
 
 
     /**
-     * @type {!xiv.renderer.XtkPlane2D}
+     * @type {!xiv.renderer.XtkPlane3D}
      * @private
      */
     this.PlaneV_ = new xiv.renderer.XtkPlane3D();
 
+
+
+    /**
+     * @type {!xiv.renderer.XtkPlane2D}
+     * @private
+     */
+    this.primaryRenderPlane_ = this.PlaneX_;
+
+
+
+    goog.events.listen(this.primaryRenderPlane_, 
+		       xiv.renderer.XtkPlane.EventType.RENDERING, 
+		       this.onRendering_.bind(this))
+
+    goog.events.listen(this.primaryRenderPlane_, 
+		       xiv.renderer.XtkPlane.EventType.RENDER_END, 
+		       this.onRenderEnd_.bind(this))
 
 }
 goog.inherits(xiv.renderer.XtkEngine, xiv.renderer.Engine);
@@ -77,7 +94,8 @@ xiv.renderer.XtkEngine.ID_PREFIX =  'xiv.renderer.XtkEngine';
  * @public
  */
 xiv.renderer.XtkEngine.EventType = {
-  ALL_RENDERED: goog.events.getUniqueId('all-rendered'),
+    RENDERING: goog.events.getUniqueId('rendering'),
+    RENDER_END: goog.events.getUniqueId('render-end')
 }
 
 
@@ -103,60 +121,89 @@ xiv.renderer.XtkEngine.ANATOMICAL_TO_CARTESIAN =  {
 xiv.renderer.XtkEngine.prototype.render = function (files) {
 
     var viewables = xiv.renderer.XtkEngine.getViewables(files);
-    
     var xObjects = [];
-
     goog.object.forEach(viewables, function(fileColl){
 	xObjects.push(xiv.renderer.XtkEngine.createXObject(fileColl));
 	window.console.log(obj);
     })
 
 
+    this.currXObjects_ = xObjects;
 
     //------------------------------------------ 
     //
     //  IMPORTANT!!!!!!!!!       DO NOT ERASE!!!
     //
-    //  YOU HAVE TO ADD AND RENDER X-OBJECTS ONE PLANE AT A TIME!!!
-    //
-    //  ONCE YOU FINISH WITH ONE PLANE, YOU CAN DO THE OTHERS!!!!
+    //  YOU HAVE TO ADD AND RENDER X-OBJECTS ONE PLANE AT A TIME,
+    //  ONCE YOU FINISH WITH ONE PLANE, YOU CAN DO THE OTHERS.
     //
     //------------------------------------------
-
     goog.array.forEach(xObjects, function(xObj){
-	this.getPlanes()['X'].add(xObj);
+	this.primaryRenderPlane_.add(xObj);
     }.bind(this))
 
-
-    this.getPlanes()['X'].Renderer.onShowtime = function(){
-
-	goog.array.forEach(xObjects, function(xObj){
-	    goog.array.forEach(['Y', 'Z'], function(orient){
-		this.getPlanes()[orient].add(xObj);
-	    }.bind(this))
-	}.bind(this))
-
-	goog.array.forEach(xObjects, function(xObj){
-	    goog.array.forEach(['Y', 'Z'], function(orient){
-		this.getPlanes()[orient].render();
-	    }.bind(this))
-	}.bind(this))
-	
+    this.primaryRenderPlane_.Renderer.onShowtime = function(){
+	this.renderNonPrimary_(xObjects)
     }.bind(this);
 
-    this.getPlanes()['X'].render();
+    this.primaryRenderPlane_.render();
+
+}
 
 
-
-
-
-    return;
-
-    goog.object.forEach(this.getPlanes(), function(plane){
-	plane.render();
+/**
+ * @param {Array.<X.object>} xObjects
+ * @public
+ */
+xiv.renderer.XtkEngine.prototype.renderNonPrimary_ = function(xObjects){
+    goog.object.forEach(this.getPlanes(), function(Plane, planeOr){
+	// We already rendered the primary plane
+	if (Plane == this.primaryRenderPlane_) { return };
+	// Add objects to other planes.
+	goog.array.forEach(xObjects, function(xObj){
+	    Plane.add(xObj);
+	})
+	// The render them.
+	Plane.render();
     })
 }
 
+
+
+/**
+ * @public
+ */
+xiv.renderer.XtkEngine.prototype.updateStyle = function(){
+    goog.object.forEach(this.getPlanes(), function(plane, key) { 
+	plane.updateStyle();
+    }.bind(this))
+}
+
+
+
+
+/**
+ * @private
+ */
+xiv.renderer.XtkEngine.prototype.onRendering_ = function(e){
+    this.dispatchEvent({
+	type: xiv.renderer.XtkEngine.EventType.RENDERING,
+	percentComplete: e.percentComplete
+    })
+}
+
+
+
+/**
+ * @param {Event}
+ * @private
+ */
+xiv.renderer.XtkEngine.prototype.onRenderEnd_ = function(e){
+    this.dispatchEvent({
+	type: xiv.renderer.XtkEngine.EventType.RENDER_END,
+	percentComplete: e.percentComplete
+    })
+}
 
 
 
@@ -180,6 +227,17 @@ xiv.renderer.XtkEngine.prototype.getPlanes = function () {
 xiv.renderer.XtkEngine.prototype.dispose = function () {
     goog.base(this, 'dispose');
     
+
+    goog.events.unlisten(this.primaryRenderPlane_, 
+		       xiv.renderer.XtkPlane.EventType.RENDERING, 
+		       this.onRendering_.bind(this))
+
+    goog.events.unlisten(this.primaryRenderPlane_, 
+		       xiv.renderer.XtkPlane.EventType.RENDER_END, 
+		       this.onRenderEnd_.bind(this))
+
+    delete this.primaryRenderPlane_;
+
     this.PlaneX_.dispose();
     delete this.PlaneX_;
 
@@ -191,6 +249,8 @@ xiv.renderer.XtkEngine.prototype.dispose = function () {
 
     this.PlaneV_.dispose();
     delete this.PlaneV_;
+
+
 }
 
 

@@ -67,6 +67,9 @@ xiv.renderer.XtkPlane = function() {
      * @type {number}
      */
     this.renderProgress_;
+
+
+    window.console.log("\n\n\n\nTHIS IS ON", this.isOn_);
 }
 goog.inherits(xiv.renderer.XtkPlane, goog.events.EventTarget);
 goog.exportSymbol('xiv.renderer.XtkPlane', xiv.renderer.XtkPlane);
@@ -84,6 +87,11 @@ xiv.renderer.XtkPlane.EventType = {
   RENDER_END: goog.events.getUniqueId('render-end'),
 }
 
+
+/**
+* @param {boolean}
+*/
+xiv.renderer.XtkPlane.prototype.isOn_ = true;
 
 
 /**
@@ -165,6 +173,25 @@ xiv.renderer.XtkPlane.prototype.add = function(xObj) {
 
 
 
+/**
+ * @retrurn {!boolean}
+ * @public
+ */
+xiv.renderer.XtkPlane.prototype.getOn = function(on) {
+    return this.isOn_;
+}
+
+
+
+/**
+* @param {!boolean} on
+ * @public
+ */
+xiv.renderer.XtkPlane.prototype.setOn = function(on) {
+    this.isOn_ = !(on === false);
+}
+
+
 
 /**
  * @public
@@ -182,53 +209,31 @@ xiv.renderer.XtkPlane.prototype.checkRenderProgress_ = function() {
 
 
     this.progTimer_ = goog.Timer.callOnce(function() {
-	//this.progTimer_.dispose();
-	this.progTimer_ = null; // destroy the timer
 
-	//window.console.log("SHOWTIME!");
-	visBars = goog.dom.getElementsByClass('progress-bar-thumb');
-	if (!visBars || visBars.length == 0){
+	this.progTimer_ = null; // destroy the timer
+	var progThumb = goog.dom.getElementByClass('progress-bar-thumb', 
+						   this.Renderer.container);
+
+	if (!progThumb){
+	    window.console.log("END HERE!");
 	    this.renderProgress_ = 100;
+	    this.dispatchEvent({
+		type: xiv.renderer.XtkPlane.EventType.RENDER_END,
+		percentComplete: this.renderProgress_
+	    })
 	    return;
 	}
-	//progBar = visBars[0];
-	//progBarThumb = 
-	  //  goog.dom.getElementsByClass('progress-bar-thumb')[0];
-	
-	this.renderProgress_ = parseInt(
-	    goog.dom.getElementsByClass('progress-bar-thumb', 
-			this.Renderer.container)[0].style.width, 10);
-	
-	window.console.log("RENDER PROGRESS", this.renderProgress_);
 
-	/**
-	progBarThumb.style.background = '#68C2DF';
-	progBar.style.background = 'rgb(80,80,80)';
-	progBar.style.width = '80%';
-	progBar.style.height = '7px';
-	progBar.style.left = '10%';
-	progBar.style.border = '0px';
-	progBar.style.padding = '0px';
-	*/
+	this.renderProgress_ = parseInt(progThumb.style.width, 10);
 
-	/**
-	if (parseInt(progBarThumb.style.width) == 100){
-	    if (!this.progClone){
-		progBar.style.opacity = 0;
-		this.progClone = progBar.cloneNode(true);
-		this.progClone.style.opacity = 1;
-		progBar.parentNode.appendChild(this.progClone);
-		this.progClone.style.zIndex = 100000;
-		moka.fx.fadeOutAndRemove(this.progClone, 1000)
-	    }
-	} else {
-	    progBar.style.opacity = 1;
-	}
-	*/
+	this.dispatchEvent({
+	    type: xiv.renderer.XtkPlane.EventType.RENDERING,
+	    percentComplete: this.renderProgress_
+	})
 
 	this.checkRenderProgress_();
 
-    }.bind(this), 100); // check again in 100 ms
+    }.bind(this), 200); // check again in 100 ms
 }
 
 
@@ -244,15 +249,26 @@ xiv.renderer.XtkPlane.prototype.render = function() {
 
 
 
+/**
+ * @public
+ */
+xiv.renderer.XtkPlane.prototype.updateStyle = function() {
+    this.Renderer.onResize();  
+};
+
+
 
 /**
-d * @inheritDoc
+* @inheritDoc
  */
 xiv.renderer.XtkPlane.prototype.dispose = function() {
     goog.base(this, 'dispose');
 
     goog.dispose(this.progTimer); 
     this.Renderer.destroy();
+
+    // prototype
+    this.isOn_ = null;
 
     delete this.XRenderer;
     delete this.container_;

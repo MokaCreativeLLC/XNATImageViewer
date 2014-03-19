@@ -137,18 +137,18 @@ moka.ui.Component.applyCssHierarchy = function(obj) {
 
 
 /**
- * @type {!string}
+ * @type {string}
  * @protected
  */  
-moka.ui.Component.prototype.iconBaseUrl = '';
+moka.ui.Component.prototype.iconBaseUrl;
 
 
 
 /**
- * @type {!string}
+ * @type {string}
  * @protected
  */  
-moka.ui.Component.prototype.iconUrl = '';
+moka.ui.Component.prototype.iconUrl ;
 
 
 
@@ -165,6 +165,14 @@ moka.ui.Component.prototype.currSize;
  * @protected
  */ 
 moka.ui.Component.prototype.currPos;
+
+
+/**
+ * @type {Array.<moka.ui.Component>}
+ * @public
+ */
+moka.ui.Component.prototype.subComponents_;
+
 
 
 
@@ -205,66 +213,6 @@ moka.ui.Component.prototype.getIconUrl = function() {
 
 
 
-
-/**
- * Creates the sub-components of the UI component.
- * @protected
- */
-moka.ui.Component.prototype.createSubComponents = function() {
-    // do nothing
-}
-
-
-
-/**
- * @type {Array.<moka.ui.Component>}
- * @public
- */
-moka.ui.Component.prototype.subComponents_;
-
-
-
-/**
- * @return {Array.<moka.ui.Component>)
- * @public
- */
-moka.ui.Component.prototype.getSubComponents = function(){
-    return this.subComponents_;
-}
-
- 
-
-/**
- * @param {Object} An objects constructor.
- * @return {Array.<moka.ui.Component>)
- * @public
- */
-moka.ui.Component.prototype.getSubComponentsByType = function(obj){
-    var arrObj = [];
-    goog.array.forEach( this.subComponents_, function(subC){
-	if (subC instanceof obj){
-	    arrObj.push(subC);
-	}
-    })
-    return arrObj;
-}
-
-
-
-
-/**
- * @param {!moka.ui.Component) subComponent
- * @public
- */
-moka.ui.Component.prototype.addSubComponent = function(subComponent){
-    this.subComponents_ = this.subComponents_ ? this.subComponents_ : [];
-    this.subComponents_.push(subComponent);
-    goog.dom.append(this.getElement(), subComponent.getElement());
-}
-
-
-
-
 /**
  * Generic function for style updates and resizing.
  * @protected
@@ -272,4 +220,20 @@ moka.ui.Component.prototype.addSubComponent = function(subComponent){
 moka.ui.Component.prototype.updateStyle = function() {
     this.currSize = goog.style.getSize(this.getElement());
     this.currPos = goog.style.getPosition(this.getElement());
+}
+
+
+
+
+/**
+ * @inheritDoc
+ */
+moka.ui.Component.prototype.disposeInternal = function() {
+    goog.base(this, 'disposeInternal');
+ 
+    this.iconBaseUrl = null;  
+    this.iconUrl = null; 
+    this.currSize = null;
+    this.currPos = null;
+    
 }

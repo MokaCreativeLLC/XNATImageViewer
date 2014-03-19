@@ -17,9 +17,9 @@ goog.require('moka.style');
 goog.require('moka.ui.ZipTabs');
 goog.require('moka.ui.SlideInMenu');
 
-
 // xiv
-goog.require('xiv.ui.layouts.LayoutHandler');
+goog.require('xiv.ui.ProgressBarPanel');
+goog.require('xiv.ui.LayoutHandler');
 goog.require('xiv.renderer.XtkEngine');
 //goog.require('xiv.ui.SlicerViewMenu');
 
@@ -31,7 +31,7 @@ goog.require('xiv.renderer.XtkEngine');
  * xiv.ui.ViewBox is also a communicator class in the sense that it gets
  * various interaction and visualization classes to talk to one another.  F
  * or instance, it links the moka.ui.SlideInMenu to the 
- * xiv.ui.layouts.LayoutHandler 
+ * xiv.ui.LayoutHandler 
  * to the xiv.ui.Displayer. 
  * @constructor
  * @extends {moka.ui.Component}
@@ -75,7 +75,7 @@ xiv.ui.ViewBox = function () {
 
 
     /**
-     * @type {?xiv.ui.layouts.LayoutHandler}
+     * @type {?xiv.ui.LayoutHandler}
      * @protected
      */
     this.LayoutHandler_ = null;
@@ -107,11 +107,27 @@ xiv.ui.ViewBox = function () {
 
 
     /**
+     * @type {xiv.ui.ProgressBarPanel}
+     * @private
+     */
+    this.ProgressBarPanel_ = null;
+
+
+
+    /**
+     * @type {!xiv.ui.SlicerViewMenu}
+     * @private
+     */
+    this.SlicerViewMenu_ = null;
+
+
+
+
+    /**
      * @type {!boolean}
      * @private
      */
     this.subComponentsInitialized_ = false;
-
 
 
     //window.console.log(resizable, resizable.getElement());
@@ -258,7 +274,7 @@ xiv.ui.ViewBox.prototype.getLoadState = function() {
 
 
 /**
- * @return {!xiv.ui.layouts.LayoutHandler} 
+ * @return {!xiv.ui.LayoutHandler} 
  * @public
  */
 xiv.ui.ViewBox.prototype.getLayoutHandler =  function() {
@@ -372,7 +388,7 @@ xiv.ui.ViewBox.prototype.setLayout = function(viewPlane) {
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
-    this.LayoutHandler_.showProgBarLayout(true);
+    //this.LayoutHandler_.showProgBarLayout(true);
 }
 
 
@@ -381,8 +397,101 @@ xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
  * As stated.
  * @private
  */
-xiv.ui.ViewBox.prototype.onRenderStart_ = function(e){
-    this.LayoutHandler_.updateProgBarLayout(e.pctComplete);
+xiv.ui.ViewBox.prototype.onRendering_ = function(e){
+    this.ProgressBarPanel_.setValue(e.percentComplete);
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
+    
+    goog.object.forEach(this.Renderer_.getPlanes(), function(plane, planeOr) {
+
+
+	if (planeOr !== 'V') {
+	    var layoutPlane = 
+		this.LayoutHandler_.getCurrentLayout().getPlaneByTitle(planeOr);
+
+	    var ch1 = goog.dom.createDom('div');
+	    ch1.style.position = 'absolute';
+	    ch1.style.height = '1px';
+	    ch1.style.width = '100%';
+	    ch1.style.top = '50%';
+	    ch1.style.left = '0%';
+	    ch1.style.backgroundColor = 'rgb(185,185,185)';
+
+
+	    var ch2 = goog.dom.createDom('div');
+	    ch2.style.position = 'absolute';
+	    ch2.style.height = '100%';
+	    ch2.style.width = '1px';
+	    ch2.style.top = '0%';
+	    ch2.style.left = '50%';
+	    ch2.style.backgroundColor = 'rgb(185,185,185)';
+
+	    goog.dom.append(layoutPlane.getElement(), ch1);
+	    goog.dom.append(layoutPlane.getElement(), ch2);
+	}
+
+	var interactors = this.LayoutHandler_.getCurrentLayout().
+		getPlaneInteractors(planeOr);
+
+	if (interactors[xiv.ui.Layout.INTERACTORS.SLIDER]){
+
+	    var slider = /**@type {!moka.ui.GenericSlider}*/
+	    interactors[xiv.ui.Layout.INTERACTORS.SLIDER];
+	    var currVol = plane.getVolume();
+	    
+	    var arrPos = 0;
+	    switch (planeOr){
+	    case 'X': 
+		arrPos = 2;
+		break;
+	    case 'Y': 
+		arrPos = 1;
+		break;
+	    case 'Z': 
+		arrPos = 0;
+		break;
+	    }
+	    slider.setMaximum(currVol.dimensions[arrPos])
+	    slider.setValue(currVol['index' + planeOr]);
+
+	    window.console.log(currVol['index' + planeOr], 
+			       currVol.indexX, currVol.indexY, currVol.indexZ);
+
+	    // Change Slice when slider moves
+	    goog.events.listen(
+		slider, 
+		moka.ui.GenericSlider.EventType.SLIDE, function(e){
+
+		    if (!currVol) return;
+
+		    currVol['index' + plane.getOrientation()] = 
+		    interactors[xiv.ui.Layout.INTERACTORS.SLIDER].getMaximum()
+		    - interactors[xiv.ui.Layout.INTERACTORS.SLIDER].getValue();
+
+		    window.console.log('\n\n');
+		    window.console.log(currVol._upperThreshold);
+		    window.console.log(plane.getRenderer()._height);
+		    window.console.log(plane.getRenderer()._width);
+		    window.console.log(plane.getRenderer()._context);
+		    window.console.log(plane.getRenderer()._frameBuffer);
+		    window.console.log(plane.getRenderer()._frameBufferContext);
+		    window.console.log(plane.getRenderer()._sliceHeight);
+		    window.console.log(plane.getRenderer()._sliceHeightSpacing);
+		    window.console.log(plane.getRenderer()._sliceWidth);
+		    window.console.log(plane.getRenderer()._sliceWidthSpacing);
+		    currVol.modified();
+		})
+
+	    // 
+	}
+
+    }.bind(this));
 }
 
 
@@ -392,21 +501,37 @@ xiv.ui.ViewBox.prototype.onRenderStart_ = function(e){
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
-    this.LayoutHandler_.hideProgBarLayout(true);
-    this.syncLayoutComponentsToRenderer_();
 
+    window.console.log("ON RENDER END");
+    this.hideProgressBarPanel_(500);
+
+    this.syncLayoutInteractorsToRenderer_();
+    
     goog.events.unlisten(this.Renderer_, 
-			 xiv.renderer.EventType.RENDER_START, 
+			 xiv.renderer.XtkEngine.EventType.RENDER_START, 
 			 this.onRenderStart_.bind(this));
 
     goog.events.unlisten(this.Renderer_, 
-			 xiv.renderer.EventType.RENDERING, 
+			 xiv.renderer.XtkEngine.EventType.RENDERING, 
 			 this.onRendering_.bind(this));
 
     goog.events.unlisten(this.Renderer_, 
-			 xiv.renderer.EventType.RENDER_END, 
+			 xiv.renderer.XtkEngine.EventType.RENDER_END, 
 			 this.onRenderEnd_.bind(this));
+
+
+    this.updateStyle();
     
+}
+
+
+
+/**
+ * As stated.
+ * @private
+ */
+xiv.ui.ViewBox.prototype.onLayoutResize_ = function(e){
+    this.updateStyle_Renderer_();
 }
 
 
@@ -435,7 +560,7 @@ xiv.ui.ViewBox.prototype.load = function (viewable) {
 					     'color': 'rgb(255,255,255)',
 					     'background': 'rgb(205,25,48)',
 					 }, 'Hello World 2.'))
-
+	this.showProgressBarPanel_(400);
     }
     if (!goog.array.contains(this.currViewables_, viewable)){
 	this.currViewables_.push(viewable);	
@@ -457,38 +582,38 @@ xiv.ui.ViewBox.prototype.load = function (viewable) {
 
     
     // Set plane containers
-    goog.object.forEach(this.Renderer_.getPlanes(), 
-	function(plane, key) { 
-	    var layoutPlane = this.LayoutHandler_.getCurrentLayoutPlane(key);
-	    //window.console.log("LAYOUT PLANE", layoutPlane, key);
-	    if (layoutPlane) {
-		plane.init(layoutPlane.getElement());
-	    }
-	}.bind(this))
+    goog.object.forEach(this.Renderer_.getPlanes(), function(plane, key) { 
+	var layoutPlane = this.LayoutHandler_.getCurrentLayoutPlane(key);
+	//window.console.log("LAYOUT PLANE", layoutPlane, key);
+	if (layoutPlane) {
+	    plane.init(layoutPlane.getElement());
+	}
+    }.bind(this))
 
 
     window.console.log(xiv.renderer.XtkEngine.getViewables(viewable['files']));
 
-
-    // Add to renderer
-    this.Renderer_.render(viewable['files']);
-
-    return;
-
     //
     goog.events.listen(this.Renderer_, 
-		       xiv.renderer.EventType.RENDER_START, 
+		       xiv.renderer.XtkEngine.EventType.RENDER_START, 
 		       this.onRenderStart_.bind(this));
 
     goog.events.listen(this.Renderer_, 
-		       xiv.renderer.EventType.RENDERING, 
+		       xiv.renderer.XtkEngine.EventType.RENDERING, 
 		       this.onRendering_.bind(this));
 
     goog.events.listen(this.Renderer_, 
-		       xiv.renderer.EventType.RENDER_END, 
+		       xiv.renderer.XtkEngine.EventType.RENDER_END, 
 		       this.onRenderEnd_.bind(this));
 
 
+    goog.events.listen(this.LayoutHandler_, 
+		       xiv.ui.LayoutHandler.EventType.RESIZE, 
+		       this.onLayoutResize_.bind(this));
+
+
+    // Add to renderer
+    this.Renderer_.render(viewable['files']);
 
     // Remember the time in which the thumbnail was loaded
     this.thumbLoadTime_ = (new Date()).getTime();    
@@ -571,6 +696,8 @@ xiv.ui.ViewBox.prototype.loadTabs_Controllers_ = function() {
  * @inheritDoc
  */
 xiv.ui.ViewBox.prototype.initSubComponents_ = function() {
+
+    
     this.initZipTabs_();
     this.initLayoutMenu_();
     this.initLayoutHandler_();
@@ -578,8 +705,65 @@ xiv.ui.ViewBox.prototype.initSubComponents_ = function() {
     
     //this.initSlicerViewMenu_();
     this.initRenderer_();
+    this.initProgressBarPanel_();
+
 
     this.subComponentsInitialized_ = true;
+}
+
+
+
+/**
+* As stated.
+ * @param {number=} opt_fadeTime The optional fade time.  Defaults to 0;
+* @private
+*/
+xiv.ui.ViewBox.prototype.showProgressBarPanel_ = function(opt_fadeTime){
+    opt_fadeTime = (goog.isNumber(opt_fadeTime) && opt_fadeTime >=0) ? 
+	opt_fadeTime : 0;
+    this.ProgressBarPanel_.getElement().style.opacity = '0';
+    this.ProgressBarPanel_.getElement().style.visibility = 'visible';
+    if (opt_fadeTime == 0) { 
+	this.ProgressBarPanel_.getElement().style.opacity = '1';
+	return;
+    } 
+    moka.fx.fadeIn(this.ProgressBarPanel_.getElement(), opt_fadeTime);
+}
+
+
+
+/**
+* As stated.
+ * @param {number=} opt_fadeTime The optional fade time.  Defaults to 0;
+* @private
+*/
+xiv.ui.ViewBox.prototype.hideProgressBarPanel_ = function(opt_fadeTime){
+    opt_fadeTime = (goog.isNumber(opt_fadeTime) && opt_fadeTime >=0) ? 
+	opt_fadeTime : 0;
+    this.ProgressBarPanel_.getElement().style.opacity = '1';
+    this.ProgressBarPanel_.getElement().style.visibility = 'visible';
+    if (opt_fadeTime == 0) { 
+	this.ProgressBarPanel_.getElement().style.visibility = 'hidden';
+	return;
+    } 
+    moka.fx.fadeOut(this.ProgressBarPanel_.getElement(), opt_fadeTime, 
+	function(){
+	    this.ProgressBarPanel_.getElement().style.visibility = 'hidden';
+	}.bind(this));
+}
+
+
+
+
+/**
+* As stated.
+* @private
+*/
+xiv.ui.ViewBox.prototype.initProgressBarPanel_ = function(){
+    this.ProgressBarPanel_ = new xiv.ui.ProgressBarPanel(); 
+    goog.dom.append(this.viewFrameElt_, this.ProgressBarPanel_.getElement());
+    this.ProgressBarPanel_.getElement().style.zIndex = 100000;
+    this.ProgressBarPanel_.setLabel('Loading:', true);
 }
 
 
@@ -689,7 +873,7 @@ xiv.ui.ViewBox.prototype.initLayoutMenu_ = function(){
 * @private
 */
 xiv.ui.ViewBox.prototype.initLayoutHandler_ = function(){
-    this.LayoutHandler_ = new xiv.ui.layouts.LayoutHandler();
+    this.LayoutHandler_ = new xiv.ui.LayoutHandler();
     goog.dom.append(this.viewFrameElt_, this.LayoutHandler_.getElement());
     goog.dom.classes.add(this.LayoutHandler_.getElement(), 
 			 xiv.ui.ViewBox.CSS.VIEWLAYOUTHANDLER);
@@ -708,27 +892,27 @@ xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
     // Add object and title to LayoutHandler
     goog.object.forEach({
 	'Sagittal': {
-	    OBJ: xiv.ui.layouts.Sagittal,
+	    OBJ: xiv.ui.Sagittal,
 	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/sagittal.png'
 	},
 	'Coronal': {
-	    OBJ: xiv.ui.layouts.Coronal,
+	    OBJ: xiv.ui.Coronal,
 	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/coronal.png'
 	},
 	'Transverse': {
-	    OBJ: xiv.ui.layouts.Transverse,
+	    OBJ: xiv.ui.Transverse,
 	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/transverse.png'
 	},
 	'3d': {
-	    OBJ: xiv.ui.layouts.ThreeD,
+	    OBJ: xiv.ui.ThreeD,
 	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/3d.png'
 	},
 	'Four-Up': {
-	    OBJ: xiv.ui.layouts.FourUp,
+	    OBJ: xiv.ui.FourUp,
 	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/four-up.png'
 	},
 	'Conventional': {
-	    OBJ: xiv.ui.layouts.Conventional,
+	    OBJ: xiv.ui.Conventional,
 	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/conventional.png'
 	},
     }, function(val, key){
@@ -761,10 +945,6 @@ xiv.ui.ViewBox.prototype.onMenuItemSelected_ = function(e) {
 * @private
 */
 xiv.ui.ViewBox.prototype.initSlicerViewMenu_ = function(){
-    /**
-     * @type {!xiv.ui.SlicerViewMenu}
-     * @private
-     */
     this.SlicerViewMenu_ = new xiv.ui.SlicerViewMenu(this);
     goog.dom.append(this.getElement(), this.SlicerViewMenu_.getElement());
 }
@@ -836,28 +1016,6 @@ xiv.ui.ViewBox.prototype.setTabsEvents_ = function () {
 
 
 
-/**
- * Callback for when the displayer is loaded.
- * @private
- */
-xiv.ui.ViewBox.prototype.onDisplayerLoaded_ = function(){
-    this.loadState_ = 'loaded';
-
-    if (this.getElement().hasAttribute('originalbordercolor')){
-	this.getElement().style.borderColor = 
-	    this.getElement().getAttribute('originalbordercolor');
-    }
-    window.console.log("HERE", this.Displayer_.getLayout());
-    this.LayoutMenu_.setLayout(this.Displayer_.getLayout());
-    this.showChildElements_();
-    this.loadTabs_();
-
-    // Thumbnail loaded callbacks
-    this.dispatchEvent({
-	type: xiv.ui.ViewBox.EventType.THUMBNAIL_LOADED
-    })
-}
-
 
 
 /**
@@ -918,6 +1076,8 @@ xiv.ui.ViewBox.prototype.updateStyle_ZipTabs_ = function () {
     //this.ZipTabs_.getResizable().showBoundaryElt();
     //this.ZipTabs_.deactivateAll();
     this.ZipTabs_.updateStyle();
+    this.updateStyle_LayoutHandler_();
+    this.updateStyle_Renderer_();
 }
 
 
@@ -949,6 +1109,7 @@ xiv.ui.ViewBox.prototype.updateStyle_LayoutHandler_ = function () {
  */
 xiv.ui.ViewBox.prototype.updateStyle_Renderer_ = function () {
     if (!this.Renderer_) { return };
+    this.Renderer_.updateStyle();
 }
 
 
@@ -961,15 +1122,27 @@ xiv.ui.ViewBox.prototype.updateStyle_Renderer_ = function () {
 xiv.ui.ViewBox.prototype.disposeInternal = function () {
     goog.base(this, 'disposeInternal');
 
+    // Unlisten - Layout Handler
+    goog.events.unlisten(this.LayoutHandler_, 
+		       xiv.ui.LayoutHandler.EventType.RESIZE, 
+		       this.onLayoutResize_.bind(this));
+
+
     // Unlisten - LayoutMenu 
     goog.events.unlisten(this.LayoutMenu_, 
 	moka.ui.SlideInMenu.EventType.ITEM_SELECTED, 
 		       this.onMenuItemSelected_.bind(this));
 
     // Unlisten - Tabs
-   goog.events.listen(this.ZipTabs_.getResizable(), 
+   goog.events.unlisten(this.ZipTabs_.getResizable(), 
 		       moka.ui.Resizable.EventType.RESIZE,
 		       this.onTabsResize_.bind(this));
+
+
+    this.ProgressBarPanel_.disposeInternal();
+    delete this.ProgressBarPanel_;
+
+
 
     // Layout Handler
     goog.dispose(this.LayoutHandler_.disposeInternal());
@@ -997,6 +1170,7 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
 	this.meus_[key] = null;
     })
     delete this.menus_;
+
 
     // Primitive types
     delete this.currViewables_;

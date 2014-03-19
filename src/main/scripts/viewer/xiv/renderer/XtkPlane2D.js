@@ -4,20 +4,20 @@
  */
 
 // xtk
-goog.require('X.renderer2D');
+goog.require('xiv.renderer.XtkRenderer2D');
 
 
 /**
  * @constructor
  * @param {!string} orientation The plane orientation.
- * @extends {xiv.renderer.Plane}
+ * @extends {xiv.renderer.XtkPlane}
  */
 goog.provide('xiv.renderer.XtkPlane2D');
 xiv.renderer.XtkPlane2D = function (orientation) {
     goog.base(this);
 
     this.orientation = orientation;
-    this.XRenderer = X.renderer2D;
+    this.XRenderer = xiv.renderer.XtkRenderer2D;
 
     /**
      * @private
@@ -27,6 +27,15 @@ xiv.renderer.XtkPlane2D = function (orientation) {
 }
 goog.inherits(xiv.renderer.XtkPlane2D, xiv.renderer.XtkPlane);
 goog.exportSymbol('xiv.renderer.XtkPlane2D', xiv.renderer.XtkPlane2D);
+
+
+
+/**
+ * @public
+ */
+xiv.renderer.XtkPlane2D.prototype.getVolume = function() {
+    return this.Renderer.getVolume();
+}
 
 
 

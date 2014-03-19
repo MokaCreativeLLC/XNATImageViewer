@@ -10,23 +10,23 @@ goog.require('goog.array');
 goog.require('moka.string');
 
 // xiv
-goog.require('xiv.ui.layouts.Layout');
-goog.require('xiv.ui.layouts.XyzvLayout');
+goog.require('xiv.ui.Layout');
+goog.require('xiv.ui.XyzvLayout');
 
 
 
 /**
- * xiv.ui.layouts.Conventional
+ * xiv.ui.Conventional
  *
  * @constructor
- * @extends {xiv.ui.layouts.XyzvLayout}
+ * @extends {xiv.ui.XyzvLayout}
  */
-goog.provide('xiv.ui.layouts.Conventional');
-xiv.ui.layouts.Conventional = function() { 
+goog.provide('xiv.ui.Conventional');
+xiv.ui.Conventional = function() { 
     goog.base(this); 
 }
-goog.inherits(xiv.ui.layouts.Conventional, xiv.ui.layouts.XyzvLayout);
-goog.exportSymbol('xiv.ui.layouts.Conventional', xiv.ui.layouts.Conventional);
+goog.inherits(xiv.ui.Conventional, xiv.ui.XyzvLayout);
+goog.exportSymbol('xiv.ui.Conventional', xiv.ui.Conventional);
 
 
 
@@ -34,7 +34,7 @@ goog.exportSymbol('xiv.ui.layouts.Conventional', xiv.ui.layouts.Conventional);
  * @type {!string}
  * @public
  */
-xiv.ui.layouts.Conventional.TITLE = 'Conventional';
+xiv.ui.Conventional.TITLE = 'Conventional';
 
 
 
@@ -43,7 +43,7 @@ xiv.ui.layouts.Conventional.TITLE = 'Conventional';
  * @enum {string}
  * @public
  */
-xiv.ui.layouts.Conventional.EventType = {
+xiv.ui.Conventional.EventType = {
 }
 
 
@@ -53,7 +53,7 @@ xiv.ui.layouts.Conventional.EventType = {
  * @const
  * @expose
  */
-xiv.ui.layouts.Conventional.ID_PREFIX =  'xiv.ui.layouts.Conventional';
+xiv.ui.Conventional.ID_PREFIX =  'xiv.ui.Conventional';
 
 
 
@@ -61,7 +61,7 @@ xiv.ui.layouts.Conventional.ID_PREFIX =  'xiv.ui.layouts.Conventional';
  * @enum {string}
  * @public
  */
-xiv.ui.layouts.Conventional.CSS_SUFFIX = {
+xiv.ui.Conventional.CSS_SUFFIX = {
     X: 'x',
     Y: 'y',
     Z: 'z',
@@ -74,7 +74,7 @@ xiv.ui.layouts.Conventional.CSS_SUFFIX = {
  * @type {!number} 
  * @const
  */
-xiv.ui.layouts.Conventional.MAX_PLANE_RESIZE_PCT = .9;
+xiv.ui.Conventional.MAX_PLANE_RESIZE_PCT = .9;
 
 
 
@@ -82,18 +82,18 @@ xiv.ui.layouts.Conventional.MAX_PLANE_RESIZE_PCT = .9;
  * @type {!number} 
  * @private
  */
-xiv.ui.layouts.Conventional.prototype.bottomPlaneWidth_ = 0;
+xiv.ui.Conventional.prototype.bottomPlaneWidth_ = 0;
 
 
 
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.Conventional.prototype.setupPlane_X = function(){
+xiv.ui.Conventional.prototype.setupPlane_X = function(){
     goog.base(this, 'setupPlane_X');
     
     goog.dom.classes.add(this.Planes['X'].getElement(), 
-			 xiv.ui.layouts.Conventional.CSS.X);
+			 xiv.ui.Conventional.CSS.X);
 
     this.Planes['X'].setResizeDirections(['RIGHT', 'TOP_RIGHT']);
 
@@ -114,11 +114,11 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_X = function(){
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.Conventional.prototype.setupPlane_Y = function(){
+xiv.ui.Conventional.prototype.setupPlane_Y = function(){
     goog.base(this, 'setupPlane_Y');
 
     goog.dom.classes.add(this.Planes['Y'].getElement(), 
-			 xiv.ui.layouts.Conventional.CSS.Y);
+			 xiv.ui.Conventional.CSS.Y);
     this.Planes['Y'].setResizeDirections(['RIGHT', 'TOP_RIGHT']);
 
     this.Planes['Y'].getResizable().getDragElt('RIGHT').style.cursor =  
@@ -137,10 +137,10 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_Y = function(){
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.Conventional.prototype.setupPlane_Z = function(){
+xiv.ui.Conventional.prototype.setupPlane_Z = function(){
     goog.base(this, 'setupPlane_Z');
     goog.dom.classes.add(this.Planes['Z'].getElement(), 
-			 xiv.ui.layouts.Conventional.CSS.Z);
+			 xiv.ui.Conventional.CSS.Z);
 }
 
 
@@ -148,10 +148,10 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_Z = function(){
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.Conventional.prototype.setupPlane_V = function(){
+xiv.ui.Conventional.prototype.setupPlane_V = function(){
     goog.base(this, 'setupPlane_V');
     goog.dom.classes.add(this.Planes['V'].getElement(), 
-			 xiv.ui.layouts.Conventional.CSS.V);
+			 xiv.ui.Conventional.CSS.V);
 
     this.Planes['V'].setResizeDirections(['BOTTOM']);
 
@@ -173,7 +173,7 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_V = function(){
  * @override
  * @param {!Event} e
  */
-xiv.ui.layouts.Conventional.prototype.onPlaneResize_X = function(e){
+xiv.ui.Conventional.prototype.onPlaneResize_X = function(e){
 
     this.bottomPlaneWidth_ = (this.currSize.width - e.size.width) / 2;
 
@@ -205,7 +205,7 @@ xiv.ui.layouts.Conventional.prototype.onPlaneResize_X = function(e){
  * @override
  * @param {!Event} e
  */
-xiv.ui.layouts.Conventional.prototype.onPlaneResize_Y = function(e){
+xiv.ui.Conventional.prototype.onPlaneResize_Y = function(e){
 
     this.bottomPlaneWidth_ = (this.currSize.width - e.size.width) / 2;
 
@@ -237,7 +237,7 @@ xiv.ui.layouts.Conventional.prototype.onPlaneResize_Y = function(e){
  * @override
  * @param {!Event} e
  */
-xiv.ui.layouts.Conventional.prototype.onPlaneResize_V = function(e){
+xiv.ui.Conventional.prototype.onPlaneResize_V = function(e){
     //window.console.log(this.Planes['V'].getResizable().getMinHeight());
     goog.object.forEach(this.Planes, function(plane){
 	if (plane === this.Planes['V']) {return};
@@ -254,7 +254,7 @@ xiv.ui.layouts.Conventional.prototype.onPlaneResize_V = function(e){
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.Conventional.prototype.updateStyle_X = function() {
+xiv.ui.Conventional.prototype.updateStyle_X = function() {
     this.Planes['X'].getResizable().setMinHeight(this.resizeMargin);
     this.Planes['X'].getResizable().setMinWidth(this.resizeMargin);
     this.Planes['X'].getResizable().setBounds(
@@ -269,7 +269,7 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_X = function() {
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.Conventional.prototype.updateStyle_Y = function() {
+xiv.ui.Conventional.prototype.updateStyle_Y = function() {
     window.console.log(this.Planes);
     this.Planes['Y'].getResizable().setMinHeight(this.resizeMargin);
     this.Planes['Y'].getResizable().setMinWidth(this.resizeMargin);
@@ -286,16 +286,16 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_Y = function() {
 /**
 * @private
 */
-xiv.ui.layouts.Conventional.prototype.updateStyle_V = function() {
+xiv.ui.Conventional.prototype.updateStyle_V = function() {
     this.Planes['V'].getResizable().setMinHeight(
 	this.currSize.height * 
-	    (1-xiv.ui.layouts.Conventional.MAX_PLANE_RESIZE_PCT));
+	    (1-xiv.ui.Conventional.MAX_PLANE_RESIZE_PCT));
 
     this.Planes['V'].getResizable().setBounds(
 	0, 0, // topLeft X, topLeft Y
 	this.currSize.width, // botRight X
 	this.currSize.height * 
-	    xiv.ui.layouts.Conventional.MAX_PLANE_RESIZE_PCT);// botRightY
+	    xiv.ui.Conventional.MAX_PLANE_RESIZE_PCT);// botRightY
 
     //this.Planes['V'].getResizable().showBoundaryElt();
 }
@@ -305,6 +305,6 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_V = function() {
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.Conventional.prototype.disposeInternal = function() {
+xiv.ui.Conventional.prototype.disposeInternal = function() {
 
 }

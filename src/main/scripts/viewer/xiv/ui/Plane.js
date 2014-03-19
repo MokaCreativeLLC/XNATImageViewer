@@ -15,7 +15,7 @@ goog.require('moka.ui.Resizable');
 
 
 /**
- * xiv.ui.layouts.Plane
+ * xiv.ui.Plane
  *
  * @constructor
  * @param {!string} title The title of the plane.
@@ -23,8 +23,8 @@ goog.require('moka.ui.Resizable');
  * if otherwise.
  * @extends {moka.ui.Component}
  */
-goog.provide('xiv.ui.layouts.Plane');
-xiv.ui.layouts.Plane = function(title, opt_resizeDirs) {
+goog.provide('xiv.ui.Plane');
+xiv.ui.Plane = function(title, opt_resizeDirs) {
     goog.base(this);
     
     /**
@@ -33,8 +33,8 @@ xiv.ui.layouts.Plane = function(title, opt_resizeDirs) {
      */
     this.title_ = title;
 }
-goog.inherits(xiv.ui.layouts.Plane, moka.ui.Component);
-goog.exportSymbol('xiv.ui.layouts.Plane', xiv.ui.layouts.Plane);
+goog.inherits(xiv.ui.Plane, moka.ui.Component);
+goog.exportSymbol('xiv.ui.Plane', xiv.ui.Plane);
 
 
 
@@ -43,7 +43,7 @@ goog.exportSymbol('xiv.ui.layouts.Plane', xiv.ui.layouts.Plane);
  * @enum {string}
  * @public
  */
-xiv.ui.layouts.Plane.EventType = {
+xiv.ui.Plane.EventType = {
 }
 
 
@@ -53,7 +53,7 @@ xiv.ui.layouts.Plane.EventType = {
  * @const
  * @expose
  */
-xiv.ui.layouts.Plane.ID_PREFIX =  'xiv.ui.layouts.Plane';
+xiv.ui.Plane.ID_PREFIX =  'xiv.ui.Plane';
 
 
 
@@ -61,14 +61,14 @@ xiv.ui.layouts.Plane.ID_PREFIX =  'xiv.ui.layouts.Plane';
  * @enum {string}
  * @public
  */
-xiv.ui.layouts.Plane.CSS_SUFFIX = {}
+xiv.ui.Plane.CSS_SUFFIX = {}
 
 
 
 /**
  * @return {!string}
  */
-xiv.ui.layouts.Plane.prototype.getTitle = function(){
+xiv.ui.Plane.prototype.getTitle = function(){
     return this.title_
 }
 
@@ -78,7 +78,7 @@ xiv.ui.layouts.Plane.prototype.getTitle = function(){
  * @type {moka.ui.Resizable}
  * @private
  */
-xiv.ui.layouts.Plane.prototype.Resizable_ = null;
+xiv.ui.Plane.prototype.Resizable_ = null;
 
 
 
@@ -86,7 +86,7 @@ xiv.ui.layouts.Plane.prototype.Resizable_ = null;
  * @type {!boolean}
  * @private
  */
-xiv.ui.layouts.Plane.prototype.isResizable_ = false;
+xiv.ui.Plane.prototype.isResizable_ = false;
 
 
 
@@ -94,7 +94,7 @@ xiv.ui.layouts.Plane.prototype.isResizable_ = false;
  * @return {moka.ui.Resizable)
  * @public
  */
-xiv.ui.layouts.Plane.prototype.getResizable = function(opt_resizeDirs){
+xiv.ui.Plane.prototype.getResizable = function(opt_resizeDirs){
     return this.Resizeable_;
 }
 
@@ -106,7 +106,7 @@ xiv.ui.layouts.Plane.prototype.getResizable = function(opt_resizeDirs){
  *    Defaults to the resizeable defaults.
  * @public
  */
-xiv.ui.layouts.Plane.prototype.setResizeDirections = 
+xiv.ui.Plane.prototype.setResizeDirections = 
 function(opt_resizeDirs){
     this.Resizeable_ = this.Resizeable_ ? this.Resizeable_ : 
 	new moka.ui.Resizable(this.getElement());
