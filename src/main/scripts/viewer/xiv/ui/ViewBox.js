@@ -469,23 +469,39 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 		moka.ui.GenericSlider.EventType.SLIDE, function(e){
 
 		    if (!currVol) return;
-
+		    /**
 		    currVol['index' + plane.getOrientation()] = 
 		    interactors[xiv.ui.Layout.INTERACTORS.SLIDER].getMaximum()
 		    - interactors[xiv.ui.Layout.INTERACTORS.SLIDER].getValue();
 
-		    window.console.log('\n\n');
+		    window.console.log('\n\n', planeOr);
 		    window.console.log(currVol._upperThreshold);
-		    window.console.log(plane.getRenderer()._height);
-		    window.console.log(plane.getRenderer()._width);
-		    window.console.log(plane.getRenderer()._context);
-		    window.console.log(plane.getRenderer()._frameBuffer);
-		    window.console.log(plane.getRenderer()._frameBufferContext);
-		    window.console.log(plane.getRenderer()._sliceHeight);
-		    window.console.log(plane.getRenderer()._sliceHeightSpacing);
-		    window.console.log(plane.getRenderer()._sliceWidth);
-		    window.console.log(plane.getRenderer()._sliceWidthSpacing);
-		    currVol.modified();
+		    window.console.log(planeOr, plane.getRenderer()._height);
+		    window.console.log(planeOr, plane.getRenderer()._width);
+		    window.console.log(planeOr, 
+				       plane.getRenderer()._sliceHeight);
+		    window.console.log(planeOr, plane.getRenderer()._sliceWidth);
+
+		    currVol.dimensions[arrPos];
+		    */
+		    switch (planeOr){
+		    case 'X': 
+			/**
+			planeYInteractors[
+			    xiv.ui.Layout.INTERACTORS.CROSSHAIR_VERTICAL].
+			    style.left = (
+				renderPlaneY.volume.WHRatio (
+				    Ratio 160 x 256) translated to 
+				planeY.max
+
+			    )
+			    */
+			break;
+		    case 'Y': 
+			break;
+		    case 'Z': 
+			break;
+		    }
 		})
 
 	    // 
@@ -1122,54 +1138,70 @@ xiv.ui.ViewBox.prototype.updateStyle_Renderer_ = function () {
 xiv.ui.ViewBox.prototype.disposeInternal = function () {
     goog.base(this, 'disposeInternal');
 
-    // Unlisten - Layout Handler
-    goog.events.unlisten(this.LayoutHandler_, 
-		       xiv.ui.LayoutHandler.EventType.RESIZE, 
-		       this.onLayoutResize_.bind(this));
-
-
-    // Unlisten - LayoutMenu 
-    goog.events.unlisten(this.LayoutMenu_, 
-	moka.ui.SlideInMenu.EventType.ITEM_SELECTED, 
-		       this.onMenuItemSelected_.bind(this));
-
-    // Unlisten - Tabs
-   goog.events.unlisten(this.ZipTabs_.getResizable(), 
-		       moka.ui.Resizable.EventType.RESIZE,
-		       this.onTabsResize_.bind(this));
-
-
-    this.ProgressBarPanel_.disposeInternal();
-    delete this.ProgressBarPanel_;
-
-
 
     // Layout Handler
-    goog.dispose(this.LayoutHandler_.disposeInternal());
-    delete this.LayoutHandler_;
+    if (goog.isDefAndNotNull(this.LayoutHandler_)){
+    // Unlisten - Layout Handler
+	goog.events.unlisten(this.LayoutHandler_, 
+			     xiv.ui.LayoutHandler.EventType.RESIZE, 
+			     this.onLayoutResize_.bind(this));
+	
+	goog.dispose(this.LayoutHandler_.disposeInternal());
+	delete this.LayoutHandler_;
+    }
+
 
     // LayoutMenu
-    goog.dispose(this.LayoutMenu_.disposeInternal());
-    delete this.LayoutMenu_;
+    if (goog.isDefAndNotNull(this.LayoutMenu_)){
+	// Unlisten - LayoutMenu 
+	goog.events.unlisten(this.LayoutMenu_, 
+			     moka.ui.SlideInMenu.EventType.ITEM_SELECTED, 
+			     this.onMenuItemSelected_.bind(this));
+	
+	goog.dispose(this.LayoutMenu_.disposeInternal());
+	delete this.LayoutMenu_;
+    }
+	
 
     // ZipTabs
-    goog.dispose(this.ZipTabs_.disposeInternal());
-    delete this.ZipTabs_;
+    if (goog.isDefAndNotNull(this.ZipTabs_)){
+	// Unlisten - Tabs
+	goog.events.unlisten(this.ZipTabs_.getResizable(), 
+			     moka.ui.Resizable.EventType.RESIZE,
+			     this.onTabsResize_.bind(this));
+	
+	goog.dispose(this.ZipTabs_.disposeInternal());
+	delete this.ZipTabs_;
+    }
+
+
+    // Progress Bar Panel
+    if (goog.isDefAndNotNull(this.ProgressBarPanel_)){
+	this.ProgressBarPanel_.disposeInternal();
+	delete this.ProgressBarPanel_;
+    }
+
 
     // Renderer
-    this.Renderer_.dispose();
-    delete this.Renderer_();
+    if (goog.isDefAndNotNull(this.Renderer_)){
+	
+	this.Renderer_.dispose();
+	delete this.Renderer_();
+    }
   
+
     // Elements - viewFrame
-    goog.dom.remove(this.viewFrameElt_);
+    goog.dom.removeNode(this.viewFrameElt_);
     delete this.viewFrameElt_;
+
 
     // Elements - menus
     goog.object.forEach(this.menus_, function(menu, key){
-	goog.dom.remove(menu);
-	this.meus_[key] = null;
-    })
+	goog.dom.removeNode(menu);
+	delete this.menus_[key];
+    }.bind(this))
     delete this.menus_;
+
 
 
     // Primitive types

@@ -17,7 +17,6 @@ goog.require('goog.fx.AnimationParallelQueue');
 goog.require('moka.string');
 goog.require('moka.style');
 goog.require('moka.fx');
-goog.require('moka.events.EventManager');
 
 // xiv
 goog.require('xiv.ui.ViewBox');
@@ -143,6 +142,12 @@ xiv.ui.ViewBoxHandler.prototype.ViewBoxPositions_;
  */
 xiv.ui.ViewBoxHandler.prototype.dragDropGroup_;
 
+
+/**
+ * @type {goog.fx.DragDropGroup}
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.dragDropTargets_
 
 
 /**
@@ -327,15 +332,11 @@ xiv.ui.ViewBoxHandler.prototype.removeColumn = function(opt_animate) {
 	    moka.fx.fadeTo(ViewBox[rowLen].getElement(), 
 			    xiv.ui.ViewBoxHandler.ANIM_FAST, 0);
 
-	    // Remove the drag drop handles
-	    var dragDropHandle = /**@type {!Element}*/ this.dragDropHandles_[
-		ViewBox[rowLen].getElement().id];
-	    dragDropHandle.parentNode.removeChild(dragDropHandle);
-	    delete dragDropHandle;
+	    goog.dom.removeNode(this.dragDropHandles_[
+		ViewBox[rowLen].getElement().id]);
 
 	    // Remove the xiv.ui.ViewBox
-	    ViewBox[rowLen].getElement().parentNode.removeChild(
-		ViewBox[rowLen].getElement());
+	    ViewBox.disposeInternal();
 	    ViewBox.splice(rowLen, 1);		
 	}.bind(this))
     }
@@ -401,13 +402,10 @@ xiv.ui.ViewBoxHandler.prototype.removeRow = function(opt_animate) {
 	goog.array.forEach(delRow, function(currDelViewBox) { 
 	    moka.fx.fadeTo(currDelViewBox.getElement(), 
 			    xiv.ui.ViewBoxHandler.ANIM_FAST, 0);
-	    currDelViewBox.getElement().parentNode.removeChild(
-		currDelViewBox.getElement());
+	    currDelViewBox.disposeInternal();
 	    // Remove the drag drop handles
-	    var dragDropHandle = /**@type {!Element}*/ this.dragDropHandles_[
-		currDelViewBox.getElement().id];
-	    dragDropHandle.parentNode.removeChild(dragDropHandle);
-	    delete dragDropHandle;
+	    goog.dom.removeNode(this.dragDropHandles_[
+		currDelViewBox.getElement().id]);
 	}.bind(this))
 	this.ViewBoxes_.splice(this.ViewBoxes_.length -1, 1);
     }
@@ -556,6 +554,39 @@ xiv.ui.ViewBoxHandler.prototype.addDragDropHandle_ = function(ViewBox) {
 }
 
 
+/**
+ * @param {Event} e
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.onThumbnailLoaded_ = function(e){
+    this.dispatchEvent({
+	type: xiv.ui.ViewBoxHandler.EventType.THUMBNAIL_LOADED
+    })
+}
+
+
+/**
+ * @param {Event} e
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.onThumbnailPreload_ = function(e){
+    this.dispatchEvent({
+	type: xiv.ui.ViewBoxHandler.EventType.THUMBNAIL_PRELOAD
+    })
+}
+
+
+/**
+ * @param {Event} e
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.onThumbnailLoadError_ = function(e){
+    this.dispatchEvent({
+	type: xiv.ui.ViewBoxHandler.EventType.THUMBNAIL_LOADERROR
+    })
+}
+
+
 
 /**
  * @param {xiv.ui.ViewBox} ViewBox
@@ -565,27 +596,15 @@ xiv.ui.ViewBoxHandler.prototype.setViewBoxEvents_ = function(ViewBox) {
 
     // Onload
     goog.events.listen(ViewBox, xiv.ui.ViewBox.EventType.THUMBNAIL_LOADED, 
-	function(e){
-	    this.dispatchEvent({
-		type: xiv.ui.ViewBoxHandler.EventType.THUMBNAIL_LOADED
-	    })
-	}.bind(this))
+	this.onThumbnailLoaded_.bind(this))
    
     // Preload
     goog.events.listen(ViewBox, xiv.ui.ViewBox.EventType.THUMBNAIL_PRELOAD, 
-	function(e){
-	    this.dispatchEvent({
-		type: xiv.ui.ViewBoxHandler.EventType.THUMBNAIL_PRELOAD
-	    })
-	}.bind(this))
+	this.onThumbnailPreload_.bind(this))
 
     // Error
     goog.events.listen(ViewBox, xiv.ui.ViewBox.EventType.THUMBNAIL_LOADERROR, 
-	function(e){
-	    this.dispatchEvent({
-		type: xiv.ui.ViewBoxHandler.EventType.THUMBNAIL_LOADERROR
-	    })
-	}.bind(this))
+	this.onThumbnailLoadError_.bind(this))
 }
 
 
@@ -1072,8 +1091,7 @@ function(draggerClone, srcViewBoxDims){
 
     // When animation finishes, delete the draggerClone.
     goog.events.listen(animQueue, 'end', function() {
-	draggerClone.parentNode.removeChild(draggerClone); 
-	delete draggerClone;
+	goog.dom.removeNode(draggerClone); 
     })
     
     return animQueue;
@@ -1090,4 +1108,56 @@ xiv.ui.ViewBoxHandler.prototype.showDragDropHandles_ = function(){
 	this.dragDropHandles_[ViewBox.getElement().id].style.visibility = 
 	    'visible';	
     }.bind(this))
+}
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.ui.ViewBoxHandler.prototype.disposeInternal = function() {
+    goog.base(this, 'disposeInternal');
+
+
+    this.loop(function(ViewBox){
+	// Onload
+	goog.events.unlisten(ViewBox, xiv.ui.ViewBox.EventType.THUMBNAIL_LOADED, 
+			     this.onThumbnailLoaded_.bind(this))
+	
+	// Preload
+	goog.events.unlisten(ViewBox, xiv.ui.ViewBox.EventType.THUMBNAIL_PRELOAD, 
+			     this.onThumbnailPreload_.bind(this))
+
+	// Error
+	goog.events.unlisten(ViewBox, xiv.ui.ViewBox.EventType.THUMBNAIL_LOADERROR, 
+			     this.onThumbnailLoadError_.bind(this))
+    }.bind(this))
+
+
+    // Drag Drop events
+    goog.events.unlisten(this.dragDropGroup_, 'dragstart', 
+		       this.onDragStart_.bind(this));
+    goog.events.unlisten(this.dragDropGroup_, 'dragover', 
+		       this.onDragOver_.bind(this));
+    goog.events.unlisten(this.dragDropGroup_, 'dragend', 
+		       this.onDragEnd_.bind(this));
+
+
+
+    this.loop(function(ViewBox){
+	ViewBox.disposeInternal();
+	goog.dom.removeNode(this.dragDropHandles_[ViewBox.getElement().id]);
+	goog.dom.removeNode(ViewBox.getElement());
+    }.bind(this));
+
+    this.ViewBoxes_ = null;
+    this.dragDropHandles_ = null;
+    this.ViewBoxPositions_ = null;
+	
+    if (this.dragDropGroup_) {
+	this.dragDropGroup_.dispose();
+	this.dragDropTargets_.dispose();
+    }
+    this.dragDropGroup_ = null;
+    this.ViewBoxesParent_ = null;
 }

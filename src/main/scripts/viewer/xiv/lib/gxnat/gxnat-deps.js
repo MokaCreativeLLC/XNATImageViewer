@@ -4,17 +4,17 @@ goog.addDependency('../../../gxnat/gxnat.js', ['gxnat'], [
 'moka.dom',
 'moka.array',
 'gxnat.Viewable',
-'gxnat.Viewable.Scan',
-'gxnat.Viewable.Slicer'
+'gxnat.Scan',
+'gxnat.Slicer'
 ]);
 
 
-goog.addDependency('../../../gxnat/Path/Path.js', 
+goog.addDependency('../../../gxnat/Path.js', 
 ['gxnat.Path'], 
 []);
 
 
-goog.addDependency('../../../gxnat/ProjectTree/ProjectTree.js', 
+goog.addDependency('../../../gxnat/ProjectTree.js', 
 ['gxnat.ProjectTree'], [
 'goog.array',
 'gxnat',
@@ -23,7 +23,7 @@ goog.addDependency('../../../gxnat/ProjectTree/ProjectTree.js',
 
 
 
-goog.addDependency('../../../gxnat/Viewable/Viewable.js', 
+goog.addDependency('../../../gxnat/Viewable.js', 
 ['gxnat.Viewable'], [
 'goog.array',
 'gxnat',
@@ -31,8 +31,8 @@ goog.addDependency('../../../gxnat/Viewable/Viewable.js',
 ]);
 
 
-goog.addDependency('../../../gxnat/Viewable/Scan/Scan.js',
-['gxnat.Viewable.Scan'], [
+goog.addDependency('../../../gxnat/Scan.js',
+['gxnat.Scan'], [
 'moka.array',
 'gxnat',
 'gxnat.Viewable',
@@ -40,8 +40,8 @@ goog.addDependency('../../../gxnat/Viewable/Scan/Scan.js',
 ]);
 
 
-goog.addDependency('../../../gxnat/Viewable/Slicer/Slicer.js',
-['gxnat.Viewable.Slicer'], [
+goog.addDependency('../../../gxnat/Slicer.js',
+['gxnat.Slicer'], [
 'goog.string',
 'moka.string',
 'gxnat',

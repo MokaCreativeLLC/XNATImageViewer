@@ -19,14 +19,14 @@ goog.require('gxnat.Viewable');
  * @constructor
  * @extends {gxnat.Viewable}
  */
-goog.provide('gxnat.Viewable.Scan');
-gxnat.Viewable.Scan = function(experimentUrl, viewableJson, 
+goog.provide('gxnat.Scan');
+gxnat.Scan = function(experimentUrl, viewableJson, 
 				    opt_initComplete) {
     this['category'] = 'Scans';
     goog.base(this, experimentUrl, viewableJson, opt_initComplete);
 }
-goog.inherits(gxnat.Viewable.Scan, gxnat.Viewable);
-goog.exportSymbol('gxnat.Viewable.Scan', gxnat.Viewable.Scan);
+goog.inherits(gxnat.Scan, gxnat.Viewable);
+goog.exportSymbol('gxnat.Scan', gxnat.Scan);
 
 
 
@@ -34,30 +34,30 @@ goog.exportSymbol('gxnat.Viewable.Scan', gxnat.Viewable.Scan);
  * @const
  * @type {!string}
  */
-gxnat.Viewable.Scan['folderQuerySuffix'] = 'scans';
+gxnat.Scan['folderQuerySuffix'] = 'scans';
 
 
 /**
  * @const
  * @type {!string}
  */
-gxnat.Viewable.Scan['fileQuerySuffix'] = '/files';
+gxnat.Scan['fileQuerySuffix'] = '/files';
 
 
 /**
  * @const
  * @type {!string}
  */
-gxnat.Viewable.Scan['fileContentsKey'] = 'URI';
+gxnat.Scan['fileContentsKey'] = 'URI';
 
 
 
 /**
  * @inheritDoc
  */
-gxnat.Viewable.Scan.prototype.makeFileUrl = function(xnatFileJson) {
+gxnat.Scan.prototype.makeFileUrl = function(xnatFileJson) {
     return gxnat.Path.graftUrl(this['experimentUrl'], 
-	      xnatFileJson[gxnat.Viewable.Scan['fileContentsKey']], 
+	      xnatFileJson[gxnat.Scan['fileContentsKey']], 
 			   'experiments');
 
 }
@@ -66,7 +66,7 @@ gxnat.Viewable.Scan.prototype.makeFileUrl = function(xnatFileJson) {
 /**
  * @inheritDoc
  */
-gxnat.Viewable.Scan.prototype.getThumbnailImage = function(opt_callback){
+gxnat.Scan.prototype.getThumbnailImage = function(opt_callback){
     //
     // Select the image in the middle of the list to 
     // serve as the thumbnail after sorting the fileURIs

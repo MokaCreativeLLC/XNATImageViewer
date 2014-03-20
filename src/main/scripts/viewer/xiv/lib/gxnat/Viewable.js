@@ -8,6 +8,7 @@ goog.require('goog.array');
 // moka
 goog.require('gxnat');
 goog.require('gxnat.Path');
+goog.require('goog.Disposable');
 
 
 
@@ -20,6 +21,7 @@ goog.require('gxnat.Path');
  * @param {!Object} viewableJson The json associated with the viewable.
  * @param {function=} opt_initComplete The callback when the init process is 
  *     complete.
+ * @extends {goog.Disposable}
  */
 goog.provide('gxnat.Viewable');
 gxnat.Viewable = function(experimentUrl, viewableJson, opt_initComplete) {
@@ -40,6 +42,7 @@ gxnat.Viewable = function(experimentUrl, viewableJson, opt_initComplete) {
 	this.onFilesGotten_(opt_initComplete);
     }.bind(this));    
 }
+goog.inherits(gxnat.Viewable, goog.Disposable);
 goog.exportSymbol('gxnat.Viewable', gxnat.Viewable);
 
 
@@ -209,10 +212,26 @@ gxnat.Viewable.prototype.getFiles = function(opt_callback){
 	}
 	if (opt_callback){
 	    opt_callback()
+
 	}
     }.bind(this))
 }
 
+
+
+/** 
+ * @public
+ */
+gxnat.Viewable.prototype.dispose = function() {
+
+    goog.base(this, 'dispose');
+    window.console.log("\n\nPRE-DISPOSED VIEWABLE", this);
+    this['pathObj'].dispose();
+    delete this['pathObj'];
+
+    goog.object.clear(this);
+    window.console.log("DISPOSED VIEWABLE", this);
+}
 
 
 
@@ -242,6 +261,5 @@ function(url, anonViewable, opt_runCallback, opt_doneCallback) {
 				    scanJson, opt_runCallback)
 	//window.console.log(viewable);
 	// sort list (shared, with custom parameters)
-	delete pathObj;
     }, opt_doneCallback)
 }

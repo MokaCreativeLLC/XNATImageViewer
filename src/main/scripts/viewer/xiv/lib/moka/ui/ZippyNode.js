@@ -13,7 +13,6 @@ goog.require('goog.ui.Zippy');
 
 // moka
 goog.require('moka.string');
-goog.require('moka.events.EventManager');
 goog.require('moka.ui.Component');
 
 

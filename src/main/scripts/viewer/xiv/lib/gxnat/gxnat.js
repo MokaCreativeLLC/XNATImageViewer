@@ -11,8 +11,8 @@ goog.require('goog.object');
 // gxnat
 goog.require('gxnat.Path');
 goog.require('gxnat.Viewable');
-goog.require('gxnat.Viewable.Scan');
-goog.require('gxnat.Viewable.Slicer');
+goog.require('gxnat.Scan');
+goog.require('gxnat.Slicer');
 
 
 
@@ -119,8 +119,8 @@ gxnat.get = function(url, callback, opt_getType){
  */
 gxnat.getViewables = function (url, opt_runCallback, opt_doneCallback){
     gxnat.VIEWABLE_TYPES = {
-	'Scan': gxnat.Viewable.Scan,
-	'Slicer': gxnat.Viewable.Slicer,
+	'Scan': gxnat.Scan,
+	'Slicer': gxnat.Slicer,
     }
 
     var typeCount = /**@type {!number}*/

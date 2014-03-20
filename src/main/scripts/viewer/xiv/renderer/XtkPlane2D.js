@@ -31,6 +31,29 @@ goog.exportSymbol('xiv.renderer.XtkPlane2D', xiv.renderer.XtkPlane2D);
 
 
 /**
+ * @param {!number} sliceNum
+ * @public
+ */
+xiv.renderer.XtkPlane2D.prototype.getSliceRelativeToContainerX = 
+function(sliceNum) {
+    return this.Renderer.getSliceRelativeToContainerX(sliceNo);
+}
+
+
+
+/**
+ * @param {!number} sliceNum
+ * @public
+ */
+xiv.renderer.XtkPlane2D.prototype.getSliceRelativeToContainerY = 
+function(sliceNum) {
+    return this.Renderer.getSliceRelativeToContainerY(sliceNo);
+}
+
+
+
+/**
+ * @param {!number} sliceNum
  * @public
  */
 xiv.renderer.XtkPlane2D.prototype.getVolume = function() {

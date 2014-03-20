@@ -21,15 +21,15 @@ goog.require('gxnat.Viewable');
  * @constructor
  * @extends {gxnat.Viewable}
  */
-goog.provide('gxnat.Viewable.Slicer');
-gxnat.Viewable.Slicer = function(experimentUrl, viewableJson, 
+goog.provide('gxnat.Slicer');
+gxnat.Slicer = function(experimentUrl, viewableJson, 
 				      opt_initComplete) {
     this['category'] = 'Slicer Scenes';
     goog.base(this, experimentUrl, viewableJson, opt_initComplete);
     this['sessionInfo']['Format']['value'] = '.mrb';
 }
-goog.inherits(gxnat.Viewable.Slicer, gxnat.Viewable);
-goog.exportSymbol('gxnat.Viewable.Slicer', gxnat.Viewable.Slicer);
+goog.inherits(gxnat.Slicer, gxnat.Viewable);
+goog.exportSymbol('gxnat.Slicer', gxnat.Slicer);
 
 
 
@@ -37,7 +37,7 @@ goog.exportSymbol('gxnat.Viewable.Slicer', gxnat.Viewable.Slicer);
  * @const
  * @type {!string}
  */
-gxnat.Viewable.Slicer['folderQuerySuffix'] = 'resources/Slicer/files';
+gxnat.Slicer['folderQuerySuffix'] = 'resources/Slicer/files';
 
 
 
@@ -45,7 +45,7 @@ gxnat.Viewable.Slicer['folderQuerySuffix'] = 'resources/Slicer/files';
  * @const
  * @type {!string}
  */
-gxnat.Viewable.Slicer['fileQuerySuffix'] = '?listContents=true';
+gxnat.Slicer['fileQuerySuffix'] = '?listContents=true';
 
 
 
@@ -53,7 +53,7 @@ gxnat.Viewable.Slicer['fileQuerySuffix'] = '?listContents=true';
  * @const
  * @type {!string}
  */
-gxnat.Viewable.Slicer['fileContentsKey'] = 'File Name';
+gxnat.Slicer['fileContentsKey'] = 'File Name';
 
 
 
@@ -61,7 +61,7 @@ gxnat.Viewable.Slicer['fileContentsKey'] = 'File Name';
  * @const
  * @type {!Array.string}
  */
-gxnat.Viewable.Slicer.thumbnailExtensions = [
+gxnat.Slicer.thumbnailExtensions = [
     'jpeg', 
     'jpg', 
     'png', 
@@ -87,7 +87,7 @@ gxnat.Viewable.prototype.makeFileUrl = function(xnatFileJson) {
 /**
  * @inheritDoc
  */
-gxnat.Viewable.Slicer.prototype.getThumbnailImage = function(opt_callback){
+gxnat.Slicer.prototype.getThumbnailImage = function(opt_callback){
 
     var ext = /** @type {!string} */ '';
     var i = /** @type {!number} */ 0;
@@ -97,11 +97,11 @@ gxnat.Viewable.Slicer.prototype.getThumbnailImage = function(opt_callback){
 
     for (i=0, len = this['files'].length; i < len; i++) {
 	ext = moka.string.getFileExtension(this['files'][i]);
-	for (j=0, len2 = gxnat.Viewable.Slicer.thumbnailExtensions.length; 
+	for (j=0, len2 = gxnat.Slicer.thumbnailExtensions.length; 
 	     j < len2; j++) {
 	    //window.console.log(ext, this['files'][i],
-	    //	     gxnat.Viewable.Slicer.thumbnailExtensions[j])
-	    if (ext === gxnat.Viewable.Slicer.thumbnailExtensions[j]){
+	    //	     gxnat.Slicer.thumbnailExtensions[j])
+	    if (ext === gxnat.Slicer.thumbnailExtensions[j]){
 		//window.console.log("FOUND!", this)
 		this['thumbnailUrl'] = this['files'][i]; 
 		return;

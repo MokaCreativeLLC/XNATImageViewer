@@ -4,6 +4,7 @@
 
 // goog
 goog.require('goog.array');
+goog.require('goog.Disposable');
 
 //moka
 goog.require('gxnat');
@@ -229,3 +230,17 @@ gxnat.ProjectTree.prototype.getLevelUris_ = function(getLevel, currLevel,
 
 
 
+/**
+ * @public
+ */
+gxnat.ProjectTree.prototype.dispose = function(url) {
+    //goog.base(this, 'dispose');
+
+    this.initPath_.dispose();
+    delete this.initPath_;
+
+    window.console.log('PRE-CLEARED TREE', this);
+    goog.object.clear(this);
+    window.console.log('CLEARED TREE', this);
+
+}

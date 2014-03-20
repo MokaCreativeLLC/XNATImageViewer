@@ -2,13 +2,15 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
+// goog
+goog.require('goog.Disposable');
 
 
 /**
  * Splits the 'url' argument into various XNAT level folders.
  * @param {!string} url The URL to derive the path object from.
  * @constructor
- * @dict
+ * @extends {goog.Disposable}
  */
 goog.provide('gxnat.Path');
 gxnat.Path = function(url){
@@ -24,6 +26,7 @@ gxnat.Path = function(url){
 
     this.deconstructUrl_(url);
 }
+goog.inherits(gxnat.Path, goog.Disposable);
 goog.exportSymbol('gxnat.Path', gxnat.Path);
 
 
@@ -41,6 +44,18 @@ gxnat.Path.xnatLevelOrder = [
     ['scans', 'resources'],
     'files'
 ]
+
+
+
+/**
+ * @public
+ */
+gxnat.Path.prototype.dispose = function(url) {
+    goog.base(this, 'dispose');
+    window.console.log('PRE-CLEARED PATH', this);
+    goog.object.clear(this);
+    window.console.log('CLEARED PATH', this);
+}
 
 
 

@@ -166,8 +166,11 @@ moka.ui.ScrollableContainer.prototype.setSliderStyles_ = function(){
 			 moka.ui.ScrollableContainer.CSS.SLIDER_THUMB);
     goog.dom.classes.add(this.Slider_.getTrack(), 
 			 moka.ui.ScrollableContainer.CSS.SLIDER_TRACK);
-    this.Slider_.setHoverClasses(
-	moka.ui.ScrollableContainer.CSS.SLIDER_THUMB_HOVERED,
+
+    this.Slider_.addThumbHoverClass(
+	moka.ui.ScrollableContainer.CSS.SLIDER_THUMB_HOVERED)
+
+    this.Slider_.addTrackHoverClass(
 	moka.ui.ScrollableContainer.CSS.SLIDER_TRACK_HOVERED);
 }
 

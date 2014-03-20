@@ -231,9 +231,10 @@ moka.ui.Component.prototype.updateStyle = function() {
 moka.ui.Component.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
  
+    goog.dom.removeNode(this.getElement());
+
     this.iconBaseUrl = null;  
     this.iconUrl = null; 
     this.currSize = null;
     this.currPos = null;
-    
 }

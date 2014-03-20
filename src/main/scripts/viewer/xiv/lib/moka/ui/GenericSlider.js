@@ -63,8 +63,8 @@ moka.ui.GenericSlider = function (opt_args) {
      * @type {!Element}
      * @private
      */
-    this.thumb_ = this.findThumbElement_();
-
+    this.thumb_ = 
+	goog.dom.getElementByClass('goog-slider-thumb', this.element_);
 
     // Other init calls.
     this.initEvents_();
@@ -72,6 +72,7 @@ moka.ui.GenericSlider = function (opt_args) {
 }
 goog.inherits(moka.ui.GenericSlider, goog.ui.Slider);	
 goog.exportSymbol('moka.ui.GenericSlider', moka.ui.GenericSlider);	
+
 
 
 
@@ -83,6 +84,7 @@ moka.ui.GenericSlider.EventType = {
   SLIDE: goog.events.getUniqueId('slide'),
   MOUSEWHEEL: goog.events.getUniqueId('mousewheel'),
 };
+
 
 
 
@@ -107,6 +109,7 @@ moka.ui.GenericSlider.CSS_SUFFIX = {
 
 
 
+
 /**
  * @param {Array.<goog.events.MouseWheelHandler>}
  * @private
@@ -119,7 +122,24 @@ moka.ui.GenericSlider.prototype.MouseWheelHandlers_;
  * @param {!boolean}
  * @private
  */
-moka.ui.GenericSlider.prototype.updating_ = false;
+moka.ui.GenericSlider.prototype.isSliding_ = false;
+
+
+
+/**
+ * @param {Array.<string>}
+ * @private
+ */
+moka.ui.GenericSlider.prototype.thumbHoverClasses_;
+
+
+
+/**
+ * @param {Array.<string>}
+ * @private
+ */
+moka.ui.GenericSlider.prototype.trackHoverClasses_;
+
 
 
 
@@ -156,12 +176,12 @@ moka.ui.GenericSlider.prototype.getThumb = function(){
 /**
  * Binds the mouse wheel scroll events appropriated for the slider through
  * the provided element.
+ *
  * @param {!Element} element The element to listen for the mousewheel event 
  *    that triggers the slider to move.
  * @public
  */
-moka.ui.GenericSlider.prototype.bindToMouseWheel = 
-function (element) {
+moka.ui.GenericSlider.prototype.bindToMouseWheel = function (element) {
 
     /**
      * @type {!goog.events.MouseWheelHandler} 
@@ -171,10 +191,9 @@ function (element) {
 	goog.events.MouseWheelHandler.EventType.MOUSEWHEEL,
 	this.onMouseWheelScroll_, false, this);
 
-    if (!this.MouseWheelHandlers_ || (this.MouseWheelHandlers_.length === 0)) {
+    if (!this.MouseWheelHandlers_ || (this.MouseWheelHandlers_.length == 0)) {
 	this.MouseWheelHandlers_ = [];
     }
-
     this.MouseWheelHandlers_.push(mouseWheelHandler);
 }
 
@@ -187,12 +206,10 @@ function (element) {
  * @public
  */
 moka.ui.GenericSlider.prototype.updateStyle = function () {
-    this.updating_ = true;
     var pos = /**@type {!number}*/ this.getValue();
     if (pos < this.getMaximum()) this.setValue(pos + 1);
     else this.setValue(pos - 1);
     this.setValue(pos);   
-    this.updating_ = false;
 }
 
 
@@ -233,47 +250,6 @@ moka.ui.GenericSlider.prototype.setCssClasses_ = function(orientation) {
 
 
 /**
- * Initializes the change event to the custom 'SLIDE' event.
- */
-moka.ui.GenericSlider.prototype.initEvents_ = function() {
-    moka.ui.GenericSlider.superClass_.addEventListener.call(this, 
-			goog.ui.Component.EventType.CHANGE, function (e) {
-	moka.dom.stopPropagation(e);
-			    if (this.updating_) { return };
-			    this.dispatchEvent({
-				type: moka.ui.GenericSlider.EventType.SLIDE,
-				value: this.getValue(),
-				minimum: this.getMinimum(),
-				maximum: this.getMaximum()
-			    });
-    }.bind(this));
-
-    this.initHoverEvents_();
-}
-
-
-
-/**
- * Finds the thumbnail element associated with the parent class.
- * This exists because it's not overtly provided in the 
- * inheritance.
- * @return {!Element} The thumbnail element.
- */
-moka.ui.GenericSlider.prototype.findThumbElement_ = function() {
-    var children = /**@type {Array | NodeList}*/
-    goog.dom.getChildren(this.element_);
-    var i = /**@type{!number}*/ 0;
-    var len = /**@type{!number}*/ children.length;
-    for (i=0; i < len; i++) {
-	if (children[i].className === 'goog-slider-thumb') {
-	    return children[i];
-	}		
-    }
-}
-
-
-
-/**
  * Runs the callbacks and manages the mousewheel events when 
  * detected over the mousewheel elements contained within the
  * MouseWheelHandlers_ variable.
@@ -291,202 +267,200 @@ moka.ui.GenericSlider.prototype.onMouseWheelScroll_ = function (event) {
 
 
 
-
-/**
- * @type {Object}
- * @private
- */
-moka.ui.GenericSlider.prototype.hoverables_;
-
-
-
-/**
- * As stated.
- * @type {!boolean}
- * @private
- */
-moka.ui.GenericSlider.prototype.isSliding_ = false;
-
-
-
-/**
- * As stated.
- * @type {!string}
- * @private
- */
-moka.ui.GenericSlider.prototype.lastHoverEvent_ = '';
-
-
-
-
 /**
  * @param {string=} opt_thumbClass The thumb class to add.
+ * @public
+ */
+moka.ui.GenericSlider.prototype.addThumbHoverClass = function(thumbClass) {
+    this.thumbHoverClasses_ = 
+	this.thumbHoverClasses_ ? this.thumbHoverClasses_ : [];
+    this.thumbHoverClasses_.push(thumbClass);
+    this.removeThumbHoverClasses_();
+}
+
+
+
+/**
  * @param {string=} opt_trackClass The track class to add.
  * @public
  */
-moka.ui.GenericSlider.prototype.setHoverClasses = 
-function(opt_thumbClass, opt_trackClass){
-    var tempObj = {
-	'thumb': opt_thumbClass,
-	'track': opt_trackClass
-    }
-    // Add to hover classes.
-    goog.object.forEach(tempObj, function(tempObjVal, key){
-	if (tempObjVal && 
-	    this.hoverables_[key]['classes'].indexOf(tempObj[key]) == -1){
-	    this.hoverables_[key]['classes'].push(tempObj[key])
-	}
-    }.bind(this))
+moka.ui.GenericSlider.prototype.addTrackHoverClass = function(trackClass) {
+    this.trackHoverClasses_ = 
+	this.trackHoverClasses_ ? this.trackHoverClasses_ : [];
+    this.trackHoverClasses_.push(trackClass);
+    this.removeTrackHoverClasses_();
 }
 
 
 
 /**
- * As stated.
- * @private
+ * Initializes the change event to the custom 'SLIDE' event.
  */
-moka.ui.GenericSlider.prototype.initHoverEvents_ = function(){
-    this.initHoverables_();
-    this.setBasicHoverEvents_();
-    this.setUniqueHoverEvents_();
-    this.setDragHoverEvents_();
-}
+moka.ui.GenericSlider.prototype.initEvents_ = function() {
 
+    goog.events.listen(this, goog.ui.Component.EventType.CHANGE, 
+		       this.onChange_.bind(this));
 
+    // MouseOver - thumb 
+    goog.events.listen(this.thumb_, goog.events.EventType.MOUSEOVER, 
+		       this.onThumbMouseOver_.bind(this));
 
-
-/**
- * Sets the basic mouseout and mouseover class adds and removes for the thumb
- * and the track.
- * @private
- */
-moka.ui.GenericSlider.prototype.setBasicHoverEvents_ = function(){
-    var elt = /**@type {!Element} */ undefined;
-
-
-
-    goog.object.forEach(this.hoverables_, function(hoverable, key){
-	elt = hoverable['element'];
-	// Mouseover
-	hoverable['MOUSEOVER'].push(
-	    goog.events.listen(elt, goog.events.EventType.MOUSEOVER,
-			       function(){
-		       this.getClassModifier_(key, goog.dom.classes.add)
-				   }.bind(this)
-			       ));
-
-	// Mouseout
-	hoverable['MOUSEOUT'].push(
-	    goog.events.listen(elt, goog.events.EventType.MOUSEOUT, function(){
-		//window.console.log("Mousehout!", this.isSliding_)
-		if (!this.isSliding_) {
-		    //window.console.log("HERE!");
-		    this.getClassModifier_(key, goog.dom.classes.remove)();
-		}
-	    }.bind(this)));
-    }.bind(this))
-}
-
-
-
-/**
- * As stated.
- * @private
- */
-moka.ui.GenericSlider.prototype.setUniqueHoverEvents_ = function(){
-
-    // Hover track when hovering thumb...
-    this.hoverables_['thumb']['MOUSEOVER'].push(
-	goog.events.listen(this.thumb_, goog.events.EventType.MOUSEOVER,
-	    function(){
-		this.lastHoverEvent_ = 'MOUSEOVER';
-		this.getClassModifier_('track', goog.dom.classes.add)();
-	    }.bind(this)))
-
-    // Unhover track when hovering thumb...
-    this.hoverables_['thumb']['MOUSEOUT'].push(
+    // MouseOut - thumb 
     goog.events.listen(this.thumb_, goog.events.EventType.MOUSEOUT, 
-        function(){
-	    this.lastHoverEvent_ = 'MOUSEOUT';
-	    // Except when sliding...
-	    if (!this.isSliding_){
-		this.getClassModifier_('track', goog.dom.classes.remove)();
-	    }
-        }.bind(this)))
-}
+		       this.onThumbMouseOut_.bind(this));
 
-    
+    // MouseOver - track
+    goog.events.listen(this.track_, goog.events.EventType.MOUSEOVER, 
+		       this.onTrackMouseOver_.bind(this));
 
-/**
- * As stated.
- * @private
- */
-moka.ui.GenericSlider.prototype.setDragHoverEvents_ = function(){
-    // DragStart set...
-    moka.ui.GenericSlider.superClass_.addEventListener.call(this, 
-		goog.ui.SliderBase.EventType.DRAG_START, 
-		this.onThumbnailDragStart_.bind(this));
+    // MouseOut - track 
+    goog.events.listen(this.track_, goog.events.EventType.MOUSEOUT, 
+		       this.onTrackMouseOut_.bind(this));
 
-    // DragEnd set...
-    moka.ui.GenericSlider.superClass_.addEventListener.call(this, 
-    			goog.ui.SliderBase.EventType.DRAG_END, 
-    this.onThumbnailDragEnd_.bind(this), this);
-    
-    // Drag set...
-    goog.events.listen(this, moka.ui.GenericSlider.EventType.SLIDE, 
-    function(e){ 
-	if (this.isSliding_ && !this.updating_){
-	    goog.object.forEach(this.hoverables_, function(hoverable, key){
-		// Apply the hover class
-		this.getClassModifier_(key, goog.dom.classes.add)();
-	    }.bind(this))
-	}
-    }.bind(this));
+    // DragStart set... 
+    goog.events.listen(this, goog.ui.SliderBase.EventType.DRAG_START, 
+		       this.onThumbnailDragStart_.bind(this));
+
+    // DragEnd set... 
+    goog.events.listen(this, goog.ui.SliderBase.EventType.DRAG_END, 
+		       this.onThumbnailDragEnd_.bind(this));
 }
 
 
 
 /**
- * As stated.
- * @private
+ * Initializes the change event to the custom 'SLIDE' event.
  */
-moka.ui.GenericSlider.prototype.initHoverables_ = function(){
-    this.hoverables_ = {
-	'thumb': {},
-	'track' : {}
+moka.ui.GenericSlider.prototype.onChange_ =  function (e) {
+    moka.dom.stopPropagation(e);
+
+    
+    if (this.isSliding_) {
+	this.addThumbHoverClasses_();
+	this.addTrackHoverClasses_();
     }
-    this.hoverables_['thumb']['element'] = this.thumb_;    
-    this.hoverables_['track']['element'] = this.track_;
-    this.hoverables_['thumb']['classes'] = 
-	[moka.ui.GenericSlider.CSS.THUMB_HOVERED];
-    this.hoverables_['track']['classes'] = 
-	[moka.ui.GenericSlider.CSS.TRACK_HOVERED];
 
-    goog.object.forEach(this.hoverables_, function(hoverable){
-	hoverable['MOUSEOVER'] = [];
-	hoverable['MOUSEOUT'] = [];
+    this.dispatchEvent({
+	type: moka.ui.GenericSlider.EventType.SLIDE,
+	value: this.getValue(),
+	minimum: this.getMinimum(),
+	maximum: this.getMaximum()
+    });
+}
+
+
+
+
+/**
+ * @param {Event}
+ * @private
+ */
+moka.ui.GenericSlider.prototype.addThumbHoverClasses_ =  function(e){
+    goog.dom.classes.add(this.thumb_, 
+			 moka.ui.GenericSlider.CSS.THUMB_HOVERED);
+
+    if (!goog.isDefAndNotNull(this.thumbHoverClasses_)){
+	return;
+    }
+    goog.array.forEach(this.thumbHoverClasses_, function(className){
+	goog.dom.classes.add(this.thumb_, className); 
     }.bind(this))
 }
 
 
 
 /**
- * As stated.
- * @param {!string} The key referencing this.hoverables_.
- * @param {!function} The function to manipulate the classes with.
- * @return {!function} The function that runs the modification of an elements
- *    class names.
+ * @param {Event}
  * @private
  */
-moka.ui.GenericSlider.prototype.getClassModifier_ = 
-function(key, classManipFcn) {
-    return function(){
-	goog.array.forEach(this.hoverables_[key]['classes'], 
-			   function(className){
-	    classManipFcn(this.hoverables_[key]['element'], className)
-	}.bind(this))
-    }.bind(this)
+moka.ui.GenericSlider.prototype.addTrackHoverClasses_ =  function(e){
+    goog.dom.classes.add(this.track_, 
+			 moka.ui.GenericSlider.CSS.TRACK_HOVERED);
+    if (!goog.isDefAndNotNull(this.trackHoverClasses_)){
+	return;
+    }
+    goog.array.forEach(this.trackHoverClasses_, function(className){
+	goog.dom.classes.add(this.track_, className); 
+    }.bind(this))
 }
+
+
+
+/**
+ * @param {Event}
+ * @private
+ */
+moka.ui.GenericSlider.prototype.removeThumbHoverClasses_ =  function(e){
+    goog.dom.classes.remove(this.thumb_, 
+			 moka.ui.GenericSlider.CSS.THUMB_HOVERED);
+    if (!goog.isDefAndNotNull(this.thumbHoverClasses_)) { return };
+    goog.array.forEach(this.thumbHoverClasses_, function(className){
+	goog.dom.classes.remove(this.thumb_, className); 
+    }.bind(this))
+}
+
+
+
+/**
+ * @param {Event}
+ * @private
+ */
+moka.ui.GenericSlider.prototype.removeTrackHoverClasses_ =  function(e){
+    goog.dom.classes.remove(this.track_, 
+			 moka.ui.GenericSlider.CSS.TRACK_HOVERED);
+    if (!goog.isDefAndNotNull(this.trackHoverClasses_)) { return };
+    goog.array.forEach(this.trackHoverClasses_, function(className){
+	goog.dom.classes.remove(this.track_, className); 
+    }.bind(this))
+}
+
+
+
+/**
+ * @param {Event}
+ * @private
+ */
+moka.ui.GenericSlider.prototype.onThumbMouseOver_ =  function(e){
+    window.console.log("THUMB MOUSE OVER!!");
+    this.addThumbHoverClasses_();
+    this.addTrackHoverClasses_();
+}
+
+
+
+/**
+ * @param {Event}
+ * @private
+ */
+moka.ui.GenericSlider.prototype.onTrackMouseOver_ =  function(e){
+    this.addTrackHoverClasses_();
+}
+
+
+
+/**
+ * @param {Event}
+ * @private
+ */
+moka.ui.GenericSlider.prototype.onThumbMouseOut_ =  function(e){
+    if (!this.isSliding_) {
+	this.removeThumbHoverClasses_();
+	this.removeTrackHoverClasses_(); 
+    }
+}
+
+
+
+/**
+ * @param {Event}
+ * @private
+ */
+moka.ui.GenericSlider.prototype.onTrackMouseOut_ =  function(e){
+    if (!this.isSliding_) {
+	this.removeTrackHoverClasses_();
+    }
+}
+
 
 
 
@@ -508,11 +482,8 @@ moka.ui.GenericSlider.prototype.onThumbnailDragStart_ = function (e) {
  */
 moka.ui.GenericSlider.prototype.onThumbnailDragEnd_ = function (e) {
     this.isSliding_ = false;
-    if (this.lastHoverEvent_ === 'MOUSEOUT'){
-	goog.object.forEach(this.hoverables_, function(hoverable, key){
-	    this.getClassModifier_(key, goog.dom.classes.remove)();
-	}.bind(this))
-    }
+    this.removeThumbHoverClasses_();
+    this.removeTrackHoverClasses_();  
 }
 
 
@@ -521,11 +492,23 @@ moka.ui.GenericSlider.prototype.onThumbnailDragEnd_ = function (e) {
  * @inheritDoc 
  */
 moka.ui.GenericSlider.prototype.disposeInternal = function() {
-    moka.ui.GenericSlider.superClass_.disposeInternal.call(this);
+    goog.base(this, 'disposeInternal');
+
+    goog.dom.removeNode(this.element_);
+    delete this.element_;
+
     goog.dom.removeNode(this.thumb_);
-    this.thumb_ = {};
+    delete this.thumb_;
+
     goog.dom.removeNode(this.track_);
-    this.track_= {};
-    this.MouseWheelHandlers_ = [];
-    this.updating_ = null;
+    delete this.track_;
+
+    goog.array.forEach(this.MouseWheelHandlers_, function(handler){
+	handler.dispose();
+    })
+    delete this.MouseWheelHandlers_;
+
+    this.thumbHoverClasses_ = null;
+    this.trackHoverClasses_ = null;
+    this.isSliding_ = null;
 };

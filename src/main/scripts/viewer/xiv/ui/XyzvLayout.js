@@ -167,7 +167,7 @@ xiv.ui.XyzvLayout.prototype.addPlaneSliders_ = function(){
 			     xiv.ui.XyzvLayout.CSS.SLIDER_TRACK, 
 			 key.toLowerCase())]);
 			 
-            slider.setHoverClasses(
+            slider.addThumbHoverClass(
 	        xiv.ui.XyzvLayout.CSS.SLIDER_THUMB_HOVERED);
 
     }.bind(this));

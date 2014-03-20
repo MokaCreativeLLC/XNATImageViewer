@@ -37,13 +37,13 @@ xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
 
     /** 
      * @private
-     * @type {!string} 
+     * @type {string} 
      */
     this.rootUrl_ = rootUrl;
 
 
     /**
-     * @type {!Array.string}
+     * @type {Array.string}
      * @private
      */
     this.queryPrefix_ = xnatQueryPrefix;
@@ -51,9 +51,10 @@ xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
 
     /** 
      * @private
-     * @type {!string} 
+     * @type {string} 
      */
     this.iconUrl_ =  goog.isString(opt_iconUrl) ? opt_iconUrl : '';
+
 };
 goog.exportSymbol('xiv', xiv);
 
@@ -108,7 +109,7 @@ xiv.prototype.Viewables_;
 
 
 /**
- * @type {!boolean}
+ * @type {boolean}
  * @private
  */
 xiv.prototype.projectTreeLoadedStarted_ = false;
@@ -196,13 +197,40 @@ xiv.prototype.getDataPaths = function() {
  * Fades out then deletes the modal and all of its child elements.
  * @public
  */
-xiv.prototype.destroy = function () {
+xiv.prototype.dispose = function () {
     this.hideModal(function (){
 	xiv.revertDocumentStyle_();
+
+	goog.events.unlisten(this.Modal_.getThumbnailHandler().
+		getThumbnailGallery().getZippyTree(),
+		moka.ui.ZippyTree.EventType.NODEADDED, this.onZippyAdded_);
+
+
+	this.dataPaths_ = null;
+
+	goog.object.forEach(this.Viewables_, function(ViewableArr, key){
+	    goog.array.forEach(ViewableArr, function(Viewable){
+		Viewable.dispose();
+	    });
+	    goog.array.clear(ViewableArr);
+	    delete this.Viewables_[key];
+	}.bind(this))
+	this.Viewables_ = null;
+
+
+	// Project Tree
+	this.ProjectTree_.dispose();
+	this.ProjectTree_ = null;
+	this.projectTreeLoadedStarted_ = null;
+
+
+	delete this.rootUrl_;
+	delete this.queryPrefix_;
+	delete this.iconUrl_;
+
+
 	this.Modal_.disposeInternal();
-	this.Modal_.getElement().parentNode.removeChild(
-	    this.Modal_.getElement());
-	delete this.Modal_.getElement();
+	goog.dom.removeChild.removeChild(this.Modal_.getElement());
 	this.Modal_ = null;
     }.bind(this));
 }
@@ -267,19 +295,13 @@ xiv.prototype.loadExperiment = function(exptUrl, opt_callback) {
  * @private
  */
 xiv.prototype.collapseAdditionalZippys_ = function() {
-    if (this.getModal().getThumbnailHandler()) {
+    if (!this.getModal().getThumbnailHandler()) { return };
 
-    goog.events.listen(this.getModal().getThumbnailHandler().
+    goog.events.listen(this.Modal_.getThumbnailHandler().
 	    getThumbnailGallery().getZippyTree(),
-       moka.ui.ZippyTree.EventType.NODEADDED, function(e) {
-		var prevDur = /**@type {!number}*/
-		e.currNode.getZippy().animationDuration;
-		e.currNode.getZippy().animationDuration = 0;
-		e.currNode.getZippy().setExpanded(false);
-		e.currNode.getZippy().animationDuration = prevDur;
-	    })
-    }
+       moka.ui.ZippyTree.EventType.NODEADDED, this.onZippyAdded_);
 }
+
 
 
 
@@ -300,12 +322,10 @@ xiv.prototype.setProjectTree = function(tree){
  * @private
  */
 xiv.prototype.setModalButtonCallbacks_ = function(){
-    this.Modal_.getButtons()['popup'].onclick = 
-	this.makeModalPopup_.bind(this);
+    this.Modal_.getPopupButton().onclick = this.makeModalPopup_.bind(this);
     //this.Modal_.getBupathOPbttons()['addXnatFolders'].onclick = 
     //	this.showPathSelector_.bind(this);
-    this.Modal_.getButtons()['close'].onclick = 
-	this.destroy.bind(this);
+    this.Modal_.getCloseButton().onclick = this.dispose.bind(this);
 } 
 
 
@@ -358,7 +378,6 @@ xiv.prototype.addViewableToModal = function(Viewable){
     //window.console.log(Viewable);
 
     if (!this.Modal_.getThumbnailHandler()) { return };
-
     this.Modal_.getThumbnailHandler().createAndAddThumbnail(
 	Viewable, // The viewable
 	xiv.extractViewableFolders_(Viewable) // The folder tree
@@ -374,7 +393,7 @@ xiv.prototype.addViewableToModal = function(Viewable){
  * @public
  */
 xiv.prototype.createModal = function(modalType){
-    this.Modal_ = /**@type {!xiv.ui.Modal}*/ new this.modalType_();
+    this.Modal_ = new this.modalType_();
     this.Modal_.setIconBaseUrl(this.iconUrl_);
     this.Modal_.setMode('windowed');
     this.setModalButtonCallbacks_();
@@ -400,6 +419,18 @@ xiv.prototype.storeViewable_ = function(viewable, path) {
     this.Viewables_[path].push(viewable);
 };
 
+
+
+/**
+ * @private
+ */
+xiv.prototype.onZippyAdded_ = function(e) {
+    var prevDur = /**@type {!number}*/
+    e.currNode.getZippy().animationDuration;
+    e.currNode.getZippy().animationDuration = 0;
+    e.currNode.getZippy().setExpanded(false);
+    e.currNode.getZippy().animationDuration = prevDur;
+}
 
 
 /**

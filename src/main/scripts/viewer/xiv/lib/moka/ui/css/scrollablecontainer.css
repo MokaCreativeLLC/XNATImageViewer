@@ -103,7 +103,6 @@
 
 .moka-ui-scrollablecontainer-slider-track {;
     background-color: rgba(0,0,0,0);
-    border: none;
 }
 
 
@@ -111,6 +110,8 @@
     box-sizing: border-box;
     background-color: rgb(50,50,50);
     border-right: solid 1px rgb(100,100,100);
-    border-left: solid 1px rgb(100,100,100);
+    border-left: none;
+    border-top: none;
+    border-bottom: none;
 }
 

@@ -9,13 +9,6 @@ goog.addDependency('../../../moka/convert/convert.js', ['moka.convert'], [
 ]); 
 
 
-goog.addDependency('../../../moka/events/events.js', ['moka.events'], []);
-
-goog.addDependency('../../../moka/events/EventManager.js', 
-		   ['moka.events.EventManager'], [
-'goog.array'    
-]); 
-
 
 goog.addDependency('../../../moka/dom/dom.js', ['moka.dom'], [
 'goog.dom',

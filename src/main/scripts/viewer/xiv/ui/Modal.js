@@ -73,8 +73,7 @@ xiv.ui.Modal.CSS_SUFFIX = {
 
 
 /**
- * @const
- * @dict
+ * @enum {string}
  */
 xiv.ui.Modal.buttonTypes = {
     'close': 'Close XNAT Image Viewer.',
@@ -177,6 +176,15 @@ xiv.ui.Modal.EXPANDBUTTON_W = 30;
 
 
 /**
+ * @const
+ * @type {!Array.string}
+ * @private
+ */
+xiv.ui.Modal.hideableButtonKeys_ = ['popup', 'close'];
+
+
+
+/**
  * @type {Element}
  * @private
  */	
@@ -227,15 +235,6 @@ xiv.ui.Modal.prototype.previousMode_;
 
 
 /**
- * @const
- * @type {!Array.string}
- * @private
- */
-xiv.ui.Modal.hideableButtonKeys_ = ['popup', 'close'];
-
-
- 
-/**
  * Get the associated xiv.ui.ViewBoxHandler for this object.
  * @return {xiv.ui.ViewBoxHandler} The xiv.ui.ViewBoxHandler for this object.
  * @public
@@ -259,12 +258,23 @@ xiv.ui.Modal.prototype.getThumbnailHandler = function() {
 
 /**
  * As stated.
- * @return {!Object} The button object.
+ * @return {!Element} The described element.
  * @public
  */
-xiv.ui.Modal.prototype.getButtons = function() {
-  return this.buttons_;
+xiv.ui.Modal.prototype.getPopupButton = function() {
+  return this.buttons_['popup'];
 }
+
+
+/**
+ * As stated.
+ * @return {!Element} The described element.
+ * @public
+ */
+xiv.ui.Modal.prototype.getCloseButton = function() {
+  return this.buttons_['close'];
+}
+
 
 
 /**
@@ -744,7 +754,7 @@ xiv.ui.Modal.prototype.createSubComponents = function() {
  * @private
  */
 xiv.ui.Modal.prototype.createBackground_ = function() {
-    this.background_ = /**@type {!Element}*/
+    this.background_ = 
     moka.dom.createUniqueDom('div', 
 			      this.constructor.ID_PREFIX + '.Background');
 
@@ -1118,7 +1128,29 @@ xiv.ui.Modal.prototype.onViewBoxesChanged_ = function(e) {
 
 
 
+/**
+ * @inheritDoc
+ */
+xiv.ui.Modal.prototype.disposeInternal = function() {
+    goog.base(this, 'disposeInternal');
 
+
+    goog.dom.removeNode(this.background_);
+
+    goog.object.forEach(this.buttons_, function(button){
+	goog.dom.removeNode(button);
+    })
+    this.buttons_ = null;
+
+    this.mode_ = 'windowed';
+    this.previousMode_ = null;
+
+    this.ViewBoxHandler_.disposeInternal();
+    this.ViewBoxHandler_ = null;
+
+    this.ThumbnailHandler_.disposeInternal();
+    this.ThumbnailHandler_ = null;
+}
 
 
 

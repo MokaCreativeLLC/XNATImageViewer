@@ -11,8 +11,6 @@ goog.require('moka.dom');
 goog.require('moka.style');
 goog.require('moka.fx');
 goog.require('moka.ui.ThumbnailGallery');
-goog.require('moka.events.EventManager');
-
 
 
 
@@ -66,6 +64,16 @@ xiv.ui.SlicerViewMenu = function () {
     goog.dom.append(this.getElement(), this.headerText);
 
 
+    /**
+     * The stored mrb properites to derive the elements
+     * from.
+     *
+     * @param {?xiv.slicer.mrbProperties}
+     * @private
+     */
+    this.mrbProperties_ = null;
+
+
 
     //
     // Set classes
@@ -93,25 +101,6 @@ xiv.ui.SlicerViewMenu.ID_PREFIX =  'xiv.ui.SlicerViewMenu';
 
 
 
-/**
- * @type {!string} 
- * @const
-*/
-xiv.ui.SlicerViewMenu.CSS_CLASS_PREFIX =
-goog.string.toSelectorCase(
-    moka.string.getLettersOnly(xiv.ui.SlicerViewMenu.ID_PREFIX));
-
-
-
-/**
- * @type {string} 
- * @const
- */
-xiv.ui.SlicerViewMenu.ELEMENT_CLASS = 
-goog.getCssName(xiv.ui.SlicerViewMenu.CSS_CLASS_PREFIX, '');
-
-
-
 
 /**
  * Event types.
@@ -124,14 +113,7 @@ xiv.ui.SlicerViewMenu.EventType = {
 
 
 
-/**
- * The stored mrb properites to derive the elements
- * from.
- *
- * @param {?xiv.slicer.mrbProperties}
- * @private
- */
-xiv.ui.SlicerViewMenu.prototype.mrbProperties_ = null;
+
 
 
 

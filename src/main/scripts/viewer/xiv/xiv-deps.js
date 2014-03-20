@@ -115,7 +115,6 @@ goog.addDependency('../../../../ui/ViewBox.js',
     'goog.object',
     'goog.style',
     'moka.ui.Component',
-    'moka.events.EventManager',
     'moka.style',
     'moka.ui.SlideInMenu',
     'moka.ui.ZipTabs',
@@ -141,7 +140,6 @@ goog.addDependency('../../../../ui/ViewBoxHandler.js',
     'moka.string',
     'moka.style',
     'moka.fx',
-    'moka.events.EventManager',
     'xiv.ui.ViewBox'
 ]);
 
@@ -212,7 +210,6 @@ goog.addDependency('../../../../ui/ThumbnailHandler.js',
     'goog.fx.DragDropGroup', 
     'moka.string', 
     'moka.fx', 
-    'moka.events.EventManager', 
     'moka.ui.ThumbnailGallery',
     'moka.ui.Thumbnail',
     'xiv.ui.Thumbnail'
