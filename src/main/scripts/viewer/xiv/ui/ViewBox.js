@@ -46,7 +46,7 @@ xiv.ui.ViewBox = function () {
      * @type {Array.<gxnat.Viewable>}
      * @private
      */
-    this.currViewables_ = [];
+    this.Viewables_ = [];
 
 
     /**
@@ -269,6 +269,15 @@ xiv.ui.ViewBox.prototype.getMenus = function() {
  */
 xiv.ui.ViewBox.prototype.getLoadState = function() {
     return this.loadState_;
+}
+
+
+/**
+ * @return {!Array.<gxnat.Viewable>} 
+ * @public
+ */
+xiv.ui.ViewBox.prototype.getViewables =  function() {
+    return this.Viewables_;
 }
 
 
@@ -578,8 +587,8 @@ xiv.ui.ViewBox.prototype.load = function (viewable) {
 					 }, 'Hello World 2.'))
 	this.showProgressBarPanel_(400);
     }
-    if (!goog.array.contains(this.currViewables_, viewable)){
-	this.currViewables_.push(viewable);	
+    if (!goog.array.contains(this.Viewables_, viewable)){
+	this.Viewables_.push(viewable);	
     }
 
     
@@ -591,7 +600,7 @@ xiv.ui.ViewBox.prototype.load = function (viewable) {
     */
     window.console.log(viewable);
 
-    if (this.currViewables_.length == 1) {
+    if (this.Viewables_.length == 1) {
 	this.LayoutHandler_.setLayout(
 	    xiv.ui.ViewBox.defaultLayout[viewable['category']]);
     }
@@ -1205,6 +1214,6 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
 
 
     // Primitive types
-    delete this.currViewables_;
+    delete this.Viewables_;
     delete this.subComponentsInitialized_;
 }

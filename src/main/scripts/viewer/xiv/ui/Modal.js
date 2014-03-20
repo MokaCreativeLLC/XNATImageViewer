@@ -122,8 +122,8 @@ xiv.ui.Modal.buttonTypes = {
     WINDOWED: 'Exit full-screen mode.',
     REMOVEROW: 'Remove ViewBox row',
     INSERTROW : 'Insert ViewBox row',
-    REMOVECOL: 'Remove ViewBox column',
-    INSERTCOL: 'Insert ViewBox column',
+    REMOVECOLUMN: 'Remove ViewBox column',
+    INSERTCOLUMN: 'Insert ViewBox column',
 }
 
 
@@ -304,28 +304,31 @@ xiv.ui.Modal.prototype.highlightInUseThumbnails = function () {
 xiv.ui.Modal.prototype.animateModal  = function () {
     // Get the dims.
     this.computeDims_();
-  
+    window.console.log(this.dims_);
+
     // Setup.
+    this.anims_ = goog.isDefAndNotNull(this.anims_) ? this.anims_ : [];
+    this.animQueue_ = goog.isDefAndNotNull(this.animQueue_) ? 
+	this.animQueue_ : new goog.fx.AnimationParallelQueue();
+
+    // Create anims
     this.createModalSlideAnimation_();
     this.createModalResizeAnimation_();
     this.createViewBoxSlideAnimations_();
     this.createViewBoxResizeAnimations_();
-    this.highlightInUseThumbnails();
+
 	
     // Events.
     goog.events.listen(this.animQueue_, 'end', 
 	this.onModalAnimationEnd_.bind(this));
 
-    // Add to queue.
-    this.animQueue_ = goog.isDefAndNotNull(this.animQueue_) ? 
-	this.animQueue_ : new goog.fx.AnimationParallelQueue();
-    this.anims_ = goog.isDefAndNotNull(this.anims_) ? this.anims_ : [];
     goog.array.forEach(this.anims_, function(anim){
 	this.animQueue_.add(anim);
-    })
+    }.bind(this))
 
     // Play.
     this.animQueue_.play();
+    this.highlightInUseThumbnails();
 }
 
 
@@ -349,7 +352,7 @@ xiv.ui.Modal.prototype.onModalAnimationAnimate_ = function() {
 xiv.ui.Modal.prototype.onModalAnimationEnd_ = function() {
 
     // Destroy anims
-    goog.array.forEach(this.anims_, function(){
+    goog.array.forEach(this.anims_, function(anim){
 	this.animQueue_.remove(anim);
 	goog.events.removeAll(anim);
 	anim.destroy();
@@ -421,14 +424,14 @@ xiv.ui.Modal.prototype.createModalSlideAnimation_ = function () {
  */
 xiv.ui.Modal.prototype.createViewBoxSlideAnimations_ = function () {
     var elt = /** @type {Element} */ null; 
+
     this.ViewBoxHandler_.loop( function(ViewBox, i, j) { 
 	elt = ViewBox.getElement();
-	this.anims_.push_(new goog.fx.dom.Slide(
+	this.anims_.push(new goog.fx.dom.Slide(
 	    elt, [elt.offsetLeft, elt.offsetTop], 
-	    [this.dims_.viewbox.X[i][j], 
-	     this.dims_.viewbox.Y[i][j]], 
+	    [this.dims_.viewbox.X[i][j], this.dims_.viewbox.Y[i][j]], 
 	    xiv.ui.Modal.ANIM_LEN, goog.fx.easing.easeOut));	
-    })
+    }.bind(this))
 }
 
 
@@ -438,13 +441,14 @@ xiv.ui.Modal.prototype.createViewBoxSlideAnimations_ = function () {
  */
 xiv.ui.Modal.prototype.createViewBoxResizeAnimations_ = function () {
     var elt = /** @type {Element} */ null; 
+
     this.ViewBoxHandler_.loop( function(ViewBox, i, j) { 
 	elt = ViewBox.getElement();
 	this.anims_.push(new goog.fx.dom.Resize(
 	    elt, [elt.offsetWidth, elt.offsetHeight], 
 	    [this.dims_.viewbox.W, this.dims_.viewbox.H], 
 	    xiv.ui.Modal.ANIM_LEN, goog.fx.easing.easeOut));	
-    })
+    }.bind(this))
 }
 
 
@@ -474,10 +478,13 @@ xiv.ui.Modal.prototype.computeDims_ = function () {
  * @private
  */ 
 xiv.ui.Modal.prototype.computeModalDims_ = function() {
+    var scalerH = (this.mode_ == xiv.ui.Modal.modes.WINDOWED) ? 
+	xiv.ui.Modal.inlineDims.STARTING_H_PCT : 1;
+    var scalerW = (this.mode_ == xiv.ui.Modal.modes.WINDOWED) ? 
+	xiv.ui.Modal.inlineDims.STARTING_W_PCT : 1;
     this.dims_ = goog.isDefAndNotNull(this.dims_) ? this.dims_ : {};
-
-    this.dims_.H = window.innerHeight * xiv.ui.Modal.inlineDims.STARTING_H_PCT;
-    this.dims_.W = window.innerWidth * xiv.ui.Modal.inlineDims.STARTING_W_PCT;
+    this.dims_.H = window.innerHeight * scalerH;
+    this.dims_.W = window.innerWidth * scalerW;
 }
 
 
@@ -515,11 +522,14 @@ xiv.ui.Modal.prototype.computeViewBoxDims_ = function() {
 	xiv.ui.Modal.inlineDims.VIEWBOX_HORIZ_MARGIN)) / 
 	this.dims_.viewbox.ROWS;
 
-    this.dims_.viewbox.W = this.dims_.W - this.dims_.thumbgallery.W -
-	this.dims_.viewbox.COLS *
-	xiv.ui.Modal.inlineDims.VIEWBOX_VERT_MARGIN -
-	xiv.ui.Modal.inlineDims.VIEWBOX_VERT_MARGIN;
 
+    this.dims_.viewbox.W = 
+    // The total width to work with
+	(this.dims_.W - this.dims_.thumbgallery.W - 
+	xiv.ui.Modal.inlineDims.VIEWBOX_HORIZ_MARGIN) / 
+	this.dims_.viewbox.COLS - xiv.ui.Modal.inlineDims.VIEWBOX_HORIZ_MARGIN;
+
+    window.console.log('Viewboxwidth', this.dims_);
 }
 
 
@@ -800,16 +810,16 @@ function(opt_listenMethod){
 		     this.onWindowedButtonClicked_.bind(this));
 
     opt_listenMethod(this.buttons_.INSERTROW, goog.events.EventType.CLICK, 
-		     this.ViewBoxHandler_.insertRow.bind(this));
+	this.ViewBoxHandler_.insertRow.bind(this.ViewBoxHandler_));
 
     opt_listenMethod(this.buttons_.REMOVEROW, goog.events.EventType.CLICK,
-		     this.ViewBoxHandler_.removeRow.bind(this));
+	this.ViewBoxHandler_.removeRow.bind(this.ViewBoxHandler_));
 
-    opt_listenMethod(this.buttons_.INSERTCOL, goog.events.EventType.CLICK, 
-		     this.ViewBoxHandler_.insertColumn.bind(this));
+    opt_listenMethod(this.buttons_.INSERTCOLUMN, goog.events.EventType.CLICK, 
+	this.ViewBoxHandler_.insertColumn.bind(this.ViewBoxHandler_));
 
-    opt_listenMethod(this.buttons_.REMOVECOL, goog.events.EventType.CLICK, 
-		     this.ViewBoxHandler_.removeColumn.bind(this));
+    opt_listenMethod(this.buttons_.REMOVECOLUMN, goog.events.EventType.CLICK, 
+	this.ViewBoxHandler_.removeColumn.bind(this.ViewBoxHandler_));
 }
 
 
@@ -822,10 +832,16 @@ xiv.ui.Modal.prototype.adjustStyleToMode_ = function(){
 
     //window.console.log("ADJUST MODE", this.mode_);
 
-    if (this.mode_ === xiv.ui.Modal.modes.POPUP || 
-	this.mode_ === xiv.ui.Modal.modes.FULLSCREEN){
+    if (this.mode_ == xiv.ui.Modal.modes.POPUP || 
+	this.mode_ == xiv.ui.Modal.modes.FULLSCREEN){
 
-
+	window.console.log("ADJUST STYLE TO MODE");
+	moka.style.setStyle(this.getElement(), {
+	    'height': '100%',
+	    'width': '100%',
+	    'border-radius': 0
+	})
+	this.updateStyle();
     } else {
 	//goog.dom.classes.remove(this.background_, xiv.ui.Modal.CSS.BLACK_BG);
     }
@@ -1011,8 +1027,6 @@ xiv.ui.Modal.prototype.onThumbnailLoaded_ = function(ViewBox){
  * @private
  */
 xiv.ui.Modal.prototype.onViewBoxesChanged_ = function(e) {
-
-    window.console.log("VIEW BOXES CHANGED");
     if (e.animate) {
 	// Fade out the new viewboxes.
 	if (e.newSet) {
@@ -1050,18 +1064,22 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
     delete this.dims_;
 
     // anims_
-    goog.array.forEach(this.anims_, function(){
-	this.animQueue_.remove(anim);
-	goog.events.removeAll(anim);
-	anim.destroy();
-	anim.disposeInternal();
-    }.bind(this))
+    if (goog.isDefAndNotNull(this.anims_)) {
+	goog.array.forEach(this.anims_, function(){
+	    this.animQueue_.remove(anim);
+	    goog.events.removeAll(anim);
+	    anim.destroy();
+	    anim.disposeInternal();
+	}.bind(this))
+    }
     delete this.anims_;
 
     // animQueue_
-    this.animQueue_.destroy();
-    this.animQueue_.disposeInternal();
-    delete this.animQueue_;
+    if (goog.isDefAndNotNull(this.animQueue_)) {
+	this.animQueue_.destroy();
+	this.animQueue_.disposeInternal();
+	delete this.animQueue_;
+    }
 
     // buttons_
     goog.object.forEach(this.buttons_, function(button, key){

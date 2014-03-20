@@ -1091,47 +1091,28 @@ xiv.ui.ViewBoxHandler.prototype.showDragDropHandles_ = function(){
  */
 xiv.ui.ViewBoxHandler.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
-
-
-    this.loop(function(ViewBox){
-	// Onload
-	goog.events.unlisten(ViewBox, xiv.ui.ViewBox.EventType.THUMBNAIL_LOADED, 
-			     this.onThumbnailLoaded_.bind(this))
-	
-	// Preload
-	goog.events.unlisten(ViewBox, xiv.ui.ViewBox.EventType.THUMBNAIL_PRELOAD, 
-			     this.onThumbnailPreload_.bind(this))
-
-	// Error
-	goog.events.unlisten(ViewBox, xiv.ui.ViewBox.EventType.THUMBNAIL_LOADERROR, 
-			     this.onThumbnailLoadError_.bind(this))
-    }.bind(this))
-
-
-    // Drag Drop events
-    goog.events.unlisten(this.dragDropGroup_, 'dragstart', 
-		       this.onDragStart_.bind(this));
-    goog.events.unlisten(this.dragDropGroup_, 'dragover', 
-		       this.onDragOver_.bind(this));
-    goog.events.unlisten(this.dragDropGroup_, 'dragend', 
-		       this.onDragEnd_.bind(this));
-
-
+    goog.events.removeAll(this.dragDropGroup_);
 
     this.loop(function(ViewBox){
+	goog.events.removeAll(ViewBox);
 	ViewBox.disposeInternal();
 	goog.dom.removeNode(this.dragDropHandles_[ViewBox.getElement().id]);
 	goog.dom.removeNode(ViewBox.getElement());
     }.bind(this));
 
-    this.ViewBoxes_ = null;
-    this.dragDropHandles_ = null;
-    this.ViewBoxPositions_ = null;
+    goog.array.forEach(this.ViewBoxes_, function(arr){
+	goog.array.clear(arr);
+    })
+    goog.array.clear(this.ViewBoxes_); 
+
+    delete this.ViewBoxes_;
+    delete this.dragDropHandles_;
+    delete this.ViewBoxPositions_;
 	
     if (this.dragDropGroup_) {
 	this.dragDropGroup_.dispose();
 	this.dragDropTargets_.dispose();
     }
-    this.dragDropGroup_ = null;
-    this.ViewBoxesParent_ = null;
+    delete this.dragDropGroup_;
+    delete this.ViewBoxesParent_;
 }
