@@ -37,75 +37,6 @@ xiv.renderer.XtkRenderer2D.prototype.getDimsForCalc_ = function() {
 
 
 /**
- * @param {!number} sliceNum
- * @public
- */
-xiv.renderer.XtkRenderer2D.prototype.getSliceRelativeToContainerX = 
-function(sliceNum) {
-
-    this.getDimsForCalc_();
-
-    // First cull sliceNum
-    sliceNum = goog.math.min(this._sliceWidth, sliceNum);
-    sliceNum = goog.math.max(0, sliceNum);
-
-
-    // If the canvas w-h ratio is greater than original,
-    // we use height ratio
-    if (this.canvasWHRatio_ > this.originalWHRatio_) {
-
-	// The actual width of the image centered in the canvas
-	var actualWidth = this.originalWidth_ * 
-	    (this._height / this.originalHeight_);
-
-	return (this._width - actualWidth)/2 + 
-	    (sliceNum / this._sliceWidth) * actualWidth;
-
-
-    // Otherwise we ise the width...
-    } else {
-	return (sliceNum / this._sliceWidth) * this._width;
-    }
-}
-
-
-
-/**
- * @param {!number} sliceNum
- * @public
- */
-xiv.renderer.XtkRenderer2D.prototype.getSliceRelativeToContainerY = 
-function(sliceNum) {
-
-    this.getDimsForCalc_();
-
-    // First cull sliceNum
-    sliceNum = goog.math.min(this._sliceHeight, sliceNum);
-    sliceNum = goog.math.max(0, sliceNum);
-
-    // If the canvas w-h ratio is greater than original,
-    // we use height ratio
-    if (this.canvasWHRatio_ > this.originalWHRatio_) {
-
-	return (sliceNum / this._sliceHeight) * this._height;
-
-    // Otherwise we use the width...
-    } else {
-
-	// The actual width of the image centered in the canvas
-	var actualHeight = this.originalHeight_ * 
-	    (this._width / this.originalWidth_);
-
-	return (this._height - actualHeight)/2 + 
-	    (sliceNum / this._sliceHeight) * actualHeight;
-	
-    }
-}
-
-
-
-
-/**
  * @public
  */
 xiv.renderer.XtkRenderer2D.prototype.onResize = function() {
@@ -119,4 +50,111 @@ xiv.renderer.XtkRenderer2D.prototype.onResize = function() {
  */
 xiv.renderer.XtkRenderer2D.prototype.getVolume = function() {
     return this._topLevelObjects[0];
+}
+
+
+
+/**
+ * Callback for slice navigation, f.e. to update sliders.
+ *
+ * @public
+ */
+xiv.renderer.XtkRenderer2D.prototype.onSliceNavigation = function() {
+    window.console.log("SLICE NAVIGATED!", this.orientation_);
+}
+
+
+
+/**
+ * Returns the X coordinate of the container where the veritcal slice 
+ * belongs.
+ *
+ * Derived from  ' X.renderer2D.prototype.xy2ijk '.
+ *
+ * @param {!number} the verticalSlice
+ * @return {?Array} An array of [i,j,k] coordinates or null if out of frame.
+ */
+xiv.renderer.XtkRenderer2D.prototype.getVerticalSliceX = 
+function(sliceNumber) {
+
+    var _volume = this._topLevelObjects[0];
+    var _view = this._camera._view;
+    var _currentSlice = null;
+
+    var _sliceWidth = this._sliceWidth;
+    var _sliceHeight = this._sliceHeight;
+    var _sliceWSpacing = null;
+    var _sliceHSpacing = null;
+
+    // get current slice
+    // which color?
+    if (this._orientation == "Y") {
+	_currentSlice = this._slices[parseInt(_volume['indexY'], 10)];
+	_sliceWSpacing = _currentSlice._widthSpacing;
+	_sliceHSpacing = _currentSlice._heightSpacing;
+	this._orientationColors[0] = 'red';
+	this._orientationColors[1] = 'blue';
+
+    } else if (this._orientation == "Z") {
+	_currentSlice = this._slices[parseInt(_volume['indexZ'], 10)];
+	_sliceWSpacing = _currentSlice._widthSpacing;
+	_sliceHSpacing = _currentSlice._heightSpacing;
+	this._orientationColors[0] = 'red';
+	this._orientationColors[1] = 'green';
+
+    } else {
+	_currentSlice = this._slices[parseInt(_volume['indexX'], 10)];
+	_sliceWSpacing = _currentSlice._heightSpacing;
+	_sliceHSpacing = _currentSlice._widthSpacing;
+	this._orientationColors[0] = 'green';
+	this._orientationColors[1] = 'blue';
+
+	var _buf = _sliceWidth;
+	_sliceWidth = _sliceHeight;
+	_sliceHeight = _buf;
+    }
+
+    // padding offsets
+    var _x = 1 * _view[12];
+    var _y = -1 * _view[13]; // we need to flip y here
+
+    // .. and zoom
+    var _normalizedScale = Math.max(_view[14], 0.6);
+    var _center = [this._width / 2, this._height / 2];
+
+    // the slice dimensions in canvas coordinates
+    var _sliceWidthScaled = _sliceWidth * _sliceWSpacing *
+	_normalizedScale;
+    var _sliceHeightScaled = _sliceHeight * _sliceHSpacing *
+	_normalizedScale;
+
+    // the image borders on the left and top in canvas coordinates
+    var _image_left2xy = _center[0] - (_sliceWidthScaled / 2);
+    var _image_top2xy = _center[1] - (_sliceHeightScaled / 2);
+
+    // incorporate the padding offsets (but they have to be scaled)
+    _image_left2xy += _x * _normalizedScale;
+    _image_top2xy += _y * _normalizedScale;
+
+    
+    //------------------
+    // Begin XIV
+    //------------------
+    var _imageRight = _image_left2xy + _sliceWidthScaled;
+    var _imageBottom = _image_top2xy + _sliceHeightScaled;
+
+
+
+    if (sliceType === 'vertical'){
+	// Crop min, max
+	slideNum = goog.math.max(0, sliceNum);
+	sliceNum = goog.math.min(sliceNum, _sliceWidth);
+	return _image_left2xy + (sliceNum / _sliceWidth) * _sliceWidthScaled; 	
+    }
+    else {
+	// Crop min, max
+	slideNum = goog.math.max(0, sliceNum);
+	sliceNum = goog.math.min(sliceNum, _sliceHeight);
+	return _image_top2xy + (sliceNum / _sliceHeight) * _sliceHeightScaled;
+    }
 }

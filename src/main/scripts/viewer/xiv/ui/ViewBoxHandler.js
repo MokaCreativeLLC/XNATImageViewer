@@ -174,32 +174,6 @@ xiv.ui.ViewBoxHandler.prototype.iconUrl = '';
 
 
 
-/**
- * Sets the icon url to derive any images from.
- * @param {!string} url The url to derive the icon images from.
- * @public
- */
-xiv.ui.ViewBoxHandler.prototype.setIconBaseUrl = function(url) {
-    this.iconBaseUrl = url;
-    this.iconUrl = goog.string.path.join( this.iconBaseUrl, 
-				this.constructor.ID_PREFIX.replace(/\./g,'/'));
-    if (this.updateIconSrcFolder){
-	this.updateIconSrcFolder();
-    }
-}
-
-
-
-/**
- * @inheritDoc
- */
-xiv.ui.ViewBoxHandler.prototype.updateIconSrcFolder = function() {
-    this.loop(function(ViewBox){
-	ViewBox.setIconBaseUrl(this.iconBaseUrl);
-    }.bind(this))
-}
-
-
 
 /**
  * As stated.

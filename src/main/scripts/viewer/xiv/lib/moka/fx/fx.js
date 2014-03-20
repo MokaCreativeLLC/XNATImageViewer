@@ -137,6 +137,8 @@ moka.fx.fadeTo = function (element, opt_time, opt_opacity, callback,
     if (callback) {
 	f.addEventListener(goog.fx.Transition.EventType.END, function(e){ 
 	    callback(e);
+	    goog.events.removeAll(f);
+	    delete f;
 	})		
     }
     f.play();
