@@ -103,4 +103,9 @@ xiv.ui.Thumbnail.prototype.getViewable = function(){
 
 
 
-
+/**
+ * @inheritDoc
+ */
+xiv.ui.Thumbnail.prototype.disposeInternal = function(){
+    goog.base(this, 'disposeInternal');
+}

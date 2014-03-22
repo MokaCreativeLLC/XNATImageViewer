@@ -17,17 +17,17 @@ goog.require('moka.style');
  * moka.ui.Component is the parent class for many of the interactive 
  * ui elements.
  * 
+ * @param {string=} opt_domHelper Optional DOM helper.
  * @constructor
  * @extends {goog.ui.Component}
- * @param {string=} opt_domHelper Optional DOM helper.
  */
 goog.provide('moka.ui.Component');
 moka.ui.Component = function (opt_domHelper) {
     goog.base(this, opt_domHelper);
     
     // Validate ID_PREFIX
-
     moka.ui.Component.validateIdPrefix(this);
+
     // Parent elt.
     this.setElementInternal(
 	moka.dom.createUniqueDom('div', this.constructor.ID_PREFIX, 
@@ -39,7 +39,6 @@ moka.ui.Component = function (opt_domHelper) {
     // apply CSS hierarchy
     moka.ui.Component.applyCssHierarchy(this);
 };
-
 goog.inherits(moka.ui.Component, goog.ui.Component);
 goog.exportSymbol('moka.ui.Component', moka.ui.Component);
 

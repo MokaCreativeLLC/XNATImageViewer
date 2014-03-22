@@ -35,6 +35,19 @@ goog.provide('xiv');
 xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
 
 
+    /**
+     * @type {!string}
+     * @private
+     */
+    this.mode_ = mode || 'windowed';
+
+    /** 
+     * @type {Object.<string, Array.<gxnat.Viewable>>}
+     * @private
+     */
+    this.Viewables_;
+
+
     /** 
      * @private
      * @type {string} 
@@ -100,11 +113,7 @@ xiv.prototype.dataPaths_;
 
 
 
-/**
- * @type {Object.<string, Array.<gxnat.Viewable>>}
- * @private
- */
-xiv.prototype.Viewables_;
+
 
 
 
@@ -201,12 +210,11 @@ xiv.prototype.dispose = function () {
     this.hideModal(function (){
 	xiv.revertDocumentStyle_();
 
-	goog.events.unlisten(this.Modal_.getThumbnailHandler().
-		getThumbnailGallery().getZippyTree(),
-		moka.ui.ZippyTree.EventType.NODEADDED, this.onZippyAdded_);
+	
+	goog.events.removeAll(this.Modal_);
 
 
-	this.dataPaths_ = null;
+
 
 	goog.object.forEach(this.Viewables_, function(ViewableArr, key){
 	    goog.array.forEach(ViewableArr, function(Viewable){
@@ -215,7 +223,7 @@ xiv.prototype.dispose = function () {
 	    goog.array.clear(ViewableArr);
 	    delete this.Viewables_[key];
 	}.bind(this))
-	this.Viewables_ = null;
+
 
 
 	// Project Tree
@@ -224,6 +232,8 @@ xiv.prototype.dispose = function () {
 	this.projectTreeLoadedStarted_ = null;
 
 
+	delete this.Viewables_;
+	delete this.dataPaths_;
 	delete this.rootUrl_;
 	delete this.queryPrefix_;
 	delete this.iconUrl_;
@@ -295,10 +305,8 @@ xiv.prototype.loadExperiment = function(exptUrl, opt_callback) {
  * @private
  */
 xiv.prototype.collapseAdditionalZippys_ = function() {
-    if (!this.getModal().getThumbnailHandler()) { return };
-
-    goog.events.listen(this.Modal_.getThumbnailHandler().
-	    getThumbnailGallery().getZippyTree(),
+    if (!this.Modal_.getThumbnailGallery()) { return };
+    goog.events.listen(this.Modal_.getThumbnailGallery().getZippyTree(),
        moka.ui.ZippyTree.EventType.NODEADDED, this.onZippyAdded_);
 }
 
@@ -322,10 +330,13 @@ xiv.prototype.setProjectTree = function(tree){
  * @private
  */
 xiv.prototype.setModalButtonCallbacks_ = function(){
-    this.Modal_.getPopupButton().onclick = this.makeModalPopup_.bind(this);
-    //this.Modal_.getBupathOPbttons()['addXnatFolders'].onclick = 
-    //	this.showPathSelector_.bind(this);
-    this.Modal_.getCloseButton().onclick = this.dispose.bind(this);
+    goog.events.listen(this.Modal_.getPopupButton(), 
+		       goog.events.EventType.CLICK, 
+		       this.createModalPopup_.bind(this))
+
+    goog.events.listen(this.Modal_.getCloseButton(), 
+		       goog.events.EventType.CLICK, 
+		       this.dispose.bind(this));
 } 
 
 
@@ -334,20 +345,35 @@ xiv.prototype.setModalButtonCallbacks_ = function(){
  * Creates a popup window of the modal element.
  * @private
  */
-xiv.prototype.makeModalPopup_ = function(){
+xiv.prototype.createModalPopup_ = function(){
 
     var dataPaths = /**@type {!string}*/ '';
     goog.array.forEach(this.dataPaths_, function(dataPath){
 	dataPaths += dataPath + '&'
     })
-    goog.window.popup(this.rootUrl_ + '/scripts/viewer/popup.html' + '?' 
-		      + dataPaths);
 
-    // Destroy
-    this.destroy();
+    // From: http://javascript.info/tutorial/popup-windows
+
+    var win = open(this.rootUrl_ + '/scripts/viewer/xiv/popup.html', 
+		   'example', 'width=300,height=300');
+    win.focus();
+
+    //win.document.body.custom = this.dataPaths_[0];
+    var dat = this.dataPaths_[0];
+    var onL = function() {
+	win.launchXImgView(dat, 'popup');
+    }
+
+
+    win.onload = onL;
+
+    //window.open(this.rootUrl_ + '/scripts/viewer/xiv/popup.html');
+
+    // Dispose
+    this.dispose();
 
     // Reload window
-    window.location.reload();
+    //window.location.reload();
 }
 
 
@@ -377,12 +403,12 @@ xiv.prototype.addViewableToModal = function(Viewable){
 
     //window.console.log(Viewable);
 
-    if (!this.Modal_.getThumbnailHandler()) { return };
-    this.Modal_.getThumbnailHandler().createAndAddThumbnail(
+    if (!this.Modal_.getThumbnailGallery()) { return };
+    this.Modal_.getThumbnailGallery().createAndAddThumbnail(
 	Viewable, // The viewable
 	xiv.extractViewableFolders_(Viewable) // The folder tree
     );
-    this.Modal_.getThumbnailHandler().setHoverParent(this.Modal_.getElement());
+    this.Modal_.getThumbnailGallery().setHoverParent(this.Modal_.getElement());
 }
 
 
@@ -394,8 +420,8 @@ xiv.prototype.addViewableToModal = function(Viewable){
  */
 xiv.prototype.createModal = function(modalType){
     this.Modal_ = new this.modalType_();
+    this.Modal_.setMode(this.mode_);
     this.Modal_.setIconBaseUrl(this.iconUrl_);
-    this.Modal_.setMode('windowed');
     this.setModalButtonCallbacks_();
     window.onresize = function () { 
 	this.Modal_.updateStyle() 
@@ -406,7 +432,7 @@ xiv.prototype.createModal = function(modalType){
 
 /**
  * Stores the viewable in an object, using its path as a key.
- * @param {!gxnat.Viewable} viweable The gxnat.Viewable object to 
+ * @param {!gxnat.Viewable} viewable The gxnat.Viewable object to 
  *    store.
  * @param {!string} path The XNAT path associated with the Viewable.
  * @private

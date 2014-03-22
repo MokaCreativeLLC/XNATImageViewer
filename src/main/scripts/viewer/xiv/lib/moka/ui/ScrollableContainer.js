@@ -228,7 +228,8 @@ moka.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 	var remap = /**@type {!number}*/
 	    moka.convert.remap1D(sendVal, beforeRange, afterRange);
 	var t = /**@type {!number}*/ remap['remappedVal'];
-	    moka.style.setStyle( this.scrollArea_, {'top': -t});	
+
+	moka.style.setStyle( this.scrollArea_, {'top': -t});	
 
 
 
@@ -256,6 +257,24 @@ moka.ui.ScrollableContainer.prototype.setSliderEvents_ = function() {
     this.Slider_.bindToMouseWheel(this.element_);
 }
 
+
+
+
+/**
+ * @inheritDoc
+ */
+moka.ui.ScrollableContainer.prototype.disposeInternal = function() {
+    goog.base(this, 'disposeInternal');
+    
+    goog.events.removeAll(this.Slider_);
+    this.Slider_.disposeInternal();
+    delete this.Slider_;
+    
+
+    goog.dom.remove(this.scrollArea_);
+    delete this.scrollArea_;
+    
+}
 
 
 

@@ -53,7 +53,7 @@ moka.ui.ZippyTree = function () {
      * @type {!Array}
      * @private
      */
-    this.secondaryQueue_ = [];
+    this.secondaryAnimQueue_ = [];
 
 
     /**
@@ -360,7 +360,7 @@ moka.ui.ZippyTree.prototype.createFadeAnim_ = function(elt, opt_callback) {
     if (!this.AnimQueue_.isPlaying()){		
 	this.AnimQueue_.add(anim)
     } else {
-	this.secondaryQueue_.push(anim);
+	this.secondaryAnimQueue_.push(anim);
     }
 
     if (opt_callback){
@@ -457,9 +457,9 @@ moka.ui.ZippyTree.prototype.continueAnim_ = function() {
     this.AnimQueue_.disposeInternal();
 
     // Add animations in the secondary queue to the AnimQueue
-    while(this.secondaryQueue_.length){
-	this.AnimQueue_.add(this.secondaryQueue_[0]);
-	goog.array.removeAt(this.secondaryQueue_, 0);
+    while(this.secondaryAnimQueue_.length){
+	this.AnimQueue_.add(this.secondaryAnimQueue_[0]);
+	goog.array.removeAt(this.secondaryAnimQueue_, 0);
     }
 
     // Reset the 'end' listener -- it appears to get disposed as well.
@@ -467,4 +467,28 @@ moka.ui.ZippyTree.prototype.continueAnim_ = function() {
 
     // Play
     this.AnimQueue_.play();
+}
+
+
+
+/**
+* @inheritDoc
+*/
+moka.ui.ZippyTree.prototype.disposeInternal = function(){
+    goog.base(this, 'disposeInternal');
+
+    goog.dom.removeNode(this.rootElt_);
+    this.rootElt_;
+
+    moka.ui.disposeAnimations(this.secondaryAnimationQueue_);
+    delete this.secondaryAnimationQueue_;
+
+    moka.ui.disposeAnimationQueue(this.AnimQueue_);
+    delete this.AnimQueue_;
+
+    delete this.maxDepth_;
+    delete this.fadeInFx_;
+    delete this.isEmpty_;
+    delete this.initOp_;
+    delete this.fadeDur_;
 }

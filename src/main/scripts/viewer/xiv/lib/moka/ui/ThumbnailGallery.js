@@ -28,7 +28,23 @@ goog.require('moka.ui.ZippyTree');
 goog.provide('moka.ui.ThumbnailGallery');
 moka.ui.ThumbnailGallery = function () {
     goog.base(this);
+
     this.setDefaultClasses_();    
+
+
+    /**
+     * @type {Object.<string, moka.ui.Thumbnail>}
+     * @private
+     */
+    this.Thumbs_;
+
+
+    /**
+     * @type {string}
+     * @private
+     */
+    this.storedHoverThumbId_;
+
 
     /**
      * @private
@@ -36,15 +52,32 @@ moka.ui.ThumbnailGallery = function () {
      */
     this.ZippyTree_ = new moka.ui.ZippyTree();
     goog.dom.append(this.getScrollArea(), this.ZippyTree_.getElement());
-    
     // Do fade in effects when zippy tree contents is added.
     this.ZippyTree_.toggleFadeInFx(true);
 
-    // Remap slider each time content is added.
-    goog.events.listen(this.ZippyTree_,
-       moka.ui.ZippyTree.EventType.CONTENTADDED, function() {
-	  this.mapSliderToContents();
-       }.bind(this))
+
+    /**
+     * @type {!Array.<string>}
+     * @private
+     */
+    this.thumbnailClasses_;
+
+
+    /**
+     * @type {!Array.<string>}
+     * @private
+     */
+    this.thumbnailTextClasses_;
+
+
+    /**
+     * @type {!Array.<string>}
+     * @private
+     */
+    this.thumbnailImageClasses_;
+
+    
+    this.setZippyTreeEvents_();
 }
 goog.inherits(moka.ui.ThumbnailGallery, moka.ui.ScrollableContainer);
 goog.exportSymbol('moka.ui.ThumbnailGallery', moka.ui.ThumbnailGallery);
@@ -71,22 +104,6 @@ moka.ui.ThumbnailGallery.CSS_SUFFIX = {
     THUMBNAIL_DISPLAYTEXT: 'thumbnail-text', 
 
 }
-
-
-
-/**
- * @type {Object<string, moka.ui.Thumbnail>}
- * @private
- */
-moka.ui.ThumbnailGallery.prototype.Thumbs_;
-
-
-
-/**
- * @type {moka.ui.ZippyTree}
- * @private
- */
-moka.ui.ThumbnailGallery.prototype.ZippyTree_;
 
 
 
@@ -133,6 +150,34 @@ moka.ui.ThumbnailGallery.prototype.createThumbnail = function(imageUrl,
 
 
 
+/**
+ * Loops through all The thumbnails, applying a callback to them.
+ *
+ * @param {!Function} The callback to apply in the loop.
+ * @public
+ */
+moka.ui.ThumbnailGallery.prototype.loop = function(callback){
+    goog.object.forEach(this.Thumbs_, function(thumb){
+	callback(thumb);
+    })
+}
+
+
+
+/**
+ * Sets the thumbnail's hover (mouseover) parent.  This allows for a more
+ * seamless UX when scrolling and overing over a thumbnail.
+ * 
+ * @param {!Element} elt The hover parent of the thumbnails.
+ * @public
+ */
+moka.ui.ThumbnailGallery.prototype.setHoverParent = function(elt){
+    this.loop(function(thumbnail){
+	goog.dom.append(elt, thumbnail.getHoverable());
+    })
+}
+
+
 
 /**
  * Adds a thumbnail to the gallery, or a gallery zippy if the opt_folders 
@@ -145,20 +190,20 @@ moka.ui.ThumbnailGallery.prototype.createThumbnail = function(imageUrl,
  */
 moka.ui.ThumbnailGallery.prototype.addThumbnail = 
 function(thumbnail, opt_folders) {
-    //window.console.log('Add thumbnail', thumbnail, opt_folders);
+
+    if (goog.object.containsValue(this.Thumbs_, thumbnail)) { return };
+
+    // Track thumbnail.
+    this.Thumbs_ = this.Thumbs_ ? this.Thumbs_ : {};
+    this.Thumbs_[thumbnail.getElement().getAttribute('id')] = thumbnail;
 
     // Bind clone to mouse wheel.
     this.getSlider().bindToMouseWheel(thumbnail.getHoverable());
     goog.events.listen(this.getSlider(), 
 		     moka.ui.GenericSlider.EventType.MOUSEWHEEL, 
 			 this.onHoverAndScroll_.bind(this));
-    // Track thumbnail.
-    this.Thumbs_ = this.Thumbs_ ? this.Thumbs_ : {};
-    this.Thumbs_[thumbnail.getElement().getAttribute('id')] = thumbnail;
 
     //window.console.log(opt_folders, "\n\nMIN", opt_minFolderInd);
-    
-    
     this.ZippyTree_.addContents(thumbnail.getElement(), opt_folders);
 }
 
@@ -187,11 +232,13 @@ moka.ui.ThumbnailGallery.prototype.createAndAddThumbnail =
 
 
 /**
- * @type {string}
  * @private
  */
-moka.ui.ThumbnailGallery.prototype.storedHoverThumbId_;
-
+moka.ui.ThumbnailGallery.prototype.setZippyTreeEvents_ = function(){ 
+    goog.events.listen(this.ZippyTree_,
+		       moka.ui.ZippyTree.EventType.CONTENTADDED,
+		       this.mapSliderToContents.bind(this))
+}
 
 
 
@@ -364,5 +411,36 @@ moka.ui.ThumbnailGallery.prototype.setDefaultClasses_ = function() {
 	moka.ui.ThumbnailGallery.CSS.THUMBNAIL_TEXT);
     goog.dom.removeNode(tempThumb.getElement());
     delete tempThumb;
+}
+
+
+
+/**
+ * @inheritDoc
+ */
+moka.ui.ThumbnailGallery.prototype.disposeInternal = function() {
+    goog.base(this, 'disposeInternal');
+
+    // Thumbs
+    moka.ui.disposeComponentMap(this.Thumbs_);
+    delete this.Thumbs_;
+
+    // Zippy Tree
+    goog.events.removeAll(this.ZippyTree_);
+    this.ZippyTree_.disposeInternal();
+    delete this.ZippyTree_;
+
+    
+    goog.array.clear(this.thumbnailClasses_);
+    delete this.thumbnailClasses_;
+
+    goog.array.clear(this.thumbnailImageClasses_);
+    delete this.thumbnailImageClasses_;
+
+    goog.array.clear(this.thumbnailTextClasses_);
+    delete this.thumbnailTextClasses_;
+
+    // other
+    delete this.storedHoverThumbId_;
 }
 

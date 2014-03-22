@@ -1163,11 +1163,8 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     // LayoutMenu
     if (goog.isDefAndNotNull(this.LayoutMenu_)){
 	// Unlisten - LayoutMenu 
-	goog.events.unlisten(this.LayoutMenu_, 
-			     moka.ui.SlideInMenu.EventType.ITEM_SELECTED, 
-			     this.onMenuItemSelected_.bind(this));
-	
-	goog.dispose(this.LayoutMenu_.disposeInternal());
+	goog.events.removeAll(this.LayoutMenu_);	
+	this.LayoutMenu_.disposeInternal();
 	delete this.LayoutMenu_;
     }
 	

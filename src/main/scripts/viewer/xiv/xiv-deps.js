@@ -169,7 +169,7 @@ goog.addDependency('../../../../ui/Modal.js',
     'moka.convert',
     'moka.fx',
     'xiv.ui.ViewBoxHandler',
-    'xiv.ui.ThumbnailHandler',
+    'xiv.ui.ThumbnailGallery',
 ]);
 
 
@@ -199,8 +199,8 @@ goog.addDependency('../../../../ui/Thumbnail.js',
 
 
 
-goog.addDependency('../../../../ui/ThumbnailHandler.js', 
-['xiv.ui.ThumbnailHandler'], [
+goog.addDependency('../../../../ui/ThumbnailGallery.js', 
+['xiv.ui.ThumbnailGallery'], [
     'goog.string',
     'goog.dom',
     'goog.dom.classes',

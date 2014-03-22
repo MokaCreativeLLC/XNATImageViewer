@@ -12,6 +12,7 @@ goog.require('goog.ui.Zippy.Events');
 goog.require('goog.ui.Zippy');
 
 // moka
+goog.require('moka.ui');
 goog.require('moka.string');
 goog.require('moka.ui.Component');
 
@@ -20,8 +21,10 @@ goog.require('moka.ui.Component');
 /**
  * A ZippyNode represents a collection of elements releveant to creating
  * a Zippy folder hierarchy (ZippyTree).  
+ *
  * @param {!string} The title of the node.
  * @param {!element} The parent element of the zippy.
+ *
  * @constructor
  * @extends {moka.ui.Component}
  */
@@ -72,7 +75,7 @@ moka.ui.ZippyNode = function (title, parentElement) {
      * @type {!goog.ui.AnimatedZippy | !goog.ui.Zippy}
      * @private
      */
-    this.zippy_ = new this.zippyType_(this.header_, this.contentHolder_, true);
+    this.Zippy_ = new this.zippyType_(this.header_, this.contentHolder_, true);
 
 
     /**
@@ -89,7 +92,8 @@ moka.ui.ZippyNode = function (title, parentElement) {
     this.Nodes_ = {};
 
 
-    this.setZippyEvets_Hover_();
+    // Events
+    this.setZippyEvents_Hover_();
     this.setZippyEvents_ExpandAndCollapse_();
 }
 goog.inherits(moka.ui.ZippyNode, moka.ui.Component);
@@ -205,7 +209,6 @@ moka.ui.ZippyNode.prototype.zippyType_ = goog.ui.AnimatedZippy;
 
 
 /**
- * As stated.
  * @return {Object.<string, goog.ui.ZippyNode>} The node collection.
  * @public
  */
@@ -254,7 +257,7 @@ moka.ui.ZippyNode.prototype.getHeaderLabel = function () {
  * @public
  */
 moka.ui.ZippyNode.prototype.getZippy = function () { 
-    return this.zippy_; 
+    return this.Zippy_; 
 };
 
 
@@ -277,7 +280,7 @@ moka.ui.ZippyNode.prototype.setAnimated = function(animated){
  * @private
  */
 moka.ui.ZippyNode.prototype.setZippyEvents_ExpandAndCollapse_ = function() {
-    goog.events.listen(this.zippy_,goog.object.getValues(goog.ui.Zippy.Events), 
+    goog.events.listen(this.Zippy_,goog.object.getValues(goog.ui.Zippy.Events), 
     function(e) { 		
 	if (e.target.isExpanded()) {
 	    this.onZippyExpanded_();
@@ -293,7 +296,7 @@ moka.ui.ZippyNode.prototype.setZippyEvents_ExpandAndCollapse_ = function() {
  * As stated.
  * @private
  */
-moka.ui.ZippyNode.prototype.setZippyEvets_Hover_ = function() {
+moka.ui.ZippyNode.prototype.setZippyEvents_Hover_ = function() {
     goog.events.listen(this.header_, goog.events.EventType.MOUSEOVER, 
 		       this.onZippyMouseOver_.bind(this));
     goog.events.listen(this.header_, goog.events.EventType.MOUSEOUT, 
@@ -331,7 +334,6 @@ moka.ui.ZippyNode.prototype.onZippyCollapsed_ = function(){
 
 
 /**
- * As stated.
  * @private
  */
 moka.ui.ZippyNode.prototype.onZippyMouseOver_ = function(){
@@ -344,7 +346,6 @@ moka.ui.ZippyNode.prototype.onZippyMouseOver_ = function(){
 
 
 /**
- * As stated.
  * @private
  */
 moka.ui.ZippyNode.prototype.onZippyMouseOut_ = function(){
@@ -353,4 +354,48 @@ moka.ui.ZippyNode.prototype.onZippyMouseOut_ = function(){
     goog.dom.classes.remove(this.expandIcon_, 
 			    moka.ui.ZippyNode.CSS.EXPAND_ICON_MOUSEOVER);
 }
+
+
+
+/**
+ * @inheritDoc
+ */
+moka.ui.ZippyNode.prototype.disposeInternal = function(){
+    goog.base(this ,'disposeInternal');
+
+
+    // Header label
+    goog.dom.removeNode(this.headerLabel_);
+    delete this.headerLabel_;
+
+    // Expand Icon
+    goog.dom.removeNode(this.expandIcon_);
+    delete this.expandIcon_;
+
+    // Header
+    goog.events.removeAll(this.header_);
+    goog.dom.removeNode(this.header_);
+    delete this.header_;
+
+    // Holder
+    goog.dom.removeNode(this.contentHolder_);
+    delete this.contentHolder_;
+    
+    // Zippy
+    this.Zippy_.disposeInternal();
+    goog.events.removeAll(this.Zippy_);
+    delete this.Zippy_;
+
+    // Sub-Nodes
+    moka.ui.disposeComponentMap(this.Nodes_);
+    delete this.Nodes_;
+
+
+    // Storage Key
+    delete this.storageKey_;
+    delete this.title_;
+}
+
+
+
 

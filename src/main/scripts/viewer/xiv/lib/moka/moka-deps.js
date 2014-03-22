@@ -50,11 +50,16 @@ goog.addDependency('../../../moka/string/string.js', ['moka.string'], [
 ]); 
 
 
+goog.addDependency('../../../moka/ui/ui.js', ['moka.ui'], [
+]);
+
+
 
 goog.addDependency('../../../moka/ui/Component.js', ['moka.ui.Component'], [
     'goog.ui.Component',
     'goog.string',
     'goog.object',
+    'moka.ui',
     'moka.style', 
     'moka.dom'
 ]);

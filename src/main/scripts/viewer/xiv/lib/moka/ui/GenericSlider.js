@@ -494,21 +494,26 @@ moka.ui.GenericSlider.prototype.onThumbnailDragEnd_ = function (e) {
 moka.ui.GenericSlider.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
+    goog.events.removeAll(this);
     goog.dom.removeNode(this.element_);
     delete this.element_;
 
+    goog.events.removeAll(this.thumb_);
     goog.dom.removeNode(this.thumb_);
     delete this.thumb_;
 
+    goog.events.removeAll(this.track_);
     goog.dom.removeNode(this.track_);
     delete this.track_;
 
     goog.array.forEach(this.MouseWheelHandlers_, function(handler){
+	goog.events.removeAll(handler);
 	handler.dispose();
     })
+    goog.array.clear(this.MouseWheelHandlers_);
     delete this.MouseWheelHandlers_;
 
-    this.thumbHoverClasses_ = null;
-    this.trackHoverClasses_ = null;
-    this.isSliding_ = null;
+    delete this.thumbHoverClasses_;
+    delete this.trackHoverClasses_;
+    delete this.isSliding_;
 };

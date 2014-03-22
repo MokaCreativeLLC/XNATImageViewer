@@ -25,7 +25,7 @@
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/viewbox.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/modal.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/thumbnail.css">
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/thumbnailhandler.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/thumbnailgallery.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/viewboxhandler.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/layouthandler.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/ui/css/layout.css">
@@ -67,81 +67,59 @@ goog.require('xiv');
 goog.require('xiv.ui.Modal');
 
 
-var mode = 'demo';
+var dataPath = '';
 var modalState = 'popup';
-var dataPath = 'sample-data/';
 var imagePath = 'images/viewer/';
 
-
-if (mode === 'demo'){
-    imagePath = 'src/main/' + imagePath;
-}
-else {
-    if (modalState === 'popup') { 
-       imagePath = '../../' + imagePath;
-    }
-    else  { 
-       imagePath = serverRoot + '/' + imagePath;
-    }
-}
 
 
 
 // NOTE: serverRoot is a global,
 // it will adjust accordingly.
 
-function launchXImgView() {
-    window.console.log('VIEWER LAUNCH', 
-   '(window state)', modalState, '(serverRoot)', '(mode)', mode,
-    serverRoot, '(dataPath)', dataPath, '(image path)', imagePath);
-    //startViewer(modalState, serverRoot, dataPath, imagePath);
+function launchXImgView(opt_dataPath, opt_modalState) {
+    window.console.log('VIEWER LAUNCH', opt_dataPath);
+    window.console.log('(window state)', modalState, opt_modalState);
+    window.console.log('(serverRoot)', serverRoot); 
+    //window.console.log('(mode)', mode);
+    window.console.log('dataPath', dataPath);
+    window.console.log('imagePath', imagePath);
 
-    // loads custom extensions.
+
+
     xiv.loadCustomExtensions();
 
-    // Adjusts the document for the viewer
     xiv.adjustDocumentStyle();
 
-    // the XnatImageViewer object
+
+    if (goog.isString(opt_modalState)){ modalState = opt_modalState};
+
+    window.console.log("MODAL STATE", modalState);
     var XnatImageViewer = new xiv(modalState, serverRoot,  
 			      gxnat.Path.getQueryPrefix(serverRoot),
 			      imagePath);
 
-    // Awkward but necessary because of the dependency relationships. 
-    // Ideally, the XnatImageViewer prototype would create the modal, but
-    // because xiv.ui.Modal is a sub-object of xiv, in creates a circular 
-    // dependency in the goog.require list.
     XnatImageViewer.setModalType(xiv.ui.Modal);
 
-    // Creates the modal
     XnatImageViewer.createModal();
 
-    // Loads a given experiment, followed by the project tree.
-    XnatImageViewer.loadExperiment(dataPath, function() {
+
+    XnatImageViewer.loadExperiment(dataPath || opt_dataPath, function() {
         XnatImageViewer.loadProjectTree();
     });
 
-    // Shows the modal.
+ 
     XnatImageViewer.showModal();
 };
 
 
 
-//-----------------
-// DEMO launch.
-//-----------------
-if (mode === 'demo') {
-    serverRoot = 'src/main';
-    window.onload = function(){
-        launchXImgView();
-    }
-}
 
 
 //-----------------
 // Live-Windowed launch
 //-----------------
-else if (mode === 'live' && modalState === 'windowed'){
+if (modalState === 'windowed'){
     dataPath = 'projects/$om.getProject()/subjects/'
     dataPath += '$om.getSubjectId()/experiments/$om.getId()';
 }
@@ -150,14 +128,17 @@ else if (mode === 'live' && modalState === 'windowed'){
 //-----------------
 // Live-Popup launch
 //-----------------
-else if (mode === 'live' && modalState === 'popup'){
-    dataPath = 'projects/$om.getProject()/subjects/'
-    dataPath += '$om.getSubjectId()/experiments/$om.getId()';
+else if (modalState === 'popup'){
+    //dataPath = window.document.body.custom;
+    //alert(dataPath);
     serverRoot = '';
+
+   /**
     window.onload = function(){
+        window.console.log(document.getElementsByClassName('xiv-ui-modal'));
         launchXImgView();
     }
-    
+    */
 }
 
 </script>

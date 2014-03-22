@@ -65,7 +65,7 @@ def convertDemoToPopup(demoPath):
         #
         # Replace the appropriate paths
         #
-        line = line.replace('src/main/scripts/viewer/xiv', '').strip()
+        line = line.replace('src/main', '/xnat').strip()
         
 
         #

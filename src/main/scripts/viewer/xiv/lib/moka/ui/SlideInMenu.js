@@ -36,7 +36,7 @@ moka.ui.SlideInMenu = function () {
 
     /**
      * @private
-     * @type {Object.<string, moka.ui.menuItemCollection>}
+     * @type {Object.<string, moka.ui.SlideInMenu.menuItemCollection>}
      */
     this.menuItems_ = {};
 
@@ -71,6 +71,13 @@ moka.ui.SlideInMenu = function () {
      * @type {!goog.ui.Menu}
      */   
     this.menu_ = new goog.ui.Menu();
+
+
+    /**
+     * @private
+     * @type {!goog.fx.AnimationParallelQueue}
+     */
+    this.animQueue_ =  new goog.fx.AnimationParallelQueue();
 
 
 
@@ -124,7 +131,7 @@ moka.ui.SlideInMenu.CSS_SUFFIX = {
  * @type {!Object}
  * @public
  */
-moka.ui.menuItemCollection = {
+moka.ui.SlideInMenu.menuItemCollection = {
     ITEM : null,
     CONTENT: null,
     ICON: null
@@ -203,19 +210,19 @@ function (elt, startPos, endPos, opt_animTime) {
  * @param {!Array.<goog.fx.Animation> | !goog.fx.Animation} anims
  * @param {Function=} opt_callback
  */
-moka.ui.SlideInMenu.runAnimations_  = function (anims, opt_callback) {
-    anims = goog.isArray(anims) ? anims : [anims]
-    var animQueue = /**@type {!goog.fx.AnimationParallelQueue}*/
-    new goog.fx.AnimationParallelQueue();
-    goog.events.listen(animQueue, 'end', function() {
+moka.ui.SlideInMenu.prototype.runAnimations_  = function (anims, opt_callback) {
+    anims = goog.isArray(anims) ? anims : [anims];
+
+    goog.events.listen(this.animQueue_, 'end', function() {
 	if (opt_callback) { opt_callback() };
-	animQueue.disposeInternal();
-	animQueue = null;
+	goog.array.forEach(anims, function(anim){
+	    anim.dispose();
+	})
     }.bind(this))
     goog.array.forEach(anims, function(anim){
-	animQueue.add(anim);
-    }) 
-    animQueue.play();
+	this.animQueue_.add(anim);
+    }.bind(this)) 
+    this.animQueue_.play();
 }
 
 
@@ -512,7 +519,8 @@ moka.ui.SlideInMenu.prototype.addMenuItem = function(itemTitles,
 	goog.dom.append(content, icon);
 	
 	// Store the item.
-	this.menuItems_[title] = goog.object.clone(moka.ui.menuItemCollection);
+	this.menuItems_[title] = 
+	    goog.object.clone(moka.ui.SlideInMenu.menuItemCollection);
 	this.menuItems_[title].ITEM = item;
 	this.menuItems_[title].CONTENT = content;
 	this.menuItems_[title].ICON = icon;
@@ -577,7 +585,7 @@ function(indexOrTitle, opt_deactivateOthers) {
 moka.ui.SlideInMenu.prototype.showMenu = 
 function(opt_callback, opt_animTime) {
     this.holder_.style.visibility = 'visible';
-    moka.ui.SlideInMenu.runAnimations_(moka.ui.SlideInMenu.createAnimIn_(
+    this.runAnimations_(moka.ui.SlideInMenu.createAnimIn_(
 	this.holder_, this.hidePos_, this.showPos_, opt_animTime), function(){
 	    //window.console.log(this.holder_);
 	    this.menuVisible_ = true;
@@ -596,7 +604,7 @@ function(opt_callback, opt_animTime) {
  */
 moka.ui.SlideInMenu.prototype.hideMenu = 
 function(opt_callback, opt_animTime) {
-    moka.ui.SlideInMenu.runAnimations_(moka.ui.SlideInMenu.createAnimOut_(
+    this.runAnimations_(moka.ui.SlideInMenu.createAnimOut_(
 	this.holder_, this.showPos_, this.hidePos_, opt_animTime), function() {
 	    this.menuVisible_ = false;
 	    this.holder_.style.visibility = 'hidden';
@@ -680,4 +688,46 @@ moka.ui.SlideInMenu.prototype.determineMenuHideable_ = function(delayTime) {
     if (!isHovered && ((dateObj.getTime() - mouseoutDate) >= delayTime)) { 
 	this.hideMenu()
     }
+}
+
+
+
+
+/**
+ * @inheritDoc
+ */
+moka.ui.SlideInMenu.prototype.disposeInternal = function() {
+    goog.base(this, 'disposeInternal');
+
+    goog.events.removeAll(this.getElement());
+    
+    goog.object.forEach(this.menuItems_, function(item, key){
+	goog.events.removeAll(item);
+	goog.dom.removeNode(item);
+	delete this.menuItems_[key];
+    }.bind(this))
+    goog.object.clear(this.menuItems_);
+    delete this.menuItems_;
+
+
+    goog.dom.removeNode(this.holder_);
+    delete this.holder_;
+
+    goog.dom.removeNode(this.icon_);
+    delete this.icon_;
+
+    goog.events.removeAll(this.menu_);
+    this.menu_.disposeInternal();
+    delete this.menu_;
+
+    moka.ui.disposeAnimationQueue(this.animQueue_);
+    delete this.animQueue_;
+
+    delete this.prevSelectedItem_;
+    delete this.currSelectedItem_;
+    delete this.menuVisible_;
+    delete this.hidePos_;
+    delete this.showPos_;
+    delete this.matchMenuIconToSelected_;
+    delete this.matchMenuTitleToSelected_;
 }

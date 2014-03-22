@@ -148,7 +148,7 @@ moka.ui.ZipTabs.prototype.getResizable = function(){
  */
 moka.ui.ZipTabs.prototype.setDefaultResizeEvents_ = function(){
 
-   goog.events.listen(this.getResizable(), moka.ui.Resizable.EventType.RESIZE,
+   goog.events.listen(this.Resizable_, moka.ui.Resizable.EventType.RESIZE,
 	function(e) {
 
 	    var size = /**@type {!goog.math.Size}*/ 
@@ -306,4 +306,24 @@ moka.ui.ZipTabs.prototype.addTab = function(tabTitle) {
 
     // Deactivate
     this.deactivateAll();
+}
+
+
+
+/**
+ * @inheritDoc
+ */
+moka.ui.ZipTabs.prototype.disposeInternal = function() {
+    goog.base(this, 'disposeInternal');
+
+    goog.events.removeAll(this.Resizable_);
+    this.Resizable_.disposeInternal(); 
+
+    goog.array.forEach(this.getTabElements(), function(tab, i) { 
+	goog.events.removeAll(tab);
+    }.bind(this))
+
+
+    delete this.Resizable_;
+    delete this.orientation_;
 }

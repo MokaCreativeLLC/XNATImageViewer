@@ -1,7 +1,6 @@
 /** 
-* @author sunilk@mokacreativellc.com (Sunil Kumar)
-* @author amh1646@rit.edu (Amanda Hartung)
-*/
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
 
 // goog
 goog.require('goog.dom');
@@ -30,7 +29,6 @@ goog.provide('moka.ui.Thumbnail');
 moka.ui.Thumbnail = function () {
     goog.base(this);
 
-
     /**
      * @type {!Image}
      * @private
@@ -38,7 +36,7 @@ moka.ui.Thumbnail = function () {
     this.image_ = goog.dom.createDom('img', {
 	'id' : 'moka.ui.Thumbnail_' + goog.string.createUniqueString()
     }); 
-    goog.dom.append(this.element_, this.image_);
+    goog.dom.append(this.getElement(), this.image_);
 
 
     /**
@@ -48,7 +46,7 @@ moka.ui.Thumbnail = function () {
     this.text_ = goog.dom.createDom('div', {
 	'id': 'DisplayText_' + goog.string.createUniqueString()
     });
-    goog.dom.append(this.element_, this.text_);
+    goog.dom.append(this.getElement(), this.text_);
 
 
     // Other init functions.
@@ -129,17 +127,6 @@ moka.ui.Thumbnail.prototype.isActive_ = false;
 
 
 
-/**
- * Gets the primary div that defines the thumbnail.
- * @return {!Element} The thumbnail div (the entire element).
- * @public
- */
-moka.ui.Thumbnail.prototype.getElement = function() {
-    return this.element_;	
-}
-
-
-
 
 /**
  * Gets the image element of the thumbnail.
@@ -170,7 +157,7 @@ moka.ui.Thumbnail.prototype.getText = function() {
  * @public
  */
 moka.ui.Thumbnail.prototype.getHoverable = function() {
-    this.hoverable_ = this.hoverable_ ? this.hoverable_ : this.element_;	
+    this.hoverable_ = this.hoverable_ ? this.hoverable_ : this.getElement();	
     return this.hoverable_
 }
 
@@ -247,9 +234,9 @@ moka.ui.Thumbnail.prototype.createHoverable = function(opt_parent,
 
 
     this.hoverable_ = (opt_element) ? opt_element : 
-	this.element_.cloneNode(true);
+	this.getElement().cloneNode(true);
     this.hoverable_.setAttribute('id', moka.ui.Thumbnail.HOVERABLE_PREFIX + 
-				 this.element_.getAttribute('id'));
+				 this.getElement().getAttribute('id'));
     this.hoverable_.style.visibility = 'hidden';
     goog.dom.classes.add(this.hoverable_, 
 			 moka.ui.Thumbnail.CSS.HOVERCLONE);
@@ -275,13 +262,14 @@ moka.ui.Thumbnail.prototype.setActive = function(active, opt_highlightBg) {
 
     //moka.dom.debug("setActive", active, opt_highlightBg);
 
+    var elt = this.getElement()
     this.isActive_ = active;
     if (this.isActive_){
 	if (opt_highlightBg) { 
-	    goog.dom.classes.add(this.element_, 
+	    goog.dom.classes.add(elt, 
 				 moka.ui.Thumbnail.CSS.HIGHLIGHT); 
 	}
-	goog.dom.classes.add(this.element_, 
+	goog.dom.classes.add(elt, 
 			     moka.ui.Thumbnail.CSS.ACTIVE);
 	goog.dom.classes.add(this.text_, 
 			     moka.ui.Thumbnail.CSS.TEXT_ACTIVE);		
@@ -289,9 +277,9 @@ moka.ui.Thumbnail.prototype.setActive = function(active, opt_highlightBg) {
 			     moka.ui.Thumbnail.CSS.IMAGE_ACTIVE);		
 	
     } else {
-	goog.dom.classes.remove(this.element_, 
+	goog.dom.classes.remove(elt, 
 				moka.ui.Thumbnail.CSS.HIGHLIGHT);
-	goog.dom.classes.remove(this.element_, 
+	goog.dom.classes.remove(elt, 
 				moka.ui.Thumbnail.CSS.ACTIVE);
 	goog.dom.classes.remove(this.text_, 
 				moka.ui.Thumbnail.CSS.TEXT_ACTIVE);		
@@ -309,8 +297,8 @@ moka.ui.Thumbnail.prototype.setActive = function(active, opt_highlightBg) {
  * @public
  */
 moka.ui.Thumbnail.prototype.updateStyle = function (opt_args) {
-    if (opt_args && this.element_) {
-	moka.style.setStyle(this.element_, opt_args);
+    if (opt_args && this.getElement()) {
+	moka.style.setStyle(this.getElement(), opt_args);
     }
 }
 
@@ -322,16 +310,17 @@ moka.ui.Thumbnail.prototype.updateStyle = function (opt_args) {
  */
 moka.ui.Thumbnail.prototype.repositionHoverable = function(){
 
+    var elt = this.getElement();
     var hoverNode = /**@type {!Element}*/ this.getHoverable();
     // Adjust only if the hover node is different from the element.
-    if (hoverNode === this.element_) { return }
+    if (hoverNode === elt) { return }
 
 
     // Find the common ancestor
     var commonAncestor = /**@type {Element}*/
-    goog.dom.findCommonAncestor(this.element_, hoverNode);
+    goog.dom.findCommonAncestor(elt, hoverNode);
     var thumbPos = /**@type {!goog.math.Coordinate}*/
-    goog.style.getRelativePosition(this.element_, commonAncestor);
+    goog.style.getRelativePosition(elt, commonAncestor);
     
     var imgClone = /**@type {Element}*/ 
     hoverNode.getElementsByTagName('img')[0];
@@ -344,8 +333,8 @@ moka.ui.Thumbnail.prototype.repositionHoverable = function(){
     // width only if the the cloneWidth is calculated to be larger (text 
     // spillover)
     cloneWidth = imgClone.scrollWidth + textClone.scrollWidth + 25;
-    cloneWidth = (cloneWidth > this.element_.clientWidth) ? cloneWidth : 
-	this.element_.clientWidth;
+    cloneWidth = (cloneWidth > elt.clientWidth) ? cloneWidth : 
+	elt.clientWidth;
     moka.style.setStyle(hoverNode, {
 	'position': 'absolute',
 	'left': thumbPos.x,
@@ -371,7 +360,7 @@ moka.ui.Thumbnail.prototype.onMouseOver = function() {
 			 moka.ui.Thumbnail.CSS.TEXT_MOUSEOVER);		
     goog.dom.classes.add(hoverNode.childNodes[0], 
 			 moka.ui.Thumbnail.CSS.IMAGE_MOUSEOVER);
-    if (hoverNode !== this.element_) {
+    if (hoverNode !== this.getElement()) {
 	this.repositionHoverable();
     }
 
@@ -401,8 +390,8 @@ moka.ui.Thumbnail.prototype.onMouseOut = function() {
 	goog.dom.classes.remove(hoverNode.childNodes[0], 
 				moka.ui.Thumbnail.CSS.IMAGE_MOUSEOVER);
 
-	hoverNode.style.visibility = (hoverNode !== this.element_) ? 'hidden' : 
-	    'visible';
+	hoverNode.style.visibility = (hoverNode !== this.getElement()) ? 
+	    'hidden' : 'visible';
 	
     }
     this.dispatchEvent({
@@ -474,3 +463,28 @@ moka.ui.Thumbnail.prototype.setClasses_ = function() {
 
 
 
+moka.ui.Thumbnail.prototype.disposeInternal = function() {
+    goog.base(this, 'disposeInternal');
+
+    // Broad events.
+    goog.events.removeAll(this);
+    goog.events.removeAll(this.getElement());
+
+    // Hoverable events and object.
+    if (goog.isDefAndNotNull(this.hoverable_)){
+	goog.events.removeAll(this.hoverable_);
+	goog.dom.removeNode(this.hoverable_);
+	delete this.hoverable_;
+    }
+
+    // Image
+    goog.dom.removeNode(this.image_);
+    delete this.image_;
+
+    // text
+    goog.dom.removeNode(this.text_);
+    delete this.text_;
+
+    // is active
+    delete this.isActive_;
+}

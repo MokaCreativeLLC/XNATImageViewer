@@ -37,6 +37,13 @@ moka.ui.Tabs = function () {
      * @private
      */
     this.googTabPane_ = new goog.ui.TabPane(this.getElement());
+
+
+    /**
+     * @type {!Array.<moka.ui.Tabs.TabItemCollection>}
+     * @private
+     */
+    this.Tabs_ = [];
 }
 goog.inherits(moka.ui.Tabs, moka.ui.Component);
 goog.exportSymbol('moka.ui.Tabs', moka.ui.Tabs)
@@ -68,11 +75,26 @@ moka.ui.Tabs.CSS_SUFFIX = {
 
 
 
+
 /**
- * @type {!string}
- * @private
+ * @param {!string} tabTitle The tab title.
+ * @param {!Element} tab The tab element.
+ * @param {!Element} tabIcon The tab element icon.
+ * @param {!Element} content The tabPage content element.
+ * @param {!goog.ui.TabPane.TabPage} googTab The google TabPage.
+ * @constructor
+ * @struct
  */
-moka.ui.Tabs.prototype.iconRoot_ = '';
+moka.ui.Tabs.TabItemCollection = 
+function(title, tab, tabIcon, content, googTab){
+    this.TITLE = title;
+    this.TAB = tab;
+    this.ICON = tabIcon;
+    this.CONTENT = content;
+    this.OBJ = googTab;
+}
+
+
 
 
 
@@ -89,14 +111,6 @@ moka.ui.Tabs.prototype.lastActiveTab_ = 0;
  * @private
  */
 moka.ui.Tabs.prototype.prevActiveTab_ = 0;
-
-
-
-/**
- * @type {Object}
- * @private
- */
-moka.ui.Tabs.prototype.Tabs_;
 
 
 
@@ -168,16 +182,12 @@ moka.ui.Tabs.prototype.addTabs = function(tabTitles) {
  * @public
  */
 moka.ui.Tabs.prototype.reset = function() {	
-    var count = /**@type {!number}*/ goog.object.getCount(this.Tabs_);
+    var count = /**@type {!number}*/ this.Tabs_.length;
     while (count > 0) {
 	this.googTabPane_.removePage(count - 1)
 	count--;
     }
-    goog.object.forEach(this.Tabs_, function(tabObj, key){	
-	goog.object.forEach(tabObj, function(tabObj2, key2){
-	    delete tabObj2;
-	}.bind(this))
-    }.bind(this))
+    this.disposeTabs();
 }
    
 
@@ -209,8 +219,8 @@ moka.ui.Tabs.prototype.setActive = function (activeTabNum) {
  */
 moka.ui.Tabs.prototype.getTabElements = function() {
     var elts = /**@type {!Array.Element}*/ [];
-    goog.object.forEach(this.Tabs_, function(tabObj, key){
-	elts.push(tabObj['tab']);
+    goog.array.forEach(this.Tabs_, function(tabItemCol){
+	elts.push(tabItemCol.TAB);
     });
     return elts;
 }
@@ -218,15 +228,13 @@ moka.ui.Tabs.prototype.getTabElements = function() {
 
 
 /**
- * As stated.
- *
  * @return {!Array.Element} The page elements.
  * @public
  */
 moka.ui.Tabs.prototype.getTabPage = function() {
     var elts = /**@type {!Array.Element}*/ [];
-    goog.object.forEach(this.Tabs_, function(tabObj, key){
-	elts.push(tabObj['content']);
+    goog.array.forEach(this.Tabs_, function(tabItemCol){
+	elts.push(tabItemCol.CONTENT);
     });
     return elts;
 }
@@ -234,17 +242,47 @@ moka.ui.Tabs.prototype.getTabPage = function() {
 
 
 /**
- * As stated.
- *
  * @return {!Array.Element} The icon elements.
  * @public
  */
 moka.ui.Tabs.prototype.getTabIcons = function() {
     var elts = /**@type {!Array.Element}*/ [];
-    goog.object.forEach(this.Tabs_, function(tabObj, key){
-	elts.push(tabObj['icon']);
+    goog.array.forEach(this.Tabs_, function(tabItemCol){
+	elts.push(tabItemCol.ICON);
     });
     return elts;
+}
+
+
+
+/**
+ * @param {!string} tabTitle
+ * @return {!boolean} Whether or not the tab exists.
+ * @public
+ */
+moka.ui.Tabs.prototype.tabExists = function(tabTitle) {
+    if (!goog.isDefAndNotNull(this.Tabs_)){ return false };
+    var i = /**@type {!number}*/ 0;
+    var len = /**@type {!number}*/ this.Tabs_.length;
+    for(; i < len; i++) {
+	if (this.Tabs_[i].TITLE == tabTitle) { return true };
+    }
+    return false;
+}
+
+
+/**
+ * @param {!string} tabTitle
+ * @return {moka.ui.TabItemCollection}
+ * @public
+ */
+moka.ui.Tabs.prototype.getTabItemCollection = function(tabTitle) {
+    if (!goog.isDefAndNotNull(this.Tabs_)){ return false };
+    var i = /**@type {!number}*/ 0;
+    var len = /**@type {!number}*/ this.Tabs_.length;
+    for(; i < len; i++) {
+	if (this.Tabs_[i].TITLE == tabTitle) { return this.Tabs_[i] };
+    }
 }
 
 
@@ -259,12 +297,13 @@ moka.ui.Tabs.prototype.getTabIcons = function() {
  */
 moka.ui.Tabs.prototype.addTab = function(tabTitle) {
 
-    this.Tabs_ = (this.Tabs_) ? this.Tabs_ : {};
+    this.Tabs_ = goog.isDefAndNotNull(this.Tabs_) ? this.Tabs_ : [];
 
-    // Check exists, error out.
-    if (this.Tabs_ && this.Tabs_[tabTitle]) {
+    // Check exists, error out.    
+    if (this.tabExists(tabTitle)) {
 	throw new Error(tabTitle + ' is an already existing tab!');
     }
+    
 
     // create Tab
     var tab = /**@type {!Element}*/ this.createTabElt_(tabTitle);
@@ -289,7 +328,9 @@ moka.ui.Tabs.prototype.addTab = function(tabTitle) {
     this.googTabPane_.addPage(googTab);
 
     // store
-    this.storeTab_(tabTitle, tab, tabIcon, content, googTab);
+    this.Tabs_.push(
+	new moka.ui.Tabs.TabItemCollection(tabTitle, tab, tabIcon, 
+					   content, googTab));
 
     // style
     this.updateStyle();
@@ -309,26 +350,30 @@ moka.ui.Tabs.prototype.addTab = function(tabTitle) {
  * of a tab page.  The contents is always a moka.ui.ScrollableContainer, which
  * can accept either Objects of Elements as part of its input method.
  *
- * @param {!string} tabName The name of the tab.
+ * @param {!string} tabTitle The name of the tab.
  * @param {!Object|!Element|!moka.ui.ScrollableContainer} contents The 
  *    contents.
  * @public
  */
-moka.ui.Tabs.prototype.setTabPageContents = function (tabName, contents) {
+moka.ui.Tabs.prototype.setTabPageContents = function (tabTitle, contents) {
     // Add the tab page if it's not there.
-    if (!this.Tabs_ || !this.Tabs_[tabName]){ this.addTab(tabName) };
+    if (!this.tabExists(tabTitle)) { this.addTab(tabTitle)};
+
+
+    var currTab = /** @type {moka.ui.Tabs.TabItemCollection}*/ 
+    this.getTabItemCollection(tabTitle);
 
     var scrollableContainer = /**@type {moka.ui.ScrollableContainer}*/ null;
 
     // Make or use existing scrollable container...
     if (contents instanceof moka.ui.ScrollableContainer) {
 	scrollableContainer = contents;
-	this.Tabs_[tabName]['content'].appendChild(
+	currTab.CONTENT.appendChild(
 	    scrollableContainer.getElement());
     }
     else {
 	scrollableContainer = new moka.ui.ScrollableContainer()
-	this.Tabs_[tabName]['content'].appendChild(
+	currTab.CONTENT.appendChild(
 	    scrollableContainer.getElement());
 	scrollableContainer.addContents(contents);
 	//window.console.log("CONTENTS", contents);
@@ -363,11 +408,10 @@ moka.ui.Tabs.prototype.createTabElt_ = function(tabTitle) {
  */
 moka.ui.Tabs.prototype.setTabIconImage_ = function(tabTitle, src) {
     //window.console.log("ICON", this.iconUrl);
-    if (!this.Tabs_[tabTitle]) {
-	throw new Error("Invalid tab!");
-    }
-    goog.dom.removeChildren(this.Tabs_[tabTitle]['icon']);
-    goog.dom.append(this.Tabs_[tabTitle]['icon'], goog.dom.createDom('img', {
+    var currTab = /** @type {moka.ui.Tabs.TabItemCollection}*/ 
+    this.getTabItemCollection(tabTitle);
+    goog.dom.removeChildren(currTab.ICON);
+    goog.dom.append(currTab.ICON, goog.dom.createDom('img', {
 	'src' : src
     }))
 }
@@ -411,24 +455,7 @@ moka.ui.Tabs.prototype.createTabPage_ = function(tabTitle) {
 }
 
 
-/**
- * @param {!string} tabTitle The tab title.
- * @param {!Element} tab The tab element.
- * @param {!Element} tabIcon The tab element icon.
- * @param {!Element} content The tabPage content element.
- * @param {!goog.ui.TabPane.TabPage} googTab The google TabPage.
- * @private
- */
-moka.ui.Tabs.prototype.storeTab_ = 
-function(tabTitle, tab, tabIcon, content, googTab){
-    this.Tabs_ = (this.Tabs_) ? this.Tabs_ : {};
-    this.Tabs_[tabTitle] = {
-	'TabPage': googTab,
-	'content': content,
-	'tab': tab,
-	'icon': tabIcon
-    }
-}
+
 
 
 
@@ -492,10 +519,10 @@ moka.ui.Tabs.prototype.updateStyle = function () {
 	    parseInt(this.getElement().parentNode.style.height, 10);
     var borderMgn = /**@type {!number}*/ 0;
     
-    goog.object.forEach(this.Tabs_, function(tObj){
+    goog.array.forEach(this.Tabs_, function(tObj){
 
 	// Resize tab wPcts
-	moka.style.setStyle(tObj['tab'], {
+	moka.style.setStyle(tObj.TAB, {
 	    'width': (wPct).toString() + '%',
 	    'height' : this.tabHeight_,
 	    'left': (wPct * i).toString() + '%',
@@ -504,14 +531,14 @@ moka.ui.Tabs.prototype.updateStyle = function () {
 	// Exit out if no parent node.
 	if (!this.getElement().parentNode){ return };
 
-	borderMgn = parseInt(moka.style.getComputedStyle(tObj['tab'], 
+	borderMgn = parseInt(moka.style.getComputedStyle(tObj.TAB, 
 						'border-bottom-width'));
 	borderMgn = (!borderMgn || isNaN(borderMgn) || 
 		     !goog.isNumber(borderMgn)) ? 0 : borderMgn; 
 
-	tObj['content'].style.top = 
+	tObj.CONTENT.style.top = 
 	    (this.tabHeight_ - borderMgn).toString() + 'px';
-	tObj['content'].style.height = 'calc(100% - ' + 
+	tObj.CONTENT.style.height = 'calc(100% - ' + 
 	    this.tabHeight_.toString() + 'px)',
 
 	i++;
@@ -660,5 +687,54 @@ moka.ui.Tabs.prototype.setTabMouseOut_ = function(tab, i) {
 
 
 
+/**
+ * @private
+ */
+moka.ui.Tabs.prototype.disposeTabs_ = function() {
+    goog.array.forEach(this.Tabs_, function(collection){
+	goog.object.forEach(collection, function(tabItem, key2){
+	    if (tabItem instanceof goog.ui.TabPane.TabPage ||
+		tabItem instanceof moka.ui.ScrollableContainer) {
+		goog.events.removeAll(tabItem);
+		tabItem.disposeInternal();	
+	    } else {
+		goog.events.removeAll(tabItem);
+		goog.dom.removeNode(tabItem);
+	    }
+	    delete collection[key2];
+	})
+	goog.object.clear(collection);
+	delete collection;
+    })
+    goog.array.clear(this.Tabs_);
+}
+
+
+
+/**
+ * @inheritDoc
+ */
+moka.ui.Tabs.prototype.disposeInternal = function() {
+    goog.base(this, 'disposeInternal');
+
+    // Element events
+    goog.array.forEach(this.getTabElements(), function(tab, i) { 
+	goog.events.removeAll(tab);
+    }.bind(this))
+
+    // The Tabs_ object
+    this.disposeTabs_();
+    delete this.Tabs_;
+
+    // tabPane
+    goog.events.removeAll(this.googTabPane_);
+    this.googTabPane_.disposeInternal();
+    delete this.googTabPane_;
+
+    // others
+    delete this.lastActiveTab_;
+    delete this.prevActiveTab_;
+    delete this.tabHeight_;
+}
 
 

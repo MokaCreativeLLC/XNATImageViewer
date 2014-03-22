@@ -26,7 +26,7 @@ goog.require('moka.convert');
 goog.require('moka.fx');
 
 // xiv
-goog.require('xiv.ui.ThumbnailHandler');
+goog.require('xiv.ui.ThumbnailGallery');
 goog.require('xiv.ui.ViewBoxHandler');
 
 
@@ -43,17 +43,17 @@ xiv.ui.Modal = function () {
 
 
     /**
-     * @type {Object}
+     * @type {Object.<string, Element>}
      * @private
      */
     this.buttons_;
 
 
     /**
-     * @type {xiv.ui.ThumbnailHandler}
+     * @type {xiv.ui.ThumbnailGallery}
      * @private
      */
-    this.ThumbnailHandler_;
+    this.ThumbnailGallery_;
 
 
     /**
@@ -86,6 +86,9 @@ xiv.ui.Modal = function () {
     if(this.ViewBoxHandler_){
 	this.ViewBoxHandler_.insertColumn(false);
     }
+
+
+    window.console.log("MODE", this.currMode_);
 }
 goog.inherits(xiv.ui.Modal, moka.ui.Component);
 goog.exportSymbol('xiv.ui.Modal', xiv.ui.Modal);
@@ -129,36 +132,62 @@ xiv.ui.Modal.buttonTypes = {
 
 
 /**
- * @enum {string}
- * @const
- */
-xiv.ui.Modal.modes = {
-    FULLSCREEN: 'fullScreen',
-    POPUP: 'popup',
-    WINDOWED: 'windowed'
-}
-
-
-
-/**
- * @enum {number}
- * @const
- */
-xiv.ui.Modal.inlineDims = {
-    STARTING_W_PCT : .95,
-    STARTING_H_PCT : .95,
-    VIEWBOX_HORIZ_MARGIN: 25,
-    VIEWBOX_VERT_MARGIN: 25,
-    VIEWBOX_MIN_H:  320,
-    VIEWBOX_MIN_W:  320,
-}
-
-
-/**
  * @type {!number} 
  * @const
  */
 xiv.ui.Modal.ANIM_LEN = 500;
+
+
+
+/**
+ * Constant upon instantiation.  See:
+ * https://groups.google.com/forum/#!msg/closure-library-discuss/
+ *    CJQGRIhkS9U/YEc3-7j4QoQJ
+ * 
+ * @struct
+ * @param {!string} name
+ * @param {number=} opt_wRatio The optional width ratio (defaults to 1).
+ * @param {number=} opt_hRatio The optional height ratio (defaults to 1).
+ */
+xiv.ui.Modal.Mode = function(name, opt_wRatio, opt_hRatio) {
+    this.VIEWBOX_HORIZ_MARGIN = 25;
+    this.VIEWBOX_VERT_MARGIN = 25;
+    this.VIEWBOX_MIN_H =  320;
+    this.VIEWBOX_MIN_W = 320;
+
+    this.NAME = name;
+    this.W_RATIO = opt_wRatio || 1;
+    this.H_RATIO = opt_hRatio || 1;
+}
+
+
+
+/**
+ * @struct
+ */
+xiv.ui.Modal.prototype.ModeTypes = {
+    FULLSCREEN:  new xiv.ui.Modal.Mode('fullscreen'),
+    POPUP: new xiv.ui.Modal.Mode('popup'),
+    FULLSCREEN_POPUP: new xiv.ui.Modal.Mode('fullscreen-popup'),
+    WINDOWED: new xiv.ui.Modal.Mode('windowed', .95, .95)
+}
+
+
+
+/**
+ * @type {!xiv.ui.Modal.Mode}
+ * @private
+ */
+xiv.ui.Modal.prototype.currMode_ = xiv.ui.Modal.prototype.ModeTypes.WINDOWED;
+
+
+
+/**
+ * @type {string}
+ * @private
+ */
+xiv.ui.Modal.prototype.prevMode_;
+
 
 
 
@@ -193,21 +222,6 @@ xiv.ui.Modal.createButtons_ = function(iconUrl){
 
 
 
-/**
- * @type {!string}
- * @private
- */
-xiv.ui.Modal.prototype.mode_ = xiv.ui.Modal.modes.WINDOWED;
-
-
-
-/**
- * @type {string}
- * @private
- */
-xiv.ui.Modal.prototype.previousMode_;
-
-
 
 /**
  * Get the associated xiv.ui.ViewBoxHandler for this object.
@@ -221,12 +235,12 @@ xiv.ui.Modal.prototype.getViewBoxHandler =  function() {
 
 
 /**
- * Get the associated xiv.ui.ThumbnailHandler for this object.
- * @return {xiv.ui.ThumbnailHandler} The xiv.ui.ThumbnailHandler for this object.
+ * Get the associated xiv.ui.ThumbnailGallery for this object.
+ * @return {xiv.ui.ThumbnailGallery} The xiv.ui.ThumbnailGallery for this object.
  * @public
  */
-xiv.ui.Modal.prototype.getThumbnailHandler = function() {
-  return this.ThumbnailHandler_;
+xiv.ui.Modal.prototype.getThumbnailGallery = function() {
+  return this.ThumbnailGallery_;
 }
 
 
@@ -254,16 +268,31 @@ xiv.ui.Modal.prototype.getCloseButton = function() {
 
 /**
  * As stated.
- * @param {!string} mode The mode to test
+ * @param {!string | !xiv.ui.Modal.Mode} mode The mode to test
  * @public
  */
 xiv.ui.Modal.prototype.setMode = function(mode) {
-    if (!mode || !goog.object.containsValue(xiv.ui.Modal.modes, mode)){
-	throw TypeError('Invalid xiv.ui.Modal mode: ' + mode);
+    
+    // first check if mode is a string
+    if (goog.isString(mode)){
+	for (var key in this.ModeTypes) {
+	    if (this.ModeTypes[key].NAME == mode){
+		mode = this.ModeTypes[key];
+		break;
+	    }
+	}
     }
-    this.mode_ = mode;
+
+    // If we still have string or it's not a valide mode, throw the error.
+    if (goog.isString(mode) || 
+	!goog.object.containsValue(this.ModeTypes, mode)){
+	throw new TypeError('Invalid xiv.ui.Modal mode: ' + mode);
+    }
+
+    this.currMode_ = mode;
     this.adjustStyleToMode_();
 }
+
 
 
 /**
@@ -272,7 +301,7 @@ xiv.ui.Modal.prototype.setMode = function(mode) {
  * @public
  */
 xiv.ui.Modal.prototype.getMode = function() {
-  return this.mode_;
+  return this.currMode_;
 }
 
 
@@ -282,7 +311,7 @@ xiv.ui.Modal.prototype.getMode = function() {
  * @public
  */
 xiv.ui.Modal.prototype.highlightInUseThumbnails = function () {
-    this.ThumbnailHandler_.loop(function(Thumbnail){  
+    this.ThumbnailGallery_.loop(function(Thumbnail){  
 	// Unhighlight all thumbnails.
 	Thumbnail.setActive(false);
 	this.ViewBoxHandler_.loop(function(ViewBox){  
@@ -478,10 +507,8 @@ xiv.ui.Modal.prototype.computeDims_ = function () {
  * @private
  */ 
 xiv.ui.Modal.prototype.computeModalDims_ = function() {
-    var scalerH = (this.mode_ == xiv.ui.Modal.modes.WINDOWED) ? 
-	xiv.ui.Modal.inlineDims.STARTING_H_PCT : 1;
-    var scalerW = (this.mode_ == xiv.ui.Modal.modes.WINDOWED) ? 
-	xiv.ui.Modal.inlineDims.STARTING_W_PCT : 1;
+    var scalerH = this.currMode_.H_RATIO;
+    var scalerW = this.currMode_.W_RATIO;
     this.dims_ = goog.isDefAndNotNull(this.dims_) ? this.dims_ : {};
     this.dims_.H = window.innerHeight * scalerH;
     this.dims_.W = window.innerWidth * scalerW;
@@ -496,14 +523,14 @@ xiv.ui.Modal.prototype.computeThumbnailGalleryDims_ = function() {
     this.dims_.thumbgallery = {};
 
     this.dims_.thumbgallery.W = 
-	goog.style.getSize(this.ThumbnailHandler_.getThumbnailGallery().
+	goog.style.getSize(this.ThumbnailGallery_.
 			   getElement()).width
 
 
     this.dims_.thumbgallery.H = this.dims_.H - 
-	xiv.ui.Modal.inlineDims.VIEWBOX_VERT_MARGIN * 2;
+	this.currMode_.VIEWBOX_VERT_MARGIN * 2;
     this.dims_.thumbgallery.Y = 
-	xiv.ui.Modal.inlineDims.VIEWBOX_VERT_MARGIN;
+	this.currMode_.VIEWBOX_VERT_MARGIN;
 }
 
 
@@ -519,15 +546,15 @@ xiv.ui.Modal.prototype.computeViewBoxDims_ = function() {
 
     this.dims_.viewbox.H = 
 	(this.dims_.H - ((this.dims_.viewbox.ROWS + 1) * 
-	xiv.ui.Modal.inlineDims.VIEWBOX_HORIZ_MARGIN)) / 
+	this.currMode_.VIEWBOX_HORIZ_MARGIN)) / 
 	this.dims_.viewbox.ROWS;
 
 
     this.dims_.viewbox.W = 
     // The total width to work with
 	(this.dims_.W - this.dims_.thumbgallery.W - 
-	xiv.ui.Modal.inlineDims.VIEWBOX_HORIZ_MARGIN) / 
-	this.dims_.viewbox.COLS - xiv.ui.Modal.inlineDims.VIEWBOX_HORIZ_MARGIN;
+	this.currMode_.VIEWBOX_HORIZ_MARGIN) / 
+	this.dims_.viewbox.COLS - this.currMode_.VIEWBOX_HORIZ_MARGIN;
 
     window.console.log('Viewboxwidth', this.dims_);
 }
@@ -577,16 +604,15 @@ xiv.ui.Modal.prototype.computeViewBoxPositions_ = function () {
     this.dims_.viewbox.X = [];
     this.dims_.viewbox.Y = [];
 
-
     this.dims_.viewbox.START = this.dims_.thumbgallery.W + 
-	xiv.ui.Modal.inlineDims.VIEWBOX_VERT_MARGIN;
+	this.currMode_.VIEWBOX_VERT_MARGIN;
 
     var l = /**@type {!number}*/ 0;
     this.ViewBoxHandler_.loop(function(ViewBox, i, j) { 
 	
 	l = this.dims_.viewbox.START + j * (
 	    this.dims_.viewbox.W + 
-		xiv.ui.Modal.inlineDims.VIEWBOX_VERT_MARGIN);
+		this.currMode_.VIEWBOX_VERT_MARGIN);
 
 	//window.console.log("L", l);
 	//window.console.log(this.dims_.viewbox.START , j , 
@@ -603,10 +629,10 @@ xiv.ui.Modal.prototype.computeViewBoxPositions_ = function () {
 	
 	this.dims_.viewbox.Y[i][j] = (-1 + i * 
 		(this.dims_.viewbox.H + 
-		 xiv.ui.Modal.inlineDims.VIEWBOX_HORIZ_MARGIN));
+		 this.currMode_.VIEWBOX_HORIZ_MARGIN));
 
 	this.dims_.viewbox.Y[i][j] +=  
-	xiv.ui.Modal.inlineDims.VIEWBOX_HORIZ_MARGIN;	
+	this.currMode_.VIEWBOX_HORIZ_MARGIN;	
     }.bind(this))
 }
 
@@ -643,9 +669,9 @@ xiv.ui.Modal.prototype.updateStyle = function () {
  */
 xiv.ui.Modal.prototype.updateStyle_ThumbnailGallery_ = function(){
     // xiv.ui.ViewBoxes	
-    if (this.ThumbnailHandler_) {
+    if (this.ThumbnailGallery_) {
 	moka.style.setStyle(
-	    this.ThumbnailHandler_.getThumbnailGallery().getElement(), {
+	    this.ThumbnailGallery_.getElement(), {
 		'height': this.dims_.thumbgallery.H,
 		'top': this.dims_.thumbgallery.Y
 	})	
@@ -693,7 +719,7 @@ xiv.ui.Modal.prototype.updateStyle_buttons_ = function(){
  */
 xiv.ui.Modal.prototype.initSubComponents = function() {
     this.initBackground_();
-    this.initThumbnailHandler_();
+    this.initThumbnailGallery_();
     this.initViewBoxHandler_();
     this.initButtons_();
 }
@@ -732,13 +758,11 @@ xiv.ui.Modal.prototype.initButtons_ = function() {
 /**
  * @private
  */
-xiv.ui.Modal.prototype.initThumbnailHandler_ = function() {
-    this.ThumbnailHandler_ = new xiv.ui.ThumbnailHandler();
-    this.ThumbnailHandler_.setHoverParent(this.getElement());
-    goog.dom.append(this.getElement(), 
-		    this.ThumbnailHandler_.getThumbnailGallery().getElement());
-
-    this.setThumbnailHandlerEvents_();
+xiv.ui.Modal.prototype.initThumbnailGallery_ = function() {
+    this.ThumbnailGallery_ = new xiv.ui.ThumbnailGallery();
+    this.ThumbnailGallery_.setHoverParent(this.getElement());
+    goog.dom.append(this.getElement(), this.ThumbnailGallery_.getElement());
+    this.setThumbnailGalleryEvents_();
 }
 
 
@@ -760,9 +784,9 @@ xiv.ui.Modal.prototype.initViewBoxHandler_ = function() {
  * @private
  */ 
 xiv.ui.Modal.prototype.onFullScreenButtonClicked_ = function() {
-    this.previousMode_ = this.mode_;
+    this.prevMode_ = this.currMode_;
     goog.dom.fullscreen.requestFullScreen(this.getElement()); 
-    this.setMode(xiv.ui.Modal.modes.FULLSCREEN);
+    this.setMode(xiv.ui.Modal.ModeType.FULLSCREEN);
     this.buttons_.FULLSCREEN.style.visibility = 'hidden';
     this.buttons_.WINDOWED.style.visibility = 'visible';
 }
@@ -775,7 +799,7 @@ xiv.ui.Modal.prototype.onFullScreenButtonClicked_ = function() {
  */ 
 xiv.ui.Modal.prototype.onWindowedButtonClicked_ = function() {
     goog.dom.fullscreen.exitFullScreen(); 
-    this.setMode(this.previousMode_);
+    this.setMode(this.prevMode_);
     this.buttons_.FULLSCREEN.style.visibility = 'visible';
     this.buttons_.WINDOWED.style.visibility = 'hidden';
 }
@@ -829,22 +853,13 @@ function(opt_listenMethod){
  * @private
  */
 xiv.ui.Modal.prototype.adjustStyleToMode_ = function(){
+    
+    window.console.log("ADJUST MODE", this.currMode_);
 
-    //window.console.log("ADJUST MODE", this.mode_);
-
-    if (this.mode_ == xiv.ui.Modal.modes.POPUP || 
-	this.mode_ == xiv.ui.Modal.modes.FULLSCREEN){
-
-	window.console.log("ADJUST STYLE TO MODE");
-	moka.style.setStyle(this.getElement(), {
-	    'height': '100%',
-	    'width': '100%',
-	    'border-radius': 0
-	})
-	this.updateStyle();
-    } else {
-	//goog.dom.classes.remove(this.background_, xiv.ui.Modal.CSS.BLACK_BG);
+    if (this.currMode_.NAME !== 'windowed'){
+	this.getElement().style.borderRadius = 0;
     }
+
 }
 
 
@@ -858,32 +873,32 @@ xiv.ui.Modal.prototype.adjustStyleToMode_ = function(){
  *     goog.events.unlisten.  Defaults to goog.events.listen.
  * @private
  */
-xiv.ui.Modal.prototype.setThumbnailHandlerEvents_ = function(opt_listenMethod){
+xiv.ui.Modal.prototype.setThumbnailGalleryEvents_ = function(opt_listenMethod){
 
     opt_listenMethod = opt_listenMethod || goog.events.listen;
 
-    opt_listenMethod(this.ThumbnailHandler_, 
-		       xiv.ui.ThumbnailHandler.EventType.MOUSEOVER,
+    opt_listenMethod(this.ThumbnailGallery_, 
+		       xiv.ui.ThumbnailGallery.EventType.MOUSEOVER,
 					 this.onThumbnailMouseover_.bind(this));
 
-    opt_listenMethod(this.ThumbnailHandler_, 
-		       xiv.ui.ThumbnailHandler.EventType.MOUSEOUT, 
+    opt_listenMethod(this.ThumbnailGallery_, 
+		       xiv.ui.ThumbnailGallery.EventType.MOUSEOUT, 
 					 this.onThumbnailMouseout_.bind(this));
 
-    opt_listenMethod(this.ThumbnailHandler_, 
-		       xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_CLICK, 
+    opt_listenMethod(this.ThumbnailGallery_, 
+		       xiv.ui.ThumbnailGallery.EventType.THUMBNAIL_CLICK, 
 		       this.onThumbnailClicked_.bind(this));
 
-    opt_listenMethod(this.ThumbnailHandler_, 
-		       xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_DRAG_OVER, 
+    opt_listenMethod(this.ThumbnailGallery_, 
+		       xiv.ui.ThumbnailGallery.EventType.THUMBNAIL_DRAG_OVER, 
 		       this.onThumbnailDragOver_.bind(this));
 
-    opt_listenMethod(this.ThumbnailHandler_, 
-		       xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_DRAG_OUT, 
+    opt_listenMethod(this.ThumbnailGallery_, 
+		       xiv.ui.ThumbnailGallery.EventType.THUMBNAIL_DRAG_OUT, 
 		       this.onThumbnailDragOut_.bind(this));
 
-    opt_listenMethod(this.ThumbnailHandler_, 
-	xiv.ui.ThumbnailHandler.EventType.THUMBNAIL_DROPPED_INTO_TARGET, 
+    opt_listenMethod(this.ThumbnailGallery_, 
+	xiv.ui.ThumbnailGallery.EventType.THUMBNAIL_DROPPED_INTO_TARGET, 
 		       this.onThumbnailDroppedIntoViewBox_.bind(this));
 }
 
@@ -915,7 +930,7 @@ xiv.ui.Modal.prototype.onThumbnailMouseout_ = function(Thumbnail){
 	    ViewBox.getLoadState() !== 'loading'){
 	    ViewBox.getElement().style.borderColor = 
 		ViewBox.getElement().getAttribute(
-		    xiv.ui.ThumbnailHandler.ORIGINAL_BORDER_ATTR);	
+		    xiv.ui.ThumbnailGallery.ORIGINAL_BORDER_ATTR);	
 	}
     })
 }
@@ -1015,7 +1030,7 @@ xiv.ui.Modal.prototype.onThumbnailPreload_ = function(ViewBox){
 xiv.ui.Modal.prototype.onThumbnailLoaded_ = function(ViewBox){
     ViewBox.getElement().style.borderColor = 
 	ViewBox.getElement().getAttribute(
-	    xiv.ui.ThumbnailHandler.ORIGINAL_BORDER_ATTR);
+	    xiv.ui.ThumbnailGallery.ORIGINAL_BORDER_ATTR);
     this.highlightInUseThumbnails();
 }
 
@@ -1040,8 +1055,8 @@ xiv.ui.Modal.prototype.onViewBoxesChanged_ = function(e) {
 	this.updateStyle();
     }	
 
-    this.ThumbnailHandler_.clearThumbnailDropTargets();
-    this.ThumbnailHandler_.addThumbnailDropTargets(
+    this.ThumbnailGallery_.clearThumbnailDropTargets();
+    this.ThumbnailGallery_.addThumbnailDropTargets(
 	this.ViewBoxHandler_.getViewBoxElements());
 }
 
@@ -1054,52 +1069,38 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
     window.console.log("TOTAL LISTENERS", goog.events.getTotalListenerCount());
 
-    // Events
-    goog.events.removeAll(this.animQueue_);
-    goog.events.removeAll(this.ViewBoxHandler_);
-    goog.events.removeAll(this.ThumbnailHandler_);
-
     // dims
     goog.object.clear(this.dims_);
     delete this.dims_;
 
     // anims_
-    if (goog.isDefAndNotNull(this.anims_)) {
-	goog.array.forEach(this.anims_, function(){
-	    this.animQueue_.remove(anim);
-	    goog.events.removeAll(anim);
-	    anim.destroy();
-	    anim.disposeInternal();
-	}.bind(this))
-    }
+    moka.ui.disposeAnimations(this.anims_);
     delete this.anims_;
 
     // animQueue_
-    if (goog.isDefAndNotNull(this.animQueue_)) {
-	this.animQueue_.destroy();
-	this.animQueue_.disposeInternal();
-	delete this.animQueue_;
-    }
-
+    moka.ui.disposeAnimationQueue(this.animQueue_);
+    delete this.animQueue_;
+    
     // buttons_
-    goog.object.forEach(this.buttons_, function(button, key){
-	goog.events.removeAll(button);
-	goog.dom.removeNode(button);
-	delete this.buttons_[key];
-    }.bind(this))
+    moka.ui.disposeElementMap(this.buttons_);
     delete this.buttons_;
 
     // ViewBoxHandler_
+    goog.events.removeAll(this.ViewBoxHandler_);
     this.ViewBoxHandler_.disposeInternal();
     delete this.ViewBoxHandler_;
 
-    // ThumbnailHandler_
-    this.ThumbnailHandler_.disposeInternal();
-    delete this.ThumbnailHandler_;
+    // ThumbnailGallery_
+    goog.events.removeAll(this.ThumbnailGallery_);
+    this.ThumbnailGallery_.disposeInternal();
+    delete this.ThumbnailGallery_;
 
-    // prototype stuff
-    this.mode_ = null;
-    this.previousMode_ = null;
+    // others
+    goog.objects.clear(this.currMode_);
+    delete this.currMode_
+
+    goog.objects.clear(this.prevMode_);
+    delete this.prevMode_;
 }
 
 

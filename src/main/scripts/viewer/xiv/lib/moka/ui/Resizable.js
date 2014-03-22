@@ -228,7 +228,7 @@ moka.ui.Resizable.prototype.bottomRightLimit_;
  * @type {number}
  * @private
  */
-moka.ui.Resizable.prototype.minHeight_;
+moka.ui.Resizable.prototype.minHeight_ = 500;
 
 
 
@@ -236,7 +236,7 @@ moka.ui.Resizable.prototype.minHeight_;
  * @type {number}
  * @private
  */
-moka.ui.Resizable.prototype.minWidth_;
+moka.ui.Resizable.prototype.minWidth_ = 500;
 
 
 
@@ -753,6 +753,7 @@ function(newPoint, opt_callback, opt_dur) {
 	function(e) {
 	    if (opt_callback) {opt_callback()};
 	    this.slideAnim_.disposeInternal();
+	    goog.events.removeAll(this.slideAnim_);
 	    this.slideAnim_.destroy();
 	    this.slideAnim_ = null;
     }.bind(this));
@@ -1218,34 +1219,41 @@ moka.ui.Resizable.prototype.disposeInternal = function() {
     moka.ui.Resizable.superClass_.disposeInternal.call(this);
 
     goog.object.forEach(this.draggers_, function(d, pos){
+	goog.events.removeAll(d);
 	d.dispose();
     })
-    this.draggers_ = {};
+    delete this.draggers_;
 
     goog.object.forEach(this.dragElts_, function(h, pos){
 	goog.dom.removeNode(h);
     })
-    this.dragElts_ = {};
+    delete this.dragElts_;
 
     if (this.ghostEl_) {
 	goog.dom.removeNode(this.ghostEl_);
-	this.ghostEl_ = null;
+	delete this.ghostEl_;
     }
 
     if (this.boundaryElt_) {
 	goog.dom.removeNode(this.boundaryElt_.parentNode, this.containment);
-	this.boundaryElt_ = null;
+	delete this.boundaryElt_;
     }
 
+
+    // NOTE: Events for slideAnim_ destroyed in 'createSlideAnim_'
     if (this.slideAnim_){
-	this.slideAnim_.disposeInternal();
-	this.slideAnim_.destroy();
-	this.slideAnim_ = null;
+	this.slideAnim_.dispose();
+	delete this.slideAnim_;
     }
 
-    this.topLeftLimit_ = null;
-    this.bottomRightLimit_ = null;
-    this.startPos_ = null;
-    this.startSize_ = null;
+    delete this.topLeftLimit_;
+    delete this.bottomRightLimit_;
+    delete this.startPos_;
+    delete this.startSize_;
+    delete this.minHeight_;
+    delete this.minWidth_;
+    delete this.continuousResize_;
+    delete this.atBounds_;
+    delete this.atMins_;
 };
 
