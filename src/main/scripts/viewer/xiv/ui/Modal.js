@@ -43,6 +43,14 @@ xiv.ui.Modal = function () {
 
 
     /**
+     * @type {?moka.ui.ZipTabs}
+     * @private
+     */	
+    this.ZipTabs_ = null; 
+
+
+
+    /**
      * @type {Object.<string, Element>}
      * @private
      */
@@ -112,6 +120,8 @@ xiv.ui.Modal.CSS_SUFFIX = {
     ROWMENU : 'rowmenu',
     COLUMNMENU_BUTTON : 'button',
     ROWMENU_BUTTON : 'button',
+    GALLERY_TABS : 'gallery-tabs',
+    GALLERY_TABDRAGGER : 'gallery-tabdragger',
 }
 
 
@@ -493,7 +503,7 @@ xiv.ui.Modal.prototype.computeDims_ = function () {
     this.dims_ = goog.isDefAndNotNull(this.dims_) ? this.dims_ : {};
     this.computeModalDims_();
 
-    this.computeThumbnailGalleryDims_();
+    this.computeZipTabsDims_();
     window.console.log("THUMB", this.dims_);
     this.computeViewBoxDims_();
     this.computeViewBoxPositions_();
@@ -519,12 +529,11 @@ xiv.ui.Modal.prototype.computeModalDims_ = function() {
 /**
  * @private
  */ 
-xiv.ui.Modal.prototype.computeThumbnailGalleryDims_ = function() {
+xiv.ui.Modal.prototype.computeZipTabsDims_ = function() {
     this.dims_.thumbgallery = {};
 
     this.dims_.thumbgallery.W = 
-	goog.style.getSize(this.ThumbnailGallery_.
-			   getElement()).width
+	goog.style.getSize(this.ZipTabs_.getElement()).width
 
 
     this.dims_.thumbgallery.H = this.dims_.H - 
@@ -759,10 +768,42 @@ xiv.ui.Modal.prototype.initButtons_ = function() {
  * @private
  */
 xiv.ui.Modal.prototype.initThumbnailGallery_ = function() {
+    this.ZipTabs_ = new moka.ui.ZipTabs('RIGHT'); 
+    goog.dom.append(this.getElement(), this.ZipTabs_.getElement());
+    goog.dom.classes.add(this.ZipTabs_.getElement(), 
+			 xiv.ui.Modal.CSS.GALLERY_TABS);
+
+    // Add dragger CSS and handle.
+    var dragger = /**@type {!Element}*/
+    this.ZipTabs_.getResizable().getDragElt('RIGHT');
+    goog.dom.classes.add(dragger, xiv.ui.Modal.CSS.GALLERY_TABDRAGGER);
+
+    /**
+    goog.dom.append(dragger, goog.dom.createDom('div', {
+	'id': xiv.ui.ViewBox.ID_PREFIX + '_DraggerHandle_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.ViewBox.CSS.TABDRAGGER_HANDLE
+    }));
+    */
+
     this.ThumbnailGallery_ = new xiv.ui.ThumbnailGallery();
     this.ThumbnailGallery_.setHoverParent(this.getElement());
-    goog.dom.append(this.getElement(), this.ThumbnailGallery_.getElement());
+    goog.dom.append(this.ZipTabs_.getElement(), 
+		    this.ThumbnailGallery_.getElement());
     this.setThumbnailGalleryEvents_();
+
+
+    this.ZipTabs_.setTabPageContents('FILE BROWSER', 
+				     goog.dom.createDom('div', {
+					 'color': 'rgb(255,255,255)',
+					 'background': 'rgb(205,25,48)',
+				     }, this.ThumbnailGallery_.getElement()))
+
+
+    goog.events.listen(this.ZipTabs_.getResizable(), 
+		       moka.ui.Resizable.EventType.RESIZE,
+		       this.updateStyle.bind(this));
+ 
 }
 
 
@@ -856,10 +897,22 @@ xiv.ui.Modal.prototype.adjustStyleToMode_ = function(){
     
     window.console.log("ADJUST MODE", this.currMode_);
 
-    if (this.currMode_.NAME !== 'windowed'){
+    if (this.currMode_ !== this.ModeTypes.WINDOWED) {
 	this.getElement().style.borderRadius = 0;
-    }
+    } 
 
+    if (this.currMode_ == this.ModeTypes.POPUP) {
+	this.buttons_.POPUP.style.visibilty = 'hidden';
+	this.buttons_.FULLSCREEN.style.visibilty = 'visible';
+    } 
+    else if (this.currMode_ == this.ModeTypes.FULLSCREEN_POPUP) {
+	this.buttons_.POPUP.style.visibilty = 'hidden';
+	this.buttons_.FULLSCREEN.style.visibilty = 'hidden';
+    } 
+    else if (this.currMode_ == this.ModeTypes.FULLSCREEN) {
+	this.buttons_.POPUP.style.visibilty = 'visible';
+	this.buttons_.FULLSCREEN.style.visibilty = 'hidden';
+    }
 }
 
 
@@ -1089,6 +1142,11 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
     goog.events.removeAll(this.ViewBoxHandler_);
     this.ViewBoxHandler_.disposeInternal();
     delete this.ViewBoxHandler_;
+
+    // Zip Tabs
+    goog.events.removeAll(this.ZipTabs_);
+    this.ZipTabs_.disposeInternal();
+    delete this.ZipTabs_;
 
     // ThumbnailGallery_
     goog.events.removeAll(this.ThumbnailGallery_);

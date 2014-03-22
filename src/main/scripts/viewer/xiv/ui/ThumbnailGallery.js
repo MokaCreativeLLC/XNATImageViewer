@@ -16,7 +16,7 @@ goog.require('moka.string');
 goog.require('moka.fx');
 goog.require('moka.ui.Thumbnail');
 goog.require('moka.ui.ThumbnailGallery');
-goog.require('moka.ui.Component');
+goog.require('moka.ui.Resizable');
 
 // xiv
 goog.require('xiv.ui.Thumbnail');
@@ -34,7 +34,7 @@ goog.provide('xiv.ui.ThumbnailGallery');
 xiv.ui.ThumbnailGallery = function () {
     goog.base(this);
 
-    
+
     /**
      * @type {!goog.fx.DragDropGroup}
      * @private
@@ -423,6 +423,9 @@ xiv.ui.ThumbnailGallery.prototype.addDragDropSource_ = function(thumbnail){
  */
 xiv.ui.ThumbnailGallery.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
+
+    this.Resizable_.disposeInternal();
+    delete this.Resizable_;
 
     this.thumbnailDragDropGroup_.disposeInternal();
     delete this.thumbnailDragDropGroup_;

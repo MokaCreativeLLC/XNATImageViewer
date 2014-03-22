@@ -124,7 +124,7 @@ xiv.renderer.XtkEngine.prototype.render = function (files) {
     var xObjects = [];
     goog.object.forEach(viewables, function(fileColl){
 	xObjects.push(xiv.renderer.XtkEngine.createXObject(fileColl));
-	window.console.log(obj);
+	window.console.log(fileColl);
     })
 
 

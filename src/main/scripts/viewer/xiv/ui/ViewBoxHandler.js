@@ -1096,7 +1096,6 @@ xiv.ui.ViewBoxHandler.prototype.disposeInternal = function() {
     this.loop(function(ViewBox){
 	goog.events.removeAll(ViewBox);
 	ViewBox.disposeInternal();
-	goog.dom.removeNode(this.dragDropHandles_[ViewBox.getElement().id]);
 	goog.dom.removeNode(ViewBox.getElement());
     }.bind(this));
 
@@ -1104,9 +1103,11 @@ xiv.ui.ViewBoxHandler.prototype.disposeInternal = function() {
 	goog.array.clear(arr);
     })
     goog.array.clear(this.ViewBoxes_); 
-
     delete this.ViewBoxes_;
+
+    moka.ui.disposeElementMap(this.dragDropHandles_);
     delete this.dragDropHandles_;
+
     delete this.ViewBoxPositions_;
 	
     if (this.dragDropGroup_) {

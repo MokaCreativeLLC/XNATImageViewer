@@ -53,7 +53,7 @@ moka.ui.disposeAnimationQueue = function(animQueue) {
 moka.ui.disposeElementMap = function(obj) {
     goog.object.forEach(obj, function(node, key){
 	goog.events.removeAll(node);
-	goog.dom.removeChild(node);
+	goog.dom.removeNode(node);
 	delete obj[key];
     })
     goog.object.clear(obj);

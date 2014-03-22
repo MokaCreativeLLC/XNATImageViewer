@@ -37,7 +37,8 @@ moka.ui.Tabs = function () {
      * @private
      */
     this.googTabPane_ = new goog.ui.TabPane(this.getElement());
-
+    window.console.log("\nTODO: Consider setting the tab orientation here, " + 
+		       " in the goog.ui.TabPane constructor");
 
     /**
      * @type {!Array.<moka.ui.Tabs.TabItemCollection>}
@@ -123,6 +124,14 @@ moka.ui.Tabs.prototype.tabHeight_ = 15;
 
 
 /**
+ * @type {!number}
+ * @private
+ */
+moka.ui.Tabs.prototype.tabWidth_ = 15;
+
+
+
+/**
  * As stated.
  * @param {!number} h
  * @public
@@ -141,6 +150,27 @@ moka.ui.Tabs.prototype.getTabHeight = function(){
     return this.tabHeight_;
 }
 
+
+
+/**
+ * As stated.
+ * @param {!number} h
+ * @public
+ */
+moka.ui.Tabs.prototype.setTabWidth = function(w){
+    this.tabWidth_ = (goog.isNumber(w) && (w > -1)) ? w : this.tabWidth_;
+    this.updateStyle();
+}
+
+
+
+/**
+ * @return {!number}
+ * @public
+ */
+moka.ui.Tabs.prototype.getTabWidth = function(){
+    return this.tabWidth_;
+}
 
 
 /**
@@ -231,7 +261,7 @@ moka.ui.Tabs.prototype.getTabElements = function() {
  * @return {!Array.Element} The page elements.
  * @public
  */
-moka.ui.Tabs.prototype.getTabPage = function() {
+moka.ui.Tabs.prototype.getTabPages = function() {
     var elts = /**@type {!Array.Element}*/ [];
     goog.array.forEach(this.Tabs_, function(tabItemCol){
 	elts.push(tabItemCol.CONTENT);
@@ -473,7 +503,7 @@ moka.ui.Tabs.prototype.deactivate = function (ind) {
 	}
     }.bind(this))
 
-    goog.array.forEach(this.getTabPage(), function(tabCont, i){
+    goog.array.forEach(this.getTabPages(), function(tabCont, i){
 	if (i === ind) {
 	    this.deactivateTabPage_(tabCont);
 	}
@@ -494,9 +524,18 @@ moka.ui.Tabs.prototype.deactivateAll = function () {
 	this.deactivateTabElt_(tabElt);
     }.bind(this))
 
-    goog.array.forEach(this.getTabPage(), function(tabCont, i){
+    goog.array.forEach(this.getTabPages(), function(tabCont, i){
 	this.deactivateTabPage_(tabCont);
     }.bind(this))
+}
+
+
+
+/**
+ * @return {!number}
+ */
+moka.ui.Tabs.prototype.getTabCount = function() {
+    return goog.object.getCount(this.Tabs_);
 }
 
 
@@ -513,7 +552,7 @@ moka.ui.Tabs.prototype.updateStyle = function () {
 
 
     var i = /**@type {!number}*/ 0;
-    var tCount = /**@type {!number}*/ goog.object.getCount(this.Tabs_);
+    var tCount = /**@type {!number}*/ this.getTabCount();
     var wPct = /**@type {!number}*/ 100/tCount; 
     var pHght = /**@type {!number}*/ 
 	    parseInt(this.getElement().parentNode.style.height, 10);
@@ -591,7 +630,7 @@ moka.ui.Tabs.prototype.setActiveTabElt_ = function (ind) {
  * @private
  */
 moka.ui.Tabs.prototype.setActiveTabPage_ = function (ind) {
-    goog.array.forEach(this.getTabPage(), function(tabPage, i) {
+    goog.array.forEach(this.getTabPages(), function(tabPage, i) {
 	if (ind === i){
 	    goog.dom.classes.add(tabPage, moka.ui.Tabs.CSS.TABPAGE_ACTIVE);
 	}	

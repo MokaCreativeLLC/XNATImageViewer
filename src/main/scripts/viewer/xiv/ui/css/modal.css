@@ -12,10 +12,10 @@
     background-color: rgba(0,0,0,1);
     border: none;
     border-radius: 20px;
-    top: 10%;
-    left: 10%;
-    height: 80%;
-    width: 80%;
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    width: 100%;
     z-index: 2;
 }
 
@@ -142,4 +142,20 @@
 .xiv-ui-modal-removerow-button {
     margin-left: 10px;
     content:url('../../../../../images/viewer/xiv/ui/Modal/removerow.png');
+}
+
+
+.xiv-ui-modal-gallery-tabs {
+    left: 0px;
+    width: 20px;
+    height: calc(100% - 50px);
+    top: 25px;
+}
+
+
+
+.xiv-ui-modal-gallery-tabdragger {
+    width: 20px;
+    background-color: rgba(255,0,0,.5);
+    
 }

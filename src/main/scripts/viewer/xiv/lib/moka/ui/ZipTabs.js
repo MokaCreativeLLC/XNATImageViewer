@@ -24,23 +24,26 @@ goog.require('moka.ui.Resizable');
  * TODO: Implement the other orientatations (LEFT, RIGHT, TOP)
  *
  * @constructor
- * @param {string=} opt_orientation
+ * @param {string=} opt_expandDirection
  * @extends {moka.ui.Tabs}
  */
 goog.provide('moka.ui.ZipTabs');
-moka.ui.ZipTabs = function (opt_orientation) {
+moka.ui.ZipTabs = function (opt_expandDirection) {
     goog.base(this);
 
-    this.checkOrientation_(opt_orientation ||
-			   moka.ui.ZipTabs.DEFAULT_ORIENTATION);
-    this.setClassesByOrientation_();
+    window.console.log("\n\nTODO: This will need another iteration with " + 
+		       "moka.ui.Tabs, especially related to orientation");
+
+    this.checkExpandDirection_(opt_expandDirection ||
+			   moka.ui.ZipTabs.DEFAULT_EXPAND_DIRECTION);
+    this.setClassesByExpandDirection_();
 
     /**
      * @type {!moka.ui.Resizable}
      * @private
      */
     this.Resizable_ = new moka.ui.Resizable(this.getElement(), 
-			     moka.ui.ZipTabs.RESIZE_DIR[this.orientation_]);    
+			    this.expandDirection_);    
     this.setDefaultResizeEvents_();
 
     // required!
@@ -55,7 +58,7 @@ goog.exportSymbol('moka.ui.ZipTabs', moka.ui.ZipTabs)
  * @type {Array.string}
  * @const
  */
-moka.ui.ZipTabs.ORIENTATIONS = ['TOP', 'BOTTOM', 'LEFT', 'RIGHT'];
+moka.ui.ZipTabs.EXPAND_DIRECTIONS = ['TOP', 'BOTTOM', 'LEFT', 'RIGHT'];
 
 
 
@@ -63,7 +66,7 @@ moka.ui.ZipTabs.ORIENTATIONS = ['TOP', 'BOTTOM', 'LEFT', 'RIGHT'];
  * @type {!string} 
  * @const
  */
-moka.ui.ZipTabs.DEFAULT_ORIENTATION = moka.ui.ZipTabs.ORIENTATIONS[1];
+moka.ui.ZipTabs.DEFAULT_EXPAND_DIRECTION = moka.ui.ZipTabs.EXPAND_DIRECTIONS[0];
 
 
 
@@ -72,8 +75,8 @@ moka.ui.ZipTabs.DEFAULT_ORIENTATION = moka.ui.ZipTabs.ORIENTATIONS[1];
  * @const
  */
 moka.ui.ZipTabs.RESIZE_DIR = {
-    'TOP': 'BOTTOM', 
-    'BOTTOM': 'TOP', 
+    'TOP': 'TOP', 
+    'BOTTOM': 'BOTTOM', 
     'LEFT': 'RIGHT', 
     'RIGHT': 'LEFT',
 };
@@ -111,7 +114,7 @@ moka.ui.ZipTabs.ID_PREFIX =  'moka.ui.ZipTabs';
  * @param {string}
  * @private
  */
-moka.ui.ZipTabs.prototype.orientation_;
+moka.ui.ZipTabs.prototype.expandDirection_;
 
 
 
@@ -119,15 +122,15 @@ moka.ui.ZipTabs.prototype.orientation_;
  * As sated.
  * @private
  */
-moka.ui.ZipTabs.prototype.checkOrientation_ = function(orient){
+moka.ui.ZipTabs.prototype.checkExpandDirection_ = function(orient){
     if (!goog.isString(orient)){
 	throw new TypeError('String required!')
     }
     orient = orient.toUpperCase();
-    if (moka.ui.ZipTabs.ORIENTATIONS.indexOf(orient) == -1){
+    if (moka.ui.ZipTabs.EXPAND_DIRECTIONS.indexOf(orient) == -1){
 	throw new Error('Invalid orienation!');
     }
-    this.orientation_ = orient;
+    this.expandDirection_ = orient;
 }
 
 
@@ -157,7 +160,7 @@ moka.ui.ZipTabs.prototype.setDefaultResizeEvents_ = function(){
 	    goog.style.getPosition(this.getElement());
 
 
-	    switch (this.orientation_) {
+	    switch (this.expandDirection_) {
 	    case 'BOTTOM':
 		if (Math.abs(this.getTabHeight() - size.height) <= 
 		    moka.ui.ZipTabs.BOUND_THRESHOLD){
@@ -193,7 +196,7 @@ moka.ui.ZipTabs.prototype.onTabClicked_ = function(event) {
     var pos = /**@type {!goog.math.Coordinate}*/ 
     goog.style.getPosition(this.getElement());
 
-    switch (this.orientation_) {
+    switch (this.expandDirection_) {
     case 'BOTTOM':
 	this.onTabClicked_bottom_(size, pos);
 	break;
@@ -236,31 +239,37 @@ moka.ui.ZipTabs.prototype.onTabClicked_bottom_ = function(size, pos) {
 
 
 
-moka.ui.ZipTabs.prototype.setClassesByOrientation_ = function() {
+moka.ui.ZipTabs.prototype.setClassesByExpandDirection_ = function() {
     goog.dom.classes.add(this.getElement(), moka.ui.ZipTabs.ELEMENT_CLASS);
     goog.dom.classes.add(this.getElement(), 
 		goog.getCssName(moka.ui.ZipTabs.CSS_CLASS_PREFIX, 
-			       this.orientation_.toLowerCase()));
+			       this.expandDirection_.toLowerCase()));
+
+
 
 
     // In-line calculations
-    switch (this.orientation_) {
+    switch (this.expandDirection_) {
 
     case 'BOTTOM':
+
+    case 'TOP':
 	moka.style.setStyle(this.getElement(), {
 	    'height': this.getTabHeight()
 	})
 	this.getElement().style.top = 'calc(100% - ' + this.getTabHeight() +
 	    'px)';
 	break;
-    case 'TOP':
-	// to do
+	break;
 
     case 'LEFT':
-	// to do
+	break;
 
     case 'RIGHT':
-	// to do
+	moka.style.setStyle(this.getElement(), {
+	    'width': this.getTabWidth()
+	})
+	this.getElement().style.left = '0px';	// to do
     }
 }
 
@@ -272,7 +281,25 @@ moka.ui.ZipTabs.prototype.setClassesByOrientation_ = function() {
 moka.ui.ZipTabs.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
     
-    switch (this.orientation_) {
+
+    // Necessary because google takes it over...
+    goog.array.forEach(this.getTabElements(), function(tab, i) { 
+	goog.dom.classes.add(tab, goog.getCssName(
+	    moka.ui.ZipTabs.CSS_CLASS_PREFIX, 
+				this.expandDirection_.toLowerCase()));
+    }.bind(this))
+
+    goog.array.forEach(this.getTabIcons(), function(tab, i) { 
+	goog.dom.classes.add(tab, goog.getCssName(
+	    moka.ui.ZipTabs.CSS_CLASS_PREFIX, 
+				this.expandDirection_.toLowerCase() + '-icon'));
+    }.bind(this))
+
+
+
+
+
+    switch (this.expandDirection_) {
     case 'TOP':
     case 'BOTTOM':
 	//moka.style.setStyle(this.getElement(), {'width': '100%'});
@@ -281,9 +308,7 @@ moka.ui.ZipTabs.prototype.updateStyle = function(){
 
     case 'LEFT':
     case 'RIGHT':
-	// TO DO:
-	//this.getElement().style.height = '100%';
-	//this.getResizable().setMinHeight(this.getTabWidth());
+	this.updateStyle_left_();	
 	break;
     }    
 }
@@ -306,7 +331,44 @@ moka.ui.ZipTabs.prototype.addTab = function(tabTitle) {
 
     // Deactivate
     this.deactivateAll();
+    this.updateStyle();
 }
+
+
+
+/**
+ * @private
+ */
+moka.ui.ZipTabs.prototype.updateStyle_left_ = function() {
+    var tabLeft = 'calc(100% - ' + this.getTabWidth() + 'px)';
+    this.getResizable().setMinWidth(this.getTabWidth());
+
+    goog.array.forEach(this.getTabPages(), function(page, i) { 
+	page.style.left = '0%';
+	page.style.height = '100%';
+	page.style.top = '0px';
+	page.style.width = tabLeft;
+    }.bind(this))
+
+    var tabH = 100/this.getTabCount();
+    goog.array.forEach(this.getTabElements(), function(tab, i) { 
+	moka.style.setStyle(tab, {
+	    'width': this.getTabWidth(),
+	    'top': (tabH * i).toString() + '%',
+	    'height': tabH.toString() + '%'
+	})
+	tab.style.left = tabLeft;
+    }.bind(this))
+
+    goog.array.forEach(
+	goog.dom.getElementsByClass(moka.ui.Tabs.CSS.TABICON, 
+				    this.getElement()), function(icon, i) { 
+					//icon.style.height = '100%';
+					//icon.style.width = '100%';
+				    }.bind(this))
+
+}
+
 
 
 
@@ -325,5 +387,5 @@ moka.ui.ZipTabs.prototype.disposeInternal = function() {
 
 
     delete this.Resizable_;
-    delete this.orientation_;
+    delete this.expandDirection_;
 }

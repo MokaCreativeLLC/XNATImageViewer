@@ -799,7 +799,7 @@ xiv.ui.ViewBox.prototype.initProgressBarPanel_ = function(){
 * @private
 */
 xiv.ui.ViewBox.prototype.initZipTabs_ = function(){
-    this.ZipTabs_ = new moka.ui.ZipTabs('BOTTOM'); 
+    this.ZipTabs_ = new moka.ui.ZipTabs('TOP'); 
     goog.dom.append(this.viewFrameElt_, this.ZipTabs_.getElement());
     goog.dom.classes.add(this.ZipTabs_.getElement(), 
 			 xiv.ui.ViewBox.CSS.TABS);

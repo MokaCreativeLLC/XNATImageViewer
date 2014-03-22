@@ -21,18 +21,23 @@ goog.require('gxnat');
 goog.require('gxnat.Path');
 goog.require('gxnat.ProjectTree');
 
+//xiv 
+goog.require('xiv.ui.Modal');
 
 
 /**
  * The main XNAT Image Viewer class.
- * @param {!string} mode
- * @param {!string} rootUrl
- * @param {!string} xnatQueryPrefix
- * @param {!string} opt_iconUrl
+ * @param {!string} mode The mode of the image viewer.
+ * @param {!string} dataPath The data path to begin viewable query from.
+ * @param {!string} rootUrl The serverRoot.
  * @constructor
  */
 goog.provide('xiv');
-xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
+xiv = function(mode, dataPath, rootUrl){
+
+    // Inits on the constructor.
+    xiv.loadCustomExtensions();
+    xiv.adjustDocumentStyle();
 
 
     /**
@@ -40,12 +45,6 @@ xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
      * @private
      */
     this.mode_ = mode || 'windowed';
-
-    /** 
-     * @type {Object.<string, Array.<gxnat.Viewable>>}
-     * @private
-     */
-    this.Viewables_;
 
 
     /** 
@@ -59,14 +58,59 @@ xiv = function(mode, rootUrl, xnatQueryPrefix, opt_iconUrl){
      * @type {Array.string}
      * @private
      */
-    this.queryPrefix_ = xnatQueryPrefix;
+    this.queryPrefix_ = gxnat.Path.getQueryPrefix(rootUrl);
 
 
     /** 
+     * @type {xiv.ui.Modal} 
      * @private
-     * @type {string} 
      */
-    this.iconUrl_ =  goog.isString(opt_iconUrl) ? opt_iconUrl : '';
+    this.Modal_;
+
+
+    /**
+     * @type {gxnat.ProjectTree}
+     * @private
+     */
+    this.ProjectTree_;
+
+
+    /**
+     * @type {Array.string}
+     * @private
+     */
+    this.dataPaths_;
+
+
+    /**
+     * @type {boolean}
+     * @private
+     */
+    this.projectTreeLoadedStarted_ = false;
+
+
+    /** 
+     * @type {Object.<string, Array.<gxnat.Viewable>>}
+     * @private
+     */
+    this.Viewables_;
+
+
+    /** 
+     * Necessary. If not done it creates weird dependency issues if declared
+     * outside of the constructor method.
+     *
+     * @type {Object} 
+     * @private
+     */
+    this.modalType_ = xiv.ui.Modal;
+
+
+    // Inits
+    this.createModal_();
+    this.loadExperiment_(dataPath, function() {
+        this.loadProjectTree_();
+    }.bind(this)); 
 
 };
 goog.exportSymbol('xiv', xiv);
@@ -81,81 +125,44 @@ xiv.ANIM_TIME = 300;
 
 
 
-/** 
- * @type {Object} 
- * @private
- */
-xiv.prototype.modalType_;
-
-
-
-/** 
- * @type {xiv.ui.Modal} 
- * @private
- */
-xiv.prototype.Modal_;
-
-
-
 /**
- * @type {gxnat.ProjectTree}
- * @private
- */
-xiv.prototype.ProjectTree_;
-
-
-
-/**
- * @type {Array.string}
- * @private
- */
-xiv.prototype.dataPaths_;
-
-
-
-
-
-
-
-/**
- * @type {boolean}
- * @private
- */
-xiv.prototype.projectTreeLoadedStarted_ = false;
-
-
-
-/**
- * @param {!Object} The modal type to set (e.g. xiv.ui.Modal).
  * @public
  */
-xiv.prototype.setModalType = function(modalType){
-    this.modalType_ = modalType;
+xiv.loadCustomExtensions = function() {
+    X.loader.extensions['IMA'] = [X.parserIMA, null];
 }
+
+
+
+/**
+ * @public
+ */
+xiv.adjustDocumentStyle = function() {
+    document.body.style.overflow = 'hidden';
+}
+
+
+
+/**
+ * @private
+ */
+xiv.revertDocumentStyle_ = function() {
+    document.body.style.overflow = 'visible';
+}
+
 
 
 /**
  * Begins the XNAT Image Viewer.
+ *
  * @public
  */
-xiv.prototype.showModal = function(){
+xiv.prototype.show = function(){
     this.Modal_.getElement().style.opacity = 0;
     goog.dom.append(document.body, this.Modal_.getElement());
     this.Modal_.updateStyle();
     // Important that this be here;
-
     moka.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME);
-}
-
-
-
-/**
- * As stated.
- * @return {!xiv.ui.Modal} The Modal class.
- * @public
- */
-xiv.prototype.getModal = function(){
-    return this.Modal_;
 }
 
 
@@ -166,7 +173,7 @@ xiv.prototype.getModal = function(){
  *     finishes.
  * @public
  */
-xiv.prototype.hideModal = function(opt_callback){
+xiv.prototype.hide = function(opt_callback){
     moka.fx.fadeOut(this.Modal_.getElement(), xiv.ANIM_TIME, opt_callback);
 }
 
@@ -192,71 +199,38 @@ xiv.prototype.addDataPath = function(path) {
 
 
 /**
- * Returns the array of stored XNAT paths.
- * @return {!Array.<string>} The array of stored XNAT paths.
+ * Fades out then disposes xiv.
+ *
  * @public
  */
-xiv.prototype.getDataPaths = function() {
-  return this.dataPaths_;
-};
-
-
-
-/**
- * Fades out then deletes the modal and all of its child elements.
- * @public
- */
-xiv.prototype.dispose = function () {
-    this.hideModal(function (){
-	xiv.revertDocumentStyle_();
-
-	
-	goog.events.removeAll(this.Modal_);
-
-
-
-
-	goog.object.forEach(this.Viewables_, function(ViewableArr, key){
-	    goog.array.forEach(ViewableArr, function(Viewable){
-		Viewable.dispose();
-	    });
-	    goog.array.clear(ViewableArr);
-	    delete this.Viewables_[key];
-	}.bind(this))
-
-
-
-	// Project Tree
-	this.ProjectTree_.dispose();
-	this.ProjectTree_ = null;
-	this.projectTreeLoadedStarted_ = null;
-
-
-	delete this.Viewables_;
-	delete this.dataPaths_;
-	delete this.rootUrl_;
-	delete this.queryPrefix_;
-	delete this.iconUrl_;
-
-
-	this.Modal_.disposeInternal();
-	goog.dom.removeChild.removeChild(this.Modal_.getElement());
-	this.Modal_ = null;
-    }.bind(this));
+xiv.prototype.dispose = function() {
+    this.hide(this.dispose_.bind(this));
 }
 
 
 
 /**
- * As stated. 
- * @public
+ * @param {!string} exptUrl The experiment url to load the vieables from.
+ * @param {Function=} opt_callback The optional callback.
+ * @private
  */
-xiv.prototype.loadProjectTree = function() {
+xiv.prototype.loadExperiment_ = function(exptUrl, opt_callback) {
+    this.addDataPath(exptUrl);
+    this.fetchViewables(this.dataPaths_[this.dataPaths_.length - 1], 
+			opt_callback);
+}
+
+
+
+/** 
+ * @private
+ */
+xiv.prototype.loadProjectTree_ = function() {
 
     if (this.projectTreeLoadedStarted_) { return }
     this.projectTreeLoadedStarted_ = true;
 
-    var startPath = /**@type {!string}*/ this.getDataPaths()[0];
+    var startPath = /**@type {!string}*/ this.dataPaths_[0];
 
     // when tree loading is finished...
     (new gxnat.ProjectTree(startPath)).load( 
@@ -275,11 +249,11 @@ xiv.prototype.loadProjectTree = function() {
 	    // store and add experiments not loaded.
 	    goog.array.forEach(expts, function(expt, i) {
 		if (i == skipInd) {return};
-		this.loadExperiment(expt);
+		this.loadExperiment_(expt);
 	    }.bind(this))
 	    
 	    // store the tree
-	    this.setProjectTree(projTree);
+	    this.setProjectTree_(projTree);
 
     }.bind(this))	
 }
@@ -287,21 +261,8 @@ xiv.prototype.loadProjectTree = function() {
 
 
 /**
- * As stated.
- * @param {!string} exptUrl The experiment url to load the vieables from.
- * @param {Function=} opt_callback The optional callback.
- * @public
- */
-xiv.prototype.loadExperiment = function(exptUrl, opt_callback) {
-    this.addDataPath(exptUrl);
-    this.fetchViewables(this.getDataPaths()[this.getDataPaths().length - 1], 
-			opt_callback);
-}
-
-
-
-/**
  * Sets the events to collapse any added zippys.
+ *
  * @private
  */
 xiv.prototype.collapseAdditionalZippys_ = function() {
@@ -312,21 +273,17 @@ xiv.prototype.collapseAdditionalZippys_ = function() {
 
 
 
-
 /**
- * As stated.
  * @param {!gxnat.ProjectTree}
- * @public
+ * @private
  */
-xiv.prototype.setProjectTree = function(tree){
+xiv.prototype.setProjectTree_ = function(tree){
     this.ProjectTree_ = tree;
 } 
 
 
 
-
-/**
- * As stated.
+/**.
  * @private
  */
 xiv.prototype.setModalButtonCallbacks_ = function(){
@@ -343,31 +300,22 @@ xiv.prototype.setModalButtonCallbacks_ = function(){
 
 /**
  * Creates a popup window of the modal element.
+ * From: http://javascript.info/tutorial/popup-windows
+ *
  * @private
  */
 xiv.prototype.createModalPopup_ = function(){
 
-    var dataPaths = /**@type {!string}*/ '';
-    goog.array.forEach(this.dataPaths_, function(dataPath){
-	dataPaths += dataPath + '&'
-    })
+    var popup = open(this.rootUrl_ + '/scripts/viewer/xiv/popup.html', 
+		   'XNAT Image Viewer', 'width=600,height=600');
+    popup.focus();
 
-    // From: http://javascript.info/tutorial/popup-windows
-
-    var win = open(this.rootUrl_ + '/scripts/viewer/xiv/popup.html', 
-		   'example', 'width=300,height=300');
-    win.focus();
-
-    //win.document.body.custom = this.dataPaths_[0];
-    var dat = this.dataPaths_[0];
-    var onL = function() {
-	win.launchXImgView(dat, 'popup');
+    var dataPath = this.dataPaths_[0];
+    var pOnload = function() {
+	popup.launchXImgView(dataPath, 'popup');
     }
 
-
-    win.onload = onL;
-
-    //window.open(this.rootUrl_ + '/scripts/viewer/xiv/popup.html');
+    popup.onload = pOnload.bind(this);
 
     // Dispose
     this.dispose();
@@ -415,13 +363,12 @@ xiv.prototype.addViewableToModal = function(Viewable){
 
 /**
  * Creates the modal element.
- * @param {!xiv.ui.Modal}
- * @public
+ *
+ * @private
  */
-xiv.prototype.createModal = function(modalType){
+xiv.prototype.createModal_ = function(){
     this.Modal_ = new this.modalType_();
     this.Modal_.setMode(this.mode_);
-    this.Modal_.setIconBaseUrl(this.iconUrl_);
     this.setModalButtonCallbacks_();
     window.onresize = function () { 
 	this.Modal_.updateStyle() 
@@ -460,6 +407,45 @@ xiv.prototype.onZippyAdded_ = function(e) {
 
 
 /**
+ * Dispose function called back after the modal is faded out.
+ *
+ * @private
+ */
+xiv.prototype.dispose_ = function() {
+    xiv.revertDocumentStyle_();
+
+    // Viewables
+    goog.object.forEach(this.Viewables_, function(ViewableArr, key){
+	goog.array.forEach(ViewableArr, function(Viewable){
+	    Viewable.dispose();
+	});
+	goog.array.clear(ViewableArr);
+	delete this.Viewables_[key];
+    }.bind(this))
+    delete this.Viewables_;
+
+
+    // Project Tree
+    this.ProjectTree_.dispose();
+    delete this.ProjectTree_;
+    delete this.projectTreeLoadedStarted_;
+
+    // Others
+    delete this.dataPaths_;
+    delete this.rootUrl_;
+    delete this.queryPrefix_;
+    delete this.iconUrl_;
+
+    // Modal
+    goog.events.removeAll(this.Modal_);
+    this.Modal_.disposeInternal();
+    goog.dom.removeChild.removeChild(this.Modal_.getElement());
+    delete this.Modal_;
+}
+
+
+
+/**
  * Extracts the folders in the provided path and returns a set of folders
  * for querying thumbnails. 
  * @param {gxnat.Viewable} Viewable
@@ -485,33 +471,6 @@ xiv.extractViewableFolders_ = function(Viewable){
     // Apply Viewable category
     folders.push(Viewable['category']);
     return folders;
-}
-
-
-
-/**
- * @public
- */
-xiv.loadCustomExtensions = function() {
-    X.loader.extensions['IMA'] = [X.parserIMA, null];
-}
-
-
-
-/**
- * @public
- */
-xiv.adjustDocumentStyle = function() {
-    document.body.style.overflow = 'hidden';
-}
-
-
-
-/**
- * @private
- */
-xiv.revertDocumentStyle_ = function() {
-    document.body.style.overflow = 'visible';
 }
 
 
