@@ -112,3 +112,13 @@ function(opt_resizeDirs){
 	new moka.ui.Resizable(this.getElement());
     this.Resizeable_.setResizeDirections(opt_resizeDirs);
 }
+
+
+
+/**
+* @inheritDoc
+*/
+xiv.ui.Plane.prototype.disposeInternal = function(){
+    goog.base(this, 'disposeInternal');
+    delete this.title_;
+}

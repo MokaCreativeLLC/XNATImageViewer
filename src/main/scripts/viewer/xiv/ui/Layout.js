@@ -161,6 +161,6 @@ xiv.ui.Layout.prototype.updateStyle = function(){
 */
 xiv.ui.Layout.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
-    window.console.log("Need to implement disposeInternal for: " + 
-		       this.constructor.ID_PREFIX);
+    moka.ui.disposeComponentMap(this.Planes_)
+    delete this.Planes_;
 }

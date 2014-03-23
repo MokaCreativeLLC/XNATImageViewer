@@ -23,9 +23,9 @@ moka.ui.disposeAnimations = function(anims) {
     anims = !goog.isArray(anims) ? [anims] : anims;
     goog.array.forEach(anims, function(anim){
 	goog.events.removeAll(anim);
-	anim.destroy();
 	anim.disposeInternal();
     })
+    goog.array.clear(anims);
 }
 
 
@@ -36,9 +36,7 @@ moka.ui.disposeAnimations = function(anims) {
  */
 moka.ui.disposeAnimationQueue = function(animQueue) {
     if (!goog.isDefAndNotNull(animQueue)) { return } ;
-
     goog.events.removeAll(animQueue);
-    animQueue.destroy();
     animQueue.disposeInternal();
 }
 

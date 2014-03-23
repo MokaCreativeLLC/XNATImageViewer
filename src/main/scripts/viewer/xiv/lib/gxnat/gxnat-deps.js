@@ -47,3 +47,9 @@ goog.addDependency('../../../gxnat/Slicer.js',
 'gxnat',
 'gxnat.Viewable',
 ]);
+
+
+
+goog.addDependency('../../../gxnat/slicer/slicer.js',
+['gxnat.slicer'], [
+]);

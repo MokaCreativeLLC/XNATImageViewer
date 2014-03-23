@@ -108,4 +108,6 @@ xiv.ui.Thumbnail.prototype.getViewable = function(){
  */
 xiv.ui.Thumbnail.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
+    this.Viewable_.dispose();
+    delete this.Viewable_;
 }

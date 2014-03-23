@@ -271,7 +271,7 @@ moka.ui.ScrollableContainer.prototype.disposeInternal = function() {
     delete this.Slider_;
     
 
-    goog.dom.remove(this.scrollArea_);
+    goog.dom.removeNode(this.scrollArea_);
     delete this.scrollArea_;
     
 }

@@ -196,6 +196,7 @@ gxnat.Viewable.prototype.onFilesGotten_ = function(opt_initComplete){
  */
 gxnat.Viewable.prototype.getFiles = function(opt_callback){
 
+    //window.console.log("GET FILES", this);
     var fileQueryUrl = /** @type {!string} */ this['queryUrl'] + 
 	               this['constructor']['fileQuerySuffix'];
     var absoluteUrl = /** @type {!string} */ '';    
@@ -225,10 +226,11 @@ gxnat.Viewable.prototype.getFiles = function(opt_callback){
 gxnat.Viewable.prototype.dispose = function() {
 
     goog.base(this, 'dispose');
-    window.console.log("\n\nPRE-DISPOSED VIEWABLE", this);
-    this['pathObj'].dispose();
-    delete this['pathObj'];
-
+    
+    if (this['pathObj']){
+	this['pathObj'].dispose();
+	delete this['pathObj'];
+    }
     goog.object.clear(this);
     window.console.log("DISPOSED VIEWABLE", this);
 }

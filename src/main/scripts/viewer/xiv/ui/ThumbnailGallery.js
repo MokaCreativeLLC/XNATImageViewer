@@ -424,9 +424,6 @@ xiv.ui.ThumbnailGallery.prototype.addDragDropSource_ = function(thumbnail){
 xiv.ui.ThumbnailGallery.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
 
-    this.Resizable_.disposeInternal();
-    delete this.Resizable_;
-
     this.thumbnailDragDropGroup_.disposeInternal();
     delete this.thumbnailDragDropGroup_;
 

@@ -8,6 +8,7 @@
 goog.require('goog.dom');
 goog.require('goog.array');
 goog.require('goog.window');
+goog.require('goog.Disposable');
 
 // xtk
 goog.require('X.loader');
@@ -30,6 +31,7 @@ goog.require('xiv.ui.Modal');
  * @param {!string} mode The mode of the image viewer.
  * @param {!string} dataPath The data path to begin viewable query from.
  * @param {!string} rootUrl The serverRoot.
+ * @extends {goog.Disposable}
  * @constructor
  */
 goog.provide('xiv');
@@ -113,6 +115,7 @@ xiv = function(mode, dataPath, rootUrl){
     }.bind(this)); 
 
 };
+goog.inherits(xiv, goog.Disposable);
 goog.exportSymbol('xiv', xiv);
 
 
@@ -412,6 +415,11 @@ xiv.prototype.onZippyAdded_ = function(e) {
  * @private
  */
 xiv.prototype.dispose_ = function() {
+
+    // Call superclass dispose.
+    xiv.superClass_.dispose.call(this)
+
+    // Revert the document.
     xiv.revertDocumentStyle_();
 
     // Viewables
@@ -423,7 +431,6 @@ xiv.prototype.dispose_ = function() {
 	delete this.Viewables_[key];
     }.bind(this))
     delete this.Viewables_;
-
 
     // Project Tree
     this.ProjectTree_.dispose();
@@ -439,7 +446,7 @@ xiv.prototype.dispose_ = function() {
     // Modal
     goog.events.removeAll(this.Modal_);
     this.Modal_.disposeInternal();
-    goog.dom.removeChild.removeChild(this.Modal_.getElement());
+    goog.dom.removeNode(this.Modal_.getElement());
     delete this.Modal_;
 }
 
@@ -453,6 +460,7 @@ xiv.prototype.dispose_ = function() {
  */
 xiv.extractViewableFolders_ = function(Viewable){
     var pathObj =  /**@type {!gxnat.Path}*/
+    //wwindow.console.log(Viewable);
     new gxnat.Path(Viewable['experimentUrl']);
     
     var folders = /**@type {!Array.string}*/ [];

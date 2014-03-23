@@ -263,6 +263,5 @@ xiv.ui.FourUp.prototype.updateStyle_V = function() {
 */
 xiv.ui.FourUp.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
-    window.console.log("Need to implement disposeInternal for: " + 
-		       this.constructor.ID_PREFIX);
+    delete this.bottomPlaneWidth_;
 }

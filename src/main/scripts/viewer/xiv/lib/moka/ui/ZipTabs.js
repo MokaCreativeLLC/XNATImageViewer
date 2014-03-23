@@ -381,11 +381,6 @@ moka.ui.ZipTabs.prototype.disposeInternal = function() {
     goog.events.removeAll(this.Resizable_);
     this.Resizable_.disposeInternal(); 
 
-    goog.array.forEach(this.getTabElements(), function(tab, i) { 
-	goog.events.removeAll(tab);
-    }.bind(this))
-
-
     delete this.Resizable_;
     delete this.expandDirection_;
 }

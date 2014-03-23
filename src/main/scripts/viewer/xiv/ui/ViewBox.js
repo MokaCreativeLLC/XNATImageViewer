@@ -11,7 +11,7 @@ goog.require('goog.array');
 goog.require('goog.object');
 goog.require('goog.style');
 
-// utils
+// moka
 goog.require('moka.ui.Component');
 goog.require('moka.style');
 goog.require('moka.ui.ZipTabs');
@@ -562,6 +562,20 @@ xiv.ui.ViewBox.prototype.onLayoutResize_ = function(e){
 
 
 /**
+ * @param {gxnat.Viewable} Viewable
+ * @return {!boolean} Whether or not the viewable needs a preload workflow.
+ * @private
+ */
+xiv.ui.ViewBox.prototype.needsPreload_ = function(Viewable){
+    if (Viewable['category'] == 'Slicer Scenes'){
+	return true;
+    }
+    return false;
+}
+
+
+
+/**
  * Loads a gxnat.Viewable object into the appropriate renderers.
  *
  * @param {!gxnat.Viewable} viewable.
@@ -592,13 +606,15 @@ xiv.ui.ViewBox.prototype.load = function (viewable) {
     }
 
     
-    /**
-    if (this.needsPreloadWorkflow_(viewable)){
+    window.console.log('VIEWABLE DROPPED', viewable);
+
+    
+    if (this.needsPreload_(viewable)){
+	window.console.log('NEEDS PRELOAD', viewable);
 	this.runPreloadWorklow_(viewable);
 	return;
     }
-    */
-    window.console.log(viewable);
+    
 
     if (this.Viewables_.length == 1) {
 	this.LayoutHandler_.setLayout(

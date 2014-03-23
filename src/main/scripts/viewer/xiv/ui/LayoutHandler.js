@@ -472,23 +472,12 @@ xiv.ui.LayoutHandler.prototype.updateStyle = function(){
 xiv.ui.LayoutHandler.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
 
-
-    goog.object.forEach(this.Layouts_, function(layout) {
-	goog.events.unlisten(layout, 
-			     xiv.ui.Layout.EventType.RESIZE, 
-			     this.onLayoutResize_.bind(this))
-    })
-
-
-
-    goog.object.forEach(this.Layouts_, function(layout){
-	layout.disposeInternal();
-	layout = null;
-    })
+    moka.ui.disposeComponentMap(this.Layouts_);
     delete this.Layouts_;
 
+    goog.object.clear(this.LayoutObjects_);
+    delete this.LayoutObjects_;
 
-    delete this.LayoutObjects_ = {};
     delete this.currLayoutTitle_;
     delete this.prevLayoutTitle_;
 }

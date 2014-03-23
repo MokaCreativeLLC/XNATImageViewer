@@ -38,6 +38,51 @@ goog.require('moka.ui.Component');
 goog.provide('xiv.ui.ViewBoxHandler');
 xiv.ui.ViewBoxHandler = function () {
     goog.base(this);
+
+    /**
+     * @type {Array.<Array.<xiv.ui.ViewBox>>}
+     * @private
+     */
+    this.ViewBoxes_;
+
+
+
+
+    /**
+     * @type {Object.<string, Element>}
+     * @private
+     */
+    this.dragDropHandles_;
+
+
+
+    /**
+     * @type {Object.<string, Object.<string, number>>}
+     * @private
+     */
+    this.ViewBoxPositions_;
+
+
+
+    /**
+     * @type {goog.fx.DragDropGroup}
+     * @private
+     */
+    this.dragDropGroup_;
+
+
+    /**
+     * @type {goog.fx.DragDropGroup}
+     * @private
+     */
+    this.dragDropTargets_
+
+
+    /**
+     * @type {!Element}
+     * @private
+     */
+    this.ViewBoxesParent_ = document.body;
 }
 goog.inherits(xiv.ui.ViewBoxHandler, moka.ui.Component);
 goog.exportSymbol('xiv.ui.ViewBoxHandler', xiv.ui.ViewBoxHandler);
@@ -108,69 +153,6 @@ xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR =  'viewboxid';
  * @expose
  */
 xiv.ui.ViewBoxHandler.ID_PREFIX =  'xiv.ui.ViewBoxHandler';
-
-
-
-/**
- * @type {Array.<Array.<xiv.ui.ViewBox>>}
- * @private
- */
-xiv.ui.ViewBoxHandler.prototype.ViewBoxes_;
-
-
-
-
-/**
- * @type {Object.<string, Element>}
- * @private
- */
-xiv.ui.ViewBoxHandler.prototype.dragDropHandles_;
-
-
-
-/**
- * @type {Object.<string, Object.<string, number>>}
- * @private
- */
-xiv.ui.ViewBoxHandler.prototype.ViewBoxPositions_;
-
-
-
-/**
- * @type {goog.fx.DragDropGroup}
- * @private
- */
-xiv.ui.ViewBoxHandler.prototype.dragDropGroup_;
-
-
-/**
- * @type {goog.fx.DragDropGroup}
- * @private
- */
-xiv.ui.ViewBoxHandler.prototype.dragDropTargets_
-
-
-/**
- * @type {!Element}
- * @private
- */
-xiv.ui.ViewBoxHandler.prototype.ViewBoxesParent_ = document.body;
-
-
-
-/**
- * @type {!string}
- * @protected
- */  
-xiv.ui.ViewBoxHandler.prototype.iconBaseUrl = '';
-
-
-
-/**
- * @type {!string}
- * @protected
- */  
-xiv.ui.ViewBoxHandler.prototype.iconUrl = '';
 
 
 
@@ -496,7 +478,6 @@ xiv.ui.ViewBoxHandler.prototype.setViewBoxesParent = function(elt) {
 xiv.ui.ViewBoxHandler.prototype.createViewBox_ = function() {
     var ViewBox = /**@type {!xiv.ui.ViewBox}*/ new xiv.ui.ViewBox();
     goog.dom.append(this.ViewBoxesParent_, ViewBox.getElement());
-    ViewBox.setIconBaseUrl(this.iconBaseUrl);
     this.addDragDropHandle_(ViewBox);
     this.setViewBoxEvents_(ViewBox);
     return ViewBox;    
@@ -1091,29 +1072,52 @@ xiv.ui.ViewBoxHandler.prototype.showDragDropHandles_ = function(){
  */
 xiv.ui.ViewBoxHandler.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
-    goog.events.removeAll(this.dragDropGroup_);
+    
 
+    // The individual ViewBoxes
     this.loop(function(ViewBox){
 	goog.events.removeAll(ViewBox);
 	ViewBox.disposeInternal();
 	goog.dom.removeNode(ViewBox.getElement());
     }.bind(this));
 
+
+    // The ViewBoxes 2D array.
     goog.array.forEach(this.ViewBoxes_, function(arr){
 	goog.array.clear(arr);
     })
     goog.array.clear(this.ViewBoxes_); 
     delete this.ViewBoxes_;
 
+
+    // Drag Drop handles
     moka.ui.disposeElementMap(this.dragDropHandles_);
     delete this.dragDropHandles_;
 
+
+    // View Box Positions
+    goog.object.forEach(this.ViewBoxPositions_, function(pos, key){
+	goog.object.clear(this.ViewBoxPositions_[key]);
+	delete this.ViewBoxPositions_[key];
+    }.bind(this))
+    goog.object.clear(this.ViewBoxPositions_);
     delete this.ViewBoxPositions_;
 	
-    if (this.dragDropGroup_) {
+
+    // Drag drop group and targets
+    if (goog.isDefAndNotNull(this.dragDropGroup_)) {
+	goog.events.removeAll(this.dragDropGroup_);
 	this.dragDropGroup_.dispose();
-	this.dragDropTargets_.dispose();
     }
     delete this.dragDropGroup_;
+
+    // Drag drop group and targets
+    if (goog.isDefAndNotNull(this.dragDropTargets_)) {
+	goog.events.removeAll(this.dragDropTargets_);
+	this.dragDropTargets_.dispose();
+    }
+    delete this.dragDropTargets_;
+
+    // View boxes parent reference.
     delete this.ViewBoxesParent_;
 }

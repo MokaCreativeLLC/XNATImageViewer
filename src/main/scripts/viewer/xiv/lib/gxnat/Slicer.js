@@ -8,6 +8,7 @@ goog.require('goog.string');
 // moka
 goog.require('moka.string');
 goog.require('gxnat');
+goog.require('gxnat.slicer');
 goog.require('gxnat.Viewable');
 
 
@@ -24,8 +25,37 @@ goog.require('gxnat.Viewable');
 goog.provide('gxnat.Slicer');
 gxnat.Slicer = function(experimentUrl, viewableJson, 
 				      opt_initComplete) {
+
     this['category'] = 'Slicer Scenes';
-    goog.base(this, experimentUrl, viewableJson, opt_initComplete);
+    this.MRMLS = this.MRMLS ? this.MRMLS : [];
+
+    //
+    // Call parent function doing the following at the end:
+    //
+    //     - Once complete, we get the mrml files.
+    //
+    goog.base(this, experimentUrl, viewableJson, function() { 
+
+	gxnat.slicer.createMrmlStructs(this['files'], function(mrmlStruct){
+	    this.MRMLS.push(mrmlStruct);
+	    var elts = gxnat.slicer.getMrmlElements(
+		this.MRMLS[this.MRMLS.length - 1].DOC, 
+		'SceneView'
+	    );
+	    window.console.log("MRML ELTS", elts);
+	}.bind(this));
+
+
+
+
+	// Init complete function.
+	if (opt_initComplete){
+	    opt_initComplete(this);
+	}
+    }.bind(this));
+
+
+
     this['sessionInfo']['Format']['value'] = '.mrb';
 }
 goog.inherits(gxnat.Slicer, gxnat.Viewable);
@@ -70,6 +100,8 @@ gxnat.Slicer.thumbnailExtensions = [
 
 
 
+
+
 /**
  * @inheritDoc
  */
@@ -107,7 +139,7 @@ gxnat.Slicer.prototype.getThumbnailImage = function(opt_callback){
 		return;
 	    }		   
 	}
-  }
+    }
     if (opt_callback){
 	opt_callback(this);
     }

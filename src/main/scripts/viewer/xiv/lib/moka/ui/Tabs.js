@@ -732,8 +732,10 @@ moka.ui.Tabs.prototype.setTabMouseOut_ = function(tab, i) {
 moka.ui.Tabs.prototype.disposeTabs_ = function() {
     goog.array.forEach(this.Tabs_, function(collection){
 	goog.object.forEach(collection, function(tabItem, key2){
-	    if (tabItem instanceof goog.ui.TabPane.TabPage ||
-		tabItem instanceof moka.ui.ScrollableContainer) {
+	    if (tabItem instanceof goog.ui.TabPane.TabPage) {
+		goog.events.removeAll(tabItem);
+		delete tabItem;
+	    } else if (tabItem instanceof moka.ui.ScrollableContainer) {
 		goog.events.removeAll(tabItem);
 		tabItem.disposeInternal();	
 	    } else {

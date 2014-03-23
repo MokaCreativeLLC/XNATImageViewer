@@ -164,7 +164,6 @@ xiv.ui.Modal.Mode = function(name, opt_wRatio, opt_hRatio) {
     this.VIEWBOX_VERT_MARGIN = 25;
     this.VIEWBOX_MIN_H =  320;
     this.VIEWBOX_MIN_W = 320;
-
     this.NAME = name;
     this.W_RATIO = opt_wRatio || 1;
     this.H_RATIO = opt_hRatio || 1;
@@ -175,7 +174,7 @@ xiv.ui.Modal.Mode = function(name, opt_wRatio, opt_hRatio) {
 /**
  * @struct
  */
-xiv.ui.Modal.prototype.ModeTypes = {
+xiv.ui.Modal.ModeTypes = {
     FULLSCREEN:  new xiv.ui.Modal.Mode('fullscreen'),
     POPUP: new xiv.ui.Modal.Mode('popup'),
     FULLSCREEN_POPUP: new xiv.ui.Modal.Mode('fullscreen-popup'),
@@ -188,7 +187,7 @@ xiv.ui.Modal.prototype.ModeTypes = {
  * @type {!xiv.ui.Modal.Mode}
  * @private
  */
-xiv.ui.Modal.prototype.currMode_ = xiv.ui.Modal.prototype.ModeTypes.WINDOWED;
+xiv.ui.Modal.prototype.currMode_ = xiv.ui.Modal.ModeTypes.WINDOWED;
 
 
 
@@ -285,9 +284,11 @@ xiv.ui.Modal.prototype.setMode = function(mode) {
     
     // first check if mode is a string
     if (goog.isString(mode)){
-	for (var key in this.ModeTypes) {
-	    if (this.ModeTypes[key].NAME == mode){
-		mode = this.ModeTypes[key];
+	for (var key in xiv.ui.Modal.ModeTypes) {
+
+	    window.console.log(key, xiv.ui.Modal.ModeTypes[key].NAME);
+	    if (xiv.ui.Modal.ModeTypes[key].NAME == mode){
+		mode = xiv.ui.Modal.ModeTypes[key];
 		break;
 	    }
 	}
@@ -295,7 +296,8 @@ xiv.ui.Modal.prototype.setMode = function(mode) {
 
     // If we still have string or it's not a valide mode, throw the error.
     if (goog.isString(mode) || 
-	!goog.object.containsValue(this.ModeTypes, mode)){
+	!goog.object.containsValue(xiv.ui.Modal.ModeTypes, mode)){
+	window.console.log(xiv.ui.Modal.ModeTypes);
 	throw new TypeError('Invalid xiv.ui.Modal mode: ' + mode);
     }
 
@@ -897,19 +899,19 @@ xiv.ui.Modal.prototype.adjustStyleToMode_ = function(){
     
     window.console.log("ADJUST MODE", this.currMode_);
 
-    if (this.currMode_ !== this.ModeTypes.WINDOWED) {
+    if (this.currMode_ !== xiv.ui.Modal.ModeTypes.WINDOWED) {
 	this.getElement().style.borderRadius = 0;
     } 
 
-    if (this.currMode_ == this.ModeTypes.POPUP) {
+    if (this.currMode_ == xiv.ui.Modal.ModeTypes.POPUP) {
 	this.buttons_.POPUP.style.visibilty = 'hidden';
 	this.buttons_.FULLSCREEN.style.visibilty = 'visible';
     } 
-    else if (this.currMode_ == this.ModeTypes.FULLSCREEN_POPUP) {
+    else if (this.currMode_ == xiv.ui.Modal.ModeTypes.FULLSCREEN_POPUP) {
 	this.buttons_.POPUP.style.visibilty = 'hidden';
 	this.buttons_.FULLSCREEN.style.visibilty = 'hidden';
     } 
-    else if (this.currMode_ == this.ModeTypes.FULLSCREEN) {
+    else if (this.currMode_ == xiv.ui.Modal.ModeTypes.FULLSCREEN) {
 	this.buttons_.POPUP.style.visibilty = 'visible';
 	this.buttons_.FULLSCREEN.style.visibilty = 'hidden';
     }
@@ -1154,10 +1156,7 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
     delete this.ThumbnailGallery_;
 
     // others
-    goog.objects.clear(this.currMode_);
     delete this.currMode_
-
-    goog.objects.clear(this.prevMode_);
     delete this.prevMode_;
 }
 

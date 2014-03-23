@@ -92,6 +92,7 @@ gxnat.get = function(url, callback, opt_getType){
     //window.console.log("\n\nxnat - get: ", url);
     goog.net.XhrIo.send(url, function(e) {
 	var xhr = /** @type {!Object}*/ e.target;
+
 	switch (opt_getType) {
 	case undefined: 
 	    callback(xhr);
@@ -102,7 +103,13 @@ gxnat.get = function(url, callback, opt_getType){
 	    } else {
 		callback(responseJson);
 	    }
+	    break;
+	case 'text':
+	    callback(xhr.getResponseText());
+	    break;
 	}
+
+	
     });
 }
 

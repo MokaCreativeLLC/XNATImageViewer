@@ -302,9 +302,4 @@ xiv.ui.Conventional.prototype.updateStyle_V = function() {
 
 
 
-/**
- * @inheritDoc
- */
-xiv.ui.Conventional.prototype.disposeInternal = function() {
 
-}

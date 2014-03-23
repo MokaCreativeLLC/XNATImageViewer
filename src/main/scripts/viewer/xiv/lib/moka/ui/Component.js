@@ -176,43 +176,6 @@ moka.ui.Component.prototype.subComponents_;
 
 
 /**
- * Sets the icon url to derive any images from.
- * @param {!string} url The url to derive the icon images from.
- * @public
- */
-moka.ui.Component.prototype.setIconBaseUrl = function(url) {
-    this.iconBaseUrl = url;
-    this.iconUrl = goog.string.path.join( this.iconBaseUrl, 
-				this.constructor.ID_PREFIX.replace(/\./g,'/'));
-    if (this.updateIconSrcFolder){
-	this.updateIconSrcFolder();
-    }
-}
-
-
-/**
- * As stated.
- * @return {!string} The URL.
- * @public
- */
-moka.ui.Component.prototype.getIconBaseUrl = function() {
-    return this.iconBaseUrl;
-}
-
-
-
-/**
- * As stated.
- * @return {!string} The URL.
- * @public
- */
-moka.ui.Component.prototype.getIconUrl = function() {
-    return this.iconUrl;
-}
-
-
-
-/**
  * Generic function for style updates and resizing.
  * @protected
  */
