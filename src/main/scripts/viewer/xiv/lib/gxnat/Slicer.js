@@ -38,11 +38,32 @@ gxnat.Slicer = function(experimentUrl, viewableJson,
 
 	gxnat.slicer.createMrmlStructs(this['files'], function(mrmlStruct){
 	    this.MRMLS.push(mrmlStruct);
-	    var elts = gxnat.slicer.getMrmlElements(
-		this.MRMLS[this.MRMLS.length - 1].DOC, 
-		'SceneView'
-	    );
-	    window.console.log("MRML ELTS", elts);
+	    
+	    var scenes = [];
+	    // Get the scenes
+	    var sceneViews = gxnat.slicer.getSceneViewsFromMrml(
+		this.MRMLS[this.MRMLS.length - 1].document);
+	    window.console.log("SceneViews", sceneViews);
+
+	    // Get the Camera positions per scene
+	    goog.array.forEach(sceneViews, function(sceneView){
+		scenes.push({
+		    'scene': sceneView,
+		    'camera': 
+		    gxnat.slicer.getCameraFromSceneView(sceneView),
+		    'backgroundColor':
+		    gxnat.slicer.getBackgroundColorFromSceneView(sceneView),
+		    'layout':
+		    gxnat.slicer.getLayoutFromSceneView(sceneView),
+		    'annotations':
+		    gxnat.slicer.getAnnotationsFromSceneView(sceneView,
+				this['queryUrl'])
+		})
+		
+	    }.bind(this))
+	    window.console.log("SCENES", this, scenes);
+	    
+	    
 	}.bind(this));
 
 
