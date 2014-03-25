@@ -111,7 +111,7 @@ xiv = function(mode, dataPath, rootUrl){
     // Inits
     this.createModal_();
     this.loadExperiment_(dataPath, function() {
-        this.loadProjectTree_();
+        //this.loadProjectTree_();
     }.bind(this)); 
 
 };

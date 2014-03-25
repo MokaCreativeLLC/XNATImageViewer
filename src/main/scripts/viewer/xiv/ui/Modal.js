@@ -96,7 +96,7 @@ xiv.ui.Modal = function () {
     }
 
 
-    window.console.log("MODE", this.currMode_);
+    //window.console.log("MODE", this.currMode_);
 }
 goog.inherits(xiv.ui.Modal, moka.ui.Component);
 goog.exportSymbol('xiv.ui.Modal', xiv.ui.Modal);
@@ -286,7 +286,7 @@ xiv.ui.Modal.prototype.setMode = function(mode) {
     if (goog.isString(mode)){
 	for (var key in xiv.ui.Modal.ModeTypes) {
 
-	    window.console.log(key, xiv.ui.Modal.ModeTypes[key].NAME);
+	    //window.console.log(key, xiv.ui.Modal.ModeTypes[key].NAME);
 	    if (xiv.ui.Modal.ModeTypes[key].NAME == mode){
 		mode = xiv.ui.Modal.ModeTypes[key];
 		break;
@@ -506,7 +506,7 @@ xiv.ui.Modal.prototype.computeDims_ = function () {
     this.computeModalDims_();
 
     this.computeZipTabsDims_();
-    window.console.log("THUMB", this.dims_);
+    //window.console.log("THUMB", this.dims_);
     this.computeViewBoxDims_();
     this.computeViewBoxPositions_();
     this.computeModalPosition_();
@@ -567,7 +567,7 @@ xiv.ui.Modal.prototype.computeViewBoxDims_ = function() {
 	this.currMode_.VIEWBOX_HORIZ_MARGIN) / 
 	this.dims_.viewbox.COLS - this.currMode_.VIEWBOX_HORIZ_MARGIN;
 
-    window.console.log('Viewboxwidth', this.dims_);
+    //window.console.log('Viewboxwidth', this.dims_);
 }
 
 
@@ -814,7 +814,7 @@ xiv.ui.Modal.prototype.initThumbnailGallery_ = function() {
  * @private
  */
 xiv.ui.Modal.prototype.initViewBoxHandler_ = function() {
-    window.console.log("INIT VIEW BOX HANDLER");
+    //window.console.log("INIT VIEW BOX HANDLER");
     this.ViewBoxHandler_ = new xiv.ui.ViewBoxHandler();
     this.ViewBoxHandler_.setViewBoxesParent(this.getElement());   
     this.setViewBoxHandlerEvents_();
@@ -897,7 +897,7 @@ function(opt_listenMethod){
  */
 xiv.ui.Modal.prototype.adjustStyleToMode_ = function(){
     
-    window.console.log("ADJUST MODE", this.currMode_);
+    //window.console.log("ADJUST MODE", this.currMode_);
 
     if (this.currMode_ !== xiv.ui.Modal.ModeTypes.WINDOWED) {
 	this.getElement().style.borderRadius = 0;

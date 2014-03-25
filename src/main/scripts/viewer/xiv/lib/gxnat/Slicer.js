@@ -27,55 +27,35 @@ gxnat.Slicer = function(experimentUrl, viewableJson,
 				      opt_initComplete) {
 
     this['category'] = 'Slicer Scenes';
-    this.MRMLS = this.MRMLS ? this.MRMLS : [];
+
 
     //
-    // Call parent function doing the following at the end:
-    //
-    //     - Once complete, we get the mrml files.
+    // Call parent for generating the base properties
     //
     goog.base(this, experimentUrl, viewableJson, function() { 
 
-	gxnat.slicer.createMrmlStructs(this['files'], function(mrmlStruct){
-	    this.MRMLS.push(mrmlStruct);
+	//
+	// Then get the scene view nodes
+	//
+	gxnat.slicer.getSceneViewNodes(this['files'], this['queryUrl'],
+	function(sceneViewNodes, mrmlNodes){
+	    this.mrml = mrmlNodes;
+	    this.sceneViews = sceneViewNodes;
 	    
-	    var scenes = [];
-	    // Get the scenes
-	    var sceneViews = gxnat.slicer.getSceneViewsFromMrml(
-		this.MRMLS[this.MRMLS.length - 1].document);
-	    window.console.log("SceneViews", sceneViews);
+	    //
+	    // Convert the scene View nodes to Viewables
+	    //
+	    window.console.log('\n\n\n\nSLICER VIEWABLE', this);
 
-	    // Get the Camera positions per scene
-	    goog.array.forEach(sceneViews, function(sceneView){
-		scenes.push({
-		    'scene': sceneView,
-		    'camera': 
-		    gxnat.slicer.getCameraFromSceneView(sceneView),
-		    'backgroundColor':
-		    gxnat.slicer.getBackgroundColorFromSceneView(sceneView),
-		    'layout':
-		    gxnat.slicer.getLayoutFromSceneView(sceneView),
-		    'annotations':
-		    gxnat.slicer.getAnnotationsFromSceneView(sceneView,
-				this['queryUrl'])
-		})
+	    //
+	    // Init complete function.
+	    //
+	    if (opt_initComplete){
 		
-	    }.bind(this))
-	    window.console.log("SCENES", this, scenes);
-	    
-	    
-	}.bind(this));
-
-
-
-
-	// Init complete function.
-	if (opt_initComplete){
-	    opt_initComplete(this);
-	}
-    }.bind(this));
-
-
+		opt_initComplete(this);
+	    }
+	}.bind(this))
+    }.bind(this))
 
     this['sessionInfo']['Format']['value'] = '.mrb';
 }
@@ -118,6 +98,8 @@ gxnat.Slicer.thumbnailExtensions = [
     'png', 
     'gif'
 ];
+
+
 
 
 
