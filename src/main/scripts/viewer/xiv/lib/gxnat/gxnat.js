@@ -10,9 +10,10 @@ goog.require('goog.object');
 
 // gxnat
 goog.require('gxnat.Path');
-goog.require('gxnat.Viewable');
-goog.require('gxnat.Scan');
-goog.require('gxnat.Slicer');
+goog.require('gxnat.vis');
+goog.require('gxnat.vis.AjaxViewable');
+goog.require('gxnat.vis.Scan');
+goog.require('gxnat.vis.Slicer');
 
 
 
@@ -115,38 +116,7 @@ gxnat.get = function(url, callback, opt_getType){
 
 
 
-/**
- * Retrieves viewables, one-by-one, for manipulation in the opt_runCallback
- * argument, and when complete the opt_doneCallback.
- * @param {!string} url The url to retrieve the viewables from.
- * @param {function=} opt_runCallback The optional callback applied to each 
- *     viewable.
- * @param {function=} opt_doneCallback The optional callback applied to each 
- *     when retrieval is complete.
- */
-gxnat.getViewables = function (url, opt_runCallback, opt_doneCallback){
-    gxnat.VIEWABLE_TYPES = {
-	'Scan': gxnat.Scan,
-	'Slicer': gxnat.Slicer,
-    }
 
-    var typeCount = /**@type {!number}*/
-	goog.object.getCount(gxnat.VIEWABLE_TYPES);
-    var typesGotten = /**@type {!number}*/ 0;
-
-    goog.object.forEach(gxnat.VIEWABLE_TYPES, function(vType){
-      gxnat.Viewable.getViewables(url, vType, opt_runCallback, function(){
-	 typesGotten++;
-	  if (typesGotten === typeCount){
-	      window.console.log("DONE!");
-	      if (opt_doneCallback) { 
-		  
-		  opt_doneCallback(); 
-	      }
-	 }
-      })
-    });
-}
 
 
 
@@ -158,7 +128,7 @@ gxnat.getViewables = function (url, opt_runCallback, opt_doneCallback){
  * Usage: 
  * // An alpha sorted sorted key set. 
  * alphaSortedKeys = ['a1','a100','a11']
- * var nautralSortedKeys = alphaSortedKeys.sort(gnxat.naturalCompare);
+ * var nautralSortedKeys = alphaSortedKeys.sort(gxnat.naturalCompare);
  * // naturalSortedKeys output:
  * // ['a1', 'a11', 'a100']
  * @param {!string} a The first compare string.
@@ -195,4 +165,55 @@ gxnat.naturalCompare = function (a, b) {
 	}
     }
   return aa.length - bb.length;
+}
+
+
+
+
+
+
+/**
+ * Sorts the viewable collection, which is an array of XNAT derived JSONS
+ * customized (added to) for the purposes of the Image viewer.
+ * @param {!Array.<gxnat.vis.AjaxViewable>} viewables The array of 
+ *     gxnat.vis.AjaxViewable to sort. 
+ * @param {!Array.<String>} keyDepthArr The key depth array indicating the 
+ *     sorting criteria.
+ * @public
+ */
+gxnat.sortXnatPropertiesArray = function (viewables, keyDepthArr){
+
+    var sorterKeys = /**@type {!Array.<string>} */ [];
+    var sorterObj = /**@type {!Object.<string, gxnat.vis.AjaxViewable>} */ {};
+    var sortedViewableCollection = 
+	/**@type {!Array.Object} */ [];
+    var sorterKey = /**@type {!Object} */ {};
+
+    //
+    // Update sorting data types.
+    //
+    goog.array.forEach(viewables, function(viewable){
+	sorterKey = viewable;
+	goog.array.forEach(keyDepthArr, function(key){
+	    sorterKey = sorterKey[key];
+	})
+	sorterKey = sorterKey.toLowerCase();
+	sorterKeys.push(sorterKey);
+	sorterObj[sorterKey] = viewable;
+    })
+
+    //
+    // Natural sort sorterKeys.
+    //
+    sorterKeys = sorterKeys.sort(gxnat.naturalCompare);
+    //goog.array.sort(sorterKeys);
+
+
+    //
+    // Construct and return the sorted collection.
+    //
+    goog.array.forEach(sorterKeys, function(sorterKey){
+	sortedViewableCollection.push(sorterObj[sorterKey]);
+    })
+    return sortedViewableCollection;
 }

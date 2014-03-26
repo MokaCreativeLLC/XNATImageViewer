@@ -15,7 +15,7 @@ goog.require('moka.ui.Thumbnail');
 /**
  * xiv.ui.Thumbnail is the parent class of Slicer and Dicom thumbnails.
  * @constructor
- * @param {gxnat.Viewable} Viewable_ The properties that 
+ * @param {gxnat.vis.ViewableSet} Viewable_ The properties that 
  *    define the XNAT-specific thumbnail
  * @extends {moka.ui.Thumbnail}
  */
@@ -25,15 +25,15 @@ xiv.ui.Thumbnail = function (Viewable_) {
 
 
     /**
-     * @type {gxnat.Viewable}
+     * @type {gxnat.vis.ViewableSet}
      * @private
      */    
-    this.Viewable_ = Viewable_;
+    this.ViewableSet_ = Viewable_;
 
-    //window.console.log("THUMB1:", Viewable_, this.Viewable_['thumbnailUrl']);
-    //window.console.log("THUMB2:", Viewable_, this.Viewable_['files']);
+    //window.console.log("THUMB1:", Viewable_, this.ViewableSet_['thumbnailUrl']);
+    //window.console.log("THUMB2:", Viewable_, this.ViewableSet_['files']);
 
-    this.setImage(this.Viewable_['thumbnailUrl']);
+    this.setImage(this.ViewableSet_.getThumbnailUrl());
     this.createText_();
     this.createHoverable();
     goog.dom.classes.add(this.getHoverable(), 
@@ -70,20 +70,24 @@ xiv.ui.Thumbnail.CSS_SUFFIX = {};
 xiv.ui.Thumbnail.prototype.createText_ = function(){
 
     var splitArr = /**@type {!Array.string}*/ 
-    this.Viewable_['queryUrl'].split("/");
+    this.ViewableSet_.getQueryUrl().split("/");
 
     var headerText =  /**@type {!string}*/ 
     splitArr[splitArr.length - 1].split(".")[0];
 
     var displayText =  /**@type {!string}*/ '';
     displayText += "<b><font size = '2'>" + headerText  + "</font></b><br>";
-    displayText += "Frmt: " + this.Viewable_['sessionInfo']
-             ["Format"]['value'].toString()  + "<br>";
+
+    if (this.ViewableSet_.hasOwnProperty('getSessionInfo')){
+	displayText += "Frmt: " + this.ViewableSet_.getSessionInfo()
+        ["Format"]['value'].toString()  + "<br>";
+    }
+
 
     /**
-    displayText += 'Type: ' + this.Viewable_['sessionInfo']
+    displayText += 'Type: ' + this.ViewableSet_['sessionInfo']
              ["type"]['value']   + "</b><br>";
-    displayText += 'Expt: ' + this.Viewable_['sessionInfo']['experiments'];
+    displayText += 'Expt: ' + this.ViewableSet_['sessionInfo']['experiments'];
     */
 
     this.setText(displayText);
@@ -93,12 +97,12 @@ xiv.ui.Thumbnail.prototype.createText_ = function(){
 
 
 /**
- * Returns the gxnat.Viewable object associated with the thumbnail.
- * @return {gxnat.Viewable}
+ * Returns the gxnat.vis.ViewableSet object associated with the thumbnail.
+ * @return {gxnat.vis.ViewableSet}
  * @public
  */
 xiv.ui.Thumbnail.prototype.getViewable = function(){
-    return this.Viewable_;
+    return this.ViewableSet_;
 }
 
 
@@ -108,6 +112,6 @@ xiv.ui.Thumbnail.prototype.getViewable = function(){
  */
 xiv.ui.Thumbnail.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
-    this.Viewable_.dispose();
-    delete this.Viewable_;
+    this.ViewableSet_.dispose();
+    delete this.ViewableSet_;
 }

@@ -21,6 +21,7 @@ goog.require('moka.fx');
 goog.require('gxnat');
 goog.require('gxnat.Path');
 goog.require('gxnat.ProjectTree');
+goog.require('gxnat.vis.AjaxViewable');
 
 //xiv 
 goog.require('xiv.ui.Modal');
@@ -82,7 +83,7 @@ xiv = function(mode, dataPath, rootUrl){
      * @private
      */
     this.dataPaths_;
-
+    this.addDataPath(dataPath);
 
     /**
      * @type {boolean}
@@ -92,15 +93,15 @@ xiv = function(mode, dataPath, rootUrl){
 
 
     /** 
-     * @type {Object.<string, Array.<gxnat.Viewable>>}
+     * @type {Object.<string, Array.<gxnat.vis.ViewableSet>>}
      * @private
      */
     this.Viewables_;
 
 
     /** 
-     * Necessary. If not done it creates weird dependency issues if declared
-     * outside of the constructor method.
+     * NOTE: Necessary!!! If not done it creates weird dependency 
+     * issues if declared outside of the constructor method.
      *
      * @type {Object} 
      * @private
@@ -110,9 +111,12 @@ xiv = function(mode, dataPath, rootUrl){
 
     // Inits
     this.createModal_();
-    this.loadExperiment_(dataPath, function() {
-        //this.loadProjectTree_();
+
+
+    this.loadExperiment_(this.dataPaths_[0], function() {
+	//this.loadProjectTree_();
     }.bind(this)); 
+
 
 };
 goog.inherits(xiv, goog.Disposable);
@@ -165,7 +169,7 @@ xiv.prototype.show = function(){
     goog.dom.append(document.body, this.Modal_.getElement());
     this.Modal_.updateStyle();
     // Important that this be here;
-    moka.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME);
+    moka.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME );
 }
 
 
@@ -337,7 +341,9 @@ xiv.prototype.createModalPopup_ = function(){
  * @public
  */
 xiv.prototype.fetchViewables = function(viewablesUri, opt_doneCallback){
-    gxnat.getViewables(viewablesUri, function(viewable){
+    xiv.getViewablesFromXnat(viewablesUri, function(viewable){
+
+	window.console.log('VIEWABLE', viewable);
 	this.storeViewable_(viewable);
 	this.addViewableToModal(viewable);
     }.bind(this), opt_doneCallback)
@@ -347,14 +353,16 @@ xiv.prototype.fetchViewables = function(viewablesUri, opt_doneCallback){
 
 /**
  * Adds a viewable to the modal.
- * @param {gxnat.Viewable} Viewable The Viewable to add.
+ * @param {gxnat.vis.ViewableSet} Viewable The Viewable to add.
  * @public
  */
 xiv.prototype.addViewableToModal = function(Viewable){
 
-    //window.console.log(Viewable);
+    window.console.log(Viewable);
 
     if (!this.Modal_.getThumbnailGallery()) { return };
+
+    window.console.log("Thumb gallery");
     this.Modal_.getThumbnailGallery().createAndAddThumbnail(
 	Viewable, // The viewable
 	xiv.extractViewableFolders_(Viewable) // The folder tree
@@ -382,7 +390,7 @@ xiv.prototype.createModal_ = function(){
 
 /**
  * Stores the viewable in an object, using its path as a key.
- * @param {!gxnat.Viewable} viewable The gxnat.Viewable object to 
+ * @param {!gxnat.vis.ViewableSet} viewable The gxnat.vis.ViewableSet object to 
  *    store.
  * @param {!string} path The XNAT path associated with the Viewable.
  * @private
@@ -433,9 +441,11 @@ xiv.prototype.dispose_ = function() {
     delete this.Viewables_;
 
     // Project Tree
-    this.ProjectTree_.dispose();
-    delete this.ProjectTree_;
-    delete this.projectTreeLoadedStarted_;
+    if (this.ProjectTree_){
+	this.ProjectTree_.dispose();
+	delete this.ProjectTree_;
+	delete this.projectTreeLoadedStarted_;
+    }
 
     // Others
     delete this.dataPaths_;
@@ -455,13 +465,13 @@ xiv.prototype.dispose_ = function() {
 /**
  * Extracts the folders in the provided path and returns a set of folders
  * for querying thumbnails. 
- * @param {gxnat.Viewable} Viewable
+ * @param {gxnat.vis.AjaxViewable} Viewable
  * @private
  */
 xiv.extractViewableFolders_ = function(Viewable){
     var pathObj =  /**@type {!gxnat.Path}*/
     //wwindow.console.log(Viewable);
-    new gxnat.Path(Viewable['experimentUrl']);
+    new gxnat.Path(Viewable.getExperimentUrl());
     
     var folders = /**@type {!Array.string}*/ [];
     var key = /**@type {!string}*/ '';
@@ -477,10 +487,50 @@ xiv.extractViewableFolders_ = function(Viewable){
     };
 
     // Apply Viewable category
-    folders.push(Viewable['category']);
+    folders.push(Viewable.getCategory());
     return folders;
 }
 
 
 
 
+
+xiv.VIEWABLE_TYPES = {
+    'Scan': gxnat.vis.Scan,
+    'Slicer': gxnat.vis.Slicer,
+}
+
+
+
+/**
+ * Retrieves viewables, one-by-one, for manipulation in the opt_runCallback
+ * argument, and when complete the opt_doneCallback.
+ * @param {!string} url The url to retrieve the viewables from.
+ * @param {function=} opt_runCallback The optional callback applied to each 
+ *     viewable.
+ * @param {function=} opt_doneCallback The optional callback applied to each 
+ *     when retrieval is complete.
+ */
+xiv.getViewablesFromXnat = function (url, opt_runCallback, opt_doneCallback){
+
+
+    var typeCount = /**@type {!number}*/
+	goog.object.getCount(xiv.VIEWABLE_TYPES);
+    var typesGotten = /**@type {!number}*/ 0;
+
+
+    goog.object.forEach(xiv.VIEWABLE_TYPES, function(vType){
+      gxnat.vis.AjaxViewable.getViewables(
+	  url, vType, opt_runCallback, function(){
+	  typesGotten++;
+	  if (typesGotten === typeCount){
+	      
+	      window.console.log("\n\n\nDONE GETTING VIEWABLES!\n\n\n");
+
+	      if (opt_doneCallback) { 
+		  opt_doneCallback(); 
+	      }
+	 }
+      })
+    });
+}

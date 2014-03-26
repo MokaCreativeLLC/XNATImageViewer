@@ -43,7 +43,7 @@ xiv.ui.ViewBox = function () {
 
 
     /**
-     * @type {Array.<gxnat.Viewable>}
+     * @type {Array.<gxnat.vis.ViewableSet>}
      * @private
      */
     this.Viewables_ = [];
@@ -273,7 +273,7 @@ xiv.ui.ViewBox.prototype.getLoadState = function() {
 
 
 /**
- * @return {!Array.<gxnat.Viewable>} 
+ * @return {!Array.<gxnat.vis.ViewableSet>} 
  * @public
  */
 xiv.ui.ViewBox.prototype.getViewables =  function() {
@@ -562,12 +562,12 @@ xiv.ui.ViewBox.prototype.onLayoutResize_ = function(e){
 
 
 /**
- * @param {gxnat.Viewable} Viewable
+ * @param {gxnat.vis.ViewableSet} Viewable
  * @return {!boolean} Whether or not the viewable needs a preload workflow.
  * @private
  */
 xiv.ui.ViewBox.prototype.needsPreload_ = function(Viewable){
-    if (Viewable['category'] == 'Slicer Scenes'){
+    if (Viewable.getCategory() == 'Slicer Scenes'){
 	return true;
     }
     return false;
@@ -576,9 +576,9 @@ xiv.ui.ViewBox.prototype.needsPreload_ = function(Viewable){
 
 
 /**
- * Loads a gxnat.Viewable object into the appropriate renderers.
+ * Loads a gxnat.vis.ViewableSet object into the appropriate renderers.
  *
- * @param {!gxnat.Viewable} viewable.
+ * @param {!gxnat.vis.ViewableSet} viewable.
  * @public
  */
 xiv.ui.ViewBox.prototype.load = function (viewable) {
@@ -618,7 +618,7 @@ xiv.ui.ViewBox.prototype.load = function (viewable) {
 
     if (this.Viewables_.length == 1) {
 	this.LayoutHandler_.setLayout(
-	    xiv.ui.ViewBox.defaultLayout[viewable['category']]);
+	    xiv.ui.ViewBox.defaultLayout[viewable.getCategory()]);
     }
 
     
@@ -686,7 +686,7 @@ xiv.ui.ViewBox.prototype.adjustLayoutHandler_ = function(){
 xiv.ui.ViewBox.prototype.loadTabs_ = function() {  
     this.ZipTabs_.reset();
     this.loadTab_Info_();
-    if (this.Thumbnail_.getViewable()['category'] == 'Slicer') {
+    if (this.Thumbnail_.getViewable().getCategory() == 'Slicer') {
 	this.loadTab_SlicerViews();
     }
     this.loadTabs_Controllers_();

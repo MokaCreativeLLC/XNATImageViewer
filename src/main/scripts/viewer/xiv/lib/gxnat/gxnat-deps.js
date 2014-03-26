@@ -1,12 +1,13 @@
+goog.addDependency('../../../gxnat/vis/ViewableSet.js', 
+['gxnat.vis.ViewableSet'], [
+    'goog.Disposable'
+]);
+
 goog.addDependency('../../../gxnat/gxnat.js', ['gxnat'], [
 'goog.net.XhrIo',
 'goog.object',
-'moka.dom',
-'moka.array',
-'gxnat.Viewable',
-'gxnat.Scan',
-'gxnat.Slicer'
 ]);
+
 
 
 goog.addDependency('../../../gxnat/Path.js', 
@@ -23,33 +24,58 @@ goog.addDependency('../../../gxnat/ProjectTree.js',
 
 
 
-goog.addDependency('../../../gxnat/Viewable.js', 
-['gxnat.Viewable'], [
+
+goog.addDependency('../../../gxnat/vis/AjaxViewable.js', 
+['gxnat.vis.AjaxViewable'], [
+    'gxnat.vis.ViewableSet'
+]);
+
+
+goog.addDependency('../../../gxnat/vis/vis.js', 
+['gxnat.vis'], [
+]);
+
+
+
+
+
+
+goog.addDependency('../../../gxnat/vis/Viewable.js', 
+['gxnat.vis.Viewable'], [
 'goog.array',
 'gxnat',
 'gxnat.Path',
 ]);
 
 
-goog.addDependency('../../../gxnat/Scan.js',
-['gxnat.Scan'], [
-'moka.array',
-'gxnat',
-'gxnat.Viewable',
-'gxnat.Path',
+
+
+
+
+goog.addDependency('../../../gxnat/vis/Scan.js',
+['gxnat.vis.Scan'], [
+'gxnat.vis.AjaxViewable',
 ]);
 
 
-goog.addDependency('../../../gxnat/Slicer.js',
-['gxnat.Slicer'], [
-'goog.string',
-'moka.string',
-'gxnat',
-'gxnat.Viewable',
+goog.addDependency('../../../gxnat/vis/Slicer.js',
+['gxnat.vis.Slicer'], [
+'gxnat.vis.AjaxViewable',
 ]);
+
+
 
 
 
 goog.addDependency('../../../gxnat/slicer/slicer.js',
 ['gxnat.slicer'], [
 ]);
+
+
+goog.addDependency('../../../gxnat/slicer/properties/properties.js',
+['gxnat.slicer.properties'], [
+]);
+
+
+
+

@@ -37,9 +37,9 @@ xiv.ui.InfoWidget = function () {
 
     /**
      * @private
-     * @type {gxnat.Viewable} 
+     * @type {gxnat.vis.ViewableSet} 
      */ 
-    this.xnatProperties_;
+    this.viewableData_;
 
 }
 goog.inherits(xiv.ui.InfoWidget, moka.ui.Component);
@@ -72,15 +72,15 @@ xiv.ui.InfoWidget.CSS_PREFIX = {
  * argument Object to create Dicom-informational tabs
  * or Slicer-informational tabs.
  *
- * @param {!gxnat.viewableProperties} xnatProperties The properties
+ * @param {!gxnat.viewableProperties} ViewableSet The properties
  *    to determine which tab to create.
  * @return {!Element} The tab as a div element.
  * @public
  */
-xiv.ui.InfoWidget.prototype.createInfoTabContents = function (xnatProperties) {	
-    return (xnatProperties['category'].toLowerCase() === 'slicer') ? 
-	this.createSlicerTab_(xnatProperties) : 
-	this.createDicomTab_(xnatProperties);
+xiv.ui.InfoWidget.prototype.createInfoTabContents = function (ViewableSet) {	
+    return (ViewableSet.getCategory().toLowerCase() === 'slicer') ? 
+	this.createSlicerTab_(ViewableSet) : 
+	this.createDicomTab_(ViewableSet);
 }
 
 
@@ -139,7 +139,7 @@ xiv.ui.InfoWidget.prototype.createLabelValuePair_ = function(parent, label, valu
 xiv.ui.InfoWidget.prototype.createDicomTab_ = function(xnatProperties) {
     
     var highImportanceKeys = ["Scan", "Format", "type"]; 
-    var sessionInfo = xnatProperties['sessionInfo'];
+    var sessionInfo = xnatProperties.getSessionInfo() ;
 
     var prevBottom = 0;
     var counter = 0;
