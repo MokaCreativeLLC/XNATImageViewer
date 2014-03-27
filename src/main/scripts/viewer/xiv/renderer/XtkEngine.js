@@ -546,8 +546,8 @@ xiv.renderer.XtkEngine.getViewables = function(fileCollection) {
     // take priority over the other node files.
     //-------------------------	
     for (var i = 0, len = fileCollection.length; i < len; i++) {
-	var basename = moka.string.basename(fileCollection[i]);
-	var ext = moka.string.getFileExtension(basename);
+	var basename = goog.string.path.basename(fileCollection[i]);
+	var ext = goog.string.path.extension(basename);
 
 	//
 	// Skip if the filename starts with a period
@@ -773,7 +773,8 @@ xiv.renderer.XtkEngine.setProperties = function(xObj, properties) {
 	// Apply any transforms that come about from it.
 	//
 	if (properties['transform']){
-            xObj.transform.matrix = new Float32Array(moka.convert.toFloatArray(properties['transform']));
+            xObj.transform.matrix = new Float32Array(
+		moka.convert.toFloatArray(properties['transform']));
 	}
     }
 }

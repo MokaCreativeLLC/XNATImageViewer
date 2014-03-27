@@ -19,7 +19,7 @@
 .moka-ui-scrollablecontainer-scrollarea {
     display: block;
     position: relative;
-    width: 93%;
+    width: calc(100% - 14px);
     left: 14px;
 }
 

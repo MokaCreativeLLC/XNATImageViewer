@@ -106,6 +106,12 @@ goog.addDependency('../../../../ui/FourUp.js',
     'xiv.ui.XyzvLayout'
 ]);
 
+goog.addDependency('../../../../ui/ViewableGroupMenu.js', 
+['xiv.ui.ViewableGroupMenu'], [
+    'moka.ui.ThumbnailGallery'
+]);
+
+
 goog.addDependency('../../../../ui/ViewBox.js', 
 ['xiv.ui.ViewBox'], [
     'goog.string',

@@ -9,8 +9,8 @@ goog.require('goog.string');
 goog.require('moka.string');
 goog.require('gxnat');
 goog.require('gxnat.slicer');
-goog.require('gxnat.vis.AjaxViewable');
-goog.require('gxnat.vis.Viewable');
+goog.require('gxnat.vis.AjaxViewableTree');
+goog.require('gxnat.vis.ViewableGroup');
 
 
 
@@ -21,13 +21,20 @@ goog.require('gxnat.vis.Viewable');
  * @param {Function=} opt_initComplete The callback when the init process is 
  *     complete.
  * @constructor
- * @extends {gxnat.vis.AjaxViewable}
+ * @extends {gxnat.vis.AjaxViewableTree}
  */
 goog.provide('gxnat.vis.Slicer');
 gxnat.vis.Slicer = function(experimentUrl, viewableJson, 
 				      opt_initComplete) {
 
     this.setCategory('Slicer Scenes');
+
+
+    /**
+     * @type {!Array.<string>}
+     * @private
+     */
+    this.mrbFiles_ = [];
 
 
     //
@@ -37,18 +44,22 @@ gxnat.vis.Slicer = function(experimentUrl, viewableJson,
 	//
 	// Then get the scene view nodes
 	//
-	gxnat.slicer.getSceneProperties(this['files'], this.queryUrl,
+	gxnat.slicer.getSceneProperties(this.mrbFiles_, this.queryUrl,
 	function(sceneViewNodes, mrmlNodes){
 
-	    this['subViewables'] = [];
+
+
 	    this.mrml = mrmlNodes;
 	    this.sceneViews = sceneViewNodes;
 
+	    //
+	    // We now translate every scene view into a ViewableGroup
+	    //
 	    goog.array.forEach(this.sceneViews, function(sceneView){
 
-		var subViewables = [];
-		var subViewableProperties = {};
-		var subViewableFiles = [];
+		var ViewablesPerSceneView = [];
+		var ViewableGroupProperties = {};
+		var ViewableGroupFiles = [];
 
 		var viewTypes = [sceneView.volumes || [], 
 				 sceneView.meshes  || [], 
@@ -70,42 +81,50 @@ gxnat.vis.Slicer = function(experimentUrl, viewableJson,
 			//
 			// Merge the properties into one set.
 			//
-			subViewableProperties = 
+			ViewableGroupProperties = 
 			    goog.object.clone(displayable.
 					      properties.general[0]);
-			goog.object.extend(subViewableProperties,
+			goog.object.extend(ViewableGroupProperties,
 					   goog.object.clone(
 					       displayable.properties.specific))
 
 			//
 			// For label maps...
 			//
-			if (subViewableProperties.labelMap){
+			if (ViewableGroupProperties.labelMap){
 			    
-			    subViewableProperties.labelMap.file = 
+			    ViewableGroupProperties.labelMap.file = 
 			    gxnat.slicer.getFileUrlRelativeToMrbUrl(
-				subViewableProperties.labelMap.file, 
+				ViewableGroupProperties.labelMap.file, 
 				this.queryUrl);
 
 
-			    subViewableProperties.colorTableFile
+			    ViewableGroupProperties['colorTableFile']
 				= 
 			    gxnat.slicer.getFileUrlRelativeToMrbUrl(
-				subViewableProperties.labelMap.
+				ViewableGroupProperties.labelMap.
 				    colorTableFile, this.queryUrl);
+				
 			}
 
 
-			//subViewableFiles.push(fileName);
-			subViewables.push(new gxnat.vis.Viewable(
-			    fileName, subViewableProperties))
+			//ViewableGroupFiles.push(fileName);
+			ViewablesPerSceneView.push(new gxnat.vis.Viewable(
+			    fileName, ViewableGroupProperties))
 
 		    }.bind(this))
-		    this['subViewables'].push(subViewables);
-		    //subViewables.push(new gxnat.vis.Viewable(
-		    //subViewableFiles, subViewableProperties))
-		    
 		}.bind(this))
+
+		
+		var viewGroup = new gxnat.vis.ViewableGroup(
+		    ViewablesPerSceneView);
+		viewGroup.setThumbnailUrl(
+		    gxnat.slicer.getFileUrlRelativeToMrbUrl(
+			gxnat.slicer.getThumbnail(sceneView.element, 
+				this.mrml[0].document), this.queryUrl));
+		
+		this.ViewableGroups.push(viewGroup);
+
 	    }.bind(this))
 		
 	    
@@ -123,7 +142,7 @@ gxnat.vis.Slicer = function(experimentUrl, viewableJson,
 	}.bind(this))
     }.bind(this))
 }
-goog.inherits(gxnat.vis.Slicer, gxnat.vis.AjaxViewable);
+goog.inherits(gxnat.vis.Slicer, gxnat.vis.AjaxViewableTree);
 goog.exportSymbol('gxnat.vis.Slicer', gxnat.vis.Slicer);
 
 
@@ -173,7 +192,7 @@ gxnat.vis.Slicer.prototype.getThumbnailImage = function(opt_callback){
 
     var ext = /** @type {!string} */ '';
     var i = /** @type {!number} */ 0;
-    var len = /** @type {!number} */ this['files'].length;
+    var len = /** @type {!number} */ this.mrbFiles_.length;
     var thumbFound = /** @type {!boolean} */ false;
 
     this['thumbnailFiles'] = [];
@@ -182,9 +201,9 @@ gxnat.vis.Slicer.prototype.getThumbnailImage = function(opt_callback){
     // Get all files that match the image extension.
     //
     for (; i < len; i++) {
-	ext = moka.string.getFileExtension(this['files'][i]);
+	ext = moka.string.getFileExtension(this.mrbFiles_[i]);
 	if (gxnat.vis.Slicer.thumbnailExtensions.indexOf(ext) != -1) {
-	    this['thumbnailFiles'].push(this['files'][i]);
+	    this['thumbnailFiles'].push(this.mrbFiles_[i]);
 	}
 	if (thumbFound) { break };
     }
@@ -232,3 +251,9 @@ gxnat.vis.Slicer.prototype.getThumbnailImage = function(opt_callback){
 
 
 
+
+
+
+gxnat.vis.Slicer.prototype.addFiles = function(fileName) {
+    this.mrbFiles_.push(fileName)
+}

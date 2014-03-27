@@ -124,7 +124,7 @@ xiv.ui.ThumbnailGallery.DRAGGER_FADER_ID =
 /**
  * Returns a newly created xiv.ui.Thumbnail object. 
  *
- * @param {gxnat.vis.ViewableSet} _Viewable The Viewable object to derive the 
+ * @param {gxnat.vis.ViewableTree} _Viewable The Viewable object to derive the 
  *     Thumbnail from.
  * @param {!string | !Array.string} folders The folders which the thumbnails 
  *     belong to.
@@ -140,7 +140,7 @@ function(_Viewable, folders) {
 /**
  * Returns a newly created xiv.ui.Thumbnail object. 
  *
- * @param {gxnat.vis.ViewableSet} _Viewable The Viewable object to derive the
+ * @param {gxnat.vis.ViewableTree} _Viewable The Viewable object to derive the
  *    Thumbnail from.
  * @returns {xiv.ui.Thumbnail}
  * @public

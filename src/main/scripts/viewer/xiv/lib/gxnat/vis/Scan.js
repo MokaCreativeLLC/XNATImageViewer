@@ -4,18 +4,21 @@
 
 // gxnat
 goog.require('gxnat.Path');
-goog.require('gxnat.vis.AjaxViewable');
+goog.require('gxnat.vis.AjaxViewableTree');
+goog.require('gxnat.vis.Viewable');
+goog.require('gxnat.vis.ViewableGroup');
 
 
 
 /**
+ * Subclass of the 'Viewable' class pertaining to Slicer .mrb files.
  * Subclass of the 'Viewable' class pertaining to Slicer .mrb files.
  * @param {!string} experimentUrl The experiment-level url of the viewable.
  * @param {!Object} viewableJson The json associated with the viewable.
  * @param {function=} opt_initComplete The callback when the init process is 
  *     complete.
  * @constructor
- * @extends {gxnat.vis.AjaxViewable}
+ * @extends {gxnat.vis.AjaxViewableTree}
  */
 goog.provide('gxnat.vis.Scan');
 gxnat.vis.Scan = function(experimentUrl, viewableJson, opt_initComplete) {
@@ -29,7 +32,7 @@ gxnat.vis.Scan = function(experimentUrl, viewableJson, opt_initComplete) {
      */
     this.sessionInfo_ = goog.object.clone(gxnat.vis.Scan.sessionProperties);
 }
-goog.inherits(gxnat.vis.Scan, gxnat.vis.AjaxViewable);
+goog.inherits(gxnat.vis.Scan, gxnat.vis.AjaxViewableTree);
 goog.exportSymbol('gxnat.vis.Scan', gxnat.vis.Scan);
 
 
@@ -49,9 +52,6 @@ gxnat.vis.Scan.sessionProperties = {
     "Scan" : {'label':"Scan", 'value': ['Empty Scan']},
     "type" : {'label':"type", 'value': ["MPRAGE"]}
 }
-
-
-
 
 
 
@@ -86,12 +86,20 @@ gxnat.vis.Scan.prototype.getSessionInfo = function() {
 
 
 
+
+/**
+* @inheritDoc
+*/
 gxnat.vis.Scan.prototype.addFiles = function(fileName) {
-    window.console.log("ADD FILES SCAN");
-    if (this.Viewables.length == 0){
-	this.Viewables.push(new gxnat.vis.Viewable());
+
+    window.console.log("ADD FILES!");
+    if (this.ViewableGroups.length == 0){
+	this.ViewableGroups.push(new gxnat.vis.ViewableGroup());
     }
-    this.Viewables[0].addFiles(fileName);
+    if (this.ViewableGroups[0].getViewables().length == 0){
+	this.ViewableGroups[0].addViewable(new gxnat.vis.Viewable());
+    }
+    this.ViewableGroups[0].getViewables()[0].addFiles(fileName);
 }
 
 
@@ -110,12 +118,14 @@ gxnat.vis.Scan.prototype.makeFileUrl = function(xnatFileJson) {
  * @inheritDoc
  */
 gxnat.vis.Scan.prototype.getThumbnailImage = function(opt_callback){
+
+    window.console.log(this);
     //
     // Select the image in the middle of the list to 
     // serve as the thumbnail after sorting the fileURIs
     // using natural sort.
     //
-    var sortedFiles = this.Viewables[0].getFiles().
+    var sortedFiles = this.ViewableGroups[0].getViewables()[0].getFiles().
 	sort(moka.array.naturalCompare);
     var imgInd = /** @type {!number} */
     Math.floor((sortedFiles.length) / 2);

@@ -18,10 +18,10 @@ goog.require('moka.ui.ZipTabs');
 goog.require('moka.ui.SlideInMenu');
 
 // xiv
+goog.require('xiv.renderer.XtkEngine');
 goog.require('xiv.ui.ProgressBarPanel');
 goog.require('xiv.ui.LayoutHandler');
-goog.require('xiv.renderer.XtkEngine');
-//goog.require('xiv.ui.SlicerViewMenu');
+goog.require('xiv.ui.ViewableGroupMenu');
 
 
 /**
@@ -43,10 +43,10 @@ xiv.ui.ViewBox = function () {
 
 
     /**
-     * @type {Array.<gxnat.vis.ViewableSet>}
+     * @type {Array.<gxnat.vis.ViewableTree>}
      * @private
      */
-    this.Viewables_ = [];
+    this.ViewableTrees_ = [];
 
 
     /**
@@ -115,13 +115,14 @@ xiv.ui.ViewBox = function () {
 
 
     /**
-     * @type {!xiv.ui.SlicerViewMenu}
+     * @type {!xiv.ui.ViewableGroupMenu}
      * @private
      */
-    this.SlicerViewMenu_ = null;
+    this.ViewableGroupMenu_ = null;
 
 
 
+    this.initViewableGroupMenu_();
 
     /**
      * @type {!boolean}
@@ -132,7 +133,7 @@ xiv.ui.ViewBox = function () {
 
     //window.console.log(resizable, resizable.getElement());
     // style
-    //this.doNotHide(this.SlicerViewMenu_.getElement());
+    //this.doNotHide(this.ViewableGroupMenu_.getElement());
     //this.hideChildElements_();
     
     this.updateStyle();
@@ -178,7 +179,8 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     VIEWLAYOUTHANDLER: 'viewlayouthandler',
     TABS: 'ziptabs',
     VIEWFRAME: 'viewframe',
-    COMPONENT_HIGHLIGHT: 'component-highlight'
+    COMPONENT_HIGHLIGHT: 'component-highlight',
+    VIEWABLEGROUPMENU: 'viewablegroupmenu',
 }
 
 
@@ -189,7 +191,8 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
  */
 xiv.ui.ViewBox.defaultLayout = {
     'Scans' : 'Four-Up',
-    'Slicer' : 'Conventional'
+    'Slicer' : 'Conventional',
+    'Slicer Scenes' : 'Conventional',
 }
 
 
@@ -273,11 +276,11 @@ xiv.ui.ViewBox.prototype.getLoadState = function() {
 
 
 /**
- * @return {!Array.<gxnat.vis.ViewableSet>} 
+ * @return {!Array.<gxnat.vis.ViewableTree>} 
  * @public
  */
-xiv.ui.ViewBox.prototype.getViewables =  function() {
-    return this.Viewables_;
+xiv.ui.ViewBox.prototype.getViewableTrees =  function() {
+    return this.ViewableTrees_;
 }
 
 
@@ -293,12 +296,12 @@ xiv.ui.ViewBox.prototype.getLayoutHandler =  function() {
 
 
 /**
- * Get the associated SlicerViewMenu for this object.
- * @return {!xiv.ui.SlicerViewMenu} The SlicerViewMenu object of the ViewBox.
+ * Get the associated ViewableGroupMenu for this object.
+ * @return {!xiv.ui.ViewableGroupMenu} The ViewableGroupMenu object of the ViewBox.
  * @public
  */
-xiv.ui.ViewBox.prototype.getSlicerViewMenu =  function() {
-    return this.SlicerViewMenu_;
+xiv.ui.ViewBox.prototype.getViewableGroupMenu =  function() {
+    return this.ViewableGroupMenu_;
 }
 
 
@@ -561,27 +564,57 @@ xiv.ui.ViewBox.prototype.onLayoutResize_ = function(e){
 
 
 
+
+
 /**
- * @param {gxnat.vis.ViewableSet} Viewable
- * @return {!boolean} Whether or not the viewable needs a preload workflow.
+ * @param {!gxnat.vis.ViewableTree} ViewableTree.
  * @private
  */
-xiv.ui.ViewBox.prototype.needsPreload_ = function(Viewable){
-    if (Viewable.getCategory() == 'Slicer Scenes'){
-	return true;
+xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
+
+    this.ViewableGroupMenu_.init();
+
+    window.console.log(ViewableTree);
+    var viewGroups = ViewableTree.getViewableGroups();
+    if (viewGroups.length > 0){
+	window.console.log("TOTAL VIEW GROUPS", viewGroups.length);
+	goog.array.forEach(viewGroups, function(viewGroup, i){
+
+	    window.console.log("VUEW GROUP THUMB", 
+			       viewGroup.getThumbnailUrl());
+	    this.ViewableGroupMenu_.createAndAddThumbnail(
+		viewGroup.getThumbnailUrl(), i);
+	}.bind(this))
     }
-    return false;
+    
+    //
+    // Store tree
+    //
+    if (!goog.array.contains(this.ViewableTrees_, ViewableTree)){
+	this.ViewableTrees_.push(ViewableTree);	
+    }
+
+    //
+    // Get the default layout
+    //
+    if (this.ViewableTrees_.length == 1) {
+	
+	this.LayoutHandler_.setLayout(
+	    xiv.ui.ViewBox.defaultLayout[ViewableTree.getCategory()]);
+    }
+
 }
 
 
 
+
 /**
- * Loads a gxnat.vis.ViewableSet object into the appropriate renderers.
+ * Loads a gxnat.vis.ViewableTree object into the appropriate renderers.
  *
- * @param {!gxnat.vis.ViewableSet} viewable.
+ * @param {!gxnat.vis.ViewableTree | !gxnat.vis.ViewableGroup} ViewableTree.
  * @public
  */
-xiv.ui.ViewBox.prototype.load = function (viewable) {
+xiv.ui.ViewBox.prototype.load = function (ViewableNode) {
 
     if (!this.subComponentsInitialized_){
 	this.initSubComponents_();
@@ -599,30 +632,22 @@ xiv.ui.ViewBox.prototype.load = function (viewable) {
 					     'color': 'rgb(255,255,255)',
 					     'background': 'rgb(205,25,48)',
 					 }, 'Hello World 2.'))
-	this.showProgressBarPanel_(400);
-    }
-    if (!goog.array.contains(this.Viewables_, viewable)){
-	this.Viewables_.push(viewable);	
+
+	window.console.log('temporarily suspending progress bar panel');
+	
     }
 
     
-    window.console.log('VIEWABLE DROPPED', viewable);
-
-    
-    if (this.needsPreload_(viewable)){
-	window.console.log('NEEDS PRELOAD', viewable);
-	this.runPreloadWorklow_(viewable);
+    if (ViewableNode instanceof gxnat.vis.ViewableTree){
+	this.loadViewableTree_(ViewableNode);
 	return;
     }
-    
 
-    if (this.Viewables_.length == 1) {
-	this.LayoutHandler_.setLayout(
-	    xiv.ui.ViewBox.defaultLayout[viewable.getCategory()]);
-    }
+    this.showProgressBarPanel_(400);
 
-    
+    //
     // Set plane containers
+    //
     goog.object.forEach(this.Renderer_.getPlanes(), function(plane, key) { 
 	var layoutPlane = this.LayoutHandler_.getCurrentLayoutPlane(key);
 	//window.console.log("LAYOUT PLANE", layoutPlane, key);
@@ -632,9 +657,8 @@ xiv.ui.ViewBox.prototype.load = function (viewable) {
     }.bind(this))
 
 
-    window.console.log(xiv.renderer.XtkEngine.getViewables(viewable['files']));
 
-    //
+ 
     goog.events.listen(this.Renderer_, 
 		       xiv.renderer.XtkEngine.EventType.RENDER_START, 
 		       this.onRenderStart_.bind(this));
@@ -653,8 +677,8 @@ xiv.ui.ViewBox.prototype.load = function (viewable) {
 		       this.onLayoutResize_.bind(this));
 
 
-    // Add to renderer
-    this.Renderer_.render(viewable['files']);
+
+    this.Renderer_.render(ViewableNode.getAllViewableFiles());
 
     // Remember the time in which the thumbnail was loaded
     this.thumbLoadTime_ = (new Date()).getTime();    
@@ -713,7 +737,7 @@ xiv.ui.ViewBox.prototype.loadTab_Info_ = function() {
  */
 xiv.ui.ViewBox.prototype.loadTab_SlicerViews_ = function() {
     this.ZipTabs_.setTabPageContents('Slicer Views', 
-		this.SlicerViewMenu_.getThumbnailGallery());
+		this.ViewableGroupMenu_.getThumbnailGallery());
 }
 
 
@@ -744,7 +768,7 @@ xiv.ui.ViewBox.prototype.initSubComponents_ = function() {
     this.initLayoutHandler_();
     this.syncLayoutMenuToLayoutHandler_();
     
-    //this.initSlicerViewMenu_();
+    
     this.initRenderer_();
     this.initProgressBarPanel_();
 
@@ -803,8 +827,10 @@ xiv.ui.ViewBox.prototype.hideProgressBarPanel_ = function(opt_fadeTime){
 xiv.ui.ViewBox.prototype.initProgressBarPanel_ = function(){
     this.ProgressBarPanel_ = new xiv.ui.ProgressBarPanel(); 
     goog.dom.append(this.viewFrameElt_, this.ProgressBarPanel_.getElement());
+    this.ProgressBarPanel_.getElement().style.opacity = 0;
     this.ProgressBarPanel_.getElement().style.zIndex = 100000;
-    this.ProgressBarPanel_.setLabel('Loading:', true);
+    this.hideProgressBarPanel_();
+
 }
 
 
@@ -982,12 +1008,24 @@ xiv.ui.ViewBox.prototype.onMenuItemSelected_ = function(e) {
 
 
 /**
-* As stated.
-* @private
-*/
-xiv.ui.ViewBox.prototype.initSlicerViewMenu_ = function(){
-    this.SlicerViewMenu_ = new xiv.ui.SlicerViewMenu(this);
-    goog.dom.append(this.getElement(), this.SlicerViewMenu_.getElement());
+ * As stated.
+ *
+ * @private
+ */
+xiv.ui.ViewBox.prototype.initViewableGroupMenu_ = function(){
+    this.ViewableGroupMenu_ = new xiv.ui.ViewableGroupMenu();
+    goog.dom.append(this.viewFrameElt_, this.ViewableGroupMenu_.getElement());
+    goog.dom.append(this.viewFrameElt_, 
+		    this.ViewableGroupMenu_.getBackground());
+
+    goog.dom.classes.add(this.ViewableGroupMenu_.getElement(), 
+			 xiv.ui.ViewBox.CSS.VIEWABLEGROUPMENU)
+
+    goog.events.listen(this.ViewableGroupMenu_, 
+		       xiv.ui.ViewableGroupMenu.EventType.VIEWSELECTED, 
+		       function(e){
+			   window.console.log("VIEW SELECT", e);
+		       })
 }
 
 
@@ -1211,6 +1249,15 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
 	delete this.Renderer_();
     }
   
+
+
+    // ViewableGroupMenu
+    if (goog.isDefAndNotNull(this.ViewableGroupMenu_)){
+	this.ViewableGroupMenu_.disposeInternal();
+	delete this.ViewableGroupMenu_;
+    }
+  
+    
 
     // Elements - viewFrame
     goog.dom.removeNode(this.viewFrameElt_);

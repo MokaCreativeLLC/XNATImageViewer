@@ -327,7 +327,8 @@ xiv.ui.Modal.prototype.highlightInUseThumbnails = function () {
 	// Unhighlight all thumbnails.
 	Thumbnail.setActive(false);
 	this.ViewBoxHandler_.loop(function(ViewBox){  
-	    if (ViewBox.getViewables().indexOf(Thumbnail.getViewable()) > -1){
+	    if (ViewBox.getViewableTrees().indexOf(Thumbnail.getViewable()) 
+		> -1){
 		Thumbnail.setActive(true);
 	    }
 	})

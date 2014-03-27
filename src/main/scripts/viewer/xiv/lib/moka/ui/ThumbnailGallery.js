@@ -219,14 +219,17 @@ function(thumbnail, opt_folders) {
  * @public
  */
 moka.ui.ThumbnailGallery.prototype.createAndAddThumbnail = 
-    function(imageUrl, displayText, opt_folders) {
-	var thumbnail = /**@type {!moka.ui.Thumbnail} */
-	this.createThumbnail(imageUrl, displayText)
-	this.addThumbnail(thumbnail, opt_folders);
-	this.setThumbnailClasses_('image');
-	this.setThumbnailClasses_('text');
-	this.setThumbnailClasses_('thumbnail');
-	return thumbnail;
+function(imageUrl, displayText, opt_folders) {
+    var thumbnail = /**@type {!moka.ui.Thumbnail} */
+    this.createThumbnail(imageUrl, displayText)
+    this.addThumbnail(thumbnail, opt_folders);
+    this.setThumbnailClasses_('image');
+    this.setThumbnailClasses_('text');
+    this.setThumbnailClasses_('thumbnail');
+    this.mapSliderToContents();
+    
+
+    return thumbnail;
 }
 
 

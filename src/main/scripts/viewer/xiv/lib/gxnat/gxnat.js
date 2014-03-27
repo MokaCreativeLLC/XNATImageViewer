@@ -11,7 +11,7 @@ goog.require('goog.object');
 // gxnat
 goog.require('gxnat.Path');
 goog.require('gxnat.vis');
-goog.require('gxnat.vis.AjaxViewable');
+goog.require('gxnat.vis.AjaxViewableTree');
 goog.require('gxnat.vis.Scan');
 goog.require('gxnat.vis.Slicer');
 
@@ -175,8 +175,8 @@ gxnat.naturalCompare = function (a, b) {
 /**
  * Sorts the viewable collection, which is an array of XNAT derived JSONS
  * customized (added to) for the purposes of the Image viewer.
- * @param {!Array.<gxnat.vis.AjaxViewable>} viewables The array of 
- *     gxnat.vis.AjaxViewable to sort. 
+ * @param {!Array.<gxnat.vis.AjaxViewableTree>} viewables The array of 
+ *     gxnat.vis.AjaxViewableTree to sort. 
  * @param {!Array.<String>} keyDepthArr The key depth array indicating the 
  *     sorting criteria.
  * @public
@@ -184,7 +184,7 @@ gxnat.naturalCompare = function (a, b) {
 gxnat.sortXnatPropertiesArray = function (viewables, keyDepthArr){
 
     var sorterKeys = /**@type {!Array.<string>} */ [];
-    var sorterObj = /**@type {!Object.<string, gxnat.vis.AjaxViewable>} */ {};
+    var sorterObj = /**@type {!Object.<string, gxnat.vis.AjaxViewableTree>} */ {};
     var sortedViewableCollection = 
 	/**@type {!Array.Object} */ [];
     var sorterKey = /**@type {!Object} */ {};

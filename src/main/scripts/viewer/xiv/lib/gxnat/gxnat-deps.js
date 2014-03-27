@@ -1,7 +1,28 @@
-goog.addDependency('../../../gxnat/vis/ViewableSet.js', 
-['gxnat.vis.ViewableSet'], [
+goog.addDependency('../../../gxnat/vis/VisNode.js', 
+['gxnat.vis.VisNode'], [
     'goog.Disposable'
 ]);
+
+
+goog.addDependency('../../../gxnat/vis/Renderable.js', 
+['gxnat.vis.Renderable'], [
+    'gxnat.vis.VisNode'
+]);
+
+
+
+goog.addDependency('../../../gxnat/vis/ViewableTree.js', 
+['gxnat.vis.ViewableTree'], [
+    'gxnat.vis.VisNode'
+]);
+
+
+goog.addDependency('../../../gxnat/vis/ViewableGroup.js', 
+['gxnat.vis.ViewableGroup'], [
+    'gxnat.vis.Renderable'
+]);
+
+
 
 goog.addDependency('../../../gxnat/gxnat.js', ['gxnat'], [
 'goog.net.XhrIo',
@@ -25,9 +46,9 @@ goog.addDependency('../../../gxnat/ProjectTree.js',
 
 
 
-goog.addDependency('../../../gxnat/vis/AjaxViewable.js', 
-['gxnat.vis.AjaxViewable'], [
-    'gxnat.vis.ViewableSet'
+goog.addDependency('../../../gxnat/vis/AjaxViewableTree.js', 
+['gxnat.vis.AjaxViewableTree'], [
+    'gxnat.vis.ViewableTree'
 ]);
 
 
@@ -42,9 +63,7 @@ goog.addDependency('../../../gxnat/vis/vis.js',
 
 goog.addDependency('../../../gxnat/vis/Viewable.js', 
 ['gxnat.vis.Viewable'], [
-'goog.array',
-'gxnat',
-'gxnat.Path',
+'gxnat.vis.Renderable'
 ]);
 
 
@@ -54,13 +73,13 @@ goog.addDependency('../../../gxnat/vis/Viewable.js',
 
 goog.addDependency('../../../gxnat/vis/Scan.js',
 ['gxnat.vis.Scan'], [
-'gxnat.vis.AjaxViewable',
+'gxnat.vis.AjaxViewableTree',
 ]);
 
 
 goog.addDependency('../../../gxnat/vis/Slicer.js',
 ['gxnat.vis.Slicer'], [
-'gxnat.vis.AjaxViewable',
+'gxnat.vis.AjaxViewableTree',
 ]);
 
 

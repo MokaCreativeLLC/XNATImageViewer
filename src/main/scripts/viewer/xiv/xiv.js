@@ -21,7 +21,7 @@ goog.require('moka.fx');
 goog.require('gxnat');
 goog.require('gxnat.Path');
 goog.require('gxnat.ProjectTree');
-goog.require('gxnat.vis.AjaxViewable');
+goog.require('gxnat.vis.AjaxViewableTree');
 
 //xiv 
 goog.require('xiv.ui.Modal');
@@ -93,10 +93,10 @@ xiv = function(mode, dataPath, rootUrl){
 
 
     /** 
-     * @type {Object.<string, Array.<gxnat.vis.ViewableSet>>}
+     * @type {Object.<string, Array.<gxnat.vis.ViewableTree>>}
      * @private
      */
-    this.Viewables_;
+    this.ViewableTrees_;
 
 
     /** 
@@ -223,7 +223,7 @@ xiv.prototype.dispose = function() {
  */
 xiv.prototype.loadExperiment_ = function(exptUrl, opt_callback) {
     this.addDataPath(exptUrl);
-    this.fetchViewables(this.dataPaths_[this.dataPaths_.length - 1], 
+    this.fetchViewableTrees(this.dataPaths_[this.dataPaths_.length - 1], 
 			opt_callback);
 }
 
@@ -340,12 +340,12 @@ xiv.prototype.createModalPopup_ = function(){
  *     viewables have been fetched.
  * @public
  */
-xiv.prototype.fetchViewables = function(viewablesUri, opt_doneCallback){
-    xiv.getViewablesFromXnat(viewablesUri, function(viewable){
+xiv.prototype.fetchViewableTrees = function(viewablesUri, opt_doneCallback){
+    xiv.getViewableTreesFromXnat(viewablesUri, function(viewable){
 
 	window.console.log('VIEWABLE', viewable);
-	this.storeViewable_(viewable);
-	this.addViewableToModal(viewable);
+	this.storeViewableTree_(viewable);
+	this.addViewableTreeToModal(viewable);
     }.bind(this), opt_doneCallback)
 }
 
@@ -353,19 +353,19 @@ xiv.prototype.fetchViewables = function(viewablesUri, opt_doneCallback){
 
 /**
  * Adds a viewable to the modal.
- * @param {gxnat.vis.ViewableSet} Viewable The Viewable to add.
+ * @param {gxnat.vis.ViewableTree} ViewableTree The Viewable to add.
  * @public
  */
-xiv.prototype.addViewableToModal = function(Viewable){
+xiv.prototype.addViewableTreeToModal = function(ViewableTree){
 
-    window.console.log(Viewable);
+    window.console.log(ViewableTree);
 
     if (!this.Modal_.getThumbnailGallery()) { return };
 
     window.console.log("Thumb gallery");
     this.Modal_.getThumbnailGallery().createAndAddThumbnail(
-	Viewable, // The viewable
-	xiv.extractViewableFolders_(Viewable) // The folder tree
+	ViewableTree, // The viewable
+	xiv.extractViewableTreeFolders_(ViewableTree) // The folder tree
     );
     this.Modal_.getThumbnailGallery().setHoverParent(this.Modal_.getElement());
 }
@@ -390,17 +390,17 @@ xiv.prototype.createModal_ = function(){
 
 /**
  * Stores the viewable in an object, using its path as a key.
- * @param {!gxnat.vis.ViewableSet} viewable The gxnat.vis.ViewableSet object to 
+ * @param {!gxnat.vis.ViewableTree} viewable The gxnat.vis.ViewableTree object to 
  *    store.
  * @param {!string} path The XNAT path associated with the Viewable.
  * @private
  */
-xiv.prototype.storeViewable_ = function(viewable, path) {
-    this.Viewables_ = this.Viewables_ ? this.Viewables_ : {};
-    if (!this.Viewables_.hasOwnProperty(path)){
-	 this.Viewables_[path] = [];
+xiv.prototype.storeViewableTree_ = function(viewable, path) {
+    this.ViewableTrees_ = this.ViewableTrees_ ? this.ViewableTrees_ : {};
+    if (!this.ViewableTrees_.hasOwnProperty(path)){
+	 this.ViewableTrees_[path] = [];
     }
-    this.Viewables_[path].push(viewable);
+    this.ViewableTrees_[path].push(viewable);
 };
 
 
@@ -430,15 +430,15 @@ xiv.prototype.dispose_ = function() {
     // Revert the document.
     xiv.revertDocumentStyle_();
 
-    // Viewables
-    goog.object.forEach(this.Viewables_, function(ViewableArr, key){
-	goog.array.forEach(ViewableArr, function(Viewable){
-	    Viewable.dispose();
+    // ViewableTrees
+    goog.object.forEach(this.ViewableTrees_, function(ViewableTreeArr, key){
+	goog.array.forEach(ViewableTreeArr, function(ViewableTree){
+	    ViewableTree.dispose();
 	});
-	goog.array.clear(ViewableArr);
-	delete this.Viewables_[key];
+	goog.array.clear(ViewableTreeArr);
+	delete this.ViewableTrees_[key];
     }.bind(this))
-    delete this.Viewables_;
+    delete this.ViewableTrees_;
 
     // Project Tree
     if (this.ProjectTree_){
@@ -465,13 +465,13 @@ xiv.prototype.dispose_ = function() {
 /**
  * Extracts the folders in the provided path and returns a set of folders
  * for querying thumbnails. 
- * @param {gxnat.vis.AjaxViewable} Viewable
+ * @param {gxnat.vis.AjaxViewableTree} ViewableTree
  * @private
  */
-xiv.extractViewableFolders_ = function(Viewable){
+xiv.extractViewableTreeFolders_ = function(ViewableTree){
     var pathObj =  /**@type {!gxnat.Path}*/
-    //wwindow.console.log(Viewable);
-    new gxnat.Path(Viewable.getExperimentUrl());
+    //wwindow.console.log(ViewableTree);
+    new gxnat.Path(ViewableTree.getExperimentUrl());
     
     var folders = /**@type {!Array.string}*/ [];
     var key = /**@type {!string}*/ '';
@@ -487,7 +487,7 @@ xiv.extractViewableFolders_ = function(Viewable){
     };
 
     // Apply Viewable category
-    folders.push(Viewable.getCategory());
+    folders.push(ViewableTree.getCategory());
     return folders;
 }
 
@@ -511,7 +511,7 @@ xiv.VIEWABLE_TYPES = {
  * @param {function=} opt_doneCallback The optional callback applied to each 
  *     when retrieval is complete.
  */
-xiv.getViewablesFromXnat = function (url, opt_runCallback, opt_doneCallback){
+xiv.getViewableTreesFromXnat = function (url, opt_runCallback, opt_doneCallback){
 
 
     var typeCount = /**@type {!number}*/
@@ -520,7 +520,7 @@ xiv.getViewablesFromXnat = function (url, opt_runCallback, opt_doneCallback){
 
 
     goog.object.forEach(xiv.VIEWABLE_TYPES, function(vType){
-      gxnat.vis.AjaxViewable.getViewables(
+      gxnat.vis.AjaxViewableTree.getViewableTrees(
 	  url, vType, opt_runCallback, function(){
 	  typesGotten++;
 	  if (typesGotten === typeCount){

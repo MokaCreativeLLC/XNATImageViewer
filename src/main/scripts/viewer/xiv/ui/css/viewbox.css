@@ -85,7 +85,11 @@
 .xiv-ui-viewbox-viewlayouthandler {
     height: 100%;
     width: 100%;
+}
 
+
+.xiv-ui-viewbox-viewablegroupmenu {
+    z-index: 100;
 }
 
 

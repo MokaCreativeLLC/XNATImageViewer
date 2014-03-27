@@ -7,7 +7,7 @@ goog.require('goog.array');
 
 // gxnat
 goog.require('gxnat.Path');
-goog.require('gxnat.vis.ViewableSet');
+goog.require('gxnat.vis.ViewableTree');
 
 
 
@@ -20,10 +20,10 @@ goog.require('gxnat.vis.ViewableSet');
  * @param {!Object} viewableJson The json associated with the viewable.
  * @param {function=} opt_initComplete The callback when the init process is 
  *     complete.
- * @extends {goog.vis.ViewableSet}
+ * @extends {goog.vis.ViewableTree}
  */
-goog.provide('gxnat.vis.AjaxViewable');
-gxnat.vis.AjaxViewable = 
+goog.provide('gxnat.vis.AjaxViewableTree');
+gxnat.vis.AjaxViewableTree = 
 function(experimentUrl, viewableJson, opt_initComplete) {
     goog.base(this);
 
@@ -69,15 +69,15 @@ function(experimentUrl, viewableJson, opt_initComplete) {
 	}.bind(this));;
     }.bind(this));    
 }
-goog.inherits(gxnat.vis.AjaxViewable, gxnat.vis.ViewableSet);
-goog.exportSymbol('gxnat.vis.AjaxViewable', gxnat.vis.AjaxViewable);
+goog.inherits(gxnat.vis.AjaxViewableTree, gxnat.vis.ViewableTree);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree', gxnat.vis.AjaxViewableTree);
 
 
 
 /**
  * @return {!string}
  */
-gxnat.vis.AjaxViewable.prototype.getExperimentUrl = function() {
+gxnat.vis.AjaxViewableTree.prototype.getExperimentUrl = function() {
     return this.experimentUrl;
 }
 
@@ -85,7 +85,7 @@ gxnat.vis.AjaxViewable.prototype.getExperimentUrl = function() {
 /**
  * @return {!string}
  */
-gxnat.vis.AjaxViewable.prototype.getQueryUrl = function() {
+gxnat.vis.AjaxViewableTree.prototype.getQueryUrl = function() {
     return this.queryUrl;
 }
 
@@ -94,7 +94,7 @@ gxnat.vis.AjaxViewable.prototype.getQueryUrl = function() {
 /**
  * @return {!string}
  */
-gxnat.vis.AjaxViewable.prototype.getFolderQuerySuffix = function() {
+gxnat.vis.AjaxViewableTree.prototype.getFolderQuerySuffix = function() {
     return this.folderQuerySuffix;
 }
 
@@ -102,7 +102,7 @@ gxnat.vis.AjaxViewable.prototype.getFolderQuerySuffix = function() {
 /**
  * @public
  */
-gxnat.vis.AjaxViewable.prototype.makeFileUrl = function(xnatFileJson) {
+gxnat.vis.AjaxViewableTree.prototype.makeFileUrl = function(xnatFileJson) {
     var fileName = /** @type {!string} */
     xnatFileJson[this.fileContentsKey];
     if (!goog.string.endsWith(fileName, '/')) {
@@ -125,7 +125,7 @@ gxnat.vis.AjaxViewable.prototype.makeFileUrl = function(xnatFileJson) {
  *     when retrieval is complete.
  * @public
  */
-gxnat.vis.AjaxViewable.loopFolderContents = 
+gxnat.vis.AjaxViewableTree.loopFolderContents = 
 function(viewableFolderUrl, runCallback, opt_doneCallback) {
     gxnat.jsonGet(viewableFolderUrl, function(viewablesJson){
 	//window.console.log(viewablesJson);
@@ -150,7 +150,7 @@ function(viewableFolderUrl, runCallback, opt_doneCallback) {
  * @param {function=} opt_callback The callback to apply afterwards.
  * @public
  */
-gxnat.vis.AjaxViewable.prototype.getFiles = function(opt_callback){
+gxnat.vis.AjaxViewableTree.prototype.getFiles = function(opt_callback){
 
     //window.console.log("GET FILES", this);
     var fileQueryUrl = /** @type {!string} */ 
@@ -167,13 +167,11 @@ gxnat.vis.AjaxViewable.prototype.getFiles = function(opt_callback){
 	    fileUrl = this.makeFileUrl(fileUrls[i]);
 	    //window.console.log("ABSOLUTE URL:", fileUrls[i], fileUrl); 
 	    if (fileUrl) { 
-		//window.console.log(fileUrl);
 		this.addFiles(fileUrl);
-	    };
+	    }
 	}
 	if (opt_callback){
-	    opt_callback()
-
+	    opt_callback();
 	}
     }.bind(this))
 }
@@ -186,25 +184,27 @@ gxnat.vis.AjaxViewable.prototype.getFiles = function(opt_callback){
 
 /**
  * Static function to generate viewables based on a given XNAT url.  All of
- * the viewables that are generated are subclasses of gxnat.vis.AjaxViewable.
+ * the viewables that are generated are subclasses of 
+ * gxnat.vis.AjaxViewableTree.
+ *
  * @param {!string} url
- * @param {!gxnat.vis.AjaxViewable} anonViewable
+ * @param {!gxnat.vis.AjaxViewableTree} anonViewable
  * @param {function=} opt_runCallback The optional callback applied to each 
  *     viewable.
  * @param {function=} opt_doneCallback The optional callback applied to each 
  *     when retrieval is complete.
  * @public
  */
-gxnat.vis.AjaxViewable.getViewables = 
+gxnat.vis.AjaxViewableTree.getViewableTrees = 
 function(url, anonViewable, opt_runCallback, opt_doneCallback) {
     
     var pathObj = /** @type {!gxnat.Path} */ new gxnat.Path(url);
     var queryFolder = /** @type {!string} */ 
     url + '/' + anonViewable.prototype.getFolderQuerySuffix();
-    var viewable = /** @type {?gxnat.vis.ViewableSet} */ null;
+    var viewable = /** @type {?gxnat.vis.ViewableTree} */ null;
 
     //window.console.log('url:', url, '\nqueryFolder:', queryFolder);
-    gxnat.vis.AjaxViewable.loopFolderContents(queryFolder, function(json){
+    gxnat.vis.AjaxViewableTree.loopFolderContents(queryFolder, function(json){
 	//window.console.log(json, pathObj);
 	viewable = new anonViewable(pathObj.pathByLevel('experiments'), 
 				    json, opt_runCallback)

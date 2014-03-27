@@ -15,7 +15,7 @@ goog.require('moka.ui.Thumbnail');
 /**
  * xiv.ui.Thumbnail is the parent class of Slicer and Dicom thumbnails.
  * @constructor
- * @param {gxnat.vis.ViewableSet} Viewable_ The properties that 
+ * @param {gxnat.vis.ViewableTree} Viewable_ The properties that 
  *    define the XNAT-specific thumbnail
  * @extends {moka.ui.Thumbnail}
  */
@@ -25,15 +25,15 @@ xiv.ui.Thumbnail = function (Viewable_) {
 
 
     /**
-     * @type {gxnat.vis.ViewableSet}
+     * @type {gxnat.vis.ViewableTree}
      * @private
      */    
-    this.ViewableSet_ = Viewable_;
+    this.ViewableTree_ = Viewable_;
 
-    //window.console.log("THUMB1:", Viewable_, this.ViewableSet_['thumbnailUrl']);
-    //window.console.log("THUMB2:", Viewable_, this.ViewableSet_['files']);
+    //window.console.log("THUMB1:", Viewable_, this.ViewableTree_['thumbnailUrl']);
+    //window.console.log("THUMB2:", Viewable_, this.ViewableTree_['files']);
 
-    this.setImage(this.ViewableSet_.getThumbnailUrl());
+    this.setImage(this.ViewableTree_.getThumbnailUrl());
     this.createText_();
     this.createHoverable();
     goog.dom.classes.add(this.getHoverable(), 
@@ -70,7 +70,7 @@ xiv.ui.Thumbnail.CSS_SUFFIX = {};
 xiv.ui.Thumbnail.prototype.createText_ = function(){
 
     var splitArr = /**@type {!Array.string}*/ 
-    this.ViewableSet_.getQueryUrl().split("/");
+    this.ViewableTree_.getQueryUrl().split("/");
 
     var headerText =  /**@type {!string}*/ 
     splitArr[splitArr.length - 1].split(".")[0];
@@ -78,16 +78,16 @@ xiv.ui.Thumbnail.prototype.createText_ = function(){
     var displayText =  /**@type {!string}*/ '';
     displayText += "<b><font size = '2'>" + headerText  + "</font></b><br>";
 
-    if (this.ViewableSet_.hasOwnProperty('getSessionInfo')){
-	displayText += "Frmt: " + this.ViewableSet_.getSessionInfo()
+    if (this.ViewableTree_.hasOwnProperty('getSessionInfo')){
+	displayText += "Frmt: " + this.ViewableTree_.getSessionInfo()
         ["Format"]['value'].toString()  + "<br>";
     }
 
 
     /**
-    displayText += 'Type: ' + this.ViewableSet_['sessionInfo']
+    displayText += 'Type: ' + this.ViewableTree_['sessionInfo']
              ["type"]['value']   + "</b><br>";
-    displayText += 'Expt: ' + this.ViewableSet_['sessionInfo']['experiments'];
+    displayText += 'Expt: ' + this.ViewableTree_['sessionInfo']['experiments'];
     */
 
     this.setText(displayText);
@@ -97,12 +97,12 @@ xiv.ui.Thumbnail.prototype.createText_ = function(){
 
 
 /**
- * Returns the gxnat.vis.ViewableSet object associated with the thumbnail.
- * @return {gxnat.vis.ViewableSet}
+ * Returns the gxnat.vis.ViewableTree object associated with the thumbnail.
+ * @return {gxnat.vis.ViewableTree}
  * @public
  */
 xiv.ui.Thumbnail.prototype.getViewable = function(){
-    return this.ViewableSet_;
+    return this.ViewableTree_;
 }
 
 
@@ -112,6 +112,6 @@ xiv.ui.Thumbnail.prototype.getViewable = function(){
  */
 xiv.ui.Thumbnail.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
-    this.ViewableSet_.dispose();
-    delete this.ViewableSet_;
+    this.ViewableTree_.dispose();
+    delete this.ViewableTree_;
 }

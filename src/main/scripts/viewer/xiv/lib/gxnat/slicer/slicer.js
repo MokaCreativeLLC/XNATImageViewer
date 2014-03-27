@@ -43,8 +43,9 @@ gxnat.slicer.Displayable = function(file, node, storageNode){
  * @param {!string} layout
  */
 gxnat.slicer.SceneView = 
-function(sceneViewElt, cam, bgCol, layout, annots, vols, meshes, fibers) {
-    this.sceneViewElement = sceneViewElt;
+function(sceneViewElt, cam, bgCol, layout, annots, vols, 
+	 meshes, fibers) {
+    this.element = sceneViewElt;
     this.camera = cam;
     this.backgroundColor = bgCol;
     this.layout = layout;
@@ -125,18 +126,18 @@ gxnat.slicer.createMrmlProperties = function(fileList, callback) {
  */
 gxnat.slicer.createSceneViewProperties = 
 function(sceneViewElt, mrbUrl, callback){
-    gxnat.slicer.getAnnotationsFromSceneView(sceneViewElt, mrbUrl, 
+    gxnat.slicer.getAnnotations(sceneViewElt, mrbUrl, 
     function(annotations){
 	window.console.log("\n\n3. CREATE SCENE VIEW NODE, ANNOT", mrbUrl);
 	callback(new gxnat.slicer.SceneView(
-		sceneViewElt,
-		gxnat.slicer.getCameraFromSceneView(sceneViewElt),
-		gxnat.slicer.getBackgroundColorFromSceneView(sceneViewElt),
-		gxnat.slicer.getLayoutFromSceneView(sceneViewElt),
-		annotations,
-		gxnat.slicer.getVolumes(sceneViewElt),
-		gxnat.slicer.getMeshes(sceneViewElt),
-		gxnat.slicer.getFibers(sceneViewElt)
+	    sceneViewElt,
+	    gxnat.slicer.getCameraFromSceneView(sceneViewElt),
+	    gxnat.slicer.getBackgroundColorFromSceneView(sceneViewElt),
+	    gxnat.slicer.getLayoutFromSceneView(sceneViewElt),
+	    annotations,
+	    gxnat.slicer.getVolumes(sceneViewElt),
+	    gxnat.slicer.getMeshes(sceneViewElt),
+	    gxnat.slicer.getFibers(sceneViewElt)
 	))
     })
 }
@@ -225,6 +226,7 @@ gxnat.slicer.toFloatArray = function(str){
 }
 
 
+
 /**
  * Parses the mrml to determine the camera's parameters.
  *
@@ -232,19 +234,48 @@ gxnat.slicer.toFloatArray = function(str){
  * @return {Array.<Array.<number>>} An 2-length array of 3-length arrays: 
  *    1) the position, 2) the up vector of the camera. 3) The focal point.
  */
-gxnat.slicer.getCameraFromSceneView = function(scene) {
+gxnat.slicer.getCameraFromSceneView = function(sceneViewElt) {
     return new gxnat.slicer.properties.Camera(
 	gxnat.slicer.toFloatArray(
-	    scene.getElementsByTagName('Camera')[0].getAttribute('position')
+	    sceneViewElt.getElementsByTagName('Camera')[0].
+		getAttribute('position')
 	),
 	gxnat.slicer.toFloatArray(
-	    scene.getElementsByTagName('Camera')[0].getAttribute('viewUp')
+	    sceneViewElt.getElementsByTagName('Camera')[0].
+		getAttribute('viewUp')
 	),
 	gxnat.slicer.toFloatArray(
-	    scene.getElementsByTagName('Camera')[0].getAttribute('focalPoint')
+	    sceneViewElt.getElementsByTagName('Camera')[0].
+		getAttribute('focalPoint')
 	)
     )
 }
+
+
+
+/**
+ * Parses the mrml to determine the camera's parameters.
+ *
+ * @return {!string}
+ */
+gxnat.slicer.getThumbnail = function(sceneViewElt, mrmlDoc) {
+
+    var storageNodeId = sceneViewElt.getAttribute('storageNodeRef');
+    var sceneViewStorageNodes = 
+	mrmlDoc.getElementsByTagName('SceneViewStorage');
+
+    window.console.log("SCENE VIEW STORAGE", sceneViewStorageNodes);
+
+    var i = 0;
+    var len = sceneViewStorageNodes.length;
+    for (; i<len; i++){
+	if (sceneViewStorageNodes[i].getAttribute('id') === storageNodeId){
+	    //window.console.log("FOUND IT!!!", storageNode);
+	    return sceneViewStorageNodes[i].getAttribute('fileName');
+	}
+    }
+}
+
 
 
 
@@ -314,7 +345,7 @@ gxnat.slicer.getFileUrlRelativeToMrbUrl = function(fileUrl, mrbUrl) {
  *     set to.
  * @return {Array.<Object>} The annotations as objects.
  */
-gxnat.slicer.getAnnotationsFromSceneView = 
+gxnat.slicer.getAnnotations = 
 function(sceneView, mrbUrl, callback) {
 
     //--------------------

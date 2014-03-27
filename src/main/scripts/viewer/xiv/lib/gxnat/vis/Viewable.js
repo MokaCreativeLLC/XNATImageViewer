@@ -3,7 +3,7 @@
  */
 
 // goog 
-goog.require('goog.Disposable');
+goog.require('gxnat.vis.Renderable');
 
 
 
@@ -11,7 +11,7 @@ goog.require('goog.Disposable');
  * @extends {goog.Disposable}
  */
 goog.provide('gxnat.vis.Viewable');
-gxnat.vis.Viewable = function(opt_files, opt_displayProperties) {
+gxnat.vis.Viewable = function(opt_files, opt_renderProperties) {
     goog.base(this);
 
     /**
@@ -20,15 +20,8 @@ gxnat.vis.Viewable = function(opt_files, opt_displayProperties) {
      */
     this.files_ = opt_files || [];
 
-
-    /**
-     * @type {?gxnat.vis.DisplayProperties}
-     * @private
-     */
-    this.displayProperties_ = opt_displayProperties || null;
-
 }
-goog.inherits(gxnat.vis.Viewable, goog.Disposable);
+goog.inherits(gxnat.vis.Viewable, gxnat.vis.Renderable);
 goog.exportSymbol('gxnat.vis.Viewable', gxnat.vis.Viewable);
 
 
@@ -51,23 +44,13 @@ gxnat.vis.Viewable.prototype.addFiles = function(fileName) {
 
 
 
-/**
- * @return {?gxnat.vis.DisplayProperties}
- */
-gxnat.vis.Viewable.getDisplayProperties = function() {
-    return this.displayProperites_;
-}
-
-
 /** 
  * @inheritDoc
  */
 gxnat.vis.Viewable.prototype.dispose = function() {
     goog.base(this, 'dispose');
-    
-    goog.array.clear(this.files_);
-    delete this.files_;
-
-    goog.object.clear(this.displayProperties_);
-    delete this.displayProperties_;
+    if (this.files_){
+	goog.array.clear(this.files_);
+	delete this.files_;
+    }
 }

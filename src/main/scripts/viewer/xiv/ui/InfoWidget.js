@@ -37,7 +37,7 @@ xiv.ui.InfoWidget = function () {
 
     /**
      * @private
-     * @type {gxnat.vis.ViewableSet} 
+     * @type {gxnat.vis.ViewableTree} 
      */ 
     this.viewableData_;
 
@@ -72,15 +72,15 @@ xiv.ui.InfoWidget.CSS_PREFIX = {
  * argument Object to create Dicom-informational tabs
  * or Slicer-informational tabs.
  *
- * @param {!gxnat.viewableProperties} ViewableSet The properties
+ * @param {!gxnat.viewableProperties} ViewableTree The properties
  *    to determine which tab to create.
  * @return {!Element} The tab as a div element.
  * @public
  */
-xiv.ui.InfoWidget.prototype.createInfoTabContents = function (ViewableSet) {	
-    return (ViewableSet.getCategory().toLowerCase() === 'slicer') ? 
-	this.createSlicerTab_(ViewableSet) : 
-	this.createDicomTab_(ViewableSet);
+xiv.ui.InfoWidget.prototype.createInfoTabContents = function (ViewableTree) {	
+    return (ViewableTree.getCategory().toLowerCase() === 'slicer') ? 
+	this.createSlicerTab_(ViewableTree) : 
+	this.createDicomTab_(ViewableTree);
 }
 
 
