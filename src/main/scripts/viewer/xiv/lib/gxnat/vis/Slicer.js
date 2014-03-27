@@ -118,10 +118,22 @@ gxnat.vis.Slicer = function(experimentUrl, viewableJson,
 		
 		var viewGroup = new gxnat.vis.ViewableGroup(
 		    ViewablesPerSceneView);
+
+		//
+		// Set the thumbnail url of the sceneView
+		//
 		viewGroup.setThumbnailUrl(
 		    gxnat.slicer.getFileUrlRelativeToMrbUrl(
 			gxnat.slicer.getThumbnail(sceneView.element, 
 				this.mrml[0].document), this.queryUrl));
+
+
+		//
+		// Set the title of the sceneView
+		//
+		viewGroup.setTitle(
+		    sceneView.element.getAttribute('id').
+			replace('vtkMRMLSceneViewNode', 'View '));
 		
 		this.ViewableGroups.push(viewGroup);
 

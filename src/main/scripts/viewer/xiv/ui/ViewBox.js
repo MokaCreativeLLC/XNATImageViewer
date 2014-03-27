@@ -50,6 +50,13 @@ xiv.ui.ViewBox = function () {
 
 
     /**
+     * @type {Object.<string, gxnat.vis.ViewableGroup>}
+     * @private
+     */
+    this.ViewableGroups_ = {};
+
+
+    /**
      * @struct
      * @private
      */
@@ -122,7 +129,7 @@ xiv.ui.ViewBox = function () {
 
 
 
-    this.initViewableGroupMenu_();
+
 
     /**
      * @type {!boolean}
@@ -531,7 +538,7 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 
     window.console.log("ON RENDER END");
-    this.hideProgressBarPanel_(500);
+    this.hideSubComponent_(this.ProgressBarPanel_, 500);
 
     this.syncLayoutInteractorsToRenderer_();
     
@@ -573,19 +580,7 @@ xiv.ui.ViewBox.prototype.onLayoutResize_ = function(e){
 xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 
     this.ViewableGroupMenu_.init();
-
-    window.console.log(ViewableTree);
-    var viewGroups = ViewableTree.getViewableGroups();
-    if (viewGroups.length > 0){
-	window.console.log("TOTAL VIEW GROUPS", viewGroups.length);
-	goog.array.forEach(viewGroups, function(viewGroup, i){
-
-	    window.console.log("VUEW GROUP THUMB", 
-			       viewGroup.getThumbnailUrl());
-	    this.ViewableGroupMenu_.createAndAddThumbnail(
-		viewGroup.getThumbnailUrl(), i);
-	}.bind(this))
-    }
+    goog.object.clear(this.ViewableGroups_);
     
     //
     // Store tree
@@ -603,6 +598,30 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 	    xiv.ui.ViewBox.defaultLayout[ViewableTree.getCategory()]);
     }
 
+
+    //
+    // Load menu
+    //
+    window.console.log(ViewableTree);
+    var viewGroups = /**@type {!Array.<gxnat.vis.ViewableGroup>}*/
+	ViewableTree.getViewableGroups();
+
+    var thumb = null;
+    if (viewGroups.length > 1){
+	//window.console.log("TOTAL VIEW GROUPS", viewGroups.length);
+	goog.array.forEach(viewGroups, function(viewGroup, i){
+	    thumb = this.ViewableGroupMenu_.createAndAddThumbnail(
+		viewGroup.getThumbnailUrl(), viewGroup.getTitle() || i);
+
+	    // Apply the UID to the thumb
+	    this.ViewableGroups_[goog.getUid(thumb)] = viewGroup;
+		
+	}.bind(this))
+	this.showSubComponent_(this.ViewableGroupMenu_);
+    }
+    else {
+	this.load(viewGroups[0])
+    }
 }
 
 
@@ -643,7 +662,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableNode) {
 	return;
     }
 
-    this.showProgressBarPanel_(400);
+    
 
     //
     // Set plane containers
@@ -679,6 +698,10 @@ xiv.ui.ViewBox.prototype.load = function (ViewableNode) {
 
 
     this.Renderer_.render(ViewableNode.getAllViewableFiles());
+    this.showSubComponent_(this.ProgressBarPanel_, 400);
+
+    window.console.log(this.ViewableGroupMenu_.getElement());
+    this.hideSubComponent_(this.ViewableGroupMenu_, 400);
 
     // Remember the time in which the thumbnail was loaded
     this.thumbLoadTime_ = (new Date()).getTime();    
@@ -771,7 +794,7 @@ xiv.ui.ViewBox.prototype.initSubComponents_ = function() {
     
     this.initRenderer_();
     this.initProgressBarPanel_();
-
+    this.initViewableGroupMenu_();
 
     this.subComponentsInitialized_ = true;
 }
@@ -779,42 +802,53 @@ xiv.ui.ViewBox.prototype.initSubComponents_ = function() {
 
 
 /**
-* As stated.
+ * @param {!moka.ui.Component} subComponent The component to show.
  * @param {number=} opt_fadeTime The optional fade time.  Defaults to 0;
-* @private
-*/
-xiv.ui.ViewBox.prototype.showProgressBarPanel_ = function(opt_fadeTime){
+ * @private
+ */
+xiv.ui.ViewBox.prototype.hideSubComponent_ = function(subComponent, 
+						      opt_fadeTime){
     opt_fadeTime = (goog.isNumber(opt_fadeTime) && opt_fadeTime >=0) ? 
 	opt_fadeTime : 0;
-    this.ProgressBarPanel_.getElement().style.opacity = '0';
-    this.ProgressBarPanel_.getElement().style.visibility = 'visible';
+
+    //
+    // Exit out if component is already hidden.
+    //
+    if (subComponent.getElement().style.visibility == 'hidden'){
+	return;
+    }
+    //subComponent.getElement().style.opacity = '1';
+    //subComponent.getElement().style.visibility = 'visible';
     if (opt_fadeTime == 0) { 
-	this.ProgressBarPanel_.getElement().style.opacity = '1';
+	subComponent.getElement().style.visibility = 'hidden';
 	return;
     } 
-    moka.fx.fadeIn(this.ProgressBarPanel_.getElement(), opt_fadeTime);
+    moka.fx.fadeOut(subComponent.getElement(), opt_fadeTime, 
+	function(){
+	    subComponent.getElement().style.visibility = 'hidden';
+	}.bind(this));
+
 }
 
 
 
+
 /**
-* As stated.
+ * @param {!moka.ui.Component} subComponent The component to show.
  * @param {number=} opt_fadeTime The optional fade time.  Defaults to 0;
-* @private
-*/
-xiv.ui.ViewBox.prototype.hideProgressBarPanel_ = function(opt_fadeTime){
+ * @private
+ */
+xiv.ui.ViewBox.prototype.showSubComponent_ = function(subComponent, 
+						      opt_fadeTime){
     opt_fadeTime = (goog.isNumber(opt_fadeTime) && opt_fadeTime >=0) ? 
 	opt_fadeTime : 0;
-    this.ProgressBarPanel_.getElement().style.opacity = '1';
-    this.ProgressBarPanel_.getElement().style.visibility = 'visible';
+    subComponent.getElement().style.opacity = '0';
+    subComponent.getElement().style.visibility = 'visible';
     if (opt_fadeTime == 0) { 
-	this.ProgressBarPanel_.getElement().style.visibility = 'hidden';
+	subComponent.getElement().style.opacity = '1';
 	return;
     } 
-    moka.fx.fadeOut(this.ProgressBarPanel_.getElement(), opt_fadeTime, 
-	function(){
-	    this.ProgressBarPanel_.getElement().style.visibility = 'hidden';
-	}.bind(this));
+    moka.fx.fadeIn(subComponent.getElement(), opt_fadeTime);
 }
 
 
@@ -829,7 +863,7 @@ xiv.ui.ViewBox.prototype.initProgressBarPanel_ = function(){
     goog.dom.append(this.viewFrameElt_, this.ProgressBarPanel_.getElement());
     this.ProgressBarPanel_.getElement().style.opacity = 0;
     this.ProgressBarPanel_.getElement().style.zIndex = 100000;
-    this.hideProgressBarPanel_();
+    this.hideSubComponent_(this.ProgressBarPanel_);
 
 }
 
@@ -1025,7 +1059,12 @@ xiv.ui.ViewBox.prototype.initViewableGroupMenu_ = function(){
 		       xiv.ui.ViewableGroupMenu.EventType.VIEWSELECTED, 
 		       function(e){
 			   window.console.log("VIEW SELECT", e);
-		       })
+
+			   this.load(this.ViewableGroups_[
+			       goog.getUid(e.thumbnail)])
+		       }.bind(this))
+
+    this.hideSubComponent_(this.ViewableGroupMenu_);
 }
 
 
@@ -1200,6 +1239,10 @@ xiv.ui.ViewBox.prototype.updateStyle_Renderer_ = function () {
  */
 xiv.ui.ViewBox.prototype.disposeInternal = function () {
     goog.base(this, 'disposeInternal');
+
+
+    // Clear the reference to the groups
+    goog.object.clear(this.ViewableGroups_);
 
 
     // Layout Handler

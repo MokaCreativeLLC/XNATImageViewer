@@ -28,15 +28,6 @@ goog.exportSymbol('gxnat.vis.VisNode', gxnat.vis.VisNode);
 gxnat.vis.VisNode.prototype.category_ = 'Generic';
 
 
-/**
- * @type {!string}
- * @private
- */
-gxnat.vis.VisNode.prototype.thumbnailUrl_ = '';
-
-
-
-
 gxnat.vis.VisNode.prototype.setCategory = function(cat) {
     this.category_ = cat;
 }
@@ -46,6 +37,16 @@ gxnat.vis.VisNode.prototype.setCategory = function(cat) {
 gxnat.vis.VisNode.prototype.getCategory = function() {
     return this.category_;
 }
+
+
+
+
+/**
+ * @type {!string}
+ * @private
+ */
+gxnat.vis.VisNode.prototype.thumbnailUrl_ = '';
+
 
 
 
@@ -61,6 +62,26 @@ gxnat.vis.VisNode.prototype.getThumbnailUrl = function() {
 
 
 
+/**
+ * @type {?string}
+ * @private
+ */
+gxnat.vis.VisNode.prototype.title_ = null;
+
+
+
+
+gxnat.vis.VisNode.prototype.setTitle = function(title) {
+    this.title_ = title;
+}
+
+
+
+gxnat.vis.VisNode.prototype.getTitle = function() {
+    return this.title_;
+}
+
+
 /** 
  * @inheritDoc
  */
@@ -73,5 +94,10 @@ gxnat.vis.VisNode.prototype.dispose = function() {
     
     if (this.thumbnailUrl_){
 	delete this.thumbnailUrl_;
+    }
+
+
+    if (this.title_){
+	delete this.title_;
     }
 }

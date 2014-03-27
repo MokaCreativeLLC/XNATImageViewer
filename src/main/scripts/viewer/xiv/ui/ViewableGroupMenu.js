@@ -126,6 +126,7 @@ xiv.ui.ViewableGroupMenu.prototype.show = function() {
 
 
 /**
+ * @return {moka.ui.Thumbnail}
  * @public
  */
 xiv.ui.ViewableGroupMenu.prototype.createAndAddThumbnail = 
@@ -133,6 +134,7 @@ function(imageUrl, displayText) {
     var thumb = 
 	this.ThumbnailGallery_.createAndAddThumbnail(imageUrl, displayText);
     this.setThumbnailOnClick_(thumb);
+    return thumb;
 }
 
 
