@@ -69,7 +69,6 @@ goog.inherits(X.parserVTK, X.parser);
  */
 X.parserVTK.prototype.parse = function(container, object, data, flag) {
 
-    console.log(container, object, data, flag);
   X.TIMER(this._classname + '.parse');
   
   var p = object._points;
@@ -198,14 +197,14 @@ X.parserVTK.prototype.parseLine = function(line) {
   
   // the first field of the line can be a keyword to indicate different modes
   var firstLineField = lineFields[0];
-  
+
   // KEYWORD CHECK / MODE SWITCH
   //
   // identify the section of the next coming lines using the vtk keywords
   switch (firstLineField) {
   
   case 'POINTS':
-      console.log("points");
+
     // this means that real X,Y,Z points are coming
     
     this._pointsMode = true;
@@ -220,7 +219,7 @@ X.parserVTK.prototype.parseLine = function(line) {
     return;
     
   case 'VERTICES':
-      console.log("VERTices");
+
     // this means that triangles or points are coming
     
     this._geometryMode = true;
@@ -247,7 +246,7 @@ X.parserVTK.prototype.parseLine = function(line) {
     return;
     
   case 'TRIANGLE_STRIPS':
-      console.log("trianglestrips");
+
     // this means that triangle_strips are coming
     
     this._geometryMode = true;
@@ -263,7 +262,7 @@ X.parserVTK.prototype.parseLine = function(line) {
     return;
     
   case 'LINES':
-      console.log("lines");
+
     // this means that lines are coming
     
     this._geometryMode = true;
@@ -279,7 +278,7 @@ X.parserVTK.prototype.parseLine = function(line) {
     return;
     
   case 'POLYGONS':
-      console.log("polygons");
+
     // this means that polygons are coming
     // we only support polygons which are triangles right now
     
@@ -296,7 +295,7 @@ X.parserVTK.prototype.parseLine = function(line) {
     return;
     
   case 'POINT_DATA':
-      console.log("point data");
+
     // this means point-data is coming
     // f.e. normals
     
@@ -308,7 +307,9 @@ X.parserVTK.prototype.parseLine = function(line) {
     return;
     
   }
- // console.log("PARSING", "GEOMETRY", this._geometryMode, "POINTS", this._pointsMode, "POINT DATA", this._pointDataMode);
+  
+
+  //window.console.log(this._pointDataMode, this._pointsMode, this._geometryMode);
   // PARSING
   //
   // now we parse according to the current mode
@@ -445,7 +446,6 @@ X.parserVTK.prototype.configure = function(p, n) {
   do {
     
     // we want to loop through the geometries in the range 0..(N - 1)
-      //console.log(this._geometries);
     var currentGeometry = this._geometries[numberOfGeometries - i];
     var currentGeometryLength = currentGeometry.length;
     

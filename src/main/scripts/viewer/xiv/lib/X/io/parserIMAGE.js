@@ -66,8 +66,7 @@ goog.inherits(X.parserIMAGE, X.parser);
  * @inheritDoc
  */
 X.parserIMAGE.prototype.parse = function(container, object, data, flag) {
-   //console.log(container, object, data);
-    //return;
+
   if (!(data instanceof ArrayBuffer)) {
     
     throw new Error();
@@ -77,7 +76,7 @@ X.parserIMAGE.prototype.parse = function(container, object, data, flag) {
   // convert data to a byte array
   var bytebuffer = new Uint8Array(data);
   var i = bytebuffer.length;
-  console.log("BYTE BUFFER", bytebuffer);
+  
   // create a binary string of the bytebuffer
   var binaryString = new Array(i);
   while (i--) {

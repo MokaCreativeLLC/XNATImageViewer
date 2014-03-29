@@ -252,7 +252,7 @@ X.renderer.prototype.onComputing = function(event) {
  * @public
  */
 X.renderer.prototype.onComputingEnd = function(event) {
-  
+
   // only do the following if the progressBar was not turned off
   if (this._config['PROGRESSBAR_ENABLED']) {
 

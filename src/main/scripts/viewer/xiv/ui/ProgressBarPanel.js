@@ -20,8 +20,8 @@ goog.provide('xiv.ui.ProgressBarPanel');
 xiv.ui.ProgressBarPanel = function() {
     goog.base(this);
 
-    window.console.log("HERE:", xiv.ui.ProgressBarPanel.CSS);
-    window.console.log("HERE:", this.CSS, xiv.ui.ProgressBarPanel);
+    //window.console.log("HERE:", xiv.ui.ProgressBarPanel.CSS);
+    //window.console.log("HERE:", this.CSS, xiv.ui.ProgressBarPanel);
     /**
      * @type {!Element}
      * @private

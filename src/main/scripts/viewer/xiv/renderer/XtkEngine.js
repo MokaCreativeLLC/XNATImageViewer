@@ -120,33 +120,73 @@ xiv.renderer.XtkEngine.ANATOMICAL_TO_CARTESIAN =  {
  */
 xiv.renderer.XtkEngine.prototype.render = function (files) {
 
+    window.console.log("RENDERING THIS!", files)
     var viewables = xiv.renderer.XtkEngine.getViewables(files);
+    window.console.log("VIEWABLES!", viewables)
     var xObjects = [];
+    var hasVolume = false;
+    var currXObj;
     goog.object.forEach(viewables, function(fileColl){
+	currXObj = xiv.renderer.XtkEngine.createXObject(fileColl);
+	if (currXObj instanceof X.volume) {
+	    window.console.log("HAS VOLUME!");
+	    hasVolume = true;
+	}
 	xObjects.push(xiv.renderer.XtkEngine.createXObject(fileColl));
-	window.console.log(fileColl);
     })
 
-
     this.currXObjects_ = xObjects;
+
+
 
     //------------------------------------------ 
     //
     //  IMPORTANT!!!!!!!!!       DO NOT ERASE!!!
     //
-    //  YOU HAVE TO ADD AND RENDER X-OBJECTS ONE PLANE AT A TIME,
-    //  ONCE YOU FINISH WITH ONE PLANE, YOU CAN DO THE OTHERS.
+    //  You have to add xObject to one plane at a time as opposed to 
+    //  all at once.  If there are volumes, we start with planeX (e.g.
+    //  this.primaryRenderPlane_).
+    //
+    //  IF THERE ARE NO VOLUMES, we feed everthing into the 3D renderer.
     //
     //------------------------------------------
-    goog.array.forEach(xObjects, function(xObj){
-	this.primaryRenderPlane_.add(xObj);
-    }.bind(this))
 
-    this.primaryRenderPlane_.Renderer.onShowtime = function(){
-	this.renderNonPrimary_(xObjects)
-    }.bind(this);
 
-    this.primaryRenderPlane_.render();
+    //
+    // If there are volumes, we use all renderers.
+    //
+    if (hasVolume) {
+
+	goog.array.forEach(xObjects, function(xObj){
+	    this.primaryRenderPlane_.add(xObj);
+	}.bind(this))
+
+	this.primaryRenderPlane_.Renderer.onShowtime = function(){
+	    this.renderNonPrimary_(xObjects)
+	}.bind(this);
+
+	this.primaryRenderPlane_.render();
+    }
+
+    //
+    // Otherwise, we just use the 3D renderer
+    //
+    else {
+	window.console.log("No volumes found! Only rendering in 3D!");
+	this.PlaneV_.init();
+
+	goog.array.forEach(xObjects, function(xObj){
+
+	    window.console.log("RENDEIRNG THIS", xObj);
+	    //xObj.file = xObj._file;
+	    this.PlaneV_.add(xObj);
+	}.bind(this))
+	this.PlaneV_.render();
+
+	goog.array.forEach(xObjects, function(xObj){
+	    window.console.log("RENDEIRNG THIS", xObj);
+	}.bind(this))
+    }
 
 }
 
@@ -545,16 +585,17 @@ xiv.renderer.XtkEngine.getViewables = function(fileCollection) {
     // for Slicer files and fiber bundles.  The mrmls, for instance
     // take priority over the other node files.
     //-------------------------	
+    var basename = '';
+    var ext = '';
     for (var i = 0, len = fileCollection.length; i < len; i++) {
-	var basename = goog.string.path.basename(fileCollection[i]);
-	var ext = goog.string.path.extension(basename);
+	basename = goog.string.path.basename(fileCollection[i]).toLowerCase();
+	ext = goog.string.path.extension(basename);
 
+	window.console.log("IS DICOM", ext, this.isDicom(ext));
 	//
 	// Skip if the filename starts with a period
 	//
 	if (goog.string.startsWith(basename, '.')) continue;
-
-
 	
 	if (ext === 'mrml') { 
 	    viewableTypes['slicer'].push(fileCollection[i]);

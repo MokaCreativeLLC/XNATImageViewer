@@ -654,6 +654,7 @@ X.renderer2D.prototype.update_ = function(object) {
   this._orientationIndex = this.volumeChildrenIndex_(this._orientation);
 
   // size
+    window.console.log(object);
   this._slices = object._children[this._orientationIndex]._children;
   
   var _currentSlice = null;

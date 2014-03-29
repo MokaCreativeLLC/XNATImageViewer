@@ -77,15 +77,11 @@
 
 .xiv-ui-viewablegroupmenu-thumbnail-text {
     position: absolute;
-    height: 70px;
-    top: 5px;
     left: 160px;
-    font-size: 14;		
+    top: calc(50% - 7px);
+    font-size: 14px;		
     font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
     color : rgb(255,255,255);  
-    line-height: 17px;
-    opacity: 1;
-	
 }
 
 

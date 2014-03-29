@@ -264,7 +264,7 @@ gxnat.slicer.getThumbnail = function(sceneViewElt, mrmlDoc) {
     var sceneViewStorageNodes = 
 	mrmlDoc.getElementsByTagName('SceneViewStorage');
 
-    window.console.log("SCENE VIEW STORAGE", sceneViewStorageNodes);
+    //window.console.log("SCENE VIEW STORAGE", sceneViewStorageNodes);
 
     var i = 0;
     var len = sceneViewStorageNodes.length;
@@ -324,14 +324,60 @@ gxnat.slicer.getLayoutFromSceneView = function(sceneView) {
 
 
 
+/**
+ * Takes into account url-encoding issues with the slicer files.
+ * @param {!string} fileUrl
+ * @param {!Array.<string>}
+ */
+gxnat.slicer.matchFileToSet = function(fileUrl, fileSet) {
+
+    if (!goog.isDefAndNotNull(fileUrl)) { return };
+ 
+    var i = /**@type {!number}*/ 0;
+    var len = /**@type {!number}*/ fileSet.length;
+    var setName = /**@type {!string}*/ '';
+    var urlName = /**@type {!string}*/ '';
+
+    //
+    // IMPORTANT!!! DO NOT ERASE!!!
+    //
+    // It was decided to use regexp instead of decodeUrl because
+    // it was impossible to determine the number of times a given string
+    // was urlencoded in the MRB and relative to XNAT.
+    //
+    function regexpReplace(str){
+	return str
+	    .replace(/%20/g, " ")
+	    .replace(/%2520/g, " ");
+    }
+
+    for (; i < len; i++){
+
+	setName = regexpReplace(fileSet[i].toLowerCase());
+	urlName = regexpReplace(fileUrl.toLowerCase());
+
+	//window.console.log("SET NAME", setName);
+	//window.console.log("URL NAME", urlName);
+	if (setName.indexOf(urlName) == (setName.length - urlName.length)){
+
+	    //
+	    window.console.log("WARNING: Risky replace here.  Need to test.");
+	    return fileSet[i].replace(/%20/g, '%2520');
+	}
+    }
+}
+
+
+
 
 /**
  *
  */
 gxnat.slicer.getFileUrlRelativeToMrbUrl = function(fileUrl, mrbUrl) {
     return goog.string.buildString(mrbUrl, '!',
-		goog.string.remove(goog.string.path.basename(mrbUrl), 
-		'.' + goog.string.path.extension(mrbUrl)), '/', fileUrl)
+		goog.string.path.basename(goog.string.path.dirname(fileUrl)),
+          
+				   '/', goog.string.path.basename(fileUrl))
 
 }
 

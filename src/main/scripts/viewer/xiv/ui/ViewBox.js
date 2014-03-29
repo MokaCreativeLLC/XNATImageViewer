@@ -476,6 +476,10 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 		arrPos = 0;
 		break;
 	    }
+	    
+	    window.console.log("RETURNING OUT OF SLIDERS -- combe back later");
+	    return
+
 	    slider.setMaximum(currVol.dimensions[arrPos])
 	    slider.setValue(currVol['index' + planeOr]);
 
@@ -617,7 +621,7 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 	    this.ViewableGroups_[goog.getUid(thumb)] = viewGroup;
 		
 	}.bind(this))
-	this.showSubComponent_(this.ViewableGroupMenu_);
+	this.showSubComponent_(this.ViewableGroupMenu_, 400);
     }
     else {
 	this.load(viewGroups[0])
@@ -634,6 +638,8 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
  * @public
  */
 xiv.ui.ViewBox.prototype.load = function (ViewableNode) {
+
+    window.console.log("LOAD", ViewableNode);
 
     if (!this.subComponentsInitialized_){
 	this.initSubComponents_();
@@ -667,8 +673,9 @@ xiv.ui.ViewBox.prototype.load = function (ViewableNode) {
     //
     // Set plane containers
     //
+    var layoutPlane;
     goog.object.forEach(this.Renderer_.getPlanes(), function(plane, key) { 
-	var layoutPlane = this.LayoutHandler_.getCurrentLayoutPlane(key);
+	layoutPlane = this.LayoutHandler_.getCurrentLayoutPlane(key);
 	//window.console.log("LAYOUT PLANE", layoutPlane, key);
 	if (layoutPlane) {
 	    plane.init(layoutPlane.getElement());
@@ -690,19 +697,32 @@ xiv.ui.ViewBox.prototype.load = function (ViewableNode) {
 		       xiv.renderer.XtkEngine.EventType.RENDER_END, 
 		       this.onRenderEnd_.bind(this));
 
-
     goog.events.listen(this.LayoutHandler_, 
 		       xiv.ui.LayoutHandler.EventType.RESIZE, 
 		       this.onLayoutResize_.bind(this));
 
 
+    this.hideSubComponent_(this.ViewableGroupMenu_, 400, function(){
+	//this.showSubComponent_(this.ProgressBarPanel_, 400);
+    }.bind(this))
 
-    this.Renderer_.render(ViewableNode.getAllViewableFiles());
-    this.showSubComponent_(this.ProgressBarPanel_, 400);
 
-    window.console.log(this.ViewableGroupMenu_.getElement());
-    this.hideSubComponent_(this.ViewableGroupMenu_, 400);
+    window.console.log("RENDERING", ViewableNode, ViewableNode.getTitle);
+    
+    if (ViewableNode.getTitle() == 'scan'){
+	window.console.log("RENDERING SCAN");
+	this.Renderer_.render(ViewableNode.getAllViewableFiles());
+    } else {
+	window.console.log("TEST RENDERING SLICER");
+	this.Renderer_.render(ViewableNode.getAllViewableFiles()[0]);
+    }
+    return
 
+
+    
+
+
+    
     // Remember the time in which the thumbnail was loaded
     this.thumbLoadTime_ = (new Date()).getTime();    
 }
@@ -785,12 +805,10 @@ xiv.ui.ViewBox.prototype.loadTabs_Controllers_ = function() {
  */
 xiv.ui.ViewBox.prototype.initSubComponents_ = function() {
 
-    
     this.initZipTabs_();
     this.initLayoutMenu_();
     this.initLayoutHandler_();
     this.syncLayoutMenuToLayoutHandler_();
-    
     
     this.initRenderer_();
     this.initProgressBarPanel_();
@@ -804,30 +822,28 @@ xiv.ui.ViewBox.prototype.initSubComponents_ = function() {
 /**
  * @param {!moka.ui.Component} subComponent The component to show.
  * @param {number=} opt_fadeTime The optional fade time.  Defaults to 0;
+ * @param {Function=} opt_callback The optional callback.
  * @private
  */
 xiv.ui.ViewBox.prototype.hideSubComponent_ = function(subComponent, 
-						      opt_fadeTime){
+						      opt_fadeTime,
+						      opt_callback) {
     opt_fadeTime = (goog.isNumber(opt_fadeTime) && opt_fadeTime >=0) ? 
 	opt_fadeTime : 0;
 
-    //
-    // Exit out if component is already hidden.
-    //
-    if (subComponent.getElement().style.visibility == 'hidden'){
-	return;
-    }
-    //subComponent.getElement().style.opacity = '1';
-    //subComponent.getElement().style.visibility = 'visible';
-    if (opt_fadeTime == 0) { 
+    var onOut = function(){
 	subComponent.getElement().style.visibility = 'hidden';
+	subComponent.getElement().style.zIndex = '-1';
+	if (opt_callback) { opt_callback() };
+    }
+
+    if ((subComponent.getElement().style.visibility == 'hidden') ||
+	(opt_fadeTime == 0)) { 
+	onOut();
 	return;
     } 
-    moka.fx.fadeOut(subComponent.getElement(), opt_fadeTime, 
-	function(){
-	    subComponent.getElement().style.visibility = 'hidden';
-	}.bind(this));
 
+    moka.fx.fadeOut(subComponent.getElement(), opt_fadeTime, onOut);
 }
 
 
@@ -836,19 +852,28 @@ xiv.ui.ViewBox.prototype.hideSubComponent_ = function(subComponent,
 /**
  * @param {!moka.ui.Component} subComponent The component to show.
  * @param {number=} opt_fadeTime The optional fade time.  Defaults to 0;
+ * @param {Function=} opt_callback The optional callback function.
  * @private
  */
 xiv.ui.ViewBox.prototype.showSubComponent_ = function(subComponent, 
-						      opt_fadeTime){
+						      opt_fadeTime,
+						      opt_callback) {
     opt_fadeTime = (goog.isNumber(opt_fadeTime) && opt_fadeTime >=0) ? 
 	opt_fadeTime : 0;
+
     subComponent.getElement().style.opacity = '0';
+    subComponent.getElement().style.zIndex = '1000';	
     subComponent.getElement().style.visibility = 'visible';
+
     if (opt_fadeTime == 0) { 
 	subComponent.getElement().style.opacity = '1';
+	if (opt_callback) { opt_callback() };
 	return;
     } 
-    moka.fx.fadeIn(subComponent.getElement(), opt_fadeTime);
+
+    moka.fx.fadeIn(subComponent.getElement(), opt_fadeTime, function(){
+	if (opt_callback) { opt_callback() };
+    });
 }
 
 

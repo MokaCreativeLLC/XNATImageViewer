@@ -74,10 +74,17 @@ gxnat.vis.Slicer = function(experimentUrl, viewableJson,
 			//
 			// Clean the file URLS so we can query them.
 			//
-			var fileName = 
-			    gxnat.slicer.getFileUrlRelativeToMrbUrl(
-				displayable.file, this.queryUrl);
+			//window.console.log("FILENAME", displayable.file, 
+			//		   this.mrbFiles_);
+
+			var fileName = gxnat.slicer.matchFileToSet(
+			    goog.string.path.basename(displayable.file), 
+			    this.mrbFiles_)
 			
+
+			//window.console.log("FILENAME2", displayable.file, 
+			//		   fileName);
+
 			//
 			// Merge the properties into one set.
 			//
@@ -94,16 +101,15 @@ gxnat.vis.Slicer = function(experimentUrl, viewableJson,
 			if (ViewableGroupProperties.labelMap){
 			    
 			    ViewableGroupProperties.labelMap.file = 
-			    gxnat.slicer.getFileUrlRelativeToMrbUrl(
-				ViewableGroupProperties.labelMap.file, 
-				this.queryUrl);
+				gxnat.slicer.matchFileToSet(
+				    ViewableGroupProperties.labelMap.file, 
+				    this.mrbFiles_)
 
 
-			    ViewableGroupProperties['colorTableFile']
-				= 
-			    gxnat.slicer.getFileUrlRelativeToMrbUrl(
-				ViewableGroupProperties.labelMap.
-				    colorTableFile, this.queryUrl);
+			    ViewableGroupProperties['colorTableFile'] =
+			    gxnat.slicer.matchFileToSet(
+			      ViewableGroupProperties.labelMap.colorTableFile, 
+			      this.mrbFiles_)
 				
 			}
 
@@ -119,21 +125,33 @@ gxnat.vis.Slicer = function(experimentUrl, viewableJson,
 		var viewGroup = new gxnat.vis.ViewableGroup(
 		    ViewablesPerSceneView);
 
+
+
+
+		window.console.log("MATCH THIS!", 
+				   gxnat.slicer.getThumbnail(sceneView.element, 
+						  this.mrml[0].document),
+				   this.mrbFiles_,
+				  gxnat.slicer.matchFileToSet(
+			gxnat.slicer.getThumbnail(sceneView.element, 
+						  this.mrml[0].document), 
+			this.mrbFiles_)
+				  );
 		//
 		// Set the thumbnail url of the sceneView
 		//
 		viewGroup.setThumbnailUrl(
-		    gxnat.slicer.getFileUrlRelativeToMrbUrl(
+		    gxnat.slicer.matchFileToSet(
 			gxnat.slicer.getThumbnail(sceneView.element, 
-				this.mrml[0].document), this.queryUrl));
+						  this.mrml[0].document), 
+			this.mrbFiles_)
+		);
 
 
 		//
 		// Set the title of the sceneView
 		//
-		viewGroup.setTitle(
-		    sceneView.element.getAttribute('id').
-			replace('vtkMRMLSceneViewNode', 'View '));
+		viewGroup.setTitle(sceneView.element.getAttribute('name'));
 		
 		this.ViewableGroups.push(viewGroup);
 

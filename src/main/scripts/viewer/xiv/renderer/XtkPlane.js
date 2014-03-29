@@ -151,7 +151,7 @@ xiv.renderer.XtkPlane.prototype.init = function(containerElt) {
     }
     this.Renderer =  new this.XRenderer();
     this.Renderer.orientation = this.orientation;
-    this.setContainer(containerElt);
+    this.setContainer(containerElt || this.container_ || document.body);
     this.Renderer.init();
 }
 
@@ -177,7 +177,7 @@ xiv.renderer.XtkPlane.prototype.add = function(xObj) {
  * @retrurn {!boolean}
  * @public
  */
-xiv.renderer.XtkPlane.prototype.getOn = function(on) {
+xiv.renderer.XtkPlane.prototype.isOn = function(on) {
     return this.isOn_;
 }
 
@@ -244,7 +244,7 @@ xiv.renderer.XtkPlane.prototype.checkRenderProgress_ = function() {
 xiv.renderer.XtkPlane.prototype.render = function() {
     this.Renderer.render();  
   //goog.dom.getElementsByClass('progress-bar-horizontal')[0].style.opacity = 0;
-    this.checkRenderProgress_();
+    //this.checkRenderProgress_();
 };
 
 
@@ -268,7 +268,7 @@ xiv.renderer.XtkPlane.prototype.dispose = function() {
     this.Renderer.destroy();
 
     // prototype
-    this.isOn_ = null;
+    delete this.isOn_;
 
     delete this.XRenderer;
     delete this.container_;

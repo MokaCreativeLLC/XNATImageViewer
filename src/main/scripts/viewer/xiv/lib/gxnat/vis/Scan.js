@@ -94,7 +94,9 @@ gxnat.vis.Scan.prototype.addFiles = function(fileName) {
 
     window.console.log("ADD FILES!");
     if (this.ViewableGroups.length == 0){
-	this.ViewableGroups.push(new gxnat.vis.ViewableGroup());
+	var scanGroup = new gxnat.vis.ViewableGroup();
+	scanGroup.setTitle('scan');
+	this.ViewableGroups.push(scanGroup);
     }
     if (this.ViewableGroups[0].getViewables().length == 0){
 	this.ViewableGroups[0].addViewable(new gxnat.vis.Viewable());
