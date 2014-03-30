@@ -4,9 +4,10 @@
 
 // goog 
 goog.require('goog.array');
-goog.require('gxnat.vis.Renderable');
 
 // gxnat
+goog.require('gxnat.vis.Renderable');
+
 
 
 /**
@@ -37,28 +38,38 @@ goog.exportSymbol('gxnat.vis.ViewableGroup', gxnat.vis.ViewableGroup);
 
 
 
-
+/**
+ * @param {!gxnat.vis.Viewable} Viewable
+ * @public
+ */
 gxnat.vis.ViewableGroup.prototype.addViewable = function(Viewable) {
     return this.Viewables.push(Viewable);
 }
 
 
 
+/**
+ * @return {!Array.<string>}
+ * @public
+ */
 gxnat.vis.ViewableGroup.prototype.getAllViewableFiles = function() {
     var files = [];
-
     goog.array.forEach(this.Viewables, function(Viewable){
 	files = goog.array.concat(files, Viewable.getFiles());
     })
-
     return files;
 }
 
 
 
+/**
+ * @return {!Array.<gxnat.vis.Viewable>} 
+ * @public
+ */
 gxnat.vis.ViewableGroup.prototype.getViewables = function() {
     return this.Viewables;
 }
+
 
 
 /** 
@@ -66,6 +77,8 @@ gxnat.vis.ViewableGroup.prototype.getViewables = function() {
  */
 gxnat.vis.ViewableGroup.prototype.dispose = function() {
     goog.base(this, 'dispose');
+
+    // Viewables
     goog.array.forEach(this.Viewables, function(Viewable){
 	if (goog.isArray(Viewable)){
 	    goog.array.forEach(Viewable, function(_v){
@@ -75,4 +88,5 @@ gxnat.vis.ViewableGroup.prototype.dispose = function() {
 	    Viewable.dispose();
 	}
     })
+    delete this.Viewables;
 }

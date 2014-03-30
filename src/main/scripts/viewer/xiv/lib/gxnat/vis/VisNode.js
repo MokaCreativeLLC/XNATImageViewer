@@ -3,10 +3,7 @@
  */
 
 // goog 
-goog.require('goog.array');
 goog.require('goog.Disposable');
-
-// gxnat
 
 
 /**
@@ -22,22 +19,32 @@ goog.exportSymbol('gxnat.vis.VisNode', gxnat.vis.VisNode);
 
 
 /**
- * @type {!string'};
+ * @type {!string}
  * @protected
  */
 gxnat.vis.VisNode.prototype.category_ = 'Generic';
 
 
+
+/**
+ * Allows setting of the category. 
+ *
+ * @param {!string} cat The category to set.
+ * @public
+ */
 gxnat.vis.VisNode.prototype.setCategory = function(cat) {
     this.category_ = cat;
 }
 
 
 
+/**
+ * @return {!string}
+ * @public
+ */
 gxnat.vis.VisNode.prototype.getCategory = function() {
     return this.category_;
 }
-
 
 
 
@@ -49,13 +56,22 @@ gxnat.vis.VisNode.prototype.thumbnailUrl_ = '';
 
 
 
-
+/**
+ * Allows setting of the thumbnailUrl. 
+ *
+ * @param {!string} url The thumbnail url.
+ * @public
+ */
 gxnat.vis.VisNode.prototype.setThumbnailUrl = function(url) {
     this.thumbnailUrl_ = url;
 }
 
 
 
+/**
+ * @return {!string}
+ * @public
+ */
 gxnat.vis.VisNode.prototype.getThumbnailUrl = function() {
     return this.thumbnailUrl_;
 }
@@ -70,16 +86,26 @@ gxnat.vis.VisNode.prototype.title_ = null;
 
 
 
-
+/**
+ * Allows setting of the title. 
+ *
+ * @param {!string} title The title to set..
+ * @public
+ */
 gxnat.vis.VisNode.prototype.setTitle = function(title) {
     this.title_ = title;
 }
 
 
 
+/**
+ * @return {!string}
+ * @public
+ */
 gxnat.vis.VisNode.prototype.getTitle = function() {
     return this.title_;
 }
+
 
 
 /** 
@@ -95,7 +121,6 @@ gxnat.vis.VisNode.prototype.dispose = function() {
     if (this.thumbnailUrl_){
 	delete this.thumbnailUrl_;
     }
-
 
     if (this.title_){
 	delete this.title_;

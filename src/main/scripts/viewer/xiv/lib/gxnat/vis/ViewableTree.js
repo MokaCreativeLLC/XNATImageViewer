@@ -2,6 +2,9 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
+// goog
+goog.require('goog.array');
+
 // gxnat
 goog.require('gxnat.vis.VisNode');
 
@@ -33,6 +36,10 @@ goog.exportSymbol('gxnat.vis.ViewableTree', gxnat.vis.ViewableTree);
 
 
 
+/**
+ * @return {!Array.<gxnat.vis.ViewableGroup>}
+ * @public
+ */
 gxnat.vis.ViewableTree.prototype.getViewableGroups = function() {
     return this.ViewableGroups;
 }
@@ -44,15 +51,17 @@ gxnat.vis.ViewableTree.prototype.getViewableGroups = function() {
  */
 gxnat.vis.ViewableTree.prototype.dispose = function() {
     goog.base(this, 'dispose');
+
+    // ViewableGroups
     goog.array.forEach(this.ViewableGroups, function(ViewableGroup){
 	ViewableGroup.dispose();
     })
     delete this.ViewableGroups;
 
 
+    // Thumbnail Files
     if (goog.isDefAndNotNull(this.thumbnailFiles_)){
 	goog.array.clear(this.thumbnailFiles_);
     }
-    
     delete this.thumbnailFiles_;
 }

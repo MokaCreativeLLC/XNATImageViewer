@@ -11,8 +11,8 @@ goog.require('gxnat.vis.ViewableGroup');
 
 
 /**
- * Subclass of the 'Viewable' class pertaining to Slicer .mrb files.
- * Subclass of the 'Viewable' class pertaining to Slicer .mrb files.
+ * Subclass of the 'AjaxViewableTree' class pertaining to Slicer .mrb files.
+ * 
  * @param {!string} experimentUrl The experiment-level url of the viewable.
  * @param {!Object} viewableJson The json associated with the viewable.
  * @param {function=} opt_initComplete The callback when the init process is 
@@ -79,17 +79,19 @@ gxnat.vis.Scan.prototype.fileContentsKey = 'URI';
 
 
 
-
+/**
+ * @return {!Object}
+ * @public
+ */
 gxnat.vis.Scan.prototype.getSessionInfo = function() {
     return this.sessionInfo_;
 }
 
 
 
-
 /**
-* @inheritDoc
-*/
+ * @inheritDoc
+ */
 gxnat.vis.Scan.prototype.addFiles = function(fileName) {
 
     window.console.log("ADD FILES!");
@@ -121,7 +123,9 @@ gxnat.vis.Scan.prototype.makeFileUrl = function(xnatFileJson) {
  */
 gxnat.vis.Scan.prototype.getThumbnailImage = function(opt_callback){
 
-    window.console.log(this);
+    //window.console.log(this, this.ViewableGroups[0]);
+
+    if (!this.ViewableGroups || !this.ViewableGroups[0]) { return };
     //
     // Select the image in the middle of the list to 
     // serve as the thumbnail after sorting the fileURIs
@@ -140,5 +144,13 @@ gxnat.vis.Scan.prototype.getThumbnailImage = function(opt_callback){
 
 
 
-
-
+/**
+ * @inheritDoc
+ */
+gxnat.vis.Scan.prototype.dispose = function(){
+    goog.base(this, 'dispose');
+    
+    // Session info.
+    goog.object.clear(this.sessionInfo_);
+    delete this.sessionInfo_;
+}

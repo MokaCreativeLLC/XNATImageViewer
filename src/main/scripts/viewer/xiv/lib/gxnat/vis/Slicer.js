@@ -36,144 +36,51 @@ gxnat.vis.Slicer = function(experimentUrl, viewableJson,
      */
     this.mrbFiles_ = [];
 
-
+    
     //
-    // Call parent for generating the base properties
+    // Call parent init to get the base properties
     //
-    goog.base(this, experimentUrl, viewableJson, function() { 
+    goog.base(this, experimentUrl, viewableJson, function() {
+
 	//
-	// Then get the scene view nodes
+	// Then get mrml nodes
 	//
-	gxnat.slicer.getSceneProperties(this.mrbFiles_, this.queryUrl,
-	function(sceneViewNodes, mrmlNodes){
-
-
-
-	    this.mrml = mrmlNodes;
-	    this.sceneViews = sceneViewNodes;
+	gxnat.slicer.getMrmlNodes(this.mrbFiles_, this.queryUrl, 
+        function(mrmlNodes) {
 
 	    //
-	    // We now translate every scene view into a ViewableGroup
+	    // Then we get the sceneViewNodes within the mrml nodes.
 	    //
-	    goog.array.forEach(this.sceneViews, function(sceneView){
+	    gxnat.slicer.getSceneViewNodes(mrmlNodes, 
+		function(sceneViewNodes){
+		    window.console.log("\n\n*****SCENE VIEW NODES", 
+				       sceneViewNodes);
 
-		var ViewablesPerSceneView = [];
-		var ViewableGroupProperties = {};
-		var ViewableGroupFiles = [];
-
-		var viewTypes = [sceneView.volumes || [], 
-				 sceneView.meshes  || [], 
-				 sceneView.fibers  || []];
-
-		goog.array.forEach(viewTypes, function(viewType){
 		    //
-		    // First we have to clean up all of the file URLs.
+		    // Then convert SceneView nodes to viewable groups
 		    //
-		    goog.array.forEach(viewType, function(displayable){
-			
-			//
-			// Clean the file URLS so we can query them.
-			//
-			//window.console.log("FILENAME", displayable.file, 
-			//		   this.mrbFiles_);
-
-			var fileName = gxnat.slicer.matchFileToSet(
-			    goog.string.path.basename(displayable.file), 
-			    this.mrbFiles_)
-			
-
-			//window.console.log("FILENAME2", displayable.file, 
-			//		   fileName);
-
-			//
-			// Merge the properties into one set.
-			//
-			ViewableGroupProperties = 
-			    goog.object.clone(displayable.
-					      properties.general[0]);
-			goog.object.extend(ViewableGroupProperties,
-					   goog.object.clone(
-					       displayable.properties.specific))
-
-			//
-			// For label maps...
-			//
-			if (ViewableGroupProperties.labelMap){
-			    
-			    ViewableGroupProperties.labelMap.file = 
-				gxnat.slicer.matchFileToSet(
-				    ViewableGroupProperties.labelMap.file, 
-				    this.mrbFiles_)
-
-
-			    ViewableGroupProperties['colorTableFile'] =
-			    gxnat.slicer.matchFileToSet(
-			      ViewableGroupProperties.labelMap.colorTableFile, 
-			      this.mrbFiles_)
-				
-			}
-
-
-			//ViewableGroupFiles.push(fileName);
-			ViewablesPerSceneView.push(new gxnat.vis.Viewable(
-			    fileName, ViewableGroupProperties))
-
-		    }.bind(this))
-		}.bind(this))
-
-		
-		var viewGroup = new gxnat.vis.ViewableGroup(
-		    ViewablesPerSceneView);
-
-
-
-
-		window.console.log("MATCH THIS!", 
-				   gxnat.slicer.getThumbnail(sceneView.element, 
-						  this.mrml[0].document),
-				   this.mrbFiles_,
-				  gxnat.slicer.matchFileToSet(
-			gxnat.slicer.getThumbnail(sceneView.element, 
-						  this.mrml[0].document), 
-			this.mrbFiles_)
-				  );
-		//
-		// Set the thumbnail url of the sceneView
-		//
-		viewGroup.setThumbnailUrl(
-		    gxnat.slicer.matchFileToSet(
-			gxnat.slicer.getThumbnail(sceneView.element, 
-						  this.mrml[0].document), 
-			this.mrbFiles_)
-		);
-
-
-		//
-		// Set the title of the sceneView
-		//
-		viewGroup.setTitle(sceneView.element.getAttribute('name'));
-		
-		this.ViewableGroups.push(viewGroup);
-
-	    }.bind(this))
-		
-	    
-	    //
-	    // Convert the scene View nodes to Viewables
-	    //
-	    window.console.log('\n\n\n\nSLICER VIEWABLE', this);
-
-	    //
-	    // Init complete function.
-	    //
-	    if (opt_initComplete){
-		opt_initComplete(this);
-	    }
+		    this.convertToViewableGroups(sceneViewNodes, 
+						 mrmlNodes,
+						 opt_initComplete);
+		}.bind(this))	
 	}.bind(this))
     }.bind(this))
 }
 goog.inherits(gxnat.vis.Slicer, gxnat.vis.AjaxViewableTree);
 goog.exportSymbol('gxnat.vis.Slicer', gxnat.vis.Slicer);
+
+
+
+/**
+ * @const
+ * @type {!Array.string}
+ */
+gxnat.vis.Slicer.thumbnailExtensions = [
+    'jpeg', 
+    'jpg', 
+    'png', 
+    'gif'
+];
 
 
 
@@ -201,15 +108,130 @@ gxnat.vis.Slicer.prototype.fileContentsKey = 'File Name';
 
 
 /**
- * @const
- * @type {!Array.string}
+ * @param {!Array.<gxnat.slicer.SceneViewNode>} sceneViewNodes
+ * @param {!Array.<gxnat.slicer.MrmlNode>} mrmlNodes
+ * @param {Function=} opt_initComplete The callback when the init process is 
+ *     complete.
  */
-gxnat.vis.Slicer.thumbnailExtensions = [
-    'jpeg', 
-    'jpg', 
-    'png', 
-    'gif'
-];
+gxnat.vis.Slicer.prototype.convertToViewableGroups = 
+function(sceneViewNodes, mrmlNodes, opt_initComplete) {
+
+    this.mrml = mrmlNodes;
+    this.sceneViews = sceneViewNodes;
+
+    goog.array.forEach(this.sceneViews, function(sceneView){
+
+	var ViewablesPerSceneView = [];
+	var ViewableGroupProperties = {};
+	var ViewableGroupFiles = [];
+	var viewTypes = [sceneView.volumes || [], 
+			 sceneView.meshes  || [], 
+			 sceneView.fibers  || []];
+
+	var fileName = '';
+
+	goog.array.forEach(viewTypes, function(viewType){
+	    goog.array.forEach(viewType, function(displayable){
+		
+		//
+		// Clean the file URLS so we can query them.
+		//
+		//window.console.log("FILENAME", displayable.file, 
+		//		   this.mrbFiles_);
+		fileName = gxnat.slicer.matchFileToSet(
+		    goog.string.path.basename(displayable.file), 
+		    this.mrbFiles_)
+		
+
+		//window.console.log("FILENAME2", displayable.file, 
+		//		   fileName);
+
+		//
+		// Merge the properties into one set.
+		//
+		ViewableGroupProperties = 
+		    goog.object.clone(displayable.
+				      properties.general[0]);
+		goog.object.extend(ViewableGroupProperties,
+				   goog.object.clone(
+				       displayable.properties.specific))
+
+		//
+		// For label maps...
+		//
+		if (ViewableGroupProperties.labelMap){
+		    
+		    ViewableGroupProperties.labelMap.file = 
+			gxnat.slicer.matchFileToSet(
+			    ViewableGroupProperties.labelMap.file, 
+			    this.mrbFiles_)
+
+
+		    ViewableGroupProperties['colorTableFile'] =
+			gxnat.slicer.matchFileToSet(
+			    ViewableGroupProperties.labelMap.colorTableFile, 
+			    this.mrbFiles_)
+		    
+		}
+
+
+		//ViewableGroupFiles.push(fileName);
+		ViewablesPerSceneView.push(new gxnat.vis.Viewable(
+		    fileName, ViewableGroupProperties))
+
+	    }.bind(this))
+	}.bind(this))
+
+	
+	var viewGroup = new gxnat.vis.ViewableGroup(
+	    ViewablesPerSceneView);
+
+	window.console.log("MATCH THIS!", 
+			   gxnat.slicer.getThumbnail(sceneView.element, 
+						     this.mrml[0].document),
+			   this.mrbFiles_,
+			   gxnat.slicer.matchFileToSet(
+			       gxnat.slicer.getThumbnail(sceneView.element, 
+							 this.mrml[0].document), 
+			       this.mrbFiles_)
+			  );
+	//
+	// Set the thumbnail url of the sceneView
+	//
+	viewGroup.setThumbnailUrl(
+	    gxnat.slicer.matchFileToSet(
+		gxnat.slicer.getThumbnail(sceneView.element, 
+					  this.mrml[0].document), 
+		this.mrbFiles_)
+	);
+
+
+	//
+	// Set the title of the sceneView
+	//
+	viewGroup.setTitle(sceneView.element.getAttribute('name'));
+	viewGroup.setRenderProperties(
+	    gxnat.vis.convertToRenderProperties(sceneView));
+	
+	this.ViewableGroups.push(viewGroup);
+
+    }.bind(this))
+
+
+    //
+    // Convert the scene View nodes to Viewables
+    //
+    window.console.log('\n\n\n\nSLICER VIEWABLE', this);
+
+    //
+    // Init complete function.
+    //
+    if (opt_initComplete){
+	opt_initComplete(this);
+    }
+
+}
+
 
 
 
