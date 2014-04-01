@@ -8,20 +8,20 @@ goog.require('goog.array');
 
 // utils
 goog.require('moka.string');
-goog.require('xiv.ui.Layout');
+goog.require('xiv.ui.layouts.Layout');
 goog.require('xiv.ui.Plane');
 
 
 
 
 /**
- * xiv.ui.XyzvLayout
+ * xiv.ui.layouts.XyzvLayout
  *
  * @constructor
- * @extends {xiv.ui.Layout}
+ * @extends {xiv.ui.layouts.Layout}
  */
-goog.provide('xiv.ui.XyzvLayout');
-xiv.ui.XyzvLayout = function() { 
+goog.provide('xiv.ui.layouts.XyzvLayout');
+xiv.ui.layouts.XyzvLayout = function() { 
     goog.base(this);
 
     this.addPlanes_();
@@ -34,8 +34,8 @@ xiv.ui.XyzvLayout = function() {
     this.setupPlane_V();
     this.updateStyle();
 }
-goog.inherits(xiv.ui.XyzvLayout, xiv.ui.Layout);
-goog.exportSymbol('xiv.ui.XyzvLayout', xiv.ui.XyzvLayout);
+goog.inherits(xiv.ui.layouts.XyzvLayout, xiv.ui.layouts.Layout);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout', xiv.ui.layouts.XyzvLayout);
 
 
 
@@ -43,7 +43,7 @@ goog.exportSymbol('xiv.ui.XyzvLayout', xiv.ui.XyzvLayout);
  * @type {!string}
  * @public
  */
-xiv.ui.XyzvLayout.TITLE = 'XyzvLayout';
+xiv.ui.layouts.XyzvLayout.TITLE = 'XyzvLayout';
 
 
 
@@ -52,7 +52,7 @@ xiv.ui.XyzvLayout.TITLE = 'XyzvLayout';
  * @enum {string}
  * @public
  */
-xiv.ui.XyzvLayout.EventType = {
+xiv.ui.layouts.XyzvLayout.EventType = {
 }
 
 
@@ -62,7 +62,7 @@ xiv.ui.XyzvLayout.EventType = {
  * @const
  * @expose
  */
-xiv.ui.XyzvLayout.ID_PREFIX =  'xiv.ui.XyzvLayout';
+xiv.ui.layouts.XyzvLayout.ID_PREFIX =  'xiv.ui.layouts.XyzvLayout';
 
 
 
@@ -70,7 +70,7 @@ xiv.ui.XyzvLayout.ID_PREFIX =  'xiv.ui.XyzvLayout';
  * @enum {string}
  * @public
  */
-xiv.ui.XyzvLayout.PLANES = {
+xiv.ui.layouts.XyzvLayout.PLANES = {
     X: 'x',
     Y: 'y',
     Z: 'z',
@@ -83,7 +83,7 @@ xiv.ui.XyzvLayout.PLANES = {
  * @enum {string}
  * @public
  */
-xiv.ui.XyzvLayout.CSS_SUFFIX = {
+xiv.ui.layouts.XyzvLayout.CSS_SUFFIX = {
     X: 'x',
     Y: 'y',
     Z: 'z',
@@ -105,23 +105,23 @@ xiv.ui.XyzvLayout.CSS_SUFFIX = {
  * @type {!number}
  * @protected
  */
-xiv.ui.XyzvLayout.prototype.resizeMargin = 0;
+xiv.ui.layouts.XyzvLayout.prototype.resizeMargin = 0;
 
 
 
 /**
  * @private
  */
-xiv.ui.XyzvLayout.prototype.addPlanes_ = function(){
+xiv.ui.layouts.XyzvLayout.prototype.addPlanes_ = function(){
     var planeTitle = /**@type {!string}*/ '';
-    goog.object.forEach(xiv.ui.XyzvLayout.PLANES, 
+    goog.object.forEach(xiv.ui.layouts.XyzvLayout.PLANES, 
 	function(title, key){
 	    planeTitle = title.toUpperCase();
 	    this.addPlane(new xiv.ui.Plane(planeTitle));
 	    goog.dom.append(this.getElement(), 
 			    this.Planes[planeTitle].getElement());
 	    goog.dom.classes.add(this.Planes[planeTitle].getElement(), 
-				 xiv.ui.XyzvLayout.CSS[key])
+				 xiv.ui.layouts.XyzvLayout.CSS[key])
 	}.bind(this))
 }
 
@@ -130,7 +130,7 @@ xiv.ui.XyzvLayout.prototype.addPlanes_ = function(){
 /**
  * @private
  */
-xiv.ui.XyzvLayout.prototype.addInteractors_ = function() {
+xiv.ui.layouts.XyzvLayout.prototype.addInteractors_ = function() {
     this.addPlaneSliders_();
     this.addFrameDisplayers_();
     //this.addCrossHairs_();
@@ -141,7 +141,7 @@ xiv.ui.XyzvLayout.prototype.addInteractors_ = function() {
 /**
  * @private
  */
-xiv.ui.XyzvLayout.prototype.addPlaneSliders_ = function(){    
+xiv.ui.layouts.XyzvLayout.prototype.addPlaneSliders_ = function(){    
     this.loopXyz(function(Plane, key) {			
 	    var slider = /**@type {!moka.ui.GenericSlider}*/
 	    new moka.ui.GenericSlider('horizontal');
@@ -150,25 +150,25 @@ xiv.ui.XyzvLayout.prototype.addPlaneSliders_ = function(){
 		goog.string.createUniqueString();
 
 
-	    Plane[xiv.ui.Layout.INTERACTORS.SLIDER] = slider;
+	    Plane[xiv.ui.layouts.Layout.INTERACTORS.SLIDER] = slider;
 
 
 	    goog.dom.append(Plane.getElement(), slider.getElement());
 
 	    goog.dom.classes.addRemove(slider.getElement(), null,
-				       [xiv.ui.XyzvLayout.CSS.SLIDER]);
+				       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER]);
 	    
 	    goog.dom.classes.addRemove(slider.getThumb(), null,
-			[xiv.ui.XyzvLayout.CSS.SLIDER_THUMB]);
+			[xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB]);
 
 	    goog.dom.classes.addRemove(slider.getTrack(), null,
-			[xiv.ui.XyzvLayout.CSS.SLIDER_TRACK ,
+			[xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK ,
 			 goog.getCssName(
-			     xiv.ui.XyzvLayout.CSS.SLIDER_TRACK, 
+			     xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK, 
 			 key.toLowerCase())]);
 			 
             slider.addThumbHoverClass(
-	        xiv.ui.XyzvLayout.CSS.SLIDER_THUMB_HOVERED);
+	        xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB_HOVERED);
 
     }.bind(this));
 };
@@ -178,19 +178,19 @@ xiv.ui.XyzvLayout.prototype.addPlaneSliders_ = function(){
 /**
  * @private
  */
-xiv.ui.XyzvLayout.prototype.addFrameDisplayers_ = function(){
+xiv.ui.layouts.XyzvLayout.prototype.addFrameDisplayers_ = function(){
     this.loopXyz(function(Plane, key) {	
 		
 	var numberElt = /**@type {!Element}*/
 	goog.dom.createDom('div', {});
 	numberElt.style.color = 'rgba(255,255,255)';
 
-	Plane[xiv.ui.Layout.INTERACTORS.DISPLAY] = numberElt;
+	Plane[xiv.ui.layouts.Layout.INTERACTORS.DISPLAY] = numberElt;
 
 	goog.dom.append(Plane.getElement(), numberElt);
 
 	goog.events.listen(
-	    Plane[xiv.ui.Layout.INTERACTORS.SLIDER],
+	    Plane[xiv.ui.layouts.Layout.INTERACTORS.SLIDER],
  
 	    moka.ui.GenericSlider.EventType.SLIDE, function(e){
 		numberElt.innerHTML = e.value.toString() + '/' + 
@@ -199,7 +199,7 @@ xiv.ui.XyzvLayout.prototype.addFrameDisplayers_ = function(){
 	}.bind(this))
 
 	goog.dom.classes.addRemove(numberElt, null,
-			[xiv.ui.XyzvLayout.CSS.FRAMENUMBER]);
+			[xiv.ui.layouts.XyzvLayout.CSS.FRAMENUMBER]);
 
     }.bind(this));
 };
@@ -210,8 +210,8 @@ xiv.ui.XyzvLayout.prototype.addFrameDisplayers_ = function(){
  * @param {!Function}
  * @protected
  */
-xiv.ui.XyzvLayout.prototype.loopXyz = function(callback){
-    goog.object.forEach(xiv.ui.XyzvLayout.PLANES, 
+xiv.ui.layouts.XyzvLayout.prototype.loopXyz = function(callback){
+    goog.object.forEach(xiv.ui.layouts.XyzvLayout.PLANES, 
 	function(plane, key) {	
 	    plane = plane.toUpperCase();
 	    if (plane == 'V') { return };
@@ -225,8 +225,8 @@ xiv.ui.XyzvLayout.prototype.loopXyz = function(callback){
  * @param {!Function}
  * @protected
  */
-xiv.ui.XyzvLayout.prototype.loop = function(callback){
-    goog.object.forEach(xiv.ui.XyzvLayout.PLANES, 
+xiv.ui.layouts.XyzvLayout.prototype.loop = function(callback){
+    goog.object.forEach(xiv.ui.layouts.XyzvLayout.PLANES, 
 	function(plane, key) {	
 	    plane = plane.toUpperCase();
 	    callback(this.Planes[plane], plane);
@@ -239,7 +239,7 @@ xiv.ui.XyzvLayout.prototype.loop = function(callback){
  * Sets up the relevant plane.  
  * @protected
  */
-xiv.ui.XyzvLayout.prototype.setupPlane_X = function(){
+xiv.ui.layouts.XyzvLayout.prototype.setupPlane_X = function(){
  
 };
 
@@ -249,7 +249,7 @@ xiv.ui.XyzvLayout.prototype.setupPlane_X = function(){
  * Sets up the relevant plane.  
  * @protected
  */
-xiv.ui.XyzvLayout.prototype.setupPlane_Y = function(){
+xiv.ui.layouts.XyzvLayout.prototype.setupPlane_Y = function(){
 
 };
 
@@ -259,7 +259,7 @@ xiv.ui.XyzvLayout.prototype.setupPlane_Y = function(){
  * Sets up the relevant plane.  
  * @protected
  */
-xiv.ui.XyzvLayout.prototype.setupPlane_Z = function(){
+xiv.ui.layouts.XyzvLayout.prototype.setupPlane_Z = function(){
 
 };
 
@@ -269,7 +269,7 @@ xiv.ui.XyzvLayout.prototype.setupPlane_Z = function(){
  * Sets up the relevant plane.  
  * @protected
  */
-xiv.ui.XyzvLayout.prototype.setupPlane_V = function(){
+xiv.ui.layouts.XyzvLayout.prototype.setupPlane_V = function(){
 
 };
 
@@ -279,7 +279,7 @@ xiv.ui.XyzvLayout.prototype.setupPlane_V = function(){
  * Callback for when (or if) the relevant plane is resized.
  * @protected
  */
-xiv.ui.XyzvLayout.prototype.onPlaneResize_X = goog.nullFunction;
+xiv.ui.layouts.XyzvLayout.prototype.onPlaneResize_X = goog.nullFunction;
 
 
 
@@ -287,7 +287,7 @@ xiv.ui.XyzvLayout.prototype.onPlaneResize_X = goog.nullFunction;
  * Callback for when (or if) the relevant plane is resized.
  * @protected
  */
-xiv.ui.XyzvLayout.prototype.onPlaneResize_Y = goog.nullFunction;
+xiv.ui.layouts.XyzvLayout.prototype.onPlaneResize_Y = goog.nullFunction;
 
 
 
@@ -295,7 +295,7 @@ xiv.ui.XyzvLayout.prototype.onPlaneResize_Y = goog.nullFunction;
  * Callback for when (or if) the relevant plane is resized.
  * @protected
  */
-xiv.ui.XyzvLayout.prototype.onPlaneResize_Z = goog.nullFunction;
+xiv.ui.layouts.XyzvLayout.prototype.onPlaneResize_Z = goog.nullFunction;
 
 
 
@@ -303,7 +303,7 @@ xiv.ui.XyzvLayout.prototype.onPlaneResize_Z = goog.nullFunction;
  * Callback for when (or if) the relevant plane is resized.
  * @protected
  */
-xiv.ui.XyzvLayout.prototype.onPlaneResize_V = goog.nullFunction;
+xiv.ui.layouts.XyzvLayout.prototype.onPlaneResize_V = goog.nullFunction;
 
 
 
@@ -311,7 +311,7 @@ xiv.ui.XyzvLayout.prototype.onPlaneResize_V = goog.nullFunction;
  * updateStyle function for the relevant plane.
  * @private
  */
-xiv.ui.Layout.prototype.updateStyle_X = goog.nullFunction;
+xiv.ui.layouts.Layout.prototype.updateStyle_X = goog.nullFunction;
 
 
 
@@ -319,14 +319,14 @@ xiv.ui.Layout.prototype.updateStyle_X = goog.nullFunction;
  * updateStyle function for the relevant plane.
  * @private
  */
-xiv.ui.Layout.prototype.updateStyle_Z = goog.nullFunction;
+xiv.ui.layouts.Layout.prototype.updateStyle_Z = goog.nullFunction;
 
 
 /**
  * updateStyle function for the relevant plane.
  * @private
  */
-xiv.ui.Layout.prototype.updateStyle_Y = goog.nullFunction;
+xiv.ui.layouts.Layout.prototype.updateStyle_Y = goog.nullFunction;
 
 
 
@@ -334,18 +334,18 @@ xiv.ui.Layout.prototype.updateStyle_Y = goog.nullFunction;
  * updateStyle function for the relevant plane.
  * @private
  */
-xiv.ui.Layout.prototype.updateStyle_V = goog.nullFunction;
+xiv.ui.layouts.Layout.prototype.updateStyle_V = goog.nullFunction;
 
 
 
 /**
 * @inheritDoc
 */
-xiv.ui.Layout.prototype.updateStyle = function(){
+xiv.ui.layouts.Layout.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
 
     this.resizeMargin = this.currSize.height * 
-	    (1-xiv.ui.Conventional.MAX_PLANE_RESIZE_PCT);
+	    (1-xiv.ui.layouts.Conventional.MAX_PLANE_RESIZE_PCT);
 
     this.updateStyle_X();
     this.updateStyle_Y();
@@ -358,7 +358,7 @@ xiv.ui.Layout.prototype.updateStyle = function(){
 /**
 * @inheritDoc
 */
-xiv.ui.XyzvLayout.prototype.disposeInternal = function(){
+xiv.ui.layouts.XyzvLayout.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
     window.console.log("Need to implement disposeInternal for: " + 
 		       this.constructor.ID_PREFIX);

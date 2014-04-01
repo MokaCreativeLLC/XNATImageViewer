@@ -50,7 +50,7 @@
     width: 10px;
     height: 10px;
     z-index: 103;
-    content:url('../../../../../images/viewer/xiv/ui/Modal/close.png');
+    content:url('/xnat/images/viewer/xiv/ui/Modal/close.png');
 }
 
 
@@ -67,13 +67,13 @@
 
 
 .xiv-ui-modal-windowed-button {
-    content:url('../../../../../images/viewer/xiv/ui/Modal/windowed.png');
+    content:url('/xnat/images/viewer/xiv/ui/Modal/windowed.png');
 }
 
 
 .xiv-ui-modal-fullscreen-button {
  
-    content:url('../../../../../images/viewer/xiv/ui/Modal/fullscreen.png');
+    content:url('/xnat/images/viewer/xiv/ui/Modal/fullscreen.png');
 }
 
 .xiv-ui-modal-popup-button {
@@ -85,7 +85,7 @@
     width: 12px;
     height: 12px;
     z-index: 1000;
-    content:url('../../../../../images/viewer/xiv/ui/Modal/popup.png');
+    content:url('/xnat/images/viewer/xiv/ui/Modal/popup.png');
 }
 
 
@@ -111,13 +111,13 @@
 
 .xiv-ui-modal-insertcolumn-button {
     margin-top: -10px;  
-    content:url('../../../../../images/viewer/xiv/ui/Modal/insertcolumn.png');  
+    content:url('/xnat/images/viewer/xiv/ui/Modal/insertcolumn.png');  
 }
 
 
 .xiv-ui-modal-removecolumn-button {
     margin-top: 10px;
-    content:url('../../../../../images/viewer/xiv/ui/Modal/removecolumn.png');
+    content:url('/xnat/images/viewer/xiv/ui/Modal/removecolumn.png');
 }
 
 
@@ -135,13 +135,13 @@
 
 .xiv-ui-modal-insertrow-button {
     margin-left: -10px; 
-    content:url('../../../../../images/viewer/xiv/ui/Modal/insertrow.png');   
+    content:url('/xnat/images/viewer/xiv/ui/Modal/insertrow.png');   
 }
 
 
 .xiv-ui-modal-removerow-button {
     margin-left: 10px;
-    content:url('../../../../../images/viewer/xiv/ui/Modal/removerow.png');
+    content:url('/xnat/images/viewer/xiv/ui/Modal/removerow.png');
 }
 
 

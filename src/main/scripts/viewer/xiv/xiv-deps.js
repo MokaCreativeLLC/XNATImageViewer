@@ -1,46 +1,47 @@
-goog.addDependency('../../../../renderer/renderer.js', 
-['xiv.renderer'], []);
+goog.addDependency('../../../../vis/vis.js', 
+['xiv.vis'], []);
 
 
-goog.addDependency('../../../../renderer/Engine.js', 
-['xiv.renderer.Engine'], [
+
+goog.addDependency('../../../../vis/RenderEngine.js', 
+['xiv.vis.RenderEngine'], [
     'goog.events.EventTarget'
 ]);
 
 
-goog.addDependency('../../../../renderer/XtkEngine.js', 
-['xiv.renderer.XtkEngine'], [
-    'xiv.renderer.Engine'
+goog.addDependency('../../../../vis/XtkEngine.js', 
+['xiv.vis.XtkEngine'], [
+    'xiv.vis.RenderEngine'
 ]);
 
 
-goog.addDependency('../../../../renderer/XtkPlane.js', 
-['xiv.renderer.XtkPlane'], [
+goog.addDependency('../../../../vis/XtkPlane.js', 
+['xiv.vis.XtkPlane'], [
     'goog.events.EventTarget'
 ]);
 
 
-goog.addDependency('../../../../renderer/XtkPlane2D.js', 
-['xiv.renderer.XtkPlane2D'], [
-    'xiv.renderer.XtkPlane'
+goog.addDependency('../../../../vis/XtkPlane2D.js', 
+['xiv.vis.XtkPlane2D'], [
+    'xiv.vis.XtkPlane'
 ]);
 
 
-goog.addDependency('../../../../renderer/XtkPlane3D.js', 
-['xiv.renderer.XtkPlane3D'], [
-    'xiv.renderer.XtkPlane'
+goog.addDependency('../../../../vis/XtkPlane3D.js', 
+['xiv.vis.XtkPlane3D'], [
+    'xiv.vis.XtkPlane'
 ]);
 
 
 
-goog.addDependency('../../../../renderer/XtkRenderer2D.js', 
-['xiv.renderer.XtkRenderer2D'], [
+goog.addDependency('../../../../vis/XtkRenderer2D.js', 
+['xiv.vis.XtkRenderer2D'], [
     'X.renderer2D'
 ]);
 
 
-goog.addDependency('../../../../renderer/XtkRenderer3D.js', 
-['xiv.renderer.XtkRenderer3D'], [
+goog.addDependency('../../../../vis/XtkRenderer3D.js', 
+['xiv.vis.XtkRenderer3D'], [
     'X.renderer3D'
 ]);
 
@@ -50,13 +51,60 @@ goog.addDependency('../../../../ui/ui.js',
 ]);
 
 
+goog.addDependency('../../../../ui/ctrl/CheckboxController.js', 
+['xiv.ui.ctrl.CheckboxController'], [
+]);
+
+
+goog.addDependency('../../../../ui/ctrl/DisplayAll.js', 
+['xiv.ui.ctrl.DisplayAll'], [
+    'xiv.ui.ctrl.CheckboxController'
+]);
+
+
+goog.addDependency('../../../../ui/ctrl/MasterOpacity.js', 
+['xiv.ui.ctrl.MasterOpacity'], [
+    'xiv.ui.ctrl.XtkController'
+]);
+
+
+goog.addDependency('../../../../ui/ctrl/MasterController.js', 
+['xiv.ui.ctrl.MasterController'], [
+]);
+
+
+goog.addDependency('../../../../ui/ctrl/VolumeController2D.js', 
+['xiv.ui.ctrl.VolumeController2D'], [
+    'xiv.ui.ctrl.MasterController'
+]);
+
+
+
+goog.addDependency('../../../../ui/ctrl/VolumeController3D.js', 
+['xiv.ui.ctrl.VolumeController3D'], [
+    'xiv.ui.ctrl.MasterController'
+]);
+
+
+
+goog.addDependency('../../../../ui/ctrl/XtkController.js', 
+['xiv.ui.ctrl.XtkController'], [
+]);
+
+
+goog.addDependency('../../../../ui/ctrl/XtkControllerTree.js', 
+['xiv.ui.ctrl.XtkControllerTree'], [
+    'xiv.ui.ctrl.XtkController'
+]);
 
 
 
 
 
-goog.addDependency('../../../../ui/LayoutHandler.js', 
-['xiv.ui.LayoutHandler'], [
+
+
+goog.addDependency('../../../../ui/layouts/LayoutHandler.js', 
+['xiv.ui.layouts.LayoutHandler'], [
     'goog.fx.dom.BgColorTransform',
     'goog.fx.dom.FadeInAndShow',
     'goog.events',
@@ -72,8 +120,8 @@ goog.addDependency('../../../../ui/LayoutHandler.js',
     'moka.dom',
     'moka.array',
     'moka.style',
-    'xiv.ui.Layout',
-    'xiv.ui.Conventional'
+    'xiv.ui.layouts.Layout',
+    'xiv.ui.layouts.Conventional'
 ]);
 
 
@@ -83,27 +131,27 @@ goog.addDependency('../../../../ui/Plane.js',
 ]);
 
 
-goog.addDependency('../../../../ui/Layout.js', 
-['xiv.ui.Layout'], [
+goog.addDependency('../../../../ui/layouts/Layout.js', 
+['xiv.ui.layouts.Layout'], [
     'moka.ui.Component',
     'xiv.ui.Plane'
 ]);
 
 
-goog.addDependency('../../../../ui/XyzvLayout.js', 
-['xiv.ui.XyzvLayout'], [
-    'xiv.ui.Layout'
+goog.addDependency('../../../../ui/layouts/XyzvLayout.js', 
+['xiv.ui.layouts.XyzvLayout'], [
+    'xiv.ui.layouts.Layout'
 ]);
 
-goog.addDependency('../../../../ui/Conventional.js', 
-['xiv.ui.Conventional'], [
-    'xiv.ui.XyzvLayout'
+goog.addDependency('../../../../ui/layouts/Conventional.js', 
+['xiv.ui.layouts.Conventional'], [
+    'xiv.ui.layouts.XyzvLayout'
 ]);
 
 
-goog.addDependency('../../../../ui/FourUp.js', 
-['xiv.ui.FourUp'], [
-    'xiv.ui.XyzvLayout'
+goog.addDependency('../../../../ui/layouts/FourUp.js', 
+['xiv.ui.layouts.FourUp'], [
+    'xiv.ui.layouts.XyzvLayout'
 ]);
 
 goog.addDependency('../../../../ui/ViewableGroupMenu.js', 
@@ -124,8 +172,8 @@ goog.addDependency('../../../../ui/ViewBox.js',
     'moka.style',
     'moka.ui.SlideInMenu',
     'moka.ui.ZipTabs',
-    'xiv.ui.LayoutHandler',
-    'xiv.renderer.XtkEngine',
+    'xiv.ui.layouts.LayoutHandler',
+    'xiv.vis.XtkEngine',
     'xiv.ui.ProgressBarPanel',
     //'xiv.ui.SlicerViewMenu'
 ]);

@@ -23,9 +23,9 @@ goog.require('moka.fx');
 goog.require('moka.ui.Component');
 
 // xiv
-goog.require('xiv.ui.Layout');
-goog.require('xiv.ui.Conventional');
-goog.require('xiv.ui.FourUp');
+goog.require('xiv.ui.layouts.Layout');
+goog.require('xiv.ui.layouts.Conventional');
+goog.require('xiv.ui.layouts.FourUp');
 //goog.require('xiv.ui.Sagittal');
 //goog.require('xiv.ui.Coronal');
 //goog.require('xiv.ui.Transverse');
@@ -34,14 +34,14 @@ goog.require('xiv.ui.FourUp');
 
 
 /**
- * xiv.ui.LayoutHandler is the class that handles the various 
+ * xiv.ui.layouts.LayoutHandler is the class that handles the various 
  * xiv.ui.layout.Layout when viewing a dataset in the xiv.ui.ViewBox.  
  *
  * @constructor
  * @extends {moka.ui.Component}
  */
-goog.provide('xiv.ui.LayoutHandler');
-xiv.ui.LayoutHandler = function() {
+goog.provide('xiv.ui.layouts.LayoutHandler');
+xiv.ui.layouts.LayoutHandler = function() {
     goog.base(this);
 
     /**
@@ -50,15 +50,15 @@ xiv.ui.LayoutHandler = function() {
      * @const
      */
     this.constructor.LayoutTypes = {};
-    this.constructor.LayoutTypes[xiv.ui.FourUp.TITLE] = 
-	xiv.ui.FourUp;
-    this.constructor.LayoutTypes[xiv.ui.Conventional.TITLE] = 
-	xiv.ui.Conventional;
+    this.constructor.LayoutTypes[xiv.ui.layouts.FourUp.TITLE] = 
+	xiv.ui.layouts.FourUp;
+    this.constructor.LayoutTypes[xiv.ui.layouts.Conventional.TITLE] = 
+	xiv.ui.layouts.Conventional;
 
 
     /**
      * @private
-     * @type {!Object.<string, xiv.ui.Layout>}
+     * @type {!Object.<string, xiv.ui.layouts.Layout>}
      */ 
     this.Layouts_ = {};
 
@@ -89,8 +89,8 @@ xiv.ui.LayoutHandler = function() {
      */ 
     this.prevLayoutTitle_;
 }
-goog.inherits(xiv.ui.LayoutHandler, moka.ui.Component);
-goog.exportSymbol('xiv.ui.LayoutHandler', xiv.ui.LayoutHandler);
+goog.inherits(xiv.ui.layouts.LayoutHandler, moka.ui.Component);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler', xiv.ui.layouts.LayoutHandler);
 
 
 
@@ -99,7 +99,7 @@ goog.exportSymbol('xiv.ui.LayoutHandler', xiv.ui.LayoutHandler);
  * @enum {string}
  * @public
  */
-xiv.ui.LayoutHandler.EventType = {
+xiv.ui.layouts.LayoutHandler.EventType = {
     LAYOUT_CHANGED: goog.events.getUniqueId('layout_changed'),
     RESIZE: goog.events.getUniqueId('resize'),
 }
@@ -111,7 +111,7 @@ xiv.ui.LayoutHandler.EventType = {
  * @const
  * @expose
  */
-xiv.ui.LayoutHandler.ID_PREFIX =  'xiv.ui.LayoutHandler';
+xiv.ui.layouts.LayoutHandler.ID_PREFIX =  'xiv.ui.layouts.LayoutHandler';
 
 
 
@@ -119,7 +119,7 @@ xiv.ui.LayoutHandler.ID_PREFIX =  'xiv.ui.LayoutHandler';
  * @enum {string}
  * @public
  */
-xiv.ui.LayoutHandler.CSS_SUFFIX = {}
+xiv.ui.layouts.LayoutHandler.CSS_SUFFIX = {}
 
 
 
@@ -128,7 +128,7 @@ xiv.ui.LayoutHandler.CSS_SUFFIX = {}
  * @type {!number}
  * @const
  */
-xiv.ui.LayoutHandler.ANIM_TIME = 800;
+xiv.ui.layouts.LayoutHandler.ANIM_TIME = 800;
 
 
 
@@ -136,16 +136,16 @@ xiv.ui.LayoutHandler.ANIM_TIME = 800;
 * @public
 * @param {boolean}
 */ 
-xiv.ui.LayoutHandler.prototype.animateLayoutChange = function(bool){
+xiv.ui.layouts.LayoutHandler.prototype.animateLayoutChange = function(bool){
     this.animateLayoutChange_ = bool;
 };
 
 
 
 /**
-* @return {xiv.ui.Layout}
+* @return {xiv.ui.layouts.Layout}
 */ 
-xiv.ui.LayoutHandler.prototype.getCurrentLayout = function(){
+xiv.ui.layouts.LayoutHandler.prototype.getCurrentLayout = function(){
     return this.Layouts_[this.currLayoutTitle_];
 };
 
@@ -155,7 +155,7 @@ xiv.ui.LayoutHandler.prototype.getCurrentLayout = function(){
  * @param {!string} planeTitle
  * @return {xiv.ui.Plane}
  */ 
-xiv.ui.LayoutHandler.prototype.getCurrentLayoutPlane = 
+xiv.ui.layouts.LayoutHandler.prototype.getCurrentLayoutPlane = 
 function(planeTitle){
     return this.Layouts_[this.currLayoutTitle_].getPlaneByTitle(planeTitle);
 };
@@ -165,9 +165,9 @@ function(planeTitle){
 
 /**
  * @param {!string} title The title to associate with the layout.
- * @param {!xiv.ui.Layout} layout
+ * @param {!xiv.ui.layouts.Layout} layout
  */ 
-xiv.ui.LayoutHandler.prototype.addLayout = function(title, layout) {
+xiv.ui.layouts.LayoutHandler.prototype.addLayout = function(title, layout) {
     if (goog.object.containsKey(this.LayoutObjects_)){
 	throw new Error(title + ' is an already used layout title!');
     }
@@ -175,7 +175,7 @@ xiv.ui.LayoutHandler.prototype.addLayout = function(title, layout) {
 
     this.LayoutObjects_[title] = layout;
    
-    window.console.log(layout,  xiv.ui.Layout.EventType.RESIZE);
+    window.console.log(layout,  xiv.ui.layouts.Layout.EventType.RESIZE);
 
 }
 
@@ -187,7 +187,7 @@ xiv.ui.LayoutHandler.prototype.addLayout = function(title, layout) {
  *     Defaults to true.
  * @public
  */ 
-xiv.ui.LayoutHandler.prototype.setLayout = 
+xiv.ui.layouts.LayoutHandler.prototype.setLayout = 
 function(title, opt_animateSwitch) {
     // Asserts
     if (!goog.object.containsKey(this.LayoutObjects_, title)){
@@ -199,7 +199,7 @@ function(title, opt_animateSwitch) {
 	this.Layouts_[title] = new this.LayoutObjects_[title];
 
 	goog.events.listen(this.Layouts_[title], 
-			   xiv.ui.Layout.EventType.RESIZE, 
+			   xiv.ui.layouts.Layout.EventType.RESIZE, 
 			   this.onLayoutResize_.bind(this))
 
 
@@ -214,7 +214,7 @@ function(title, opt_animateSwitch) {
     this.prevLayoutTitle_ = this.currLayoutTitle_;
     this.currLayoutTitle_ = title;
     this.switchLayout((opt_animateSwitch === false) ? 
-			   0 : xiv.ui.LayoutHandler.ANIM_TIME);
+			   0 : xiv.ui.layouts.LayoutHandler.ANIM_TIME);
 }
 
 
@@ -223,11 +223,11 @@ function(title, opt_animateSwitch) {
  * @type {Event}
  * @private
  */ 
-xiv.ui.LayoutHandler.prototype.onLayoutResize_ = function(e) {
+xiv.ui.layouts.LayoutHandler.prototype.onLayoutResize_ = function(e) {
     window.console.log("RESIZE", e, typeof e)
     window.console.log('grabbing resize event from layout in handler');
     this.dispatchEvent({
-	type: xiv.ui.LayoutHandler.EventType.RESIZE
+	type: xiv.ui.layouts.LayoutHandler.EventType.RESIZE
     })
     
 }
@@ -239,7 +239,7 @@ xiv.ui.LayoutHandler.prototype.onLayoutResize_ = function(e) {
  * @return {Object}
  * @private
  */ 
-xiv.ui.LayoutHandler.getTransitionStyles_ = function(elt) {
+xiv.ui.layouts.LayoutHandler.getTransitionStyles_ = function(elt) {
     var size = /**@type {!goog.math.Size}*/ goog.style.getSize(elt);
     var pos = /**@type {!goog.math.Coordinate}*/  goog.style.getPosition(elt);
     return {	
@@ -258,15 +258,15 @@ xiv.ui.LayoutHandler.getTransitionStyles_ = function(elt) {
 
 /**
  * @param {number=} opt_time The optional time to animate.  Defaults to
- *     xiv.ui.LayoutHandler.ANIM_TIME set value.
+ *     xiv.ui.layouts.LayoutHandler.ANIM_TIME set value.
  * @private
  */ 
-xiv.ui.LayoutHandler.prototype.switchLayout = function(opt_time) {
+xiv.ui.layouts.LayoutHandler.prototype.switchLayout = function(opt_time) {
     window.console.log("SWITCH LAYOUT", opt_time, this.prevLayoutTitle_);
 
     // Set opt_time
     opt_time = (goog.isNumber(opt_time) && (opt_time >= 0)) ? opt_time : 
-	xiv.ui.LayoutHandler.ANIM_TIME;
+	xiv.ui.layouts.LayoutHandler.ANIM_TIME;
 
     // Do nothing if we're the previous layout is the same as the current one.
     if (this.prevLayoutTitle_ == this.currLayoutTitle_){
@@ -287,7 +287,7 @@ xiv.ui.LayoutHandler.prototype.switchLayout = function(opt_time) {
  * @param {number=} duration The animation duration..  
  * @private
  */ 
-xiv.ui.LayoutHandler.prototype.runLayoutChangeAnim_ = 
+xiv.ui.layouts.LayoutHandler.prototype.runLayoutChangeAnim_ = 
 function(duration) {
 
     var emptyStyleFilter = /**@type {!Function}*/ function(val, key) {
@@ -314,13 +314,13 @@ function(duration) {
 
 		// As-Is
 		asIsDims.push(goog.object.filter(
-		    xiv.ui.LayoutHandler.getTransitionStyles_(
+		    xiv.ui.layouts.LayoutHandler.getTransitionStyles_(
 			plane.getElement()), 
 		    emptyStyleFilter));
 
 		// To-Be
 		toBeDims.push(goog.object.filter(
-		    xiv.ui.LayoutHandler.getTransitionStyles_(
+		    xiv.ui.layouts.LayoutHandler.getTransitionStyles_(
 			newPlanes[key].getElement()), emptyStyleFilter));
 
 	    // Otherwise we just fade the panels out...
@@ -373,7 +373,7 @@ function(duration) {
 /**
  * @public
  */ 
-xiv.ui.LayoutHandler.prototype.showCurrentLayout = function() {
+xiv.ui.layouts.LayoutHandler.prototype.showCurrentLayout = function() {
     goog.object.forEach(this.Layouts_, function(layout, title){
 	layout.getElement().style.visibility = 
 	    (title == this.currLayoutTitle_) ? 'visible' : 'hidden';
@@ -386,7 +386,7 @@ xiv.ui.LayoutHandler.prototype.showCurrentLayout = function() {
 /**
  * @public
  */ 
-xiv.ui.LayoutHandler.prototype.hideAllLayouts = function() {
+xiv.ui.layouts.LayoutHandler.prototype.hideAllLayouts = function() {
     goog.object.forEach(this.Layouts_, function(layout, title){
 	layout.getElement().style.visibility = 'hidden';
 	layout.updateStyle();
@@ -401,7 +401,7 @@ xiv.ui.LayoutHandler.prototype.hideAllLayouts = function() {
  *
  * @private
  */ 
-xiv.ui.LayoutHandler.prototype.setLayoutEvents_ = 
+xiv.ui.layouts.LayoutHandler.prototype.setLayoutEvents_ = 
 function(layout){
     goog.object.forEach(layout.getPlanes(), function(plane){
 	goog.events.listen(plane.getElement(), goog.events.EventType.DBLCLICK, 
@@ -419,7 +419,7 @@ function(layout){
  *
  * @param {function}
  */ 
-xiv.ui.LayoutHandler.prototype.onPlaneDoubleClicked = 
+xiv.ui.layouts.LayoutHandler.prototype.onPlaneDoubleClicked = 
 function(callback){
     this.planeDoubleClickedCallback_.push(callback)
 };
@@ -429,14 +429,14 @@ function(callback){
 /**
  * @private
  */ 
-xiv.ui.LayoutHandler.prototype.onLayoutChanged_ = goog.nullFunction();
+xiv.ui.layouts.LayoutHandler.prototype.onLayoutChanged_ = goog.nullFunction();
 
 
 
 /**
  * @private
  */ 
-xiv.ui.LayoutHandler.prototype.onLayoutChanging_ = 
+xiv.ui.layouts.LayoutHandler.prototype.onLayoutChanging_ = 
 function() {
 
 }
@@ -447,7 +447,7 @@ function() {
  * Sets the double-click EVENT for the ViewPlanes
  * @private
  */
-xiv.ui.LayoutHandler.prototype.setPlanesDoubleClicked_ = 
+xiv.ui.layouts.LayoutHandler.prototype.setPlanesDoubleClicked_ = 
 function(callback){
  
 }
@@ -456,7 +456,7 @@ function(callback){
 /**
 * @inheritDoc
 */
-xiv.ui.LayoutHandler.prototype.updateStyle = function(){
+xiv.ui.layouts.LayoutHandler.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
     goog.object.forEach(this.Layouts_, function(layout){
 	layout.updateStyle();
@@ -469,7 +469,7 @@ xiv.ui.LayoutHandler.prototype.updateStyle = function(){
 /**
 * @inheritDoc
 */
-xiv.ui.LayoutHandler.prototype.disposeInternal = function(){
+xiv.ui.layouts.LayoutHandler.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
 
     moka.ui.disposeComponentMap(this.Layouts_);

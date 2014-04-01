@@ -1,6 +1,6 @@
 
 
-.sliceSlider .goog-slider-thumb {
+.goog-slider-thumb {
 	position: absolute;
     margin-top: -3px;
 	width: 6px;
@@ -11,9 +11,9 @@
 }
 
 
-.xiv-ui-xtkcontrollermenu .goog-slider-thumb,
-.xiv-ui-xtkcontrollermenu .goog-twothumbslider-value-thumb,
-.xiv-ui-xtkcontrollermenu .goog-twothumbslider-extent-thumb {
+.goog-slider-thumb,
+.goog-twothumbslider-value-thumb,
+.goog-twothumbslider-extent-thumb {
     position: absolute;
     margin-top: -2px;
 	width: 4px;
@@ -23,9 +23,24 @@
     border-radius: 4px;
 }
 
-.xiv-ui-xtkcontrollermenu .goog-slider-disabled,
-.xiv-ui-xtkcontrollermenu .goog-twothumbslider-disabled {
-    opacity: 0.5;
+
+
+.xiv-ui-ctrl-xtkcontroller {
+    float: top;
+    width: 100%;
+}
+
+
+.xiv-ui-ctrl-xtkcontroller-label {
+    float: left;
+    color: white;
+    font-size: 10px;
+    font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+
+.xiv-ui-ctrl-xtkcontroller-component {
+    float: right;
 }
 
 
@@ -39,7 +54,7 @@
 
 
 
-.xiv-ui-xtkcontrollermenu-scrollgallery {
+.xiv-ui-ctrl-xtkcontroller-scrollgallery {
     top: 25px;
     left: 0px;
     width: 100%;
@@ -51,14 +66,14 @@
 }
 
 
-.xiv-ui-xtkcontrollermenu-scrollgallery-scrollarea {
+.xiv-ui-ctrl-xtkcontroller-scrollgallery-scrollarea {
     position: relative;
     width: 166px;
     left: 14px;
 }
 
 
-.xiv-ui-xtkcontrollermenu-scrollgallery-zippyheader {
+.xiv-ui-ctrl-xtkcontroller-scrollgallery-zippyheader {
 
     position: relative;
     background-color: rgb(70,70,70);
@@ -72,7 +87,7 @@
 }
 
 
-.xiv-ui-xtkcontrollermenu-scrollgallery-slider-widget {
+.xiv-ui-ctrl-xtkcontroller-scrollgallery-slider-widget {
     width: 7;
     background-color: rgb(0,0,0);
     border: none;
@@ -80,7 +95,7 @@
 
 
 
-.xiv-ui-xtkcontrollermenu-scrollgallery-slider-thumb {
+.xiv-ui-ctrl-xtkcontroller-scrollgallery-slider-thumb {
     height: 60px;
     background-color: rgb(120,120,120);
     border: none;

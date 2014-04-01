@@ -17,13 +17,13 @@ goog.require('xiv.ui.Plane');
 
 
 /**
- * xiv.ui.Layout
+ * xiv.ui.layouts.Layout
  *
  * @constructor
  * @extends {moka.ui.Component}
  */
-goog.provide('xiv.ui.Layout');
-xiv.ui.Layout = function() {
+goog.provide('xiv.ui.layouts.Layout');
+xiv.ui.layouts.Layout = function() {
     if (!this.constructor.TITLE){
 	window.console.log('\n\n\n\n' + 
 			   'This is the class attempting to inherit from it:');
@@ -41,8 +41,8 @@ xiv.ui.Layout = function() {
      */
     this.Planes = {};
 }
-goog.inherits(xiv.ui.Layout, moka.ui.Component);
-goog.exportSymbol('xiv.ui.Layout', xiv.ui.Layout);
+goog.inherits(xiv.ui.layouts.Layout, moka.ui.Component);
+goog.exportSymbol('xiv.ui.layouts.Layout', xiv.ui.layouts.Layout);
 
 
 
@@ -51,7 +51,7 @@ goog.exportSymbol('xiv.ui.Layout', xiv.ui.Layout);
  * @enum {string}
  * @public
  */
-xiv.ui.Layout.EventType = {
+xiv.ui.layouts.Layout.EventType = {
     RESIZE: goog.events.getUniqueId('resize')
 }
 
@@ -61,7 +61,7 @@ xiv.ui.Layout.EventType = {
  * @enum {string}
  * @public
  */
-xiv.ui.Layout.INTERACTORS = {
+xiv.ui.layouts.Layout.INTERACTORS = {
     SLIDER: goog.string.createUniqueString(),
     DISPLAY: goog.string.createUniqueString()
 }
@@ -73,7 +73,7 @@ xiv.ui.Layout.INTERACTORS = {
  * @const
  * @expose
  */
-xiv.ui.Layout.ID_PREFIX =  'xiv.ui.Layout';
+xiv.ui.layouts.Layout.ID_PREFIX =  'xiv.ui.layouts.Layout';
 
 
 
@@ -81,14 +81,14 @@ xiv.ui.Layout.ID_PREFIX =  'xiv.ui.Layout';
  * @enum {string}
  * @public
  */
-xiv.ui.Layout.CSS_SUFFIX = {}
+xiv.ui.layouts.Layout.CSS_SUFFIX = {}
 
 
 
 /**
  * @return {Object.<string, xiv.ui.layout.Plane>}
  */
-xiv.ui.Layout.prototype.getPlanes = function(){
+xiv.ui.layouts.Layout.prototype.getPlanes = function(){
     return this.Planes;
 };
 
@@ -98,7 +98,7 @@ xiv.ui.Layout.prototype.getPlanes = function(){
  * @param {!string} planeTitle
  * @return {xiv.ui.layout.Plane}
  */
-xiv.ui.Layout.prototype.getPlaneByTitle = function(title){
+xiv.ui.layouts.Layout.prototype.getPlaneByTitle = function(title){
     return this.Planes[title];
 };
 
@@ -108,12 +108,12 @@ xiv.ui.Layout.prototype.getPlaneByTitle = function(title){
  * @param {!string} planeTitle
  * @return {xiv.ui.layout.Plane}
  */
-xiv.ui.Layout.prototype.getPlaneInteractors = function(title) {
+xiv.ui.layouts.Layout.prototype.getPlaneInteractors = function(title) {
     
     window.console.log(title, this.Planes[title]);
     var objs = /**@type{!Object}*/ {};
 
-    goog.object.forEach(xiv.ui.Layout.INTERACTORS, function(inter){
+    goog.object.forEach(xiv.ui.layouts.Layout.INTERACTORS, function(inter){
 	objs[inter]  =  this.Planes[title][inter]
     }.bind(this))
 
@@ -126,7 +126,7 @@ xiv.ui.Layout.prototype.getPlaneInteractors = function(title) {
 /**
  * @return {!string}
  */
-xiv.ui.Layout.prototype.getTitle = function(){
+xiv.ui.layouts.Layout.prototype.getTitle = function(){
     return this.constructor.TITLE;
 }
 
@@ -135,7 +135,7 @@ xiv.ui.Layout.prototype.getTitle = function(){
 /**
  * @param {!xiv.ui.layout.Plane} plane
  */
-xiv.ui.Layout.prototype.addPlane = function(plane){
+xiv.ui.layouts.Layout.prototype.addPlane = function(plane){
     this.Planes = this.Planes ? this.Planes : {};
     this.Planes[plane.getTitle()] = plane;
     //window.console.log("PLANES", plane, this.Planes);
@@ -146,7 +146,7 @@ xiv.ui.Layout.prototype.addPlane = function(plane){
 /**
 * @inheritDoc
 */
-xiv.ui.Layout.prototype.updateStyle = function(){
+xiv.ui.layouts.Layout.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
 
     this.dispatchEvent({
@@ -159,7 +159,7 @@ xiv.ui.Layout.prototype.updateStyle = function(){
 /**
 * @inheritDoc
 */
-xiv.ui.Layout.prototype.disposeInternal = function(){
+xiv.ui.layouts.Layout.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
     moka.ui.disposeComponentMap(this.Planes_)
     delete this.Planes_;

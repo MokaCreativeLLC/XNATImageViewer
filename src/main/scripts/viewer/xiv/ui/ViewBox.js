@@ -18,9 +18,10 @@ goog.require('moka.ui.ZipTabs');
 goog.require('moka.ui.SlideInMenu');
 
 // xiv
-goog.require('xiv.renderer.XtkEngine');
+goog.require('xiv.vis.RenderEngine');
+goog.require('xiv.vis.XtkEngine');
 goog.require('xiv.ui.ProgressBarPanel');
-goog.require('xiv.ui.LayoutHandler');
+goog.require('xiv.ui.layouts.LayoutHandler');
 goog.require('xiv.ui.ViewableGroupMenu');
 
 
@@ -31,7 +32,7 @@ goog.require('xiv.ui.ViewableGroupMenu');
  * xiv.ui.ViewBox is also a communicator class in the sense that it gets
  * various interaction and visualization classes to talk to one another.  F
  * or instance, it links the moka.ui.SlideInMenu to the 
- * xiv.ui.LayoutHandler 
+ * xiv.ui.layouts.LayoutHandler 
  * to the xiv.ui.Displayer. 
  * @constructor
  * @extends {moka.ui.Component}
@@ -82,7 +83,7 @@ xiv.ui.ViewBox = function () {
 
 
     /**
-     * @type {?xiv.ui.LayoutHandler}
+     * @type {?xiv.ui.layouts.LayoutHandler}
      * @protected
      */
     this.LayoutHandler_ = null;
@@ -106,7 +107,7 @@ xiv.ui.ViewBox = function () {
 
 
     /**
-     * @type {xiv.renderer.XtkEngine}
+     * @type {xiv.vis.XtkEngine}
      * @private
      */
     this.Renderer_ = null;
@@ -293,7 +294,7 @@ xiv.ui.ViewBox.prototype.getViewableTrees =  function() {
 
 
 /**
- * @return {!xiv.ui.LayoutHandler} 
+ * @return {!xiv.ui.layouts.LayoutHandler} 
  * @public
  */
 xiv.ui.ViewBox.prototype.getLayoutHandler =  function() {
@@ -485,10 +486,10 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 	var interactors = this.LayoutHandler_.getCurrentLayout().
 		getPlaneInteractors(planeOr);
 
-	if (interactors[xiv.ui.Layout.INTERACTORS.SLIDER]){
+	if (interactors[xiv.ui.layouts.Layout.INTERACTORS.SLIDER]){
 
 	    var slider = /**@type {!moka.ui.GenericSlider}*/
-	    interactors[xiv.ui.Layout.INTERACTORS.SLIDER];
+	    interactors[xiv.ui.layouts.Layout.INTERACTORS.SLIDER];
 	    var currVol = plane.getVolume();
 	    
 	    var arrPos = 0;
@@ -521,8 +522,8 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 		    if (!currVol) return;
 		    /**
 		    currVol['index' + plane.getOrientation()] = 
-		    interactors[xiv.ui.Layout.INTERACTORS.SLIDER].getMaximum()
-		    - interactors[xiv.ui.Layout.INTERACTORS.SLIDER].getValue();
+		    interactors[xiv.ui.layouts.Layout.INTERACTORS.SLIDER].getMaximum()
+		    - interactors[xiv.ui.layouts.Layout.INTERACTORS.SLIDER].getValue();
 
 		    window.console.log('\n\n', planeOr);
 		    window.console.log(currVol._upperThreshold);
@@ -538,7 +539,7 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 		    case 'X': 
 			/**
 			planeYInteractors[
-			    xiv.ui.Layout.INTERACTORS.CROSSHAIR_VERTICAL].
+			    xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIR_VERTICAL].
 			    style.left = (
 				renderPlaneY.volume.WHRatio (
 				    Ratio 160 x 256) translated to 
@@ -574,15 +575,15 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     this.syncLayoutInteractorsToRenderer_();
     
     goog.events.unlisten(this.Renderer_, 
-			 xiv.renderer.XtkEngine.EventType.RENDER_START, 
+			 xiv.vis.RenderEngine.EventType.RENDER_START, 
 			 this.onRenderStart_.bind(this));
 
     goog.events.unlisten(this.Renderer_, 
-			 xiv.renderer.XtkEngine.EventType.RENDERING, 
+			 xiv.vis.RenderEngine.EventType.RENDERING, 
 			 this.onRendering_.bind(this));
 
     goog.events.unlisten(this.Renderer_, 
-			 xiv.renderer.XtkEngine.EventType.RENDER_END, 
+			 xiv.vis.RenderEngine.EventType.RENDER_END, 
 			 this.onRenderEnd_.bind(this));
 
 
@@ -711,19 +712,19 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
 
  
     goog.events.listen(this.Renderer_, 
-		       xiv.renderer.XtkEngine.EventType.RENDER_START, 
+		       xiv.vis.RenderEngine.EventType.RENDER_START, 
 		       this.onRenderStart_.bind(this));
 
     goog.events.listen(this.Renderer_, 
-		       xiv.renderer.XtkEngine.EventType.RENDERING, 
+		       xiv.vis.RenderEngine.EventType.RENDERING, 
 		       this.onRendering_.bind(this));
 
     goog.events.listen(this.Renderer_, 
-		       xiv.renderer.XtkEngine.EventType.RENDER_END, 
+		       xiv.vis.RenderEngine.EventType.RENDER_END, 
 		       this.onRenderEnd_.bind(this));
 
     goog.events.listen(this.LayoutHandler_, 
-		       xiv.ui.LayoutHandler.EventType.RESIZE, 
+		       xiv.ui.layouts.LayoutHandler.EventType.RESIZE, 
 		       this.onLayoutResize_.bind(this));
 
 
@@ -1013,7 +1014,7 @@ xiv.ui.ViewBox.prototype.initLayoutMenu_ = function(){
 * @private
 */
 xiv.ui.ViewBox.prototype.initLayoutHandler_ = function(){
-    this.LayoutHandler_ = new xiv.ui.LayoutHandler();
+    this.LayoutHandler_ = new xiv.ui.layouts.LayoutHandler();
     goog.dom.append(this.viewFrameElt_, this.LayoutHandler_.getElement());
     goog.dom.classes.add(this.LayoutHandler_.getElement(), 
 			 xiv.ui.ViewBox.CSS.VIEWLAYOUTHANDLER);
@@ -1048,11 +1049,11 @@ xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
 	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/3d.png'
 	},
 	'Four-Up': {
-	    OBJ: xiv.ui.FourUp,
+	    OBJ: xiv.ui.layouts.FourUp,
 	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/four-up.png'
 	},
 	'Conventional': {
-	    OBJ: xiv.ui.Conventional,
+	    OBJ: xiv.ui.layouts.Conventional,
 	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/conventional.png'
 	},
     }, function(val, key){
@@ -1115,7 +1116,7 @@ xiv.ui.ViewBox.prototype.initViewableGroupMenu_ = function(){
  * @private
  */
 xiv.ui.ViewBox.prototype.initRenderer_ = function(){
-    this.Renderer_ = new xiv.renderer.XtkEngine();
+    this.Renderer_ = new xiv.vis.XtkEngine();
 }
 
 
@@ -1288,7 +1289,7 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     if (goog.isDefAndNotNull(this.LayoutHandler_)){
     // Unlisten - Layout Handler
 	goog.events.unlisten(this.LayoutHandler_, 
-			     xiv.ui.LayoutHandler.EventType.RESIZE, 
+			     xiv.ui.layouts.LayoutHandler.EventType.RESIZE, 
 			     this.onLayoutResize_.bind(this));
 	
 	goog.dispose(this.LayoutHandler_.disposeInternal());
