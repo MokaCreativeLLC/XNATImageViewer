@@ -16,13 +16,3 @@ goog.provide('gxnat.vis');
 gxnat.vis = {};
 goog.exportSymbol('gxnat.vis', gxnat.vis);
 
-
-/**
- * @param {gxnat.slicer.Node.Node}
- */
-gxnat.vis.convertToRenderProperties = function(slicerNode){
-    window.console.log("CONVERT TO RENDER PROPERTIES. NEED TO WORK ON THIS!");
-    if (slicerNode instanceof gxnat.slicer.SceneViewNode){
-	return new gxnat.vis.RenderProperties(slicerNode); 	
-    }
-}

@@ -69,7 +69,7 @@ xiv.renderer.XtkPlane = function() {
     this.renderProgress_;
 
 
-    window.console.log("\n\n\n\nTHIS IS ON", this.isOn_);
+    //window.console.log("\n\n\n\nTHIS IS ON", this.sOn_);
 }
 goog.inherits(xiv.renderer.XtkPlane, goog.events.EventTarget);
 goog.exportSymbol('xiv.renderer.XtkPlane', xiv.renderer.XtkPlane);
@@ -162,6 +162,11 @@ xiv.renderer.XtkPlane.prototype.init = function(containerElt) {
 */
 xiv.renderer.XtkPlane.prototype.add = function(xObj) {
 
+    if (!this.isOn_){
+	window.console.log('Not adding xObj to Plane' + this.orientation);
+	return;
+    }
+
     window.console.log("NEED TO IMPLEMENT VOLUME HANDLING FOR 2D PLANES");
     if(xObj.isSelectedVolume === true) {
 	//console.log("add selected vol", xObj);
@@ -196,55 +201,15 @@ xiv.renderer.XtkPlane.prototype.setOn = function(on) {
 /**
  * @public
  */
-xiv.renderer.XtkPlane.prototype.getRenderProgress = function() {
-    return this.renderProgress_;
-}
-
-
-
-/**
- * @protected
- */
-xiv.renderer.XtkPlane.prototype.checkRenderProgress_ = function() {
-
-
-    this.progTimer_ = goog.Timer.callOnce(function() {
-
-	this.progTimer_ = null; // destroy the timer
-	var progThumb = goog.dom.getElementByClass('progress-bar-thumb', 
-						   this.Renderer.container);
-
-	if (!progThumb){
-	    window.console.log("END HERE!");
-	    this.renderProgress_ = 100;
-	    this.dispatchEvent({
-		type: xiv.renderer.XtkPlane.EventType.RENDER_END,
-		percentComplete: this.renderProgress_
-	    })
-	    return;
-	}
-
-	this.renderProgress_ = parseInt(progThumb.style.width, 10);
-
-	this.dispatchEvent({
-	    type: xiv.renderer.XtkPlane.EventType.RENDERING,
-	    percentComplete: this.renderProgress_
-	})
-
-	this.checkRenderProgress_();
-
-    }.bind(this), 200); // check again in 100 ms
-}
-
-
-
-/**
- * @public
- */
 xiv.renderer.XtkPlane.prototype.render = function() {
+    if (!this.isOn_) { 
+	window.console.log('Plane' + this.orientation + ' is switched off.');
+	return 
+    };
+
     this.Renderer.render();  
-  //goog.dom.getElementsByClass('progress-bar-horizontal')[0].style.opacity = 0;
-    //this.checkRenderProgress_();
+
+
 };
 
 

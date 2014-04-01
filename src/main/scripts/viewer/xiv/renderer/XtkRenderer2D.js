@@ -2,6 +2,10 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
+// xiv
+goog.require('xiv.renderer.XtkEngine');
+
+
 // xtk
 goog.require('X.renderer2D');
 
@@ -62,6 +66,21 @@ xiv.renderer.XtkRenderer2D.prototype.getVolume = function() {
 xiv.renderer.XtkRenderer2D.prototype.onSliceNavigation = function() {
     window.console.log("SLICE NAVIGATED!", this.orientation_);
 }
+
+
+/**
+ * @inheritDoc
+ */
+xiv.renderer.XtkRenderer2D.prototype.onProgress = function(event) {
+    goog.base(this, 'onProgress', event);
+    window.console.log("ON PROGRESS!", event._value);
+    this.dispatchEvent({
+	type: xiv.renderer.XtkEngine.EventType.RENDERING,
+	value: event._value,
+	obj: this
+    })
+};
+
 
 
 

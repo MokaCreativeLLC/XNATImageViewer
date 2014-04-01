@@ -139,7 +139,7 @@ goog.exportSymbol('gxnat.slicer.LayoutNode', gxnat.slicer.LayoutNode);
  * @extends {gxnat.slicer.Node}
  */
 gxnat.slicer.AnnotationsNode = 
-function(position, color, fcsvText, markupsFiducialId, displayNodeId) {
+function(position, color, fcsvText, markupsFiducialId, displayNodeId, name) {
     goog.base(this);
 
     this.position = position;
@@ -147,6 +147,7 @@ function(position, color, fcsvText, markupsFiducialId, displayNodeId) {
     this.fcsvText = fcsvText;
     this.markupsFiducialId = markupsFiducialId;
     this.displayNodeId = displayNodeId;
+    this.name = name;
 }
 goog.inherits(gxnat.slicer.AnnotationsNode, gxnat.slicer.Node);
 goog.exportSymbol('gxnat.slicer.AnnotationsNode', 
@@ -230,9 +231,9 @@ gxnat.slicer.DisplayNode = function(sceneViewElt, sceneViewDisplayableElt){
     this.color =  gxnat.slicer.toFloatArray(
 	displayNodeElt.getAttribute('color'));
     this.visible =  displayNodeElt.getAttribute('visibility') === 'true';
-    this.origin =  gxnat.slicer.toFloatArray(sceneNode.getAttribute('origin'));
+    this.origin =  gxnat.slicer.toFloatArray(sceneViewElt.getAttribute('origin'));
     this.colorMode =  parseInt(displayNodeElt.getAttribute('colorMode'), 10);
-    this.ijkToRASDirections =  sceneNode.getAttribute('ijkToRASDirections'); 
+    this.ijkToRASDirections =  sceneViewElt.getAttribute('ijkToRASDirections'); 
 
 
 }

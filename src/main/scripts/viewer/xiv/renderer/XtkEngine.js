@@ -25,6 +25,20 @@ xiv.renderer.XtkEngine = function () {
     goog.base(this);
     
 
+
+    /**
+     * @type {!Object.<string, X.Object>}
+     * @private
+     */
+    this.currXObjects_ = {
+	'volumes' : [],
+	'meshes' : [],
+	'fibers': [],
+	'spheres' : [],
+    };
+
+
+
     /**
      * @type {!xiv.renderer.XtkPlane2D}
      * @private
@@ -61,18 +75,8 @@ xiv.renderer.XtkEngine = function () {
      * @type {!xiv.renderer.XtkPlane2D}
      * @private
      */
-    this.primaryRenderPlane_ = this.PlaneX_;
-
-
-
-    goog.events.listen(this.primaryRenderPlane_, 
-		       xiv.renderer.XtkPlane.EventType.RENDERING, 
-		       this.onRendering_.bind(this))
-
-    goog.events.listen(this.primaryRenderPlane_, 
-		       xiv.renderer.XtkPlane.EventType.RENDER_END, 
-		       this.onRenderEnd_.bind(this))
-
+    this.primaryRenderPlane_ = null;
+    this.setPrimaryRenderPlane(this.PlaneX_);
 }
 goog.inherits(xiv.renderer.XtkEngine, xiv.renderer.Engine);
 goog.exportSymbol('xiv.renderer.XtkEngine', xiv.renderer.XtkEngine);
@@ -115,79 +119,215 @@ xiv.renderer.XtkEngine.ANATOMICAL_TO_CARTESIAN =  {
 
 
 /**
- * @param {!string || !Array.string} files
+ * @param {!gxnat.vis.ViewableGroup} ViewableGroup
+ * @private
+ */
+xiv.renderer.XtkEngine.prototype.getAnnotations_ = function(ViewableGroup) {
+    goog.array.forEach(ViewableGroup.getRenderProperties().annotations,
+		       function(annotationsNode){
+			   this.currXObjects_['spheres'].push(
+			       xiv.renderer.XtkEngine.createAnnotation(
+				   annotationsNode))
+		       }.bind(this))
+}
+
+
+
+/**
+ * @param {xiv.renderer.XtkPlane} Plane
+ * @public
+ */
+xiv.renderer.XtkEngine.prototype.setPrimaryRenderPlane = function(Plane) {
+    this.primaryRenderPlane_ = Plane;
+    this.setPrimaryRenderPlaneEvents_();
+}
+
+
+
+/**
+ * @private
+ */
+xiv.renderer.XtkEngine.prototype.setPrimaryRenderPlaneEvents_ = function() {
+    
+
+    // Unlisten on the given planes
+    goog.object.forEach(this.getPlanes(), function(Plane, planeOr){
+	goog.events.unlisten(Plane.getRenderer(), 
+			     xiv.renderer.XtkEngine.EventType.RENDERING, 
+			     this.onRendering_.bind(this))
+	goog.events.unlisten(Plane.getRenderer(), 
+			     xiv.renderer.XtkEngine.EventType.RENDER_END, 
+			     this.onRenderEnd_.bind(this))
+    }.bind(this))
+
+
+
+    // Re-listen on the primary
+    this.primaryRenderPlane_.init();
+    goog.events.listen(this.primaryRenderPlane_.getRenderer(), 
+		       xiv.renderer.XtkEngine.EventType.RENDERING, 
+		       this.onRendering_.bind(this))
+
+    goog.events.listen(this.primaryRenderPlane_.getRenderer(), 
+		       xiv.renderer.XtkEngine.EventType.RENDER_END, 
+		       this.onRenderEnd_.bind(this))
+}
+
+
+
+/**
+ * @param {!gxnat.vis.ViewableGroup} ViewableGroup
+ * @private
+ */
+xiv.renderer.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
+    
+    //
+    // Annotations
+    //
+    if (goog.isDefAndNotNull(ViewableGroup.getRenderProperties().annotations)){
+	this.getAnnotations_(ViewableGroup);
+    }
+
+
+    //
+    // Volumes, meshes and fibers
+    //
+    goog.array.forEach(ViewableGroup.getViewables(), function(Viewable){
+	currXObj = xiv.renderer.XtkEngine.createXObject(Viewable.getFiles());
+	renderProps = Viewable.getRenderProperties();
+
+	// Volumes
+	if (currXObj instanceof X.volume) {
+	    this.constructor.setRenderProperties_Volume_(
+		currXObj, renderProps);
+	    this.currXObjects_['volumes'].push(currXObj);
+	}
+
+	// Meshes
+	else if (currXObj instanceof X.mesh){
+	    this.constructor.setRenderProperties_Mesh_(
+		currXObj, renderProps);
+	    this.currXObjects_['meshes'].push(currXObj);
+	}
+
+	// Fibers
+	else if (currXObj instanceof X.fiber){
+	    this.constructor.setRenderProperties_Fiber_(
+		currXObj, renderProps);
+	    this.currXObjects_['fibers'].push(currXObj);
+	}
+    }.bind(this))
+}
+
+
+
+/**
+ * @private
+ */
+xiv.renderer.XtkEngine.prototype.render3dPlane = function(){
+    
+    window.console.log("No volumes found! Only rendering in 3D!");
+    this.setPrimaryRenderPlane(this.PlaneV_);
+    this.PlaneV_.init();
+    goog.object.forEach(this.currXObjects_, function(xObjArr, key){
+	if (key !== 'volumes'){
+	    goog.array.forEach(xObjArr, function(xObj){
+		this.PlaneV_.add(xObj);
+	    }.bind(this))
+	}
+    }.bind(this))
+    this.PlaneV_.render();
+}
+
+
+
+/**
+ * @private
+ */
+xiv.renderer.XtkEngine.prototype.renderAllPlanes = function(){
+    var selVol = this.getSelectedVolume();
+    var otherXObjects = [];
+
+    //
+    // Store all non-volume objects.
+    //
+    goog.object.forEach(this.currXObjects_, function(xObjArr, key){
+	if (key !== 'volumes'){
+	    goog.array.forEach(xObjArr, function(xObj){
+		otherXObjects.push(xObj);
+	    })
+	}
+    }.bind(this))
+
+    //
+    // Add the selected volume
+    //
+    otherXObjects.push(selVol);
+    window.console.log("OTHER X OBJECTS", otherXObjects);
+
+    //
+    // Add objects to primary render plane
+    //
+    goog.array.forEach(otherXObjects, function(xObj){
+	this.primaryRenderPlane_.add(xObj);
+    }.bind(this))
+
+    //
+    // Once rendered, add to secoundary planes
+    //
+    this.primaryRenderPlane_.Renderer.onShowtime = function(){
+	this.renderNonPrimary_(otherXObjects)
+    }.bind(this);
+
+    //
+    // Render!
+    //
+    this.primaryRenderPlane_.render();
+}
+
+
+
+/**
+ * @param {!gxnat.vis.ViewableGroup} ViewableGroup
  * @return {Array.<xiv.renderer.XtkPlane>}
  */
-xiv.renderer.XtkEngine.prototype.render = function (files) {
-
-    window.console.log("RENDERING THIS!", files)
-    var viewables = xiv.renderer.XtkEngine.getViewables(files);
-    window.console.log("VIEWABLES!", viewables)
-    var xObjects = [];
-    var hasVolume = false;
-    var currXObj;
-    goog.object.forEach(viewables, function(fileColl){
-	currXObj = xiv.renderer.XtkEngine.createXObject(fileColl);
-	if (currXObj instanceof X.volume) {
-	    window.console.log("HAS VOLUME!");
-	    hasVolume = true;
-	}
-	xObjects.push(xiv.renderer.XtkEngine.createXObject(fileColl));
-    })
-
-    this.currXObjects_ = xObjects;
-
-
+xiv.renderer.XtkEngine.prototype.render = function (ViewableGroup) {
+    //
+    // Create the XObjects
+    //
+    this.createXObjects_(ViewableGroup);
 
     //------------------------------------------ 
     //
     //  IMPORTANT!!!!!!!!!       DO NOT ERASE!!!
     //
     //  You have to add xObject to one plane at a time as opposed to 
-    //  all at once.  If there are volumes, we start with planeX (e.g.
-    //  this.primaryRenderPlane_).
+    //  all at once.  If there are volumes, we start with the
+    //  this.primaryRenderPlane_ 
     //
     //  IF THERE ARE NO VOLUMES, we feed everthing into the 3D renderer.
     //
     //------------------------------------------
 
+    if (this.currXObjects_['volumes'].length > 0) {
+	
+	// Get the first ON plane.
+	var Planes = this.getPlanes();
+	var key = '';
+	for (key in Planes) {
+	    if (Planes[key].isOn()){
+		this.setPrimaryRenderPlane(Planes[key]);
+		break;
+	    }
+	}
+	
+	// Then render
+	this.renderAllPlanes();
+	return;
 
-    //
-    // If there are volumes, we use all renderers.
-    //
-    if (hasVolume) {
-
-	goog.array.forEach(xObjects, function(xObj){
-	    this.primaryRenderPlane_.add(xObj);
-	}.bind(this))
-
-	this.primaryRenderPlane_.Renderer.onShowtime = function(){
-	    this.renderNonPrimary_(xObjects)
-	}.bind(this);
-
-	this.primaryRenderPlane_.render();
+    } else if (this.PlaneV_.isOn()) {
+	this.render3dPlane();
     }
-
-    //
-    // Otherwise, we just use the 3D renderer
-    //
-    else {
-	window.console.log("No volumes found! Only rendering in 3D!");
-	this.PlaneV_.init();
-
-	goog.array.forEach(xObjects, function(xObj){
-
-	    window.console.log("RENDEIRNG THIS", xObj);
-	    //xObj.file = xObj._file;
-	    this.PlaneV_.add(xObj);
-	}.bind(this))
-	this.PlaneV_.render();
-
-	goog.array.forEach(xObjects, function(xObj){
-	    window.console.log("RENDEIRNG THIS", xObj);
-	}.bind(this))
-    }
-
 }
 
 
@@ -197,15 +337,40 @@ xiv.renderer.XtkEngine.prototype.render = function (files) {
  */
 xiv.renderer.XtkEngine.prototype.renderNonPrimary_ = function(xObjects){
     goog.object.forEach(this.getPlanes(), function(Plane, planeOr){
+
 	// We already rendered the primary plane
-	if (Plane == this.primaryRenderPlane_) { return };
+	if ((Plane == this.primaryRenderPlane_) ||
+	   !Plane.isOn()) { return };
+
 	// Add objects to other planes.
 	goog.array.forEach(xObjects, function(xObj){
 	    Plane.add(xObj);
 	})
-	// The render them.
+
+	// Then render them.
 	Plane.render();
     })
+}
+
+
+
+/**
+ * @return {X.Volume}
+ * @public
+ */
+xiv.renderer.XtkEngine.prototype.getSelectedVolume = function(){
+
+    if (this.currXObjects_['volumes'].length == 0) {return};
+
+    var selectedVolumeFound = false;
+    goog.array.forEach(this.currXObjects_['volumes'], function(vol){
+	if (vol['isSelectedVolume']){
+	    return vol;
+	}
+    });
+    if (!selectedVolumeFound){
+	return this.currXObjects_['volumes'][0];
+    } 
 }
 
 
@@ -221,14 +386,53 @@ xiv.renderer.XtkEngine.prototype.updateStyle = function(){
 
 
 
+/**
+ * @param {!X.Object} xObj 
+ * @param {!gxnat.vis.RenderProperties} renderProperties 
+ * @private
+ */
+xiv.renderer.XtkEngine.setRenderProperties_Mesh_ = 
+function(xObj, renderProperties){
+    xObj.color = renderProperties.color || [.5,.5,.5];
+    xObj.opacity = renderProperties.opacity || 1;
+
+}
+
+
+/**
+ * @param {!X.Object} xObj 
+ * @param {!gxnat.vis.RenderProperties} renderProperties 
+ * @private
+ */
+xiv.renderer.XtkEngine.setRenderProperties_Volume_ = 
+function(xObj, renderProperties){
+    window.console.log("HAS VOLUME!", xObj, renderProperties);
+
+    xObj.origin = renderProperties.origin || [0,0,0];
+    xObj.upperThreshold = renderProperties.upperThreshold;
+    xObj.lowerThreshold = renderProperties.lowerThreshold;
+    xObj.volumeRendering = renderProperties.volumeRendering;
+    xObj['isSelectedVolume'] = renderProperties.isSelectedVolume;
+    
+    if (renderProperties.labelMapFile){
+	xObj.labelmap.file = renderProperties.labelMapFile;
+	xObj.labelmap.colortable.file = 
+	    renderProperties.labelMapColorTableFile;
+    }
+}
+
+
+
+
 
 /**
  * @private
  */
 xiv.renderer.XtkEngine.prototype.onRendering_ = function(e){
+    window.console.log("ON RENDERING! ", e.value, e.obj);
     this.dispatchEvent({
 	type: xiv.renderer.XtkEngine.EventType.RENDERING,
-	percentComplete: e.percentComplete
+	value: e.value
     })
 }
 
@@ -267,14 +471,11 @@ xiv.renderer.XtkEngine.prototype.getPlanes = function () {
 xiv.renderer.XtkEngine.prototype.dispose = function () {
     goog.base(this, 'dispose');
     
+    goog.events.removeAll(this.PlaneX_);
+    goog.events.removeAll(this.PlaneY_);
+    goog.events.removeAll(this.PlaneZ_);
+    goog.events.removeAll(this.PlaneV_);
 
-    goog.events.unlisten(this.primaryRenderPlane_, 
-		       xiv.renderer.XtkPlane.EventType.RENDERING, 
-		       this.onRendering_.bind(this))
-
-    goog.events.unlisten(this.primaryRenderPlane_, 
-		       xiv.renderer.XtkPlane.EventType.RENDER_END, 
-		       this.onRenderEnd_.bind(this))
 
     delete this.primaryRenderPlane_;
 
@@ -423,21 +624,24 @@ xiv.renderer.XtkEngine.generateXtkObjectFromExtension = function(ext) {
  * and applying the relevant parameters to that
  * sphere (center, name, color, radius, etc.).
  * 
- * @param {Object} annotationObj The annotation object with the relevant properties.
- * @param {number=} opt_radius The optional radius of the annotation object (default is 3).
+ * @param {!gxnat.slicer.AnnotationsNode} annotationsNode
+ * @param {number=} opt_radius The optional radius.
  * @return {X.sphere}
  */
-xiv.renderer.XtkEngine.makeAnnotation = function(annotationObj, opt_radius) {
+xiv.renderer.XtkEngine.createAnnotation = 
+function(annotationsNode, opt_radius) {
 
     var annotation = new X.sphere();
-    annotation.center = annotationObj['location'];
-    annotation.caption = annotationObj['name'];
-    annotation.name = annotationObj['name'];
+    annotation.center = annotationsNode.position;
+    annotation.caption = annotationsNode.name;
+    annotation.name = annotationsNode.name;
     annotation.radius = (opt_radius === undefined) ? 3 : opt_radius;
-    window.console.log(annotationObj['opacity'], annotationObj['visible']);
-    annotation.opacity = annotationObj['opacity'];
-    annotation.visible = annotationObj['visible'];
-    annotation.color = annotationObj['color'];
+    annotation.color = [10,0,0];
+
+    //window.console.log(annotationObj['opacity'], annotationObj['visible']);
+    //annotation.opacity = annotationObj['opacity'];
+    //annotation.visible = annotationObj['visible'];
+    
     window.console.log("\n\n\n\t\tANNOT", annotation);
     return annotation;
 };

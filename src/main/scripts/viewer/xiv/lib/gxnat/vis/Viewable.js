@@ -11,7 +11,10 @@ goog.require('gxnat.vis.Renderable');
  * A Viewable is basically a list of files with optional render properties,
  * since it is a sub-class of Renderable.
  * 
- * @extends {goog.Disposable}
+ * @param {string= | Array.string=} opt_files
+ * @param {gxnat.slicer.Node=} opt_renderProperties A subclass of 
+ *    gxnat.slicer.Node that will be converted to render properties.
+ * @extends {gxnat.vis.Renderables}
  */
 goog.provide('gxnat.vis.Viewable');
 gxnat.vis.Viewable = function(opt_files, opt_renderProperties) {
@@ -22,6 +25,11 @@ gxnat.vis.Viewable = function(opt_files, opt_renderProperties) {
      * @private
      */
     this.files_ = opt_files || [];
+
+
+    if (goog.isDefAndNotNull(opt_renderProperties)){
+	this.setRenderProperties(opt_renderProperties);
+    }
 }
 goog.inherits(gxnat.vis.Viewable, gxnat.vis.Renderable);
 goog.exportSymbol('gxnat.vis.Viewable', gxnat.vis.Viewable);

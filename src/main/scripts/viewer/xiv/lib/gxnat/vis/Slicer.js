@@ -7,6 +7,8 @@ goog.require('goog.string');
 
 // moka
 goog.require('moka.string');
+
+// gxnat
 goog.require('gxnat');
 goog.require('gxnat.slicer');
 goog.require('gxnat.vis.AjaxViewableTree');
@@ -16,6 +18,7 @@ goog.require('gxnat.vis.ViewableGroup');
 
 /**
  * Subclass of the 'Viewable' class pertaining to Slicer .mrb files.
+ *
  * @param {!string} experimentUrl The experiment-level url of the viewable.
  * @param {!Object} viewableJson The json associated with the viewable.
  * @param {Function=} opt_initComplete The callback when the init process is 
@@ -27,6 +30,7 @@ goog.provide('gxnat.vis.Slicer');
 gxnat.vis.Slicer = function(experimentUrl, viewableJson, 
 				      opt_initComplete) {
 
+    // Set the category
     this.setCategory('Slicer Scenes');
 
 
@@ -42,26 +46,19 @@ gxnat.vis.Slicer = function(experimentUrl, viewableJson,
     //
     goog.base(this, experimentUrl, viewableJson, function() {
 
-	//
 	// Then get mrml nodes
-	//
 	gxnat.slicer.getMrmlNodes(this.mrbFiles_, this.queryUrl, 
         function(mrmlNodes) {
 
-	    //
 	    // Then we get the sceneViewNodes within the mrml nodes.
-	    //
 	    gxnat.slicer.getSceneViewNodes(mrmlNodes, 
 		function(sceneViewNodes){
-		    window.console.log("\n\n*****SCENE VIEW NODES", 
-				       sceneViewNodes);
 
-		    //
-		    // Then convert SceneView nodes to viewable groups
-		    //
-		    this.convertToViewableGroups(sceneViewNodes, 
-						 mrmlNodes,
+		    // Then convert SceneView nodes to viewableGroups
+		    this.convertToViewableGroups(sceneViewNodes, mrmlNodes,
 						 opt_initComplete);
+
+		    //window.console.log("\n\nSCN VIEW NODES", sceneViewNodes);
 		}.bind(this))	
 	}.bind(this))
     }.bind(this))
@@ -119,109 +116,61 @@ function(sceneViewNodes, mrmlNodes, opt_initComplete) {
     this.mrml = mrmlNodes;
     this.sceneViews = sceneViewNodes;
 
-    goog.array.forEach(this.sceneViews, function(sceneView){
+    var viewTypes;
+    var ViewablesPerGroup;
+    var fileName;
+    var ViewableGroup;
 
-	var ViewablesPerSceneView = [];
-	var ViewableGroupProperties = {};
-	var ViewableGroupFiles = [];
-	var viewTypes = [sceneView.volumes || [], 
-			 sceneView.meshes  || [], 
-			 sceneView.fibers  || []];
+    //
+    // Cycle through the sceneView nodes.
+    //
+    goog.array.forEach(this.sceneViews, function(sceneView) {
+	viewTypes = [sceneView.volumes || [],  sceneView.meshes  || [], 
+		     sceneView.fibers  || []];
+	ViewablesPerGroup = [];
 
-	var fileName = '';
-
+	// Cycle through the meshes, volumes and vibers in the sceneView
 	goog.array.forEach(viewTypes, function(viewType){
 	    goog.array.forEach(viewType, function(displayable){
 		
-		//
-		// Clean the file URLS so we can query them.
-		//
-		//window.console.log("FILENAME", displayable.file, 
-		//		   this.mrbFiles_);
+		// Clean the file URLS so we can query them correctly.
 		fileName = gxnat.slicer.matchFileToSet(
 		    goog.string.path.basename(displayable.file), 
-		    this.mrbFiles_)
-		
+		    this.mrbFiles_);
 
-		//window.console.log("FILENAME2", displayable.file, 
-		//		   fileName);
-
-		//
-		// Merge the properties into one set.
-		//
-		ViewableGroupProperties = 
-		    goog.object.clone(displayable.
-				      properties.general[0]);
-		goog.object.extend(ViewableGroupProperties,
-				   goog.object.clone(
-				       displayable.properties.specific))
-
-		//
-		// For label maps...
-		//
-		if (ViewableGroupProperties.labelMap){
-		    
-		    ViewableGroupProperties.labelMap.file = 
-			gxnat.slicer.matchFileToSet(
-			    ViewableGroupProperties.labelMap.file, 
-			    this.mrbFiles_)
-
-
-		    ViewableGroupProperties['colorTableFile'] =
-			gxnat.slicer.matchFileToSet(
-			    ViewableGroupProperties.labelMap.colorTableFile, 
-			    this.mrbFiles_)
-		    
+		// Make some specialized adjustments for volumes
+		if (displayable.properties instanceof 
+		    gxnat.slicer.VolumeDisplayNode) {
+		    this.adjustVolumeDisplayProperties_(displayable);
 		}
 
+		// Store each viewable 
+		ViewablesPerGroup.push(new gxnat.vis.Viewable(
+		    fileName, displayable.properties))
 
-		//ViewableGroupFiles.push(fileName);
-		ViewablesPerSceneView.push(new gxnat.vis.Viewable(
-		    fileName, ViewableGroupProperties))
-
+		//window.console.log("FILENAME", displayable.file);
+		//window.console.log("FILENAME2", displayable, fileName);
 	    }.bind(this))
 	}.bind(this))
 
 	
-	var viewGroup = new gxnat.vis.ViewableGroup(
-	    ViewablesPerSceneView);
+	// Create the ViewableGroup
+	ViewableGroup = new gxnat.vis.ViewableGroup(ViewablesPerGroup);
 
-	window.console.log("MATCH THIS!", 
-			   gxnat.slicer.getThumbnail(sceneView.element, 
-						     this.mrml[0].document),
-			   this.mrbFiles_,
-			   gxnat.slicer.matchFileToSet(
-			       gxnat.slicer.getThumbnail(sceneView.element, 
-							 this.mrml[0].document), 
-			       this.mrbFiles_)
-			  );
-	//
-	// Set the thumbnail url of the sceneView
-	//
-	viewGroup.setThumbnailUrl(
+	// Set the thumbnail url of the ViewableGroup
+	ViewableGroup.setThumbnailUrl(
 	    gxnat.slicer.matchFileToSet(
 		gxnat.slicer.getThumbnail(sceneView.element, 
-					  this.mrml[0].document), 
-		this.mrbFiles_)
+			this.mrml[0].document), this.mrbFiles_)
 	);
 
-
-	//
-	// Set the title of the sceneView
-	//
-	viewGroup.setTitle(sceneView.element.getAttribute('name'));
-	viewGroup.setRenderProperties(
-	    gxnat.vis.convertToRenderProperties(sceneView));
-	
-	this.ViewableGroups.push(viewGroup);
+	// Set the other properties and store
+	ViewableGroup.setTitle(sceneView.element.getAttribute('name'));
+	ViewableGroup.setRenderProperties(sceneView);
+	this.ViewableGroups.push(ViewableGroup);
 
     }.bind(this))
 
-
-    //
-    // Convert the scene View nodes to Viewables
-    //
-    window.console.log('\n\n\n\nSLICER VIEWABLE', this);
 
     //
     // Init complete function.
@@ -229,10 +178,41 @@ function(sceneViewNodes, mrmlNodes, opt_initComplete) {
     if (opt_initComplete){
 	opt_initComplete(this);
     }
-
 }
 
 
+
+
+/**
+ * @param {!gxnat.slicer.DisplayableNode} displayable
+ */
+gxnat.vis.Slicer.prototype.adjustVolumeDisplayProperties_ = 
+function(displayable){
+    //
+    // We have to make some URL adjustments to label map files
+    //
+    if ( displayable.properties.labelMap) {
+
+	// The label map file
+	displayable.properties['labelMapFile'] = 
+	    gxnat.slicer.matchFileToSet(
+		displayable.properties.labelMap.file, 
+		this.mrbFiles_);
+
+	// The colortable file
+	if (displayable.properties.labelMap.colorTableFile !==
+	   gxnat.slicer.GENERIC_COLORTABLE_FILE) {
+	    displayable.properties['colorTableFile'] =
+		gxnat.slicer.matchFileToSet(
+		    displayable.properties.labelMap.colorTableFile, 
+		    this.mrbFiles_);
+	} else {
+	    displayable.properties['colorTableFile'] =
+		displayable.properties.labelMap.colorTableFile;
+	}
+	//window.console.log(displayable);
+    }
+}
 
 
 

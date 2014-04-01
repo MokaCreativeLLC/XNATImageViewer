@@ -407,17 +407,44 @@ xiv.ui.ViewBox.prototype.setLayout = function(viewPlane) {
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
-    //this.LayoutHandler_.showProgBarLayout(true);
+
 }
 
 
 
 /**
  * As stated.
+ * @param {Event} e
  * @private
  */
 xiv.ui.ViewBox.prototype.onRendering_ = function(e){
-    this.ProgressBarPanel_.setValue(e.percentComplete);
+
+    if (e.value > .99 && !this.progFadeOut_){
+	
+	window.console.log("\n\n2DONE!!");
+	this.progFadeOut_ = true;
+	this.ProgressBarPanel_.setValue(100);
+
+	this.progTimer_ = goog.Timer.callOnce(function() {
+
+	    window.console.log("DONE!!");
+	    
+	    this.progTimer_ = null;
+	    
+
+	    this.hideSubComponent_(this.ProgressBarPanel_, 400, function(){
+		window.console.log("HIDE ONCE!");
+		this.progFadeOut_ = null;
+	    }.bind(this));
+
+	}.bind(this), 1700); // check again in 500 ms
+
+
+	
+    } else {
+	this.showSubComponent_(this.ProgressBarPanel_, 0);
+	this.ProgressBarPanel_.setValue(e.value * 100);
+    }
 }
 
 
@@ -637,9 +664,9 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
  * @param {!gxnat.vis.ViewableTree | !gxnat.vis.ViewableGroup} ViewableTree.
  * @public
  */
-xiv.ui.ViewBox.prototype.load = function (ViewableNode) {
+xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
 
-    window.console.log("LOAD", ViewableNode);
+    window.console.log("LOAD", ViewableSet);
 
     if (!this.subComponentsInitialized_){
 	this.initSubComponents_();
@@ -649,22 +676,20 @@ xiv.ui.ViewBox.prototype.load = function (ViewableNode) {
 					 goog.dom.createDom('div', {
 					     'color': 'rgb(255,255,255)',
 					     'background': 'rgb(205,25,48)',
-					 }, 'Hello World.'))
-
+					 }, 'Hello World.'));
 
 	this.ZipTabs_.setTabPageContents('TestTab2',
 					 goog.dom.createDom('div', {
 					     'color': 'rgb(255,255,255)',
 					     'background': 'rgb(205,25,48)',
-					 }, 'Hello World 2.'))
+					 }, 'Hello World 2.'));
 
 	window.console.log('temporarily suspending progress bar panel');
-	
     }
 
     
-    if (ViewableNode instanceof gxnat.vis.ViewableTree){
-	this.loadViewableTree_(ViewableNode);
+    if (ViewableSet instanceof gxnat.vis.ViewableTree){
+	this.loadViewableTree_(ViewableSet);
 	return;
     }
 
@@ -703,24 +728,13 @@ xiv.ui.ViewBox.prototype.load = function (ViewableNode) {
 
 
     this.hideSubComponent_(this.ViewableGroupMenu_, 400, function(){
-	//this.showSubComponent_(this.ProgressBarPanel_, 400);
+	this.showSubComponent_(this.ProgressBarPanel_, 0);
     }.bind(this))
 
 
-    window.console.log("RENDERING", ViewableNode, ViewableNode.getTitle);
+    window.console.log("RENDERING", ViewableSet, ViewableSet.getTitle);
     
-    if (ViewableNode.getTitle() == 'scan'){
-	window.console.log("RENDERING SCAN");
-	this.Renderer_.render(ViewableNode.getAllViewableFiles());
-    } else {
-	window.console.log("TEST RENDERING SLICER");
-	this.Renderer_.render(ViewableNode.getAllViewableFiles()[0]);
-    }
-    return
-
-
-    
-
+    this.Renderer_.render(ViewableSet);
 
     
     // Remember the time in which the thumbnail was loaded

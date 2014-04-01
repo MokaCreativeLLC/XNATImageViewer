@@ -22,6 +22,14 @@ goog.exportSymbol('gxnat.slicer', gxnat.slicer);
 
 
 /**
+ * @public
+ */
+gxnat.slicer.GENERIC_COLORTABLE_FILE = 
+    '/xnat/scripts/viewer/xiv/renderer/GenericColorTable.txt';
+
+
+
+/**
  * @param {!Array.<string>} fileList
  * @return {!Array.<string>}
  */
@@ -392,6 +400,7 @@ function(sceneView, mrmlNode, callback) {
     var currId = '';
     var displayNodeId = '';
     var markupsFiducialId = '';
+    var name = '';
     var i = 0;
     var mFid;
     var dispFid;
@@ -461,7 +470,7 @@ function(sceneView, mrmlNode, callback) {
 		position = [parseFloat(splitLine[1]), 
 			    parseFloat(splitLine[2]),
 			    parseFloat(splitLine[3])]
-		
+		name = splitLine[11];
 		color = [1,0,0];
 		currId = '';
 		displayNodeId = '';
@@ -508,7 +517,7 @@ function(sceneView, mrmlNode, callback) {
 		//
 		annots.push(new gxnat.slicer.AnnotationsNode(
 		    position, color, splitLine,
-		    markupsFiducialId, displayNodeId));
+		    markupsFiducialId, displayNodeId, name));
 		
 	    })
 
@@ -739,9 +748,8 @@ gxnat.slicer.getVolumes = function(sceneView) {
 		    if (node.getAttribute('colorNodeID').indexOf(
 			"vtkMRMLColorTableNodeFileGeneric")
 			!= -1) {
-			
-			volumeNode.colorTableFile = 'genericColorTableFile.txt'
-			
+			volumeNode.colorTableFile =
+			    gxnat.slicer.GENERIC_COLORTABLE_FILE;
 
 		    } else {
 			window.console.log("Need to implement method for " + 
@@ -793,7 +801,7 @@ gxnat.slicer.getVolumes = function(sceneView) {
 	volume.properties = new gxnat.slicer.VolumeDisplayNode(
 	    sceneView, volume.node, selectedVolumeID);
 	if (volume.labelMap) { 
-	    volume.properties.specific.labelMap = volume.labelMap;
+	    volume.properties.labelMap = volume.labelMap;
 	    delete volume.labelMap;
 	}
     })

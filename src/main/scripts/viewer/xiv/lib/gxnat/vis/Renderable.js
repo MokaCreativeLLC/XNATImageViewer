@@ -19,18 +19,21 @@ gxnat.vis.Renderable = function(opt_displayProperties) {
      * @private
      * @type {?gxnat.vis.RenderProperties}
      */
-    this.renderProperties_ = opt_displayProperties || null;
+    this.RenderProperties_ = opt_displayProperties || null;
 }
 goog.inherits(gxnat.vis.Renderable, gxnat.vis.VisNode);
 goog.exportSymbol('gxnat.vis.Renderable', gxnat.vis.Renderable);
 
 
 
+
+
 /**
- * @param {gxnat.vis.RenderProperties}
+ * @param {!gxnat.vis.RenderProperties | !gxnat.slicer.Node} props
  */
 gxnat.vis.VisNode.prototype.setRenderProperties = function(props) {
-    this.renderProperties_ = props;
+    this.RenderProperties_ = props instanceof gxnat.vis.RenderProperties ? 
+	props : new gxnat.vis.RenderProperties(props);
 }
 
 
@@ -39,7 +42,7 @@ gxnat.vis.VisNode.prototype.setRenderProperties = function(props) {
  * @return {?gxnat.vis.RenderProperties}
  */
 gxnat.vis.VisNode.prototype.getRenderProperties = function() {
-    return this.renderProperties_;
+    return this.RenderProperties_;
 }
 
 
@@ -50,8 +53,8 @@ gxnat.vis.VisNode.prototype.getRenderProperties = function() {
 gxnat.vis.Renderable.prototype.dispose = function() {
     goog.base(this, 'dispose');
 
-    if (this.renderProperties_){
-	this.renderProperties_.dispose();
-	delete this.renderProperties_;
+    if (this.RenderProperties_){
+	this.RenderProperties_.dispose();
+	delete this.RenderProperties_;
     }
 }
