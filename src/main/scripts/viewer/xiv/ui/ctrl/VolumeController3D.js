@@ -6,20 +6,20 @@
 goog.require('goog.object');
 
 // xiv
-goog.require('xiv.ui.ctrl.MasterController');
+goog.require('xiv.ui.ctrl.MasterController3D');
 
 
 
 /**
  *
  * @constructor
- * @extends {xiv.ui.ctrl.MasterController}
+ * @extends {xiv.ui.ctrl.MasterController3D}
  */
 goog.provide('xiv.ui.ctrl.VolumeController3D');
 xiv.ui.ctrl.VolumeController3D = function() {
     goog.base(this);
 }
-goog.inherits(xiv.ui.ctrl.VolumeController3D, xiv.ui.ctrl.MasterController);
+goog.inherits(xiv.ui.ctrl.VolumeController3D, xiv.ui.ctrl.MasterController3D);
 goog.exportSymbol('xiv.ui.ctrl.VolumeController3D', 
 		  xiv.ui.ctrl.VolumeController3D);
 

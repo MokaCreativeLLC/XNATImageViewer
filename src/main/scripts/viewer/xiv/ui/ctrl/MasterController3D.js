@@ -10,6 +10,7 @@ goog.require('xiv.ui.ctrl.XtkController');
 goog.require('xiv.ui.ctrl.DisplayAll');
 goog.require('xiv.ui.ctrl.MasterOpacity');
 goog.require('xiv.ui.ctrl.TwoThumbSliderController');
+goog.require('xiv.ui.ctrl.ColorPaletteController');
 
 
 
@@ -18,8 +19,8 @@ goog.require('xiv.ui.ctrl.TwoThumbSliderController');
  * @constructor
  * @extends {xiv.ui.ctrl.XtkController}
  */
-goog.provide('xiv.ui.ctrl.MasterController');
-xiv.ui.ctrl.MasterController = function() {
+goog.provide('xiv.ui.ctrl.MasterController3D');
+xiv.ui.ctrl.MasterController3D = function() {
     goog.base(this);
 
 
@@ -29,8 +30,8 @@ xiv.ui.ctrl.MasterController = function() {
      */
     this.xObjs_ = [];
 }
-goog.inherits(xiv.ui.ctrl.MasterController, xiv.ui.ctrl.XtkController);
-goog.exportSymbol('xiv.ui.ctrl.MasterController', xiv.ui.ctrl.MasterController);
+goog.inherits(xiv.ui.ctrl.MasterController3D, xiv.ui.ctrl.XtkController);
+goog.exportSymbol('xiv.ui.ctrl.MasterController3D', xiv.ui.ctrl.MasterController3D);
 
 
 /**
@@ -38,7 +39,7 @@ goog.exportSymbol('xiv.ui.ctrl.MasterController', xiv.ui.ctrl.MasterController);
  * @const
  * @expose
  */
-xiv.ui.ctrl.MasterController.ID_PREFIX =  'xiv.ui.ctrl.MasterController';
+xiv.ui.ctrl.MasterController3D.ID_PREFIX =  'xiv.ui.ctrl.MasterController3D';
 
 
 
@@ -46,7 +47,7 @@ xiv.ui.ctrl.MasterController.ID_PREFIX =  'xiv.ui.ctrl.MasterController';
  * @enum {string}
  * @public
  */
-xiv.ui.ctrl.MasterController.CSS_SUFFIX = {};
+xiv.ui.ctrl.MasterController3D.CSS_SUFFIX = {};
 
 
 
@@ -54,7 +55,7 @@ xiv.ui.ctrl.MasterController.CSS_SUFFIX = {};
  * @param {!X.Object} xObj
  * @public
  */
-xiv.ui.ctrl.MasterController.prototype.add = function(xObj) {
+xiv.ui.ctrl.MasterController3D.prototype.add = function(xObj) {
     window.console.log('MASTER CONTROLLER ADDING', xObj);
 
     this.xObjs_.push(xObj);
@@ -69,17 +70,22 @@ xiv.ui.ctrl.MasterController.prototype.add = function(xObj) {
 			       window.console.log("CHECK!", e.checked);
 			   })
 	this.subControllers.push(displayAll);
-
+	goog.dom.append(this.getElement(), displayAll.getElement());
 
 
 	var masterOpacity = new xiv.ui.ctrl.MasterOpacity();
 	this.subControllers.push(masterOpacity);
-
+	goog.dom.append(this.getElement(), masterOpacity.getElement());
 
 
 	var twoThumb = new xiv.ui.ctrl.TwoThumbSliderController();
 	this.subControllers.push(twoThumb);
+	goog.dom.append(this.getElement(), twoThumb.getElement());
 
+
+	var colorPalette = new xiv.ui.ctrl.ColorPaletteController();
+	this.subControllers.push(twoThumb);
+	goog.dom.append(this.getElement(), colorPalette.getElement());
 
 
 	this.getElement().style.position = 'absolute';
@@ -93,9 +99,9 @@ xiv.ui.ctrl.MasterController.prototype.add = function(xObj) {
 	window.console.log('sub', this.getElement());
 
 
-	goog.dom.append(this.getElement(), displayAll.getElement());
-	goog.dom.append(this.getElement(), masterOpacity.getElement());
-	goog.dom.append(this.getElement(), twoThumb.getElement());
+
+
+
 	//this.addMasterControls_();
 
 
@@ -108,7 +114,7 @@ xiv.ui.ctrl.MasterController.prototype.add = function(xObj) {
  * @param {!X.Object} xObj
  * @public
  */
-xiv.ui.ctrl.MasterController.prototype.addMasterControls_ = goog.nullFunction;
+xiv.ui.ctrl.MasterController3D.prototype.addMasterControls_ = goog.nullFunction;
 
 
 
@@ -116,14 +122,14 @@ xiv.ui.ctrl.MasterController.prototype.addMasterControls_ = goog.nullFunction;
  * @param {!string} labelTitle;
  * @public
  */
-xiv.ui.ctrl.MasterController.prototype.disposeInternal = function() {
+xiv.ui.ctrl.MasterController3D.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
     
     goog.array.clear(this.xObjs_);
     delete this.xObjs_;
 
     window.console.log("need to implement dispose methods" + 
-		       " for MasterController");
+		       " for MasterController3D");
 }
 
 

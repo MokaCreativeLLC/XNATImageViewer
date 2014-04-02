@@ -51,8 +51,15 @@ goog.addDependency('../../../../ui/ui.js',
 ]);
 
 
+goog.addDependency('../../../../ui/ctrl/ColorPaletteController.js', 
+['xiv.ui.ctrl.ColorPaletteController'], [
+    'xiv.ui.ctrl.XtkController'
+]);
+
+
 goog.addDependency('../../../../ui/ctrl/CheckboxController.js', 
 ['xiv.ui.ctrl.CheckboxController'], [
+    'xiv.ui.ctrl.XtkController'
 ]);
 
 
@@ -81,21 +88,21 @@ goog.addDependency('../../../../ui/ctrl/MasterOpacity.js',
 ]);
 
 
-goog.addDependency('../../../../ui/ctrl/MasterController.js', 
-['xiv.ui.ctrl.MasterController'], [
+goog.addDependency('../../../../ui/ctrl/MasterController3D.js', 
+['xiv.ui.ctrl.MasterController3D'], [
 ]);
 
 
 goog.addDependency('../../../../ui/ctrl/VolumeController2D.js', 
 ['xiv.ui.ctrl.VolumeController2D'], [
-    'xiv.ui.ctrl.MasterController'
+    'xiv.ui.ctrl.MasterController3D'
 ]);
 
 
 
 goog.addDependency('../../../../ui/ctrl/VolumeController3D.js', 
 ['xiv.ui.ctrl.VolumeController3D'], [
-    'xiv.ui.ctrl.MasterController'
+    'xiv.ui.ctrl.MasterController3D'
 ]);
 
 
