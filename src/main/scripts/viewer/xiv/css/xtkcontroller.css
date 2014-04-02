@@ -26,13 +26,13 @@
 
 
 .xiv-ui-ctrl-xtkcontroller {
-    float: top;
+    display: block;
+    position: relative;
     width: 100%;
 }
 
 
 .xiv-ui-ctrl-xtkcontroller-label {
-    float: left;
     color: white;
     font-size: 10px;
     font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
@@ -40,7 +40,7 @@
 
 
 .xiv-ui-ctrl-xtkcontroller-component {
-    float: right;
+
 }
 
 

@@ -23,16 +23,19 @@ xiv.ui.ctrl.MasterOpacity = function(){
     var slider = new moka.ui.GenericSlider();
     this.setComponent(slider);
 
+
+
     //------------------
     // Set slider classes.
     //------------------
     goog.dom.classes.add(slider.getElement(), 
-			 xiv.ui.ctrl.XtkController.SLIDER_WIDGET_CLASS);
+			 xiv.ui.ctrl.MasterOpacity.CSS.SLIDER);
     goog.dom.classes.add(slider.getThumb(), 
-			 xiv.ui.ctrl.XtkController.SLIDER_THUMB_CLASS);
+			 xiv.ui.ctrl.MasterOpacity.CSS.SLIDER_THUMB);
     goog.dom.classes.add(slider.getTrack(),
-			 xiv.ui.ctrl.XtkController.SLIDER_TRACK_CLASS);
-    //slider.setHoverClasses(xiv.ui.ctrl.XtkController.THUMB_HOVER_CLASS);
+			 xiv.ui.ctrl.MasterOpacity.CSS.SLIDER_TRACK);
+    slider.addThumbHoverClass(xiv.ui.ctrl.MasterOpacity.CSS.SLIDER_THUMB_HOVER);
+    slider.addTrackHoverClass(xiv.ui.ctrl.MasterOpacity.CSS.SLIDER_TRACK_HOVER);
 
 
 
@@ -67,6 +70,11 @@ xiv.ui.ctrl.MasterOpacity.ID_PREFIX =  'xiv.ui.ctrl.MasterOpacity';
  * @public
  */
 xiv.ui.ctrl.MasterOpacity.CSS_SUFFIX = {
+    SLIDER: 'slider',
+    SLIDER_THUMB: 'slider-thumb',
+    SLIDER_THUMB_HOVER: 'slider-thumb-hover',
+    SLIDER_TRACK: 'slider-track',
+    SLIDER_TRACK_HOVER: 'slider-track-hover',
 };
 
 
