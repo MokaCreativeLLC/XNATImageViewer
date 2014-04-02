@@ -48,6 +48,20 @@ xiv.ui.ctrl.MasterOpacity = function(){
     slider.setValue(1);
 
 
+
+    /**
+     * @type {!Element}
+     * @private
+     */
+    this.valueInput_ = goog.dom.createDom('input', {
+	'type': 'text'
+    })
+    goog.dom.classes.add(this.valueInput_, 
+			 xiv.ui.ctrl.MasterOpacity.CSS.VALUE_INPUT);
+    goog.dom.append(this.getElement(), this.valueInput_);
+    
+
+
     // Events
     goog.events.listen(this.getComponent(), goog.events.EventType.CHANGE, 
     		       this.dispatchComponentEvent.bind(this))
@@ -75,6 +89,7 @@ xiv.ui.ctrl.MasterOpacity.CSS_SUFFIX = {
     SLIDER_THUMB_HOVER: 'slider-thumb-hover',
     SLIDER_TRACK: 'slider-track',
     SLIDER_TRACK_HOVER: 'slider-track-hover',
+    VALUE_INPUT: 'value-input',
 };
 
 
@@ -83,6 +98,8 @@ xiv.ui.ctrl.MasterOpacity.CSS_SUFFIX = {
  */
 xiv.ui.ctrl.MasterOpacity.prototype.dispatchComponentEvent = function(){
     window.console.log("DISPATCH SLIDER", this.getComponent().getValue());
+
+    this.valueInput_.setAttribute('value', this.getComponent().getValue());
     this.dispatchEvent({
 	type: xiv.ui.ctrl.XtkController.EventType.CHANGE,
 	value: this.getComponent().getValue()

@@ -7,8 +7,8 @@
 
 .xiv-ui-ctrl-masteropacity-slider {
     position: absolute;
-    left: calc(100% - 95px);
-    width: 90px;
+    left: calc(100% - 115px);
+    width: 65px;
 }
 
 
@@ -37,4 +37,17 @@
 
 .xiv-ui-ctrl-masteropacity-slider-track-hover {
     box-sizing: content-box;
+}
+
+
+.xiv-ui-ctrl-masteropacity-value-input {
+    position: absolute;
+    top: 0px;
+    border: solid 1px rgb(100,100,100);
+    width: 20px;
+    left: calc(100% - 30px);
+    font-size: 10px;
+    background-color: rgba(0,0,0,0);
+    color: white;
+    font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
 }
