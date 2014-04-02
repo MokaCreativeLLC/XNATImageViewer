@@ -9,6 +9,7 @@ goog.require('goog.object');
 goog.require('xiv.ui.ctrl.XtkController');
 goog.require('xiv.ui.ctrl.DisplayAll');
 goog.require('xiv.ui.ctrl.MasterOpacity');
+goog.require('xiv.ui.ctrl.TwoThumbSliderController');
 
 
 
@@ -67,15 +68,17 @@ xiv.ui.ctrl.MasterController.prototype.add = function(xObj) {
 			   function(e){
 			       window.console.log("CHECK!", e.checked);
 			   })
+	this.subControllers.push(displayAll);
 
 
 
 	var masterOpacity = new xiv.ui.ctrl.MasterOpacity();
-
-	
-	this.subControllers.push(displayAll);
 	this.subControllers.push(masterOpacity);
 
+
+
+	var twoThumb = new xiv.ui.ctrl.TwoThumbSliderController();
+	this.subControllers.push(twoThumb);
 
 
 
@@ -83,7 +86,7 @@ xiv.ui.ctrl.MasterController.prototype.add = function(xObj) {
 	this.getElement().style.left = '10%';
 	this.getElement().style.top = '30%';
 	this.getElement().style.height = '200px';
-	this.getElement().style.width = '200px';
+	this.getElement().style.width = '400px';
 	this.getElement().style.backgroundColor = 'rgba(20,200,20,1)';
 	this.getElement().style.opacity = 1;
 	this.getElement().style.zIndex = 4000;
@@ -92,6 +95,7 @@ xiv.ui.ctrl.MasterController.prototype.add = function(xObj) {
 
 	goog.dom.append(this.getElement(), displayAll.getElement());
 	goog.dom.append(this.getElement(), masterOpacity.getElement());
+	goog.dom.append(this.getElement(), twoThumb.getElement());
 	//this.addMasterControls_();
 
 

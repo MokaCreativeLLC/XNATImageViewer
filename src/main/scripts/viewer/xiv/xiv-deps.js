@@ -62,9 +62,22 @@ goog.addDependency('../../../../ui/ctrl/DisplayAll.js',
 ]);
 
 
+goog.addDependency('../../../../ui/ctrl/TwoThumbSliderController.js', 
+['xiv.ui.ctrl.TwoThumbSliderController'], [
+    'xiv.ui.ctrl.XtkController'
+]);
+
+
+goog.addDependency('../../../../ui/ctrl/SliderController.js', 
+['xiv.ui.ctrl.SliderController'], [
+    'xiv.ui.ctrl.XtkController'
+]);
+
+
+
 goog.addDependency('../../../../ui/ctrl/MasterOpacity.js', 
 ['xiv.ui.ctrl.MasterOpacity'], [
-    'xiv.ui.ctrl.XtkController'
+    'xiv.ui.ctrl.SliderController'
 ]);
 
 

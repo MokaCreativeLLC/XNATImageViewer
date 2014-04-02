@@ -4,6 +4,6 @@
 
 
 .xiv-ui-ctrl-displayall-checkboxholder {
-    float: left;
-    margin-left: 6px;
+    position: absolute;
+    left: 30%;
 }
