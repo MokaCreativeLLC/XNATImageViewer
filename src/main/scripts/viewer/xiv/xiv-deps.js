@@ -63,11 +63,6 @@ goog.addDependency('../../../../ui/ctrl/CheckboxController.js',
 ]);
 
 
-goog.addDependency('../../../../ui/ctrl/DisplayAll.js', 
-['xiv.ui.ctrl.DisplayAll'], [
-    'xiv.ui.ctrl.CheckboxController'
-]);
-
 
 goog.addDependency('../../../../ui/ctrl/TwoThumbSliderController.js', 
 ['xiv.ui.ctrl.TwoThumbSliderController'], [
@@ -80,12 +75,6 @@ goog.addDependency('../../../../ui/ctrl/SliderController.js',
     'xiv.ui.ctrl.XtkController'
 ]);
 
-
-
-goog.addDependency('../../../../ui/ctrl/MasterOpacity.js', 
-['xiv.ui.ctrl.MasterOpacity'], [
-    'xiv.ui.ctrl.SliderController'
-]);
 
 
 goog.addDependency('../../../../ui/ctrl/MasterController3D.js', 

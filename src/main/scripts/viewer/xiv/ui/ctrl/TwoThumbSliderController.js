@@ -75,6 +75,7 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.createSlider_ = function() {
     var elt = goog.dom.createDom('div', {
 	'id' : 'ThresholdSlider_' + goog.string.createUniqueString(),
     });    
+    goog.dom.append(this.getElement(), elt);
 
 
     //------------------
@@ -94,6 +95,7 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.createSlider_ = function() {
      */
     this.slider_ = new goog.ui.TwoThumbSlider;
     this.slider_.decorate(elt);
+    this.setComponent(this.slider_);
 
 
 
@@ -122,7 +124,7 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.createSlider_ = function() {
 
 
 
-    this.setComponent(elt);
+    //this.setComponent(elt);
 
 
 
@@ -137,20 +139,6 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.createSlider_ = function() {
     goog.events.listen(this.slider_, goog.events.EventType.CHANGE, 
     		       this.dispatchComponentEvent.bind(this))
 
-
-    /**
-    if (opt_args) {
-	if (opt_args['maximum'])  {this.slider_.setMaximum(opt_args['maximum'])};
-	if (opt_args['minimum'])  {this.slider_.setMaximum(opt_args['minimum'])};
-	if (opt_args['step'])  {this.slider_.setStep(opt_args['step'])} ;
-	if (opt_args['value'])  {this.slider_.setValue(opt_args['value'])};
-	if (opt_args['extent'])  {this.slider_.setExtent(opt_args['extent'])};
-    }
-    
-
-
-    return {'slider': slider, 'element': elt};
-    */
 }
 
 

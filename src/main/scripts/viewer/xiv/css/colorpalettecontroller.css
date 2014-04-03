@@ -15,11 +15,11 @@
 
 
 .xiv-ui-ctrl-colorpalettecontroller-colorpaletteholder {
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
     width: 200px;
     height: 200px;
     z-index: 2;
-    background-color: rgba(20,200,50, .4);
+    background-color: rgb(0,0,0);
 }

@@ -20,11 +20,14 @@ xiv.ui.ctrl.CheckboxController = function(){
     this.setLabel('Display All');
 
 
-    this.setComponent(goog.dom.createDom('div', {
-	'id' : 'CheckBoxHodler_' + goog.string.createUniqueString()
-    }))
-
-    goog.dom.classes.add(this.getComponent(), 
+    /**
+     * @type {!Element}
+     * @private
+     */
+    this.checkboxHolder_ = goog.dom.createDom('div', {
+	'id' : 'CheckboxHodler_' + goog.string.createUniqueString()
+    })
+    goog.dom.classes.add(this.checkboxHolder_, 
 		     xiv.ui.ctrl.CheckboxController.CSS.CHECKBOXHOLDER);
 
 
@@ -32,12 +35,13 @@ xiv.ui.ctrl.CheckboxController = function(){
      * @type {!goog.ui.Checkbox}
      * @private
      */
-    this.checkBox_ = new goog.ui.Checkbox(true);
-    this.checkBox_.decorate(this.getComponent());
+    this.checkbox_ = new goog.ui.Checkbox(true);
+    this.checkbox_.decorate(this.checkboxHolder_);
+    this.setComponent(this.checkbox_);
 
 
     // Events
-    goog.events.listen(this.checkBox_, goog.events.EventType.CHANGE, 
+    goog.events.listen(this.checkbox_, goog.events.EventType.CHANGE, 
     		       this.dispatchComponentEvent.bind(this))
 }
 
@@ -68,10 +72,10 @@ xiv.ui.ctrl.CheckboxController.CSS_SUFFIX = {
  */
 xiv.ui.ctrl.CheckboxController.prototype.dispatchComponentEvent = function(){
 
-    window.console.log("DISPATCH CHECKBOX", this.checkBox_.isChecked());
+    window.console.log("DISPATCH CHECKBOX", this.checkbox_.isChecked());
     this.dispatchEvent({
 	type: xiv.ui.ctrl.XtkController.EventType.CHANGE,
-	checked: this.checkBox_.isChecked()
+	checked: this.checkbox_.isChecked()
     })
 }
 
@@ -83,10 +87,13 @@ xiv.ui.ctrl.CheckboxController.prototype.dispatchComponentEvent = function(){
 xiv.ui.ctrl.CheckboxController.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
+    goog.dom.removeNode(this.checkboxHolder_);
+    delete this.checkboxHolder_;
+    
     // Check box
-    goog.events.removeAll(this.checkBox_);
-    this.checkBox_.disposeInternal();
-    delete this.checkBox_();
+    goog.events.removeAll(this.checkbox_);
+    this.checkbox_.disposeInternal();
+    delete this.checkbox_();
 }
 
 

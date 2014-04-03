@@ -36,7 +36,6 @@ xiv.ui.ctrl.ColorPaletteController = function(){
 		       this.showColorPalette_.bind(this))
 
 
-
     /**
      * @type {!goog.ui.HsvPalette}
      * @private
@@ -44,8 +43,6 @@ xiv.ui.ctrl.ColorPaletteController = function(){
     this.colorPalette_ = new goog.ui.HsvPalette();
     this.colorPalette_.render();
     //goog.dom.append(this.getElement(), this.colorPalette_.getElement());
-    
-
     goog.events.listen(this.colorPalette_, goog.ui.Component.EventType.ACTION, 
 		       this.dispatchComponentEvent.bind(this));
 
@@ -62,20 +59,7 @@ xiv.ui.ctrl.ColorPaletteController = function(){
     })
     goog.dom.append(document.body, this.colorPaletteHolder_);
     goog.dom.append(this.colorPaletteHolder_, this.colorPalette_.getElement());
-
-
-    
-
-    /**
-     * @type {!goog.ui.Popup}
-     * @private
-     */
-    this.popup_ = new goog.ui.Popup(this.colorPaletteHolder_);
-    this.popup_.setHideOnEscape(true);
-    this.popup_.setAutoHide(true);
-    this.popup_.setVisible(false);
-    //goog.dom.append(this.popup_.getElement(), this.colorPaletteHolder_);
-    
+    this.colorPaletteHolder_.style.visibility = 'hidden';
 }
 
 goog.inherits(xiv.ui.ctrl.ColorPaletteController, xiv.ui.ctrl.XtkController);
@@ -92,6 +76,7 @@ xiv.ui.ctrl.ColorPaletteController.ID_PREFIX =
     'xiv.ui.ctrl.ColorPaletteController';
 
 
+
 /**
  * @enum {string}
  * @public
@@ -103,43 +88,30 @@ xiv.ui.ctrl.ColorPaletteController.CSS_SUFFIX = {
 
 
 
-
-
 /**
  * @private
  */
-xiv.ui.ctrl.ColorPaletteController.prototype.showColorPalette_ = function(){
- 
+xiv.ui.ctrl.ColorPaletteController.prototype.showColorPalette_ = function() {
+    this.colorPaletteHolder_.style.visibility =
+     (this.colorPaletteHolder_.style.visibility == 'hidden') ? 
+	'visible' : 'hidden';
 
-    //goog.events.listen(window, goog.events.EventType.RESIZE, onResize);
-    //goog.events.listen(document, goog.events.EventType.MOUSEMOVE, onMouseMove);
-    // goog.events.listen(absBox, goog.events.EventType.MOUSEOUT,
-    // onAbsBoxMouseOut);
-
+    window.console.log(this.colorPaletteHolder_.style.visibility);
 
     /**
-      var btn = document.getElementById('btn');
-      var buttonCorner = toCorner(
-          getCheckedValue(document.forms[0].elements['button_corner']));
-      var menuCorner = toCorner(
-          getCheckedValue(document.forms[0].elements['menu_corner']));
+    // Find the common ancestor
+    var commonAncestor = 
+    goog.dom.findCommonAncestor(this.colorPaletteHolder_, 
+				this.getComponent());
+    var boxPos = 
+    goog.style.getRelativePosition(this.getComponent(), commonAncestor);
 
-      var t = parseInt(document.getElementById('margin_top').value);
-      var r = parseInt(document.getElementById('margin_right').value);
-      var b = parseInt(document.getElementById('margin_bottom').value);
-      var l = parseInt(document.getElementById('margin_left').value);
-      var margin = new goog.math.Box(t, r, b, l);
+    window.console.log(commonAncestor);
     */
 
-      ///popup.setVisible(false);
-      //popup.setPinnedCorner(menuCorner);
-      //popup.setMargin(margin);
-      //popup.setPosition(new goog.positioning.AnchoredViewportPosition(btn,
-      //    buttonCorner));
-
-    window.console.log(this.colorPaletteHolder_, this.popup_.getElement());
-    window.console.log("SHOW COLOR PALETTE");
-    this.popup_.setVisible(true);
+    goog.style.setPosition(this.colorPaletteHolder_, 
+			   goog.style.getPageOffset(this.getComponent()));
+    window.console.log(boxPos, goog.style.getPosition(this.colorPaletteHolder_))
 }
 
 
@@ -150,15 +122,10 @@ xiv.ui.ctrl.ColorPaletteController.prototype.showColorPalette_ = function(){
 xiv.ui.ctrl.ColorPaletteController.prototype.dispatchComponentEvent = 
 function(e){
 
-    window.console.log("COLOR SELECTED", e.target.getColor());
-    window.console.log("RGB", 
-		    goog.color.hexToRgb(e.target.getColor()).map(
-			function(x) { 
-			    return x / 255; 
-			}))
+    // Set the colorSquare color
     this.colorSquare_.style.backgroundColor = e.target.getColor();
 
-
+    // Dispatch event
     this.dispatchEvent({
 	type: xiv.ui.ctrl.XtkController.EventType.CHANGE,
 	color: goog.color.hexToRgb(e.target.getColor()).map( function(x) { 
