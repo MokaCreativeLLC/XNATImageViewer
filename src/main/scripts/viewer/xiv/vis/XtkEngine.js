@@ -174,6 +174,26 @@ xiv.vis.XtkEngine.prototype.setPrimaryRenderPlaneEvents_ = function() {
 
 
 /**
+ * @return {Array.<xiv.ui.ctrl.XtkController>}
+ * @public
+ */
+xiv.vis.XtkEngine.prototype.getControllers3D = function(){
+    return this.ControllerTree_.getControllers3D();
+}
+
+
+/**
+ * @return {Array.<xiv.ui.ctrl.XtkController>}
+ * @public
+ */
+xiv.vis.XtkEngine.prototype.getControllers2D = function(){
+    window.console.log(this, this.ControllerTree_);
+    return this.ControllerTree_.getControllers2D();
+}
+
+
+
+/**
  * @param {!gxnat.vis.ViewableGroup} ViewableGroup
  * @private
  */
@@ -192,10 +212,11 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
     //
     if (goog.isDefAndNotNull(this.ControllerTree_)){
 	this.ControllerTree_.disposeInternal();
-	delete this.ControllerTree_;
+	this.ControllerTree_ = null;
     }
     this.ControllerTree_ = new xiv.ui.ctrl.XtkControllerTree();
-
+    window.console.log("*********CONTROLLER TREE!!!", 
+		      this.ControllerTree_ );
 
 
     //

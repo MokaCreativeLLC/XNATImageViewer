@@ -25,13 +25,6 @@ xiv.ui.ctrl.MasterController3D = function() {
 
 
     /**
-     * @type {!Array.<xiv.ui.ctrl.XtkController>}
-     * @protected
-     */
-    this.masterControllers = [];
-
-
-    /**
      * @type {!Array.<X.Object>}
      * @private
      */
@@ -75,39 +68,25 @@ xiv.ui.ctrl.MasterController3D.prototype.add = function(xObj) {
     if (this.xObjs_.length == 1){
 	goog.dom.append(document.body, this.getElement());
 
-	this.add_displayAll();
-	this.add_masterOpacity();
-
-	/**
-	var colorPalette = new xiv.ui.ctrl.ColorPaletteController();
-	this.subControllers.push(twoThumb);
-	goog.dom.append(this.getElement(), colorPalette.getElement());
-	*/
-
-	this.getElement().style.position = 'absolute';
-	this.getElement().style.left = '10%';
-	this.getElement().style.top = '30%';
-	this.getElement().style.height = '200px';
-	this.getElement().style.width = '400px';
-	this.getElement().style.backgroundColor = 'rgba(20,200,20,1)';
-	this.getElement().style.opacity = 1;
-	this.getElement().style.zIndex = 4000;
-	window.console.log('sub', this.getElement());
-
-	//this.addMasterControls_();
+	this.add_displayAll(xObj);
+	this.add_masterOpacity(xObj);
     }
 }
 
 
 
 /**
+ * @param {!X.Object} xObj
  * @protected
  */
-xiv.ui.ctrl.XtkController.prototype.add_displayAll = function() {
+xiv.ui.ctrl.XtkController.prototype.add_displayAll = function(xObj) {
     // create
     var displayAll = this.createController(
 	xiv.ui.ctrl.CheckboxController, 'Display All', 
 	this.onMasterDisplayAllChange_.bind(this));
+
+    // set folder
+    displayAll.setFolders([xiv.ui.ctrl.XtkController.getObjectCategory(xObj)])
 
     // store
     this.masterControllers.push(displayAll);
@@ -118,13 +97,18 @@ xiv.ui.ctrl.XtkController.prototype.add_displayAll = function() {
 
 
 /**
+ * @param {!X.Object} xObj
  * @protected
  */
-xiv.ui.ctrl.XtkController.prototype.add_masterOpacity = function() {
+xiv.ui.ctrl.XtkController.prototype.add_masterOpacity = function(xObj) {
     // create
     var masterOpacity = this.createController( 
-	xiv.ui.ctrl.SliderController, 'Master Opacity12', 
+	xiv.ui.ctrl.SliderController, 'Master Opacity', 
 	this.onMasterOpacityChange_.bind(this));
+    
+    // set folder
+    masterOpacity.setFolders([
+	xiv.ui.ctrl.XtkController.getObjectCategory(xObj)]);
 
     // store
     this.masterControllers.push(masterOpacity);

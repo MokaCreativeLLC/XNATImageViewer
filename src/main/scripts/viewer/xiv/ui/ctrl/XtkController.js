@@ -8,6 +8,7 @@ goog.require('goog.ui.TwoThumbSlider');
 goog.require('goog.events');
 goog.require('goog.array');
 goog.require('goog.string');
+goog.require('goog.string.path');
 goog.require('goog.dom');
 goog.require('goog.ui.Checkbox');
 
@@ -41,6 +42,13 @@ xiv.ui.ctrl.XtkController = function() {
     goog.base(this);
 
     /**
+     * @type {!Array.<xiv.ui.ctrl.XtkController>}
+     * @protected
+     */
+    this.masterControllers = [];
+
+
+    /**
      * @type {!Array.<xiv.ui.ctrl.XtkController}
      * @protected
      */
@@ -72,6 +80,18 @@ xiv.ui.ctrl.XtkController.CSS_SUFFIX = {
 
 
 /**
+ * Event types.
+ * @enum {string}
+ * @public
+ */
+xiv.ui.ctrl.XtkController.EventType = {
+    CHANGE: goog.events.getUniqueId('change'),
+}
+
+
+
+
+/**
  * Creates a div label 
  * @return {Element}
  */
@@ -85,13 +105,52 @@ xiv.ui.ctrl.XtkController.createLabel = function(){
 
 
 /**
- * Event types.
- * @enum {string}
+ * @param {!X.Object} xObj
+ * @return {!string}
+ * @protected
+ */
+xiv.ui.ctrl.XtkController.getXObjLabel = function(xObj){
+    var volFolder = goog.isArray(xObj.file)? xObj.file[0] : xObj.file;
+    return goog.string.path.basename(volFolder);
+}
+
+
+
+/**
+ * @param {!X.Object} xObj
+ * @return {!string}
  * @public
  */
-xiv.ui.ctrl.XtkController.EventType = {
-    CHANGE: goog.events.getUniqueId('change'),
+xiv.ui.ctrl.XtkController.getObjectCategory = 
+function(xObj){
+    if (xObj instanceof X.mesh){
+	return 'Meshes';
+    } 
+    else if (xObj instanceof X.volume){
+	return 'Volumes';
+    }
+    else if (xObj instanceof X.fiber){
+	return 'Fibers';
+    }
+    else if (xObj instanceof X.sphere){
+	return 'Annotations';
+    }
 }
+
+
+
+
+/**
+ * @param {!X.Object} xObj
+ * @param {!xiv.ui.ctrl.XtkController} controller
+ * @public
+ */
+xiv.ui.ctrl.XtkController.setControllerFolders = 
+function(xObj, controller){
+    controller.setFolders([xiv.ui.ctrl.XtkController.getObjectCategory(xObj), 
+			   xiv.ui.ctrl.XtkController.getXObjLabel(xObj)]);
+}
+
 
 
 
@@ -166,6 +225,7 @@ xiv.ui.ctrl.XtkController.prototype.getFolders = function() {
 }
 
 
+
 /**
  * @param {!Element | !goog.ui.Component} component
  * @public
@@ -182,6 +242,36 @@ xiv.ui.ctrl.XtkController.prototype.setComponent = function(component) {
 	goog.dom.append(this.getElement(), elt);
 	goog.dom.classes.add(elt, xiv.ui.ctrl.XtkController.CSS.COMPONENT);
     }
+}
+
+
+
+/**
+ * @return {!Array.<xiv.ui.ctrl.XtkController>}
+ * @public
+ */
+xiv.ui.ctrl.XtkController.prototype.getAllControllers = function() {
+    return goog.array.concat(this.masterControllers, this.subControllers);
+}
+
+
+
+/**
+ * @return {!Array.<xiv.ui.ctrl.XtkController>}
+ * @public
+ */
+xiv.ui.ctrl.XtkController.prototype.getMasterControllers = function() {
+    return this.masterControllers;
+}
+
+
+
+/**
+ * @return {!Array.<xiv.ui.ctrl.XtkController>}
+ * @public
+ */
+xiv.ui.ctrl.XtkController.prototype.getSubControllers = function() {
+    return this.subControllers;
 }
 
 
@@ -243,6 +333,9 @@ xiv.ui.ctrl.XtkController.prototype.add_colorPalette = function(xObj) {
 	    xObj.color = e.color
 	});
 
+    // set folder
+    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, color);
+
     // strore
     this.subControllers.push(color);
     
@@ -268,6 +361,9 @@ xiv.ui.ctrl.XtkController.prototype.add_opacity = function(xObj) {
 	    xObj.opacity = e.value;
 	});
 
+    // set folder
+    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, opacity);
+
     // store
     this.subControllers.push(opacity);
 
@@ -289,6 +385,9 @@ xiv.ui.ctrl.XtkController.prototype.add_visible = function(xObj) {
 	 function(e){
 	     xObj.visible = e.checked;
 	 });
+
+    // set folder
+    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, visibleCheckBox);
 
     // store
     this.subControllers.push(visibleCheckBox);

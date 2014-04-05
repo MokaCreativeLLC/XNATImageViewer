@@ -24,7 +24,8 @@ xiv.ui.ctrl.XtkControllerTree = function() {
     goog.base(this);
 }
 goog.inherits(xiv.ui.ctrl.XtkControllerTree, moka.ui.Component);
-goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree', xiv.ui.ctrl.XtkControllerTree);
+goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree', 
+		  xiv.ui.ctrl.XtkControllerTree);
 
 
 /**
@@ -41,6 +42,58 @@ xiv.ui.ctrl.XtkControllerTree.ID_PREFIX =  'xiv.ui.ctrl.XtkControllerTree';
  * @public
  */
 xiv.ui.ctrl.XtkControllerTree.CSS_SUFFIX = {};
+
+
+
+/**
+ * @param {Array.<xiv.ui.ctrl.MasterController3D> |
+ *         xiv.ui.ctrl.MasterController3D |
+ *         Array.<xiv.ui.ctrl.MasterController2D> |
+ *         xiv.ui.ctrl.MasterController2D} mainControls
+ * @return {Array.<xiv.ui.ctrl.XtkController>}
+ * @public
+ */
+xiv.ui.ctrl.XtkControllerTree.prototype.getControllers = 
+function(mainControls) {
+    var controllers = [];
+    goog.array.forEach(
+	goog.isArray(mainControls) ? mainControls : [mainControls], 
+     function(ctrl){
+	if (goog.isDefAndNotNull(ctrl)) {
+	    controllers = goog.array.concat(controllers, 
+					    ctrl.getAllControllers());
+	}
+    })
+    return controllers;
+}
+
+
+
+/**
+ * @return {Array.<xiv.ui.ctrl.XtkController>}
+ * @public
+ */
+xiv.ui.ctrl.XtkControllerTree.prototype.getControllers3D = function() {
+    return this.getControllers([
+	this.VolumeController3D_,
+	this.MeshController3D_,
+	this.FiberController3D_,
+	this.AnnotationsController3D_
+    ])
+}
+
+
+
+/**
+ * @return {Array.<xiv.ui.ctrl.XtkController>}
+ * @public
+ */
+xiv.ui.ctrl.XtkControllerTree.prototype.getControllers2D = function() {
+    return this.getControllers([
+	this.VolumeController2D_
+    ]);
+}
+
 
 
 
@@ -64,7 +117,6 @@ function(xObj, renderProps) {
     }
 
 
-    window.console.log("RETURNING OUT");
     return;
 
     if (xObj instanceof X.mesh) {

@@ -129,6 +129,19 @@ xiv.ui.ViewBox = function () {
     this.ViewableGroupMenu_ = null;
 
 
+    
+    /**
+     * @type {!moka.ui.ZippyTree}
+     * @private
+     */
+    this.Controllers3D_ = null;
+
+
+    /**
+     * @type {!moka.ui.ZippyTree}
+     * @private
+     */
+    this.Controllers2D_ = null;
 
 
 
@@ -431,7 +444,7 @@ xiv.ui.ViewBox.prototype.onRendering_ = function(e){
 	    window.console.log("DONE!!");
 	    
 	    this.progTimer_ = null;
-	    
+	    this.onRenderEnd_();
 
 	    this.hideSubComponent_(this.ProgressBarPanel_, 400, function(){
 		window.console.log("HIDE ONCE!");
@@ -564,29 +577,113 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 
 
 /**
+ * @param {!moka.ui.ZippyTree} ctrlProperty Either this.Controllers3D_ or 
+ *     this.Controllers2D_ 
+ * @param {Function=} ctrlGetter The function used to retrieve the controllers.
+ * @private
+ */
+xiv.ui.ViewBox.prototype.generateControllers_ = 
+function(ctrlProperty, ctrlGetter) {
+    //
+    // Check null
+    //
+    if (goog.isDefAndNotNull(ctrlProperty)){
+	ctrlProperty.disposeInternal();
+	ctrlProperty = null;
+    }
+
+    //
+    // Get the controls
+    //
+    var controllers = ctrlGetter();
+    if (goog.isDefAndNotNull(controllers) && (controllers.length > 0)) {
+	
+	// reset the tree
+	ctrlProperty = new moka.ui.ZippyTree();
+
+	// add the contents
+	goog.array.forEach(controllers, function(ctrl){
+	    ctrlProperty.addContents(ctrl.getElement(), 
+					    ctrl.getFolders());
+	}.bind(this));
+
+	// contract all
+	ctrlProperty.contractAll();
+    }
+
+    //
+    // Return the adjusted property
+    //
+    return ctrlProperty;
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.createControllers_ = function() {
+    //
+    // 2D
+    //
+    this.Controllers2D_ = this.generateControllers_(this.Controllers2D_, 
+	this.Renderer_.getControllers2D.bind(this.Renderer_));
+    if (goog.isDefAndNotNull(this.Controllers2D_)){
+	// Add to tab
+	this.ZipTabs_.setTabPageContents('2D', 
+					 this.Controllers2D_.getElement()); 
+    }
+
+    //
+    // 3D
+    //
+    this.Controllers3D_ = this.generateControllers_(this.Controllers3D_, 
+	this.Renderer_.getControllers3D.bind(this.Renderer_));
+    if (goog.isDefAndNotNull(this.Controllers3D_)){
+	// Add to tab
+	this.ZipTabs_.setTabPageContents('3D', 
+					 this.Controllers3D_.getElement()); 
+    }
+}
+
+
+
+
+/**
  * As stated.
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
+    //
+    // Controllers
+    //
+    this.createControllers_();
 
-    window.console.log("ON RENDER END");
+    //
+    // Hide progress bar
+    //
     this.hideSubComponent_(this.ProgressBarPanel_, 500);
 
+    //
+    // Sync interactors
+    //
     this.syncLayoutInteractorsToRenderer_();
     
+    //
+    // Stop render listerners
+    // 
     goog.events.unlisten(this.Renderer_, 
 			 xiv.vis.RenderEngine.EventType.RENDER_START, 
 			 this.onRenderStart_.bind(this));
-
     goog.events.unlisten(this.Renderer_, 
 			 xiv.vis.RenderEngine.EventType.RENDERING, 
 			 this.onRendering_.bind(this));
-
     goog.events.unlisten(this.Renderer_, 
 			 xiv.vis.RenderEngine.EventType.RENDER_END, 
 			 this.onRenderEnd_.bind(this));
-
-
+    //
+    // Update styles
+    //
     this.updateStyle();
     
 }
@@ -630,7 +727,6 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 	    xiv.ui.ViewBox.defaultLayout[ViewableTree.getCategory()]);
     }
 
-
     //
     // Load menu
     //
@@ -673,6 +769,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
 	this.initSubComponents_();
 	this.setComponentEvents_();
 
+	/**
 	this.ZipTabs_.setTabPageContents('TestTab1', 
 					 goog.dom.createDom('div', {
 					     'color': 'rgb(255,255,255)',
@@ -684,8 +781,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
 					     'color': 'rgb(255,255,255)',
 					     'background': 'rgb(205,25,48)',
 					 }, 'Hello World 2.'));
-
-	window.console.log('temporarily suspending progress bar panel');
+	*/
     }
 
     
@@ -736,8 +832,8 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
     window.console.log("RENDERING", ViewableSet, ViewableSet.getTitle);
     
     this.Renderer_.render(ViewableSet);
-
     
+
     // Remember the time in which the thumbnail was loaded
     this.thumbLoadTime_ = (new Date()).getTime();    
 }
@@ -1281,6 +1377,20 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     goog.base(this, 'disposeInternal');
 
 
+    // @D Controllers
+    if (goog.isDefAndNotNull(this.Controllers2D_)){
+	this.Controllers2D_.disposeInternal();
+	this.Controllers2D_ = null;
+    }
+
+
+    // 3D Controllers
+    if (goog.isDefAndNotNull(this.Controllers3D_)){
+	this.Controllers3D_.disposeInternal();
+	this.Controllers3D_ = null;
+    }
+    
+    
     // Clear the reference to the groups
     goog.object.clear(this.ViewableGroups_);
 

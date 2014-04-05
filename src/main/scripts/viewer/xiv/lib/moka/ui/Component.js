@@ -143,11 +143,13 @@ moka.ui.Component.prototype.iconBaseUrl;
 
 
 
+
 /**
  * @type {string}
  * @protected
  */  
 moka.ui.Component.prototype.iconUrl ;
+
 
 
 
@@ -159,6 +161,7 @@ moka.ui.Component.prototype.currSize;
 
 
 
+
 /**
  * @type {goog.math.Size}
  * @protected
@@ -166,11 +169,27 @@ moka.ui.Component.prototype.currSize;
 moka.ui.Component.prototype.currPos;
 
 
+
+
 /**
  * @type {Array.<moka.ui.Component>}
  * @public
  */
 moka.ui.Component.prototype.subComponents_;
+
+
+
+
+/**
+ * @param {!goog.ui.Component} subComponent
+ * @protected
+ */
+moka.ui.Component.prototype.addSubComponent = function(subComponent) {
+    if (!goog.isDefAndNotNull(this.subComponents_)){
+	this.subComponents_ = [];
+    }
+    this.subComponents_.push(subComponent);
+}
 
 
 
@@ -192,9 +211,24 @@ moka.ui.Component.prototype.updateStyle = function() {
  */
 moka.ui.Component.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
- 
+
+    // SubComponents
+    if (goog.isDefAndNotNull(this.subComponents_)){
+	goog.array.forEach(this.subComponents_, function(subC){
+	    goog.events.removeAll(subC);
+	    subC.disposeInternal();
+	    subC = null;
+	})
+	goog.array.clear(this.subComponents_);
+    }
+
+    // Events
+    goog.events.removeAll(this);
+
+    // Element
     goog.dom.removeNode(this.getElement());
 
+    // Other
     this.iconBaseUrl = null;  
     this.iconUrl = null; 
     this.currSize = null;

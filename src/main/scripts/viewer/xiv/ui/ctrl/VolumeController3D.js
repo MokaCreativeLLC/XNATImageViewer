@@ -54,6 +54,10 @@ xiv.ui.ctrl.VolumeController3D.prototype.add_volumeRendering = function(xObj) {
 	    xObj.volumeRendering = e.checked;
 	});
 
+    // set folder
+    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, 
+						   volumeRenderingCheckBox);
+
     // store
     this.subControllers.push(volumeRenderingCheckBox);
 
@@ -76,6 +80,9 @@ xiv.ui.ctrl.VolumeController3D.prototype.add_threshold = function(xObj) {
 	    xObj.lowerThreshold = parseFloat(e.lower);
 	    xObj.upperThreshold = parseFloat(e.upper);
 	});
+
+    // set folder
+    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, threshold);
 
     // strore
     this.subControllers.push(threshold);
