@@ -25,6 +25,7 @@ goog.require('xiv.ui.ctrl.CheckboxController');
 goog.require('xiv.ui.ctrl.SliderController');
 goog.require('xiv.ui.ctrl.TwoThumbSliderController');
 goog.require('xiv.ui.ctrl.ColorPaletteController');
+goog.require('xiv.ui.ctrl.RadioButtonController');
 
 
 
@@ -404,7 +405,6 @@ xiv.ui.ctrl.XtkController.prototype.add_visible = function(xObj) {
  */
 xiv.ui.ctrl.XtkController.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
- 
     //  subControllers
     goog.array.forEach(this.subControllers, function(){
 	goog.events.removeAll(subController);
@@ -413,6 +413,16 @@ xiv.ui.ctrl.XtkController.prototype.disposeInternal = function() {
     })
     goog.array.clear(this.subControllers);
     delete this.subControllers;
+
+
+    // Master controllers.
+    goog.object.forEach(this.masterControllers, function(controller){
+	goog.events.removeAll(controller);
+	controller.disposeInternal();
+	controller = null;
+    })
+    goog.array.clear(this.masterControllers);
+    delete this.masterControllers;
 
 
     //  Component

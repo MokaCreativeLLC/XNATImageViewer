@@ -108,10 +108,10 @@ function(xObj, renderProps) {
     if (xObj instanceof X.volume) {
 
 	if (!goog.isDefAndNotNull(this.VolumeController2D_)){
-	    //this.VolumeController2D_ = new xiv.ui.ctrl.VolumeController2D();
+	    this.VolumeController2D_ = new xiv.ui.ctrl.VolumeController2D();
 	    this.VolumeController3D_ = new xiv.ui.ctrl.VolumeController3D();
 	}
-	//this.VolumeController2D_.add(xObj, renderProps);
+	this.VolumeController2D_.add(xObj, renderProps);
 	this.VolumeController3D_.add(xObj, renderProps);
 
     }

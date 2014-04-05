@@ -57,6 +57,12 @@ goog.addDependency('../../../../ui/ctrl/ColorPaletteController.js',
 ]);
 
 
+goog.addDependency('../../../../ui/ctrl/RadioButtonController.js', 
+['xiv.ui.ctrl.RadioButtonController'], [
+    'xiv.ui.ctrl.XtkController'
+]);
+
+
 goog.addDependency('../../../../ui/ctrl/CheckboxController.js', 
 ['xiv.ui.ctrl.CheckboxController'], [
     'xiv.ui.ctrl.XtkController'
@@ -77,15 +83,19 @@ goog.addDependency('../../../../ui/ctrl/SliderController.js',
 
 
 
+goog.addDependency('../../../../ui/ctrl/MasterController2D.js', 
+['xiv.ui.ctrl.MasterController2D'], [
+]);
+
+goog.addDependency('../../../../ui/ctrl/VolumeController2D.js', 
+['xiv.ui.ctrl.VolumeController2D'], [
+    'xiv.ui.ctrl.MasterController2D'
+]);
+
 goog.addDependency('../../../../ui/ctrl/MasterController3D.js', 
 ['xiv.ui.ctrl.MasterController3D'], [
 ]);
 
-
-goog.addDependency('../../../../ui/ctrl/VolumeController2D.js', 
-['xiv.ui.ctrl.VolumeController2D'], [
-    'xiv.ui.ctrl.MasterController3D'
-]);
 
 
 

@@ -155,14 +155,6 @@ function(e) {
 xiv.ui.ctrl.MasterController3D.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
-    // Master controllers.
-    goog.object.forEach(this.masterControllers, function(controller){
-	goog.events.removeAll(controller);
-	controller.disposeInternal();
-	controller = null;
-    })
-    goog.array.clear(this.masterControllers);
-    delete this.masterControllers;
 
     // XObjs
     goog.array.clear(this.xObjs_);

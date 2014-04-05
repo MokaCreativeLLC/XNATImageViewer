@@ -106,10 +106,6 @@ xiv.ui.ctrl.VolumeController3D.prototype.add = function(xObj) {
 
     this.add_volumeRendering(xObj);
     this.add_threshold(xObj);
-
-    //threshold.getComponent().setExtent(
-// Math.abs(xObj.lowerThreshold) + Math.abs(xObj.upperThreshold));
-    //threshold.getComponent().setValue(xObj.lowerThreshold);
 }
 
 

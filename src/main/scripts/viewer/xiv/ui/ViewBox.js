@@ -622,7 +622,7 @@ function(ctrlProperty, ctrlGetter) {
 /**
  * @private
  */
-xiv.ui.ViewBox.prototype.createControllers_ = function() {
+xiv.ui.ViewBox.prototype.createControllerTabs_ = function() {
     //
     // 2D
     //
@@ -657,7 +657,7 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     // Controllers
     //
-    this.createControllers_();
+    this.createControllerTabs_();
 
     //
     // Hide progress bar
@@ -768,20 +768,6 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
     if (!this.subComponentsInitialized_){
 	this.initSubComponents_();
 	this.setComponentEvents_();
-
-	/**
-	this.ZipTabs_.setTabPageContents('TestTab1', 
-					 goog.dom.createDom('div', {
-					     'color': 'rgb(255,255,255)',
-					     'background': 'rgb(205,25,48)',
-					 }, 'Hello World.'));
-
-	this.ZipTabs_.setTabPageContents('TestTab2',
-					 goog.dom.createDom('div', {
-					     'color': 'rgb(255,255,255)',
-					     'background': 'rgb(205,25,48)',
-					 }, 'Hello World 2.'));
-	*/
     }
 
     
