@@ -150,10 +150,10 @@ xiv.vis.XtkEngine.prototype.setPrimaryRenderPlaneEvents_ = function() {
 
     // Unlisten on the given planes
     goog.object.forEach(this.getPlanes(), function(Plane, planeOr){
-	goog.events.unlisten(Plane.getRenderer(), 
+	goog.events.listen(Plane, 
 			     xiv.vis.RenderEngine.EventType.RENDERING, 
 			     this.onRendering_.bind(this))
-	goog.events.unlisten(Plane.getRenderer(), 
+	goog.events.listen(Plane, 
 			     xiv.vis.RenderEngine.EventType.RENDER_END, 
 			     this.onRenderEnd_.bind(this))
     }.bind(this))
@@ -162,11 +162,11 @@ xiv.vis.XtkEngine.prototype.setPrimaryRenderPlaneEvents_ = function() {
 
     // Re-listen on the primary
     this.primaryRenderPlane_.init();
-    goog.events.listen(this.primaryRenderPlane_.getRenderer(), 
+    goog.events.listen(this.primaryRenderPlane_, 
 		       xiv.vis.RenderEngine.EventType.RENDERING, 
 		       this.onRendering_.bind(this))
 
-    goog.events.listen(this.primaryRenderPlane_.getRenderer(), 
+    goog.events.listen(this.primaryRenderPlane_, 
 		       xiv.vis.RenderEngine.EventType.RENDER_END, 
 		       this.onRenderEnd_.bind(this))
 }
@@ -180,6 +180,7 @@ xiv.vis.XtkEngine.prototype.setPrimaryRenderPlaneEvents_ = function() {
 xiv.vis.XtkEngine.prototype.getControllers3D = function(){
     return this.ControllerTree_.getControllers3D();
 }
+
 
 
 /**
@@ -198,15 +199,6 @@ xiv.vis.XtkEngine.prototype.getControllers2D = function(){
  * @private
  */
 xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
-    
-    //
-    // Annotations
-    //
-    if (goog.isDefAndNotNull(ViewableGroup.getRenderProperties().annotations)){
-	this.getAnnotations_(ViewableGroup);
-    }
-
-    
     //
     // Clear existing controller tree
     //
@@ -215,8 +207,24 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 	this.ControllerTree_ = null;
     }
     this.ControllerTree_ = new xiv.ui.ctrl.XtkControllerTree();
+
+    
+    //
+    // Annotations
+    //
+    if (goog.isDefAndNotNull(ViewableGroup.getRenderProperties().annotations)){
+	this.getAnnotations_(ViewableGroup);
+	window.console.log("\n\n\n\n\n************ANNOTATIONS!!!!");
+	goog.array.forEach(this.currXObjects_['spheres'], function(annot){
+
+	    window.console.log("ANNOT", annot);
+	    this.ControllerTree_.createControllers(annot);
+	}.bind(this))
+    }
+
+   
     window.console.log("*********CONTROLLER TREE!!!", 
-		      this.ControllerTree_ );
+		      this.ControllerTree_, this.currXObjects_);
 
 
     //
@@ -235,7 +243,6 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 	if (currXObj instanceof X.volume) {
 	    this.constructor.setRenderProperties_Volume_(
 		currXObj, renderProps);
-	    
 	    this.currXObjects_['volumes'].push(currXObj);
 	}
 
@@ -247,7 +254,7 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 	}
 
 	// Fibers
-	else if (currXObj instanceof X.fiber){
+	else if (currXObj instanceof X.fibers){
 	    this.constructor.setRenderProperties_Fiber_(
 		currXObj, renderProps);
 	    this.currXObjects_['fibers'].push(currXObj);
@@ -459,13 +466,11 @@ function(xObj, renderProperties){
 
 
 
-
-
 /**
  * @private
  */
 xiv.vis.XtkEngine.prototype.onRendering_ = function(e){
-    window.console.log("ON RENDERING! ", e.value, e.obj);
+    window.console.log("\n\nON RENDERING! ", e.value, e.obj);
     this.dispatchEvent({
 	type: xiv.vis.RenderEngine.EventType.RENDERING,
 	value: e.value
@@ -479,9 +484,11 @@ xiv.vis.XtkEngine.prototype.onRendering_ = function(e){
  * @private
  */
 xiv.vis.XtkEngine.prototype.onRenderEnd_ = function(e){
+
+    window.console.log("\n\nON RENDER END EGINE!");
     this.dispatchEvent({
 	type: xiv.vis.RenderEngine.EventType.RENDER_END,
-	percentComplete: e.percentComplete
+	value: e.value
     })
 }
 

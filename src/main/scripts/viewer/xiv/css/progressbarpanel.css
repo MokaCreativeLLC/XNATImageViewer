@@ -22,6 +22,8 @@
     height: 10px; 
     width: 95%;
     top: calc(50% - 5px);
+    background-color: rgba(0,0,0,0);
+    border: none;
     left: 2.5%;
 }
 

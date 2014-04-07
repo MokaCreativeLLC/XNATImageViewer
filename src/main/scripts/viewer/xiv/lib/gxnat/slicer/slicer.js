@@ -506,7 +506,12 @@ function(sceneView, mrmlNode, callback) {
 			color = 
 			    gxnat.slicer.toFloatArray(
 				dispFid.getAttribute('color')
-			    )
+			    ).map(function(x){
+				return parseFloat(x);
+			    })
+
+			window.console.log("\n\nCOLOR", color, 
+					   dispFid.getAttribute('color'));
 			break;
 			
 		    }

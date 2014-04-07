@@ -30,17 +30,3 @@ xiv.vis.XtkRenderer3D.prototype.onResize = function() {
 }
 
 
-
-/**
- * @inheritDoc
- */
-xiv.vis.XtkRenderer3D.prototype.onProgress = function(event) {
-    goog.base(this, 'onProgress', event);
-    //window.console.log("DOSPATCHING 3D", event._value);
-    this.dispatchEvent({
-	type: xiv.vis.RenderEngine.EventType.RENDERING,
-	value: event._value,
-	obj: this
-    })
-};
-

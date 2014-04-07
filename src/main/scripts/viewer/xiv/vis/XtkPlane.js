@@ -16,6 +16,9 @@ xiv.vis.XtkPlane = function() {
 
 
     /**
+     * The TYPE of XTK renderer -- not to be confused with this.Renderer
+     * which is the instance of the renderer.
+     *
      * @type {obj}
      * @protected
      */
@@ -35,7 +38,7 @@ xiv.vis.XtkPlane = function() {
      * @type {?goog.Timer}
      * @private
      */
-    this.progTimer_ = null;
+    this.progressTimer_ = null;
 
 
 
@@ -67,9 +70,6 @@ xiv.vis.XtkPlane = function() {
      * @type {number}
      */
     this.renderProgress_;
-
-
-    //window.console.log("\n\n\n\nTHIS IS ON", this.sOn_);
 }
 goog.inherits(xiv.vis.XtkPlane, goog.events.EventTarget);
 goog.exportSymbol('xiv.vis.XtkPlane', xiv.vis.XtkPlane);
@@ -77,21 +77,10 @@ goog.exportSymbol('xiv.vis.XtkPlane', xiv.vis.XtkPlane);
 
 
 /**
- * Event types.
- * @enum {string}
- * @public
- */
-xiv.vis.XtkPlane.EventType = {
-  RENDER_START: goog.events.getUniqueId('render-start'),
-  RENDERING: goog.events.getUniqueId('rendering'),
-  RENDER_END: goog.events.getUniqueId('render-end'),
-}
-
-
-/**
 * @param {boolean}
 */
 xiv.vis.XtkPlane.prototype.isOn_ = true;
+
 
 
 /**
@@ -109,6 +98,51 @@ xiv.vis.XtkPlane.prototype.getRenderer = function(){
 xiv.vis.XtkPlane.prototype.getOrientation = function(){
     return this.orientation;
 };
+
+
+
+/**
+ * Searches the DOM and for XTK's render bar.  This was chosen over inheriting
+ * the 'onProgress' method in the XtkRenderer classes because it created 
+ * awkard timing issues for UX.
+ * 
+ * @protected
+ */
+xiv.vis.XtkPlane.prototype.checkRenderProgress_ = function() {
+    this.progressTimer_ = goog.Timer.callOnce(function() {
+	// destroy the timer
+	this.progressTimer_ = null; 
+
+	// get the progress-bar thumbnail from DOM
+	var progThumb = goog.dom.getElementByClass('progress-bar-thumb', 
+						   this.Renderer.container);
+
+	// exit out if at 100% and send RENDER_END event.
+	if (!progThumb){
+	    this.renderProgress_ = 1;
+	    this.dispatchEvent({
+		type: xiv.vis.RenderEngine.EventType.RENDER_END,
+		value: this.renderProgress_
+	    })
+	    return;
+	}
+
+	// set the render progress
+	this.renderProgress_ = parseInt(progThumb.style.width, 10) / 100;
+
+	// dispatch rednering event if not at 100%
+	this.dispatchEvent({
+	    type: xiv.vis.RenderEngine.EventType.RENDERING,
+	    value: this.renderProgress_
+	})
+
+	// recurse
+	this.checkRenderProgress_();
+
+	// check again in 200 ms
+    }.bind(this), 200); 
+}
+
 
 
 
@@ -208,8 +242,7 @@ xiv.vis.XtkPlane.prototype.render = function() {
     };
 
     this.Renderer.render();  
-
-
+    this.checkRenderProgress_();
 };
 
 
@@ -229,7 +262,7 @@ xiv.vis.XtkPlane.prototype.updateStyle = function() {
 xiv.vis.XtkPlane.prototype.dispose = function() {
     goog.base(this, 'dispose');
 
-    goog.dispose(this.progTimer); 
+    goog.dispose(this.progressTimer); 
     this.Renderer.destroy();
 
     // prototype
@@ -241,4 +274,8 @@ xiv.vis.XtkPlane.prototype.dispose = function() {
     delete this.xObjs_;
     delete this.currVolume_;
     delete this.renderProgress_;
+
+    // progress timer
+    this.progressTimer_.dispose();
+    delete this.progressTimer_;
 };

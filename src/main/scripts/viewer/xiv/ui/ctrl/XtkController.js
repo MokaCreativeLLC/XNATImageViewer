@@ -111,8 +111,9 @@ xiv.ui.ctrl.XtkController.createLabel = function(){
  * @protected
  */
 xiv.ui.ctrl.XtkController.getXObjLabel = function(xObj){
-    var volFolder = goog.isArray(xObj.file)? xObj.file[0] : xObj.file;
-    return goog.string.path.basename(volFolder);
+    
+    var folder = goog.isArray(xObj.file)? xObj.file[0] : xObj.file || xObj.name;
+    return goog.string.path.basename(folder);
 }
 
 
@@ -130,7 +131,7 @@ function(xObj){
     else if (xObj instanceof X.volume){
 	return 'Volumes';
     }
-    else if (xObj instanceof X.fiber){
+    else if (xObj instanceof X.fibers){
 	return 'Fibers';
     }
     else if (xObj instanceof X.sphere){
@@ -341,9 +342,9 @@ xiv.ui.ctrl.XtkController.prototype.add_colorPalette = function(xObj) {
     this.subControllers.push(color);
     
     // set defaults
-    color.getComponent().setValue(goog.color.rgbToHsv(
-	e.color.map( function(x) { 
-	    return x * 255; 
+    color.getComponent().setColor(goog.color.rgbArrayToHex(
+	xObj.color.map( function(x) { 
+	    return goog.math.clamp(parseFloat(x), 0, 1) * 255; 
 	})
     ))
 }
@@ -359,7 +360,8 @@ xiv.ui.ctrl.XtkController.prototype.add_opacity = function(xObj) {
     var opacity = this.createController( 
 	xiv.ui.ctrl.SliderController, 'Opacity', 
 	function(e){
-	    xObj.opacity = e.value;
+	    window.console.log(e.value);
+	    xObj.opacity = parseFloat(e.value);
 	});
 
     // set folder

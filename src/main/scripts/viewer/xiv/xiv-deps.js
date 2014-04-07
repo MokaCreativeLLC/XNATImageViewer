@@ -97,6 +97,16 @@ goog.addDependency('../../../../ui/ctrl/MasterController3D.js',
 ]);
 
 
+goog.addDependency('../../../../ui/ctrl/AnnotationsController3D.js', 
+['xiv.ui.ctrl.AnnotationsController3D'], [
+]);
+
+
+
+goog.addDependency('../../../../ui/ctrl/MeshController3D.js', 
+['xiv.ui.ctrl.MeshController3D'], [
+]);
+
 
 
 goog.addDependency('../../../../ui/ctrl/VolumeController3D.js', 

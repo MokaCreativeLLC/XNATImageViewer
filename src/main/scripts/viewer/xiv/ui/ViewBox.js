@@ -433,6 +433,7 @@ xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
  */
 xiv.ui.ViewBox.prototype.onRendering_ = function(e){
 
+    window.console.log("ON RENDERING");
     if (e.value > .99 && !this.progFadeOut_){
 	
 	window.console.log("\n\n2DONE!!");
@@ -639,6 +640,8 @@ xiv.ui.ViewBox.prototype.createControllerTabs_ = function() {
     //
     this.Controllers3D_ = this.generateControllers_(this.Controllers3D_, 
 	this.Renderer_.getControllers3D.bind(this.Renderer_));
+
+    window.console.log(this.Renderer_.getControllers3D());
     if (goog.isDefAndNotNull(this.Controllers3D_)){
 	// Add to tab
 	this.ZipTabs_.setTabPageContents('3D', 
@@ -654,6 +657,8 @@ xiv.ui.ViewBox.prototype.createControllerTabs_ = function() {
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
+
+    window.console.log("ON RENDER END!");
     //
     // Controllers
     //

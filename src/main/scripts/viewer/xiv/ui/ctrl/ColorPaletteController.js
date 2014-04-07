@@ -31,7 +31,7 @@ xiv.ui.ctrl.ColorPaletteController = function(){
 	    '_ColorPalette_' + goog.string.createUniqueString(),
 	'class': xiv.ui.ctrl.ColorPaletteController.CSS.COLORSQUARE
     })
-    this.setComponent(this.colorSquare_);
+    goog.dom.append(this.getElement(), this.colorSquare_);
     goog.events.listen(this.colorSquare_, goog.events.EventType.CLICK, 
 		       this.showColorPalette_.bind(this))
 
@@ -45,7 +45,7 @@ xiv.ui.ctrl.ColorPaletteController = function(){
     //goog.dom.append(this.getElement(), this.colorPalette_.getElement());
     goog.events.listen(this.colorPalette_, goog.ui.Component.EventType.ACTION, 
 		       this.dispatchComponentEvent.bind(this));
-
+    this.setComponent(this.colorPalette_);
     
 
     /**

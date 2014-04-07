@@ -8,9 +8,17 @@ goog.require('goog.object');
 // moka
 goog.require('moka.ui.Component');
 
+// xtk
+goog.require('X.volume');
+goog.require('X.mesh');
+goog.require('X.sphere');
+
+
 // xiv
 goog.require('xiv.ui.ctrl.VolumeController2D');
 goog.require('xiv.ui.ctrl.VolumeController3D');
+goog.require('xiv.ui.ctrl.MeshController3D');
+goog.require('xiv.ui.ctrl.AnnotationsController3D');
 
 
 
@@ -74,11 +82,13 @@ function(mainControls) {
  * @public
  */
 xiv.ui.ctrl.XtkControllerTree.prototype.getControllers3D = function() {
+
+    window.console.log(this.AnnotationsController3D_);
     return this.getControllers([
 	this.VolumeController3D_,
 	this.MeshController3D_,
-	this.FiberController3D_,
-	this.AnnotationsController3D_
+	this.AnnotationsController3D_,
+	this.FiberController3D_
     ])
 }
 
@@ -105,43 +115,47 @@ xiv.ui.ctrl.XtkControllerTree.prototype.getControllers2D = function() {
 xiv.ui.ctrl.XtkControllerTree.prototype.createControllers = 
 function(xObj, renderProps) {
 
+    window.console.log(xObj);
     if (xObj instanceof X.volume) {
-
 	if (!goog.isDefAndNotNull(this.VolumeController2D_)){
 	    this.VolumeController2D_ = new xiv.ui.ctrl.VolumeController2D();
 	    this.VolumeController3D_ = new xiv.ui.ctrl.VolumeController3D();
 	}
 	this.VolumeController2D_.add(xObj, renderProps);
 	this.VolumeController3D_.add(xObj, renderProps);
-
     }
 
-
-    return;
-
-    if (xObj instanceof X.mesh) {
-
+    else if (xObj instanceof X.mesh) {
 	if (!goog.isDefAndNotNull(this.MeshController3D_)){
 	    this.MeshController3D_ = new xiv.ui.ctrl.MeshController3D();
 	}
 	this.MeshController3D_.add(xObj, renderProps);
-
-    }
-
-    else if (xObj instanceof X.fiber) {
-	if (!goog.isDefAndNotNull(this.FiberController3D_)){
-	    this.FiberController3D_ = new xiv.ui.ctrl.FiberController3D();
-	}
-	this.FiberController3D_.add(xObj, renderProps);
     }
 
     else if (xObj instanceof X.sphere) {
+	window.console.log('\n\n\nANNOT!!!!!');
 	if (!goog.isDefAndNotNull(this.AnnotationsController3D_)){
 	    this.AnnotationsController3D_ = 
 		new xiv.ui.ctrl.AnnotationsController3D();
 	}
 	this.AnnotationsController3D_.add(xObj);
     }
+
+
+    //
+    // Possible TODO, though not necessarily within the domain of
+    // XNATSlicer.
+    //
+    /**
+     *
+    else if (xObj instanceof X.fibers) {
+	if (!goog.isDefAndNotNull(this.FiberController3D_)){
+	    this.FiberController3D_ = new xiv.ui.ctrl.FiberController3D();
+	}
+	this.FiberController3D_.add(xObj, renderProps);
+    }
+    */
+
 }
 
 

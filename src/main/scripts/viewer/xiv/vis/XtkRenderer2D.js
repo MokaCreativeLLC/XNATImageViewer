@@ -68,20 +68,6 @@ xiv.vis.XtkRenderer2D.prototype.onSliceNavigation = function() {
 }
 
 
-/**
- * @inheritDoc
- */
-xiv.vis.XtkRenderer2D.prototype.onProgress = function(event) {
-    goog.base(this, 'onProgress', event);
-    window.console.log("ON PROGRESS!", event._value);
-    this.dispatchEvent({
-	type: xiv.vis.RenderEngine.EventType.RENDERING,
-	value: event._value,
-	obj: this
-    })
-};
-
-
 
 
 /**
