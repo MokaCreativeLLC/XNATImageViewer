@@ -77,10 +77,13 @@ xiv.vis.XtkRenderer2D.prototype.onSliceNavigation = function() {
  * Derived from  ' X.renderer2D.prototype.xy2ijk '.
  *
  * @param {!number} the verticalSlice
+ * @param {boolean=} Whether to reverse the orientation.
  * @return {?Array} An array of [i,j,k] coordinates or null if out of frame.
  */
-xiv.vis.XtkRenderer2D.prototype.getVerticalSliceX = 
-function(sliceNumber) {
+xiv.vis.XtkRenderer2D.prototype.getVerticalSliceLeft = 
+function(sliceNumber, opt_reverse) {
+
+    var sliceType = 'vertical';
 
     var _volume = this._topLevelObjects[0];
     var _view = this._camera._view;
@@ -152,14 +155,22 @@ function(sliceNumber) {
 
     if (sliceType === 'vertical'){
 	// Crop min, max
-	slideNum = goog.math.max(0, sliceNum);
-	sliceNum = goog.math.min(sliceNum, _sliceWidth);
-	return _image_left2xy + (sliceNum / _sliceWidth) * _sliceWidthScaled; 	
+	sliceNumber = Math.max(0, sliceNumber);
+	sliceNumber = Math.min(sliceNumber, _sliceWidth);
+
+	if (opt_reverse === 'true'){
+	    return _image_left2xy + 
+		((this._sliceWidth - sliceNumber) / _sliceWidth) * 
+		_sliceWidthScaled; 	
+	} else {
+	    return _image_left2xy + (sliceNumber / _sliceWidth) * 
+		_sliceWidthScaled;
+	}
     }
     else {
 	// Crop min, max
-	slideNum = goog.math.max(0, sliceNum);
-	sliceNum = goog.math.min(sliceNum, _sliceHeight);
-	return _image_top2xy + (sliceNum / _sliceHeight) * _sliceHeightScaled;
+	sliceNumber = Math.max(0, sliceNumber);
+	sliceNumber = Math.min(sliceNumber, _sliceHeight);
+	return _image_top2xy + (sliceNumber / _sliceHeight) * _sliceHeightScaled;
     }
 }

@@ -495,6 +495,9 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 
 	    goog.dom.append(layoutPlane.getElement(), ch1);
 	    goog.dom.append(layoutPlane.getElement(), ch2);
+
+	    layoutPlane['CrossHoriz'] = ch1; 
+	    layoutPlane['CrossVert'] = ch2; 
 	}
 
 	var interactors = this.LayoutHandler_.getCurrentLayout().
@@ -520,7 +523,7 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 	    }
 	    
 	    window.console.log("RETURNING OUT OF SLIDERS -- combe back later");
-	    return
+	    //return
 
 	    slider.setMaximum(currVol.dimensions[arrPos])
 	    slider.setValue(currVol['index' + planeOr]);
@@ -529,45 +532,78 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 			       currVol.indexX, currVol.indexY, currVol.indexZ);
 
 	    // Change Slice when slider moves
-	    goog.events.listen(
-		slider, 
+	    goog.events.listen( slider, 
 		moka.ui.GenericSlider.EventType.SLIDE, function(e){
 
 		    if (!currVol) return;
-		    /**
+		    
 		    currVol['index' + plane.getOrientation()] = 
-		    interactors[xiv.ui.layouts.Layout.INTERACTORS.SLIDER].getMaximum()
-		    - interactors[xiv.ui.layouts.Layout.INTERACTORS.SLIDER].getValue();
-
+		    interactors[xiv.ui.layouts.Layout.INTERACTORS.SLIDER].
+			getMaximum()
+		    - interactors[xiv.ui.layouts.Layout.INTERACTORS.SLIDER].
+			getValue();
+		    
+		    /**
 		    window.console.log('\n\n', planeOr);
 		    window.console.log(currVol._upperThreshold);
 		    window.console.log(planeOr, plane.getRenderer()._height);
 		    window.console.log(planeOr, plane.getRenderer()._width);
 		    window.console.log(planeOr, 
 				       plane.getRenderer()._sliceHeight);
-		    window.console.log(planeOr, plane.getRenderer()._sliceWidth);
+
+		    window.console.log(planeOr, plane.getRenderer().
+				       _sliceWidth);
+				       */
 
 		    currVol.dimensions[arrPos];
-		    */
+		    
+
+		    // Change crosshairs
 		    switch (planeOr){
 		    case 'X': 
-			/**
-			planeYInteractors[
-			    xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIR_VERTICAL].
-			    style.left = (
-				renderPlaneY.volume.WHRatio (
-				    Ratio 160 x 256) translated to 
-				planeY.max
 
-			    )
-			    */
+			//
+			// Y Vertical crosshair
+			//
+			var vertY = 
+			this.Renderer_.PlaneY_.getRenderer().
+			    getVerticalSliceLeft(
+			    currVol['index' + plane.getOrientation()], true);
+
+			var layoutPlaneY = this.LayoutHandler_.
+			    getCurrentLayout().getPlaneByTitle('Y');
+
+			layoutPlaneY['CrossVert'].style.left = 
+			vertY.toString() + 'px';
+
+			//
+			// Z Vertical crosshair
+			//
+			var vertZ = 
+			this.Renderer_.PlaneZ_.getRenderer().
+			    getVerticalSliceLeft(
+			    currVol['index' + plane.getOrientation()]);
+
+			var layoutPlaneZ = this.LayoutHandler_.
+			    getCurrentLayout().getPlaneByTitle('Z');
+
+			layoutPlaneZ['CrossVert'].style.left = 
+			vertZ.toString() + 'px';
+
+
 			break;
 		    case 'Y': 
+			window.console.log("Y move");
+			window.console.log(
+			    currVol['index' + plane.getOrientation()]);
 			break;
 		    case 'Z': 
+			window.console.log("Z move");
+			window.console.log(
+			    currVol['index' + plane.getOrientation()]);
 			break;
 		    }
-		})
+		}.bind(this))
 
 	    // 
 	}
