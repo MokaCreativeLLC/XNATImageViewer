@@ -796,7 +796,7 @@ xiv.ui.Modal.prototype.initThumbnailGallery_ = function() {
     this.setThumbnailGalleryEvents_();
 
 
-    this.ZipTabs_.setTabPageContents('FILE BROWSER', 
+    this.ZipTabs_.setTabPageContents('PROJECT BROWSER', 
 				     goog.dom.createDom('div', {
 					 'color': 'rgb(255,255,255)',
 					 'background': 'rgb(205,25,48)',

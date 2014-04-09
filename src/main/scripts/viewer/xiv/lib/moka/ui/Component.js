@@ -193,14 +193,24 @@ moka.ui.Component.prototype.addSubComponent = function(subComponent) {
 
 
 
+/**
+ * For size calculations.
+ * @protected
+ */
+moka.ui.Component.prototype.calcDims = function() {
+    this.currSize = goog.style.getSize(this.getElement());
+    this.currPos = goog.style.getPosition(this.getElement());
+}
+
+
+
 
 /**
  * Generic function for style updates and resizing.
  * @protected
  */
 moka.ui.Component.prototype.updateStyle = function() {
-    this.currSize = goog.style.getSize(this.getElement());
-    this.currPos = goog.style.getPosition(this.getElement());
+    this.calcDims();
 }
 
 
@@ -231,6 +241,8 @@ moka.ui.Component.prototype.disposeInternal = function() {
     // Other
     this.iconBaseUrl = null;  
     this.iconUrl = null; 
+
+    // Size and pos
     this.currSize = null;
     this.currPos = null;
 }

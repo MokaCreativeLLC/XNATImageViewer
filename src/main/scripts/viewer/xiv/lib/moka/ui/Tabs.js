@@ -26,10 +26,11 @@ goog.require('moka.ui.ScrollableContainer');
  * xiv.ui.ViewBox. These tabs are multi-purpose and could be used for 
  * information, object togling, image adjusting, etc.
  * @constructor
+ * @param {string=} opt_tabOrientation
  * @extends {moka.ui.Component}
  */
 goog.provide('moka.ui.Tabs');
-moka.ui.Tabs = function () {
+moka.ui.Tabs = function (opt_tabOrientation) {
     goog.base(this);
 
     /**
@@ -37,17 +38,37 @@ moka.ui.Tabs = function () {
      * @private
      */
     this.googTabPane_ = new goog.ui.TabPane(this.getElement());
-    window.console.log("\nTODO: Consider setting the tab orientation here, " + 
-		       " in the goog.ui.TabPane constructor");
+
 
     /**
      * @type {!Array.<moka.ui.Tabs.TabItemCollection>}
      * @private
      */
     this.Tabs_ = [];
+
+
+    this.checkOrientation_(opt_tabOrientation ||
+			   moka.ui.Tabs.DEFAULT_ORIENTATION);
+    this.setClassesByOrientation_();
 }
 goog.inherits(moka.ui.Tabs, moka.ui.Component);
 goog.exportSymbol('moka.ui.Tabs', moka.ui.Tabs)
+
+
+
+/**
+ * @type {Array.string}
+ * @const
+ */
+moka.ui.Tabs.ORIENTATIONS = ['TOP', 'BOTTOM', 'LEFT', 'RIGHT'];
+
+
+
+/**
+ * @type {!string} 
+ * @const
+ */
+moka.ui.Tabs.DEFAULT_ORIENTATION = moka.ui.Tabs.ORIENTATIONS[0];
 
 
 
@@ -56,6 +77,7 @@ goog.exportSymbol('moka.ui.Tabs', moka.ui.Tabs)
  * @const
  */
 moka.ui.Tabs.ID_PREFIX =  'moka.ui.Tabs';
+
 
 
 
@@ -96,6 +118,67 @@ function(title, tab, tabIcon, content, googTab){
 }
 
 
+
+
+/**
+ * As sated.
+ * @private
+ */
+moka.ui.Tabs.prototype.checkOrientation_ = function(orient){
+    if (!goog.isString(orient)){
+	throw new TypeError('String required!')
+    }
+    orient = orient.toUpperCase();
+    if (moka.ui.Tabs.ORIENTATIONS.indexOf(orient) == -1){
+	throw new Error('Invalid orienation!');
+    }
+    this.orientation = orient;
+}
+
+
+
+/**
+ * @private
+ */
+moka.ui.Tabs.prototype.setClassesByOrientation_ = function() {
+    goog.dom.classes.add(this.getElement(), moka.ui.Tabs.ELEMENT_CLASS);
+    goog.dom.classes.add(this.getElement(), 
+		goog.getCssName(moka.ui.Tabs.CSS_CLASS_PREFIX, 
+			       this.orientation.toLowerCase()));
+
+    // In-line calculations
+    switch (this.orientation) {
+
+    case 'BOTTOM':
+
+    case 'TOP':
+	moka.style.setStyle(this.getElement(), {
+	    'height': this.getTabHeight()
+	})
+	this.getElement().style.top = 'calc(100% - ' + this.getTabHeight() +
+	    'px)';
+	break;
+	break;
+
+    case 'LEFT':
+	break;
+
+    case 'RIGHT':
+	moka.style.setStyle(this.getElement(), {
+	    'width': this.getTabWidth()
+	})
+	this.getElement().style.left = '0px';
+    }
+}
+
+
+
+
+/**
+ * @param {string}
+ * @protected
+ */
+moka.ui.Tabs.prototype.orientation_;
 
 
 
@@ -362,15 +445,15 @@ moka.ui.Tabs.prototype.addTab = function(tabTitle) {
 	new moka.ui.Tabs.TabItemCollection(tabTitle, tab, tabIcon, 
 					   content, googTab));
 
-    // style
-    this.updateStyle();
-
     // set events
     this.clearEventListeners_();
     this.setClickEvents_();
     this.setHoverEvents_();
     this.deactivateAll();
     this.setActive(0);
+
+    // style
+    this.updateStyle();
 }
 
 
@@ -413,6 +496,8 @@ moka.ui.Tabs.prototype.setTabPageContents = function (tabTitle, contents) {
     // Set the scrollable container class.
     goog.dom.classes.add(scrollableContainer.getElement(), 
 			 moka.ui.Tabs.CSS.SCROLLGALLERY);
+
+    this.updateStyle();
 }
 
 
@@ -468,6 +553,8 @@ moka.ui.Tabs.prototype.createTabIcon_ = function(tabTitle) {
     
     return icon;
 }
+
+
 
 
 
@@ -535,7 +622,8 @@ moka.ui.Tabs.prototype.deactivateAll = function () {
  * @return {!number}
  */
 moka.ui.Tabs.prototype.getTabCount = function() {
-    return goog.object.getCount(this.Tabs_);
+    window.console.log('\n\n\n\n', this.Tabs_);
+    return this.Tabs_.length;
 }
 
 
@@ -545,10 +633,30 @@ moka.ui.Tabs.prototype.getTabCount = function() {
  */
 moka.ui.Tabs.prototype.updateStyle = function () {
 
+
+
+
+
     if (!this.getElement().parentNode) { return };
     
     // Need to do this -- google takes it over.
     goog.dom.classes.add(this.getElement(), moka.ui.Tabs.ELEMENT_CLASS);
+
+
+    // Necessary because google takes it over...
+    goog.array.forEach(this.getTabElements(), function(tab, i) { 
+	goog.dom.classes.add(tab, goog.getCssName(
+	    moka.ui.Tabs.CSS_CLASS_PREFIX, 
+				this.orientation.toLowerCase()));
+    }.bind(this))
+
+    goog.array.forEach(this.getTabIcons(), function(tab, i) { 
+	goog.dom.classes.add(tab, goog.getCssName(
+	    moka.ui.Tabs.CSS_CLASS_PREFIX, 
+				this.orientation.toLowerCase() + '-icon'));
+    }.bind(this))
+
+
 
 
     var i = /**@type {!number}*/ 0;
@@ -560,12 +668,22 @@ moka.ui.Tabs.prototype.updateStyle = function () {
     
     goog.array.forEach(this.Tabs_, function(tObj){
 
-	// Resize tab wPcts
-	moka.style.setStyle(tObj.TAB, {
-	    'width': (wPct).toString() + '%',
-	    'height' : this.tabHeight_,
-	    'left': (wPct * i).toString() + '%',
-	})
+
+	if (this.orientation === 'RIGHT' || this.orientation === 'LEFT') {
+	    // Resize tab wPcts
+	    moka.style.setStyle(tObj.TAB, {
+		'height' : (100/tCount).toString() + '%',
+		'left': (wPct * i).toString() + '%',
+	    })
+	} else {
+	    // Resize tab wPcts
+	    moka.style.setStyle(tObj.TAB, {
+		'width': (wPct).toString() + '%',
+		'left': (wPct * i).toString() + '%',
+	    })
+
+
+	}
 
 	// Exit out if no parent node.
 	if (!this.getElement().parentNode){ return };
@@ -590,7 +708,16 @@ moka.ui.Tabs.prototype.updateStyle = function () {
  * @private
  */
 moka.ui.Tabs.prototype.deactivateTabElt_ = function (tabElt) {
+    // remove active classes
     goog.dom.classes.remove(tabElt, moka.ui.Tabs.CSS.TAB_ACTIVE);
+
+
+    // remove orientation classes
+    goog.dom.classes.remove(tabElt, goog.getCssName(
+	moka.ui.Tabs.CSS.TAB_ACTIVE, 
+	this.orientation.toLowerCase()));
+
+    // set default classes
     goog.dom.classes.set(tabElt, moka.ui.Tabs.CSS.TAB);
 }
 
@@ -616,9 +743,16 @@ moka.ui.Tabs.prototype.setActiveTabElt_ = function (ind) {
     goog.array.forEach(this.getTabElements(), function(tab, i) { 
 	if (i === ind) {
 	    tab.setAttribute('isActive', true);
+
+	    // Active classes
 	    goog.dom.classes.add(tab, moka.ui.Tabs.CSS.TAB_ACTIVE);
+
+	    // Orientation classes
+	    goog.dom.classes.add(tab, goog.getCssName(
+		moka.ui.Tabs.CSS.TAB_ACTIVE, 
+		this.orientation.toLowerCase()));
 	}
-    })	
+    }.bind(this))	
 }
 
 
@@ -694,6 +828,10 @@ moka.ui.Tabs.prototype.setHoverEvents_ = function() {
 moka.ui.Tabs.prototype.setTabMouseOver_ = function(tab, i) {
     goog.events.listen(tab, goog.events.EventType.MOUSEOVER, function() { 
 	goog.dom.classes.add(tab, moka.ui.Tabs.CSS.TAB_HOVERED);
+
+	goog.dom.classes.add(tab, goog.getCssName(
+	    moka.ui.Tabs.CSS.TAB_HOVERED, 
+	    this.orientation.toLowerCase()));
 	
 	// Set TabIcon style change (opacity) -- applies whether active 
 	// or inactive
@@ -715,6 +853,11 @@ moka.ui.Tabs.prototype.setTabMouseOver_ = function(tab, i) {
 moka.ui.Tabs.prototype.setTabMouseOut_ = function(tab, i) {
     goog.events.listen(tab, goog.events.EventType.MOUSEOUT, function(e) { 
 	goog.dom.classes.remove(tab, moka.ui.Tabs.CSS.TAB_HOVERED);
+	goog.dom.classes.remove(tab, goog.getCssName(
+	    moka.ui.Tabs.CSS.TAB_HOVERED, 
+	    this.orientation.toLowerCase()));
+
+
 	// TabIcon style change (opacity) -- applies whether active or inactive
 	goog.array.forEach(goog.dom.getElementsByClass(
 	    moka.ui.Tabs.CSS.TABICON, tab), function(icon){
@@ -776,6 +919,7 @@ moka.ui.Tabs.prototype.disposeInternal = function() {
     delete this.lastActiveTab_;
     delete this.prevActiveTab_;
     delete this.tabHeight_;
+    delete this.orientation;
 }
 
 
