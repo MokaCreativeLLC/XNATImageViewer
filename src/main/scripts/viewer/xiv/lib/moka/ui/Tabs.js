@@ -47,6 +47,7 @@ moka.ui.Tabs = function (opt_tabOrientation) {
     this.Tabs_ = [];
 
 
+    // Orient the tabs
     this.checkOrientation_(opt_tabOrientation ||
 			   moka.ui.Tabs.DEFAULT_ORIENTATION);
     this.setClassesByOrientation_();
@@ -157,7 +158,6 @@ moka.ui.Tabs.prototype.setClassesByOrientation_ = function() {
 	})
 	this.getElement().style.top = 'calc(100% - ' + this.getTabHeight() +
 	    'px)';
-	break;
 	break;
 
     case 'LEFT':
@@ -622,7 +622,6 @@ moka.ui.Tabs.prototype.deactivateAll = function () {
  * @return {!number}
  */
 moka.ui.Tabs.prototype.getTabCount = function() {
-    window.console.log('\n\n\n\n', this.Tabs_);
     return this.Tabs_.length;
 }
 
@@ -632,11 +631,6 @@ moka.ui.Tabs.prototype.getTabCount = function() {
  * @inheritDoc
  */
 moka.ui.Tabs.prototype.updateStyle = function () {
-
-
-
-
-
     if (!this.getElement().parentNode) { return };
     
     // Need to do this -- google takes it over.
@@ -655,8 +649,6 @@ moka.ui.Tabs.prototype.updateStyle = function () {
 	    moka.ui.Tabs.CSS_CLASS_PREFIX, 
 				this.orientation.toLowerCase() + '-icon'));
     }.bind(this))
-
-
 
 
     var i = /**@type {!number}*/ 0;
@@ -795,7 +787,7 @@ moka.ui.Tabs.prototype.clearEventListeners_ = function(){
 moka.ui.Tabs.prototype.setClickEvents_ = function() {
     // Cycle through each tab...
     goog.array.forEach(this.getTabElements(), function(tab, i) { 
-	goog.events.listen(tab, goog.events.EventType.MOUSEUP, function(event) {
+	goog.events.listen(tab, goog.events.EventType.CLICK, function(event) {
 	    window.console.log("CLICK", i);
 	    this.deactivateAll();
 	    this.setActive(i);

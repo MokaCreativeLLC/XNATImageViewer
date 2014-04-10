@@ -46,7 +46,14 @@ xiv.ui.Modal = function () {
      * @type {?moka.ui.ZipTabs}
      * @private
      */	
-    this.ZipTabs_ = null; 
+    this.ProjectTab_ = null; 
+
+
+    /**
+     * @type {!Element}
+     * @private
+     */	
+    this.ProjectTabBounds_ = null; 
 
 
 
@@ -120,8 +127,10 @@ xiv.ui.Modal.CSS_SUFFIX = {
     ROWMENU : 'rowmenu',
     COLUMNMENU_BUTTON : 'button',
     ROWMENU_BUTTON : 'button',
-    GALLERY_TABS : 'gallery-tabs',
-    GALLERY_TABDRAGGER : 'gallery-tabdragger',
+    PROJECTTAB : 'projecttab',
+    PROJECTTAB_BOUNDS: 'projecttab-bounds',
+    PROJECTTAB_DRAGGER : 'projecttab-dragger',
+    PROJECTTAB_DRAGGER_HANDLE : 'projecttab-dragger-handle',
 }
 
 
@@ -536,8 +545,7 @@ xiv.ui.Modal.prototype.computeZipTabsDims_ = function() {
     this.dims_.thumbgallery = {};
 
     this.dims_.thumbgallery.W = 
-	goog.style.getSize(this.ZipTabs_.getElement()).width
-
+	goog.style.getSize(this.ProjectTab_.getElement()).width
 
     this.dims_.thumbgallery.H = this.dims_.H - 
 	this.currMode_.VIEWBOX_VERT_MARGIN * 2;
@@ -657,20 +665,24 @@ xiv.ui.Modal.prototype.computeViewBoxPositions_ = function () {
  * @param {Object.<string, string | number>=}
  * @public
  */
-xiv.ui.Modal.prototype.updateStyle = function () {	
-    this.computeDims_();
+xiv.ui.Modal.prototype.updateStyle = function () {
 
+    //window.console.log("\n\nupdate style!");
+    //window.console.log("WIDTH", this.ProjectTab_.getElement());
+    this.computeDims_();
     moka.style.setStyle(this.getElement(), {
 	'height' : this.dims_.H,
 	'width': this.dims_.W,
 	'left': this.dims_.X,
 	'top': this.dims_.Y,
     });
-    this.updateStyle_ThumbnailGallery_();
+    this.updateStyle_ProjectTab_();
     this.updateStyle_ViewBoxes_();
-    //window.console.log("DIMS", this.dims_);
     this.updateStyle_buttons_();
     this.highlightInUseThumbnails();
+    //window.console.log("WIDTH", this.ProjectTab_.getElement());
+    //window.console.log("DIMS", this.dims_);
+   // window.console.log("RESIZE5!", this.ProjectTab_.getElement().style.width);
 }
 
 
@@ -679,16 +691,13 @@ xiv.ui.Modal.prototype.updateStyle = function () {
  * Updates the ViewBoxes's style.
  * @private
  */
-xiv.ui.Modal.prototype.updateStyle_ThumbnailGallery_ = function(){
+xiv.ui.Modal.prototype.updateStyle_ProjectTab_ = function(){
     // xiv.ui.ViewBoxes	
-    if (this.ThumbnailGallery_) {
-	moka.style.setStyle(
-	    this.ThumbnailGallery_.getElement(), {
-		'height': this.dims_.thumbgallery.H,
-		'top': this.dims_.thumbgallery.Y
-	})	
+    if (this.ProjectTab_) {
+	this.ProjectTab_.updateStyle();
     }
 }
+
 
 
 
@@ -731,7 +740,7 @@ xiv.ui.Modal.prototype.updateStyle_buttons_ = function(){
  */
 xiv.ui.Modal.prototype.initSubComponents = function() {
     this.initBackground_();
-    this.initThumbnailGallery_();
+    this.initProjectTab_();
     this.initViewBoxHandler_();
     this.initButtons_();
 }
@@ -770,41 +779,68 @@ xiv.ui.Modal.prototype.initButtons_ = function() {
 /**
  * @private
  */
-xiv.ui.Modal.prototype.initThumbnailGallery_ = function() {
-    this.ZipTabs_ = new moka.ui.ZipTabs('RIGHT'); 
-    goog.dom.append(this.getElement(), this.ZipTabs_.getElement());
-    goog.dom.classes.add(this.ZipTabs_.getElement(), 
-			 xiv.ui.Modal.CSS.GALLERY_TABS);
+xiv.ui.Modal.prototype.initProjectTab_ = function() {
 
-    // Add dragger CSS and handle.
-    var dragger = /**@type {!Element}*/
-    this.ZipTabs_.getResizable().getDragElt('RIGHT');
-    goog.dom.classes.add(dragger, xiv.ui.Modal.CSS.GALLERY_TABDRAGGER);
+    //
+    // TabBounds
+    //
+    this.ProjectTabBounds_ = goog.dom.createDom('div');
+    goog.dom.append(this.getElement(), this.ProjectTabBounds_);
+    goog.dom.classes.add(this.ProjectTabBounds_, 
+			 xiv.ui.Modal.CSS.PROJECTTAB_BOUNDS);
+    this.ProjectTabBounds_.style.visibility = 'hidden';
 
-    /**
-    goog.dom.append(dragger, goog.dom.createDom('div', {
-	'id': xiv.ui.ViewBox.ID_PREFIX + '_DraggerHandle_' + 
-	    goog.string.createUniqueString(),
-	'class': xiv.ui.ViewBox.CSS.TABDRAGGER_HANDLE
-    }));
-    */
+    //
+    // ProjectTab
+    //
+    this.ProjectTab_ = new moka.ui.ZipTabs('RIGHT'); 
+    goog.dom.append(this.getElement(), this.ProjectTab_.getElement());
+    goog.dom.classes.add(this.ProjectTab_.getElement(), 
+			 xiv.ui.Modal.CSS.PROJECTTAB);
+
+
+
+    
+
+    
 
     this.ThumbnailGallery_ = new xiv.ui.ThumbnailGallery();
     this.ThumbnailGallery_.setHoverParent(this.getElement());
-    goog.dom.append(this.ZipTabs_.getElement(), 
+    goog.dom.append(this.ProjectTab_.getElement(), 
 		    this.ThumbnailGallery_.getElement());
     this.setThumbnailGalleryEvents_();
 
 
-    this.ZipTabs_.setTabPageContents('PROJECT BROWSER', 
+    this.ProjectTab_.setTabPageContents('Project Browser', 
 				     goog.dom.createDom('div', {
 					 'color': 'rgb(255,255,255)',
 					 'background': 'rgb(205,25,48)',
 				     }, this.ThumbnailGallery_.getElement()))
 
+    this.ProjectTab_.setBoundaryElement(this.ProjectTabBounds_);
+    this.ProjectTab_.Resizable_.showBoundaryElement();
 
-    goog.events.listen(this.ZipTabs_.getResizable(), 
-		       moka.ui.Resizable.EventType.RESIZE,
+
+    //
+    // Add dragger CSS
+    //
+    var dragger = /**@type {!Element}*/
+    this.ProjectTab_.getResizable().getDragElt('RIGHT');
+    goog.dom.classes.add(dragger, xiv.ui.Modal.CSS.PROJECTTAB_DRAGGER);
+
+
+    //
+    // Add dragger handle
+    //
+    goog.dom.append(dragger, goog.dom.createDom('div', {
+	'id': xiv.ui.ViewBox.ID_PREFIX + '_DraggerHandle_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.Modal.CSS.PROJECTTAB_DRAGGER_HANDLE
+    }));
+
+
+
+    goog.events.listen(this.ProjectTab_, moka.ui.Resizable.EventType.RESIZE,
 		       this.updateStyle.bind(this));
  
 }
@@ -917,7 +953,6 @@ xiv.ui.Modal.prototype.adjustStyleToMode_ = function(){
 	this.buttons_.FULLSCREEN.style.visibilty = 'hidden';
     }
 }
-
 
 
 
@@ -1147,9 +1182,9 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
     delete this.ViewBoxHandler_;
 
     // Zip Tabs
-    goog.events.removeAll(this.ZipTabs_);
-    this.ZipTabs_.disposeInternal();
-    delete this.ZipTabs_;
+    goog.events.removeAll(this.ProjectTab_);
+    this.ProjectTab_.disposeInternal();
+    delete this.ProjectTab_;
 
     // ThumbnailGallery_
     goog.events.removeAll(this.ThumbnailGallery_);

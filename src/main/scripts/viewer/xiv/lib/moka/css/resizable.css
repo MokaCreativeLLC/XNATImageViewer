@@ -15,7 +15,7 @@ See the COPYING file for details.
 
 .moka-ui-resizable-right {
   position: absolute;
-  right: 0px;
+  left: 100%;
   top: 0px;
   width: 7px;
   height: 100%;

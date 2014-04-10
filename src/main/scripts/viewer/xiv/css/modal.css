@@ -145,18 +145,38 @@
 }
 
 
-.xiv-ui-modal-gallery-tabs {
+.xiv-ui-modal-projecttab-bounds {
+    position: absolute;
+    top: 25px;
+    left: 0px;
+    height: calc(100% - 50px);
+    width: 200px;
+    background-color: rgba(120,220,120, .5);
+}
+
+
+.xiv-ui-modal-projecttab {
     left: 0px;
     width: 20px;
     height: calc(100% - 50px);
     top: 25px;
-    border-ef
 }
 
 
+.xiv-ui-modal-projecttab-dragger {
+    left: calc(100%);
+    width: 10px;
+    background-color: rgba(45,45,45,1);
+    height: 100%;
+}
 
-.xiv-ui-modal-gallery-tabdragger {
-    width: 20px;
-    background-color: rgba(255,0,0,.5);
-    
+
+.xiv-ui-modal-projecttab-dragger-handle {
+    position: absolute;
+    width: 4px;
+    left: 3px;
+    height: 30px;
+    top: calc(50% - 15px);
+    background-color: rgb(100,100,100);
+    border-radius: 4px;
 }

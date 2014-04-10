@@ -31,21 +31,23 @@ goog.provide('moka.ui.ZipTabs');
 moka.ui.ZipTabs = function (opt_orientation) {
     goog.base(this, opt_orientation);
 
+
+    /**
+     * @type {?Element}
+     * @private
+     */
+    this.boundaryElt_ = null;
+
+
     /**
      * @type {!moka.ui.Resizable}
      * @private
      */
-    this.Resizable_ = new moka.ui.Resizable(this.getElement(), 
-			    this.orientation);    
-    this.setDefaultResizeEvents_();
+    this.Resizable_ = null;
 
-
-    // required!
-    this.updateStyle();
 }
 goog.inherits(moka.ui.ZipTabs, moka.ui.Tabs);
 goog.exportSymbol('moka.ui.ZipTabs', moka.ui.ZipTabs)
-
 
 
 
@@ -53,7 +55,15 @@ goog.exportSymbol('moka.ui.ZipTabs', moka.ui.ZipTabs)
  * @type {!number}
  * @const
  */
-moka.ui.ZipTabs.BOUND_THRESHOLD = 4;
+moka.ui.ZipTabs.BOUND_THRESHOLD_VERT = 4;
+
+
+
+/**
+ * @type {!number}
+ * @const
+ */
+moka.ui.ZipTabs.BOUND_THRESHOLD_HORIZ = 4;
 
 
 
@@ -76,9 +86,6 @@ moka.ui.ZipTabs.ID_PREFIX =  'moka.ui.ZipTabs';
 
 
 
-
-
-
 /**
  * @return {!moka.ui.Resizable} The resizable object.
  * @public
@@ -89,55 +96,103 @@ moka.ui.ZipTabs.prototype.getResizable = function(){
 
 
 
-
 /**
  * As sated.
  * @private
  */
 moka.ui.ZipTabs.prototype.setDefaultResizeEvents_ = function(){
-
    goog.events.listen(this.Resizable_, moka.ui.Resizable.EventType.RESIZE,
 	function(e) {
-	    
-	    this.calcDims();
+	    //window.console.log("RESIZE!", this.getElement().style.width);
 
 	    switch (this.orientation) {
+
 	    case 'BOTTOM':
-		if (Math.abs(this.getTabHeight() - this.currSize.height) <= 
-		    moka.ui.ZipTabs.BOUND_THRESHOLD){
-		    this.deactivateAll();
-		} else {
-		    this.setActive(this.getLastActiveTab());
-		}
+		this.onResizeTop_();
 		break;
+
 	    case 'TOP': // to do
 		break;
+
 	    case 'LEFT': // to do
 		break;
+
 	    case 'RIGHT': // to do
-		if (Math.abs(this.getTabWidth() - this.currSize.width) <= 
-		    moka.ui.ZipTabs.BOUND_THRESHOLD){
-		    this.deactivateAll();
-		} else {
-		    this.setActive(this.getLastActiveTab());
-		}
+		this.onResizeRight_();
 		break;
 	    }
+
+	    this.dispatchEvent({
+		type: moka.ui.Resizable.EventType.RESIZE,
+		size: e.size,
+		pos: e.pos
+	    });
+
+	    //window.console.log("Event dispatched from ZipTabs!", 
+	    //this.getElement().style.width);
 	}.bind(this));
 }
 
 
 
 /**
+ * @public
+ */
+moka.ui.ZipTabs.prototype.setBoundaryElement = function(elt) {
+    if (this.Resizable_) {
+	this.Resizable_.setBoundaryElement(elt);
+	this.boundaryElt_ = null;
+    } else {
+	this.boundaryElt_ = elt;
+    }
+    this.updateStyle();
+}
+
+
+
+/**
+ * @private
+ */
+moka.ui.ZipTabs.prototype.onResizeTop_ = function() {
+    if (Math.abs(this.getTabHeight() - this.currSize.height) <= 
+	moka.ui.ZipTabs.BOUND_THRESHOLD_VERT){
+	this.deactivateAll();
+    } else {
+	this.setActive(this.getLastActiveTab());
+    }
+}
+
+
+
+/**
+ * @private
+ */
+moka.ui.ZipTabs.prototype.onResizeRight_ = function() {
+
+    this.updateStyleRight_();
+    this.calcDims();
+
+    if (Math.abs(this.getTabWidth() - this.currSize.width) <= 
+	moka.ui.ZipTabs.BOUND_THRESHOLD_HORIZ){
+	this.deactivateAll();
+    } else {
+	this.setActive(this.getLastActiveTab());
+    }
+}
+
+
+
+/**
  * Callback for when a ViewBoxTab is activated.
- * @param {!number} clickInd The clicked tab index.
+ * @param {!Event} event The click event.
  * @private
  */
 moka.ui.ZipTabs.prototype.onTabClicked_ = function(event) {
+    window.console.log(this.getElement().style.width);
     this.calcDims();
     switch (this.orientation) {
     case 'BOTTOM':
-	this.onTabClicked_bottom_();
+	this.onTabClickedBottom_(event);
 	break;
 
     case 'TOP':
@@ -149,7 +204,7 @@ moka.ui.ZipTabs.prototype.onTabClicked_ = function(event) {
 	break;
 
     case 'RIGHT':
-	this.onTabClicked_right_();
+	this.onTabClickedRight_(event);
 	break;
     }
 }
@@ -157,16 +212,20 @@ moka.ui.ZipTabs.prototype.onTabClicked_ = function(event) {
 
 
 /**
+ * @param {!Event} event The click event.
  * @private
  */
-moka.ui.ZipTabs.prototype.onTabClicked_bottom_ = function() {
+moka.ui.ZipTabs.prototype.onTabClickedBottom_ = function(event) {
     if (Math.abs(this.currSize.height - this.getTabHeight()) <= 
-	moka.ui.ZipTabs.BOUND_THRESHOLD) {
-	this.Resizable_.slideDragger('TOP', new goog.math.Coordinate(0, 
-					this.Resizable_.getTopLimit()));
+	moka.ui.ZipTabs.BOUND_THRESHOLD_VERT) {
+
+	this.Resizable_.slideDragger('TOP', new goog.math.Coordinate(
+	    this.currPos.x, this.Resizable_.getTopLimit()));
     }
     else if (this.getLastActiveTab() == this.getPreviousActiveTab()) {
-	this.Resizable_.slideDragger('TOP', new goog.math.Coordinate(0, 
+
+	this.Resizable_.slideDragger('TOP', new goog.math.Coordinate(
+	    this.currPos.x, 
 		this.Resizable_.getBottomLimit() - this.getTabHeight()),
 				      this.deactivateAll.bind(this));
     }
@@ -176,17 +235,21 @@ moka.ui.ZipTabs.prototype.onTabClicked_bottom_ = function() {
 
 
 /**
+ * @param {!Event} event The click event.
  * @private
  */
-moka.ui.ZipTabs.prototype.onTabClicked_right_ = function() {
+moka.ui.ZipTabs.prototype.onTabClickedRight_ = function(event) {
+
+    this.updateStyle();
+    window.console.log('TAB RIGHT', this.getElement().style.width);
     if (Math.abs(this.currSize.width - this.getTabWidth()) <= 
-	moka.ui.ZipTabs.BOUND_THRESHOLD) {
-	this.Resizable_.slideDragger('RIGHT', new goog.math.Coordinate(0, 
-					this.Resizable_.getRightLimit()));
-    }
-    else if (this.getLastActiveTab() == this.getPreviousActiveTab()) {
-	this.Resizable_.slideDragger('RIGHT', new goog.math.Coordinate(0, 
-		this.Resizable_.getLeftLimit()), this.deactivateAll.bind(this))
+	moka.ui.ZipTabs.BOUND_THRESHOLD_HORIZ) {
+	this.setActive(this.lastActiveTab_);
+	this.Resizable_.slideDraggerToBounds('RIGHT', 'RIGHT');
+
+    } else if (this.getLastActiveTab() == this.getPreviousActiveTab()) {
+	window.console.log("SLIDE BACK!");
+	this.Resizable_.slideDraggerToBounds('RIGHT', 'LEFT');
     }
 }
 
@@ -197,8 +260,9 @@ moka.ui.ZipTabs.prototype.onTabClicked_right_ = function() {
  * @inheritDoc
  */
 moka.ui.ZipTabs.prototype.updateStyle = function(){
+    window.console.log(this.getElement().style.width);
     goog.base(this, 'updateStyle');
-    
+    window.console.log(this.getElement().style.width);
     switch (this.orientation) {
     case 'TOP':
     case 'BOTTOM':
@@ -208,10 +272,29 @@ moka.ui.ZipTabs.prototype.updateStyle = function(){
 
     case 'LEFT':
     case 'RIGHT':
-	this.updateStyle_left_();	
+	this.updateStyleRight_();	
 	break;
     }    
 }
+
+
+
+/**
+ * @private
+ */
+moka.ui.ZipTabs.prototype.setResizable_ = function(tabTitle) {
+    this.Resizable_ = new moka.ui.Resizable(this.getElement(), 
+					    this.orientation);    
+    this.setDefaultResizeEvents_();
+
+
+    if (this.boundaryElt_){
+	this.setBoundaryElement(this.boundaryElt_);
+    }
+    // required!
+    this.updateStyle();
+}
+
 
 
 
@@ -222,9 +305,16 @@ moka.ui.ZipTabs.prototype.addTab = function(tabTitle) {
     // Parent class
     goog.base(this, 'addTab', tabTitle);
 
+
+    // Set resizable only after the tab has been added.
+    if (this.getTabElements().length == 1) {
+	this.setResizable_();
+    }
+
     // More click listeners
     goog.array.forEach(this.getTabElements(), function(tab, i) { 
-	goog.events.listen(tab, goog.events.EventType.MOUSEUP, function(event) {
+	goog.events.listen(tab, goog.events.EventType.CLICK, function(event) {
+	    window.console.log(this.getElement().style.width);
 	    this.onTabClicked_(event);
 	}.bind(this))
     }.bind(this))
@@ -239,26 +329,64 @@ moka.ui.ZipTabs.prototype.addTab = function(tabTitle) {
 /**
  * @private
  */
-moka.ui.ZipTabs.prototype.updateStyle_left_ = function() {
-    var tabLeft = 'calc(100% - ' + this.getTabWidth() + 'px)';
-    this.getResizable().setMinWidth(this.getTabWidth());
+moka.ui.ZipTabs.prototype.updateStyleRight_ = function() {
+    //
+    // Exit out if no resizable or no tabs
+    //
+    if (!this.Resizable_ || (this.getTabElements().length == 0)) { return };
+    
+    //
+    // Set the min width
+    //
+    this.Resizable_.setMinWidth(this.getTabWidth());
 
-    goog.array.forEach(this.getTabPages(), function(page, i) { 
-	page.style.left = '0%';
-	page.style.height = '100%';
-	page.style.top = '0px';
-	page.style.width = tabLeft;
+    //
+    // Get the dragger position
+    //
+    var dragElt = this.Resizable_.getDragElt('RIGHT');
+    var dragPos = goog.style.getPosition(dragElt);
+    var dragSize = goog.style.getSize(dragElt);
+					 
+    //
+    // Move the tab elements
+    //
+    goog.array.forEach(this.getTabElements(), function(tabElt, i){
+	moka.style.setStyle(tabElt, {
+	    'left': dragPos.x - this.getTabWidth()
+	})
     }.bind(this))
 
+    //
+    // Set the tab heights
+    //
     var tabH = 100/this.getTabCount();
     goog.array.forEach(this.getTabElements(), function(tab, i) { 
 	moka.style.setStyle(tab, {
-	    'width': this.getTabWidth(),
 	    'top': (tabH * i).toString() + '%',
 	    'height': tabH.toString() + '%'
 	})
-	tab.style.left = tabLeft;
     }.bind(this))
+     
+    //
+    // Resize the pages
+    //
+    goog.array.forEach(this.getTabPages(), function(page, i) {
+	moka.style.setStyle(page, {
+	    'left': 0,
+	    'top': 0,
+	    'height': '100%',
+	    'width': dragPos.x
+	})
+    }.bind(this))
+
+    //
+    // Resize the element
+    //
+    window.console.log('DRAG POS', this.getTabWidth(), dragPos.x);
+    moka.style.setStyle(this.getElement(), {
+	//'width': (dragPos.x == 0)? this.getTabWidth() : dragPos.x
+    })
+    window.console.log(this.getElement().style.width);
 
     goog.array.forEach(
 	goog.dom.getElementsByClass(moka.ui.Tabs.CSS.TABICON, 
@@ -278,8 +406,10 @@ moka.ui.ZipTabs.prototype.updateStyle_left_ = function() {
 moka.ui.ZipTabs.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
+    goog.dom.remove(this.boundaryElt_);
+    delete this.boundaryElt_;
+
     goog.events.removeAll(this.Resizable_);
     this.Resizable_.disposeInternal(); 
-
     delete this.Resizable_;
 }
