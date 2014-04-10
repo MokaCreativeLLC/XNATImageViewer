@@ -788,7 +788,8 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
     goog.dom.append(this.getElement(), this.ProjectTabBounds_);
     goog.dom.classes.add(this.ProjectTabBounds_, 
 			 xiv.ui.Modal.CSS.PROJECTTAB_BOUNDS);
-    this.ProjectTabBounds_.style.visibility = 'hidden';
+    //window.console.log(this.ProjectTabBounds_.parentNode);
+    //this.ProjectTabBounds_.style.visibility = 'hidden';
 
     //
     // ProjectTab
@@ -798,11 +799,6 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
     goog.dom.classes.add(this.ProjectTab_.getElement(), 
 			 xiv.ui.Modal.CSS.PROJECTTAB);
 
-
-
-    
-
-    
 
     this.ThumbnailGallery_ = new xiv.ui.ThumbnailGallery();
     this.ThumbnailGallery_.setHoverParent(this.getElement());
@@ -818,21 +814,20 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
 				     }, this.ThumbnailGallery_.getElement()))
 
     this.ProjectTab_.setBoundaryElement(this.ProjectTabBounds_);
-    this.ProjectTab_.Resizable_.showBoundaryElement();
+    //this.ProjectTab_.Resizable_.showBoundaryElement();
 
-
+    
     //
     // Add dragger CSS
     //
-    var dragger = /**@type {!Element}*/
-    this.ProjectTab_.getResizable().getDragElt('RIGHT');
-    goog.dom.classes.add(dragger, xiv.ui.Modal.CSS.PROJECTTAB_DRAGGER);
+    var dragHandle = this.ProjectTab_.getResizeHandles()[0];
+    goog.dom.classes.add(dragHandle, xiv.ui.Modal.CSS.PROJECTTAB_DRAGGER);
 
 
     //
     // Add dragger handle
     //
-    goog.dom.append(dragger, goog.dom.createDom('div', {
+    goog.dom.append(dragHandle, goog.dom.createDom('div', {
 	'id': xiv.ui.ViewBox.ID_PREFIX + '_DraggerHandle_' + 
 	    goog.string.createUniqueString(),
 	'class': xiv.ui.Modal.CSS.PROJECTTAB_DRAGGER_HANDLE

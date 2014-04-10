@@ -1,0 +1,105 @@
+/*
+Use of this source code is governed by an Apache 2.0 License.
+See the COPYING file for details.
+*/
+
+
+.moka-ui-resizedragger {
+  position: absolute;
+  font-size: 0.1px;
+  z-index: 100;
+  background-color: rgba(255,20,20, .5);
+}
+
+
+/**
+  RIGHT AND LEFT
+*/
+.moka-ui-resizedraggerright, .moka-ui-resizedraggerleft {
+  position: absolute;
+  top: 0px;
+  width: 7px;
+  height: 100%;
+  cursor: ew-resize;
+}
+
+.moka-ui-resizedraggerright {
+  left: 100%;
+}
+
+.moka-ui-resizedraggerleft {
+  left: -7px
+}
+
+
+
+/**
+ * TOP AND BOTTOM
+ */
+.moka-ui-resizedraggertop, .moka-ui-resizedraggerbottom {
+  position: absolute;
+  left: 0px;
+  width: 100%;
+  height: 7px;
+  cursor: ns-resize;
+}
+
+.moka-ui-resizedraggertop {
+  top: -7px;
+}
+
+.moka-ui-resizedraggerbottom {
+  top: 100%;
+}
+
+
+
+
+/**
+ * CORNERS
+ */
+.moka-ui-resizedraggertopright, .moka-ui-resizedraggertopleft,
+.moka-ui-resizedraggerbottomright, .moka-ui-resizedraggerbottomleft {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  z-index: 50;
+}
+
+.moka-ui-resizedraggerbottomright {
+  right: 1px;
+  bottom: 1px;
+  cursor: se-resize;
+}
+
+.moka-ui-resizedraggerbottomleft {
+  left: 1px;
+  bottom: 1px;
+  cursor: sw-resize;
+}
+
+.moka-ui-resizedraggertopleft {
+  left: 1px;
+  top: 1px;
+  cursor: nw-resize;
+}
+
+.moka-ui-resizedraggertopright {
+  right: 1px;
+  top: 1px;
+  cursor: ne-resize;
+}
+
+
+
+
+
+.moka-ui-resizedragger-ghost {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  border: #aaaaaa 2px solid;
+  z-index: 999;
+  cursor: move;
+  -moz-box-sizing: border-box;
+}

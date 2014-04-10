@@ -33,18 +33,13 @@ moka.ui.ZipTabs = function (opt_orientation) {
 
 
     /**
-     * @type {?Element}
-     * @private
-     */
-    this.boundaryElt_ = null;
-
-
-    /**
      * @type {!moka.ui.Resizable}
      * @private
      */
-    this.Resizable_ = null;
-
+    this.Resizable_ = new moka.ui.Resizable(this.getElement(), 
+					    this.orientation); 
+    this.Resizable_.setMinWidth(this.getTabWidth())
+    this.setResizeEvents_();
 }
 goog.inherits(moka.ui.ZipTabs, moka.ui.Tabs);
 goog.exportSymbol('moka.ui.ZipTabs', moka.ui.ZipTabs)
@@ -90,8 +85,8 @@ moka.ui.ZipTabs.ID_PREFIX =  'moka.ui.ZipTabs';
  * @return {!moka.ui.Resizable} The resizable object.
  * @public
  */
-moka.ui.ZipTabs.prototype.getResizable = function(){
-    return this.Resizable_;
+moka.ui.ZipTabs.prototype.getResizeHandles = function(){
+    return this.Resizable_.getHandles();
 }
 
 
@@ -100,7 +95,7 @@ moka.ui.ZipTabs.prototype.getResizable = function(){
  * As sated.
  * @private
  */
-moka.ui.ZipTabs.prototype.setDefaultResizeEvents_ = function(){
+moka.ui.ZipTabs.prototype.setResizeEvents_ = function(){
    goog.events.listen(this.Resizable_, moka.ui.Resizable.EventType.RESIZE,
 	function(e) {
 	    //window.console.log("RESIZE!", this.getElement().style.width);
@@ -139,12 +134,7 @@ moka.ui.ZipTabs.prototype.setDefaultResizeEvents_ = function(){
  * @public
  */
 moka.ui.ZipTabs.prototype.setBoundaryElement = function(elt) {
-    if (this.Resizable_) {
-	this.Resizable_.setBoundaryElement(elt);
-	this.boundaryElt_ = null;
-    } else {
-	this.boundaryElt_ = elt;
-    }
+    this.Resizable_.setBoundaryElement(elt);
     this.updateStyle();
 }
 
@@ -261,13 +251,16 @@ moka.ui.ZipTabs.prototype.onTabClickedRight_ = function(event) {
  */
 moka.ui.ZipTabs.prototype.updateStyle = function(){
     window.console.log('UPDATE STYLE', this.getElement().style.width);
-    goog.base(this, 'updateStyle');
     
+    goog.base(this, 'updateStyle');
+    this.Resizable_.update();
+
+    return;
     switch (this.orientation) {
     case 'TOP':
     case 'BOTTOM':
 	//moka.style.setStyle(this.getElement(), {'width': '100%'});
-	this.getResizable().setMinHeight(this.getTabHeight());
+	this.Resizable_.setMinHeight(this.getTabHeight());
 	break;
 
     case 'LEFT':
@@ -284,14 +277,6 @@ moka.ui.ZipTabs.prototype.updateStyle = function(){
  */
 moka.ui.ZipTabs.prototype.setResizable_ = function(tabTitle) {
     window.console.log('set resizable');
-    this.Resizable_ = new moka.ui.Resizable(this.getElement(), 
-					    this.orientation);    
-    this.setDefaultResizeEvents_();
-
-
-    if (this.boundaryElt_){
-	this.setBoundaryElement(this.boundaryElt_);
-    }
     // required!
     this.updateStyle();
 }
