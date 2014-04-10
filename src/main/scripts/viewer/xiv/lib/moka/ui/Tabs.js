@@ -144,7 +144,7 @@ moka.ui.Tabs.prototype.checkOrientation_ = function(orient){
 moka.ui.Tabs.prototype.setClassesByOrientation_ = function() {
     goog.dom.classes.add(this.getElement(), moka.ui.Tabs.ELEMENT_CLASS);
     goog.dom.classes.add(this.getElement(), 
-		goog.getCssName(moka.ui.Tabs.CSS_CLASS_PREFIX, 
+		goog.getCssName(moka.ui.Tabs.CSS.TAB, 
 			       this.orientation.toLowerCase()));
 
     // In-line calculations
@@ -631,66 +631,74 @@ moka.ui.Tabs.prototype.getTabCount = function() {
  * @inheritDoc
  */
 moka.ui.Tabs.prototype.updateStyle = function () {
+
+    window.console.log("\n\n\n\n**********UPDATE STULE", this.orientation);
     if (!this.getElement().parentNode) { return };
     
     // Need to do this -- google takes it over.
     goog.dom.classes.add(this.getElement(), moka.ui.Tabs.ELEMENT_CLASS);
 
 
-    // Necessary because google takes it over...
+    //
+    // IMPORTANT: Necessary because google takes it over...
+    //
+
+    // Element orientation classes
     goog.array.forEach(this.getTabElements(), function(tab, i) { 
 	goog.dom.classes.add(tab, goog.getCssName(
-	    moka.ui.Tabs.CSS_CLASS_PREFIX, 
-				this.orientation.toLowerCase()));
+	    moka.ui.Tabs.CSS.TAB, this.orientation.toLowerCase()));
     }.bind(this))
 
-    goog.array.forEach(this.getTabIcons(), function(tab, i) { 
-	goog.dom.classes.add(tab, goog.getCssName(
-	    moka.ui.Tabs.CSS_CLASS_PREFIX, 
-				this.orientation.toLowerCase() + '-icon'));
+    // Icon orientation classes
+    goog.array.forEach(this.getTabIcons(), function(icon, i) { 
+	goog.dom.classes.add(icon, goog.getCssName(
+	    moka.ui.Tabs.CSS.TABICON, this.orientation.toLowerCase()));
+    }.bind(this))
+
+    // Page
+    goog.array.forEach(this.getTabPages(), function(page, i) { 
+	goog.dom.classes.add(page, goog.getCssName(
+	    moka.ui.Tabs.CSS.TABPAGE, this.orientation.toLowerCase()));
     }.bind(this))
 
 
-    var i = /**@type {!number}*/ 0;
-    var tCount = /**@type {!number}*/ this.getTabCount();
-    var wPct = /**@type {!number}*/ 100/tCount; 
-    var pHght = /**@type {!number}*/ 
-	    parseInt(this.getElement().parentNode.style.height, 10);
-    var borderMgn = /**@type {!number}*/ 0;
-    
+    switch (this.orientation) {
+    case 'TOP':
+    case 'BOTTOM':
+	//moka.style.setStyle(this.getElement(), {'width': '100%'});
+	//this.getResizable().setMinHeight(this.getTabHeight());
+	this.updateStyleBottom_();
+	break;
+
+    case 'LEFT':
+    case 'RIGHT':
+	this.updateStyleRight_();	
+	break;
+    }  
+}
+
+
+
+
+/**
+ * @private
+ */
+moka.ui.Tabs.prototype.updateStyleRight_ = function() {
+    var borderMgn = 0;    
     goog.array.forEach(this.Tabs_, function(tObj){
-
-
-	if (this.orientation === 'RIGHT' || this.orientation === 'LEFT') {
-	    // Resize tab wPcts
-	    moka.style.setStyle(tObj.TAB, {
-		'height' : (100/tCount).toString() + '%',
-		'left': (wPct * i).toString() + '%',
-	    })
-	} else {
-	    // Resize tab wPcts
-	    moka.style.setStyle(tObj.TAB, {
-		'width': (wPct).toString() + '%',
-		'left': (wPct * i).toString() + '%',
-	    })
-
-
-	}
 
 	// Exit out if no parent node.
 	if (!this.getElement().parentNode){ return };
 
-	borderMgn = parseInt(moka.style.getComputedStyle(tObj.TAB, 
-						'border-bottom-width'));
-	borderMgn = (!borderMgn || isNaN(borderMgn) || 
-		     !goog.isNumber(borderMgn)) ? 0 : borderMgn; 
+	//
+	// Resize tabElement heights
+	//
+	moka.style.setStyle(tObj.TAB, {
+	    'height' : (100/this.getTabCount()).toString() + '%',
+	})
 
-	tObj.CONTENT.style.top = 
-	    (this.tabHeight_ - borderMgn).toString() + 'px';
-	tObj.CONTENT.style.height = 'calc(100% - ' + 
-	    this.tabHeight_.toString() + 'px)',
 
-	i++;
+
     }.bind(this))
 }
 
@@ -711,6 +719,9 @@ moka.ui.Tabs.prototype.deactivateTabElt_ = function (tabElt) {
 
     // set default classes
     goog.dom.classes.set(tabElt, moka.ui.Tabs.CSS.TAB);
+    goog.dom.classes.add(tabElt, goog.getCssName(
+	moka.ui.Tabs.CSS.TAB, 
+	this.orientation.toLowerCase()));
 }
 
 

@@ -334,6 +334,19 @@ moka.ui.Resizable.prototype.slideAnim_;
 
 
 
+/**
+ * @private
+ */
+moka.ui.Resizable.prototype.getDraggerDirection_ = function(dragger) {
+    for (var direction in this.draggers_) {
+	if (this.draggers_[direction] === dragger) {
+	    return direction;
+	}
+    }
+    return null;
+};
+
+
 
 /**
  * Returns the draggers.
@@ -823,8 +836,7 @@ function(draggerDir, newPoint, opt_callback, opt_dur) {
     //
     goog.events.listen(this.slideAnim_, goog.fx.Animation.EventType.BEGIN, 
 	function(e) {
-	    window.console.log('DRAG START', this.element_.style.width);
-	    this.onDragStart_({
+	    this.onResizeStart_({
 		currentTarget: dragger
 	    })
     }.bind(this));
@@ -833,9 +845,8 @@ function(draggerDir, newPoint, opt_callback, opt_dur) {
     // onAnimate
     //
     goog.events.listen(this.slideAnim_, goog.fx.Animation.EventType.ANIMATE, 
-	function(e) {
-	    window.console.log('DRAGGING', this.element_.style.width);
-	    this.onDrag_({
+	function(e) {	    
+	    this.onResize_({
 		currentTarget: dragger
 	    })
     }.bind(this));
@@ -956,9 +967,9 @@ moka.ui.Resizable.prototype.initSize_ = function(){
  * @private
  */
 moka.ui.Resizable.prototype.addResizableHandler_ = function(dir) {
-    var dom = /**@type {!goog.dom.DomHelper}*/ this.getDomHelper();
-    var handle = /**@type {!Element}*/ dom.createDom('div');
-    var dirNum = /**@type {!number}*/ moka.ui.Resizable.Directions[dir];
+    var dom = this.getDomHelper();
+    var handle = dom.createDom('div');
+    var dirNum = moka.ui.Resizable.Directions[dir];
 
     //
     // Add classes.
@@ -1003,11 +1014,11 @@ moka.ui.Resizable.prototype.setDraggerEvents_ = function(dragger) {
     // Event listeners.
     this.getHandler().
 	listen(dragger, goog.fx.Dragger.EventType.START, 
-	       this.onDragStart_).
+	       this.onResizeStart_).
 	listen(dragger, goog.fx.Dragger.EventType.DRAG,
-               this.onDrag_).
+               this.onResize_).
 	listen(dragger, goog.fx.Dragger.EventType.END,
-               this.onDragEnd_);
+               this.onResizeEnd_);
 
 };
 
@@ -1073,7 +1084,7 @@ moka.ui.Resizable.prototype.getDragParams_ = function(e){
  * @param {Event} e
  * @private
  */
-moka.ui.Resizable.prototype.onDragStart_ = function(e) {
+moka.ui.Resizable.prototype.onResizeStart_ = function(e) {
     //
     // Show the ghost element if not continuously resizing
     //
@@ -1115,7 +1126,7 @@ moka.ui.Resizable.prototype.onDragStart_ = function(e) {
  * @param {Event} e
  * @private
  */
-moka.ui.Resizable.prototype.onDrag_ = function(e) {
+moka.ui.Resizable.prototype.onResize_ = function(e) {
     //
     // Get drag parameters
     //
@@ -1127,32 +1138,32 @@ moka.ui.Resizable.prototype.onDrag_ = function(e) {
     switch (parseInt(this.currDragDirection_)) 
     {
     case 1: // TOP
-	this.onDrag_top_();
+	this.onResize_top_();
 	break;
     case 2: // RIGHT
-	this.onDrag_right_();
+	this.onResize_right_();
 	break;
     case 4: // BOTTOM
-	this.onDrag_bottom_();
+	this.onResize_bottom_();
 	break;
     case 8: // LEFT
-	this.onDrag_left_();
+	this.onResize_left_();
 	break;
     case 16: // TOP_LEFT
-	this.onDrag_top_();
-	this.onDrag_left_();
+	this.onResize_top_();
+	this.onResize_left_();
 	break;
     case 32: // TOP_RIGHT
-	this.onDrag_top_();
-	this.onDrag_right_();
+	this.onResize_top_();
+	this.onResize_right_();
 	break;
     case 64: // BOTTOM_RIGHT
-	this.onDrag_bottom_();
-	this.onDrag_right_();
+	this.onResize_bottom_();
+	this.onResize_right_();
 	break;
     case 128: // BOTTOM_LEFT
-	this.onDrag_bottom_();
-	this.onDrag_left_();
+	this.onResize_bottom_();
+	this.onResize_left_();
 	break;
     }
 
@@ -1170,7 +1181,7 @@ moka.ui.Resizable.prototype.onDrag_ = function(e) {
  * @param {Event} e
  * @private
  */
-moka.ui.Resizable.prototype.onDragEnd_ = function(e) {
+moka.ui.Resizable.prototype.onResizeEnd_ = function(e) {
     if (!this.continuousResize_) {
 	this.resize_(this.element_, 
 		     goog.style.getBorderBoxSize(this.ghostEl_), true);
@@ -1209,24 +1220,6 @@ moka.ui.Resizable.prototype.resize_ = function() {
 
 
 
-
-
-
-
-/**
- * @private
- */
-moka.ui.Resizable.prototype.getDraggerDirection_ = function(dragger) {
-    for (var direction in this.draggers_) {
-	if (this.draggers_[direction] === dragger) {
-	    return direction;
-	}
-    }
-    return null;
-};
-
-
-
 /**
  * @private
  */
@@ -1250,22 +1243,27 @@ moka.ui.Resizable.prototype.manageGhostElement_ = function() {
 moka.ui.Resizable.prototype.disposeInternal = function() {
     moka.ui.Resizable.superClass_.disposeInternal.call(this);
 
+    // draggers
     goog.object.forEach(this.draggers_, function(d, pos){
 	goog.events.removeAll(d);
 	d.dispose();
     })
     delete this.draggers_;
 
+    // Drag elements
     goog.object.forEach(this.dragElts_, function(h, pos){
 	goog.dom.removeNode(h);
     })
     delete this.dragElts_;
 
+
+    // Ghost element
     if (this.ghostEl_) {
 	goog.dom.removeNode(this.ghostEl_);
 	delete this.ghostEl_;
     }
 
+    // Boundary element
     if (this.boundaryElt_) {
 	goog.dom.removeNode(this.boundaryElt_.parentNode, this.containment);
 	delete this.boundaryElt_;
@@ -1277,10 +1275,8 @@ moka.ui.Resizable.prototype.disposeInternal = function() {
 	this.slideAnim_.dispose();
 	delete this.slideAnim_;
     }
-
-
     
-    // When Dragging properties...
+    // Dragging properties
     delete this.currDragger_;
     delete this.currDragDirection_;
     delete this.currDraggerSize_ ;
@@ -1290,7 +1286,7 @@ moka.ui.Resizable.prototype.disposeInternal = function() {
     delete this.startPos_;
     delete this.startSize_;
 
-
+    // Other properties
     delete this.topLeftLimit_;
     delete this.bottomRightLimit_;
     delete this.minHeight_;
@@ -1308,13 +1304,14 @@ moka.ui.Resizable.prototype.disposeInternal = function() {
 /**
  * @private
  */
-moka.ui.Resizable.prototype.onDrag_right_ = function() {
+moka.ui.Resizable.prototype.onResize_right_ = function() {
     //
     // For when the user drags
     //
     if (this.currDragger_.deltaX > 0) {
 	this.eltSize_.width = this.currDragger_.deltaX + 
 	    this.handlerOffsetSize_.width;
+
 
     // 
     // For when it's animated
@@ -1330,6 +1327,8 @@ moka.ui.Resizable.prototype.onDrag_right_ = function() {
 	this.currDragEltSize_.width - this.topLeftLimit_.x;
     this.eltSize_.width = goog.math.clamp(this.eltSize_.width, 
 					  this.minWidth_, rightBound);
+
+    window.console.log(this.eltSize_.width);
     this.atBounds_.RIGHT = (this.eltSize_.width == rightBound) ? 1 : 0;
 };
 
@@ -1339,7 +1338,7 @@ moka.ui.Resizable.prototype.onDrag_right_ = function() {
 /**
  * @private
  */
-moka.ui.Resizable.prototype.onDrag_bottom_ = function() {
+moka.ui.Resizable.prototype.onResize_bottom_ = function() {
     this.eltSize_.height = this.currDragger_.deltaY + 
 	this.handlerOffsetSize_.height;
     this.eltSize_.height = (this.eltSize_.height <= this.minHeight_) ? 
@@ -1367,7 +1366,7 @@ moka.ui.Resizable.prototype.onDrag_bottom_ = function() {
 /**
  * @private
  */
-moka.ui.Resizable.prototype.onDrag_top_ = function() {
+moka.ui.Resizable.prototype.onResize_top_ = function() {
 
     // Don't move if at minSize and we're pushing downward
     if ((this.currDragger_.deltaY > 0) && this.atMins_.HEIGHT) {
@@ -1416,7 +1415,7 @@ moka.ui.Resizable.prototype.onDrag_top_ = function() {
 /**
  * @private
  */
-moka.ui.Resizable.prototype.onDrag_left_ = function() {
+moka.ui.Resizable.prototype.onResize_left_ = function() {
     //
     // Don't move if at minSize and we're pushing rightward
     //
