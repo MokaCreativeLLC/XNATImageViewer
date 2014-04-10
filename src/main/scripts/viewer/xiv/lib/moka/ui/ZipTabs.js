@@ -230,16 +230,14 @@ moka.ui.ZipTabs.prototype.onTabClickedBottom_ = function(event) {
  */
 moka.ui.ZipTabs.prototype.onTabClickedRight_ = function(event) {
 
-    this.updateStyle();
-    window.console.log('TAB RIGHT', this.getElement().style.width);
     if (Math.abs(this.currSize.width - this.getTabWidth()) <= 
 	moka.ui.ZipTabs.BOUND_THRESHOLD_HORIZ) {
 	this.setActive(this.lastActiveTab_);
-	this.Resizable_.slideDraggerToBounds('RIGHT', 'RIGHT');
+	this.Resizable_.slideToLimits('RIGHT', 'MAX');
 
     } else if (this.getLastActiveTab() == this.getPreviousActiveTab()) {
 	window.console.log("SLIDE BACK!");
-	this.Resizable_.slideDraggerToBounds('RIGHT', 'LEFT');
+	this.Resizable_.slideToLimits('RIGHT', 'MIN');
     }
 }
 

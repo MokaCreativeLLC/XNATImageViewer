@@ -168,15 +168,6 @@ moka.ui.Resizable.DEFAULT_MIN_WIDTH = 20;
 
 
 /**
- * @type {!number} 
- * @const
- */
-moka.ui.Resizable.ANIM_MED = 500;
-
-
-
-
-/**
  * @type {Object.<string, number>}
  */
 this.boundThresholds_ = {
@@ -291,20 +282,6 @@ moka.ui.Resizable.prototype.getHandles = function() {
 
 
 
-/**
- * Returns the specified dragger.
- *
- * @param {!string} dragDir
- * @return {!goog.fx.Dragger}
- * @public
- */
-moka.ui.Resizable.prototype.getResizeDragger = function(dragDir) {
-    this.checkDraggerDirValid_(dragDir);
-    return this.ResizeDraggers_[dragDir];
-};
-
-
-
 
 /**
  * @return {!goog.math.Rect} 
@@ -313,68 +290,6 @@ moka.ui.Resizable.prototype.getResizeDragger = function(dragDir) {
 moka.ui.Resizable.prototype.getLimits = function() {
     return this.limits_
 };
-
-
-
-/**
- * Returns the atLimits_ object.
- * 
- * TODO: this needs to be verified on init -- currently it isn't.
- *
- * @throws {Error} If invalid bound argument.
- * @return {!string} bound The bounds. 
- * @public
- */
-moka.ui.Resizable.prototype.isAtLimits = function(bound) {
-    switch(bound){
-    case 'TOP':
-	return this.atLimits_.TOP;
-    case 'RIGHT':
-	return this.atLimits_.RIGHT;
-    case 'BOTTOM':
-	return this.atLimits_.BOTTOM;
-    case 'LEFT':
-	return this.atLimits_.LEFT;
-    }
-    throw new Error('Invalid bounds: \'' + bound + '\'');
-};
-
-
-
-
-
-/**
- * Determines if the resizeable is near bounds within a given threshold.
- *
- * @param {!string} bound The bound to check.
- * @param {!number} opt_threshold The threshold to determine 'nearness' by.
- *     Defaults to moka.ui.Resizable.BOUND_THRESHOLD.
- * @return {!enum} The bounds. 
- * @public
- */
-moka.ui.Resizable.prototype.isNearLimits = function(bound, opt_threshold) {
-
-    opt_threshold = opt_threshold || moka.ui.Resizable.BOUND_THRESHOLD;
-    var size = /**@type {!goog.math.Size}*/ 
-    goog.style.getSize(this.getElement());
-    var pos = /**@type {!goog.math.Coordinate}*/ 
-    goog.style.getPosition(this.getElement());
-
-    switch(bound){
-    case 'TOP':
-	return (Math.abs(pos.x - this.getTopLimit()) <= opt_threshold)
-    case 'RIGHT':
-	return (Math.abs(pos.x + size.width - 
-			 this.getRightLimit()) <= opt_threshold)
-    case 'BOTTOM':
-	return (Math.abs(pos.y + size.height - 
-			 this.getBottomLimit()) <= opt_threshold)
-    case 'LEFT':
-	return (Math.abs(pos.x - this.getLeftLimit()) <= opt_threshold)
-    }
-    throw new Error('Invalid bounds: \'' + bound + '\'');
-};
-
 
 
 
@@ -571,49 +486,22 @@ moka.ui.Resizable.prototype.hasDragger = function(draggerDir){
  *
  * @param {!string} draggerDir The dragger to slide. See 
  *      moka.ui.Resizable.Directions for values.
- * @param {!string} bounds The boundary to slide to.
+ * @param {!string} limitType The limit type ('MAX' or 'MIN').
  * @param {Function=} opt_callback The optional callback on completion.
  * @param {number=} opt_dur The optional duration.  Defaults to 
  *     moka.ui.Resizable.ANIM_MED.
  * @private
  */
-moka.ui.Resizable.prototype.slideDraggerToLimits = 
-function(draggerDir, bounds, opt_callback, opt_dur) {
-    //
-    // We can't do anything if the element is not in the DOM
-    //
-    if (!this.getElement().parentNode) { return };
-
-    //
-    // Make sure drag bounds are updated.
-    //
-    this.updateLimits_();
-
-    //
-    // Check dragger direction and bounds
-    //
+moka.ui.Resizable.prototype.slideToLimits = 
+function(draggerDir, limitType, opt_callback, opt_dur) {
     draggerDir = draggerDir.toUpperCase();
-    bounds = bounds.toUpperCase();
-    this.checkDraggerDirValid_(draggerDir);
-    if (!goog.isDefAndNotNull(moka.ui.Resizable.Directions[bounds])) { 
-	throw new Error('Invalid bounds: ' + bounds);
-    } 
+    this.checkDirectionValid(draggerDir);
+   
+    // Update
+    this.update();
 
-    //
-    // Get the params
-    //
-    var endCoordinate = this.getBoundCoords_(draggerDir, bounds);
-
-    //
-    // Exit out of no valid end coordinate defined
-    //
-    if (!goog.isDefAndNotNull(endCoordinate)) { return };
-
-    //
-    // Create anim
-    //
-    this.createSlideAnim_(draggerDir, endCoordinate, opt_callback, opt_dur);
-    this.slideAnim_.play();
+    // Slide dragger
+    this.ResizeDraggers_[draggerDir].slideToLimits(limitType, opt_callback);
 };
 
 
@@ -630,59 +518,11 @@ function(draggerDir, bounds, opt_callback, opt_dur) {
  */
 moka.ui.Resizable.prototype.createSlideAnim_ = 
 function(draggerDir, newPoint, opt_callback, opt_dur) {
-    //
-    // Params
-    //
-    var dragElt = this.getDragElt(draggerDir);
-    var dragger = this.getDragger(draggerDir);
-    var pos = goog.style.getPosition(dragElt);
-    var size = goog.style.getSize(dragElt);
 
-    //
-    // The anim
-    // 
-    this.slideAnim_ = new goog.fx.dom.Slide(dragElt, 
-		[pos.x, pos.y], [newPoint.x, newPoint.y], 
-		opt_dur || moka.ui.Resizable.ANIM_MED, goog.fx.easing.easeOut);
 
-    //
-    // onAnimate START
-    //
-    goog.events.listen(this.slideAnim_, goog.fx.Animation.EventType.BEGIN, 
-	function(e) {
 
-	    /**
-	    this.onResizeStart_({
-		currentTarget: dragger
-	    })
-	    */
-    }.bind(this));
 
-    //
-    // onAnimate
-    //
-    goog.events.listen(this.slideAnim_, goog.fx.Animation.EventType.ANIMATE, 
-	function(e) {
-	    window.console.log(dragger.handle);
-	    /**
-	    this.onResize_({
-		currentTarget: dragger
-	    })
-	    */
-    }.bind(this));
 
-    //
-    // onAnimate END
-    //
-    goog.events.listen(this.slideAnim_, goog.fx.Animation.EventType.END, 
-	function(e) {
-	    window.console.log('DRAG END', this.element_.style.width);
-	    if (opt_callback) {opt_callback()};
-	    this.slideAnim_.disposeInternal();
-	    goog.events.removeAll(this.slideAnim_);
-	    this.slideAnim_.destroy();
-	    this.slideAnim_ = null;
-    }.bind(this));
 }
   
 

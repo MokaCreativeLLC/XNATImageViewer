@@ -81,3 +81,34 @@ moka.ui.ResizeDraggerRight.prototype.update = function(updateDims) {
     })
 }
 
+
+
+
+/**
+ * @return {!Object.<string, goog.math.Coordinate>}
+ * @private
+ */
+moka.ui.ResizeDraggerRight.prototype.getSlideTrajectory_ = function(limitType) {
+
+    // startCoordinate
+    var start = new goog.math.Coordinate(this.handleDims.X, this.handleDims.Y);
+
+    // endCoordinate
+    var end;
+    if (limitType == 'MIN') {
+	end = new goog.math.Coordinate(
+	    this.Dragger_.limits.left,
+	    this.handleDims.Y
+	);
+    } else {
+	end = new goog.math.Coordinate(
+	    this.Dragger_.limits.left + this.Dragger_.limits.width,
+	    this.handleDims.Y
+	);
+    }
+
+    return {
+	start: start,
+	end: end
+    }
+}

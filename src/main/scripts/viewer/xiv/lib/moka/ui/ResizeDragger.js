@@ -132,6 +132,15 @@ moka.ui.ResizeDragger.CSS_SUFFIX = {
 }
 
 
+
+/**
+ * @type {!number} 
+ * @const
+ */
+moka.ui.ResizeDragger.ANIM_MED = 500;
+
+
+
 /**
  * @return {!goog.fx.Dragger}
  * @public
@@ -252,6 +261,82 @@ moka.ui.ResizeDragger.prototype.updateHandleDims = function() {
 moka.ui.ResizeDragger.prototype.update = function(opt_updateDims) {
     this.updateHandleDims();
 }
+
+
+
+
+/**
+ * @param {!string} limitType The limit type ('MAX' or 'MIN').
+ * @param {Function=} opt_callback The optional callback on completion.
+ * @param {number=} opt_dur The optional duration.  Defaults to 
+ *     moka.ui.Resizable.ANIM_MED.
+ * @public
+ */
+moka.ui.ResizeDragger.prototype.slideToLimits = 
+function(limitType, opt_callback, opt_dur) {
+    this.updateHandleDims();
+    var traj = this.getSlideTrajectory_(limitType); 
+    this.createSlideAnim_(traj.start, traj.end);
+}
+
+
+/**
+ * @param {}
+ * @private
+ */ 
+moka.ui.ResizeDragger.prototype.createSlideAnim_ = 
+function(startPos, endPos, opt_callback, opt_dur) {
+    //
+    // The anim
+    // 
+    this.slideAnim_ = 
+	new goog.fx.dom.Slide(this.getElement(), 
+	    [startPos.x, startPos.y], [endPos.x, endPos.y], 
+             opt_dur || moka.ui.ResizeDragger.ANIM_MED, 
+			      goog.fx.easing.easeOut);    
+
+    //
+    // onAnimate START
+    //
+    goog.events.listen(this.slideAnim_, goog.fx.Animation.EventType.BEGIN, 
+	function(e) {
+
+	    /**
+	    this.onResizeStart_({
+		currentTarget: dragger
+	    })
+	    */
+    }.bind(this));
+
+    //
+    // onAnimate
+    //
+    goog.events.listen(this.slideAnim_, goog.fx.Animation.EventType.ANIMATE, 
+	this.onResize.bind(this));
+
+    //
+    // onAnimate END
+    //
+    goog.events.listen(this.slideAnim_, goog.fx.Animation.EventType.END, 
+	function(e) {
+	    window.console.log('DRAG END');
+	    this.onResizeEnd();
+	    if (opt_callback) {opt_callback()};
+	    this.slideAnim_.disposeInternal();
+	    goog.events.removeAll(this.slideAnim_);
+	    this.slideAnim_.destroy();
+	    this.slideAnim_ = null;
+    }.bind(this));
+
+
+    //
+    // PLAY
+    //
+    this.slideAnim_.play();    
+}
+
+
+
 
 
 
