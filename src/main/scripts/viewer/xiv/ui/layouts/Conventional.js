@@ -65,7 +65,8 @@ xiv.ui.layouts.Conventional.CSS_SUFFIX = {
     X: 'x',
     Y: 'y',
     Z: 'z',
-    V: 'v'
+    V: 'v',
+    V_BOUNDARY: 'v-boundary'
 }
 
 
@@ -75,6 +76,8 @@ xiv.ui.layouts.Conventional.CSS_SUFFIX = {
  * @const
  */
 xiv.ui.layouts.Conventional.MAX_PLANE_RESIZE_PCT = .9;
+
+
 
 
 
@@ -92,14 +95,14 @@ xiv.ui.layouts.Conventional.prototype.bottomPlaneWidth_ = 0;
 xiv.ui.layouts.Conventional.prototype.setupPlane_X = function(){
     goog.base(this, 'setupPlane_X');
     
-    goog.dom.classes.add(this.Planes['X'].getElement(), 
-			 xiv.ui.layouts.Conventional.CSS.X);
-
-    window.console.log("NEED TO SET RESIZE FOR CONVEIONAL X!");
-    return;
-    //this.Planes['X'].setResizeDirections(['RIGHT', 'TOP_RIGHT']);
-
-
+    //
+    // Set the plane resizable
+    //
+    this.setPlaneResizable('X', 'RIGHT');
+    
+    //
+    // Listen for the RESIZE event.
+    //
     goog.events.listen(this.Planes['X'].getResizable(), 
 		       moka.ui.Resizable.EventType.RESIZE,
 		       this.onPlaneResize_X.bind(this));
@@ -113,20 +116,14 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_X = function(){
 xiv.ui.layouts.Conventional.prototype.setupPlane_Y = function(){
     goog.base(this, 'setupPlane_Y');
 
-    goog.dom.classes.add(this.Planes['Y'].getElement(), 
-			 xiv.ui.layouts.Conventional.CSS.Y);
-
-    window.console.log("NEED TO SET RESIZE FOR CONVEIONAL Y!");
-    return;
-
-    this.Planes['Y'].setResizeDirections(['RIGHT', 'TOP_RIGHT']);
-
-    this.Planes['Y'].getResizable().getDragElt('RIGHT').style.cursor =  
-	'ew-resize';
-
-    this.Planes['Y'].getResizable().getDragElt('TOP_RIGHT').style.cursor =  
-	'move';
-
+    //
+    // Set the plane resizable
+    //
+    this.setPlaneResizable('Y', 'RIGHT');
+    
+    //
+    // Listen for the RESIZE event.
+    //
     goog.events.listen(this.Planes['Y'].getResizable(), 
 		       moka.ui.Resizable.EventType.RESIZE,
 		       this.onPlaneResize_Y.bind(this));
@@ -139,8 +136,8 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_Y = function(){
  */
 xiv.ui.layouts.Conventional.prototype.setupPlane_Z = function(){
     goog.base(this, 'setupPlane_Z');
-    goog.dom.classes.add(this.Planes['Z'].getElement(), 
-			 xiv.ui.layouts.Conventional.CSS.Z);
+
+    // Do nothing for now
 }
 
 
@@ -150,21 +147,15 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_Z = function(){
  */
 xiv.ui.layouts.Conventional.prototype.setupPlane_V = function(){
     goog.base(this, 'setupPlane_V');
-    goog.dom.classes.add(this.Planes['V'].getElement(), 
-			 xiv.ui.layouts.Conventional.CSS.V);
 
-    window.console.log("NEED TO SET RESIZE FOR CONVEIONAL V!");
-    return;
-
-    this.Planes['V'].setResizeDirections(['BOTTOM']);
-
-    this.Planes['V'].getResizable().getDragElt('BOTTOM').style.cursor =  
-	'ns-resize';
-
-    // This plane's dragger handle should get priority.
-    this.Planes['V'].getResizable().getDragElt('BOTTOM').style.zIndex =  
-	'100';
-
+    //
+    // Set the plane resizable
+    //
+    this.setPlaneResizable('V', 'BOTTOM');
+    
+    //
+    // Listen for the RESIZE event.
+    //
     goog.events.listen(this.Planes['V'].getResizable(), 
 		       moka.ui.Resizable.EventType.RESIZE,
 		       this.onPlaneResize_V.bind(this));
@@ -178,28 +169,34 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_V = function(){
  */
 xiv.ui.layouts.Conventional.prototype.onPlaneResize_X = function(e){
 
-    this.bottomPlaneWidth_ = (this.currSize.width - e.size.width) / 2;
+    this.calcDims();
+
+    var xSize = goog.style.getSize(this.Planes['X'].getElement());
+    var ySize = goog.style.getSize(this.Planes['Y'].getElement());
+    var zSize = goog.style.getSize(this.Planes['Z'].getElement());
+
+    //
+    // Determine delta by tallying all the sizes
+    //
+    var deltaX = xSize.width + ySize.width + zSize.width - this.currSize.width;
+
+    //
+    // Change both Y and Z planes at a linear rate
+    //
 
     // Y Plane
     moka.style.setStyle(this.Planes['Y'].getElement(), {
-	'height': e.size.height,
-	'left': e.size.width, 
-	'top': e.pos.y
+	'width': Math.max(ySize.width - deltaX/2, 20), 
+	'left': xSize.width, 
     });
 
     // Z Plane
     moka.style.setStyle(this.Planes['Z'].getElement(), {
-	'width': this.bottomPlaneWidth_, 
-	'height': e.size.height,
-	'left': this.currSize.width - this.bottomPlaneWidth_, 
-	'top': e.pos.y
-    });
-
-    // V Plane
-    moka.style.setStyle(this.Planes['V'].getElement(), {
-	'height': this.currSize.height - e.size.height,
-    });
-
+	'width': Math.max(zSize.width - deltaX/2, 20), 
+	'left': xSize.width + ySize.width, 
+    });	
+    
+    this.updateStyle();
 }
 
 
@@ -210,27 +207,34 @@ xiv.ui.layouts.Conventional.prototype.onPlaneResize_X = function(e){
  */
 xiv.ui.layouts.Conventional.prototype.onPlaneResize_Y = function(e){
 
-    this.bottomPlaneWidth_ = (this.currSize.width - e.size.width) / 2;
+    this.calcDims();
+
+    var xSize = goog.style.getSize(this.Planes['X'].getElement());
+    var ySize = goog.style.getSize(this.Planes['Y'].getElement());
+    var zSize = goog.style.getSize(this.Planes['Z'].getElement());
+
+    //
+    // Determine delta by tallying all the sizes
+    //
+    var deltaX = xSize.width + ySize.width + zSize.width - this.currSize.width;
+
+    //
+    // Change both Y and Z planes at a linear rate
+    //
 
     // X Plane
-    moka.style.setStyle(this.Planes['X'].getElement(), {
-	'height': e.size.height,
+    moka.style.setStyle(this.Planes['Y'].getElement(), {
+	'width': Math.max(xSize.width - deltaX/2, 20), 
 	'left': 0, 
-	'top': e.pos.y
     });
 
     // Z Plane
     moka.style.setStyle(this.Planes['Z'].getElement(), {
-	'width': this.bottomPlaneWidth_, 
-	'height': e.size.height,
-	'left': e.pos.x + e.size.width, 
-	'top': e.pos.y
-    });
-
-    // V Plane
-    moka.style.setStyle(this.Planes['V'].getElement(), {
-	'height': this.currSize.height - e.size.height,
-    });
+	'width': Math.max(zSize.width - deltaX/2, 20), 
+	'left': xSize.width + ySize.width, 
+    });	
+    
+    this.updateStyle();
 
 }
 
@@ -241,14 +245,30 @@ xiv.ui.layouts.Conventional.prototype.onPlaneResize_Y = function(e){
  * @param {!Event} e
  */
 xiv.ui.layouts.Conventional.prototype.onPlaneResize_V = function(e){
-    //window.console.log(this.Planes['V'].getResizable().getMinHeight());
+    this.calcDims();
+
+    var xyzTop = parseInt(this.Planes['V'].getElement().style.height);
+    var xyzHeight = this.currSize.height - xyzTop;
+
     goog.object.forEach(this.Planes, function(plane){
+	//
+	// Skip V
+	//
 	if (plane === this.Planes['V']) {return};
+
+	//
+	// Adjust others
+	//
 	moka.style.setStyle(plane.getElement(), {
-	    'height': this.currSize.height - e.size.height,
-	    'top': e.size.height
-	})
+	    'top': xyzTop,
+	    'height': xyzHeight
+	}) 
     }.bind(this))
+
+    //
+    // Update
+    //
+    this.updateStyle();
 }
 
 
@@ -274,7 +294,7 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_X = function() {
  * @inheritDoc
  */
 xiv.ui.layouts.Conventional.prototype.updateStyle_Y = function() {
-    return;
+    return
     window.console.log(this.Planes);
     this.Planes['Y'].getResizable().setMinHeight(this.resizeMargin);
     this.Planes['Y'].getResizable().setMinWidth(this.resizeMargin);
@@ -292,18 +312,8 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_Y = function() {
 * @private
 */
 xiv.ui.layouts.Conventional.prototype.updateStyle_V = function() {
-    return;
-    this.Planes['V'].getResizable().setMinHeight(
-	this.currSize.height * 
-	    (1-xiv.ui.layouts.Conventional.MAX_PLANE_RESIZE_PCT));
 
-    this.Planes['V'].getResizable().setBounds(
-	0, 0, // topLeft X, topLeft Y
-	this.currSize.width, // botRight X
-	this.currSize.height * 
-	    xiv.ui.layouts.Conventional.MAX_PLANE_RESIZE_PCT);// botRightY
 
-    //this.Planes['V'].getResizable().showBoundaryElt();
 }
 
 

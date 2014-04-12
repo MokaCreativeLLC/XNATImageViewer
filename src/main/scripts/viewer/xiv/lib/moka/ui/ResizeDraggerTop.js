@@ -49,21 +49,18 @@ moka.ui.ResizeDraggerTop.CSS_SUFFIX = {}
 moka.ui.ResizeDraggerTop.prototype.onResize = function(e) {
     goog.base(this, 'onResize');
 
-    var deltaY = (this.UpdateDims.ELEMENT.Y - 
-		  this.UpdateDims.BOUNDARY.Y) - this.handleDims.Y;
-
     moka.style.setStyle(this.resizeElt, {
-	'top' : this.UpdateDims.BOUNDARY.Y + 
-	    this.handleDims.Y + this.handleDims.H,
-
+	'top' : this.handleDims.Y + this.handleDims.H,
 	'height': Math.max(
-	    this.UpdateDims.ELEMENT.H + deltaY  - this.handleDims.H,
+	    // Previous height
+	    this.UpdateDims.ELEMENT.H +
+
+		// deltaY
+		(this.UpdateDims.ELEMENT.Y - this.handleDims.Y - 
+		 this.handleDims.H),
 	    this.minSize.height
 	)
     })
-
-    window.console.log(this.UpdateDims.ELEMENT.H + deltaY,
-		       this.UpdateDims.ELEMENT.H , deltaY)
 }
 
 
@@ -87,14 +84,14 @@ moka.ui.ResizeDraggerTop.prototype.update = function(updateDims) {
     // NOTE: MIN MAX are relative to the direction of the dragger.
     // i.e. The max of a top dragger is to the top of the boundary.
     var Y_MIN = this.UpdateDims.BOUNDARY.H - this.minSize.height;
-    var Y_MAX = 0 - this.handleDims.H;
+    var Y_MAX = this.UpdateDims.BOUNDARY.Y - this.handleDims.H;
 
 
     //
     // Reset limits
     //
     this.Dragger.setLimits(new goog.math.Rect(
-	this.UpdateDims.ELEMENT.X - this.UpdateDims.BOUNDARY.X, 
+	this.UpdateDims.BOUNDARY.X, 
 	Y_MAX, 0, Y_MIN
     ))
 
@@ -102,11 +99,8 @@ moka.ui.ResizeDraggerTop.prototype.update = function(updateDims) {
     // Set the top
     //
     moka.style.setStyle(this.getElement(), {
-	'top': this.UpdateDims.ELEMENT.Y - this.UpdateDims.BOUNDARY.Y - 
-	    this.handleDims.H
+	'top': this.UpdateDims.ELEMENT.Y - this.handleDims.H
     })
-
-    window.console.log("RESIZE TOP", goog.style.getSize(this.resizeElt));
 }
 
 

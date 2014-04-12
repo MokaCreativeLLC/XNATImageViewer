@@ -109,6 +109,51 @@ xiv.ui.layouts.XyzvLayout.prototype.resizeMargin = 0;
 
 
 
+
+/**
+ * @param {!string} planeOr The plane orientation to apply the boundary to.
+ * @param {!string | Array.<string>} resizeDirs The resize directions.
+ * @protected
+ */
+xiv.ui.layouts.XyzvLayout.prototype.setPlaneResizable = 
+function(planeOr, resizeDirs){
+    //
+    // Set the resize directions
+    //
+    this.Planes[planeOr].setResizeDirections(resizeDirs);
+
+    //
+    // Create and set the resize boundary
+    //
+    var boundElt = this.createResizeBoundary(planeOr)
+    goog.dom.append(this.getElement(), boundElt);
+    this.Planes[planeOr].getResizable().setBoundaryElement(boundElt);
+
+    //
+    // IMPORTANT!!!! Update the resize boundary.
+    //
+    this.Planes[planeOr].getResizable().update();
+}
+
+
+
+
+/**
+ * @param {!string} planeOr The plane orientation to apply the boundary to.
+ * @protected
+ */
+xiv.ui.layouts.XyzvLayout.prototype.createResizeBoundary = function(planeOr){
+    return  goog.dom.createDom('div', {
+	'id' : this.constructor.ID_PREFIX + '_ResizeBoundary_' + 
+	    planeOr + '_' + goog.string.createUniqueString(),
+	'class': goog.getCssName(this.constructor.ELEMENT_CLASS, 
+				 planeOr.toLowerCase() + '-resizeboundary')
+    })
+}
+
+
+
+
 /**
  * @private
  */
@@ -240,7 +285,7 @@ xiv.ui.layouts.XyzvLayout.prototype.loop = function(callback){
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupPlane_X = function(){
- 
+    goog.dom.classes.add(this.Planes['X'].getElement(), this.constructor.CSS.X);
 };
 
 
@@ -250,7 +295,7 @@ xiv.ui.layouts.XyzvLayout.prototype.setupPlane_X = function(){
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupPlane_Y = function(){
-
+    goog.dom.classes.add(this.Planes['Y'].getElement(), this.constructor.CSS.Y);
 };
 
 
@@ -260,7 +305,7 @@ xiv.ui.layouts.XyzvLayout.prototype.setupPlane_Y = function(){
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupPlane_Z = function(){
-
+    goog.dom.classes.add(this.Planes['Z'].getElement(), this.constructor.CSS.Z);
 };
 
 
@@ -270,7 +315,7 @@ xiv.ui.layouts.XyzvLayout.prototype.setupPlane_Z = function(){
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupPlane_V = function(){
-
+    goog.dom.classes.add(this.Planes['V'].getElement(), this.constructor.CSS.V);
 };
 
 
@@ -311,7 +356,7 @@ xiv.ui.layouts.XyzvLayout.prototype.onPlaneResize_V = goog.nullFunction;
  * updateStyle function for the relevant plane.
  * @private
  */
-xiv.ui.layouts.Layout.prototype.updateStyle_X = goog.nullFunction;
+xiv.ui.layouts.XyzvLayout.prototype.updateStyle_X = goog.nullFunction;
 
 
 
@@ -319,14 +364,14 @@ xiv.ui.layouts.Layout.prototype.updateStyle_X = goog.nullFunction;
  * updateStyle function for the relevant plane.
  * @private
  */
-xiv.ui.layouts.Layout.prototype.updateStyle_Z = goog.nullFunction;
+xiv.ui.layouts.XyzvLayout.prototype.updateStyle_Z = goog.nullFunction;
 
 
 /**
  * updateStyle function for the relevant plane.
  * @private
  */
-xiv.ui.layouts.Layout.prototype.updateStyle_Y = goog.nullFunction;
+xiv.ui.layouts.XyzvLayout.prototype.updateStyle_Y = goog.nullFunction;
 
 
 
@@ -334,18 +379,15 @@ xiv.ui.layouts.Layout.prototype.updateStyle_Y = goog.nullFunction;
  * updateStyle function for the relevant plane.
  * @private
  */
-xiv.ui.layouts.Layout.prototype.updateStyle_V = goog.nullFunction;
+xiv.ui.layouts.XyzvLayout.prototype.updateStyle_V = goog.nullFunction;
 
 
 
 /**
 * @inheritDoc
 */
-xiv.ui.layouts.Layout.prototype.updateStyle = function(){
+xiv.ui.layouts.XyzvLayout.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
-
-    this.resizeMargin = this.currSize.height * 
-	    (1-xiv.ui.layouts.Conventional.MAX_PLANE_RESIZE_PCT);
 
     this.updateStyle_X();
     this.updateStyle_Y();

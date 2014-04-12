@@ -81,6 +81,13 @@ xiv.ui.Plane.prototype.getTitle = function(){
 xiv.ui.Plane.prototype.Resizable_ = null;
 
 
+/**
+ * @type {!Element}
+ * @private
+ */
+xiv.ui.Plane.prototype.resizeBoundary_ = null;
+
+
 
 /**
  * @type {!boolean}

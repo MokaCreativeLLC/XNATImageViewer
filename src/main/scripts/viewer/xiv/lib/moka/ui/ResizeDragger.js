@@ -1,6 +1,5 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
- * @author unkown email (uchida)
  */
 
 // goog
@@ -45,20 +44,6 @@ moka.ui.ResizeDragger = function(direction, resizeElt) {
      * @protected
      */
     this.Dragger =  new goog.fx.Dragger(this.getElement());
-
-
-    /**
-     * @type {?goog.math.Size}
-     * @protected
-     */
-    this.minSize = null;
-
-
-    /**
-     * @type {?moka.ui.ResizeDragger.UpdateDims}
-     * @protected
-     */
-    this.UpdateDims = null;
 
 
     /**
@@ -149,10 +134,26 @@ moka.ui.ResizeDragger.ANIM_MED = 500;
 
 
 /**
+ * @type {?moka.ui.ResizeDragger.UpdateDims}
+ * @protected
+ */
+moka.ui.ResizeDragger.prototype.UpdateDims = null;
+
+
+
+/**
  * @type {!boolean|
  * @protected
  */ 
 moka.ui.ResizeDragger.prototype.isAnimating = false;
+
+
+
+/**
+ * @type {?goog.math.Size}
+ * @protected
+ */
+moka.ui.ResizeDragger.prototype.minSize = new goog.math.Size(10,10);
 
 
 
@@ -243,7 +244,8 @@ moka.ui.ResizeDragger.prototype.onResize = function(e) {
     window.console.log("RESIZING!!!!!");
     this.updateHandleDims();
     this.dispatchEvent({
-	type: moka.ui.ResizeDragger.EventType.RESIZE
+	type: moka.ui.ResizeDragger.EventType.RESIZE,
+	dims: this.UpdateDims,
     })
 }
 
@@ -401,7 +403,7 @@ moka.ui.ResizeDragger.prototype.disposeInternal = function() {
     
 
     // The dragger handle
-    goog.dom.remove(this.Dragger.handle);
+    goog.dom.removeNode(this.Dragger.handle);
     this.Dragger.handle = null;
     
     // The dragger

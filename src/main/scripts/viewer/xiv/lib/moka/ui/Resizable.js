@@ -1,6 +1,5 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
- * @author unkown email (uchida)
  */
 
 // goog
@@ -19,9 +18,9 @@ goog.require('goog.fx.dom.Slide');
 goog.require('moka.ui.Component');
 goog.require('moka.ui.ResizeDragger');
 goog.require('moka.ui.ResizeDraggerRight');
-//goog.require('moka.ui.ResizeDraggerTop');
-//goog.require('moka.ui.ResizeDraggerBottom');
-//goog.require('moka.ui.ResizeDraggerLeft');
+goog.require('moka.ui.ResizeDraggerTop');
+goog.require('moka.ui.ResizeDraggerBottom');
+goog.require('moka.ui.ResizeDraggerLeft');
 goog.require('moka.style');
 
 
@@ -58,28 +57,6 @@ moka.ui.Resizable = function(element, opt_dirs) {
      * @private
      */
     this.ResizeDraggers_ = {};
-
-    
-    /**
-     * @type {goog.math.Rect}
-     * @private
-     */
-    this.limits_ = moka.ui.Resizable.DEFAULT_LIMITS;
-
-
-    /**
-     * @type {number}
-     * @private
-     */
-    this.minWidth_ = moka.ui.Resizable.DEFAULT_MIN_WIDTH, 
-
-
-    /**
-     * @type {number}
-     * @private
-     */
-    this.minHieght_ = moka.ui.Resizable.DEFAULT_MIN_HEIGHT;
-
 
 
     this.setResizeDirections(opt_dirs || moka.ui.Resizable.defaultDirections);
@@ -214,6 +191,29 @@ moka.ui.Resizable.prototype.startSize_;
  * @private
  */
 moka.ui.Resizable.prototype.boundaryElt_;
+
+
+
+/**
+ * @type {goog.math.Rect}
+ * @private
+ */
+moka.ui.Resizable.prototype.limits_ = moka.ui.Resizable.DEFAULT_LIMITS;
+
+
+/**
+ * @type {number}
+ * @private
+ */
+moka.ui.Resizable.prototype.minWidth_ = moka.ui.Resizable.DEFAULT_MIN_WIDTH, 
+
+
+/**
+ * @type {number}
+ * @private
+ */
+moka.ui.Resizable.prototype.minHeight_ = moka.ui.Resizable.DEFAULT_MIN_HEIGHT;
+
 
 
 
@@ -363,6 +363,10 @@ moka.ui.Resizable.prototype.setLimits_ = function(x1, y1, width, height) {
  */
 moka.ui.Resizable.prototype.setBoundaryElement = function(elt) {
     this.boundaryElt_ = elt;
+    if (this.boundaryElt_.parentNode !== this.element_.parentNode){
+	throw new Error('Boundary element parentNode must be same as ' + 
+			'resizable  element\'s parentNode.');
+    }
     this.updateLimits_();
 };
 
@@ -434,6 +438,11 @@ moka.ui.Resizable.prototype.setResizeDirections = function(opt_dirs){
 	    opt_dirs =  [opt_dirs];
 	}
     }
+
+    //
+    // Clear
+    //
+    this.disposeDraggers_();
 
     //
     // Loop
@@ -552,7 +561,6 @@ moka.ui.Resizable.createResizeDragger = function(dir, element) {
 
 
 
-
 /**
  * @param {!string} dir The resize handler direction.
  * @public
@@ -569,7 +577,7 @@ moka.ui.Resizable.prototype.addResizeDirection = function(dir) {
 
     // Events
     if (!this.ResizeDraggers_[dir]){
-	window.console.log("NEED TO IMPLEMENT DRAAGGERS", dir);
+	window.console.log("NEED TO IMPLEMENT MULTI_DIM DRAAGGERS", dir);
 	return
     }
     goog.events.listen(this.ResizeDraggers_[dir], 
@@ -619,9 +627,8 @@ moka.ui.Resizable.prototype.updateResizeDraggers_  = function() {
 	//
 	// Ensure that draggerHandles are attached to the boundaryElt.
 	//
-	if (this.boundaryElt_ && (Dragger.getHandle().parentNode !== 
-	    this.boundaryElt_)) {
-	    goog.dom.append(this.boundaryElt_, Dragger.getHandle());
+	if (this.boundaryElt_ && this.boundaryElt_.parentNode) {
+	    goog.dom.append(this.boundaryElt_.parentNode, Dragger.getHandle());
 	}
 	
 	//
@@ -716,7 +723,8 @@ moka.ui.Resizable.prototype.onResizeStart_ = function(e) {
  */
 moka.ui.Resizable.prototype.onResize_ = function(e) {
     this.dispatchEvent({
-	type: moka.ui.Resizable.EventType.RESIZE
+	type: moka.ui.Resizable.EventType.RESIZE,
+	dims: e.dims
     });
 };
 
@@ -766,6 +774,20 @@ moka.ui.Resizable.prototype.resize_ = function() {
 
 
 
+/** 
+ * @private
+ */
+moka.ui.Resizable.prototype.disposeDraggers_ = function() {
+    // draggers
+    goog.object.forEach(this.ResizeDraggers_, function(d, pos){
+	if (d) {
+	    goog.events.removeAll(d);
+	    d.disposeInternal();
+	}
+    })
+    goog.object.clear(this.ResizeDraggers_);
+}
+
 
 /** 
  * @inheritDoc 
@@ -774,10 +796,7 @@ moka.ui.Resizable.prototype.disposeInternal = function() {
     moka.ui.Resizable.superClass_.disposeInternal.call(this);
 
     // draggers
-    goog.object.forEach(this.ResizeDraggers_, function(d, pos){
-	goog.events.removeAll(d);
-	d.dispose();
-    })
+    this.disposeDraggers_();
     delete this.ResizeDraggers_;
 
 

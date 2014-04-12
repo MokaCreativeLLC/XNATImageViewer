@@ -148,9 +148,8 @@ xiv.ui.layouts.Layout.prototype.addPlane = function(plane){
 */
 xiv.ui.layouts.Layout.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
-
     this.dispatchEvent({
-	type: goog.events.EventType.RESIZE
+	type: xiv.ui.layouts.Layout.EventType.RESIZE
     })
 }
 

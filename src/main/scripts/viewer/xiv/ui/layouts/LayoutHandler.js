@@ -198,6 +198,9 @@ function(title, opt_animateSwitch) {
     if (!goog.object.containsKey(this.Layouts_, title)) {
 	this.Layouts_[title] = new this.LayoutObjects_[title];
 
+	//
+	// LISTEN to resize
+	//
 	goog.events.listen(this.Layouts_[title], 
 			   xiv.ui.layouts.Layout.EventType.RESIZE, 
 			   this.onLayoutResize_.bind(this))

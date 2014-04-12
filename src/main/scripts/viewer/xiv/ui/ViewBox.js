@@ -710,7 +710,9 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     // Hide progress bar
     //
-    this.hideSubComponent_(this.ProgressBarPanel_, 500);
+    this.hideSubComponent_(this.ProgressBarPanel_, 500, function(){
+	this.updateStyle();
+    }.bind(this));
 
     //
     // Sync interactors
@@ -732,6 +734,7 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     // Update styles
     //
+    window.console.log("UPDATE STYLE");
     this.updateStyle();
     
 }
@@ -743,6 +746,7 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
  * @private
  */
 xiv.ui.ViewBox.prototype.onLayoutResize_ = function(e){
+    window.console.log("LAYOUT RESIZE!");
     this.updateStyle_Renderer_();
 }
 
@@ -851,6 +855,10 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
 		       xiv.vis.RenderEngine.EventType.RENDER_END, 
 		       this.onRenderEnd_.bind(this));
 
+
+    //
+    // Layout resize
+    //
     goog.events.listen(this.LayoutHandler_, 
 		       xiv.ui.layouts.LayoutHandler.EventType.RESIZE, 
 		       this.onLayoutResize_.bind(this));
@@ -1332,10 +1340,16 @@ xiv.ui.ViewBox.prototype.onTabsResize_ = function() {
  * @inheritDoc
  */
 xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
+    //
     // Merge any new arguments and update.
+    //
     if (opt_args) {
 	moka.style.setStyle(this.getElement(), opt_args);
     }    
+
+    //
+    // Parent update style
+    //
     goog.base(this, 'updateStyle');
     this.updateStyle_ZipTabs_();
     this.updateStyle_LayoutHandler_();
@@ -1363,14 +1377,7 @@ xiv.ui.ViewBox.prototype.updateStyle_ZipTabs_ = function () {
 xiv.ui.ViewBox.prototype.updateStyle_LayoutHandler_ = function () {
     if (!this.LayoutHandler_) { return };
     this.LayoutHandler_.getElement().style.height = 
-       (// The size of the ViewBox
-        this.currSize.height -
-	 // The top of the zip tabs
-	parseInt(this.ZipTabs_.getElement().style.height, 10) - 
-	 // The tab drag handle
-	goog.style.getSize(
-	    this.ZipTabs_.getResizeHandles()[0]).height
-	).toString() + 'px';
+	this.ZipTabs_.getResizeHandles()[0].style.top;
     this.LayoutHandler_.updateStyle();
 }
 
