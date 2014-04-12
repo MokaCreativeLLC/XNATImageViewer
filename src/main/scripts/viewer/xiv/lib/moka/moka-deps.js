@@ -80,7 +80,10 @@ goog.addDependency('../../../moka/ui/Resizable.js',
     'goog.fx.Dragger.EventType',
     'goog.fx.dom.Slide', 
     'moka.ui.Component',
+    'moka.ui.ResizeDraggerLeft',
     'moka.ui.ResizeDraggerRight',
+    'moka.ui.ResizeDraggerTop',
+    'moka.ui.ResizeDraggerBottom',
     'moka.style'
 ]);
 
@@ -91,11 +94,26 @@ goog.addDependency('../../../moka/ui/ResizeDragger.js',
 ]);
 
 
+goog.addDependency('../../../moka/ui/ResizeDraggerLeft.js', 
+['moka.ui.ResizeDraggerLeft'], [
+    'moka.ui.ResizeDragger'
+]);
+
+
 goog.addDependency('../../../moka/ui/ResizeDraggerRight.js', 
 ['moka.ui.ResizeDraggerRight'], [
     'moka.ui.ResizeDragger'
 ]);
 
+goog.addDependency('../../../moka/ui/ResizeDraggerTop.js', 
+['moka.ui.ResizeDraggerTop'], [
+    'moka.ui.ResizeDragger'
+])
+
+goog.addDependency('../../../moka/ui/ResizeDraggerBottom.js', 
+['moka.ui.ResizeDraggerBottom'], [
+    'moka.ui.ResizeDragger'
+])
 
 
 goog.addDependency('../../../moka/ui/GenericSlider.js', 

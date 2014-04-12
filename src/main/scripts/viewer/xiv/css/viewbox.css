@@ -82,6 +82,16 @@
 }
 
 
+.xiv-ui-viewbox-ziptab-bounds {
+    position: absolute;
+    left: 0px;
+    top: 300px;
+    height: calc(100% - 300px);
+    width: 100%;
+    background-color: rgba(255,0,0,0);
+}
+
+
 .xiv-ui-viewbox-viewlayouthandler {
     height: 100%;
     width: 100%;

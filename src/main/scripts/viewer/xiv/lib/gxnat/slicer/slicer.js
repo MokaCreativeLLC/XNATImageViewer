@@ -79,7 +79,7 @@ gxnat.slicer.getMrmlNodes = function(fileList, mrbUrl, callback) {
     var mrmlNodes = [];
     var counter = 0;
 
-    window.console.log("MRML URLS", mrmlUrls);
+    //window.console.log("MRML URLS", mrmlUrls);
 
     goog.array.forEach(mrmlUrls, function(mrmlUrl){
 	gxnat.slicer.getMrmlAsXml(mrmlUrl, function(mDoc) {
@@ -110,8 +110,8 @@ gxnat.slicer.createSceneViewProperties =
 function(sceneViewElt, mrmlNode, callback){
 
     gxnat.slicer.getAnnotations(sceneViewElt, mrmlNode, function(annotations){
-	window.console.log("\n\n3. CREATE SCENE VIEW NODE, ANNOT", 
-			   mrmlNode.mrbUrl);
+	//window.console.log("\n\n3. CREATE SCENE VIEW NODE, ANNOT", 
+	//mrmlNode.mrbUrl);
 	callback(new gxnat.slicer.SceneViewNode(
 	    sceneViewElt,
 	    gxnat.slicer.getCameraFromSceneView(sceneViewElt),
@@ -429,7 +429,7 @@ function(sceneView, mrmlNode, callback) {
     })
 
 
-    window.console.log('\n\nANNOT 1', sceneView, getCounter, fcsvUrls);
+    //window.console.log('\n\nANNOT 1', sceneView, getCounter, fcsvUrls);
 
     if (fcsvUrls.length == 0) {
 	callback(null);
@@ -510,8 +510,8 @@ function(sceneView, mrmlNode, callback) {
 				return parseFloat(x);
 			    })
 
-			window.console.log("\n\nCOLOR", color, 
-					   dispFid.getAttribute('color'));
+			//window.console.log("\n\nCOLOR", color, 
+			//		   dispFid.getAttribute('color'));
 			break;
 			
 		    }
@@ -826,7 +826,7 @@ gxnat.slicer.getMeshes = function(sceneView) {
 					      'Model', 'ModelStorage');
 
     goog.array.forEach(meshes, function(mesh){
-	window.console.log("MESH", mesh);
+	//window.console.log("MESH", mesh);
 	mesh.properties = new gxnat.slicer.MeshDisplayNode(
 	    sceneView, mesh.node);
     })

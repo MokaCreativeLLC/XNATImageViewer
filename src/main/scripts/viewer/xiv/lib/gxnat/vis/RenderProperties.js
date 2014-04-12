@@ -18,8 +18,7 @@ goog.provide('gxnat.vis.RenderProperties');
 gxnat.vis.RenderProperties = function(slicerNode){
     goog.base(this);
     
-    window.console.log("\n\n\nRENDER PROPERTIES!", slicerNode);
-
+    //window.console.log("\n\n\nRENDER PROPERTIES!", slicerNode);
 
     //
     // Scene Views
@@ -37,7 +36,7 @@ gxnat.vis.RenderProperties = function(slicerNode){
     // Volumes
     //
     else if (slicerNode instanceof gxnat.slicer.VolumeDisplayNode){
-	window.console.log("VOLUME DISPLAY", slicerNode);
+	//window.console.log("VOLUME DISPLAY", slicerNode);
 	this.origin = slicerNode.origin || [0,0,0];
 	this.upperThreshold = slicerNode.upperThreshold || 10000;
 	this.lowerThreshold = slicerNode.lowerThreshold || -10000;

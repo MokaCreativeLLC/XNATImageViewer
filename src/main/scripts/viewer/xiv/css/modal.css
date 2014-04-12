@@ -150,14 +150,13 @@
     top: 25px;
     left: 0px;
     height: calc(100% - 50px);
-    width: 200px;
-    background-color: rgba(120,220,120, .5);
+    width: 250px;
+    background-color: rgba(120,220,120, 0);
 }
 
 
 .xiv-ui-modal-projecttab {
     left: 0px;
-    width: 20px;
     height: calc(100% - 50px);
     top: 25px;
 }

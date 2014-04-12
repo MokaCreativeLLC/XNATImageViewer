@@ -18,7 +18,6 @@ goog.require('moka.ui.ResizeDragger');
  * @param {!Element} resizeElt The element that will be resized.
  */
 goog.provide('goog.ui.ResizeDraggerRight');
-goog.provide('goog.ui.ResizeDraggerRight.EventType');
 moka.ui.ResizeDraggerRight = function(resizeElt) {
     goog.base(this, 'right', resizeElt);
 };
@@ -48,36 +47,54 @@ moka.ui.ResizeDraggerRight.CSS_SUFFIX = {}
  * @inheritDoc
  */
 moka.ui.ResizeDraggerRight.prototype.onResize = function(e) {
-    window.console.log("ON RESIZE!", this.handleDims);
     goog.base(this, 'onResize');
+
+    var deltaX = this.handleDims.X - 
+	((this.UpdateDims.ELEMENT.X - this.UpdateDims.BOUNDARY.X) + 
+	this.UpdateDims.ELEMENT.W);
+
     moka.style.setStyle(this.resizeElt, {
-	'width': this.handleDims.X 
+	'width': Math.max(
+	    this.UpdateDims.ELEMENT.W + deltaX,
+	    this.minSize.width)
     })
 }
 
 
 
 /**
- * @param {!moka.ui.ResizeDragger.UpdateDims} updateDims
- * @public
+ * @inheritDoc
  */ 
 moka.ui.ResizeDraggerRight.prototype.update = function(updateDims) {
+    //
+    // Do nothing if dragging.
+    //
+    if (this.Dragger.isDragging() ||  this.isAnimating) {return};
+
+
     goog.base(this, 'update', updateDims);
+
+    //
+    // NOTE: MIN MAX are relative to the direction of the dragger.
+    // i.e. The max of a right dragger is to the right of the boundary.
+    //
+    var X_MIN = this.UpdateDims.ELEMENT.X + this.minSize.width;
+    var X_MAX = this.UpdateDims.BOUNDARY.W;
 
     //
     // Reset limits
     //
-    this.Dragger_.setLimits(new goog.math.Rect(
-	updateDims.X_MIN, 
-	updateDims.BOUNDARY.Y - updateDims.ELEMENT.Y, 
-	updateDims.X_MAX, 0
+    this.Dragger.setLimits(new goog.math.Rect(
+	X_MIN, 
+	this.UpdateDims.BOUNDARY.Y - this.UpdateDims.ELEMENT.Y, 
+	X_MAX, 0
     ))
 
     //
     // Set the left
     //
     moka.style.setStyle(this.getElement(), {
-	'left': updateDims.ELEMENT.X + updateDims.ELEMENT.W
+	'left': this.UpdateDims.ELEMENT.X + this.UpdateDims.ELEMENT.W
     })
 }
 
@@ -97,12 +114,12 @@ moka.ui.ResizeDraggerRight.prototype.getSlideTrajectory_ = function(limitType) {
     var end;
     if (limitType == 'MIN') {
 	end = new goog.math.Coordinate(
-	    this.Dragger_.limits.left,
+	    this.Dragger.limits.left,
 	    this.handleDims.Y
 	);
     } else {
 	end = new goog.math.Coordinate(
-	    this.Dragger_.limits.left + this.Dragger_.limits.width,
+	    this.Dragger.limits.left + this.Dragger.limits.width,
 	    this.handleDims.Y
 	);
     }

@@ -89,6 +89,12 @@ xiv.ui.ViewBox = function () {
     this.LayoutHandler_ = null;
 
 
+    /**
+     * @type {!Element}
+     * @private
+     */	
+    this.ZipTabBounds_ = null; 
+
 
     /**
      * @type {?moka.ui.ZipTabs}
@@ -199,6 +205,7 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     MENU_TOP_LEFT:  'menu-top-left',
     VIEWLAYOUTHANDLER: 'viewlayouthandler',
     TABS: 'ziptabs',
+    TAB_BOUNDS: 'ziptab-bounds',
     VIEWFRAME: 'viewframe',
     COMPONENT_HIGHLIGHT: 'component-highlight',
     VIEWABLEGROUPMENU: 'viewablegroupmenu',
@@ -763,7 +770,6 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
     // Get the default layout
     //
     if (this.ViewableTrees_.length == 1) {
-	
 	this.LayoutHandler_.setLayout(
 	    xiv.ui.ViewBox.defaultLayout[ViewableTree.getCategory()]);
     }
@@ -772,8 +778,7 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
     // Load menu
     //
     window.console.log(ViewableTree);
-    var viewGroups = /**@type {!Array.<gxnat.vis.ViewableGroup>}*/
-	ViewableTree.getViewableGroups();
+    var viewGroups = ViewableTree.getViewableGroups();
 
     var thumb = null;
     if (viewGroups.length > 1){
@@ -1038,19 +1043,37 @@ xiv.ui.ViewBox.prototype.initProgressBarPanel_ = function(){
 * @private
 */
 xiv.ui.ViewBox.prototype.initZipTabs_ = function(){
+    //
+    // TabBounds
+    //
+    this.ZipTabBounds_ = goog.dom.createDom('div');
+    goog.dom.append(this.viewFrameElt_, this.ZipTabBounds_);
+    goog.dom.classes.add(this.ZipTabBounds_, 
+			 xiv.ui.ViewBox.CSS.TAB_BOUNDS);
+
+    //
+    // Create the tabs
+    //
     this.ZipTabs_ = new moka.ui.ZipTabs('TOP'); 
     goog.dom.append(this.viewFrameElt_, this.ZipTabs_.getElement());
-    goog.dom.classes.add(this.ZipTabs_.getElement(), 
-			 xiv.ui.ViewBox.CSS.TABS);
+    goog.dom.classes.add(this.ZipTabs_.getElement(), xiv.ui.ViewBox.CSS.TABS);
+
+    //
     // Add dragger CSS and handle.
-    var dragger = /**@type {!Element}*/
-    this.ZipTabs_.getResizable().getDragElt('TOP');
-    goog.dom.classes.add(dragger, xiv.ui.ViewBox.CSS.TABDRAGGER);
-    goog.dom.append(dragger, goog.dom.createDom('div', {
+    //
+    var dragHandle = this.ZipTabs_.getResizeHandles()[0];
+    goog.dom.classes.add(dragHandle, xiv.ui.ViewBox.CSS.TABDRAGGER);
+    goog.dom.append(dragHandle, goog.dom.createDom('div', {
 	'id': xiv.ui.ViewBox.ID_PREFIX + '_DraggerHandle_' + 
 	    goog.string.createUniqueString(),
 	'class': xiv.ui.ViewBox.CSS.TABDRAGGER_HANDLE
     }));
+
+
+    //
+    // Set the boundary of the tabs
+    //
+    this.ZipTabs_.setBoundaryElement(this.ZipTabBounds_);
 }
 
 
@@ -1287,14 +1310,9 @@ xiv.ui.ViewBox.prototype.setComponentEvents_ = function() {
  * @private
  */
 xiv.ui.ViewBox.prototype.setTabsEvents_ = function () {
-    goog.events.listen(this.ZipTabs_.getResizable(), 
-		       moka.ui.Resizable.EventType.RESIZE,
+    goog.events.listen(this.ZipTabs_, moka.ui.Resizable.EventType.RESIZE,
 		       this.onTabsResize_.bind(this));
 }
-
-
-
-
 
 
 
@@ -1303,7 +1321,7 @@ xiv.ui.ViewBox.prototype.setTabsEvents_ = function () {
  * Callback for when the xiv.ui.ViewBoxBorder is dragged.
  * @private
  */
-xiv.ui.ViewBox.prototype.onTabsResize_ = function() {	
+xiv.ui.ViewBox.prototype.onTabsResize_ = function() {
     this.updateStyle();
 }
 
@@ -1331,34 +1349,8 @@ xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
  * @private
  */
 xiv.ui.ViewBox.prototype.updateStyle_ZipTabs_ = function () {
-
     if (!this.ZipTabs_) { return };
-
-    var menuWidth = /**@type {number}*/
-    goog.style.getSize(this.menus_.LEFT).width;
-    var tabWidth = /**@type {number}*/ this.currSize.width;
-
-    window.console.log(this.currSize.width, 'MENU WIDTH',
-		       goog.style.getSize(this.menus_.LEFT).width)
-
-    if (this.currSize.width <= 0) {
-	this.ZipTabs_.getResizable().setBounds(
-	    0,  // topLeft X
-	    0,   // topLeft Y
-	    tabWidth,  // botRight X
-	    this.currSize.height);  //botRight Y
-    } else {
-	this.ZipTabs_.getResizable().setBounds(
-	    0,  // topLeft X
-	    this.currSize.height * xiv.ui.ViewBox.MIN_TAB_H_PCT, // topLeft Y
-	    tabWidth, // botRight X
-	    this.currSize.height);  // botRightY
-    }
-    //this.ZipTabs_.getResizable().showBoundaryElt();
-    //this.ZipTabs_.deactivateAll();
     this.ZipTabs_.updateStyle();
-    this.updateStyle_LayoutHandler_();
-    this.updateStyle_Renderer_();
 }
 
 
@@ -1377,7 +1369,7 @@ xiv.ui.ViewBox.prototype.updateStyle_LayoutHandler_ = function () {
 	parseInt(this.ZipTabs_.getElement().style.height, 10) - 
 	 // The tab drag handle
 	goog.style.getSize(
-	    this.ZipTabs_.getResizable().getDragElt('TOP')).height
+	    this.ZipTabs_.getResizeHandles()[0]).height
 	).toString() + 'px';
     this.LayoutHandler_.updateStyle();
 }
@@ -1404,7 +1396,7 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     goog.base(this, 'disposeInternal');
 
 
-    // @D Controllers
+    // 2D Controllers
     if (goog.isDefAndNotNull(this.Controllers2D_)){
 	this.Controllers2D_.disposeInternal();
 	this.Controllers2D_ = null;
@@ -1442,6 +1434,11 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
 	delete this.LayoutMenu_;
     }
 	
+    // ZipTab Bounds
+    if (goog.isDefAndNotNull(this.ZipTabBounds_)){
+	goog.dom.remove(this.ZipTabBounds_);
+	delete this.ZipTabBounds_;
+    }    
 
     // ZipTabs
     if (goog.isDefAndNotNull(this.ZipTabs_)){

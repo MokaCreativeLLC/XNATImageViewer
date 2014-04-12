@@ -42,9 +42,23 @@ moka.ui.ResizeDragger = function(direction, resizeElt) {
     
     /**
      * @type {!goog.fx.Dragger}
-     * @private
+     * @protected
      */
-    this.Dragger_ =  new goog.fx.Dragger(this.getElement());
+    this.Dragger =  new goog.fx.Dragger(this.getElement());
+
+
+    /**
+     * @type {?goog.math.Size}
+     * @protected
+     */
+    this.minSize = null;
+
+
+    /**
+     * @type {?moka.ui.ResizeDragger.UpdateDims}
+     * @protected
+     */
+    this.UpdateDims = null;
 
 
     /**
@@ -72,18 +86,11 @@ goog.exportSymbol('moka.ui.ResizeDragger', moka.ui.ResizeDragger);
 /**
  * @struct
  */
-moka.ui.ResizeDragger.UpdateDims = 
-function(resizeElt, resizeBoundaryElt, minWidth, minHeight, limits) {
+moka.ui.ResizeDragger.UpdateDims = function(resizeElt, resizeBoundaryElt) {
     var eltPos = goog.style.getPosition(resizeElt);
     var eltSize = goog.style.getSize(resizeElt);
     var boundaryPos = goog.style.getPosition(resizeBoundaryElt);
     var boundarySize = goog.style.getSize(resizeBoundaryElt);
-
-    this.X_MIN = eltPos.x + minWidth;
-    this.X_MAX = boundarySize.width - this.X_MIN;
-
-    this.Y_MIN = eltPos.y + minHeight;
-    this.Y_MAX = boundarySize.height - this.Y_MIN;
     
     this.ELEMENT = {
 	W: eltSize.width,
@@ -142,11 +149,19 @@ moka.ui.ResizeDragger.ANIM_MED = 500;
 
 
 /**
+ * @type {!boolean|
+ * @protected
+ */ 
+moka.ui.ResizeDragger.prototype.isAnimating = false;
+
+
+
+/**
  * @return {!goog.fx.Dragger}
  * @public
  */ 
 moka.ui.ResizeDragger.prototype.getDragger = function() {
-    return this.Dragger_;
+    return this.Dragger;
 }
 
 
@@ -170,13 +185,23 @@ moka.ui.ResizeDragger.prototype.getHandle = function() {
 
 
 
+/**
+ * @param {!goog.math.Size} minSize
+ * @public
+ */ 
+moka.ui.ResizeDragger.prototype.setMinSize = function(minSize) {
+    return this.minSize = minSize
+}
+
+
+
 
 /**
  * @param {!goog.math.Rect} limits
  * @public
  */ 
 moka.ui.ResizeDragger.prototype.setLimits = function(limits) {
-    return this.Dragger_.setLimits(limits)
+    return this.Dragger.setLimits(limits)
 }
 
 
@@ -187,13 +212,13 @@ moka.ui.ResizeDragger.prototype.setLimits = function(limits) {
  */
 moka.ui.ResizeDragger.prototype.setEvents_ = function(dragger) {
     // START
-    goog.events.listen(this.Dragger_, goog.fx.Dragger.EventType.START, 
+    goog.events.listen(this.Dragger, goog.fx.Dragger.EventType.START, 
 		       this.onResizeStart.bind(this));
     // DRAG
-    goog.events.listen(this.Dragger_, goog.fx.Dragger.EventType.DRAG, 
+    goog.events.listen(this.Dragger, goog.fx.Dragger.EventType.DRAG, 
 		       this.onResize.bind(this));
     // END
-    goog.events.listen(this.Dragger_, goog.fx.Dragger.EventType.END, 
+    goog.events.listen(this.Dragger, goog.fx.Dragger.EventType.END, 
 		       this.onResizeEnd.bind(this));
 };
 
@@ -242,7 +267,7 @@ moka.ui.ResizeDragger.prototype.onResizeEnd = function(e) {
 moka.ui.ResizeDragger.prototype.updateHandleDims = function() {
     var handle = this.getElement();
     var handlePos = goog.style.getComputedPosition(handle);
-
+    //window.console.log(this.getElement());
     if (!goog.isDefAndNotNull(handlePos.X)){
 	handlePos = goog.style.getPosition(handle);
     }
@@ -259,7 +284,20 @@ moka.ui.ResizeDragger.prototype.updateHandleDims = function() {
  * @public
  */ 
 moka.ui.ResizeDragger.prototype.update = function(opt_updateDims) {
+
+    window.console.log("UPDATE RESZE DRAGGER", 
+		       this.Dragger.isDragging() ,  this.isAnimating);
+    //
+    // Don't update if we're dragging.
+    //
+    if (this.Dragger.isDragging() ||  this.isAnimating) {return};
+
+    //
+    // Otherwise update.
+    //
     this.updateHandleDims();
+    this.UpdateDims = goog.isDefAndNotNull(opt_updateDims) ?
+	opt_updateDims : this.UpdateDims;
 }
 
 
@@ -276,12 +314,16 @@ moka.ui.ResizeDragger.prototype.slideToLimits =
 function(limitType, opt_callback, opt_dur) {
     this.updateHandleDims();
     var traj = this.getSlideTrajectory_(limitType); 
-    this.createSlideAnim_(traj.start, traj.end);
+    this.createSlideAnim_(traj.start, traj.end, opt_callback, opt_dur);
 }
 
 
 /**
- * @param {}
+ * @param {!goog.math.Coordinate} startPos The start position.
+ * @param {!goog.math.Coordinate} endPos The end position.
+ * @param {Function=} opt_callback The optional callback on completion.
+ * @param {number=} opt_dur The optional duration.  Defaults to 
+ *     moka.ui.Resizable.ANIM_MED.
  * @private
  */ 
 moka.ui.ResizeDragger.prototype.createSlideAnim_ = 
@@ -299,14 +341,10 @@ function(startPos, endPos, opt_callback, opt_dur) {
     // onAnimate START
     //
     goog.events.listen(this.slideAnim_, goog.fx.Animation.EventType.BEGIN, 
-	function(e) {
-
-	    /**
-	    this.onResizeStart_({
-		currentTarget: dragger
-	    })
-	    */
-    }.bind(this));
+        function() {
+	    this.isAnimating = true;
+	    this.onResizeStart();
+	}.bind(this));
 
     //
     // onAnimate
@@ -318,14 +356,14 @@ function(startPos, endPos, opt_callback, opt_dur) {
     // onAnimate END
     //
     goog.events.listen(this.slideAnim_, goog.fx.Animation.EventType.END, 
-	function(e) {
-	    window.console.log('DRAG END');
-	    this.onResizeEnd();
-	    if (opt_callback) {opt_callback()};
-	    this.slideAnim_.disposeInternal();
-	    goog.events.removeAll(this.slideAnim_);
-	    this.slideAnim_.destroy();
-	    this.slideAnim_ = null;
+    function(e){
+	this.isAnimating = false;
+	this.onResizeEnd();
+	if (opt_callback) {opt_callback()};
+	this.slideAnim_.disposeInternal();
+	goog.events.removeAll(this.slideAnim_);
+	this.slideAnim_.destroy();
+	this.slideAnim_ = null;
     }.bind(this));
 
 
@@ -337,31 +375,39 @@ function(startPos, endPos, opt_callback, opt_dur) {
 
 
 
-
-
-
-
-
 /**
  * @private
  */ 
 moka.ui.ResizeDragger.prototype.disposeInternal = function() {
 
+    // isAnimating
+    delete this.isAnimating;
+
+    // Minimum size
+    goog.object.clear(this.minSize);
+    delete this.minSize;
+    
     // The resize elt
     delete this.resizeElt;
 
     // handle dims
     goog.object.clear(this.handleDims);
     delete this.handleDims;
+    
+    // update dims
+    goog.object.clear(this.UpdateDims);
+    window.console.log("UPDATE DIMS DISPOSE", this.UpdateDims);
+    delete this.UpdateDims;
+    
 
     // The dragger handle
-    goog.dom.remove(this.Dragger_.handle);
-    this.Dragger_.handle = null;
+    goog.dom.remove(this.Dragger.handle);
+    this.Dragger.handle = null;
     
     // The dragger
-    goog.events.removeAll(this.Dragger_);
-    this.Dragger_.dispose();
-    delete this.Dragger_;
+    goog.events.removeAll(this.Dragger);
+    this.Dragger.dispose();
+    delete this.Dragger;
 
     // direction
     delete this.direction_;

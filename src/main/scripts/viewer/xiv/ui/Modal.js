@@ -264,6 +264,15 @@ xiv.ui.Modal.prototype.getThumbnailGallery = function() {
 
 
 /**
+ * @return {moka.ui.ZipTabs} The projectTab
+ * @public
+ */
+xiv.ui.Modal.prototype.getProjectTab = function() {
+  return this.ProjectTab_;
+}
+
+
+/**
  * As stated.
  * @return {!Element} The described element.
  * @public
@@ -667,8 +676,6 @@ xiv.ui.Modal.prototype.computeViewBoxPositions_ = function () {
  */
 xiv.ui.Modal.prototype.updateStyle = function () {
 
-    //window.console.log("\n\nupdate style!");
-    //window.console.log("WIDTH", this.ProjectTab_.getElement());
     this.computeDims_();
     moka.style.setStyle(this.getElement(), {
 	'height' : this.dims_.H,
@@ -692,7 +699,6 @@ xiv.ui.Modal.prototype.updateStyle = function () {
  * @private
  */
 xiv.ui.Modal.prototype.updateStyle_ProjectTab_ = function(){
-    // xiv.ui.ViewBoxes	
     if (this.ProjectTab_) {
 	this.ProjectTab_.updateStyle();
     }
@@ -780,7 +786,6 @@ xiv.ui.Modal.prototype.initButtons_ = function() {
  * @private
  */
 xiv.ui.Modal.prototype.initProjectTab_ = function() {
-
     //
     // TabBounds
     //
@@ -788,8 +793,6 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
     goog.dom.append(this.getElement(), this.ProjectTabBounds_);
     goog.dom.classes.add(this.ProjectTabBounds_, 
 			 xiv.ui.Modal.CSS.PROJECTTAB_BOUNDS);
-    //window.console.log(this.ProjectTabBounds_.parentNode);
-    //this.ProjectTabBounds_.style.visibility = 'hidden';
 
     //
     // ProjectTab
@@ -798,25 +801,30 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
     goog.dom.append(this.getElement(), this.ProjectTab_.getElement());
     goog.dom.classes.add(this.ProjectTab_.getElement(), 
 			 xiv.ui.Modal.CSS.PROJECTTAB);
+    
 
 
+    //
+    // Thumbnail Gallery
+    //
     this.ThumbnailGallery_ = new xiv.ui.ThumbnailGallery();
     this.ThumbnailGallery_.setHoverParent(this.getElement());
     goog.dom.append(this.ProjectTab_.getElement(), 
 		    this.ThumbnailGallery_.getElement());
     this.setThumbnailGalleryEvents_();
 
-
+    //
+    // add thumbnail gallery to ProjectTab_
+    //
     this.ProjectTab_.setTabPageContents('Project Browser', 
-				     goog.dom.createDom('div', {
-					 'color': 'rgb(255,255,255)',
-					 'background': 'rgb(205,25,48)',
-				     }, this.ThumbnailGallery_.getElement()))
+				        this.ThumbnailGallery_);
 
+    //
+    // Set the boundary of the tabs
+    //
     this.ProjectTab_.setBoundaryElement(this.ProjectTabBounds_);
-    //this.ProjectTab_.Resizable_.showBoundaryElement();
-
     
+
     //
     // Add dragger CSS
     //
@@ -834,7 +842,7 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
     }));
 
 
-
+    // Event listener
     goog.events.listen(this.ProjectTab_, moka.ui.Resizable.EventType.RESIZE,
 		       this.updateStyle.bind(this));
  

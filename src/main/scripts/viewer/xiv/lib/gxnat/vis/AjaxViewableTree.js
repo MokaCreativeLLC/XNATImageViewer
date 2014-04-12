@@ -14,8 +14,7 @@ goog.require('gxnat.vis.ViewableTree');
 
 /**
  * Sub-class of ViewableTree that gets its properties through Ajax methods,
- * necessitating for callback management in order for the object to get 
- * create.
+ * necessitating for callback management.
  *
  * @constructor
  * @param {!string} experimentUrl The experiment-level url of the viewable.
@@ -162,16 +161,14 @@ function(viewableFolderUrl, runCallback, opt_doneCallback) {
  * @public
  */
 gxnat.vis.AjaxViewableTree.prototype.getFiles = function(callback){
-
     //window.console.log("GET FILES", this);
-    var fileQueryUrl = /** @type {!string} */ 
-    this.queryUrl + this.fileQuerySuffix;
-    var absoluteUrl = /** @type {!string} */ '';    
-    var i = /** @type {!number} */ 0;
-    var len = /** @type {!number} */ 0;
-    var fileUrl = /** @type {!string} */ '';
+    var fileQueryUrl = this.queryUrl + this.fileQuerySuffix;
+    var absoluteUrl = '';    
+    var i =  0;
+    var len = 0;
+    var fileUrl = '';
 
-    window.console.log(this, fileQueryUrl);
+    //window.console.log(this, fileQueryUrl);
     gxnat.jsonGet(fileQueryUrl, function(fileUrls){
 	//window.console.log(fileUrls);
 	for (i=0, len = fileUrls.length; i < len; i++) {
@@ -238,19 +235,19 @@ gxnat.vis.AjaxViewableTree.prototype.dispose = function() {
 gxnat.vis.AjaxViewableTree.getViewableTrees = 
 function(url, AjaxViewableTreeSubClass, opt_runCallback, opt_doneCallback) {
     
-    var pathObj = /** @type {!gxnat.Path} */ new gxnat.Path(url);
-    var queryFolder = /** @type {!string} */ 
+    var pathObj =  new gxnat.Path(url);
+    var queryFolder = 
     url + '/' + AjaxViewableTreeSubClass.prototype.getFolderQuerySuffix();
-    var viewable = /** @type {?gxnat.vis.ViewableTree} */ null;
+    var viewable = null;
 
-    window.console.log('\n\n\nurl:', url, '\nqueryFolder:', queryFolder);
+//    window.console.log('\n\n\nurl:', url, '\nqueryFolder:', queryFolder);
     gxnat.vis.AjaxViewableTree.loopFolderContents(queryFolder, function(json){
-	window.console.log(json, pathObj);
+	//window.console.log(json, pathObj);
 
 	viewable = new AjaxViewableTreeSubClass(
 	    pathObj.pathByLevel('experiments'), json, opt_runCallback);
 
-	window.console.log(viewable);
+	//window.console.log(viewable);
 	// sort list (shared, with custom parameters)
 	window.console.log("need to sort the viewable list");
     }, opt_doneCallback)

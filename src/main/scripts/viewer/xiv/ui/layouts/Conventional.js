@@ -95,13 +95,9 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_X = function(){
     goog.dom.classes.add(this.Planes['X'].getElement(), 
 			 xiv.ui.layouts.Conventional.CSS.X);
 
-    this.Planes['X'].setResizeDirections(['RIGHT', 'TOP_RIGHT']);
-
-    this.Planes['X'].getResizable().getDragElt('RIGHT').style.cursor =  
-	'ew-resize';
-
-    this.Planes['X'].getResizable().getDragElt('TOP_RIGHT').style.cursor =  
-	'move';
+    window.console.log("NEED TO SET RESIZE FOR CONVEIONAL X!");
+    return;
+    //this.Planes['X'].setResizeDirections(['RIGHT', 'TOP_RIGHT']);
 
 
     goog.events.listen(this.Planes['X'].getResizable(), 
@@ -119,6 +115,10 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_Y = function(){
 
     goog.dom.classes.add(this.Planes['Y'].getElement(), 
 			 xiv.ui.layouts.Conventional.CSS.Y);
+
+    window.console.log("NEED TO SET RESIZE FOR CONVEIONAL Y!");
+    return;
+
     this.Planes['Y'].setResizeDirections(['RIGHT', 'TOP_RIGHT']);
 
     this.Planes['Y'].getResizable().getDragElt('RIGHT').style.cursor =  
@@ -152,6 +152,9 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_V = function(){
     goog.base(this, 'setupPlane_V');
     goog.dom.classes.add(this.Planes['V'].getElement(), 
 			 xiv.ui.layouts.Conventional.CSS.V);
+
+    window.console.log("NEED TO SET RESIZE FOR CONVEIONAL V!");
+    return;
 
     this.Planes['V'].setResizeDirections(['BOTTOM']);
 
@@ -255,6 +258,7 @@ xiv.ui.layouts.Conventional.prototype.onPlaneResize_V = function(e){
  * @inheritDoc
  */
 xiv.ui.layouts.Conventional.prototype.updateStyle_X = function() {
+    return;
     this.Planes['X'].getResizable().setMinHeight(this.resizeMargin);
     this.Planes['X'].getResizable().setMinWidth(this.resizeMargin);
     this.Planes['X'].getResizable().setBounds(
@@ -270,6 +274,7 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_X = function() {
  * @inheritDoc
  */
 xiv.ui.layouts.Conventional.prototype.updateStyle_Y = function() {
+    return;
     window.console.log(this.Planes);
     this.Planes['Y'].getResizable().setMinHeight(this.resizeMargin);
     this.Planes['Y'].getResizable().setMinWidth(this.resizeMargin);
@@ -287,6 +292,7 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_Y = function() {
 * @private
 */
 xiv.ui.layouts.Conventional.prototype.updateStyle_V = function() {
+    return;
     this.Planes['V'].getResizable().setMinHeight(
 	this.currSize.height * 
 	    (1-xiv.ui.layouts.Conventional.MAX_PLANE_RESIZE_PCT));

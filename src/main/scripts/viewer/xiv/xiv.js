@@ -168,6 +168,10 @@ xiv.prototype.show = function(){
     this.Modal_.getElement().style.opacity = 0;
     goog.dom.append(document.body, this.Modal_.getElement());
     this.Modal_.updateStyle();
+
+    // The the project tab expanded
+    this.Modal_.getProjectTab().setExpanded(true, 0, 0);
+
     // Important that this be here;
     moka.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME );
 }
@@ -342,8 +346,7 @@ xiv.prototype.createModalPopup_ = function(){
  */
 xiv.prototype.fetchViewableTrees = function(viewablesUri, opt_doneCallback){
     xiv.getViewableTreesFromXnat(viewablesUri, function(viewable){
-
-	window.console.log('VIEWABLE', viewable);
+	//window.console.log('VIEWABLE', viewable);
 	this.storeViewableTree_(viewable);
 	this.addViewableTreeToModal(viewable);
     }.bind(this), opt_doneCallback)
@@ -357,12 +360,9 @@ xiv.prototype.fetchViewableTrees = function(viewablesUri, opt_doneCallback){
  * @public
  */
 xiv.prototype.addViewableTreeToModal = function(ViewableTree){
-
-    window.console.log(ViewableTree);
-
+    //window.console.log(ViewableTree);
     if (!this.Modal_.getThumbnailGallery()) { return };
-
-    window.console.log("Thumb gallery");
+    //window.console.log("Thumb gallery");
     this.Modal_.getThumbnailGallery().createAndAddThumbnail(
 	ViewableTree, // The viewable
 	xiv.extractViewableTreeFolders_(ViewableTree) // The folder tree

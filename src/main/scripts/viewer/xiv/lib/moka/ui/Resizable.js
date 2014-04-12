@@ -501,7 +501,8 @@ function(draggerDir, limitType, opt_callback, opt_dur) {
     this.update();
 
     // Slide dragger
-    this.ResizeDraggers_[draggerDir].slideToLimits(limitType, opt_callback);
+    this.ResizeDraggers_[draggerDir].slideToLimits(limitType, opt_callback, 
+						   opt_dur);
 };
 
 
@@ -567,6 +568,10 @@ moka.ui.Resizable.prototype.addResizeDirection = function(dir) {
 	moka.ui.Resizable.createResizeDragger(dir, this.element_);
 
     // Events
+    if (!this.ResizeDraggers_[dir]){
+	window.console.log("NEED TO IMPLEMENT DRAAGGERS", dir);
+	return
+    }
     goog.events.listen(this.ResizeDraggers_[dir], 
 		       moka.ui.ResizeDragger.EventType.RESIZE_START, 
 		       this.onResizeStart_.bind(this))
@@ -604,7 +609,8 @@ moka.ui.Resizable.prototype.updateResizeDraggers_  = function() {
     // Define the update dims
     //
     var updateDims = new moka.ui.ResizeDragger.UpdateDims(
-	this.element_, this.boundaryElt_, this.minWidth_, this.minHeight_);
+	this.element_, this.boundaryElt_);
+    var minSize = new goog.math.Size(this.minWidth_, this.minHeight_);
 
     //
     // Loop draggers
@@ -617,6 +623,11 @@ moka.ui.Resizable.prototype.updateResizeDraggers_  = function() {
 	    this.boundaryElt_)) {
 	    goog.dom.append(this.boundaryElt_, Dragger.getHandle());
 	}
+	
+	//
+	// Set the minimum sizes
+	//
+	Dragger.setMinSize(minSize);
 
 	//
 	// Call dragger update
