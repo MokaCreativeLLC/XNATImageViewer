@@ -264,6 +264,26 @@ moka.ui.Resizable.prototype.getResizeDraggerDirection_ = function(dragger) {
 
 
 
+/**
+ * @param {!string} dir
+ * @return {!Element}
+ * @public
+ */
+moka.ui.Resizable.prototype.getHandle = function(dir) {
+    return this.ResizeDraggers_[dir].getHandle();
+};
+
+
+
+/**
+ * @param {!string} dir
+ * @return {!moka.ui.ResizeDragger}
+ * @public
+ */
+moka.ui.Resizable.prototype.getResizeDragger = function(dir) {
+    return this.ResizeDraggers_[dir];
+};
+
 
 
 /**
@@ -280,6 +300,14 @@ moka.ui.Resizable.prototype.getHandles = function() {
 };
 
 
+
+/**
+ * @return {!goog.math.Rect} 
+ * @public
+ */
+moka.ui.Resizable.prototype.getBoundaryElement = function() {
+    return this.boundaryElt_;
+};
 
 
 

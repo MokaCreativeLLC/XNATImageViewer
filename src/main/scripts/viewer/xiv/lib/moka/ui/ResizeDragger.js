@@ -48,7 +48,7 @@ moka.ui.ResizeDragger = function(direction, resizeElt) {
 
     /**
      * @type {Object}
-     * @protected
+     * @public
      */
     this.handleDims = {
 	W: null,
@@ -135,7 +135,7 @@ moka.ui.ResizeDragger.ANIM_MED = 500;
 
 /**
  * @type {?moka.ui.ResizeDragger.UpdateDims}
- * @protected
+ * @public
  */
 moka.ui.ResizeDragger.prototype.UpdateDims = null;
 

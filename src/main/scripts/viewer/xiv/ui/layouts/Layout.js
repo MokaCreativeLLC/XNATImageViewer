@@ -142,15 +142,23 @@ xiv.ui.layouts.Layout.prototype.addPlane = function(plane){
 }
 
 
+/**
+* @protected
+*/
+xiv.ui.layouts.Layout.prototype.dispatchResize = function(){
+    this.dispatchEvent({
+	type: xiv.ui.layouts.Layout.EventType.RESIZE
+    })
+}
+
+
 
 /**
 * @inheritDoc
 */
 xiv.ui.layouts.Layout.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
-    this.dispatchEvent({
-	type: xiv.ui.layouts.Layout.EventType.RESIZE
-    })
+    this.dispatchResize();
 }
 
 

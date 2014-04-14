@@ -66,7 +66,7 @@ moka.ui.ResizeDraggerBottom.prototype.update = function(updateDims) {
     //
     // Do nothing if dragging.
     //
-   if (this.Dragger.isDragging() || this.isAnimating) { return };
+    if (this.Dragger.isDragging() || this.isAnimating) { return };
 
 
     //

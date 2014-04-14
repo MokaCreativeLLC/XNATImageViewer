@@ -268,7 +268,8 @@ xiv.ui.layouts.Conventional.prototype.onPlaneResize_V = function(e){
     //
     // Update
     //
-    this.updateStyle();
+    this.updateXandYBoundaries_();
+    this.dispatchResize();
 }
 
 
@@ -278,14 +279,7 @@ xiv.ui.layouts.Conventional.prototype.onPlaneResize_V = function(e){
  * @inheritDoc
  */
 xiv.ui.layouts.Conventional.prototype.updateStyle_X = function() {
-    return;
-    this.Planes['X'].getResizable().setMinHeight(this.resizeMargin);
-    this.Planes['X'].getResizable().setMinWidth(this.resizeMargin);
-    this.Planes['X'].getResizable().setBounds(
-	0, this.resizeMargin, // topLeft X, topLeft Y
-	this.currSize.width - this.resizeMargin*2, // botRight X
-	this.currSize.height);// botRightY
-    //this.Planes['X'].getResizable().showBoundaryElt();
+    this.Planes['X'].getResizable().update();
 }
 
 
@@ -294,16 +288,7 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_X = function() {
  * @inheritDoc
  */
 xiv.ui.layouts.Conventional.prototype.updateStyle_Y = function() {
-    return
-    window.console.log(this.Planes);
-    this.Planes['Y'].getResizable().setMinHeight(this.resizeMargin);
-    this.Planes['Y'].getResizable().setMinWidth(this.resizeMargin);
-    this.Planes['Y'].getResizable().setBounds(
-	this.resizeMargin, this.resizeMargin, // topLeft X, topLeft Y
-	this.currSize.width - this.resizeMargin, // botRight X
-	this.currSize.height);// botRightY
-
-    //this.Planes['Y'].getResizable().showBoundaryElt();
+   this.Planes['Y'].getResizable().update();
 }
 
 
@@ -312,9 +297,44 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_Y = function() {
 * @private
 */
 xiv.ui.layouts.Conventional.prototype.updateStyle_V = function() {
+    this.Planes['V'].getResizable().update();
 
+    var vHandle = this.Planes['V'].getResizable().getHandles()[0];
+    var vSize = goog.style.getSize(vHandle);
+    var vPos = goog.style.getPosition(vHandle);
 
+    this.Planes['X'].getResizable().getBoundaryElement().style.top = 
+	(vPos.Y + vSize.height).toString() + 'px';
 }
+
+
+
+/**
+ * @private
+ */
+xiv.ui.layouts.Conventional.prototype.updateXandYBoundaries_ = function() {
+
+    this.Planes['V'].getResizable();
+
+    var vHandle = this.Planes['V'].getResizable().getResizeDragger('BOTTOM');
+    var currTop = vHandle.handleDims.Y + vHandle.handleDims.H;
+    var currHeight = this.currSize.height - vHandle.handleDims.Y;
+    goog.array.forEach(['X', 'Y'], function(plane){
+	this.Planes[plane].getResizable().getBoundaryElement().style.top = 
+	    (vHandle.handleDims.Y + vHandle.handleDims.H).toString() + 'px';
+	this.Planes[plane].getResizable().getBoundaryElement().style.height = 
+	    (this.currSize.height - vHandle.handleDims.Y).toString() + 'px';
+
+	this.Planes[plane].getResizable().getHandle('RIGHT').style.top = 
+	    (vHandle.handleDims.Y + vHandle.handleDims.H).toString() + 'px';
+	this.Planes[plane].getResizable().getHandle('RIGHT').style.height = 
+	    (this.currSize.height - vHandle.handleDims.Y).toString() + 'px';
+
+	this.Planes[plane].getResizable().update();	
+    }.bind(this))
+}
+
+
 
 
 

@@ -1376,8 +1376,10 @@ xiv.ui.ViewBox.prototype.updateStyle_ZipTabs_ = function () {
  */
 xiv.ui.ViewBox.prototype.updateStyle_LayoutHandler_ = function () {
     if (!this.LayoutHandler_) { return };
+
+    window.console.log("\n@\n@\n@\n@\n@UPDATE STYLE LAYOUT HANDLER");
     this.LayoutHandler_.getElement().style.height = 
-	this.ZipTabs_.getResizeHandles()[0].style.top;
+	this.ZipTabs_.getHandle('TOP').style.top;
     this.LayoutHandler_.updateStyle();
 }
 
