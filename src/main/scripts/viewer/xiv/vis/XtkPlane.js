@@ -178,7 +178,7 @@ xiv.vis.XtkPlane.prototype.init = function(containerElt) {
     if (this.Renderer) { this.Renderer.destroy() } ;
     //this.Renderer = (this.id_ !== 'v') ? new X.renderer2D : new X.renderer3D(
 
-    window.console.log(this.orientation, this);
+    //window.console.log(this.orientation, this);
     if (!goog.isDefAndNotNull(this.XRenderer)){
 	throw new Error('XtkPlane subclass must have the' +
 			' property "XRenderer" defined.')

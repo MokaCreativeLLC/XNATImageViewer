@@ -545,7 +545,7 @@ moka.ui.Tabs.prototype.setHoverEvents_ = function() {
 moka.ui.Tabs.prototype.setTabMouseOver_ = function(ind) {
     goog.events.listen(this.Tabs_[ind].TAB, 
         goog.events.EventType.MOUSEOVER, function() {
-	window.console.log(this.Tabs_[ind].ACTIVE);
+	//window.console.log(this.Tabs_[ind].ACTIVE);
 	//
 	// We don't need to highlight anything if we're over the active tab.
 	//
@@ -712,7 +712,7 @@ moka.ui.Tabs.prototype.deactivateAll = function () {
  */
 moka.ui.Tabs.prototype.updateStyle = function () {
 
-    window.console.log("\n\n\n\n**********UPDATE STULE", this.orientation);
+    //window.console.log("\n\n\n\n**********UPDATE STULE", this.orientation);
     if (!this.getElement().parentNode) { return };
     
     //
@@ -792,10 +792,13 @@ moka.ui.Tabs.prototype.updateStyleHorizontal_ = function() {
     //
     // Sets tab widths
     //
-    goog.array.forEach(this.Tabs_, function(tObj){
+    var width;
+    goog.array.forEach(this.Tabs_, function(tObj, i){
 	if (!this.getElement().parentNode){ return };
+	width = 100/this.Tabs_.length;
 	moka.style.setStyle(tObj.TAB, {
-	    'width' : (100/this.Tabs_.length).toString() + '%',
+	    'width' : (width).toString() + '%',
+	    'left': (i * width).toString() + '%'
 	})
     }.bind(this))
 }

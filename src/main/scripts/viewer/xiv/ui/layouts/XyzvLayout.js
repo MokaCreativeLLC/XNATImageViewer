@@ -127,6 +127,7 @@ function(planeOr, resizeDirs){
     //
     var boundElt = this.createResizeBoundary(planeOr)
     goog.dom.append(this.getElement(), boundElt);
+    boundElt.style.position = 'absolute';
     this.Planes[planeOr].getResizable().setBoundaryElement(boundElt);
 
     //
@@ -381,19 +382,6 @@ xiv.ui.layouts.XyzvLayout.prototype.updateStyle_Y = goog.nullFunction;
  */
 xiv.ui.layouts.XyzvLayout.prototype.updateStyle_V = goog.nullFunction;
 
-
-
-/**
-* @inheritDoc
-*/
-xiv.ui.layouts.XyzvLayout.prototype.updateStyle = function(){
-    goog.base(this, 'updateStyle');
-
-    this.updateStyle_X();
-    this.updateStyle_Y();
-    this.updateStyle_Z();
-    this.updateStyle_V();
-}
 
 
 

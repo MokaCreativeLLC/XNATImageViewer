@@ -41,74 +41,91 @@ moka.ui.ResizeDraggerLeft.ID_PREFIX =  'moka.ui.ResizeDraggerLeft';
 moka.ui.ResizeDraggerLeft.CSS_SUFFIX = {}
 
 
+/**
+ * @public
+ */
+moka.ui.ResizeDraggerLeft.resizeMethod = function() {
+
+    //
+    // Resize
+    //
+    goog.style.setWidth(this.resizeElt, Math.min(
+	// At least minwidth
+	Math.max(this.resizeeSize.width + 
+		 // deltaX
+		 (this.resizeePos.x - this.handlePos.x), 
+		 this.minSize.width),
+	// At max the boundary width
+	this.boundarySize.width))
+    
+
+    //
+    // For safety, make sure handle is the same top as the element
+    //
+    goog.style.setPosition(this.getElement(), this.handlePos.x,
+			   this.resizeePos.y)
+}
+goog.exportSymbol('moka.ui.ResizeDraggerLeft.resizeMethod', 
+		  moka.ui.ResizeDraggerLeft.resizeMethod);
+
+
 
 
 /**
  * @inheritDoc
- */
-moka.ui.ResizeDraggerLeft.prototype.onResize = function(e) {
-    window.console.log("ON RESIZE!", this.handleDims);
-    goog.base(this, 'onResize');
-    moka.style.setStyle(this.resizeElt, {
-	'left': this.handleDims.X + this.handeDims.W,
-	'width': '200px',
-    })
-}
-
-
-
-/**
- * @param {!moka.ui.ResizeDragger.UpdateDims} updateDims
- * @public
  */ 
 moka.ui.ResizeDraggerLeft.prototype.update = function(updateDims) {
+    //
+    // Do nothing if dragging.
+    //
+    if (this.Dragger.isDragging() ||  this.isAnimating) {return};
+
+    //
+    // Call superclass
+    //
     goog.base(this, 'update', updateDims);
+
 
     //
     // Reset limits
     //
-    this.Dragger_.setLimits(new goog.math.Rect(
-	this.UpdateDims.X_MIN, 
-	this.UpdateDims.BOUNDARY.Y - this.UpdateDims.ELEMENT.Y, 
-	this.UpdateDims.X_MAX, 0
+    this.Dragger.setLimits(new goog.math.Rect(
+	// X
+	this.boundaryPos.x - this.handleSize.width, 
+	// Y
+	this.boundaryPos.y, 
+	// W
+	this.boundarySize.width - this.minSize.width - this.handleSize.width,
+	// H
+	0
     ))
 
     //
     // Set the left
     //
-    moka.style.setStyle(this.getElement(), {
-	'left': this.UpdateDims.ELEMENT.X + this.UpdateDims.ELEMENT.W
-    })
+    goog.style.setPosition(this.getElement(), this.resizeePos.x - 
+			   this.handleSize.width, this.resizeePos.y)
 }
 
 
 
 
 /**
- * @return {!Object.<string, goog.math.Coordinate>}
- * @private
+ * inheritDoc
  */
-moka.ui.ResizeDraggerLeft.prototype.getSlideTrajectory_ = function(limitType) {
-
-    // startCoordinate
-    var start = new goog.math.Coordinate(this.handleDims.X, this.handleDims.Y);
-
-    // endCoordinate
-    var end;
-    if (limitType == 'MIN') {
-	end = new goog.math.Coordinate(
-	    this.Dragger_.limits.left,
-	    this.handleDims.Y
-	);
-    } else {
-	end = new goog.math.Coordinate(
-	    this.Dragger_.limits.left + this.Dragger_.limits.width,
-	    this.handleDims.Y
-	);
-    }
-
+moka.ui.ResizeDraggerLeft.prototype.getSlideTrajectory = function(limitType) {
+    goog.base(this, 'getSlideTrajectory');
     return {
-	start: start,
-	end: end
+	start: new goog.math.Coordinate(this.handlePos.x, this.handlePos.y),
+	end: (limitType == 'MIN') ? 
+	    // MIN
+	    new goog.math.Coordinate(
+		this.boundaryPos.x + this.minSize.width,
+		this.handlePos.y) :
+
+	    // MAX
+	    new goog.math.Coordinate(
+		this.boundaryPos.x + this.boundarySize.width -
+		    this.minSize.width, this.handlePos.y)
     }
 }

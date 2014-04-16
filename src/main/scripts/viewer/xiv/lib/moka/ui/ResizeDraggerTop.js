@@ -1,6 +1,5 @@
 /**
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
- * @author unkown email (uchida)
+ * @author sunilk@mokacreativellc.com (Sunil Kumar))
  */
 
 // goog
@@ -42,95 +41,104 @@ moka.ui.ResizeDraggerTop.CSS_SUFFIX = {}
 
 
 
+/**
+ * @public
+ */
+moka.ui.ResizeDraggerTop.calculateDraggerLimits = function() {
+    this.draggerLimitTop = this.boundaryPos.top - this.vertDraggerOffset;
+    this.draggerLimitBottom = this.resizeePos.bottom - this.minSize.height + 
+	this.vertDraggerOffset;
+    this.draggerLimitHeight = this.draggerLimitBottom - this.draggerLimitTop;
+}
+goog.exportSymbol('moka.ui.ResizeDraggerTop.calculateDraggerLimits', 
+		  moka.ui.ResizeDraggerTop.calculateDraggerLimits);
+
+
 
 /**
- * @inheritDoc
+ * @public
  */
-moka.ui.ResizeDraggerTop.prototype.onResize = function(e) {
-    goog.base(this, 'onResize');
+moka.ui.ResizeDraggerTop.resizeMethod = function() {
+    //
+    // Calculate height
+    //
+    var newEltTop = this.handlePos.y  - this.vertDraggerOffset;
+    var deltaY = (this.isAnimating) ?
+	// when animating (slightly more involved calculation)
+	(this.resizeePos.y - newEltTop) : 
+	// when animating (slightly less involved calculation)
+	this.Dragger.startY - this.Dragger.clientY;
+    var height = this.resizeeSize.height + deltaY;
 
-    moka.style.setStyle(this.resizeElt, {
-	'top' : this.handleDims.Y + this.handleDims.H,
-	'height': Math.max(
-	    // Previous height
-	    this.UpdateDims.ELEMENT.H +
-
-		// deltaY
-		(this.UpdateDims.ELEMENT.Y - this.handleDims.Y - 
-		 this.handleDims.H),
-	    this.minSize.height
-	)
-    })
+    //
+    // Update resizee
+    //
+    this.resizeElt.style.top = (newEltTop).toString() + 'px';
+    goog.style.setHeight(this.resizeElt, Math.max(height, this.minSize.height));
 }
+goog.exportSymbol('moka.ui.ResizeDraggerTop.resizeMethod', 
+		  moka.ui.ResizeDraggerTop.resizeMethod);
+
 
 
 
 /**
  * @inheritDoc
  */ 
-moka.ui.ResizeDraggerTop.prototype.update = function(updateDims) {
+moka.ui.ResizeDraggerTop.prototype.update = function() {
     //
     // Do nothing if dragging.
     //
-   if (this.Dragger.isDragging() || this.isAnimating) { return };
-
+    if (this.Dragger.isDragging() || this.isAnimating) { return };
 
     //
     // Parent updateDims
     //
-    goog.base(this, 'update', updateDims);
-
-
-    // NOTE: MIN MAX are relative to the direction of the dragger.
-    // i.e. The max of a top dragger is to the top of the boundary.
-    var Y_MIN = this.UpdateDims.BOUNDARY.H - this.minSize.height;
-    var Y_MAX = this.UpdateDims.BOUNDARY.Y - this.handleDims.H;
-
+    goog.base(this, 'update');
 
     //
     // Reset limits
     //
     this.Dragger.setLimits(new goog.math.Rect(
-	this.UpdateDims.BOUNDARY.X, 
-	Y_MAX, 0, Y_MIN
+	this.boundaryPos.x, 
+	this.draggerLimitTop, 
+	0, 
+	this.draggerLimitHeight
     ))
 
     //
     // Set the top
     //
-    moka.style.setStyle(this.getElement(), {
-	'top': this.UpdateDims.ELEMENT.Y - this.handleDims.H
-    })
+    goog.style.setPosition(this.getElement(), 
+			   this.resizeePos.x,
+			   this.resizeePos.y + this.vertDraggerOffset);
+
+    window.console.log("\n%\n%\n%\n\n\n^^^^^^^^^^^^^^", this.draggerLimitHeight
+		       , this.handleSize.height, this.minSize);
 }
 
 
 
 
 /**
- * @return {!Object.<string, goog.math.Coordinate>}
- * @private
+ * inheritDoc
  */
-moka.ui.ResizeDraggerTop.prototype.getSlideTrajectory_ = function(limitType) {
-
-    // startCoordinate
-    var start = new goog.math.Coordinate(this.handleDims.X, this.handleDims.Y);
-
-    // endCoordinate
-    var end;
-    if (limitType == 'MIN') {
-	end = new goog.math.Coordinate(
-	    this.handleDims.X,
-	    this.Dragger.limits.top + this.Dragger.limits.height
-	);
-    } else {
-	end = new goog.math.Coordinate(
-	    this.handleDims.X,
-	    this.Dragger.limits.top - this.handleDims.H
-	);
-    }
-
+moka.ui.ResizeDraggerTop.prototype.getSlideTrajectory = function(limitType) {
+    goog.base(this, 'getSlideTrajectory');
     return {
-	start: start,
-	end: end
+	//
+	// Start coordinate is the same
+	//
+	start: new goog.math.Coordinate(this.handlePos.x, this.handlePos.y),
+
+	//
+	// End coordinate
+	//
+	end: (limitType == 'MIN') ? 
+	    new goog.math.Coordinate(this.handlePos.x, 
+				     this.draggerLimitBottom) 
+	    :
+	    new goog.math.Coordinate(this.handlePos.x, 
+				     this.draggerLimitTop) 
     }
 }

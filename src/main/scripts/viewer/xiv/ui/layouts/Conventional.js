@@ -43,8 +43,7 @@ xiv.ui.layouts.Conventional.TITLE = 'Conventional';
  * @enum {string}
  * @public
  */
-xiv.ui.layouts.Conventional.EventType = {
-}
+xiv.ui.layouts.Conventional.EventType = {}
 
 
 
@@ -75,17 +74,15 @@ xiv.ui.layouts.Conventional.CSS_SUFFIX = {
  * @type {!number} 
  * @const
  */
-xiv.ui.layouts.Conventional.MAX_PLANE_RESIZE_PCT = .9;
-
-
+xiv.ui.layouts.Conventional.MIN_PLANE_WIDTH = 20;
 
 
 
 /**
  * @type {!number} 
- * @private
+ * @const
  */
-xiv.ui.layouts.Conventional.prototype.bottomPlaneWidth_ = 0;
+xiv.ui.layouts.Conventional.MIN_PLANE_HEIGHT = 20;
 
 
 
@@ -98,7 +95,7 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_X = function(){
     //
     // Set the plane resizable
     //
-    this.setPlaneResizable('X', 'RIGHT');
+    this.setPlaneResizable('X', ['RIGHT', 'TOP_RIGHT']);
     
     //
     // Listen for the RESIZE event.
@@ -106,6 +103,10 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_X = function(){
     goog.events.listen(this.Planes['X'].getResizable(), 
 		       moka.ui.Resizable.EventType.RESIZE,
 		       this.onPlaneResize_X.bind(this));
+
+    goog.events.listen(this.Planes['X'].getResizable(), 
+		       moka.ui.Resizable.EventType.RESIZE_END,
+		       this.updateStyle.bind(this));
 }
 
 
@@ -119,7 +120,7 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_Y = function(){
     //
     // Set the plane resizable
     //
-    this.setPlaneResizable('Y', 'RIGHT');
+    this.setPlaneResizable('Y', ['RIGHT', 'TOP_RIGHT']);
     
     //
     // Listen for the RESIZE event.
@@ -127,6 +128,10 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_Y = function(){
     goog.events.listen(this.Planes['Y'].getResizable(), 
 		       moka.ui.Resizable.EventType.RESIZE,
 		       this.onPlaneResize_Y.bind(this));
+
+    goog.events.listen(this.Planes['Y'].getResizable(), 
+		       moka.ui.Resizable.EventType.RESIZE_END,
+		       this.updateStyle.bind(this));
 }
 
 
@@ -159,6 +164,31 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_V = function(){
     goog.events.listen(this.Planes['V'].getResizable(), 
 		       moka.ui.Resizable.EventType.RESIZE,
 		       this.onPlaneResize_V.bind(this));
+
+
+    goog.events.listen(this.Planes['V'].getResizable(), 
+		       moka.ui.Resizable.EventType.RESIZE_END,
+		       this.updateStyle.bind(this));
+}
+
+
+/**
+ * @param {Function=};
+ * @private
+ */
+xiv.ui.layouts.Conventional.prototype.onXYPlaneResize_ = function(callback){
+    this.calcDims();
+
+    var xSize = goog.style.getSize(this.Planes['X'].getElement());
+    var ySize = goog.style.getSize(this.Planes['Y'].getElement());
+    var zSize = goog.style.getSize(this.Planes['Z'].getElement());
+
+    //
+    // Determine delta by tallying all the sizes
+    //
+    var deltaX = xSize.width + ySize.width + zSize.width - this.currSize.width;
+    
+    callback(xSize, ySize, zSize, deltaX)
 }
 
 
@@ -168,35 +198,42 @@ xiv.ui.layouts.Conventional.prototype.setupPlane_V = function(){
  * @param {!Event} e
  */
 xiv.ui.layouts.Conventional.prototype.onPlaneResize_X = function(e){
+    this.onXYPlaneResize_(function(xSize, ySize, zSize, deltaX){
+	var yWidth = Math.max(this.currSize.width - xSize.width - zSize.width, 
+			      xiv.ui.layouts.Conventional.MIN_PLANE_WIDTH);
+	var xTop = this.currSize.height - xSize.height
 
-    this.calcDims();
+	//
+	// Y Plane
+	//
+	goog.style.setPosition(this.Planes['Y'].getElement(), 
+			       xSize.width, xTop);
+	goog.style.setSize(this.Planes['Y'].getElement(), 
+			   yWidth, xSize.height);
 
-    var xSize = goog.style.getSize(this.Planes['X'].getElement());
-    var ySize = goog.style.getSize(this.Planes['Y'].getElement());
-    var zSize = goog.style.getSize(this.Planes['Z'].getElement());
+	//
+	// Z Plane
+	//
+	goog.style.setPosition(this.Planes['Z'].getElement(), 
+			       xSize.width + yWidth, xTop);
+	goog.style.setSize(this.Planes['Z'].getElement(), 
+			   zSize.width, xSize.height);
+			   
+
+	//
+	// V Plane
+	//
+	goog.style.setSize(this.Planes['V'].getElement(), 
+			   this.currSize.width, 
+			   this.currSize.height - xSize.height);
+	
+
+    }.bind(this))
 
     //
-    // Determine delta by tallying all the sizes
+    // Dispatch
     //
-    var deltaX = xSize.width + ySize.width + zSize.width - this.currSize.width;
-
-    //
-    // Change both Y and Z planes at a linear rate
-    //
-
-    // Y Plane
-    moka.style.setStyle(this.Planes['Y'].getElement(), {
-	'width': Math.max(ySize.width - deltaX/2, 20), 
-	'left': xSize.width, 
-    });
-
-    // Z Plane
-    moka.style.setStyle(this.Planes['Z'].getElement(), {
-	'width': Math.max(zSize.width - deltaX/2, 20), 
-	'left': xSize.width + ySize.width, 
-    });	
-    
-    this.updateStyle();
+    this.dispatchResize();
 }
 
 
@@ -206,36 +243,41 @@ xiv.ui.layouts.Conventional.prototype.onPlaneResize_X = function(e){
  * @param {!Event} e
  */
 xiv.ui.layouts.Conventional.prototype.onPlaneResize_Y = function(e){
+    this.onXYPlaneResize_(function(xSize, ySize, zSize, deltaX){
+	var yTop = this.currSize.height - ySize.height
 
-    this.calcDims();
+	//
+	// X Plane
+	//
+	goog.style.setPosition(this.Planes['X'].getElement(), 
+			       0, yTop);
+	goog.style.setSize(this.Planes['X'].getElement(), 
+			   xSize.width, ySize.height);
 
-    var xSize = goog.style.getSize(this.Planes['X'].getElement());
-    var ySize = goog.style.getSize(this.Planes['Y'].getElement());
-    var zSize = goog.style.getSize(this.Planes['Z'].getElement());
+	//
+	// Z Plane
+	//
+	goog.style.setPosition(this.Planes['Z'].getElement(), 
+			       xSize.width + ySize.width, yTop);
+	goog.style.setSize(this.Planes['Z'].getElement(), 
+			   this.currSize.width - xSize.width - ySize.width, 
+			   ySize.height);
+			   
+
+	//
+	// V Plane
+	//
+	goog.style.setSize(this.Planes['V'].getElement(), 
+			   this.currSize.width, 
+			   this.currSize.height - ySize.height);
+	
+
+    }.bind(this))
 
     //
-    // Determine delta by tallying all the sizes
+    // Dispatch
     //
-    var deltaX = xSize.width + ySize.width + zSize.width - this.currSize.width;
-
-    //
-    // Change both Y and Z planes at a linear rate
-    //
-
-    // X Plane
-    moka.style.setStyle(this.Planes['Y'].getElement(), {
-	'width': Math.max(xSize.width - deltaX/2, 20), 
-	'left': 0, 
-    });
-
-    // Z Plane
-    moka.style.setStyle(this.Planes['Z'].getElement(), {
-	'width': Math.max(zSize.width - deltaX/2, 20), 
-	'left': xSize.width + ySize.width, 
-    });	
-    
-    this.updateStyle();
-
+    this.dispatchResize();
 }
 
 
@@ -246,7 +288,6 @@ xiv.ui.layouts.Conventional.prototype.onPlaneResize_Y = function(e){
  */
 xiv.ui.layouts.Conventional.prototype.onPlaneResize_V = function(e){
     this.calcDims();
-
     var xyzTop = parseInt(this.Planes['V'].getElement().style.height);
     var xyzHeight = this.currSize.height - xyzTop;
 
@@ -268,10 +309,76 @@ xiv.ui.layouts.Conventional.prototype.onPlaneResize_V = function(e){
     //
     // Update
     //
-    this.updateXandYBoundaries_();
+    this.updateStyle_X();
+    this.updateStyle_Y();
+
+    //
+    // Required!
+    //
     this.dispatchResize();
 }
 
+
+
+/**
+* @inheritDoc
+*/
+xiv.ui.layouts.Conventional.prototype.updateStyle = function(){
+    goog.base(this, 'updateStyle');
+
+    this.updateStyle_V();
+    this.updateStyle_X();
+    this.updateStyle_Y();
+    this.updateStyle_Z();
+}
+
+
+
+/**
+ * @param {!string} Either or the X or Y plane string.
+ * @private
+ */
+xiv.ui.layouts.Conventional.prototype.updateStyle_XY_ = function(plane) {
+   
+    var vHandle = this.Planes['V'].getResizable().getResizeDragger('BOTTOM');
+    var boundaryElt = this.Planes[plane].getResizable().getBoundaryElement(); 
+    var planePos = goog.style.getPosition(this.Planes[plane].getElement());
+    var planeSize = goog.style.getSize(this.Planes[plane].getElement());
+
+    //
+    // Boundary
+    //
+    goog.style.setPosition(boundaryElt, 
+			   parseInt(boundaryElt.style.left), 
+			   this.minPlaneHeight_);
+    goog.style.setSize(boundaryElt, 
+		       this.currSize.width - this.minPlaneWidth_ * 3,
+		       this.currSize.height - this.minPlaneHeight_ * 2);
+
+
+    //
+    // Right Handle
+    //
+    var rightHandle = this.Planes[plane].getResizable().getHandle('RIGHT')
+    goog.style.setPosition(rightHandle, planePos.x + planeSize.width, 
+			   planePos.y);
+    goog.style.setHeight(rightHandle, 
+			 this.currSize.height - vHandle.handlePos.y);
+
+    window.console.log("HEIGHT", this.currSize.height , vHandle.handlePos.y);
+    //
+    // Top-right handle
+    //
+    goog.style.setPosition(
+	this.Planes[plane].getResizable().getHandle('TOP_RIGHT'), 
+	planePos.x + planeSize.width, 
+	planePos.y);
+    
+    //
+    // IMPORTANT!!
+    //
+    this.Planes[plane].getResizable().update();
+}
 
 
 
@@ -279,7 +386,18 @@ xiv.ui.layouts.Conventional.prototype.onPlaneResize_V = function(e){
  * @inheritDoc
  */
 xiv.ui.layouts.Conventional.prototype.updateStyle_X = function() {
-    this.Planes['X'].getResizable().update();
+    //
+    // Set the left of the boundary
+    //
+    moka.style.setStyle(
+	this.Planes['X'].getResizable().getBoundaryElement(), {
+	    'left': this.minPlaneWidth_
+	})
+
+    //
+    // Call common
+    //
+    this.updateStyle_XY_('X');
 }
 
 
@@ -288,7 +406,18 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_X = function() {
  * @inheritDoc
  */
 xiv.ui.layouts.Conventional.prototype.updateStyle_Y = function() {
-   this.Planes['Y'].getResizable().update();
+    //
+    // Set the left of the boundary
+    //
+    moka.style.setStyle(
+	this.Planes['Y'].getResizable().getBoundaryElement(), {
+	    'left': this.minPlaneWidth_ * 2
+	})
+
+    //
+    // Call common
+    //
+    this.updateStyle_XY_('Y');
 }
 
 
@@ -297,42 +426,35 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_Y = function() {
 * @private
 */
 xiv.ui.layouts.Conventional.prototype.updateStyle_V = function() {
+    //
+    // Top handle
+    //
+    var topHandle = this.Planes['V'].getResizable().getHandle('BOTTOM')
+    goog.style.setPosition(topHandle, 
+        0,  goog.style.getSize(this.Planes['V'].getElement()).height);
+    goog.style.setWidth(topHandle, this.currSize.width)
+
+
+    //
+    // Boundary
+    //
+    goog.style.setPosition(
+	this.Planes['V'].getResizable().getBoundaryElement(), 
+	this.currSize.width,
+	this.minPlaneHeight_);
+
+    goog.style.setSize(
+	this.Planes['V'].getResizable().getBoundaryElement(), 
+	this.currSize.width - this.minPlaneWidth_ * 3,
+	this.currSize.height - this.minPlaneHeight_ * 2);
+
+    //
+    // IMPORTANT!!
+    //
     this.Planes['V'].getResizable().update();
-
-    var vHandle = this.Planes['V'].getResizable().getHandles()[0];
-    var vSize = goog.style.getSize(vHandle);
-    var vPos = goog.style.getPosition(vHandle);
-
-    this.Planes['X'].getResizable().getBoundaryElement().style.top = 
-	(vPos.Y + vSize.height).toString() + 'px';
 }
 
 
-
-/**
- * @private
- */
-xiv.ui.layouts.Conventional.prototype.updateXandYBoundaries_ = function() {
-
-    this.Planes['V'].getResizable();
-
-    var vHandle = this.Planes['V'].getResizable().getResizeDragger('BOTTOM');
-    var currTop = vHandle.handleDims.Y + vHandle.handleDims.H;
-    var currHeight = this.currSize.height - vHandle.handleDims.Y;
-    goog.array.forEach(['X', 'Y'], function(plane){
-	this.Planes[plane].getResizable().getBoundaryElement().style.top = 
-	    (vHandle.handleDims.Y + vHandle.handleDims.H).toString() + 'px';
-	this.Planes[plane].getResizable().getBoundaryElement().style.height = 
-	    (this.currSize.height - vHandle.handleDims.Y).toString() + 'px';
-
-	this.Planes[plane].getResizable().getHandle('RIGHT').style.top = 
-	    (vHandle.handleDims.Y + vHandle.handleDims.H).toString() + 'px';
-	this.Planes[plane].getResizable().getHandle('RIGHT').style.height = 
-	    (this.currSize.height - vHandle.handleDims.Y).toString() + 'px';
-
-	this.Planes[plane].getResizable().update();	
-    }.bind(this))
-}
 
 
 

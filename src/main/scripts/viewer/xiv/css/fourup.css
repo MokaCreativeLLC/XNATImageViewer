@@ -19,6 +19,12 @@
 }
 
 
+.xiv-ui-layouts-fourup-x-resizeboundary {
+    background-color: blue;
+    opacity: .3;
+}
+
+
 .xiv-ui-layouts-fourup-v {
     left: 50%;
     top: 0%;

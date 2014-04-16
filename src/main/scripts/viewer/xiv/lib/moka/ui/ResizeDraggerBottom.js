@@ -42,27 +42,43 @@ moka.ui.ResizeDraggerBottom.CSS_SUFFIX = {}
 
 
 
-
 /**
- * @inheritDoc
+ * @public
  */
-moka.ui.ResizeDraggerBottom.prototype.onResize = function(e) {
-    goog.base(this, 'onResize');
-    
-    moka.style.setStyle(this.resizeElt, {
-	'height': Math.max(this.handleDims.Y, this.minSize.height)
-    })
+moka.ui.ResizeDraggerBottom.calculateDraggerLimits = function() {
+    this.draggerLimitTop = this.resizeePos.top + this.minSize.height +
+	this.vertDraggerOffset;
 
-    window.console.log(this.handleDims.Y, this.resizeElt);
+    this.draggerLimitBottom = this.boundaryPos.bottom + this.vertDraggerOffset;
+    this.draggerLimitHeight = this.draggerLimitBottom - this.draggerLimitTop;
 }
+goog.exportSymbol('moka.ui.ResizeDraggerBottom.calculateDraggerLimits', 
+		  moka.ui.ResizeDraggerBottom.calculateDraggerLimits)
+
 
 
 
 /**
- * @param {!moka.ui.ResizeDragger.UpdateDims} updateDims
+ * @public
+ */
+moka.ui.ResizeDraggerBottom.resizeMethod = function() {
+    var deltaY = this.handlePos.y - this.resizeePos.bottom; 
+    var height = this.resizeeSize.height + deltaY;
+    window.console.log("DELTA Y", deltaY);
+
+    goog.style.setHeight(this.resizeElt, Math.max(height, 
+	this.minSize.height));
+}
+goog.exportSymbol('moka.ui.ResizeDraggerBottom.resizeMethod', 
+		  moka.ui.ResizeDraggerBottom.resizeMethod);
+
+
+
+
+/**
  * @public
  */ 
-moka.ui.ResizeDraggerBottom.prototype.update = function(updateDims) {
+moka.ui.ResizeDraggerBottom.prototype.update = function() {
     //
     // Do nothing if dragging.
     //
@@ -72,62 +88,50 @@ moka.ui.ResizeDraggerBottom.prototype.update = function(updateDims) {
     //
     // Parent updateDims
     //
-    goog.base(this, 'update', updateDims);
-
-
-    // NOTE: MIN MAX are relative to the direction of the dragger.
-    // i.e. The max of a top dragger is to the top of the boundary.
-    var Y_MIN = this.UpdateDims.BOUNDARY.Y;
-    var Y_MAX = this.UpdateDims.BOUNDARY.Y + this.UpdateDims.BOUNDARY.H;
+    goog.base(this, 'update');
 
 
     //
     // Reset limits
     //
     this.Dragger.setLimits(new goog.math.Rect(
-	this.UpdateDims.BOUNDARY.X, 
-	Y_MIN, 
-	this.UpdateDims.BOUNDARY.X, 
-	Y_MAX
+	this.boundaryPos.x, 
+	this.draggerLimitTop, 
+	0, 
+	this.draggerLimitBottom 
     ))
 
     //
     // Set the top
     //
-    moka.style.setStyle(this.getElement(), {
-	'top': this.UpdateDims.ELEMENT.H
-    })
+    goog.style.setPosition(this.getElement(), this.resizeePos.x,
+	this.resizeePos.bottom + this.vertDraggerOffset);
 }
 
 
 
 
 /**
- * @return {!Object.<string, goog.math.Coordinate>}
- * @private
+ * inheritDoc
  */
-moka.ui.ResizeDraggerBottom.prototype.getSlideTrajectory_ = 
-function(limitType) {
-
-    // startCoordinate
-    var start = new goog.math.Coordinate(this.handleDims.X, this.handleDims.Y);
-
-    // endCoordinate
-    var end;
-    if (limitType == 'MIN') {
-	end = new goog.math.Coordinate(
-	    this.handleDims.X,
-	    this.Dragger_.limits.top - this.handleDims.H
-	);
-    } else {
-	end = new goog.math.Coordinate(
-	    this.handleDims.X,
-	    this.Dragger_.limits.top + this.Dragger_.limits.height
-	);
-    }
+moka.ui.ResizeDraggerBottom.prototype.getSlideTrajectory = function(limitType) {
+    goog.base(this, 'getSlideTrajectory');
 
     return {
-	start: start,
-	end: end
+	//
+	// Start coordinate is the same
+	//
+	start: new goog.math.Coordinate(this.handlePos.x, this.handlePos.y),
+
+	//
+	// End coordinate
+	//
+	end: (limitType == 'MIN') ? 
+	    new goog.math.Coordinate(
+		this.handlePos.x,
+		this.draggerLimitTop) :
+	    new goog.math.Coordinate(
+		this.handlePos.x,
+		this.draggerLimitBottom)
     }
 }

@@ -175,8 +175,7 @@ xiv.ui.layouts.LayoutHandler.prototype.addLayout = function(title, layout) {
 
     this.LayoutObjects_[title] = layout;
    
-    window.console.log(layout,  xiv.ui.layouts.Layout.EventType.RESIZE);
-
+    //window.console.log(layout,  xiv.ui.layouts.Layout.EventType.RESIZE);
 }
 
 
@@ -227,8 +226,8 @@ function(title, opt_animateSwitch) {
  * @private
  */ 
 xiv.ui.layouts.LayoutHandler.prototype.onLayoutResize_ = function(e) {
-    window.console.log("RESIZE", e, typeof e)
-    window.console.log('grabbing resize event from layout in handler');
+    //window.console.log("RESIZE", e, typeof e)
+    //window.console.log('grabbing resize event from layout in handler');
     this.dispatchEvent({
 	type: xiv.ui.layouts.LayoutHandler.EventType.RESIZE
     })

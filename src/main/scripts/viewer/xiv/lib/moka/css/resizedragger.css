@@ -17,7 +17,6 @@ See the COPYING file for details.
 */
 .moka-ui-resizedraggerright, .moka-ui-resizedraggerleft {
   position: absolute;
-  top: 0px;
   width: 7px;
   height: 100%;
   cursor: ew-resize;
@@ -62,48 +61,24 @@ See the COPYING file for details.
 /**
  * CORNERS
  */
-.moka-ui-resizedraggertopright, .moka-ui-resizedraggertopleft,
-.moka-ui-resizedraggerbottomright, .moka-ui-resizedraggerbottomleft {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  z-index: 50;
-}
 
-.moka-ui-resizedraggerbottomright {
-  right: 1px;
-  bottom: 1px;
-  cursor: se-resize;
-}
-
+.moka-ui-resizedraggertopright, 
+.moka-ui-resizedraggertopleft, 
+.moka-ui-resizedraggerbottomright, 
 .moka-ui-resizedraggerbottomleft {
-  left: 1px;
-  bottom: 1px;
-  cursor: sw-resize;
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  cursor: move;
 }
 
-.moka-ui-resizedraggertopleft {
-  left: 1px;
-  top: 1px;
-  cursor: nw-resize;
+
+.moka-ui-resizedraggertopright, 
+.moka-ui-resizedraggertopleft, {
+  top: calc(100% - 7px);
 }
 
 .moka-ui-resizedraggertopright {
-  right: 1px;
-  top: 1px;
-  cursor: ne-resize;
-}
-
-
-
-
-
-.moka-ui-resizedragger-ghost {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  border: #aaaaaa 2px solid;
-  z-index: 999;
-  cursor: move;
-  -moz-box-sizing: border-box;
+  left: calc(100% - 7px);
+  background-color: orange;
 }

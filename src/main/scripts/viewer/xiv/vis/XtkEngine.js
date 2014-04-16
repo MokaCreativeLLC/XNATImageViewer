@@ -188,7 +188,7 @@ xiv.vis.XtkEngine.prototype.getControllers3D = function(){
  * @public
  */
 xiv.vis.XtkEngine.prototype.getControllers2D = function(){
-    window.console.log(this, this.ControllerTree_);
+    //window.console.log(this, this.ControllerTree_);
     return this.ControllerTree_.getControllers2D();
 }
 
@@ -212,7 +212,9 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
     //
     // Annotations
     //
-    if (goog.isDefAndNotNull(ViewableGroup.getRenderProperties().annotations)){
+    
+    if (goog.isDefAndNotNull(ViewableGroup.getRenderProperties() &&
+	goog.isDefAndNotNull(ViewableGroup.getRenderProperties().annotations))){
 	this.getAnnotations_(ViewableGroup);
 	window.console.log("\n\n\n\n\n************ANNOTATIONS!!!!");
 	goog.array.forEach(this.currXObjects_['spheres'], function(annot){
@@ -223,8 +225,8 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
     }
 
    
-    window.console.log("*********CONTROLLER TREE!!!", 
-		      this.ControllerTree_, this.currXObjects_);
+    //window.console.log("*********CONTROLLER TREE!!!", 
+    //this.ControllerTree_, this.currXObjects_);
 
 
     //
@@ -450,7 +452,7 @@ function(xObj, renderProperties){
 xiv.vis.XtkEngine.setRenderProperties_Volume_ = 
 function(xObj, renderProperties){
     window.console.log("HAS VOLUME!", xObj, renderProperties);
-
+    if (!renderProperties) { return };
     xObj.origin = renderProperties.origin || [0,0,0];
     xObj.upperThreshold = renderProperties.upperThreshold;
     xObj.lowerThreshold = renderProperties.lowerThreshold;
@@ -470,7 +472,7 @@ function(xObj, renderProperties){
  * @private
  */
 xiv.vis.XtkEngine.prototype.onRendering_ = function(e){
-    window.console.log("\n\nON RENDERING! ", e.value, e.obj);
+    //window.console.log("\n\nON RENDERING! ", e.value, e.obj);
     this.dispatchEvent({
 	type: xiv.vis.RenderEngine.EventType.RENDERING,
 	value: e.value

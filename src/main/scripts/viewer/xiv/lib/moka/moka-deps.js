@@ -116,6 +116,13 @@ goog.addDependency('../../../moka/ui/ResizeDraggerBottom.js',
 ])
 
 
+goog.addDependency('../../../moka/ui/ResizeDraggerTopRight.js', 
+['moka.ui.ResizeDraggerTopRight'], [
+    'moka.ui.ResizeDragger'
+])
+
+
+
 goog.addDependency('../../../moka/ui/GenericSlider.js', 
 ['moka.ui.GenericSlider'], [
 'goog.ui.Slider',

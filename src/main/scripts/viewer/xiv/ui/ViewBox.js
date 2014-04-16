@@ -440,7 +440,7 @@ xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
  */
 xiv.ui.ViewBox.prototype.onRendering_ = function(e){
 
-    window.console.log("ON RENDERING");
+    //window.console.log("ON RENDERING");
     if (e.value > .99 && !this.progFadeOut_){
 	
 	window.console.log("\n\n2DONE!!");
@@ -781,7 +781,7 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
     //
     // Load menu
     //
-    window.console.log(ViewableTree);
+    //window.console.log(ViewableTree);
     var viewGroups = ViewableTree.getViewableGroups();
 
     var thumb = null;
@@ -813,7 +813,7 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
  */
 xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
 
-    window.console.log("LOAD", ViewableSet);
+    //window.console.log("LOAD", ViewableSet);
 
     if (!this.subComponentsInitialized_){
 	this.initSubComponents_();
@@ -825,8 +825,6 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
 	this.loadViewableTree_(ViewableSet);
 	return;
     }
-
-    
 
     //
     // Set plane containers
@@ -840,9 +838,9 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
 	}
     }.bind(this))
 
-
-
- 
+    //
+    // Events
+    //
     goog.events.listen(this.Renderer_, 
 		       xiv.vis.RenderEngine.EventType.RENDER_START, 
 		       this.onRenderStart_.bind(this));
@@ -869,7 +867,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
     }.bind(this))
 
 
-    window.console.log("RENDERING", ViewableSet, ViewableSet.getTitle);
+    //window.console.log("RENDERING", ViewableSet, ViewableSet.getTitle);
     
     this.Renderer_.render(ViewableSet);
     
@@ -1069,13 +1067,15 @@ xiv.ui.ViewBox.prototype.initZipTabs_ = function(){
     //
     // Add dragger CSS and handle.
     //
-    var dragHandle = this.ZipTabs_.getResizeHandles()[0];
+    var resizeDragger = this.ZipTabs_.getResizable().getResizeDragger('TOP');
+    var dragHandle = resizeDragger.getHandle();
     goog.dom.classes.add(dragHandle, xiv.ui.ViewBox.CSS.TABDRAGGER);
     goog.dom.append(dragHandle, goog.dom.createDom('div', {
 	'id': xiv.ui.ViewBox.ID_PREFIX + '_DraggerHandle_' + 
 	    goog.string.createUniqueString(),
 	'class': xiv.ui.ViewBox.CSS.TABDRAGGER_HANDLE
     }));
+    resizeDragger.setOffsetY(-5);
 
 
     //
@@ -1351,6 +1351,10 @@ xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
     // Parent update style
     //
     goog.base(this, 'updateStyle');
+
+    window.console.log("\n%\n%\n%\n\n\n^^^^^^^^^^^^^^");
+
+
     this.updateStyle_ZipTabs_();
     this.updateStyle_LayoutHandler_();
     this.updateStyle_Renderer_();
@@ -1364,6 +1368,7 @@ xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
  */
 xiv.ui.ViewBox.prototype.updateStyle_ZipTabs_ = function () {
     if (!this.ZipTabs_) { return };
+    //window.console.log("\n%\n%\n%\n\n\n&&&&ZIP TABS");
     this.ZipTabs_.updateStyle();
 }
 
@@ -1377,9 +1382,10 @@ xiv.ui.ViewBox.prototype.updateStyle_ZipTabs_ = function () {
 xiv.ui.ViewBox.prototype.updateStyle_LayoutHandler_ = function () {
     if (!this.LayoutHandler_) { return };
 
-    window.console.log("\n@\n@\n@\n@\n@UPDATE STYLE LAYOUT HANDLER");
+    //window.console.log("\n@\n@\n@\n@\n@UPDATE STYLE LAYOUT HANDLER", 
+    //this.ZipTabs_.getResizable().getHandle('TOP'));
     this.LayoutHandler_.getElement().style.height = 
-	this.ZipTabs_.getHandle('TOP').style.top;
+	this.ZipTabs_.getResizable().getHandle('TOP').style.top;
     this.LayoutHandler_.updateStyle();
 }
 

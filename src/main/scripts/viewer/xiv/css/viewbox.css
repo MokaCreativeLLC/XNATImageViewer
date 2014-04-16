@@ -33,17 +33,16 @@
 
 .xiv-ui-viewbox-tabdragger {
     background-color: rgb(40,40,40);
-    height: 6px;
-    top: -2px;
+    height: 10px;
 }
 
 
 .xiv-ui-viewbox-tabdragger-handle {
     position: absolute;
-    top: calc(50% - 1px);
+    top: calc(50% - 1.5px);
     left: calc(50% - 15px);
     width: 30px;
-    height: 2px;
+    height: 3px;
     background-color: rgb(80,80,80);
 }
 

@@ -60,27 +60,10 @@
 
 
 .xiv-ui-layouts-conventional-x-resizeboundary {
-    left : 20px;
-    width: calc(100% - 40px);
-    height: 100%;
-    background-color: rgba(255,0,255,.4);
-    z-index: 2;
+    background-color: purple;
+    opacity: .5;
+    z-index: 20;
 }
 
 
-.xiv-ui-layouts-conventional-y-resizeboundary {
-    left : 40px;
-    width: calc(100% - 20px);
-    height: 100%;
-    background-color: rgba(255,255,0,0);
-}
-
-
-.xiv-ui-layouts-conventional-v-resizeboundary {
-    top: 20px;
-    left : 0px;
-    width: 100%;
-    height: calc(100% - 40px);
-    background-color: rgba(255,0,0,0);
-}
 

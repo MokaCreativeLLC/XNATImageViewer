@@ -828,9 +828,9 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
     //
     // Add dragger CSS
     //
-    var dragHandle = this.ProjectTab_.getResizeHandles()[0];
+    var dragHandle = this.ProjectTab_.getResizable().getHandle('RIGHT');
     goog.dom.classes.add(dragHandle, xiv.ui.Modal.CSS.PROJECTTAB_DRAGGER);
-
+    this.ProjectTab_.getResizable().getResizeDragger('RIGHT').setOffsetX(5);
 
     //
     // Add dragger handle

@@ -72,8 +72,8 @@
 
 
 .moka-ui-tabs-tab-right {
-    width: 18px;
-    left: calc(100% - 18px);
+    width: 22px;
+    left: calc(100% - 22px);
     border-radius: 0px 4px 4px 0px;
     border-left: none;
 }
@@ -132,7 +132,7 @@
     -webkit-transform:rotate(90deg);
     -moz-transform:rotate(90deg);
     -o-transform: rotate(90deg);
-    left: -36px;
+    left: -33px;
     white-space: nowrap;
 }
 
@@ -194,6 +194,5 @@
     left: 0px;
     height: calc(100% - 18px);
     width: 100%;
-    border-top: none;
     border-bottom: none;
 }

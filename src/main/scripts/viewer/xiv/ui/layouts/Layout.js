@@ -86,6 +86,41 @@ xiv.ui.layouts.Layout.CSS_SUFFIX = {}
 
 
 /**
+ * @type {!number}
+ * @private
+ */
+xiv.ui.layouts.Layout.prototype.minPlaneWidth_ = 20;
+
+
+
+/**
+ * @type {!number}
+ * @private
+ */
+xiv.ui.layouts.Layout.prototype.minPlaneHeight_ = 20;
+
+
+
+/**
+ * @param {!number} h
+ * @private
+ */
+xiv.ui.layouts.Layout.prototype.setMinPlaneHeight = function(h){
+    this.minPlaneHeight_ = h;
+}
+
+
+
+/**
+ * @param {!number} w
+ * @private
+ */
+xiv.ui.layouts.Layout.prototype.setMinPlaneWidth = function(w){
+    this.minPlaneWidth_ = w;
+}
+
+
+/**
  * @return {Object.<string, xiv.ui.layout.Plane>}
  */
 xiv.ui.layouts.Layout.prototype.getPlanes = function(){
@@ -168,6 +203,10 @@ xiv.ui.layouts.Layout.prototype.updateStyle = function(){
 */
 xiv.ui.layouts.Layout.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
-    moka.ui.disposeComponentMap(this.Planes_)
+
+    delete this.minPlaneHeight_;
+    delete this.minPlaneWidth_;
+
+    moka.ui.disposeComponentMap(this.Planes_);
     delete this.Planes_;
 }

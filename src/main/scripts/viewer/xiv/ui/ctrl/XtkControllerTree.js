@@ -83,7 +83,7 @@ function(mainControls) {
  */
 xiv.ui.ctrl.XtkControllerTree.prototype.getControllers3D = function() {
 
-    window.console.log(this.AnnotationsController3D_);
+    //window.console.log(this.AnnotationsController3D_);
     return this.getControllers([
 	this.VolumeController3D_,
 	this.MeshController3D_,

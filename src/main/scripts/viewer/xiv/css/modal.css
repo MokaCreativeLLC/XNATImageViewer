@@ -166,7 +166,8 @@
     left: calc(100%);
     width: 10px;
     background-color: rgba(45,45,45,1);
-    height: 100%;
+    top: 25px;
+    height: calc(100% - 50px);
 }
 
 

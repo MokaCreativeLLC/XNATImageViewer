@@ -21,6 +21,10 @@ goog.require('moka.ui.ResizeDraggerRight');
 goog.require('moka.ui.ResizeDraggerTop');
 goog.require('moka.ui.ResizeDraggerBottom');
 goog.require('moka.ui.ResizeDraggerLeft');
+goog.require('moka.ui.ResizeDraggerTopRight');
+//goog.require('moka.ui.ResizeDraggerBottomRight');
+//goog.require('moka.ui.ResizeDraggerTopLeft');
+//goog.require('moka.ui.ResizeDraggerBottomLeft');
 goog.require('moka.style');
 
 
@@ -72,8 +76,8 @@ goog.exportSymbol('moka.ui.Resizable', moka.ui.Resizable);
  */
 moka.ui.Resizable.EventType = {
     RESIZE: 'resize',
-    START_RESIZE: 'start_resize',
-    END_RESIZE: 'end_resize'
+    RESIZE_START: 'resize_start',
+    RESIZE_END: 'resize_end'
 };
 
 
@@ -117,7 +121,7 @@ moka.ui.Resizable.DIRECTIONS = [
  * @const
  * @public
  */
-moka.ui.Resizable.DEFAULT_DIRECTIONS = ['RIGHT', 'BOTTOM', 'BOTTOM_RIGHT'];
+moka.ui.Resizable.DEFAULT_DIRECTIONS = ['RIGHT', 'BOTTOM'];
 
 
 
@@ -311,79 +315,6 @@ moka.ui.Resizable.prototype.getBoundaryElement = function() {
 
 
 
-/**
- * @return {!goog.math.Rect} 
- * @public
- */
-moka.ui.Resizable.prototype.getLimits = function() {
-    return this.limits_
-};
-
-
-
-/**
- * As stated.
- * @return {!number}
- * @public
- */
-moka.ui.Resizable.prototype.getLeftLimit = function() {
-    return this.limits_.x;
-};
-
-
-
-/**
- * As stated.
- * @return {!number}
- * @public
- */
-moka.ui.Resizable.prototype.getTopLimit = function() {
-    return this.limits.y
-};
-
-
-
-/**
- * As stated.
- * @return {!number}
- * @public
- */
-moka.ui.Resizable.prototype.getRightLimit = function() {
-    return this.limits_.x + this.limits_.width;
-};
-
-
-
-/**
- * As stated.
- * @return {!number}
- * @public
- */
-moka.ui.Resizable.prototype.getBottomLimit = function() {
-    return this.limits_.y + this.limits_.height;
-};
-
-
-
-
-
-
-/**
- * Set's the boundary of the resizeable based on the arguments.
- * 
- * @param {!number} x1 Top left x.
- * @param {!number} y1 Top left y.
- * @param {!number} with The width.
- * @param {!number} height The height.
- * @throws {Error} If x2 < x1.
- * @throws {Error} If y2 < y1.
- * @private
- */
-moka.ui.Resizable.prototype.setLimits_ = function(x1, y1, width, height) {  
-    this.limits_ = new goog.math.Rect(x1, y1, width, height)
-}
-
-
 
 /**
  * @param {!Element} elt The boundary Element.
@@ -395,7 +326,7 @@ moka.ui.Resizable.prototype.setBoundaryElement = function(elt) {
 	throw new Error('Boundary element parentNode must be same as ' + 
 			'resizable  element\'s parentNode.');
     }
-    this.updateLimits_();
+    this.update();
 };
 
 
@@ -542,26 +473,6 @@ function(draggerDir, limitType, opt_callback, opt_dur) {
 						   opt_dur);
 };
 
-
-
-
-/**
- * @param {!string} draggerDir The dragger to slide. See 
- *      moka.ui.Resizable.Directions for values.
- * @param {!goog.math.Coordinate} newPoint The point to slide to.
- * @param {Function=} opt_callback The optional callback on completion.
- * @param {number=} opt_dur The optional duration.  Defaults to 
- *     moka.ui.Resizable.ANIM_MED.
- * @private
- */
-moka.ui.Resizable.prototype.createSlideAnim_ = 
-function(draggerDir, newPoint, opt_callback, opt_dur) {
-
-
-
-
-
-}
   
 
 
@@ -584,6 +495,21 @@ moka.ui.Resizable.createResizeDragger = function(dir, element) {
     case 'RIGHT':
 	return new moka.ui.ResizeDraggerRight(element);
 	break;
+    case 'TOP_RIGHT':
+	return new moka.ui.ResizeDraggerTopRight(element);
+	break;
+    case 'TOP_LEFT':
+	window.console.log('ToDo: need to implement resize ' + 
+			   'dragger for top left.')
+	break;
+    case 'BOTTOM_LEFT':
+	window.console.log('ToDo: need to implement resize ' + 
+			   'dragger for bottom left.')
+	break;
+    case 'BOTTOM_RIGHT':
+	window.console.log('ToDo: need to implement resize ' + 
+			   'dragger for bottom right.')
+	break;
     }
 }
 
@@ -603,11 +529,6 @@ moka.ui.Resizable.prototype.addResizeDirection = function(dir) {
     this.ResizeDraggers_[dir] = 
 	moka.ui.Resizable.createResizeDragger(dir, this.element_);
 
-    // Events
-    if (!this.ResizeDraggers_[dir]){
-	window.console.log("NEED TO IMPLEMENT MULTI_DIM DRAAGGERS", dir);
-	return
-    }
     goog.events.listen(this.ResizeDraggers_[dir], 
 		       moka.ui.ResizeDragger.EventType.RESIZE_START, 
 		       this.onResizeStart_.bind(this))
@@ -629,34 +550,30 @@ moka.ui.Resizable.prototype.addResizeDirection = function(dir) {
  * @public
  */
 moka.ui.Resizable.prototype.update  = function() {
-    this.updateLimits_();
-    this.updateResizeDraggers_();
-}
-
-
-
-/**
- * @private
- */
-moka.ui.Resizable.prototype.updateResizeDraggers_  = function() {
+    
     if (!goog.isDefAndNotNull(this.boundaryElt_)) { return };
 
     //
     // Define the update dims
     //
-    var updateDims = new moka.ui.ResizeDragger.UpdateDims(
-	this.element_, this.boundaryElt_);
     var minSize = new goog.math.Size(this.minWidth_, this.minHeight_);
-
+    //window.console.log('UPDATE', this.boundaryElt_);
     //
     // Loop draggers
     //
     goog.object.forEach(this.ResizeDraggers_, function(Dragger, dir){
 	//
-	// Ensure that draggerHandles are attached to the boundaryElt.
+	// Ensure that draggerHandles are attached to the boundaryElt's parent.
 	//
 	if (this.boundaryElt_ && this.boundaryElt_.parentNode) {
 	    goog.dom.append(this.boundaryElt_.parentNode, Dragger.getHandle());
+	}
+
+	//
+	// Store the reference to the boundary element in the dragger
+	//
+	if (Dragger.getBoundaryElement() !== this.boundaryElt_){
+	    Dragger.setBoundaryElement(this.boundaryElt_);
 	}
 	
 	//
@@ -667,40 +584,11 @@ moka.ui.Resizable.prototype.updateResizeDraggers_  = function() {
 	//
 	// Call dragger update
 	//
-	Dragger.update(updateDims);
+	Dragger.updateTrackedDimensions();
+	Dragger.update();
     }.bind(this))
 }
 
-
-
-/**
- * @private
- */
-moka.ui.Resizable.prototype.updateLimits_  = function() {
-    // Do nothing if there's no parent to the boundaryElt or
-    // it's not defined
-    if (!this.boundaryElt_ || !this.boundaryElt_.parentNode){
-	return;
-    } 
-
-    var width = (this.boundaryElt_.style.width.length != 0) ? 
-	this.boundaryElt_.style.width : 
-	parseInt(goog.style.getComputedStyle(this.boundaryElt_, 'width'));
-
-    var height = (this.boundaryElt_.style.height.length != 0) ? 
-	this.boundaryElt_.style.height : 
-	parseInt(goog.style.getComputedStyle(this.boundaryElt_, 'height'));
-
-    //
-    // Exit out if there are NaNs
-    //
-    if (isNaN(width) || isNaN(height)) {
-	window.console.log("WARNING: NaN values found.");
-	return;
-    }
-
-    this.setLimits_(0, 0, width, height);
-}
 
 
 
@@ -739,7 +627,7 @@ moka.ui.Resizable.prototype.getDragParams_ = function(e){
  */
 moka.ui.Resizable.prototype.onResizeStart_ = function(e) {
     this.dispatchEvent({
-	type: moka.ui.Resizable.EventType.START_RESIZE
+	type: moka.ui.Resizable.EventType.RESIZE_START
     });
 };
 
@@ -752,7 +640,10 @@ moka.ui.Resizable.prototype.onResizeStart_ = function(e) {
 moka.ui.Resizable.prototype.onResize_ = function(e) {
     this.dispatchEvent({
 	type: moka.ui.Resizable.EventType.RESIZE,
-	dims: e.dims
+	resizeePosition: e.resizeePos,
+	resizeeSize: e.resizeeSize,
+	boundaryPosition: e.boundaryPos,
+	boundarySize: e.boundarySize,
     });
 };
 
@@ -763,6 +654,7 @@ moka.ui.Resizable.prototype.onResize_ = function(e) {
  * @private
  */
 moka.ui.Resizable.prototype.onResizeEnd_ = function(e) {
+    //window.console.log("ON RESIZE END!");
     //
     // IMPORTANT: Update only on resize end!!!!!
     //
@@ -770,35 +662,10 @@ moka.ui.Resizable.prototype.onResizeEnd_ = function(e) {
 
     // Dispatch event
     this.dispatchEvent({
-	type: moka.ui.Resizable.EventType.END_RESIZE
+	type: moka.ui.Resizable.EventType.RESIZE_END
     });
 };
 
-
-
-/**
- * @private
- */
-moka.ui.Resizable.prototype.resize_ = function() {
-    var newSize = 
-	new goog.math.Size(Math.max(this.eltSize_.width, 0), 
-			   Math.max(this.eltSize_.height, 0));
-    var newPos = 
-	new goog.math.Coordinate(Math.max(this.eltPos_.x, 0), 
-				 Math.max(this.eltPos_.y, 0));
-
-    if (this.continuousResize_) {
-	this.dispatchEvent({
-	    type: moka.ui.Resizable.EventType.RESIZE,
-	    size: newSize.clone(),
-	    pos: newPos.clone()
-	});
-    }
-
-    window.console.log(newSize);
-    goog.style.setBorderBoxSize(this.element_, newSize);
-    goog.style.setPosition(this.element_, newPos);
-};
 
 
 

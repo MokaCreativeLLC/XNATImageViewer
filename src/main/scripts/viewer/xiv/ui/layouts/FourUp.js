@@ -42,8 +42,7 @@ xiv.ui.layouts.FourUp.TITLE = 'Four-Up';
  * @enum {string}
  * @public
  */
-xiv.ui.layouts.FourUp.EventType = {
-}
+xiv.ui.layouts.FourUp.EventType = {}
 
 
 
@@ -73,15 +72,15 @@ xiv.ui.layouts.FourUp.CSS_SUFFIX = {
  * @type {!number} 
  * @const
  */
-xiv.ui.layouts.FourUp.MAX_PLANE_RESIZE_PCT = .9;
+xiv.ui.layouts.FourUp.MIN_PLANE_WIDTH = 20;
 
 
 
 /**
  * @type {!number} 
- * @private
+ * @const
  */
-xiv.ui.layouts.FourUp.prototype.bottomPlaneWidth_ = 0;
+xiv.ui.layouts.FourUp.MIN_PLANE_HEIGHT = 20;
 
 
 
@@ -91,71 +90,21 @@ xiv.ui.layouts.FourUp.prototype.bottomPlaneWidth_ = 0;
 xiv.ui.layouts.FourUp.prototype.setupPlane_X = function(){
     goog.base(this, 'setupPlane_X');
 
-    goog.dom.classes.add(this.Planes['X'].getElement(), 
-			 xiv.ui.layouts.FourUp.CSS.X);
+    //
+    // Set the plane resizable
+    //
+    this.setPlaneResizable('X', ['RIGHT', 'TOP', 'TOP_RIGHT']);
 
-    this.Planes['X'].setResizeDirections(['TOP', 'RIGHT']);
-
-    this.Planes['X'].getResizable().getDragElt('TOP').style.cursor =  
-	'ns-resize';
-
-    this.Planes['X'].getResizable().getDragElt('RIGHT').style.cursor =  
-	'ew-resize';
-
+    //
+    // Listen for the RESIZE event.
+    //
     goog.events.listen(this.Planes['X'].getResizable(), 
 		       moka.ui.Resizable.EventType.RESIZE,
 		       this.onPlaneResize_X.bind(this));
-}
 
-
-
-/**
- * @inheritDoc
- */
-xiv.ui.layouts.FourUp.prototype.setupPlane_Y = function(){
-    goog.base(this, 'setupPlane_Y');
-
-    goog.dom.classes.add(this.Planes['Y'].getElement(), 
-			 xiv.ui.layouts.FourUp.CSS.Y);
-}
-
-
-
-/**
- * @inheritDoc
- */
-xiv.ui.layouts.FourUp.prototype.setupPlane_Z = function(){
-    goog.base(this, 'setupPlane_Z');
-
-    goog.dom.classes.add(this.Planes['Z'].getElement(), 
-			 xiv.ui.layouts.FourUp.CSS.Z);
-}
-
-
-
-/**
- * @inheritDoc
- */
-xiv.ui.layouts.FourUp.prototype.setupPlane_V = function(){
-    goog.base(this, 'setupPlane_V');
-
-    goog.dom.classes.add(this.Planes['V'].getElement(), 
-			 xiv.ui.layouts.FourUp.CSS.V);
-
-    this.Planes['V'].setResizeDirections(['LEFT', 'BOTTOM', 'BOTTOM_LEFT']);
-
-    this.Planes['V'].getResizable().getDragElt('LEFT').style.cursor =  
-	'ew-resize';
-    this.Planes['V'].getResizable().getDragElt('BOTTOM').style.cursor =  
-	'ns-resize';
-    this.Planes['V'].getResizable().getDragElt('BOTTOM_LEFT').style.cursor =  
-	'move';
-
-    this.Planes['V'].getElement().style.zIndex =  1000;
-
-    goog.events.listen(this.Planes['V'].getResizable(), 
-		       moka.ui.Resizable.EventType.RESIZE,
-		       this.onPlaneResize_V.bind(this));
+    goog.events.listen(this.Planes['X'].getResizable(), 
+		       moka.ui.Resizable.EventType.RESIZE_END,
+		       this.updateStyle.bind(this));
 }
 
 
@@ -166,94 +115,106 @@ xiv.ui.layouts.FourUp.prototype.setupPlane_V = function(){
  */
 xiv.ui.layouts.FourUp.prototype.onPlaneResize_X = function(e){
 
-    // Y Plane
-    moka.style.setStyle(this.Planes['Y'].getElement(), {
-	'width': this.currSize.width - e.size.width,
-	'height': e.size.height,
-	'left': e.size.width, 
-	'top': e.pos.y
-    });
+    var planePos = goog.style.getPosition(this.Planes['X'].getElement());
+    var planeSize = goog.style.getSize(this.Planes['X'].getElement());
 
-    // Z Plane
-    moka.style.setStyle(this.Planes['Z'].getElement(), {
-	'height': this.currSize.height - e.size.height,
-	'width': e.size.width, 
-    });
 
-    // V Plane
-    moka.style.setStyle(this.Planes['V'].getElement(), {
-	'left': e.size.width,
-	'width': this.currSize.width - e.size.width,
-	'height': this.currSize.height - e.size.height,
-    });
+    //
+    // Y PLANE
+    //
+    goog.style.setPosition(
+	this.Planes['Y'].getElement(), 
+	planeSize.width,
+	planePos.y);
+    goog.style.setSize(
+	this.Planes['Y'].getElement(), 
+	this.currSize.width - planeSize.width,
+	planeSize.height);
 
-    this.dispatchEvent({
-	type: xiv.ui.layouts.Layout.EventType.RESIZE
-    })
+
+    //
+    // Z PLANE
+    //
+    goog.style.setPosition(
+	this.Planes['Z'].getElement(), 0, 0);
+    goog.style.setSize(
+	this.Planes['Z'].getElement(), planeSize.width, planePos.y);
+
+
+
+    //
+    // V PLANE
+    //
+    goog.style.setPosition( this.Planes['V'].getElement(), 
+			    planeSize.width, 0);
+    goog.style.setSize(this.Planes['V'].getElement(), 
+	this.currSize.width - planeSize.width, planePos.y);
+
+
+    //
+    // CHEAT Make the X RIGHT handle 100% of the height
+    //
+    var xRightHandle = 
+	this.Planes['X'].getResizable().getResizeDragger('RIGHT').getHandle();
+    xRightHandle.style.top = '0px';
+    xRightHandle.style.height = (this.currSize.height).toString() + 'px';
+
+
+    //
+    // Required!
+    //
+    this.dispatchResize();
 }
 
 
 
 /**
- * @override
- * @param {!Event} e
- */
-xiv.ui.layouts.FourUp.prototype.onPlaneResize_V = function(e){
-    // X Plane
-    moka.style.setStyle(this.Planes['X'].getElement(), {
-	'width': this.currSize.width - e.size.width,
-	'height': this.currSize.height - e.size.height,
-	'top':  e.size.height
-    });
-
-    // Y Plane
-    moka.style.setStyle(this.Planes['Y'].getElement(), {
-	'height': this.currSize.height - e.size.height,
-	'width': e.size.width, 
-	'left': e.pos.x,
-	'top': e.size.height
-    });
-
-    // Z Plane
-    moka.style.setStyle(this.Planes['Z'].getElement(), {
-	'width': this.currSize.width - e.size.width,
-	'height': e.size.height,
-    });
-
-    this.dispatchEvent({
-	type: xiv.ui.layouts.Layout.EventType.RESIZE
-    })
+* @inheritDoc
+*/
+xiv.ui.layouts.FourUp.prototype.updateStyle = function(){
+    goog.base(this, 'updateStyle');
+    this.updateStyle_X();
 }
-
-
 
 
 /**
  * @inheritDoc
  */
 xiv.ui.layouts.FourUp.prototype.updateStyle_X = function() {
-    this.Planes['X'].getResizable().setMinHeight(this.resizeMargin);
-    this.Planes['X'].getResizable().setMinWidth(this.resizeMargin);
-    this.Planes['X'].getResizable().setBounds(
-	0, this.resizeMargin, // topLeft X, topLeft Y
-	this.currSize.width - this.resizeMargin, // botRight X
-	this.currSize.height);// botRightY
-    //this.Planes['X'].getResizable().showBoundaryElt();
-}
+    //
+    // Boundary
+    //
+    goog.style.setPosition(
+	this.Planes['X'].getResizable().getBoundaryElement(), 
+	this.minPlaneWidth_, this.minPlaneHeight_);
+
+    goog.style.setSize(
+	this.Planes['X'].getResizable().getBoundaryElement(), 
+	this.currSize.width - this.minPlaneWidth_ * 2,
+	this.currSize.height - this.minPlaneHeight_ * 2);
+
+    //
+    // Make the X TOP handle 100% of the width
+    //
+    var xTopHandle = 
+	this.Planes['X'].getResizable().getResizeDragger('TOP').getHandle();
+    xTopHandle.style.left = '0px';
+    xTopHandle.style.width = (this.currSize.width).toString() + 'px';
 
 
+    //
+    // IMPORTANT!!!
+    //
+    this.Planes['X'].getResizable().update();
 
-/**
-* @private
-*/
-xiv.ui.layouts.FourUp.prototype.updateStyle_V = function() {
-    this.Planes['V'].getResizable().setMinHeight(this.resizeMargin);
-    this.Planes['V'].getResizable().setMinWidth(this.resizeMargin);
-    this.Planes['V'].getResizable().setBounds(
-	this.resizeMargin, 0, // topLeft X, topLeft Y
-	this.currSize.width, // botRight X
-	this.currSize.height - this.resizeMargin);// botRightY
-    //this.Planes['V'].getResizable().showBoundaryElt();
+
+    //
+    // CHEAT Make the X RIGHT handle 100% of the height
+    //
+    var xRightHandle = 
+	this.Planes['X'].getResizable().getResizeDragger('RIGHT').getHandle();
+    xRightHandle.style.top = '0px';
+    xRightHandle.style.height = (this.currSize.height).toString() + 'px';
 }
 
 
@@ -263,5 +224,5 @@ xiv.ui.layouts.FourUp.prototype.updateStyle_V = function() {
 */
 xiv.ui.layouts.FourUp.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
-    delete this.bottomPlaneWidth_;
+    
 }
