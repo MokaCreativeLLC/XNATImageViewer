@@ -7,7 +7,6 @@
 
 /**
  * @constructor
- * 
  * @extends {goog.events.EventTarget}
  */
 goog.provide('xiv.vis.XtkPlane');
@@ -110,14 +109,20 @@ xiv.vis.XtkPlane.prototype.getOrientation = function(){
  */
 xiv.vis.XtkPlane.prototype.checkRenderProgress_ = function() {
     this.progressTimer_ = goog.Timer.callOnce(function() {
+	//
 	// destroy the timer
+	//
 	this.progressTimer_ = null; 
 
+	//
 	// get the progress-bar thumbnail from DOM
+	//
 	var progThumb = goog.dom.getElementByClass('progress-bar-thumb', 
 						   this.Renderer.container);
 
+	//
 	// exit out if at 100% and send RENDER_END event.
+	//
 	if (!progThumb){
 	    this.renderProgress_ = 1;
 	    this.dispatchEvent({
@@ -127,19 +132,27 @@ xiv.vis.XtkPlane.prototype.checkRenderProgress_ = function() {
 	    return;
 	}
 
+	//
 	// set the render progress
+	//
 	this.renderProgress_ = parseInt(progThumb.style.width, 10) / 100;
 
+	//
 	// dispatch rednering event if not at 100%
+	//
 	this.dispatchEvent({
 	    type: xiv.vis.RenderEngine.EventType.RENDERING,
 	    value: this.renderProgress_
 	})
 
+	//
 	// recurse
+	//
 	this.checkRenderProgress_();
 
+	//
 	// check again in 200 ms
+	//
     }.bind(this), 200); 
 }
 

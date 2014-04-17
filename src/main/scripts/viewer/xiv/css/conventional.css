@@ -60,9 +60,11 @@
 
 
 .xiv-ui-layouts-conventional-x-resizeboundary {
+    /**
     background-color: purple;
     opacity: .5;
     z-index: 20;
+    */
 }
 
 

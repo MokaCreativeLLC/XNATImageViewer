@@ -720,18 +720,6 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     this.syncLayoutInteractorsToRenderer_();
     
     //
-    // Stop render listerners
-    // 
-    goog.events.unlisten(this.Renderer_, 
-			 xiv.vis.RenderEngine.EventType.RENDER_START, 
-			 this.onRenderStart_.bind(this));
-    goog.events.unlisten(this.Renderer_, 
-			 xiv.vis.RenderEngine.EventType.RENDERING, 
-			 this.onRendering_.bind(this));
-    goog.events.unlisten(this.Renderer_, 
-			 xiv.vis.RenderEngine.EventType.RENDER_END, 
-			 this.onRenderEnd_.bind(this));
-    //
     // Update styles
     //
     window.console.log("UPDATE STYLE");
@@ -841,15 +829,15 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
     //
     // Events
     //
-    goog.events.listen(this.Renderer_, 
+    goog.events.listenOnce(this.Renderer_, 
 		       xiv.vis.RenderEngine.EventType.RENDER_START, 
 		       this.onRenderStart_.bind(this));
 
-    goog.events.listen(this.Renderer_, 
+    goog.events.listenOnce(this.Renderer_, 
 		       xiv.vis.RenderEngine.EventType.RENDERING, 
 		       this.onRendering_.bind(this));
 
-    goog.events.listen(this.Renderer_, 
+    goog.events.listenOnce(this.Renderer_, 
 		       xiv.vis.RenderEngine.EventType.RENDER_END, 
 		       this.onRenderEnd_.bind(this));
 

@@ -121,6 +121,9 @@ xiv.vis.XtkEngine.ANATOMICAL_TO_CARTESIAN =  {
  * @private
  */
 xiv.vis.XtkEngine.prototype.getAnnotations_ = function(ViewableGroup) {
+    if (!goog.isDefAndNotNull(ViewableGroup.getRenderProperties().annotations))
+	{ return }
+
     goog.array.forEach(ViewableGroup.getRenderProperties().annotations,
 		       function(annotationsNode){
 			   this.currXObjects_['spheres'].push(

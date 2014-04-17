@@ -80,11 +80,30 @@ moka.ui.SlideInMenu = function () {
     this.animQueue_ =  new goog.fx.AnimationParallelQueue();
 
 
+    /**
+     * @private
+     * @type {!Array.<goog.fx.Animation>}
+     */
+    this.anims_ =  [];
 
+    //
+    // Events
+    //
     this.setMenuEvents_(); 
+
+    //
+    // Hide the menu initially
+    //
     this.hideMenu(undefined, 0);
+
+    //
+    // Render the menu in the holder
+    //
     this.menu_.render(this.holder_); 
+
+    //
     // must come after the render
+    //
     goog.dom.classes.add(this.menu_.getElement(), 
 			 moka.ui.SlideInMenu.CSS.MENU);
 }
@@ -143,6 +162,14 @@ moka.ui.SlideInMenu.menuItemCollection = {
  * @const
  * @type {number}
  */	
+moka.ui.SlideInMenu.FADE_OUT_COUNTDOWN = 450;
+
+
+
+/**
+ * @const
+ * @type {number}
+ */	
 moka.ui.SlideInMenu.ANIM_LEN_IN = 500;
 
 
@@ -177,7 +204,7 @@ moka.ui.SlideInMenu.createAnimIn_  =
 function (elt, startPos, endPos, opt_animTime) {
     opt_animTime = goog.isDef(opt_animTime) ? opt_animTime : 
 	moka.ui.SlideInMenu.ANIM_LEN_IN;
-    return [new goog.fx.dom.FadeInAndShow(elt, opt_animTime),
+    return [new goog.fx.dom.FadeIn(elt, opt_animTime),
 	    new goog.fx.dom.Slide(elt, startPos, endPos, opt_animTime, 
 				  goog.fx.easing.easeOut)];
 }
@@ -197,33 +224,11 @@ moka.ui.SlideInMenu.createAnimOut_  =
 function (elt, startPos, endPos, opt_animTime) {
     opt_animTime = goog.isDef(opt_animTime) ? opt_animTime : 
 	moka.ui.SlideInMenu.ANIM_LEN_OUT;
-    return [new goog.fx.dom.FadeOutAndHide(elt, opt_animTime),
+    return [new goog.fx.dom.FadeOut(elt, opt_animTime),
 	    new goog.fx.dom.Slide(elt, startPos, endPos, 
 	        opt_animTime, goog.fx.easing.easeOut)];
 }
 
-
-
-/**
- * Animates the position and opacity of the xiv.ui.SelectedItem menu
- * (i.e. slides it and fades it in/out)/
- * @param {!Array.<goog.fx.Animation> | !goog.fx.Animation} anims
- * @param {Function=} opt_callback
- */
-moka.ui.SlideInMenu.prototype.runAnimations_  = function (anims, opt_callback) {
-    anims = goog.isArray(anims) ? anims : [anims];
-
-    goog.events.listen(this.animQueue_, 'end', function() {
-	if (opt_callback) { opt_callback() };
-	goog.array.forEach(anims, function(anim){
-	    anim.dispose();
-	})
-    }.bind(this))
-    goog.array.forEach(anims, function(anim){
-	this.animQueue_.add(anim);
-    }.bind(this)) 
-    this.animQueue_.play();
-}
 
 
 
@@ -424,11 +429,131 @@ moka.ui.SlideInMenu.prototype.matchMenuTitleToSelected = function(bool) {
 
 
 /**
- * @return {String}
+ * @return {string}
  * @public
  */
 moka.ui.SlideInMenu.prototype.getSelectedMenuItem = function() {
     return this.currSelectedItem_;
+}
+
+
+/**
+ * @private
+ */
+moka.ui.SlideInMenu.prototype.clearAnimQueue_ = function(){
+    //
+    // Stop the queue
+    //
+    this.animQueue_.stop();
+
+    //
+    // Dispose and remove the old/existing animations
+    //
+    goog.array.forEach(this.anims_, function(anim){
+	this.animQueue_.remove(anim);
+	anim.dispose();
+    }.bind(this))
+
+    //
+    // Clear the anims_ array
+    //
+    goog.array.clear(this.anims_);
+}
+
+
+
+/**
+ * Animates the position and opacity of the xiv.ui.SelectedItem menu
+ * (i.e. slides it and fades it in/out)/
+ *
+ * @param {!Array.<goog.fx.Animation> | !goog.fx.Animation} anims
+ * @param {Function=} opt_callback
+ */
+moka.ui.SlideInMenu.prototype.runAnimations_  = function (anims, opt_callback) {
+    //
+    // Clear the current anim queue
+    //
+    this.clearAnimQueue_();
+
+    //
+    // Store the current anims
+    //
+    goog.array.forEach(goog.isArray(anims) ? anims : [anims], function(anim){
+	this.animQueue_.add(anim);
+	this.anims_.push(anim);
+    }.bind(this)) 
+
+    //
+    // Make sure the holder is visible before running the anims
+    //
+    this.holder_.style.visibility = 'visible';
+
+    //
+    // Set the events
+    //
+    goog.events.listenOnce(this.animQueue_, goog.fx.Animation.EventType.END, 
+	function(e) {
+	    if (opt_callback) { opt_callback() };
+	}.bind(this))
+
+
+    //
+    // Play the animation queue
+    //
+    this.animQueue_.play();
+}
+
+
+/**
+ * @private
+ * @type {!number}
+ */
+moka.ui.SlideInMenu.prototype.fadeOutTimer_ = null;
+
+
+
+
+/**
+ * @private
+ */
+moka.ui.SlideInMenu.prototype.startFadeOutTimer_ = function() { 
+
+    //
+    // Remove any existing timers
+    //
+    if (goog.isDefAndNotNull(this.fadeOutTimer_)){
+	goog.Timer.clear(this.fadeOutTimer_)
+	this.fadeOutTimer_ = null;
+    }
+
+    this.fadeOutTimer_ = goog.Timer.callOnce(function() {
+	//
+	// destroy the timer
+	//
+	this.fadeOutTimer_ = null; 
+
+	//
+	// Exit out if the menu isn't visible
+	//
+	if (!this.menuVisible_) {return}
+
+	//
+	// Hide and exit if not over a menu item
+	//
+	if (!this.mouseIsOverMenu_ && this.menuVisible_){
+	    this.hideMenu();
+	    return;
+	}
+
+	//
+	// recurse
+	//
+	this.startFadeOutTimer_();
+
+	//
+	// check again later
+	//
+    }.bind(this), moka.ui.SlideInMenu.FADE_OUT_COUNTDOWN); 
 }
 
 
@@ -441,19 +566,24 @@ moka.ui.SlideInMenu.prototype.getSelectedMenuItem = function() {
  * @public
  */
 moka.ui.SlideInMenu.prototype.setHighlightedIndex = function(index) {
-
+    //
     // Highlight the menuitem.
+    //
     goog.dom.classes.add(
 	this.menuItems_[this.getTitleFromIndex(index)].CONTENT, 
 		moka.ui.SlideInMenu.CSS.MENUITEM_HIGHLIGHT);
 
+    //
     // Adjust icon src, if needed.
+    //
     if (this.matchMenuIconToSelected_){
 	this.icon_.src = 
 	    this.menuItems_[this.getTitleFromIndex(index)].ICON.src;
     }
 
+    //
     // Adjust title, if needed.
+    //
     if (this.matchMenuTitleToSelected_){
 	this.getElement().title  = 
 	    this.getItemCollectionFromIndex(index).ITEM.getContent();
@@ -488,37 +618,47 @@ moka.ui.SlideInMenu.prototype.addMenuItem = function(itemTitles,
     opt_iconSrc = opt_iconSrc || [];
     opt_iconSrc = goog.isArray(opt_iconSrc) ? opt_iconSrc : [opt_iconSrc];
     
-    var item = /**@type {goog.ui.MenuItem}*/ null;
-    var childNodes = /**@type {{length: number}}*/ null;
-    var content = /**@type {Element}*/ null;
-    var icon = /**@type {Element}*/ null;
+    var item = null;
+    var childNodes = null;
+    var content = null;
+    var icon = null;
     
     goog.array.forEach(itemTitles, function(title, i){
 	if (this.menuItems_[title]){
 	    throw new Error(title + ' is already in use!');
 	}
 	
+	//
 	// create the menu item.
+	//
 	item = new goog.ui.MenuItem(title)
 	this.menu_.addItem(item);
 
+	//
 	// Modify the content element.
+	//
 	content = item.getContentElement();
 	goog.dom.classes.add(content, moka.ui.SlideInMenu.CSS.MENUITEM);
 	content.title = title;
 
+	//
 	// Set the icon.
+	//
 	icon = goog.dom.createDom("img", {
 	    'id':  moka.ui.SlideInMenu.ID_PREFIX + '_MenuItemIcon_' + 
 		goog.string.createUniqueString(),
 	    'class' : moka.ui.SlideInMenu.CSS.MENUITEM_ICON
 	});
 
+	//
 	// Set the icon src, if available.
+	//
 	icon.src = (i <= opt_iconSrc.length - 1) ? opt_iconSrc[i] : null;
 	goog.dom.append(content, icon);
 	
+	//
 	// Store the item.
+	//
 	this.menuItems_[title] = 
 	    goog.object.clone(moka.ui.SlideInMenu.menuItemCollection);
 	this.menuItems_[title].ITEM = item;
@@ -531,6 +671,7 @@ moka.ui.SlideInMenu.prototype.addMenuItem = function(itemTitles,
 
 /**
  * Sets a menu item active either by its index number or title. 
+ *
  * @param {!number | !string} indexOrTitle Either the index or the title to 
  *    set the item selected.
  * @param {boolean=} opt_deactivateOthers Optional: whether to deactive other
@@ -540,9 +681,10 @@ moka.ui.SlideInMenu.prototype.addMenuItem = function(itemTitles,
  */
 moka.ui.SlideInMenu.prototype.setSelected = 
 function(indexOrTitle, opt_deactivateOthers) {
-
+    //
     // Set index, assert value
-    var index = /**@param {!number}*/ indexOrTitle;
+    //
+    var index = indexOrTitle;
     if (goog.isString(index)) {
 	if (!this.menuItems_[index]){
 	    throw new Error(index + ' does not exist!');
@@ -550,29 +692,44 @@ function(indexOrTitle, opt_deactivateOthers) {
 	index = this.getIndexFromTitle(index);
     } 
 
+    //
     // Record the view layouts, previous and current.
+    //
     this.prevSelectedItem_ = this.currSelectedItem_ ? 
 	this.currSelectedItem_ : indexOrTitle;
     this.currSelectedItem_ = indexOrTitle;
 
-    // Highlight / unhighlight the relevant menu items.
-    this.setHighlightedIndex(index);
-
+    //
     // Deactivate others
+    //
     if (!goog.isDef(opt_deactivateOthers) || opt_deactivateOthers){
 	this.deselectAll();
     }
+
+    //
+    // Highlight / unhighlight the relevant menu items.
+    //
+    this.setHighlightedIndex(index);
     
+    //
     // Dispatch the event
+    //
+    this.dispatchSelected_(index);
+
+}
+
+
+
+/**
+ * @param {!number | !string} index The tab index.
+ * @private
+ */
+moka.ui.SlideInMenu.prototype.dispatchSelected_ = function(index){
     this.dispatchEvent({
 	type: moka.ui.SlideInMenu.EventType.ITEM_SELECTED,
 	index: index,
 	title: this.getItemCollectionFromIndex(index).ITEM.getContent()
     });
-
-    if (this.menuVisible_){
-	this.hideMenu();
-    }
 }
 
 
@@ -582,14 +739,21 @@ function(indexOrTitle, opt_deactivateOthers) {
  * @param {number=} opt_animTime
  * @public
  */
-moka.ui.SlideInMenu.prototype.showMenu = 
-function(opt_callback, opt_animTime) {
-    this.holder_.style.visibility = 'visible';
+moka.ui.SlideInMenu.prototype.showMenu = function(opt_callback, opt_animTime) {
+    //
+    // Create the animations associated with sliding IN
+    //
     this.runAnimations_(moka.ui.SlideInMenu.createAnimIn_(
 	this.holder_, this.hidePos_, this.showPos_, opt_animTime), function(){
-	    //window.console.log(this.holder_);
+	    //
+	    // Track menu visibility
+	    //
 	    this.menuVisible_ = true;
-	    if (goog.isDef(opt_callback)){
+
+	    //
+	    // Run callback
+	    //
+	    if (goog.isDefAndNotNull(opt_callback)){
 		opt_callback();
 	    }	
 	}.bind(this));
@@ -602,13 +766,25 @@ function(opt_callback, opt_animTime) {
  * @param {number=} opt_animTime
  * @public
  */
-moka.ui.SlideInMenu.prototype.hideMenu = 
-function(opt_callback, opt_animTime) {
+moka.ui.SlideInMenu.prototype.hideMenu = function(opt_callback, opt_animTime) {
+    //
+    // Create the animations associated with sliding OUT
+    //
     this.runAnimations_(moka.ui.SlideInMenu.createAnimOut_(
 	this.holder_, this.showPos_, this.hidePos_, opt_animTime), function() {
+	    //
+	    // Track menu visibility
+	    //	    
 	    this.menuVisible_ = false;
+
+	    //
+	    // Hide the holder
+	    //
 	    this.holder_.style.visibility = 'hidden';
-	    //window.console.log(this.holder_);
+
+	    //
+	    // callback
+	    //
 	    if (goog.isDef(opt_callback)){
 		opt_callback();
 	    }
@@ -621,23 +797,44 @@ function(opt_callback, opt_animTime) {
  * @private
  */
 moka.ui.SlideInMenu.prototype.setMenuEvents_ = function() {
-
+    //
     // CLICK: Show or hide the menu
+    //
     goog.events.listen(this.getElement(), goog.events.EventType.CLICK, 
 	function (event) {
 	    if (!this.menuVisible_) { this.showMenu() } 
 	    else { this.hideMenu() }		   
 	}.bind(this))
 
+    //
     // Mouseover / Mouseout hover over the main icon.
+    //
     moka.style.setHoverClass(this.icon_, 
 			      moka.ui.SlideInMenu.CSS.ICON_HOVERED);
 
+    //
     // Onclick: Menu items (i.e. the view planes) - select-
+    //
     goog.events.listen(this.menu_, 'action', function(e) {
 	moka.dom.stopPropagation(e);
 	this.setSelected(parseInt(e.target.getId().replace(/:/g, ''), 10));
     }.bind(this));  
+
+
+    //
+    // Onclick: Menu items (i.e. the view planes) - select-
+    //
+    goog.events.listen(this.holder_, goog.events.EventType.MOUSEOVER, 
+	function(e) {
+	    window.console.log("MOUSE OVER!");
+	    this.mouseIsOverMenu_ = true;
+	}.bind(this)); 
+    goog.events.listen(this.holder_, goog.events.EventType.MOUSEOUT, 
+	function(e) {
+	    window.console.log("MOUSE OUT!");
+	    this.mouseIsOverMenu_ = false;
+	    this.startFadeOutTimer_();
+	}.bind(this)); 
 }
 
 
@@ -647,7 +844,6 @@ moka.ui.SlideInMenu.prototype.setMenuEvents_ = function() {
  */
 moka.ui.SlideInMenu.prototype.disposeInternal = function() {
     moka.ui.SlideInMenu.superClass_.disposeInternal.call(this);
-
     goog.object.forEach(this.menuItems_, function(item, pos){
 	item.ITEM.dispose();
 	goog.dom.remove(item.getElement());
@@ -659,48 +855,25 @@ moka.ui.SlideInMenu.prototype.disposeInternal = function() {
 
 
 /**
- * TODO: Reinvestigate the hover probabilities of this. 
- *
- * @deprecated
- * @private
- */
-moka.ui.SlideInMenu.prototype.closeCountdown_ = function(opt_delay) {
-    var dateObj = new Date();
-    opt_delay = goog.isDef(opt_delay) ? opt_delay : 
-	moka.ui.SlideInMenu.MOUSEOUT_HIDE;
-    var mouseoutDate = dateObj.getTime();
-    delay = new goog.async.Delay(function(){ 
-	determineMenuHideable(opt_delay) 
-    }, opt_delay);
-    delay.start();
-}
-
-
-
-/**
- * TODO: Reinvestigate the hover probabilities of this. 
- *
- * @deprecated
- * @private
- */
-moka.ui.SlideInMenu.prototype.determineMenuHideable_ = function(delayTime) {
-    var dateObj = new Date();
-    if (!isHovered && ((dateObj.getTime() - mouseoutDate) >= delayTime)) { 
-	this.hideMenu()
-    }
-}
-
-
-
-
-/**
  * @inheritDoc
  */
 moka.ui.SlideInMenu.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
-    goog.events.removeAll(this.getElement());
+    delete this.mouseIsOverMenu_;
+    delete this.fadeOutTimer_;
+
+    //
+    // Anims
+    //
+    this.clearAnimQueue_();
+    goog.array.clear(this.anims_);
+    delete this.anims_;
+
     
+    //
+    // Menu items
+    //
     goog.object.forEach(this.menuItems_, function(item, key){
 	goog.events.removeAll(item);
 	goog.dom.removeNode(item);
@@ -709,17 +882,28 @@ moka.ui.SlideInMenu.prototype.disposeInternal = function() {
     goog.object.clear(this.menuItems_);
     delete this.menuItems_;
 
-
+    //
+    // Holder
+    //
     goog.dom.removeNode(this.holder_);
     delete this.holder_;
 
+    //
+    // Icon
+    //
     goog.dom.removeNode(this.icon_);
     delete this.icon_;
 
+    //
+    // Menu
+    //
     goog.events.removeAll(this.menu_);
     this.menu_.disposeInternal();
     delete this.menu_;
 
+    //
+    // Animation Queue
+    //
     moka.ui.disposeAnimationQueue(this.animQueue_);
     delete this.animQueue_;
 
