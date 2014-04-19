@@ -1,0 +1,42 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+.xiv-ui-progressbarpanel  {
+    position: absolute;
+    height: 100%; 
+    width: 100%;
+    background-color: rgb(25, 25, 25);
+    text-align: middle;
+}
+
+.xiv-ui-progressbarpanel-thumb  {
+    position: absolute;
+    height: 100%;
+    top: 0%;
+    background-color: rgb(100, 149, 237);
+}
+
+.xiv-ui-progressbarpanel-progbarholder  {
+    position: absolute;
+    height: 10px; 
+    width: 95%;
+    top: calc(50% - 5px);
+    background-color: rgba(0,0,0,0);
+    border: none;
+    left: 2.5%;
+}
+
+.xiv-ui-progressbarpanel-labelholder  {
+    position: absolute;
+    height: 15px; 
+    width: 100%;
+    top: calc(50% - 25px);
+    text-align: center;
+    color: rgba(255,255,255, .8);
+    font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
+    font-size: 10px;
+}
+
+
+

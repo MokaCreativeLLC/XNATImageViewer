@@ -1,0 +1,84 @@
+/*
+Use of this source code is governed by an Apache 2.0 License.
+See the COPYING file for details.
+*/
+
+
+.moka-ui-resizedragger {
+  position: absolute;
+  font-size: 0.1px;
+  z-index: 100;
+  background-color: rgba(255,20,20, .5);
+}
+
+
+/**
+  RIGHT AND LEFT
+*/
+.moka-ui-resizedraggerright, .moka-ui-resizedraggerleft {
+  position: absolute;
+  width: 7px;
+  height: 100%;
+  cursor: ew-resize;
+}
+
+.moka-ui-resizedraggerright {
+  left: 100%;
+  background-color: rgba(0,255,0,.5);
+}
+
+.moka-ui-resizedraggerleft {
+  left: -7px
+  background-color: rgba(0,0,255,.5);
+}
+
+
+
+/**
+ * TOP AND BOTTOM
+ */
+.moka-ui-resizedraggertop, .moka-ui-resizedraggerbottom {
+  position: absolute;
+  left: 0px;
+  width: 100%;
+  height: 7px;
+  cursor: ns-resize;
+}
+
+.moka-ui-resizedraggertop {
+  top: -7px;
+  background-color: rgba(0,255,0,.5);
+}
+
+.moka-ui-resizedraggerbottom {
+  top: 100%;
+  background-color: rgba(255,0,0,.5);
+}
+
+
+
+
+/**
+ * CORNERS
+ */
+
+.moka-ui-resizedraggertopright, 
+.moka-ui-resizedraggertopleft, 
+.moka-ui-resizedraggerbottomright, 
+.moka-ui-resizedraggerbottomleft {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  cursor: move;
+}
+
+
+.moka-ui-resizedraggertopright, 
+.moka-ui-resizedraggertopleft, {
+  top: calc(100% - 7px);
+}
+
+.moka-ui-resizedraggertopright {
+  left: calc(100% - 7px);
+  background-color: orange;
+}

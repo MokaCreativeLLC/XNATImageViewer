@@ -1,0 +1,28 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.xiv-ui-thumbnailgallery {
+    position: absolute;
+    left: 0px;
+    width: 180px;
+}
+
+
+
+.xiv-ui-thumbnailgallery-thumbnail-dragging {
+    position: absolute;
+    width: 87px;
+    height: 87px;
+    top: 0px;
+    left: 0px;
+    cursor: pointer;
+    background-color: rgb(0,0,0);
+    z-index: 2;
+    opacity: .85;
+    width: 150px;
+    background-color: rgba(0,0,0,0);
+    opacity: .5
+}

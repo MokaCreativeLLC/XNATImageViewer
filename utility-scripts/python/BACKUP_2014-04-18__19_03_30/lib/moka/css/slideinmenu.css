@@ -1,0 +1,58 @@
+/**
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.moka-ui-slideinmenu {
+    z-index: 2;    
+}
+
+
+.moka-ui-slideinmenu-icon {
+    max-width:100%;
+    max-height:100%;
+    opacity: .5; 
+}
+
+
+.moka-ui-slideinmenu-icon-hovered {
+    opacity: 1; 
+}
+
+
+.moka-ui-slideinmenu-menuholder {
+    position : absolute;	
+    background-color: rgba(255,100,22,1);    
+    z-index: 4;
+}
+
+
+.moka-ui-slideinmenu-menu {
+  background-color: rgb(125,125,125);
+  border: solid 1px rgb(50,50,50);
+  z-index: 20000; 
+  cursor: pointer;
+  width: 130px;
+}
+
+
+.moka-ui-slideinmenu-menuitem {
+    overflow: visible;
+    margin-left: 13px;
+    margin-top: 7px;
+    height: 20px;
+}
+
+
+.moka-ui-slideinmenu-menuitem-highlight {
+    color: white;
+}
+
+.moka-ui-slideinmenu-menuitem-icon {
+    position: absolute;
+    margin-top: -8px;
+    left: 5px;
+    width: 30px;
+    height: 30px;
+}

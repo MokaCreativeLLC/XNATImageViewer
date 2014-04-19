@@ -414,11 +414,11 @@ xiv.ui.ViewBox.prototype.doNotHide = function(element){
  * Allows for external communication to set
  * the viewscheme within the xiv.ui.ViewBox by communicating
  * to its moka.ui.SlideInMenu object.
- * @param {!string} viewPlane Sets the view layout associated with the argument.
+ * @param {!string} layout Sets the view layout associated with the argument.
  * @public
  */
-xiv.ui.ViewBox.prototype.setLayout = function(viewPlane) {
-    this.LayoutMenu_.setLayout(viewPlane);
+xiv.ui.ViewBox.prototype.setLayout = function(layout) {
+    this.LayoutMenu_.setLayout(layout);
 }
 
 
@@ -480,8 +480,8 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 
 
 	if (planeOr !== 'V') {
-	    var layoutPlane = 
-		this.LayoutHandler_.getCurrentLayout().getPlaneByTitle(planeOr);
+	    var layoutPlane = this.LayoutHandler_.getCurrentLayout().
+		getLayoutFrameByTitle(planeOr);
 
 	    var ch1 = goog.dom.createDom('div');
 	    ch1.style.position = 'absolute';
@@ -819,7 +819,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
     //
     var layoutPlane;
     goog.object.forEach(this.Renderer_.getPlanes(), function(plane, key) { 
-	layoutPlane = this.LayoutHandler_.getCurrentLayoutPlane(key);
+	layoutPlane = this.LayoutHandler_.getCurrentLayoutFrame(key);
 	//window.console.log("LAYOUT PLANE", layoutPlane, key);
 	if (layoutPlane) {
 	    plane.init(layoutPlane.getElement());
@@ -842,14 +842,6 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
 		       this.onRenderEnd_.bind(this));
 
 
-    //
-    // Layout resize
-    //
-    goog.events.listen(this.LayoutHandler_, 
-		       xiv.ui.layouts.LayoutHandler.EventType.RESIZE, 
-		       this.onLayoutResize_.bind(this));
-
-
     this.hideSubComponent_(this.ViewableGroupMenu_, 400, function(){
 	this.showSubComponent_(this.ProgressBarPanel_, 0);
     }.bind(this))
@@ -866,13 +858,60 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
  
 
 
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.onLayoutChangeStart_ = function(e){
+    goog.object.forEach(this.Renderer_.getPlanes(), 
+    function(renderPlane, planeOr) {
+	if (goog.isDefAndNotNull( e.transitionElements[planeOr])){
+	    //
+	    // Attach the render plane to the transition element
+	    //
+	    renderPlane.setContainer( e.transitionElements[planeOr]);	
+	    renderPlane.updateStyle();
+	}
+    })
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.onLayoutChanging_ = function(e){
+    goog.object.forEach(this.Renderer_.getPlanes(), 
+    function(renderPlane, planeOr) {
+	renderPlane.updateStyle();
+    })
+}
+
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.onLayoutChangeEnd_ = function(e){
+    var frames = e.frames;
+    goog.object.forEach(this.Renderer_.getPlanes(), 
+    function(renderPlane, planeOr) {
+	//
+	// Put the renderers in the new layout frames
+	//
+	if (goog.isDefAndNotNull(frames[planeOr])){
+	    renderPlane.setContainer(frames[planeOr].getElement());
+	    renderPlane.updateStyle();
+	}
+    })
+}
 
 
 
 /**
  * As stated.
-* @private
-*/
+ * @private
+ */
 xiv.ui.ViewBox.prototype.adjustLayoutHandler_ = function(){
     this.LayoutHandler_.setViewPlanes(this.Displayer_.ViewPlanes, 
 					  this.Displayer_.Interactors);
@@ -1160,6 +1199,25 @@ xiv.ui.ViewBox.prototype.initLayoutHandler_ = function(){
     goog.dom.append(this.viewFrameElt_, this.LayoutHandler_.getElement());
     goog.dom.classes.add(this.LayoutHandler_.getElement(), 
 			 xiv.ui.ViewBox.CSS.VIEWLAYOUTHANDLER);
+
+    //
+    // EVENTS
+    //
+    goog.events.listen(this.LayoutHandler_, 
+	xiv.ui.layouts.LayoutHandler.EventType.RESIZE, 
+	this.onLayoutResize_.bind(this));
+
+    goog.events.listen(this.LayoutHandler_, 
+	xiv.ui.layouts.LayoutHandler.EventType.LAYOUT_CHANGE_START, 
+	this.onLayoutChangeStart_.bind(this));
+
+    goog.events.listen(this.LayoutHandler_, 
+	xiv.ui.layouts.LayoutHandler.EventType.LAYOUT_CHANGING, 
+	this.onLayoutChanging_.bind(this));
+
+    goog.events.listen(this.LayoutHandler_, 
+	xiv.ui.layouts.LayoutHandler.EventType.LAYOUT_CHANGE_END, 
+	this.onLayoutChangeEnd_.bind(this));
 }
 
 
@@ -1420,10 +1478,7 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     // Layout Handler
     if (goog.isDefAndNotNull(this.LayoutHandler_)){
     // Unlisten - Layout Handler
-	goog.events.unlisten(this.LayoutHandler_, 
-			     xiv.ui.layouts.LayoutHandler.EventType.RESIZE, 
-			     this.onLayoutResize_.bind(this));
-	
+	goog.events.removeAll(this.LayoutHandler_);
 	goog.dispose(this.LayoutHandler_.disposeInternal());
 	delete this.LayoutHandler_;
     }
