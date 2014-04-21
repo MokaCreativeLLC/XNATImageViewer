@@ -8,7 +8,7 @@ See the COPYING file for details.
   position: absolute;
   font-size: 0.1px;
   z-index: 100;
-  background-color: rgba(255,20,20, .5);
+  /*background-color: rgba(255,20,20, 0);*/
 }
 
 
@@ -24,12 +24,12 @@ See the COPYING file for details.
 
 .moka-ui-resizedraggerright {
   left: 100%;
-  background-color: rgba(0,255,0,.5);
+  /*background-color: rgba(0,255,0,.5);*/
 }
 
 .moka-ui-resizedraggerleft {
   left: -7px
-  background-color: rgba(0,0,255,.5);
+  /*background-color: rgba(0,0,255,.5);*/
 }
 
 
@@ -47,12 +47,12 @@ See the COPYING file for details.
 
 .moka-ui-resizedraggertop {
   top: -7px;
-  background-color: rgba(0,255,0,.5);
+  /*background-color: rgba(0,255,0,.5);*/
 }
 
 .moka-ui-resizedraggerbottom {
   top: 100%;
-  background-color: rgba(255,0,0,.5);
+  /*background-color: rgba(255,0,0,.5);*/
 }
 
 
@@ -80,5 +80,5 @@ See the COPYING file for details.
 
 .moka-ui-resizedraggertopright {
   left: calc(100% - 7px);
-  background-color: orange;
+  /*background-color: orange;*/
 }

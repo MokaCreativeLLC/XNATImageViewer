@@ -214,6 +214,13 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
 
 
 /**
+ * @const
+ */
+xiv.ui.ViewBox.ORIENTATION_TAG = goog.string.createUniqueString();
+
+
+
+/**
  * @dict
  * @const
  */
@@ -471,149 +478,180 @@ xiv.ui.ViewBox.prototype.onRendering_ = function(e){
 
 
 
+
 /**
  * @private
  */
-xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
-    
+xiv.ui.ViewBox.prototype.syncVolumeToSlider_ = 
+function(slider, volume) {
+    if (!goog.isDefAndNotNull(volume)) return;
+    volume['index' + slider[xiv.ui.ViewBox.ORIENTATION_TAG]] = 
+	slider.getMaximum() - slider.getValue();
+    //volume.modified(true);
+}
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.syncFrameDisplayToSlider_ = 
+function(slider) {
+
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.syncCrosshairsToSliderX_ =  
+function(slider, volume) {
+    var ind = 'indexX'
+
+    // Y Vertical crosshair
+    this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Y')
+    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].
+	vertical.style.left =
+	this.Renderer_.PlaneY_.getRenderer().getVerticalSliceX(
+	    volume[ind], true).toString() + 'px';
+
+    // Z Vertical crosshair
+    this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Z')
+    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].
+	vertical.style.left =
+	this.Renderer_.PlaneZ_.getRenderer().getVerticalSliceX(
+	    volume[ind], true).toString() + 'px';
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.syncCrosshairsToSliderY_ =  
+function(slider, volume) {
+    var ind = 'indexY'
+
+    // X Vertical crosshair
+    this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('X')
+    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].
+	vertical.style.left =
+	this.Renderer_.PlaneX_.getRenderer().getVerticalSliceX(
+	    volume[ind]).toString() + 'px';
+
+    // Z Horizontall crosshair
+    this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Z')
+    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].
+	horizontal.style.top =
+	this.Renderer_.PlaneZ_.getRenderer().getHorizontalSliceY(
+	    volume[ind], true).toString() + 'px';
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.syncCrosshairsToSliderZ_ =  
+function(slider, volume) {
+    var ind = 'indexZ'
+
+    // X Horizontal crosshair
+    this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('X')
+    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].horizontal.style.top =
+	this.Renderer_.PlaneX_.getRenderer().getHorizontalSliceY(
+	    volume[ind]).toString() + 'px';
+
+    // Y Vertical crosshair
+    this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Y')
+    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].horizontal.style.top =
+	this.Renderer_.PlaneY_.getRenderer().getHorizontalSliceY(
+	    volume[ind]).toString() + 'px';
+
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.syncCrosshairsToSlider_ = 
+function(slider, volume) {
+    switch (slider[xiv.ui.ViewBox.ORIENTATION_TAG]){
+    case 'X': 
+	this.syncCrosshairsToSliderX_(slider, volume);
+	break;
+    case 'Y': 
+	this.syncCrosshairsToSliderY_(slider, volume);
+	break;
+    case 'Z': 
+	this.syncCrosshairsToSliderZ_(slider, volume);
+	break;
+    }
+}
+
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {  
+    var interactors = this.LayoutHandler_.getMasterInteractors();
+    var interactorSet;
+    var slider;
+    var frameDisplay;
+    var crosshairs;
+    var currVol;
+    var arrPos;
+
     goog.object.forEach(this.Renderer_.getPlanes(), function(plane, planeOr) {
+	//
+	// We can't do anything if there's no slider or plane interactors.
+	//
+	if (!goog.isDefAndNotNull(interactors[planeOr]) ||
+	    !goog.isDefAndNotNull(interactors[planeOr].SLIDER)) { 
+	    return 
+	};
 
+	interactorSet = interactors[planeOr];
+	slider = interactorSet.SLIDER;
+	frameDisplay = interactorSet.DISPLAY;
+	crosshairs = interactorSet.CROSSHAIRS;
+	currVol = plane.getVolume();
+	arrPos = 0;
 
-	if (planeOr !== 'V') {
-	    var layoutPlane = this.LayoutHandler_.getCurrentLayout().
-		getLayoutFrameByTitle(planeOr);
-
-	    var ch1 = goog.dom.createDom('div');
-	    ch1.style.position = 'absolute';
-	    ch1.style.height = '1px';
-	    ch1.style.width = '100%';
-	    ch1.style.top = '50%';
-	    ch1.style.left = '0%';
-	    ch1.style.backgroundColor = 'rgb(185,185,185)';
-
-
-	    var ch2 = goog.dom.createDom('div');
-	    ch2.style.position = 'absolute';
-	    ch2.style.height = '100%';
-	    ch2.style.width = '1px';
-	    ch2.style.top = '0%';
-	    ch2.style.left = '50%';
-	    ch2.style.backgroundColor = 'rgb(185,185,185)';
-
-	    goog.dom.append(layoutPlane.getElement(), ch1);
-	    goog.dom.append(layoutPlane.getElement(), ch2);
-
-	    layoutPlane['CrossHoriz'] = ch1; 
-	    layoutPlane['CrossVert'] = ch2; 
+	//
+	// XTK specific designations
+	//
+	switch (planeOr){
+	case 'X': 
+	    arrPos = 2;
+	    break;
+	case 'Y': 
+	    arrPos = 1;
+	    break;
+	case 'Z': 
+	    arrPos = 0;
+	    break;
 	}
+	
+	slider.setMaximum(currVol.dimensions[arrPos])
+	slider.setValue(currVol['index' + planeOr]);
+	slider[xiv.ui.ViewBox.ORIENTATION_TAG] = planeOr
 
-	var interactors = this.LayoutHandler_.getCurrentLayout().
-		getPlaneInteractors(planeOr);
+	// Change Slice when slider moves
+	goog.events.listen(slider, moka.ui.GenericSlider.EventType.SLIDE, 
+        function(e){
+	    this.syncVolumeToSlider_(e.target, currVol);
+	    this.syncCrosshairsToSlider_(e.target, currVol);
 
-	if (interactors[xiv.ui.layouts.Layout.INTERACTORS.SLIDER]){
+	    //
+	    // Change crosshairs
+	    //
+	  
+	}.bind(this))
 
-	    var slider = /**@type {!moka.ui.GenericSlider}*/
-	    interactors[xiv.ui.layouts.Layout.INTERACTORS.SLIDER];
-	    var currVol = plane.getVolume();
-	    
-	    var arrPos = 0;
-	    switch (planeOr){
-	    case 'X': 
-		arrPos = 2;
-		break;
-	    case 'Y': 
-		arrPos = 1;
-		break;
-	    case 'Z': 
-		arrPos = 0;
-		break;
-	    }
-	    
-	    window.console.log("RETURNING OUT OF SLIDERS -- combe back later");
-	    //return
-
-	    slider.setMaximum(currVol.dimensions[arrPos])
-	    slider.setValue(currVol['index' + planeOr]);
-
-	    window.console.log(currVol['index' + planeOr], 
-			       currVol.indexX, currVol.indexY, currVol.indexZ);
-
-	    // Change Slice when slider moves
-	    goog.events.listen( slider, 
-		moka.ui.GenericSlider.EventType.SLIDE, function(e){
-
-		    if (!currVol) return;
-		    
-		    currVol['index' + plane.getOrientation()] = 
-		    interactors[xiv.ui.layouts.Layout.INTERACTORS.SLIDER].
-			getMaximum()
-		    - interactors[xiv.ui.layouts.Layout.INTERACTORS.SLIDER].
-			getValue();
-		    
-		    /**
-		    window.console.log('\n\n', planeOr);
-		    window.console.log(currVol._upperThreshold);
-		    window.console.log(planeOr, plane.getRenderer()._height);
-		    window.console.log(planeOr, plane.getRenderer()._width);
-		    window.console.log(planeOr, 
-				       plane.getRenderer()._sliceHeight);
-
-		    window.console.log(planeOr, plane.getRenderer().
-				       _sliceWidth);
-				       */
-
-		    currVol.dimensions[arrPos];
-		    
-
-		    // Change crosshairs
-		    switch (planeOr){
-		    case 'X': 
-
-			//
-			// Y Vertical crosshair
-			//
-			var vertY = 
-			this.Renderer_.PlaneY_.getRenderer().
-			    getVerticalSliceLeft(
-			    currVol['index' + plane.getOrientation()], true);
-
-			var layoutPlaneY = this.LayoutHandler_.
-			    getCurrentLayout().getPlaneByTitle('Y');
-
-			layoutPlaneY['CrossVert'].style.left = 
-			vertY.toString() + 'px';
-
-			//
-			// Z Vertical crosshair
-			//
-			var vertZ = 
-			this.Renderer_.PlaneZ_.getRenderer().
-			    getVerticalSliceLeft(
-			    currVol['index' + plane.getOrientation()]);
-
-			var layoutPlaneZ = this.LayoutHandler_.
-			    getCurrentLayout().getPlaneByTitle('Z');
-
-			layoutPlaneZ['CrossVert'].style.left = 
-			vertZ.toString() + 'px';
-
-
-			break;
-		    case 'Y': 
-			window.console.log("Y move");
-			window.console.log(
-			    currVol['index' + plane.getOrientation()]);
-			break;
-		    case 'Z': 
-			window.console.log("Z move");
-			window.console.log(
-			    currVol['index' + plane.getOrientation()]);
-			break;
-		    }
-		}.bind(this))
-
-	    // 
-	}
 
     }.bind(this));
 }
@@ -1232,25 +1270,29 @@ xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
     // Add icons and title to LayoutMenu
     // Add object and title to LayoutHandler
     goog.object.forEach({
-	'Sagittal': {
-	    OBJ: xiv.ui.Sagittal,
-	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/sagittal.png'
-	},
-	'Coronal': {
-	    OBJ: xiv.ui.Coronal,
-	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/coronal.png'
-	},
-	'Transverse': {
-	    OBJ: xiv.ui.Transverse,
-	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/transverse.png'
-	},
-	'3d': {
-	    OBJ: xiv.ui.ThreeD,
-	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/3d.png'
-	},
 	'Four-Up': {
 	    OBJ: xiv.ui.layouts.FourUp,
 	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/four-up.png'
+	},
+	'Sagittal': {
+	    OBJ: xiv.ui.layouts.Sagittal,
+	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/sagittal.png'
+	},
+	'Coronal': {
+	    OBJ: xiv.ui.layouts.Coronal,
+	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/coronal.png'
+	},
+	'Transverse': {
+	    OBJ: xiv.ui.layouts.Transverse,
+	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/transverse.png'
+	},
+	'3D': {
+	    OBJ: xiv.ui.layouts.ThreeD,
+	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/3d.png'
+	},
+	'2D': {
+	    OBJ: xiv.ui.layouts.TwoD,
+	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/2d.png'
 	},
 	'Conventional': {
 	    OBJ: xiv.ui.layouts.Conventional,
@@ -1259,6 +1301,14 @@ xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
     }, function(val, key){
 	this.LayoutMenu_.addMenuItem(key, val.ICON);
 	this.LayoutHandler_.addLayout(key, val.OBJ);
+
+	//
+	// Set the master layout
+	//
+	if (key == 'Four-Up') {
+	    this.LayoutHandler_.setMasterLayout(key);
+	}
+
     }.bind(this))
 
     // Set the layout when a menu item is clicked.

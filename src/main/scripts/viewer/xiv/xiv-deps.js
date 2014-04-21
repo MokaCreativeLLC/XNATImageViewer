@@ -154,6 +154,12 @@ goog.addDependency('../../../../ui/layouts/LayoutHandler.js',
 ]);
 
 
+goog.addDependency('../../../../ui/layouts/interactors/Crosshairs.js', 
+['xiv.ui.layouts.interactors.Crosshairs'], [
+    'moka.ui.Component'
+]);
+
+
 
 goog.addDependency('../../../../ui/layouts/LayoutFrame.js', 
 ['xiv.ui.layouts.LayoutFrame'], [
@@ -174,6 +180,37 @@ goog.addDependency('../../../../ui/layouts/XyzvLayout.js',
 
 goog.addDependency('../../../../ui/layouts/Conventional.js', 
 ['xiv.ui.layouts.Conventional'], [
+    'xiv.ui.layouts.XyzvLayout'
+]);
+
+
+goog.addDependency('../../../../ui/layouts/Sagittal.js', 
+['xiv.ui.layouts.Sagittal'], [
+    'xiv.ui.layouts.XyzvLayout'
+]);
+
+
+goog.addDependency('../../../../ui/layouts/Coronal.js', 
+['xiv.ui.layouts.Coronal'], [
+    'xiv.ui.layouts.XyzvLayout'
+]);
+
+
+goog.addDependency('../../../../ui/layouts/Transverse.js', 
+['xiv.ui.layouts.Transverse'], [
+    'xiv.ui.layouts.XyzvLayout'
+]);
+
+
+goog.addDependency('../../../../ui/layouts/TwoD.js', 
+['xiv.ui.layouts.TwoD'], [
+    'xiv.ui.layouts.XyzvLayout'
+]);
+
+
+
+goog.addDependency('../../../../ui/layouts/ThreeD.js', 
+['xiv.ui.layouts.ThreeD'], [
     'xiv.ui.layouts.XyzvLayout'
 ]);
 

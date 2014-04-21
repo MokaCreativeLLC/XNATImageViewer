@@ -26,9 +26,11 @@ goog.require('moka.ui.Component');
 goog.require('xiv.ui.layouts.Layout');
 goog.require('xiv.ui.layouts.Conventional');
 goog.require('xiv.ui.layouts.FourUp');
-//goog.require('xiv.ui.Sagittal');
-//goog.require('xiv.ui.Coronal');
-//goog.require('xiv.ui.Transverse');
+goog.require('xiv.ui.layouts.Sagittal');
+goog.require('xiv.ui.layouts.Coronal');
+goog.require('xiv.ui.layouts.Transverse');
+goog.require('xiv.ui.layouts.TwoD');
+goog.require('xiv.ui.layouts.ThreeD');
 
 
 
@@ -54,8 +56,6 @@ xiv.ui.layouts.LayoutHandler = function() {
 	xiv.ui.layouts.FourUp;
     this.constructor.LayoutTypes[xiv.ui.layouts.Conventional.TITLE] = 
 	xiv.ui.layouts.Conventional;
-
-
 
 
 
@@ -98,6 +98,7 @@ xiv.ui.layouts.LayoutHandler = function() {
      * @type {Object.<string, Element>}
      */ 
     this.transitionElts_ = {};
+
 }
 goog.inherits(xiv.ui.layouts.LayoutHandler, moka.ui.Component);
 goog.exportSymbol('xiv.ui.layouts.LayoutHandler', xiv.ui.layouts.LayoutHandler);
@@ -152,6 +153,13 @@ xiv.ui.layouts.LayoutHandler.prototype.Layouts_ = null;
 
 
 
+/**
+ * @private
+ * @type {!string}
+ */ 
+xiv.ui.layouts.LayoutHandler.prototype.masterLayout_ = null;
+
+
 
 /**
 * @public
@@ -178,8 +186,32 @@ xiv.ui.layouts.LayoutHandler.prototype.getCurrentLayout = function(){
  */ 
 xiv.ui.layouts.LayoutHandler.prototype.getCurrentLayoutFrame = 
 function(planeTitle){
-    return this.Layouts_[this.currLayoutTitle_].getLayoutFrameByTitle(planeTitle);
+    return this.Layouts_[this.currLayoutTitle_].
+	getLayoutFrameByTitle(planeTitle);
 };
+
+
+
+/**
+ * @public
+ * @param{xiv.ui.layout.XyzvLayout} newLayout
+ */
+xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractors = function(Layout) {
+    return this.masterLayout_.getInteractors();
+}
+
+
+
+/**
+ * @param {!string} title The title to associate with the layout.
+ * @public
+ */ 
+xiv.ui.layouts.LayoutHandler.prototype.setMasterLayout = 
+function(title) {
+    this.setLayout(title);
+    this.Layouts_[title].addInteractors();
+    this.masterLayout_ = this.Layouts_[title]; 
+}
 
 
 
@@ -187,6 +219,7 @@ function(planeTitle){
 /**
  * @param {!string} title The title to associate with the layout.
  * @param {!xiv.ui.layouts.Layout} layout
+ * @public
  */ 
 xiv.ui.layouts.LayoutHandler.prototype.addLayout = function(title, layout) {
     if (goog.object.containsKey(this.LayoutObjects_)){
@@ -194,9 +227,7 @@ xiv.ui.layouts.LayoutHandler.prototype.addLayout = function(title, layout) {
     }
     if (!layout) { return };
 
-    this.LayoutObjects_[title] = layout;
-   
-    //window.console.log(layout,  xiv.ui.layouts.Layout.EventType.RESIZE);
+    this.LayoutObjects_[title] = layout; 
 }
 
 
@@ -217,13 +248,16 @@ function(title, opt_animateSwitch) {
     //
     // Create layouts object
     //
-    if (!goog.isDefAndNotNull(this.Layouts_)) { this.Layouts_ = {}; }
+    if (!goog.isDefAndNotNull(this.Layouts_)) { 
+	this.Layouts_ = {}; 
+    }
 
     //
     // Create instance of layout object in Layouts_, if not stored.
     //
     if (!goog.object.containsKey(this.Layouts_, title)) {
 	this.Layouts_[title] = new this.LayoutObjects_[title];
+
 	//
 	// LISTEN to resize
 	//
@@ -493,7 +527,8 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChanging_ = function() {
  * @private
  */ 
 xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
-    var newLayoutFrames = this.Layouts_[this.currLayoutTitle_].getLayoutFrames();
+    var newLayoutFrames = this.Layouts_[this.currLayoutTitle_].
+	getLayoutFrames();
 
     //-------------------------------
     // IMPORTANT!!!!!!!!!!!!!!
@@ -507,6 +542,13 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
 	})
 	
     }.bind(this));
+
+    //
+    // Transfer the interactors over
+    //
+    this.Layouts_[this.prevLayoutTitle_].transferInteractors(
+	this.Layouts_[this.currLayoutTitle_])
+
 
     //
     // Dispose of the transition elements
@@ -639,6 +681,8 @@ xiv.ui.layouts.LayoutHandler.prototype.disposeInternal = function(){
     goog.object.clear(this.planeChildren_);
     delete this.planeChildren_;
 
+    // Master layout
+    delete this.masterLayout_;
 
     moka.ui.disposeComponentMap(this.Layouts_);
     delete this.Layouts_;

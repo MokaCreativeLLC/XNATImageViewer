@@ -63,7 +63,8 @@ xiv.ui.layouts.Layout.EventType = {
  */
 xiv.ui.layouts.Layout.INTERACTORS = {
     SLIDER: goog.string.createUniqueString(),
-    DISPLAY: goog.string.createUniqueString()
+    DISPLAY: goog.string.createUniqueString(),
+    CROSSHAIRS: goog.string.createUniqueString() 
 }
 
 

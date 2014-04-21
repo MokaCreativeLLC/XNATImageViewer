@@ -339,9 +339,9 @@ moka.fx.generateAnim_BgColorTrans = function(elt, startDim, endDim, duration) {
  * 'moka.fx.createAnimsFromDims' to get the animations,
  * then adds them to a parallel queue and plays them.
  * @param {!Element} elt The element to generate the animations for.
- * @param {!Object.<string, string|number>} startDims The start 
+ * @param {Object.<string, string|number>} startDims The start 
  *    dimensions.
- * @param {!Object.<string, string|number>} endDims The end dimensions.
+ * @param {Object.<string, string|number>} endDims The end dimensions.
  * @param {!number} duration The animation durations.
  * @return {Array.<goog.fx.dom.Animation>}
  * @public
@@ -351,6 +351,14 @@ moka.fx.generateAnimations = function (elt, startDim, endDim, duration) {
     var anims = /**@type {!Array.<goog.fx.Animation>}*/ [];
 
     goog.array.forEach(moka.fx.animGenStyles, function(style){
+	//
+	// Don't process empty values
+	//
+	if (!goog.isDefAndNotNull(startDim) || !goog.isDefAndNotNull(endDim)){
+	    return;
+	}
+
+
 	switch(style){
 	    // we only need one, otherwise it'll create a repeat.
 	case 'left':  
@@ -386,9 +394,9 @@ moka.fx.generateAnimations = function (elt, startDim, endDim, duration) {
 
     // Clean out undefined values.
     // Not so elegant :-/
-    var anims2 = /**@type {!Array.<goog.fx.Animation>}*/ [];
+    var anims2 = [];
     goog.array.forEach(anims, function(anim){
-	if (anim){
+	if (goog.isDefAndNotNull(anim)){
 	    anims2.push(anim);
 	}
     })

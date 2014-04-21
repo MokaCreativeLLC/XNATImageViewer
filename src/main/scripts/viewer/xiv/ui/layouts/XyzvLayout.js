@@ -5,11 +5,15 @@
 // goog
 goog.require('goog.string');
 goog.require('goog.array');
+goog.require('goog.object');
 
-// utils
+// moka
 goog.require('moka.string');
+
+// xiv
 goog.require('xiv.ui.layouts.Layout');
 goog.require('xiv.ui.layouts.LayoutFrame');
+goog.require('xiv.ui.layouts.interactors.Crosshairs');
 
 
 
@@ -18,20 +22,24 @@ goog.require('xiv.ui.layouts.LayoutFrame');
  * xiv.ui.layouts.XyzvLayout
  *
  * @constructor
+ * @param {string= | Array.<string>=} opt_frames
  * @extends {xiv.ui.layouts.Layout}
  */
 goog.provide('xiv.ui.layouts.XyzvLayout');
-xiv.ui.layouts.XyzvLayout = function() { 
+xiv.ui.layouts.XyzvLayout = function(opt_frames) { 
     goog.base(this);
 
-    this.addLayoutFrames_();
+    opt_frames = goog.isDefAndNotNull(opt_frames) ? opt_frames :
+	goog.object.getValues(xiv.ui.layouts.XyzvLayout.PLANES);
+    opt_frames = goog.isArray(opt_frames) ? opt_frames : [opt_frames];
 
-    this.addInteractors_();
-
-    this.setupLayoutFrame_X();
-    this.setupLayoutFrame_Y();
-    this.setupLayoutFrame_Z();
-    this.setupLayoutFrame_V();
+    goog.array.forEach(opt_frames, function(frameTitle, i){
+	opt_frames[i] = frameTitle.toUpperCase();
+    })
+    
+    this.validateFrameTitles_(opt_frames);
+    this.addLayoutFrames_(opt_frames);
+    this.setupLayoutFrames_();
     this.updateStyle();
 }
 goog.inherits(xiv.ui.layouts.XyzvLayout, xiv.ui.layouts.Layout);
@@ -52,8 +60,7 @@ xiv.ui.layouts.XyzvLayout.TITLE = 'XyzvLayout';
  * @enum {string}
  * @public
  */
-xiv.ui.layouts.XyzvLayout.EventType = {
-}
+xiv.ui.layouts.XyzvLayout.EventType = {}
 
 
 
@@ -71,10 +78,10 @@ xiv.ui.layouts.XyzvLayout.ID_PREFIX =  'xiv.ui.layouts.XyzvLayout';
  * @public
  */
 xiv.ui.layouts.XyzvLayout.PLANES = {
-    X: 'x',
-    Y: 'y',
-    Z: 'z',
-    V: 'v'
+    X: 'X',
+    Y: 'Y',
+    Z: 'Z',
+    V: 'V'
 }
 
 
@@ -95,9 +102,22 @@ xiv.ui.layouts.XyzvLayout.CSS_SUFFIX = {
     SLIDER_TRACK_X: 'slider-track-x',
     SLIDER_TRACK_Y: 'slider-track-y',
     SLIDER_TRACK_Z: 'slider-track-z',
-
     FRAMENUMBER: 'framenumber',
 }
+
+
+ 
+/**
+ * @struct
+ */
+xiv.ui.layouts.XyzvLayout.InteractorSet = 
+function(slider, display, crosshairs) {
+    this.SLIDER = slider;
+    this.DISPLAY = display;
+    this.CROSSHAIRS = crosshairs;   
+}
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.InteractorSet', 
+		  xiv.ui.layouts.XyzvLayout.InteractorSet);
 
 
 
@@ -154,13 +174,41 @@ xiv.ui.layouts.XyzvLayout.prototype.createResizeBoundary = function(planeOr){
 
 
 
-
 /**
+ * @param {!Array.<string>} frameTitles
  * @private
  */
-xiv.ui.layouts.XyzvLayout.prototype.addLayoutFrames_ = function(){
-    var planeTitle = /**@type {!string}*/ '';
-    goog.object.forEach(xiv.ui.layouts.XyzvLayout.PLANES, 
+xiv.ui.layouts.XyzvLayout.prototype.validateFrameTitles_ = 
+function(frameTitles){
+    //
+    // Validate length
+    //
+    if (frameTitles.length > 
+	goog.object.getCount(xiv.ui.layouts.XyzvLayout.PLANES)){
+	throw new Error('Invalid amount of frames ' + frameTitles + 
+			'. Must be ' + xiv.ui.layouts.XyzvLayout.PLANES);
+    }
+
+    //
+    // Validate values
+    //
+    goog.array.forEach(frameTitles, function(title){
+	if (!goog.object.containsValue(
+	    xiv.ui.layouts.XyzvLayout.PLANES, title)){
+	    throw new Error('Invalid frame title ', title);
+	}
+    }.bind(this))
+}
+
+
+
+/**
+ * @param {!Object} frames
+ * @private
+ */
+xiv.ui.layouts.XyzvLayout.prototype.addLayoutFrames_ = function(frames){
+    var planeTitle = '';
+    goog.array.forEach(frames, 
 	function(title, key){
 	    planeTitle = title.toUpperCase();
 	    this.addLayoutFrame(new xiv.ui.layouts.LayoutFrame(planeTitle));
@@ -174,12 +222,59 @@ xiv.ui.layouts.XyzvLayout.prototype.addLayoutFrames_ = function(){
 
 
 /**
- * @private
+ * @public
+ * @param{xiv.ui.layout.XyzvLayout} newLayout
  */
-xiv.ui.layouts.XyzvLayout.prototype.addInteractors_ = function() {
+xiv.ui.layouts.XyzvLayout.prototype.transferInteractors = function(Layout) {
+    Layout.setInteractors(this.getInteractors());
+}
+
+
+
+/**
+ * @public
+ * @param {Object.<xiv.ui.layouts.XyzvLayout.InteractorSet>} interactors
+ */
+xiv.ui.layouts.XyzvLayout.prototype.setInteractors = function(interactors) {
+    this.loopXyz(function(LayoutFrame, key) {
+	if (goog.isDefAndNotNull(interactors[key])){
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.SLIDER] =
+		interactors[key].SLIDER;
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.DISPLAY] =
+		interactors[key].DISPLAY;
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS] =
+		interactors[key].CROSSHAIRS;
+	}
+    })   
+}
+
+
+
+/**
+ * @public
+ */
+xiv.ui.layouts.XyzvLayout.prototype.addInteractors = function() {
     this.addLayoutFrameSliders_();
     this.addFrameDisplayers_();
-    //this.addCrossHairs_();
+    this.addCrosshairs_();
+};
+
+
+
+
+/**
+ * @return {Object.<xiv.ui.layouts.XyzvLayout.InteractorSet>}
+ * @public
+ */
+xiv.ui.layouts.XyzvLayout.prototype.getInteractors = function() {
+    var interactors = {}
+    this.loopXyz(function(LayoutFrame, key) {
+	interactors[key] = new xiv.ui.layouts.XyzvLayout.InteractorSet(
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.SLIDER], 
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.DISPLAY],
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])
+    }) 
+    return interactors
 };
 
 
@@ -187,10 +282,11 @@ xiv.ui.layouts.XyzvLayout.prototype.addInteractors_ = function() {
 /**
  * @private
  */
-xiv.ui.layouts.XyzvLayout.prototype.addLayoutFrameSliders_ = function(){    
+xiv.ui.layouts.XyzvLayout.prototype.addLayoutFrameSliders_ = function(){ 
+    var slider;
+
     this.loopXyz(function(LayoutFrame, key) {			
-	    var slider = /**@type {!moka.ui.GenericSlider}*/
-	    new moka.ui.GenericSlider('horizontal');
+	    slider = new moka.ui.GenericSlider('horizontal');
 
 	    slider.getElement().id = key + "_LayoutFrameSlider_" +
 		goog.string.createUniqueString();
@@ -225,10 +321,11 @@ xiv.ui.layouts.XyzvLayout.prototype.addLayoutFrameSliders_ = function(){
  * @private
  */
 xiv.ui.layouts.XyzvLayout.prototype.addFrameDisplayers_ = function(){
+
+    var numberElt;
     this.loopXyz(function(LayoutFrame, key) {	
 		
-	var numberElt = /**@type {!Element}*/
-	goog.dom.createDom('div', {});
+	numberElt = goog.dom.createDom('div', {});
 	numberElt.style.color = 'rgba(255,255,255)';
 
 	LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.DISPLAY] = numberElt;
@@ -253,6 +350,26 @@ xiv.ui.layouts.XyzvLayout.prototype.addFrameDisplayers_ = function(){
 
 
 /**
+ * @private
+ */
+xiv.ui.layouts.XyzvLayout.prototype.addCrosshairs_ = function(){
+    var crosshairs;
+    this.loopXyz(function(LayoutFrame, key) {
+
+	crosshairs = new xiv.ui.layouts.interactors.Crosshairs();
+
+	LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS] = 
+	    crosshairs; 
+
+	goog.dom.append(LayoutFrame.getElement(), crosshairs.vertical);
+	goog.dom.append(LayoutFrame.getElement(), crosshairs.horizontal);
+	
+    }.bind(this));
+}
+
+
+
+/**
  * @param {!Function}
  * @protected
  */
@@ -260,7 +377,8 @@ xiv.ui.layouts.XyzvLayout.prototype.loopXyz = function(callback){
     goog.object.forEach(xiv.ui.layouts.XyzvLayout.PLANES, 
 	function(plane, key) {	
 	    plane = plane.toUpperCase();
-	    if (plane == 'V') { return };
+	    if ((!goog.isDefAndNotNull(this.LayoutFrames[plane])) 
+		|| (plane == 'V')) { return };
 	    callback(this.LayoutFrames[plane], plane);
 	}.bind(this))
 };
@@ -282,11 +400,33 @@ xiv.ui.layouts.XyzvLayout.prototype.loop = function(callback){
 
 
 /**
+ * @private
+ */
+xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrames_ = function(){
+    if (goog.isDefAndNotNull(this.LayoutFrames['X'])){
+	this.setupLayoutFrame_X();
+    }
+    if (goog.isDefAndNotNull(this.LayoutFrames['Y'])){
+	this.setupLayoutFrame_Y();
+    }
+    if (goog.isDefAndNotNull(this.LayoutFrames['Z'])){
+	this.setupLayoutFrame_Z();
+    }
+    if (goog.isDefAndNotNull(this.LayoutFrames['V'])){
+	this.setupLayoutFrame_V();
+    }
+}
+
+
+
+/**
  * Sets up the relevant plane.  
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_X = function(){
-    goog.dom.classes.add(this.LayoutFrames['X'].getElement(), this.constructor.CSS.X);
+    if (!goog.isDefAndNotNull(this.constructor.CSS)) { return };
+    goog.dom.classes.add(this.LayoutFrames['X'].getElement(), 
+			 this.constructor.CSS.X);
 };
 
 
@@ -296,7 +436,9 @@ xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_X = function(){
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_Y = function(){
-    goog.dom.classes.add(this.LayoutFrames['Y'].getElement(), this.constructor.CSS.Y);
+    if (!goog.isDefAndNotNull(this.constructor.CSS)) { return };
+    goog.dom.classes.add(this.LayoutFrames['Y'].getElement(), 
+			 this.constructor.CSS.Y);
 };
 
 
@@ -306,7 +448,9 @@ xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_Y = function(){
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_Z = function(){
-    goog.dom.classes.add(this.LayoutFrames['Z'].getElement(), this.constructor.CSS.Z);
+    if (!goog.isDefAndNotNull(this.constructor.CSS)) { return };
+    goog.dom.classes.add(this.LayoutFrames['Z'].getElement(), 
+			 this.constructor.CSS.Z);
 };
 
 
@@ -316,7 +460,9 @@ xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_Z = function(){
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_V = function(){
-    goog.dom.classes.add(this.LayoutFrames['V'].getElement(), this.constructor.CSS.V);
+    if (!goog.isDefAndNotNull(this.constructor.CSS)) { return };
+    goog.dom.classes.add(this.LayoutFrames['V'].getElement(),
+			 this.constructor.CSS.V);
 };
 
 

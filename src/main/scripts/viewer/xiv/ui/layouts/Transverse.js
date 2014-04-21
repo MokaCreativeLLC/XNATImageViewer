@@ -2,68 +2,48 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-// goog
-goog.require('goog.string');
-goog.require('goog.array');
-
-// utils
-goog.require('moka.string');
-
 // xiv
-goog.require('xiv');
-
+goog.require('xiv.ui.layouts.XyzvLayout');
 
 
 
 /**
- * xiv.ui.ViewLayout
+ * xiv.ui.layouts.Transverse
  *
  * @constructor
- * @param {!string, array.<string>=}
+ * @extends {xiv.ui.layouts.XyzvLayout}
  */
-goog.provide('xiv.ui.ViewLayout');
-xiv.ui.ViewLayout = function(viewSchemeName, cssSuffixes) {
-    var that = this;
-    var cssSuffixes = cssSuffixes ? cssSuffixes : ['v', 'x', 'y', 'z'];
-    var cssId = moka.string.stripNonAlphanumeric(viewSchemeName.toLowerCase());
-
-
-    this.id = viewSchemeName;
-    this.title = viewSchemeName;
-    this.src = xiv.ICON_URL + "ViewLayouts/" + 
-	goog.string.toTitleCase(this.id) +  "-white.png";
-    this.cssPrefix = goog.getCssName(
-	xiv.ui.ViewLayout.VIEWSCHEME_CLASS_PREFIX, cssId);
-
-
-    this.cssSheets = {};
-    this.cssSheetsInteractor = {}
-    goog.array.forEach(cssSuffixes, function(suffix){
-	that.cssSheets[suffix] = goog.getCssName(that.cssPrefix, suffix);
-	//console.log(that.cssSheets[suffix]);
-	that.cssSheetsInteractor[suffix] = goog.getCssName(goog.getCssName(xiv.ui.ViewLayout.VIEWSCHEME_INTERACTOR_CLASS_PREFIX, cssId), suffix);
-    })
-
-
-   
-
+goog.provide('xiv.ui.layouts.Transverse');
+xiv.ui.layouts.Transverse = function() { 
+    goog.base(this, 'Z'); 
+    goog.dom.classes.add(this.LayoutFrames['Z'].getElement(), 
+	goog.getCssName(xiv.ui.layouts.LayoutFrame.ELEMENT_CLASS, 
+			this.constructor.TITLE.toLowerCase()))
 }
-goog.exportSymbol('xiv.ui.ViewLayout', xiv.ui.ViewLayout);
+goog.inherits(xiv.ui.layouts.Transverse, xiv.ui.layouts.XyzvLayout);
+goog.exportSymbol('xiv.ui.layouts.Transverse', xiv.ui.layouts.Transverse);
 
 
 
-xiv.ui.ViewLayout.VIEWSCHEME_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName('xiv-viewlayout');
-xiv.ui.ViewLayout.VIEWSCHEME_INTERACTOR_CLASS_PREFIX = /**@type {string} @const*/ goog.getCssName(xiv.ui.ViewLayout.VIEWSCHEME_CLASS_PREFIX, 'interactor');
+/**
+ * @type {!string}
+ * @public
+ */
+xiv.ui.layouts.Transverse.TITLE = 'Transverse';
+
+
+
+/**
+ * @type {!string} 
+ * @const
+ * @expose
+ */
+xiv.ui.layouts.Transverse.ID_PREFIX =  'xiv.ui.layouts.Transverse';
 
 
 
 
-xiv.ui.ViewLayout.prototype.id = /** @type {string}*/ '';
-xiv.ui.ViewLayout.prototype.src = /** @type {string}*/ '';
-xiv.ui.ViewLayout.prototype.title = /** @type {string}*/ '';
-xiv.ui.ViewLayout.prototype.cssPrefix = /** @type {string}*/ '';
-xiv.ui.ViewLayout.prototype.cssSheets = /** @type {Object.<string,string>}*/ '';
-xiv.ui.ViewLayout.prototype.cssSheetsInteractor = /** @type {Object.<string,string>}*/ '';
+
 
 
 

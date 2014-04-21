@@ -76,14 +76,14 @@ xiv.vis.XtkRenderer2D.prototype.onSliceNavigation = function() {
  *
  * Derived from  ' X.renderer2D.prototype.xy2ijk '.
  *
- * @param {!number} the verticalSlice
+ * @param {!number} sliceNumber The slice number
+ * @param {!string} sliceType Either 'vertical' or 'horizontal'.
  * @param {boolean=} Whether to reverse the orientation.
  * @return {?Array} An array of [i,j,k] coordinates or null if out of frame.
+ * @private
  */
-xiv.vis.XtkRenderer2D.prototype.getVerticalSliceLeft = 
-function(sliceNumber, opt_reverse) {
-
-    var sliceType = 'vertical';
+xiv.vis.XtkRenderer2D.prototype.getSliceScreenPos_ = 
+function(sliceNumber, sliceType, opt_reverse) {
 
     var _volume = this._topLevelObjects[0];
     var _view = this._camera._view;
@@ -158,7 +158,7 @@ function(sliceNumber, opt_reverse) {
 	sliceNumber = Math.max(0, sliceNumber);
 	sliceNumber = Math.min(sliceNumber, _sliceWidth);
 
-	if (opt_reverse === 'true'){
+	if (opt_reverse){
 	    return _image_left2xy + 
 		((this._sliceWidth - sliceNumber) / _sliceWidth) * 
 		_sliceWidthScaled; 	
@@ -171,6 +171,44 @@ function(sliceNumber, opt_reverse) {
 	// Crop min, max
 	sliceNumber = Math.max(0, sliceNumber);
 	sliceNumber = Math.min(sliceNumber, _sliceHeight);
-	return _image_top2xy + (sliceNumber / _sliceHeight) * _sliceHeightScaled;
+	return _image_top2xy + (sliceNumber / _sliceHeight) * 
+	    _sliceHeightScaled;
     }
+}
+
+
+
+
+/**
+ * Returns the Y coordinate of the container where the veritcal slice 
+ * belongs.
+ *
+ * Derived from  ' X.renderer2D.prototype.xy2ijk '.
+ *
+ * @param {!number} the verticalSlice
+ * @param {boolean=} Whether to reverse the orientation.
+ * @return {?Array} An array of [i,j,k] coordinates or null if out of frame.
+ * @public
+ */
+xiv.vis.XtkRenderer2D.prototype.getVerticalSliceX = 
+function(sliceNumber, opt_reverse) {
+    return this.getSliceScreenPos_(sliceNumber, 'vertical', opt_reverse);
+}
+
+
+
+/**
+ * Returns the Y coordinate of the container where the veritcal slice 
+ * belongs.
+ *
+ * Derived from  ' X.renderer2D.prototype.xy2ijk '.
+ *
+ * @param {!number} the verticalSlice
+ * @param {boolean=} Whether to reverse the orientation.
+ * @return {?Array} An array of [i,j,k] coordinates or null if out of frame.
+ * @public
+ */
+xiv.vis.XtkRenderer2D.prototype.getHorizontalSliceY = 
+function(sliceNumber, opt_reverse) {
+    return this.getSliceScreenPos_(sliceNumber, 'horizontal', opt_reverse);
 }
