@@ -128,8 +128,8 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.createSlider_ = function() {
 
 
 
-    this.slider_.setMinimum(-1000);
-    this.slider_.setMaximum(1000);
+    this.slider_.setMinimum(-10000);
+    this.slider_.setMaximum(10000);
     this.slider_.setValue(this.slider_.getMinimum());
     this.slider_.setExtent(2000);
     this.slider_.setStep(1);

@@ -194,9 +194,9 @@ function(planeTitle){
 
 /**
  * @public
- * @param{xiv.ui.layout.XyzvLayout} newLayout
+ * @param{} newLayout
  */
-xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractors = function(Layout) {
+xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractors = function() {
     return this.masterLayout_.getInteractors();
 }
 
@@ -209,6 +209,9 @@ xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractors = function(Layout) {
 xiv.ui.layouts.LayoutHandler.prototype.setMasterLayout = 
 function(title) {
     this.setLayout(title);
+    if (goog.isDefAndNotNull(this.masterLayout_)){
+	this.masterLayout_.removeAllInteractors();
+    }
     this.Layouts_[title].addInteractors();
     this.masterLayout_ = this.Layouts_[title]; 
 }
@@ -326,7 +329,7 @@ xiv.ui.layouts.LayoutHandler.getTransitionStyles_ = function(elt) {
  * @private
  */ 
 xiv.ui.layouts.LayoutHandler.prototype.switchLayout = function(opt_time) {
-    window.console.log("SWITCH LAYOUT", opt_time, this.prevLayoutTitle_);
+    //window.console.log("SWITCH LAYOUT", opt_time, this.prevLayoutTitle_);
 
     // Set opt_time
     opt_time = (goog.isNumber(opt_time) && (opt_time >= 0)) ? opt_time : 

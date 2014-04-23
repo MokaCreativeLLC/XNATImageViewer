@@ -300,7 +300,7 @@ moka.ui.ZipTabs.prototype.onTabClickedRight_ = function(event, opt_dur) {
  * @inheritDoc
  */
 moka.ui.ZipTabs.prototype.updateStyle = function(){
-    window.console.log('ZIPTAB UPDATE STYLE', this.orientation);
+    //window.console.log('ZIPTAB UPDATE STYLE', this.orientation);
     //
     // Call superclass
     //
@@ -339,7 +339,7 @@ moka.ui.ZipTabs.prototype.updateStyle = function(){
  * @private
  */
 moka.ui.ZipTabs.prototype.setResizable_ = function(tabTitle) {
-    window.console.log('set resizable');
+    //window.console.log('set resizable');
     // required!
     this.updateStyle();
 }

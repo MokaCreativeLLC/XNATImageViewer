@@ -20,20 +20,6 @@ goog.require('moka.ui.Component');
 goog.provide('xiv.ui.layouts.interactors.Crosshairs');
 xiv.ui.layouts.interactors.Crosshairs = function() { 
     goog.base(this);
-
-   /**
-    * @type {!Element}
-    * @public
-    */
-    this.vertical = this.createCrosshair_('vertical');
-
-
-   /**
-    * @type {!Element}
-    * @public
-    */
-    this.horizontal = this.createCrosshair_('horizontal');
-
 }
 goog.inherits(xiv.ui.layouts.interactors.Crosshairs, moka.ui.Component);
 goog.exportSymbol('xiv.ui.layouts.interactors.Crosshairs', 
@@ -69,6 +55,39 @@ xiv.ui.layouts.interactors.Crosshairs.CSS_SUFFIX = {
     HORIZONTAL: 'horizontal',
     VERTICAL: 'vertical',
 }
+
+
+
+/**
+ * @type {!Element}
+ * @public
+ */
+xiv.ui.layouts.interactors.Crosshairs.prototype.vertical = null;
+
+
+
+/**
+ * @type {!Element}
+ * @public
+ */
+xiv.ui.layouts.interactors.Crosshairs.prototype.horizontal = null;
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.ui.layouts.interactors.Crosshairs.prototype.render = 
+function(parentElement) {
+
+    this.vertical = this.createCrosshair_('vertical');
+    this.horizontal = this.createCrosshair_('horizontal');
+
+    // No need to call the parent class
+    goog.dom.appendChild(parentElement, this.horizontal);
+    goog.dom.appendChild(parentElement, this.vertical);
+}
+
 
 
 

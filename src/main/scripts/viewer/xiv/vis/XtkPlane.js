@@ -151,9 +151,9 @@ xiv.vis.XtkPlane.prototype.checkRenderProgress_ = function() {
 	this.checkRenderProgress_();
 
 	//
-	// check again in 200 ms
+	// check again...
 	//
-    }.bind(this), 200); 
+    }.bind(this), 500); 
 }
 
 

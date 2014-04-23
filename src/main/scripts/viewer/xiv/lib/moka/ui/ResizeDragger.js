@@ -502,7 +502,7 @@ function(limitType, opt_callback, opt_dur) {
 	return;
     }
     this.createSlideAnim_(traj.start, traj.end, opt_callback, opt_dur);
-    window.console.log("\n\n\n\nSET EXPANDED!!!!", traj, opt_dur);
+    //window.console.log("\n\n\n\nSET EXPANDED!!!!", traj, opt_dur);
 }
 
 
@@ -552,12 +552,16 @@ function(startPos, endPos, opt_callback, opt_dur) {
 	this.slideAnim_.destroy();
 	this.slideAnim_ = null;
 
+	//
+	// Set the end position, just to be on the save side.
+	//
 	goog.style.setPosition(this.getElement(), endPos);
-	window.console.log("RESE END", 
-			   this.resizeePos, 
-			   this.resizeeSize,
-			   this.boundarySize,
-			   this.getElement().style.left);
+
+	//window.console.log("RESIZEE END", 
+	//		   this.resizeePos, 
+	//		   this.resizeeSize,
+	//		   this.boundarySize,
+	//		   this.getElement().style.left);
 
 	this.onResizeEnd();
 	if (opt_callback) {opt_callback()};

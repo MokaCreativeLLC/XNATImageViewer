@@ -154,6 +154,19 @@ goog.addDependency('../../../../ui/layouts/LayoutHandler.js',
 ]);
 
 
+goog.addDependency('../../../../ui/layouts/interactors/Slider.js', 
+['xiv.ui.layouts.interactors.Slider'], [
+    'moka.ui.GenericSlider'
+]);
+
+
+
+goog.addDependency('../../../../ui/layouts/interactors/FrameDisplay.js', 
+['xiv.ui.layouts.interactors.FrameDisplay'], [
+    'moka.ui.Component'
+]);
+
+
 goog.addDependency('../../../../ui/layouts/interactors/Crosshairs.js', 
 ['xiv.ui.layouts.interactors.Crosshairs'], [
     'moka.ui.Component'

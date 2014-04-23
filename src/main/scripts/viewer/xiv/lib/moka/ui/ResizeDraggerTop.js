@@ -113,8 +113,9 @@ moka.ui.ResizeDraggerTop.prototype.update = function() {
 			   this.resizeePos.x,
 			   this.resizeePos.y + this.vertDraggerOffset);
 
-    window.console.log("\n%\n%\n%\n\n\n^^^^^^^^^^^^^^", this.draggerLimitHeight
-		       , this.handleSize.height, this.minSize);
+    //window.console.log("\n%\n%\n%\n\n\n^^^^^^^^^^^^^^", 
+    //this.draggerLimitHeight
+    //, this.handleSize.height, this.minSize);
 }
 
 

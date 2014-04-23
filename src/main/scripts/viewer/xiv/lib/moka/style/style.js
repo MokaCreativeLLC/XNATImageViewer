@@ -429,7 +429,7 @@ moka.style.setStyle = function (elt, styleObj) {
  * Applies a css class to an element if it is being hovered on. 
  * @param {!Element} elt The element to apply the css class to.
  * @param {!string} className The class name to be applied.
- * @param {function=} opt_eventFindTuneMethod The custom method to run during 
+ * @param {Function=} opt_eventFindTuneMethod The custom method to run during 
  *    the occurence of the hover states.
  * @param {Object=} opt_eventFindTuneMethodBinder The binding object to apply 
  *    to the opt_eventFindTuneMethod argument.
