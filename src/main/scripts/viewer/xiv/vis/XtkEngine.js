@@ -85,10 +85,22 @@ xiv.vis.XtkEngine = function () {
      * @private
      */
     this.primaryRenderPlane_ = null;
-    this.setPrimaryRenderPlane(this.PlaneX_);
+    this.setPrimaryRenderPlane(this.PlaneV_);
 }
 goog.inherits(xiv.vis.XtkEngine, xiv.vis.RenderEngine);
 goog.exportSymbol('xiv.vis.XtkEngine', xiv.vis.XtkEngine);
+
+
+
+/**
+ * Event types.
+ * @enum {string}
+ * @public
+ */
+xiv.vis.XtkEngine.EventType = {
+    SLICE_NAVIGATED: goog.events.getUniqueId('slice-navigated'),
+}
+
 
 
 
@@ -228,8 +240,8 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
     }
 
    
-    //window.console.log("*********CONTROLLER TREE!!!", 
-    //this.ControllerTree_, this.currXObjects_);
+    window.console.log("*********CONTROLLER TREE!!!", 
+    this.ControllerTree_, this.currXObjects_);
 
 
     //
@@ -311,6 +323,7 @@ xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
     // Add the selected volume
     //
     otherXObjects.push(selVol);
+    window.console.log("SELECTED VOLUME", selVol, this.primaryRenderPlane_);
     window.console.log("OTHER X OBJECTS", otherXObjects);
 
     //
@@ -371,7 +384,6 @@ xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
 	
 	// Then render
 	this.renderAllPlanes();
-	return;
 
     } else if (this.PlaneV_.isOn()) {
 	this.render3dPlane();
@@ -408,17 +420,30 @@ xiv.vis.XtkEngine.prototype.renderNonPrimary_ = function(xObjects){
  */
 xiv.vis.XtkEngine.prototype.getSelectedVolume = function(){
 
+    window.console.log("\n*\n*\n*\n*\n*\n*GET SELECTED VOLUME!");
+
     if (this.currXObjects_['volumes'].length == 0) {return};
 
-    var selectedVolumeFound = false;
-    goog.array.forEach(this.currXObjects_['volumes'], function(vol){
+    //
+    // First look for the selected volume
+    //
+    var i = 0;
+    var len = this.currXObjects_['volumes'].length;
+    for (; i<len; i++){
+	var vol = this.currXObjects_['volumes'][i];
 	if (vol['isSelectedVolume']){
+	    window.console.log("\n*\n*\n*\n*\n*\n*SELECTED VOLUME FOUND!");
 	    return vol;
 	}
-    });
-    if (!selectedVolumeFound){
-	return this.currXObjects_['volumes'][0];
-    } 
+    }
+
+    //
+    // Default to the first volume if no selected volume
+    //
+    window.console.log("\n*\n*\n*\n*\n*\n*SELECTED VOLUME NOT FOUND!");
+    this.currXObjects_['volumes'][0]['isSelectedVolume'] = true;
+    return this.currXObjects_['volumes'][0];
+    
 }
 
 
@@ -454,15 +479,45 @@ function(xObj, renderProperties){
  */
 xiv.vis.XtkEngine.setRenderProperties_Volume_ = 
 function(xObj, renderProperties){
-    window.console.log("HAS VOLUME!", xObj, renderProperties);
-    if (!renderProperties) { return };
-    xObj.origin = renderProperties.origin || [0,0,0];
+
+    if (!goog.isDefAndNotNull(renderProperties)) {  
+	renderProperties = {
+	    origin: [0,0,0],
+	    upperThreshold: 10000,
+	    lowerThreshold: -10000,
+	    isSelectedVolume: true,
+	    volumeRendering: false
+	}
+    };
+
+    //
+    // Origin
+    //
+    xObj.origin = renderProperties.origin;
+
+    //
+    // Upper threshold
+    //
     xObj.upperThreshold = renderProperties.upperThreshold;
+
+    //
+    // Lower threshold
+    //
     xObj.lowerThreshold = renderProperties.lowerThreshold;
+
+    //
+    // Volume Rendering
+    //
     xObj.volumeRendering = renderProperties.volumeRendering;
+
+
+    //
+    // Selected Volume
+    //
     xObj['isSelectedVolume'] = renderProperties.isSelectedVolume;
     
-    if (renderProperties.labelMapFile){
+
+    if (goog.isDefAndNotNull(renderProperties.labelMapFile)){
 	xObj.labelmap.file = renderProperties.labelMapFile;
 	xObj.labelmap.colortable.file = 
 	    renderProperties.labelMapColorTableFile;
@@ -961,122 +1016,4 @@ xiv.vis.XtkEngine.createXObject = function(fileCollection) {
     //console.log(obj);
     //return
     return obj;
-}
-
-
-
-
-
-
-
-
-
-/**
- * Adds various display/visibility properties to 
- * a given XTK object.
- *
- * @param {!X.Object} xObj
- * @param {!Object} properties
- */
-xiv.vis.XtkEngine.setProperties = function(xObj, properties) {
-
-    window.console.log("SET PROPERTIES", xObj, properties, xObj.file);
-
-    if (!properties) {
-	return;
-    }
-
-
-    //--------------------
-    // Color -- volumes: .maxColor, meshes: .color
-    //--------------------
-    if (properties['color']) {
-        xObj.color = properties['color'];
-    }
-    
-
-
-    //--------------------
-    // Color table (if it exists).
-    //--------------------
-    if (properties['colorTable']) {
-        xObj.labelmap.file = xObj.file;
-        xObj.labelmap.colortable.file = properties['colorTable'];
-    }
-    
-
-    if (properties['fiberDisplay']){
-	goog.array.forEach(properties['fiberDisplay'], function(fiberDisplay){
-	    if (fiberDisplay['colorTable']) {
-		//xObj.labelmap.file = xObj.file;
-		//xObj.labelmap.colortable.file = fiberDisplay['colorTable'];
-
-		console.log("COLOR TABLE SET", xObj.colortable, fiberDisplay['colorTable']);
-		xObj.colortable.file = fiberDisplay['colorTable'];
-	    }
-	})
-    }
-
-
-    //--------------------
-    // Opacity
-    //--------------------
-    if (properties['opacity']) {
-	//window.console.log("\n\n********OPACITY\n\n", xObj, properties['opacity'])
-        xObj.opacity = parseFloat(properties['opacity'], 10);
-    }
-
-
-    //--------------------
-    // Visibility.
-    //
-    // We basically have to set 
-    // all visibilities to true
-    // and then afterwards reconcile them
-    // with the settings (likely slicer settings)
-    // and then set them to false.
-    //--------------------
-    xObj.visible = true;
-
-
-
-    //--------------------
-    // Selected Volume
-    //--------------------
-    if (properties['isSelectedVolume'] !== undefined) {
-	xObj['isSelectedVolume'] = properties['isSelectedVolume'];
-    }
-
-
-
-    //--------------------
-    // Threshold
-    //--------------------
-    if (properties['lowerThreshold'] !== NaN){
-        xObj.lowerThreshold = properties['lowerThreshold'];
-    }
-    if (properties['upperThreshold'] !== NaN){
-        xObj.upperThreshold = properties['upperThreshold'];
-    }
-
-    
-
-
-    //--------------------
-    // Center.
-    //--------------------
-    if (properties['origin']) {
-        xObj.center =  properties['origin'];
-        xObj.origin =  properties['origin'];
-        
-
-	console.log("ORIGIN", properties['origin'])
-	//
-	// Apply any transforms that come about from it.
-	//
-	if (properties['transform']){
-            xObj.transform.matrix = new Float32Array(
-		moka.convert.toFloatArray(properties['transform']));
-	}
-    }
 }

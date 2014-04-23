@@ -224,9 +224,8 @@ xiv.vis.XtkPlane.prototype.add = function(xObj) {
 	return;
     }
 
-    window.console.log("NEED TO IMPLEMENT VOLUME HANDLING FOR 2D PLANES");
-    if(xObj.isSelectedVolume === true) {
-	//console.log("add selected vol", xObj);
+    if(xObj['isSelectedVolume'] == true) {
+	console.log("add selected vol", xObj);
 	this.currVolume_ = xObj;
     }
     this.xObjs_.push(xObj);

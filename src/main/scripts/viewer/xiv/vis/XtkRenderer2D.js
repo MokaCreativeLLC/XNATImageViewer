@@ -59,12 +59,30 @@ xiv.vis.XtkRenderer2D.prototype.getVolume = function() {
 
 
 /**
+ * @public
+ */
+xiv.vis.XtkRenderer2D.prototype.onScroll = function() {
+    window.console.log("SCROLL!", this._orientation);
+    this.onSliceNavigation();
+}
+
+
+
+/**
  * Callback for slice navigation, f.e. to update sliders.
  *
  * @public
  */
 xiv.vis.XtkRenderer2D.prototype.onSliceNavigation = function() {
-    window.console.log("SLICE NAVIGATED!", this.orientation_);
+    window.console.log("SLICE NAVIGATED!", this._orientation);
+
+    this.dispatchEvent({
+	type: xiv.vis.XtkEngine.EventType.SLICE_NAVIGATED,
+	indexX: this._topLevelObjects[0]['indexX'],
+	indexY: this._topLevelObjects[0]['indexY'],
+	indexZ: this._topLevelObjects[0]['indexZ'],
+	orientation: this._orientation
+    })
 }
 
 

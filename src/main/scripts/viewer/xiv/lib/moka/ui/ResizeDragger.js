@@ -256,6 +256,7 @@ moka.ui.ResizeDragger.prototype.isAnimating = false;
 moka.ui.ResizeDragger.prototype.minSize = new goog.math.Size(10,10);
 
 
+
 /**
  * @return {!goog.math.Rect} 
  * @public
@@ -277,14 +278,14 @@ moka.ui.ResizeDragger.prototype.setBoundaryElement = function(elt) {
 
 
 
-
 /**
  * @return {!goog.fx.Dragger}
  * @public
  */ 
 moka.ui.ResizeDragger.prototype.getDragger = function() {
     return this.Dragger;
-}
+};
+
 
 
 /**
@@ -293,7 +294,7 @@ moka.ui.ResizeDragger.prototype.getDragger = function() {
  */ 
 moka.ui.ResizeDragger.prototype.getDirection = function() {
     return this.direction_;
-}
+};
 
 
 
@@ -329,19 +330,19 @@ moka.ui.ResizeDragger.prototype.updateTrackingValues = function() {
     //
     if (this.Dragger.isDragging() || this.isAnimating) { return };
 
-
     //
     // Resizee Position
     //
-    this.resizeePos = goog.object.clone(
-	goog.style.getPosition(this.resizee));
+    this.resizeePos = goog.object.clone(goog.style.getPosition(this.resizee));
 
     //
     // Resizee Size
     //
-    this.resizeeSize = goog.object.clone(
-	goog.style.getSize(this.resizee));
+    this.resizeeSize = goog.object.clone(goog.style.getSize(this.resizee));
+
+    //
     // Customizations
+    //
     this.resizeePos.left = this.resizeePos.x;
     this.resizeePos.top = this.resizeePos.y;
     this.resizeePos.right = this.resizeePos.x + this.resizeeSize.width;
@@ -386,7 +387,6 @@ moka.ui.ResizeDragger.prototype.setMinSize = function(minSize) {
 
 
 
-
 /**
  * @param {!goog.fx.Dragger} dragger
  * @private
@@ -421,7 +421,6 @@ moka.ui.ResizeDragger.prototype.onResizeStart = function(e) {
  * @protected
  */
 moka.ui.ResizeDragger.prototype.onResize = function(e) {
-    //window.console.log("RESIZING!!!!!");
     this.updateTrackingValues();
     this.dispatchEvent({
 	type: moka.ui.ResizeDragger.EventType.RESIZE,
@@ -498,8 +497,14 @@ moka.ui.ResizeDragger.prototype.slideToLimits =
 function(limitType, opt_callback, opt_dur) {
     this.updateTrackingValues();
     var traj = this.getSlideTrajectory(limitType); 
+    if (goog.isNumber(opt_dur) && opt_dur === 0) {
+	goog.style.setStyle(this.getElement(), traj.end);
+	return;
+    }
     this.createSlideAnim_(traj.start, traj.end, opt_callback, opt_dur);
+    window.console.log("\n\n\n\nSET EXPANDED!!!!", traj, opt_dur);
 }
+
 
 
 /**
@@ -517,8 +522,8 @@ function(startPos, endPos, opt_callback, opt_dur) {
     // 
     this.slideAnim_ = new goog.fx.dom.Slide(this.getElement(), 
 	    [startPos.x, startPos.y], [endPos.x, endPos.y], 
-             opt_dur || moka.ui.ResizeDragger.ANIM_MED, 
-			      goog.fx.easing.easeOut);    
+	    goog.isNumber(opt_dur) ? opt_dur : 
+	        moka.ui.ResizeDragger.ANIM_MED, goog.fx.easing.easeOut);    
 
     //
     // onAnimate START
@@ -541,12 +546,21 @@ function(startPos, endPos, opt_callback, opt_dur) {
     goog.events.listen(this.slideAnim_, goog.fx.Animation.EventType.END, 
     function(e){
 	this.isAnimating = false;
-	this.onResizeEnd();
-	if (opt_callback) {opt_callback()};
+
 	this.slideAnim_.disposeInternal();
 	goog.events.removeAll(this.slideAnim_);
 	this.slideAnim_.destroy();
 	this.slideAnim_ = null;
+
+	goog.style.setPosition(this.getElement(), endPos);
+	window.console.log("RESE END", 
+			   this.resizeePos, 
+			   this.resizeeSize,
+			   this.boundarySize,
+			   this.getElement().style.left);
+
+	this.onResizeEnd();
+	if (opt_callback) {opt_callback()};
     }.bind(this));
 
 

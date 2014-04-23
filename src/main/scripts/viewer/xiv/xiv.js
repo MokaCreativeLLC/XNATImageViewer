@@ -169,10 +169,14 @@ xiv.prototype.show = function(){
     goog.dom.append(document.body, this.Modal_.getElement());
     this.Modal_.updateStyle();
 
+    //
     // The the project tab expanded
-    this.Modal_.getProjectTab().setExpanded(true, 0, 0);
+    //
+    this.Modal_.getProjectTab().setExpanded(true, 0, 1000);
 
-    // Important that this be here;
+    //
+    // Important that this be here
+    //
     moka.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME );
 }
 
@@ -180,6 +184,7 @@ xiv.prototype.show = function(){
 
 /**
  * Hides the XNAT Image Viewer.
+ *
  * @param {function=} opt_callback The callback once the hide animation
  *     finishes.
  * @public
@@ -192,16 +197,15 @@ xiv.prototype.hide = function(opt_callback){
 
 /**
  * Sets the governing XNAT Path from which all file IO occurs.
+ *
  * @param {!string} path The XNAT path to set for querying.
  * @public
  */
 xiv.prototype.addDataPath = function(path) {
     this.dataPaths_ = this.dataPaths_ ? this.dataPaths_ : [];
-    var updatedPath = /**@type {!string}*/ 
-    (path[0] !== "/") ? "/" + path : path;
+    var updatedPath = (path[0] !== "/") ? "/" + path : path;
     if (this.dataPaths_.indexOf(this.queryPrefix_ + updatedPath) === -1) {
-	var finalPath = /**@type {!string}*/ 
-	(updatedPath.indexOf(this.queryPrefix_) === -1) ?
+	var finalPath = (updatedPath.indexOf(this.queryPrefix_) === -1) ?
 	    this.queryPrefix_ + updatedPath : updatedPath;
 	this.dataPaths_.push(finalPath); 
     }
@@ -469,13 +473,10 @@ xiv.prototype.dispose_ = function() {
  * @private
  */
 xiv.extractViewableTreeFolders_ = function(ViewableTree){
-    var pathObj =  /**@type {!gxnat.Path}*/
-    //wwindow.console.log(ViewableTree);
-    new gxnat.Path(ViewableTree.getExperimentUrl());
-    
-    var folders = /**@type {!Array.string}*/ [];
-    var key = /**@type {!string}*/ '';
-    var keyValid = /**@type {string}*/ gxnat.folderAbbrev[key];
+    var pathObj = new gxnat.Path(ViewableTree.getExperimentUrl());
+    var folders = [];
+    var key = '';
+    var keyValid = gxnat.folderAbbrev[key];
 
     //window.console.log("PATH OBJ", pathObj, "key valid", keyValid);
     for (key in pathObj){ 
@@ -511,13 +512,10 @@ xiv.VIEWABLE_TYPES = {
  * @param {function=} opt_doneCallback The optional callback applied to each 
  *     when retrieval is complete.
  */
-xiv.getViewableTreesFromXnat = function (url, opt_runCallback, opt_doneCallback){
-
-
-    var typeCount = /**@type {!number}*/
-	goog.object.getCount(xiv.VIEWABLE_TYPES);
-    var typesGotten = /**@type {!number}*/ 0;
-
+xiv.getViewableTreesFromXnat = 
+function (url, opt_runCallback, opt_doneCallback) {
+    var typeCount = goog.object.getCount(xiv.VIEWABLE_TYPES);
+    var typesGotten = 0;
 
     goog.object.forEach(xiv.VIEWABLE_TYPES, function(vType){
       gxnat.vis.AjaxViewableTree.getViewableTrees(

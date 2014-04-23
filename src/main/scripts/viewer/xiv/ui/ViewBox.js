@@ -645,10 +645,6 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
         function(e){
 	    this.syncVolumeToSlider_(e.target, currVol);
 	    this.syncCrosshairsToSlider_(e.target, currVol);
-
-	    //
-	    // Change crosshairs
-	    //
 	  
 	}.bind(this))
 
@@ -938,6 +934,9 @@ xiv.ui.ViewBox.prototype.onLayoutChangeEnd_ = function(e){
 	// Put the renderers in the new layout frames
 	//
 	if (goog.isDefAndNotNull(frames[planeOr])){
+
+	    window.console.log("SETTING CONTAINER", planeOr, 
+			       frames[planeOr].getElement());
 	    renderPlane.setContainer(frames[planeOr].getElement());
 	    renderPlane.updateStyle();
 	}

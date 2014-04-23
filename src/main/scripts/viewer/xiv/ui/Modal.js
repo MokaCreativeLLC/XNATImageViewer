@@ -56,7 +56,6 @@ xiv.ui.Modal = function () {
     this.ProjectTabBounds_ = null; 
 
 
-
     /**
      * @type {Object.<string, Element>}
      * @private
@@ -254,7 +253,8 @@ xiv.ui.Modal.prototype.getViewBoxHandler =  function() {
 
 /**
  * Get the associated xiv.ui.ThumbnailGallery for this object.
- * @return {xiv.ui.ThumbnailGallery} The xiv.ui.ThumbnailGallery for this object.
+ * @return {xiv.ui.ThumbnailGallery} The xiv.ui.ThumbnailGallery for this 
+ *    object.
  * @public
  */
 xiv.ui.Modal.prototype.getThumbnailGallery = function() {
@@ -358,6 +358,7 @@ xiv.ui.Modal.prototype.highlightInUseThumbnails = function () {
 /**
  * Used when a row or column is inserted.  The modal animates itself
  * on its resize.
+ *
  * @param {function=} opt_callback The callback for AFTER the modal is animated.
  * @public
  */
@@ -844,6 +845,8 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
 
     // Event listener
     goog.events.listen(this.ProjectTab_, moka.ui.Resizable.EventType.RESIZE,
+		       this.updateStyle.bind(this));
+    goog.events.listen(this.ProjectTab_, moka.ui.Resizable.EventType.RESIZE_END,
 		       this.updateStyle.bind(this));
  
 }
