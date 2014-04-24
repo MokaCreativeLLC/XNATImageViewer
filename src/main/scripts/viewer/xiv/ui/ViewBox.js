@@ -425,7 +425,9 @@ xiv.ui.ViewBox.prototype.doNotHide = function(element){
  * @public
  */
 xiv.ui.ViewBox.prototype.setLayout = function(layout) {
-    this.LayoutMenu_.setLayout(layout);
+
+    window.console.log("SET LAYOUT", layout, this.LayoutMenu_);
+    this.LayoutMenu_.setSelected(layout);
 }
 
 
@@ -594,7 +596,7 @@ function(slider, volume) {
 	getLayoutFrameByTitle(slider[xiv.ui.ViewBox.ORIENTATION_TAG])
     [xiv.ui.layouts.Layout.INTERACTORS.FRAME_DISPLAY]
 
-    window.console.log("SLIDER", slider.getMaximum());
+    //window.console.log("SLIDER", slider.getMaximum());
     frameDisplay.setTotalFrames(slider.getMaximum());
     frameDisplay.setCurrentFrame(slider.getValue());   
 }
@@ -837,7 +839,7 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
     // Get the default layout
     //
     if (this.ViewableTrees_.length == 1) {
-	this.LayoutHandler_.setLayout(
+	this.setLayout(
 	    xiv.ui.ViewBox.defaultLayout[ViewableTree.getCategory()]);
     }
 
@@ -959,6 +961,11 @@ xiv.ui.ViewBox.prototype.onLayoutChanging_ = function(e){
     function(renderPlane, planeOr) {
 	renderPlane.updateStyle();
     })
+
+    //
+    // Update the interactors
+    //
+    this.LayoutHandler_.updateInteractors();
 }
 
 
@@ -982,6 +989,12 @@ xiv.ui.ViewBox.prototype.onLayoutChangeEnd_ = function(e){
 	    renderPlane.updateStyle();
 	}
     })
+
+
+    //
+    // Update the interactors
+    //
+    this.LayoutHandler_.updateInteractors();
 }
 
 
@@ -1063,7 +1076,7 @@ xiv.ui.ViewBox.prototype.initSubComponents_ = function() {
     this.initLayoutMenu_();
     this.initLayoutHandler_();
     this.syncLayoutMenuToLayoutHandler_();
-    
+    window.console.log("\n\n\nINIT SUB!", this.LayoutMenu_);
     this.initRenderer_();
     this.initProgressBarPanel_();
     this.initViewableGroupMenu_();

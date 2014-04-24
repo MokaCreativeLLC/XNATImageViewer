@@ -284,6 +284,29 @@ xiv.ui.layouts.XyzvLayout.prototype.setInteractors = function(interactors) {
 /**
  * @public
  */
+xiv.ui.layouts.XyzvLayout.prototype.updateInteractors = function() {
+    goog.object.forEach(this.getInteractors(), 
+	function(interactorSet, planeOr){
+	    
+	    if (goog.isDefAndNotNull(interactorSet.SLIDER)){
+		interactorSet.SLIDER.updateStyle();
+	    }
+
+	    if (goog.isDefAndNotNull(interactorSet.CROSSHAIRS)){
+		interactorSet.CROSSHAIRS.updateStyle();
+	    }
+
+	    if (goog.isDefAndNotNull(interactorSet.FRAME_DISPLAY)){
+		interactorSet.CROSSHAIRS.updateStyle();
+	    }
+	})
+}
+
+
+
+/**
+ * @public
+ */
 xiv.ui.layouts.XyzvLayout.prototype.removeAllInteractors = function() {
     goog.object.forEach(this.getInteractors(), 
 	function(interactorSet, planeOr){

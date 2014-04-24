@@ -733,7 +733,7 @@ xiv.ui.Modal.prototype.updateStyle_ViewBoxes_ = function(){
  * @private
  */
 xiv.ui.Modal.prototype.updateStyle_buttons_ = function(){
-    moka.style.setStyle(this.buttons_INSERTROW, {
+    moka.style.setStyle(this.buttons_.INSERTROW, {
 	'left': this.dims_.BUTTONS.INSERTROW.X
     })
     moka.style.setStyle(this.buttons_.REMOVEROW, { 

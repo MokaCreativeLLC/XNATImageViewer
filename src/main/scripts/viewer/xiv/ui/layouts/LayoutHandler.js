@@ -194,6 +194,16 @@ function(planeTitle){
 
 /**
  * @public
+ */
+xiv.ui.layouts.LayoutHandler.prototype.updateInteractors = function() {
+    window.console.log("UPDATE INTERACTORS");
+    this.masterLayout_.updateInteractors();
+}
+
+
+
+/**
+ * @public
  * @param{} newLayout
  */
 xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractors = function() {
@@ -371,13 +381,6 @@ goog.array.forEach(goog.dom.getChildren(plane.getElement()),
 	    this.planeChildren_[key] = [];
 	}
 	this.planeChildren_[key].push(planeChild); 
-
-	//-------------------------------
-	// IMPORTANT!!!!!!!!!!!!!!
-	// 
-	// Attatch the plane's children to the transition element
-	//-------------------------------
-	goog.dom.append(transitionElt, planeChild)
     }.bind(this))
 }
 
@@ -448,6 +451,30 @@ function(opt_duration) {
 	    // Store references to the plane's children
 	    //
 	    this.storeAndAppendLayoutFrameChildren_(plane, key, transitionElt);
+
+
+	    //
+	    // Append the plane children to transition
+	    //
+	    goog.object.forEach(this.planeChildren_, 
+	    function(planeArr, planeOr){
+
+		//-------------------------------
+		// IMPORTANT!!!!!!!!!!!!!!
+		// 
+		// Attatch the plane's children to the transition element
+		//-------------------------------
+		goog.array.forEach(planeArr, function(planeChildElt){
+		    goog.dom.removeNode(planeChildElt);
+		    if (goog.isDefAndNotNull(this.transitionElts_[planeOr])){
+			goog.dom.appendChild(this.transitionElts_[planeOr], 
+					     planeChildElt)	
+		    }
+		}.bind(this))
+	    }.bind(this))
+
+
+
 
 	    //
 	    // If the new layout has the same panels (idenfified by key)

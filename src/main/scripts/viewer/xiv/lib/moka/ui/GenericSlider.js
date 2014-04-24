@@ -203,12 +203,14 @@ moka.ui.GenericSlider.prototype.bindToMouseWheel = function (element) {
 /**
  * Update so slider thumb is at correct position -- likely
  * a bug in the native goog.ui.Slider code -- a simple fix for it.
+ *
  * @public
  */
 moka.ui.GenericSlider.prototype.updateStyle = function () {
-    var pos = /**@type {!number}*/ this.getValue();
-    if (pos < this.getMaximum()) this.setValue(pos + 1);
-    else this.setValue(pos - 1);
+    var pos = this.getValue();
+
+    this.setValue(Math.max(this.getMinimum(), 
+			   Math.min(pos + 1, this.getMaximum())))
     this.setValue(pos);   
 }
 
