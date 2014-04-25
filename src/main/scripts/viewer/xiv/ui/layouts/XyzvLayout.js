@@ -411,16 +411,6 @@ xiv.ui.layouts.XyzvLayout.prototype.addFrameDisplays_ = function(){
 
 	LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.FRAME_DISPLAY] = 
 	    frameDisplay; 
-
-	
-	goog.events.listen(
-	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.SLIDER],
-	    moka.ui.GenericSlider.EventType.SLIDE, function(e){
-		frameDisplay.setCurrentFrame(e.value);
-		//numberElt.innerHTML = e.value.toString() + '/' + 
-		//    e.maximum.toString();
-
-	}.bind(this))
     }.bind(this));
 };
 

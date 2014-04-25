@@ -31,6 +31,22 @@ goog.exportSymbol('xiv.vis.XtkPlane2D', xiv.vis.XtkPlane2D);
 
 
 /**
+ * @type {?goog.events.Key}
+ * @private
+ */
+xiv.vis.XtkPlane2D.prototype.keyDown_ = null;
+
+
+/**
+ * @type {?goog.events.Key}
+ * @private
+ */
+xiv.vis.XtkPlane2D.prototype.keyUp_ = null;
+
+
+
+
+/**
  * @param {!number} sliceNum
  * @public
  */
@@ -62,12 +78,16 @@ xiv.vis.XtkPlane2D.prototype.getVolume = function() {
 
 
 
+
+
 /**
  * @inheritDoc
  */
 xiv.vis.XtkPlane2D.prototype.dispose = function() {
     goog.base(this, 'dispose');
     delete this.currVolume_;
+    delete this.keyDown_;
+    delete this.keyUp_;
 }
 
 

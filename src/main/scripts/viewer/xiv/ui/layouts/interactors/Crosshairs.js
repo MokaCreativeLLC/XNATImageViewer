@@ -90,7 +90,6 @@ function(parentElement) {
 
 
 
-
 /**
  * @private
  * @param {!string} orientation
@@ -103,6 +102,21 @@ function(orientation) {
 	throw new Error ('Invalid orientation: ' + orientation);
     }
 }
+
+
+
+/**
+ * @param {boolean} visible
+ * @public
+ */
+xiv.ui.layouts.interactors.Crosshairs.prototype.toggleVisible = 
+function(visible) {
+    var visibility  = (visible === false) ? 'hidden' : 'visible';
+    //window.console.log('\n\nVISIBLE!', visibility);
+    this.vertical.style.visibility = visibility;
+    this.horizontal.style.visibility = visibility; 
+}
+
 
 
 

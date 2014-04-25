@@ -20,6 +20,7 @@ goog.require('X.renderer2D');
 goog.provide('xiv.vis.XtkRenderer2D');
 xiv.vis.XtkRenderer2D = function () {
     goog.base(this);
+
 }
 goog.inherits(xiv.vis.XtkRenderer2D, X.renderer2D);
 goog.exportSymbol('xiv.vis.XtkRenderer2D', xiv.vis.XtkRenderer2D);
@@ -49,6 +50,7 @@ xiv.vis.XtkRenderer2D.prototype.onResize = function() {
 
 
 
+
 /**
  * @public
  */
@@ -62,29 +64,79 @@ xiv.vis.XtkRenderer2D.prototype.getVolume = function() {
  * @public
  */
 xiv.vis.XtkRenderer2D.prototype.onScroll = function() {
-    window.console.log("SCROLL!", this._orientation);
     this.onSliceNavigation();
 }
 
 
+/**
+ * @private
+ * @type {boolean}
+ */
+xiv.vis.XtkRenderer2D.prototype.shiftDown_ = false;
+
 
 /**
- * Callback for slice navigation, f.e. to update sliders.
- *
+ * @param {!Event} e
  * @public
  */
-xiv.vis.XtkRenderer2D.prototype.onSliceNavigation = function() {
-    window.console.log("SLICE NAVIGATED!", this._orientation);
+xiv.vis.XtkRenderer2D.prototype.onShiftDown_ = function(e) {
+    if (!this.shiftDown_) {
+	this.shiftDown_ = true;
+	this.dispatchEvent({
+	    type: xiv.vis.XtkEngine.EventType.SHIFT_DOWN,
+	    orientation: this.orientation
+	})
+    }
+}
 
+
+/**
+ * @param {!Event} e
+ * @public
+ */
+xiv.vis.XtkRenderer2D.prototype.onShiftUp_ = function(e) {
+    if (this.shiftDown_) {
+	this.shiftDown_ = false;
+	this.dispatchEvent({
+	    type: xiv.vis.XtkEngine.EventType.SHIFT_UP,
+	    orientation: this.orientation
+	})
+    }
+}
+
+
+
+
+/**
+ * @public
+ */
+xiv.vis.XtkRenderer2D.prototype.init = function() {
+    goog.base(this, 'init');
+
+    this.interactor.onMouseMove = function(e){
+	if (this._interactor._shiftDown) {
+	    this.onShiftDown_(e);
+	}
+	else {
+	    this.onShiftUp_(e);
+	}
+    }.bind(this)
+}
+
+
+/**
+ * @inheritDoc
+ */
+xiv.vis.XtkRenderer2D.prototype.onSliceNavigation = function() {
     this.dispatchEvent({
 	type: xiv.vis.XtkEngine.EventType.SLICE_NAVIGATED,
 	indexX: this._topLevelObjects[0]['indexX'],
 	indexY: this._topLevelObjects[0]['indexY'],
 	indexZ: this._topLevelObjects[0]['indexZ'],
-	orientation: this._orientation
+	orientation: this._orientation,
+	shiftDown: this._interactor._shiftDown
     })
 }
-
 
 
 
@@ -106,7 +158,6 @@ function(sliceNumber, sliceType, opt_reverse) {
     var _volume = this._topLevelObjects[0];
     var _view = this._camera._view;
     var _currentSlice = null;
-
     var _sliceWidth = this._sliceWidth;
     var _sliceHeight = this._sliceHeight;
     var _sliceWSpacing = null;
@@ -189,8 +240,16 @@ function(sliceNumber, sliceType, opt_reverse) {
 	// Crop min, max
 	sliceNumber = Math.max(0, sliceNumber);
 	sliceNumber = Math.min(sliceNumber, _sliceHeight);
-	return _image_top2xy + (sliceNumber / _sliceHeight) * 
-	    _sliceHeightScaled;
+
+
+	if (opt_reverse){
+	    return _image_top2xy + 
+		((this._sliceHeight - sliceNumber) / _sliceHeight) * 
+		_sliceHeightScaled;	
+	} else {
+	    return _image_top2xy + (sliceNumber / _sliceHeight) * 
+		_sliceHeightScaled;
+	}
     }
 }
 

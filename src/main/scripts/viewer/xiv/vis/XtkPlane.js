@@ -53,7 +53,7 @@ xiv.vis.XtkPlane = function() {
      * @type {?Element}
      * @protected
      */  
-    this.container_ = null;
+    this.container = null;
 
 
 
@@ -173,7 +173,7 @@ xiv.vis.XtkPlane.prototype.getCurrentVolume = function(){
  * @public
  */
 xiv.vis.XtkPlane.prototype.getContainer = function() {
-    return this.container_;
+    return this.container;
 }
 
 
@@ -183,11 +183,28 @@ xiv.vis.XtkPlane.prototype.getContainer = function() {
  * @public
  */
 xiv.vis.XtkPlane.prototype.setContainer = function(containerElt) {
-    if (!this.Renderer) { return }
-    this.container_ = containerElt;
+
+    this.container = containerElt;
+
+    if (!goog.isDefAndNotNull(this.Renderer)) { 
+	this.init(containerElt);
+    }
+
+    //
+    // Set the container
+    //
     this.Renderer.container = containerElt;
 }
 
+
+
+/**
+ * @param {Event}
+ * @private
+ */
+xiv.vis.XtkPlane.prototype.onSliceNavigated_ = function(e) {
+    this.dispatchEvent(e);
+}
 
 
 
@@ -198,7 +215,7 @@ xiv.vis.XtkPlane.prototype.setContainer = function(containerElt) {
  * @public
  */
 xiv.vis.XtkPlane.prototype.init = function(containerElt) {
-    if (this.Renderer) { this.Renderer.destroy() } ;
+    if (goog.isDefAndNotNull(this.Renderer)) { this.Renderer.destroy() } ;
     //this.Renderer = (this.id_ !== 'v') ? new X.renderer2D : new X.renderer3D(
 
     //window.console.log(this.orientation, this);
@@ -208,8 +225,20 @@ xiv.vis.XtkPlane.prototype.init = function(containerElt) {
     }
     this.Renderer =  new this.XRenderer();
     this.Renderer.orientation = this.orientation;
-    this.setContainer(containerElt || this.container_ || document.body);
+    this.setContainer(containerElt || this.container || document.body);
     this.Renderer.init();
+
+
+
+
+
+
+    //
+    // Slice Navigated Event
+    //
+    goog.events.listen(this.Renderer, 
+		       xiv.vis.XtkEngine.EventType.SLICE_NAVIGATED, 
+		       this.onSliceNavigated_.bind(this))
 }
 
 
@@ -293,7 +322,7 @@ xiv.vis.XtkPlane.prototype.dispose = function() {
     delete this.isOn_;
 
     delete this.XRenderer;
-    delete this.container_;
+    delete this.container;
     delete this.orientation;
     delete this.xObjs_;
     delete this.currVolume_;

@@ -78,7 +78,7 @@ xiv.vis.XtkEngine = function () {
      */
     this.PlaneV_ = new xiv.vis.XtkPlane3D();
 
-
+    
 
     /**
      * @type {!xiv.vis.XtkPlane2D}
@@ -86,6 +86,8 @@ xiv.vis.XtkEngine = function () {
      */
     this.primaryRenderPlane_ = null;
     this.setPrimaryRenderPlane(this.PlaneV_);
+
+    this.setRenderPlaneEvents_();
 }
 goog.inherits(xiv.vis.XtkEngine, xiv.vis.RenderEngine);
 goog.exportSymbol('xiv.vis.XtkEngine', xiv.vis.XtkEngine);
@@ -99,6 +101,8 @@ goog.exportSymbol('xiv.vis.XtkEngine', xiv.vis.XtkEngine);
  */
 xiv.vis.XtkEngine.EventType = {
     SLICE_NAVIGATED: goog.events.getUniqueId('slice-navigated'),
+    SHIFT_DOWN: goog.events.getUniqueId('shift-down'),
+    SHIFT_UP: goog.events.getUniqueId('shift-up'),
 }
 
 
@@ -153,15 +157,63 @@ xiv.vis.XtkEngine.prototype.getAnnotations_ = function(ViewableGroup) {
 xiv.vis.XtkEngine.prototype.setPrimaryRenderPlane = function(Plane) {
     this.primaryRenderPlane_ = Plane;
     this.setPrimaryRenderPlaneEvents_();
+    
 }
 
+
+
+/**
+ * @param {Event}
+ * @private
+ */
+xiv.vis.XtkEngine.prototype.onSliceNavigated_ = function(e) {
+    /**
+    this.dispatchEvent({
+	type: xiv.vis.XtkEngine.EventType.SLICE_NAVIGATED,
+	indexX: this._topLevelObjects[0]['indexX'],
+	indexY: this._topLevelObjects[0]['indexY'],
+	indexZ: this._topLevelObjects[0]['indexZ'],
+	orientation: this._orientation,
+	shiftDown: this._interactor._shiftDown
+    })
+    */
+    //window.console.log("ENGINE SLICE NAVIGATED");
+    this.dispatchEvent(e);
+}
+
+
+
+/**
+ * @param {Event}
+ * @private
+ */
+xiv.vis.XtkEngine.prototype.setRenderPlaneEvents_ = function() {
+    //
+    // SLICE NAVIGATED EVENTS
+    //
+    goog.object.forEach(this.getPlanes(), function(Plane, planeOr){
+	goog.events.listen(Plane, 
+			   xiv.vis.XtkEngine.EventType.SLICE_NAVIGATED, 
+			   this.onSliceNavigated_.bind(this))
+
+	goog.events.listen(Plane, 
+			   xiv.vis.XtkEngine.EventType.SHIFT_UP,
+			   function(e){
+			       window.console.log("SHIFT UP 2!");
+			   }.bind(this))
+    }.bind(this))
+
+
+
+
+
+}
 
 
 /**
  * @private
  */
 xiv.vis.XtkEngine.prototype.setPrimaryRenderPlaneEvents_ = function() {
-    
 
     // Unlisten on the given planes
     goog.object.forEach(this.getPlanes(), function(Plane, planeOr){
@@ -353,10 +405,38 @@ xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
  * @return {Array.<xiv.vis.XtkPlane>}
  */
 xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
+
     //
     // Create the XObjects
     //
     this.createXObjects_(ViewableGroup);
+
+    
+    //
+    // Set the background color and camera if render properties are defined
+    //
+    var renderProps = ViewableGroup.getRenderProperties();
+
+    
+    if (goog.isDefAndNotNull(renderProps)) {
+	if (goog.isDefAndNotNull(renderProps.backgroundColor)) {
+	    this.PlaneV_.setBackgroundColors(
+		ViewableGroup.getRenderProperties().backgroundColor);
+	}
+
+	if (goog.isDefAndNotNull(renderProps.camera)) {
+	    this.PlaneV_.setCamera(
+		ViewableGroup.getRenderProperties().camera);
+	}
+    } 
+
+    //
+    // Otherwise just set the default camera
+    //
+    else {
+	this.PlaneV_.setBackgroundColors();
+	this.PlaneV_.setCamera();
+    }
 
     //------------------------------------------ 
     //
@@ -369,7 +449,6 @@ xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
     //  IF THERE ARE NO VOLUMES, we feed everthing into the 3D renderer.
     //
     //------------------------------------------
-
     if (this.currXObjects_['volumes'].length > 0) {
 	
 	// Get the first ON plane.
@@ -555,10 +634,46 @@ xiv.vis.XtkEngine.prototype.onRenderEnd_ = function(e){
 
 
 /**
+ * @return {xiv.vis.XtkPlane}
+ */
+xiv.vis.XtkEngine.prototype.getPlaneX = function () {
+    return this.PlaneX_;
+}
+
+
+/**
+ * @return {xiv.vis.XtkPlane}
+ */
+xiv.vis.XtkEngine.prototype.getPlaneY = function () {
+    return this.PlaneY_;
+}
+
+
+/**
+ * @return {xiv.vis.XtkPlane}
+ */
+xiv.vis.XtkEngine.prototype.getPlaneZ = function () {
+    return this.PlaneZ_;
+}
+
+
+/**
+ * @return {xiv.vis.XtkPlane}
+ */
+xiv.vis.XtkEngine.prototype.getPlaneV = function () {
+    return this.PlaneV_;
+}
+
+
+
+
+
+
+/**
  * @return {Array.<xiv.vis.XtkPlane>}
  */
 xiv.vis.XtkEngine.prototype.getPlanes = function () {
-    var obj  = /**@dict*/ {};
+    var obj  = {};
     obj[this.PlaneX_.getOrientation()] = this.PlaneX_;
     obj[this.PlaneY_.getOrientation()] = this.PlaneY_;
     obj[this.PlaneZ_.getOrientation()] = this.PlaneZ_;
