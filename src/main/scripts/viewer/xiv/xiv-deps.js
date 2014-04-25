@@ -144,11 +144,11 @@ goog.addDependency('../../../../ui/layouts/LayoutHandler.js',
     'goog.fx.dom.Slide',
     'goog.fx.dom.Resize',
     'goog.dom',
-    'moka.string',
-    'moka.fx',
-    'moka.dom',
-    'moka.array',
-    'moka.style',
+    'nrg.string',
+    'nrg.fx',
+    'nrg.dom',
+    'nrg.array',
+    'nrg.style',
     'xiv.ui.layouts.Layout',
     'xiv.ui.layouts.Conventional'
 ]);
@@ -156,20 +156,20 @@ goog.addDependency('../../../../ui/layouts/LayoutHandler.js',
 
 goog.addDependency('../../../../ui/layouts/interactors/Slider.js', 
 ['xiv.ui.layouts.interactors.Slider'], [
-    'moka.ui.GenericSlider'
+    'nrg.ui.Slider'
 ]);
 
 
 
 goog.addDependency('../../../../ui/layouts/interactors/FrameDisplay.js', 
 ['xiv.ui.layouts.interactors.FrameDisplay'], [
-    'moka.ui.Component'
+    'nrg.ui.Component'
 ]);
 
 
 goog.addDependency('../../../../ui/layouts/interactors/Crosshairs.js', 
 ['xiv.ui.layouts.interactors.Crosshairs'], [
-    'moka.ui.Component'
+    'nrg.ui.Component'
 ]);
 
 
@@ -181,7 +181,7 @@ goog.addDependency('../../../../ui/layouts/LayoutFrame.js',
 
 goog.addDependency('../../../../ui/layouts/Layout.js', 
 ['xiv.ui.layouts.Layout'], [
-    'moka.ui.Component',
+    'nrg.ui.Component',
     'xiv.ui.layouts.LayoutFrame'
 ]);
 
@@ -235,7 +235,7 @@ goog.addDependency('../../../../ui/layouts/FourUp.js',
 
 goog.addDependency('../../../../ui/ViewableGroupMenu.js', 
 ['xiv.ui.ViewableGroupMenu'], [
-    'moka.ui.ThumbnailGallery'
+    'nrg.ui.ThumbnailGallery'
 ]);
 
 
@@ -247,10 +247,10 @@ goog.addDependency('../../../../ui/ViewBox.js',
     'goog.array',
     'goog.object',
     'goog.style',
-    'moka.ui.Component',
-    'moka.style',
-    'moka.ui.SlideInMenu',
-    'moka.ui.ZipTabs',
+    'nrg.ui.Component',
+    'nrg.style',
+    'nrg.ui.SlideInMenu',
+    'nrg.ui.ZipTabs',
     'xiv.ui.layouts.LayoutHandler',
     'xiv.vis.XtkEngine',
     'xiv.ui.ProgressBarPanel',
@@ -269,10 +269,10 @@ goog.addDependency('../../../../ui/ViewBoxHandler.js',
     'goog.fx.DragDrop',
     'goog.fx.DragDropGroup',
     'goog.fx.AnimationParallelQueue',
-    'moka.ui.Component',
-    'moka.string',
-    'moka.style',
-    'moka.fx',
+    'nrg.ui.Component',
+    'nrg.string',
+    'nrg.style',
+    'nrg.fx',
     'xiv.ui.ViewBox'
 ]);
 
@@ -295,12 +295,12 @@ goog.addDependency('../../../../ui/Modal.js',
     'goog.fx.dom.Slide',
     'goog.fx.dom.Resize',
     'goog.events',
-    'moka.ui.Component',
-    'moka.dom',
-    'moka.string',
-    'moka.style',
-    'moka.convert',
-    'moka.fx',
+    'nrg.ui.Component',
+    'nrg.dom',
+    'nrg.string',
+    'nrg.style',
+    'nrg.convert',
+    'nrg.fx',
     'xiv.ui.ViewBoxHandler',
     'xiv.ui.ThumbnailGallery',
 ]);
@@ -315,7 +315,7 @@ goog.addDependency('../../../../xiv.js',
     'goog.window',
     'X.loader',
     'X.parserIMA',
-    'moka.fx',
+    'nrg.fx',
     'gxnat',
     'gxnat.Path',
     'gxnat.ProjectTree',
@@ -327,7 +327,7 @@ goog.addDependency('../../../../ui/Thumbnail.js',
 ['xiv.ui.Thumbnail'], [
     'goog.dom',
     'goog.string',
-    'moka.ui.Thumbnail',
+    'nrg.ui.Thumbnail',
 ]);
 
 
@@ -341,10 +341,10 @@ goog.addDependency('../../../../ui/ThumbnailGallery.js',
     'goog.array',
     'goog.fx.DragDrop', 
     'goog.fx.DragDropGroup', 
-    'moka.string', 
-    'moka.fx', 
-    'moka.ui.ThumbnailGallery',
-    'moka.ui.Thumbnail',
+    'nrg.string', 
+    'nrg.fx', 
+    'nrg.ui.ThumbnailGallery',
+    'nrg.ui.Thumbnail',
     'xiv.ui.Thumbnail'
 ]);
 

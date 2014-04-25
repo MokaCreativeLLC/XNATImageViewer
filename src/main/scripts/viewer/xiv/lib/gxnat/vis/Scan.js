@@ -132,7 +132,7 @@ gxnat.vis.Scan.prototype.getThumbnailImage = function(opt_callback){
     // using natural sort.
     //
     var sortedFiles = this.ViewableGroups[0].getViewables()[0].getFiles().
-	sort(moka.array.naturalCompare);
+	sort(nrg.array.naturalCompare);
     var imgInd = /** @type {!number} */
     Math.floor((sortedFiles.length) / 2);
     //window.console.log(this['files'], this['files'].length, imgInd);

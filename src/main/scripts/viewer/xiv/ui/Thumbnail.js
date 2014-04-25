@@ -8,7 +8,7 @@ goog.require('goog.dom');
 goog.require('goog.string');
 
 // utils
-goog.require('moka.ui.Thumbnail');
+goog.require('nrg.ui.Thumbnail');
 
 
 
@@ -17,7 +17,7 @@ goog.require('moka.ui.Thumbnail');
  * @constructor
  * @param {gxnat.vis.ViewableTree} Viewable_ The properties that 
  *    define the XNAT-specific thumbnail
- * @extends {moka.ui.Thumbnail}
+ * @extends {nrg.ui.Thumbnail}
  */
 goog.provide('xiv.ui.Thumbnail');
 xiv.ui.Thumbnail = function (Viewable_) {
@@ -40,7 +40,7 @@ xiv.ui.Thumbnail = function (Viewable_) {
 			 xiv.ui.Thumbnail.CSS_CLASS_PREFIX);
        
 }
-goog.inherits(xiv.ui.Thumbnail, moka.ui.Thumbnail);
+goog.inherits(xiv.ui.Thumbnail, nrg.ui.Thumbnail);
 goog.exportSymbol('xiv.ui.Thumbnail', xiv.ui.Thumbnail);
 
 

@@ -1,0 +1,203 @@
+/**
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+/**
+ * ELEMENT
+ */
+.nrg-ui-tabs {
+    position: absolute;
+    left: 0px;
+    background-color: rgb(35, 35, 35);
+    z-index: 10;
+}
+
+.nrg-ui-tabs-right {
+    left: 0px;
+}
+
+
+.nrg-ui-tabs-left {
+    left: calc(100% - 18px);
+}
+
+
+.nrg-ui-tabs-top {
+    top: calc(100% - 18px);
+}
+
+
+.nrg-ui-tabs-bottom {
+    top: 0px;
+}
+
+
+
+
+
+/**
+ * TABS
+ */	
+.nrg-ui-tabs-tab {
+  box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -webkit-box-sizing:border-box;
+    position: absolute;
+    top: 0px;	
+    color: white;
+    font-size: 10px;
+    font-family: Helvetica, 'Helvetica neue', Arial, sans-serif;
+    background-color: rgb(0,0,0);
+    cursor: pointer;
+    border: solid 1px rgb(60, 60, 60);
+    text-align:center;
+}
+
+
+.nrg-ui-tabs-tab-top {
+    height: 18px;
+    top: 0px;
+    border-radius: 4px 4px 0px 0px;
+    border-bottom: none;
+}
+
+
+.nrg-ui-tabs-tab-bottom {
+    height: 18px;
+    top: calc(100% - 18px);
+    border-radius: 0px 0px 4px 4px;
+    border-top: none;
+}
+
+
+.nrg-ui-tabs-tab-right {
+    width: 22px;
+    left: calc(100% - 22px);
+    border-radius: 0px 4px 4px 0px;
+    border-left: none;
+}
+
+
+.nrg-ui-tabs-tab-left {
+    width: 18px;
+    left: 0px;
+    border-radius: 4px 0px 0px 4px;
+    border-right: none;
+}
+
+
+.nrg-ui-tabs-tab-active {
+    border: solid 1px rgb(220, 220, 220);
+}
+
+
+.nrg-ui-tabs-tab-active-right {
+    border-left: none;
+    border-radius: 0px 4px 4px 0px;
+}
+
+
+.nrg-ui-tabs-tab-active-top {
+    border-bottom: none;
+}
+
+
+.nrg-ui-tabs-tab-active {
+    z-index: 1;
+}
+
+	
+.nrg-ui-tabs-icon {
+    opacity: .65;
+    z-index: 11;
+    color: white;
+    font-size: 12px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    display: table;
+}
+
+
+
+.nrg-ui-tabs-icon-active {
+    opacity: 1;
+}
+
+
+.nrg-ui-tabs-icon-top {
+    width: 100%;
+    height: 100%;
+}
+
+
+.nrg-ui-tabs-icon-right {
+    -webkit-transform:rotate(90deg);
+    -moz-transform:rotate(90deg);
+    -o-transform: rotate(90deg);
+    left: -33px;
+    top: calc(50% - 5px);
+    white-space: nowrap;
+}
+
+
+.nrg-ui-tabs-icon-content {
+  display: table-cell;
+   text-align: center;
+   vertical-align: middle;
+}
+
+	
+.nrg-ui-tabs-page {
+  box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -webkit-box-sizing:border-box;
+    position: absolute;
+    color: white;
+    font-family: Helvetica, 'Helvetica neue', Arial, sans-serif;
+    background-color: rgb(0,0,0);
+    width: 100%;
+    border: solid 1px rgb(60, 60, 60);
+    visibility: hidden;
+    overflow: hidden;
+}
+
+
+.nrg-ui-tabs-page-content {
+    position: absolute;
+    left: 0px;
+    top: 10px;
+    height: calc(100% - 20px);
+    width: 100%;
+    z-index: 2;
+}
+
+
+
+.nrg-ui-tabs-page-active {
+    border: solid 1px rgb(220, 220, 220);
+    visibility: visible;
+    z-index: 2;
+}
+
+
+.nrg-ui-tabs-page-right, .nrg-ui-tabs-page-left {
+    position: absolute;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    width: calc(100% - 18px);
+    border-right: none;
+    border-left: none;
+}
+
+
+.nrg-ui-tabs-page-top, .nrg-ui-tabs-page-bottom {
+    position: absolute;
+    top: 18px;
+    left: 0px;
+    height: calc(100% - 18px);
+    width: 100%;
+    border-bottom: none;
+}

@@ -5,7 +5,7 @@
 // goog
 goog.require('goog.ui.ProgressBar');
 
-// moka
+// nrg
 
 
 
@@ -14,7 +14,7 @@ goog.require('goog.ui.ProgressBar');
  * xiv.ui.ProgressBarPanel
  *
  * @constructor
- * @extends {moka.ui.Component}
+ * @extends {nrg.ui.Component}
  */
 goog.provide('xiv.ui.ProgressBarPanel');
 xiv.ui.ProgressBarPanel = function() {
@@ -63,7 +63,7 @@ xiv.ui.ProgressBarPanel = function() {
      */
     this.progressBarHolder_ = null;
 }
-goog.inherits(xiv.ui.ProgressBarPanel, moka.ui.Component);
+goog.inherits(xiv.ui.ProgressBarPanel, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.ProgressBarPanel', xiv.ui.ProgressBarPanel);
 
 

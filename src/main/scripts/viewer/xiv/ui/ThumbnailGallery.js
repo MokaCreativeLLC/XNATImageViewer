@@ -12,11 +12,11 @@ goog.require('goog.fx.DragDrop');
 goog.require('goog.fx.DragDropGroup');
 
 // utils
-goog.require('moka.string');
-goog.require('moka.fx');
-goog.require('moka.ui.Thumbnail');
-goog.require('moka.ui.ThumbnailGallery');
-goog.require('moka.ui.Resizable');
+goog.require('nrg.string');
+goog.require('nrg.fx');
+goog.require('nrg.ui.Thumbnail');
+goog.require('nrg.ui.ThumbnailGallery');
+goog.require('nrg.ui.Resizable');
 
 // xiv
 goog.require('xiv.ui.Thumbnail');
@@ -28,7 +28,7 @@ goog.require('xiv.ui.Thumbnail');
  * xiv.ui.Thumbnails such as drag and drop, and also keeps a running list of 
  * them. 
  * @constructor
- * @extends {moka.ui.ThumbnailGallery}
+ * @extends {nrg.ui.ThumbnailGallery}
  */
 goog.provide('xiv.ui.ThumbnailGallery');
 xiv.ui.ThumbnailGallery = function () {
@@ -53,7 +53,7 @@ xiv.ui.ThumbnailGallery = function () {
     // inits
     this.initDragDrop_();
 }
-goog.inherits(xiv.ui.ThumbnailGallery, moka.ui.ThumbnailGallery);
+goog.inherits(xiv.ui.ThumbnailGallery, nrg.ui.ThumbnailGallery);
 goog.exportSymbol('xiv.ui.ThumbnailGallery', xiv.ui.ThumbnailGallery);
 
 
@@ -150,7 +150,7 @@ xiv.ui.ThumbnailGallery.prototype.createThumbnail = function(_Viewable) {
     //window.console.log(_Viewable['thumbnailUrl']);
     var thumbnail = /**@type {!xiv.ui.Thumbnail}*/ 
     new xiv.ui.Thumbnail(_Viewable);
-    goog.events.listen(thumbnail, moka.ui.Thumbnail.EventType.CLICK, function(){
+    goog.events.listen(thumbnail, nrg.ui.Thumbnail.EventType.CLICK, function(){
 	//window.console.log("THUM", thumbnail);
 	this.dispatchEvent({
 	    type: xiv.ui.ThumbnailGallery.EventType.THUMBNAIL_CLICK,
@@ -284,7 +284,7 @@ xiv.ui.ThumbnailGallery.prototype.createDragElement_ = function(srcElt) {
     // Get the thumbnail ID from the ancestor.
     var thumbId = /**@type {!string}*/  goog.dom.getAncestorByTagNameAndClass(
 	srcElt, 'div', xiv.ui.Thumbnail.ELEMENT_CLASS).id.replace(
-	    moka.ui.Thumbnail.HOVERABLE_PREFIX, '');
+	    nrg.ui.Thumbnail.HOVERABLE_PREFIX, '');
 
     // Exit out of the id is not stored.
     if (!goog.object.containsKey(this.Thumbs_, thumbId)) {
@@ -347,7 +347,7 @@ xiv.ui.ThumbnailGallery.prototype.onDragEnd_ = function (event) {
 
     // Fade out the draggers
     goog.array.forEach(dragThumbnails, function(elt){
-	moka.fx.fadeOut(elt, xiv.ui.ThumbnailGallery.ANIM_MED, function(){ 
+	nrg.fx.fadeOut(elt, xiv.ui.ThumbnailGallery.ANIM_MED, function(){ 
 	    goog.dom.removeNode(elt);
 	})
     })

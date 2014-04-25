@@ -6,7 +6,7 @@
 goog.require('goog.array');
 goog.require('goog.Disposable');
 
-//moka
+//nrg
 goog.require('gxnat');
 goog.require('gxnat.Path');
 

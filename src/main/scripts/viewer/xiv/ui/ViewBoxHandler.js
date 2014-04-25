@@ -14,13 +14,13 @@ goog.require('goog.fx.DragDropGroup');
 goog.require('goog.fx.AnimationParallelQueue');
 
 // utils
-goog.require('moka.string');
-goog.require('moka.style');
-goog.require('moka.fx');
+goog.require('nrg.string');
+goog.require('nrg.style');
+goog.require('nrg.fx');
 
 // xiv
 goog.require('xiv.ui.ViewBox');
-goog.require('moka.ui.Component');
+goog.require('nrg.ui.Component');
 
 
 
@@ -33,7 +33,7 @@ goog.require('moka.ui.Component');
  * the xiv.ui.ViewBox locations within the modal using a multi-dimenesional
  * array.
  * @constructor
- * @extends {moka.ui.Component}
+ * @extends {nrg.ui.Component}
  */
 goog.provide('xiv.ui.ViewBoxHandler');
 xiv.ui.ViewBoxHandler = function () {
@@ -84,7 +84,7 @@ xiv.ui.ViewBoxHandler = function () {
      */
     this.ViewBoxesParent_ = document.body;
 }
-goog.inherits(xiv.ui.ViewBoxHandler, moka.ui.Component);
+goog.inherits(xiv.ui.ViewBoxHandler, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.ViewBoxHandler', xiv.ui.ViewBoxHandler);
 
 
@@ -285,7 +285,7 @@ xiv.ui.ViewBoxHandler.prototype.removeColumn = function(opt_animate) {
     if (this.ViewBoxes_[0] && this.ViewBoxes_[0].length > 1) {
 	goog.array.forEach(this.ViewBoxes_, function(ViewBox, i) {
 	    var rowLen = /**@type {!number}*/ ViewBox.length - 1;
-	    moka.fx.fadeTo(ViewBox[rowLen].getElement(), 
+	    nrg.fx.fadeTo(ViewBox[rowLen].getElement(), 
 			    xiv.ui.ViewBoxHandler.ANIM_FAST, 0);
 
 	    goog.dom.removeNode(this.dragDropHandles_[
@@ -356,7 +356,7 @@ xiv.ui.ViewBoxHandler.prototype.removeRow = function(opt_animate) {
 	var delRow = /**@type {!Array.ViewBox}*/
 	this.ViewBoxes_[this.ViewBoxes_.length - 1];
 	goog.array.forEach(delRow, function(currDelViewBox) { 
-	    moka.fx.fadeTo(currDelViewBox.getElement(), 
+	    nrg.fx.fadeTo(currDelViewBox.getElement(), 
 			    xiv.ui.ViewBoxHandler.ANIM_FAST, 0);
 	    currDelViewBox.disposeInternal();
 	    // Remove the drag drop handles
@@ -873,8 +873,8 @@ xiv.ui.ViewBoxHandler.prototype.onDragStart_ = function(event) {
     this.ViewBoxPositions_ = {};
     this.loop(function(ViewBox){
 	this.ViewBoxPositions_[ViewBox.getElement().id] = {
-	    'absolute': moka.style.absolutePosition(ViewBox.getElement()),
-	    'relative': moka.style.dims(ViewBox.getElement())
+	    'absolute': nrg.style.absolutePosition(ViewBox.getElement()),
+	    'relative': nrg.style.dims(ViewBox.getElement())
 	}
 	this.dragDropHandles_[ViewBox.getElement().id].style.visibility = 
 	    'hidden';
@@ -970,7 +970,7 @@ xiv.ui.ViewBoxHandler.prototype.onDragEnd_ = function(event) {
 
     var srcViewBoxDims = /**@type {!Object}*/
     //goog.style.getPosition(originalViewBox);	
-    moka.style.absolutePosition(originalViewBox);
+    nrg.style.absolutePosition(originalViewBox);
     //window.console.log(srcViewBoxDims);
  
     var draggerClone = /**@type {!Element}*/
@@ -1014,8 +1014,8 @@ xiv.ui.ViewBoxHandler.prototype.createDraggerClone_ = function(dragger){
 xiv.ui.ViewBoxHandler.prototype.repositionDraggerClone_ = 
 function(dragger, draggerClone){
     var draggerViewBoxDims = /**@type {!Object}*/
-    moka.style.absolutePosition(dragger);
-    moka.style.setStyle(draggerClone, {
+    nrg.style.absolutePosition(dragger);
+    nrg.style.setStyle(draggerClone, {
 	'top': draggerViewBoxDims['top'] , 
 	'left': draggerViewBoxDims['left'],
 	'z-index': 10000
@@ -1091,7 +1091,7 @@ xiv.ui.ViewBoxHandler.prototype.disposeInternal = function() {
 
 
     // Drag Drop handles
-    moka.ui.disposeElementMap(this.dragDropHandles_);
+    nrg.ui.disposeElementMap(this.dragDropHandles_);
     delete this.dragDropHandles_;
 
 

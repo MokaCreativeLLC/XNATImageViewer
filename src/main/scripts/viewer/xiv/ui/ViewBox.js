@@ -11,11 +11,11 @@ goog.require('goog.array');
 goog.require('goog.object');
 goog.require('goog.style');
 
-// moka
-goog.require('moka.ui.Component');
-goog.require('moka.style');
-goog.require('moka.ui.ZipTabs');
-goog.require('moka.ui.SlideInMenu');
+// nrg
+goog.require('nrg.ui.Component');
+goog.require('nrg.style');
+goog.require('nrg.ui.ZipTabs');
+goog.require('nrg.ui.SlideInMenu');
 
 // xiv
 goog.require('xiv.vis.RenderEngine');
@@ -31,11 +31,11 @@ goog.require('xiv.ui.ViewableGroupMenu');
  * clicked in, and load them based on their characteristics.
  * xiv.ui.ViewBox is also a communicator class in the sense that it gets
  * various interaction and visualization classes to talk to one another.  F
- * or instance, it links the moka.ui.SlideInMenu to the 
+ * or instance, it links the nrg.ui.SlideInMenu to the 
  * xiv.ui.layouts.LayoutHandler 
  * to the xiv.ui.Displayer. 
  * @constructor
- * @extends {moka.ui.Component}
+ * @extends {nrg.ui.Component}
  */
 goog.provide('xiv.ui.ViewBox');
 
@@ -97,7 +97,7 @@ xiv.ui.ViewBox = function () {
 
 
     /**
-     * @type {?moka.ui.ZipTabs}
+     * @type {?nrg.ui.ZipTabs}
      * @private
      */	
     this.ZipTabs_ = null; 
@@ -105,7 +105,7 @@ xiv.ui.ViewBox = function () {
 
 
     /**
-     * @type {!moka.ui.SlideInMenu}
+     * @type {!nrg.ui.SlideInMenu}
      * @private
      */
     this.LayoutMenu_ = null;
@@ -137,14 +137,14 @@ xiv.ui.ViewBox = function () {
 
     
     /**
-     * @type {!moka.ui.ZippyTree}
+     * @type {!nrg.ui.ZippyTree}
      * @private
      */
     this.Controllers3D_ = null;
 
 
     /**
-     * @type {!moka.ui.ZippyTree}
+     * @type {!nrg.ui.ZippyTree}
      * @private
      */
     this.Controllers2D_ = null;
@@ -165,7 +165,7 @@ xiv.ui.ViewBox = function () {
     
     this.updateStyle();
 }
-goog.inherits(xiv.ui.ViewBox, moka.ui.Component);
+goog.inherits(xiv.ui.ViewBox, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.ViewBox', xiv.ui.ViewBox);
 
 
@@ -420,7 +420,7 @@ xiv.ui.ViewBox.prototype.doNotHide = function(element){
 /**
  * Allows for external communication to set
  * the viewscheme within the xiv.ui.ViewBox by communicating
- * to its moka.ui.SlideInMenu object.
+ * to its nrg.ui.SlideInMenu object.
  * @param {!string} layout Sets the view layout associated with the argument.
  * @public
  */
@@ -805,7 +805,7 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 	//
 	// Change Slice when slider moves
 	//
-	goog.events.listen(slider, moka.ui.GenericSlider.EventType.SLIDE, 
+	goog.events.listen(slider, nrg.ui.Slider.EventType.SLIDE, 
         function(e){
 	    this.syncVolumeToSlider_(e.target, currVol);
 	    this.syncCrosshairsToSlider_(e.target, currVol);
@@ -827,7 +827,7 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 
 
 /**
- * @param {!moka.ui.ZippyTree} ctrlProperty Either this.Controllers3D_ or 
+ * @param {!nrg.ui.ZippyTree} ctrlProperty Either this.Controllers3D_ or 
  *     this.Controllers2D_ 
  * @param {Function=} ctrlGetter The function used to retrieve the controllers.
  * @private
@@ -849,7 +849,7 @@ function(ctrlProperty, ctrlGetter) {
     if (goog.isDefAndNotNull(controllers) && (controllers.length > 0)) {
 	
 	// reset the tree
-	ctrlProperty = new moka.ui.ZippyTree();
+	ctrlProperty = new nrg.ui.ZippyTree();
 
 	// add the contents
 	goog.array.forEach(controllers, function(ctrl){
@@ -1213,7 +1213,7 @@ xiv.ui.ViewBox.prototype.initSubComponents_ = function() {
 
 
 /**
- * @param {!moka.ui.Component} subComponent The component to show.
+ * @param {!nrg.ui.Component} subComponent The component to show.
  * @param {number=} opt_fadeTime The optional fade time.  Defaults to 0;
  * @param {Function=} opt_callback The optional callback.
  * @private
@@ -1236,14 +1236,14 @@ xiv.ui.ViewBox.prototype.hideSubComponent_ = function(subComponent,
 	return;
     } 
 
-    moka.fx.fadeOut(subComponent.getElement(), opt_fadeTime, onOut);
+    nrg.fx.fadeOut(subComponent.getElement(), opt_fadeTime, onOut);
 }
 
 
 
 
 /**
- * @param {!moka.ui.Component} subComponent The component to show.
+ * @param {!nrg.ui.Component} subComponent The component to show.
  * @param {number=} opt_fadeTime The optional fade time.  Defaults to 0;
  * @param {Function=} opt_callback The optional callback function.
  * @private
@@ -1264,7 +1264,7 @@ xiv.ui.ViewBox.prototype.showSubComponent_ = function(subComponent,
 	return;
     } 
 
-    moka.fx.fadeIn(subComponent.getElement(), opt_fadeTime, function(){
+    nrg.fx.fadeIn(subComponent.getElement(), opt_fadeTime, function(){
 	if (opt_callback) { opt_callback() };
     });
 }
@@ -1304,8 +1304,8 @@ xiv.ui.ViewBox.prototype.initZipTabs_ = function(){
     //
     // Create the tabs
     //
-    this.ZipTabs_ = new moka.ui.ZipTabs('TOP'); 
-    goog.dom.append(this.viewFrameElt_, this.ZipTabs_.getElement());
+    this.ZipTabs_ = new nrg.ui.ZipTabs('TOP'); 
+    this.ZipTabs_.render(this.viewFrameElt_);
     goog.dom.classes.add(this.ZipTabs_.getElement(), xiv.ui.ViewBox.CSS.TABS);
 
     //
@@ -1392,7 +1392,7 @@ xiv.ui.ViewBox.prototype.addToMenu = function(menuLoc, element, opt_insertInd){
 * @private
 */
 xiv.ui.ViewBox.prototype.initLayoutMenu_ = function(){
-    this.LayoutMenu_ = new moka.ui.SlideInMenu();
+    this.LayoutMenu_ = new nrg.ui.SlideInMenu();
     this.addToMenu('LEFT', this.LayoutMenu_.getElement());
 
     goog.dom.classes.add(this.LayoutMenu_.getElement(), 
@@ -1492,7 +1492,7 @@ xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
 
     // Set the layout when a menu item is clicked.
     goog.events.listen(this.LayoutMenu_, 
-	moka.ui.SlideInMenu.EventType.ITEM_SELECTED, 
+	nrg.ui.SlideInMenu.EventType.ITEM_SELECTED, 
 		       this.onMenuItemSelected_.bind(this));
 }
 
@@ -1593,7 +1593,7 @@ xiv.ui.ViewBox.prototype.setComponentEvents_ = function() {
  * @private
  */
 xiv.ui.ViewBox.prototype.setTabsEvents_ = function () {
-    goog.events.listen(this.ZipTabs_, moka.ui.Resizable.EventType.RESIZE,
+    goog.events.listen(this.ZipTabs_, nrg.ui.Resizable.EventType.RESIZE,
 		       this.onTabsResize_.bind(this));
 }
 
@@ -1619,7 +1619,7 @@ xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
     // Merge any new arguments and update.
     //
     if (opt_args) {
-	moka.style.setStyle(this.getElement(), opt_args);
+	nrg.style.setStyle(this.getElement(), opt_args);
     }    
 
     //
@@ -1731,7 +1731,7 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     if (goog.isDefAndNotNull(this.ZipTabs_)){
 	// Unlisten - Tabs
 	goog.events.unlisten(this.ZipTabs_.getResizable(), 
-			     moka.ui.Resizable.EventType.RESIZE,
+			     nrg.ui.Resizable.EventType.RESIZE,
 			     this.onTabsResize_.bind(this));
 	
 	goog.dispose(this.ZipTabs_.disposeInternal());

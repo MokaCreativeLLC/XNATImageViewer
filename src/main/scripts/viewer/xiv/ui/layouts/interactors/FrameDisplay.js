@@ -6,7 +6,7 @@
 goog.require('goog.dom');
 
 // utils
-goog.require('moka.ui.Component');
+goog.require('nrg.ui.Component');
 
 
 
@@ -15,13 +15,13 @@ goog.require('moka.ui.Component');
  * xiv.ui.layouts.interactors.FrameDisplay
  *
  * @constructor
- * @extends {moka.ui.Component}
+ * @extends {nrg.ui.Component}
  */
 goog.provide('xiv.ui.layouts.interactors.FrameDisplay');
 xiv.ui.layouts.interactors.FrameDisplay = function() { 
     goog.base(this);
 }
-goog.inherits(xiv.ui.layouts.interactors.FrameDisplay, moka.ui.Component);
+goog.inherits(xiv.ui.layouts.interactors.FrameDisplay, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.layouts.interactors.FrameDisplay', 
 		  xiv.ui.layouts.interactors.FrameDisplay);
 

@@ -13,9 +13,11 @@ goog.require('goog.Disposable');
 // xtk
 goog.require('X.loader');
 goog.require('X.parserIMA'); // custom
+goog.require('X.renderer3D'); // for testing WebGL
 
-// moka
-goog.require('moka.fx');
+// nrg
+goog.require('nrg.fx');
+goog.require('nrg.ui.ErrorOverlay');
 
 // gxnat
 goog.require('gxnat');
@@ -159,15 +161,119 @@ xiv.revertDocumentStyle_ = function() {
 
 
 
+
+/**
+ * NOTE: Derived from: 
+ * http://stackoverflow.com/questions/11871077/proper-way-to-detect-
+ *     webgl-support
+ *
+ * @public
+ */
+xiv.prototype.testForExperimentalWebGL = function(){
+
+    var canvas = goog.dom.createDom('canvas');
+
+    try { 
+	gl = canvas.getContext("webgl"); 
+    }
+    catch (x) { 
+	gl = null; 
+    }
+
+
+    try { 
+	gl = canvas.getContext("experimental-webgl"); 
+	glExperimental = true;
+    }
+    catch (x) { 	
+	gl = null; 
+    }
+
+    if(gl) { 
+	return true; 
+    }
+    else { 
+	alert('NO WEBGL!');
+	return false; 
+    }
+}
+
+
+
+
+/**
+ * @private
+ */
+xiv.prototype.onNoExperimentalWebGL_ = function(){
+    
+    var errorString = '<font size="30">:(</font><br><br>'+
+	'XImgView can\'t be used on this browser ' +
+	'because experimental-webgl is either unsupported ' +
+	'or disabled.<br>For more information:<br><br>' +
+
+    '<a href="https://github.com/xtk/X/wiki/X:Browsers">' + 
+	'https://github.com/xtk/X/wiki/X:Browsers' + '</a><br><br>' +
+
+    '<a href="http://apple.stackexchange.com/questions/14365/' + 
+	'how-to-disable-webgl-in-the-chrome-browser-on-mac-os-x">' + 
+	'http://apple.stackexchange.com/questions/14365/how-to-disable' + 
+	'-webgl-in-the-chrome-browser-on-mac-os-x' + '</a>';
+
+
+    //alert(errorString);
+
+    
+    var ErrorOverlay = new nrg.ui.ErrorOverlay(errorString);
+    //ErrorOverlay.addImage();
+    ErrorOverlay.addBackground();
+    ErrorOverlay.addCloseButton();
+    
+    //var errorImg = ErrorOverlay.addImage();
+    //goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE); 
+
+    ErrorOverlay.addText(errorString)
+    ErrorOverlay.render();
+
+    //
+    // Fade in the error overlay
+    //
+    ErrorOverlay.getElement().style.opacity = 0;
+    nrg.fx.fadeInFromZero(ErrorOverlay.getElement(), xiv.ANIM_TIME );
+
+    //
+    // Dispose of XIV
+    //
+    this.dispose();
+}
+
+
+
+
 /**
  * Begins the XNAT Image Viewer.
  *
  * @public
  */
 xiv.prototype.show = function(){
+    
+    //
+    // Test for Experimental WebGL
+    //
+    if (!this.testForExperimentalWebGL()){
+	this.onNoExperimentalWebGL_();
+	return;
+    }
+
+    //
+    // Set the Modal's opacity to 0, then attatch to document.
+    //
+    this.Modal_.render();
     this.Modal_.getElement().style.opacity = 0;
-    goog.dom.append(document.body, this.Modal_.getElement());
-    this.Modal_.updateStyle();
+
+    //
+    // Set the button callbacks once rendered.
+    //
+    this.setModalButtonCallbacks_();
 
     //
     // The the project tab expanded
@@ -177,7 +283,7 @@ xiv.prototype.show = function(){
     //
     // Important that this be here
     //
-    moka.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME );
+    nrg.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME );
 }
 
 
@@ -190,7 +296,7 @@ xiv.prototype.show = function(){
  * @public
  */
 xiv.prototype.hide = function(opt_callback){
-    moka.fx.fadeOut(this.Modal_.getElement(), xiv.ANIM_TIME, opt_callback);
+    nrg.fx.fadeOut(this.Modal_.getElement(), xiv.ANIM_TIME, opt_callback);
 }
 
 
@@ -283,7 +389,7 @@ xiv.prototype.loadProjectTree_ = function() {
 xiv.prototype.collapseAdditionalZippys_ = function() {
     if (!this.Modal_.getThumbnailGallery()) { return };
     goog.events.listen(this.Modal_.getThumbnailGallery().getZippyTree(),
-       moka.ui.ZippyTree.EventType.NODEADDED, this.onZippyAdded_);
+       nrg.ui.ZippyTree.EventType.NODEADDED, this.onZippyAdded_);
 }
 
 
@@ -384,7 +490,6 @@ xiv.prototype.addViewableTreeToModal = function(ViewableTree){
 xiv.prototype.createModal_ = function(){
     this.Modal_ = new this.modalType_();
     this.Modal_.setMode(this.mode_);
-    this.setModalButtonCallbacks_();
     window.onresize = function () { 
 	this.Modal_.updateStyle() 
     }.bind(this);
@@ -394,7 +499,8 @@ xiv.prototype.createModal_ = function(){
 
 /**
  * Stores the viewable in an object, using its path as a key.
- * @param {!gxnat.vis.ViewableTree} viewable The gxnat.vis.ViewableTree object to 
+ * @param {!gxnat.vis.ViewableTree} viewable The gxnat.vis.ViewableTree object 
+  * to 
  *    store.
  * @param {!string} path The XNAT path associated with the Viewable.
  * @private

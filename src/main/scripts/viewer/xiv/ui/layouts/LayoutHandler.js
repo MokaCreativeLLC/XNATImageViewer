@@ -15,12 +15,12 @@ goog.require('goog.fx.dom.Slide');
 goog.require('goog.fx.dom.BgColorTransform');
 
 // utils
-goog.require('moka.dom');
-goog.require('moka.array');
-goog.require('moka.string');
-goog.require('moka.style');
-goog.require('moka.fx');
-goog.require('moka.ui.Component');
+goog.require('nrg.dom');
+goog.require('nrg.array');
+goog.require('nrg.string');
+goog.require('nrg.style');
+goog.require('nrg.fx');
+goog.require('nrg.ui.Component');
 
 // xiv
 goog.require('xiv.ui.layouts.Layout');
@@ -40,7 +40,7 @@ goog.require('xiv.ui.layouts.ThreeD');
  * xiv.ui.layout.Layout when viewing a dataset in the xiv.ui.ViewBox.  
  *
  * @constructor
- * @extends {moka.ui.Component}
+ * @extends {nrg.ui.Component}
  */
 goog.provide('xiv.ui.layouts.LayoutHandler');
 xiv.ui.layouts.LayoutHandler = function() {
@@ -100,7 +100,7 @@ xiv.ui.layouts.LayoutHandler = function() {
     this.transitionElts_ = {};
 
 }
-goog.inherits(xiv.ui.layouts.LayoutHandler, moka.ui.Component);
+goog.inherits(xiv.ui.layouts.LayoutHandler, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.layouts.LayoutHandler', xiv.ui.layouts.LayoutHandler);
 
 
@@ -410,7 +410,7 @@ function(asIsDims, toBeDims, opt_duration){
     var counter = 0;
     goog.object.forEach(this.transitionElts_, function(elt){
 	anims = goog.array.concat(anims, 
-		moka.fx.generateAnimations(elt, asIsDims[counter], 
+		nrg.fx.generateAnimations(elt, asIsDims[counter], 
 					   toBeDims[counter], opt_duration));
 	counter++;
     })
@@ -510,7 +510,7 @@ function(opt_duration) {
     //
     // run animation
     //
-    moka.fx.parallelAnimate(
+    nrg.fx.parallelAnimate(
 	// Generate the sub-animations
 	this.generateTransitionAnims_(asIsDims, toBeDims, opt_duration), 
 	// BEGIN - hide all
@@ -714,7 +714,7 @@ xiv.ui.layouts.LayoutHandler.prototype.disposeInternal = function(){
     // Master layout
     delete this.masterLayout_;
 
-    moka.ui.disposeComponentMap(this.Layouts_);
+    nrg.ui.disposeComponentMap(this.Layouts_);
     delete this.Layouts_;
 
     goog.object.clear(this.LayoutObjects_);

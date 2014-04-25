@@ -1085,14 +1085,14 @@ xiv.vis.XtkEngine.createXObject = function(fileCollection) {
     //window.console.log("FILE COLLECT", fileCollection);
 
     var ext = (goog.isArray(fileCollection)) ? 
-	moka.string.getFileExtension(fileCollection[0]) : 
-	moka.string.getFileExtension(fileCollection);
+	nrg.string.getFileExtension(fileCollection[0]) : 
+	nrg.string.getFileExtension(fileCollection);
     var obj = this.generateXtkObjectFromExtension(ext);  
     
 	
     var urlEncode = function(url){
-	var dirname = moka.string.dirname(url);
-	var basename = moka.string.basename(url);
+	var dirname = nrg.string.dirname(url);
+	var basename = nrg.string.basename(url);
 
 	//
 	// Four doubly encododed basenames

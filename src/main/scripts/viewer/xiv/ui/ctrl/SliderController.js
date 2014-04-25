@@ -14,8 +14,6 @@ goog.require('xiv.ui.ctrl.XtkController');
 xiv.ui.ctrl.SliderController = function(){
     goog.base(this);
     this.setLabel('Master Opacity');
-    this.createSlider_();
-    this.createValueInput_();
 }
 goog.inherits(xiv.ui.ctrl.SliderController, xiv.ui.ctrl.XtkController);
 goog.exportSymbol('xiv.ui.ctrl.SliderController', xiv.ui.ctrl.SliderController);
@@ -47,12 +45,21 @@ xiv.ui.ctrl.SliderController.CSS_SUFFIX = {
 
 
 
+/**
+ * @inheritDoc
+ */
+xiv.ui.ctrl.SliderController.prototype.render = function(opt_parentElement) {
+    goog.base(this, 'render', opt_parentElement);
+    this.createSlider_();
+    this.createValueInput_();
+}
+
 
 /**
  * @private
  */
 xiv.ui.ctrl.SliderController.prototype.createSlider_ = function() {
-    var slider = new moka.ui.GenericSlider();
+    var slider = new nrg.ui.Slider();
     this.setComponent(slider);
 
     // Inits

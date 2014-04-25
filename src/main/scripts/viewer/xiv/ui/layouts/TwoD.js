@@ -6,8 +6,8 @@
 goog.require('goog.string');
 goog.require('goog.array');
 
-// moka
-goog.require('moka.string');
+// nrg
+goog.require('nrg.string');
 
 // xiv
 goog.require('xiv.ui.layouts.Layout');
@@ -99,11 +99,11 @@ xiv.ui.layouts.TwoD.prototype.setupLayoutFrame_X = function(){
     // Listen for the RESIZE event.
     //
     goog.events.listen(this.LayoutFrames['X'].getResizable(), 
-		       moka.ui.Resizable.EventType.RESIZE,
+		       nrg.ui.Resizable.EventType.RESIZE,
 		       this.onLayoutFrameResize_X.bind(this));
 
     goog.events.listen(this.LayoutFrames['X'].getResizable(), 
-		       moka.ui.Resizable.EventType.RESIZE_END,
+		       nrg.ui.Resizable.EventType.RESIZE_END,
 		       this.updateStyle.bind(this));
 }
 
@@ -124,11 +124,11 @@ xiv.ui.layouts.TwoD.prototype.setupLayoutFrame_Y = function(){
     // Listen for the RESIZE event.
     //
     goog.events.listen(this.LayoutFrames['Y'].getResizable(), 
-		       moka.ui.Resizable.EventType.RESIZE,
+		       nrg.ui.Resizable.EventType.RESIZE,
 		       this.onLayoutFrameResize_Y.bind(this));
 
     goog.events.listen(this.LayoutFrames['Y'].getResizable(), 
-		       moka.ui.Resizable.EventType.RESIZE_END,
+		       nrg.ui.Resizable.EventType.RESIZE_END,
 		       this.updateStyle.bind(this));
 }
 
@@ -309,7 +309,7 @@ xiv.ui.layouts.TwoD.prototype.updateStyle_X = function() {
     //
     // Set the left of the boundary
     //
-    moka.style.setStyle(
+    nrg.style.setStyle(
 	this.LayoutFrames['X'].getResizable().getBoundaryElement(), {
 	    'left': this.minLayoutFrameWidth_
 	})
@@ -329,7 +329,7 @@ xiv.ui.layouts.TwoD.prototype.updateStyle_Y = function() {
     //
     // Set the left of the boundary
     //
-    moka.style.setStyle(
+    nrg.style.setStyle(
 	this.LayoutFrames['Y'].getResizable().getBoundaryElement(), {
 	    'left': this.minLayoutFrameWidth_ * 2
 	})

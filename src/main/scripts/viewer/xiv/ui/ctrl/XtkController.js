@@ -13,12 +13,12 @@ goog.require('goog.dom');
 goog.require('goog.ui.Checkbox');
 
 // lib
-goog.require('moka.ui.Component');
-goog.require('moka.string');
-goog.require('moka.dom');
-goog.require('moka.array');
-goog.require('moka.style');
-goog.require('moka.ui.ZippyTree');
+goog.require('nrg.ui.Component');
+goog.require('nrg.string');
+goog.require('nrg.dom');
+goog.require('nrg.array');
+goog.require('nrg.style');
+goog.require('nrg.ui.ZippyTree');
 
 // xiv
 goog.require('xiv.ui.ctrl.CheckboxController');
@@ -36,26 +36,13 @@ goog.require('xiv.ui.ctrl.RadioButtonController');
  * (volumes) and 3D xtk objects.
  *
  * @constructor
- * @extends {moka.ui.Component}
+ * @extends {nrg.ui.Component}
  */
 goog.provide('xiv.ui.ctrl.XtkController');
 xiv.ui.ctrl.XtkController = function() {
     goog.base(this);
-
-    /**
-     * @type {!Array.<xiv.ui.ctrl.XtkController>}
-     * @protected
-     */
-    this.masterControllers = [];
-
-
-    /**
-     * @type {!Array.<xiv.ui.ctrl.XtkController}
-     * @protected
-     */
-    this.subControllers = [];
 }
-goog.inherits(xiv.ui.ctrl.XtkController, moka.ui.Component);
+goog.inherits(xiv.ui.ctrl.XtkController, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.ctrl.XtkController', xiv.ui.ctrl.XtkController);
 
 
@@ -155,28 +142,55 @@ function(xObj, controller){
 
 
 
-
 /**
  * @private
- * @type {!Element | !goog.ui.Component}
+ * @type {Element | goog.ui.Component}
  */
-xiv.ui.ctrl.XtkController.prototype.component_ = null;
-
-
-
-/**
- * @private
- * @type {!string}
- */
-xiv.ui.ctrl.XtkController.prototype.label_ = null;
+xiv.ui.ctrl.XtkController.prototype.component_;
 
 
 
 /**
  * @private
- * @type {!Array.string}
+ * @type {string}
  */
-xiv.ui.ctrl.XtkController.prototype.folders_ = null;
+xiv.ui.ctrl.XtkController.prototype.label_;
+
+
+
+/**
+ * @private
+ * @type {Array.string}
+ */
+xiv.ui.ctrl.XtkController.prototype.folders_;
+
+
+
+/**
+ * @type {Array.<xiv.ui.ctrl.XtkController>}
+ * @protected
+ */
+xiv.ui.ctrl.XtkController.prototype.masterControllers;
+
+
+
+/**
+ * @type {Array.<xiv.ui.ctrl.XtkController}
+ * @protected
+ */
+xiv.ui.ctrl.XtkController.prototype.subControllers;
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.ui.ctrl.XtkController.prototype.render = function(opt_parentElement) {
+    goog.base(this, 'render', opt_parentElement);
+    this.masterControllers = [];
+    this.subControllers = [];
+}
+
 
 
 
@@ -227,7 +241,6 @@ xiv.ui.ctrl.XtkController.prototype.getFolders = function() {
 }
 
 
-
 /**
  * @param {!Element | !goog.ui.Component} component
  * @public
@@ -238,10 +251,12 @@ xiv.ui.ctrl.XtkController.prototype.setComponent = function(component) {
     var elt = this.component_;
     if (this.component_ instanceof goog.ui.Component){
 	elt = this.component_.getElement();
-    } 
+	this.component_.render(this.getElement());
+    } else {
+	goog.dom.appendChild(this.getElement(), elt);
+    }
 
     if (goog.isDefAndNotNull(elt)){
-	goog.dom.append(this.getElement(), elt);
 	goog.dom.classes.add(elt, xiv.ui.ctrl.XtkController.CSS.COMPONENT);
     }
 }

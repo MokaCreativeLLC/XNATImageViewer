@@ -6,7 +6,7 @@
 goog.require('goog.dom');
 
 // utils
-goog.require('moka.ui.GenericSlider');
+goog.require('nrg.ui.Slider');
 
 
 
@@ -15,13 +15,13 @@ goog.require('moka.ui.GenericSlider');
  * xiv.ui.layouts.interactors.Slider
  *
  * @constructor
- * @extends {moka.ui.GenericSlider}
+ * @extends {nrg.ui.Slider}
  */
 goog.provide('xiv.ui.layouts.interactors.Slider');
 xiv.ui.layouts.interactors.Slider = function() { 
     goog.base(this);
 }
-goog.inherits(xiv.ui.layouts.interactors.Slider, moka.ui.GenericSlider);
+goog.inherits(xiv.ui.layouts.interactors.Slider, nrg.ui.Slider);
 goog.exportSymbol('xiv.ui.layouts.interactors.Slider', 
 		  xiv.ui.layouts.interactors.Slider);
 

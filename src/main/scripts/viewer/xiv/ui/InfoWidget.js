@@ -9,11 +9,11 @@ goog.require('goog.dom');
 goog.require('goog.array');
 
 // utils
-goog.require('moka.convert');
-goog.require('moka.style');
+goog.require('nrg.convert');
+goog.require('nrg.style');
 
 // xiv
-goog.require('moka.ui.Component');
+goog.require('nrg.ui.Component');
 
 
 
@@ -29,7 +29,7 @@ goog.require('moka.ui.Component');
  * be in use.
  *
  * @constructor
- * @extends {moka.ui.Component}
+ * @extends {nrg.ui.Component}
  */
 goog.provide('xiv.ui.InfoWidget');
 xiv.ui.InfoWidget = function () {
@@ -42,7 +42,7 @@ xiv.ui.InfoWidget = function () {
     this.viewableData_;
 
 }
-goog.inherits(xiv.ui.InfoWidget, moka.ui.Component);
+goog.inherits(xiv.ui.InfoWidget, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.InfoWidget', xiv.ui.InfoWidget);
 
 
@@ -200,7 +200,7 @@ xiv.ui.InfoWidget.prototype.createDicomTab_ = function(xnatProperties) {
 	// Add "highImportance" class to high importance keys
 	// (i.e. big bold font)
 	//
-	moka.style.setStyle(labelValuePair, {'top': currTop});
+	nrg.style.setStyle(labelValuePair, {'top': currTop});
 	goog.array.forEach(highImportanceKeys, function(highImportanceKey){
 	    if (currLabel.toLowerCase() === highImportanceKey.toLowerCase()) {
 		goog.dom.classes.add(labelValuePair, 
@@ -211,11 +211,11 @@ xiv.ui.InfoWidget.prototype.createDicomTab_ = function(xnatProperties) {
 	//
 	// Calculate the hieghts of the label/value pairs.
 	//
-	currDims = moka.style.getComputedStyle(labelValuePair, 
+	currDims = nrg.style.getComputedStyle(labelValuePair, 
 						['height', 'top']);
 	prevBottom = 0;
 	for (dim in currDims){ 
-	    prevBottom += moka.convert.toInt(currDims[dim]); 
+	    prevBottom += nrg.convert.toInt(currDims[dim]); 
 	}
 	counter++;
     }.bind(this))
@@ -226,7 +226,7 @@ xiv.ui.InfoWidget.prototype.createDicomTab_ = function(xnatProperties) {
     // so we can send that contents into a ScrollGallery, which
     // will know how to scroll through that information.
     //
-    moka.style.setStyle(contents, {'height' : prevBottom + 6})
+    nrg.style.setStyle(contents, {'height' : prevBottom + 6})
     return contents;
    
 }
@@ -289,19 +289,19 @@ xiv.ui.InfoWidget.prototype.createSlicerTab_ = function(xnatProperties) {
     // Loop through the keys array to create elements.
     //------------------
     goog.array.forEach(keys, function(key){
-	//moka.dom.debug("KEY", key)
+	//nrg.dom.debug("KEY", key)
 	currLabel = key['label'];
 	currValue = key['value'];
 	currTop = prevBottom + 6;
 	labelValuePair = this.createLabelValuePair_(contents, currLabel, currValue);
-	//moka.dom.debug(labelValuePair);
+	//nrg.dom.debug(labelValuePair);
 
 
 	//
 	// Add "highImportance" class to high importance keys
 	// (i.e. big bold font)
 	//
-	moka.style.setStyle(labelValuePair, {'top': currTop});
+	nrg.style.setStyle(labelValuePair, {'top': currTop});
 	goog.array.forEach(highImportanceKeys, function(highImportanceKey){
 	    if (currLabel === highImportanceKey) {
 		goog.dom.classes.add(labelValuePair, xiv.ui.InfoWidget.TABCONTENT_INFO_HIGHIMPORTANCE_CLASS);
@@ -312,10 +312,10 @@ xiv.ui.InfoWidget.prototype.createSlicerTab_ = function(xnatProperties) {
 	//
 	// Calculate the hieghts of the label/value pairs.
 	//
-	currDims = moka.style.getComputedStyle(labelValuePair, ['height', 'top']);
+	currDims = nrg.style.getComputedStyle(labelValuePair, ['height', 'top']);
 	prevBottom = 0;
 	for (dim in currDims){ 
-	    prevBottom += moka.convert.toInt(currDims[dim]); 
+	    prevBottom += nrg.convert.toInt(currDims[dim]); 
 	}
 	counter++;
     }.bind(this))
@@ -327,7 +327,7 @@ xiv.ui.InfoWidget.prototype.createSlicerTab_ = function(xnatProperties) {
     // so we can send that contents into a ScrollGallery, which
     // will know how to scroll through that information.
     //------------------
-    moka.style.setStyle(contents, {'height' : prevBottom + 6})
+    nrg.style.setStyle(contents, {'height' : prevBottom + 6})
     return contents;
   
 }

@@ -18,12 +18,12 @@ goog.require('goog.fx.dom.Resize');
 goog.require('goog.events');
 
 // utils
-goog.require('moka.ui.Component');
-goog.require('moka.ui.Resizable');
-goog.require('moka.dom');
-goog.require('moka.style');
-goog.require('moka.convert');
-goog.require('moka.fx');
+goog.require('nrg.ui.Component');
+goog.require('nrg.ui.Resizable');
+goog.require('nrg.dom');
+goog.require('nrg.style');
+goog.require('nrg.convert');
+goog.require('nrg.fx');
 
 // xiv
 goog.require('xiv.ui.ThumbnailGallery');
@@ -33,78 +33,15 @@ goog.require('xiv.ui.ViewBoxHandler');
 
 
 /**
- * xiv.ui.Modal is the central class where various moka.ui.Components meet.
+ * xiv.ui.Modal is the central class where various nrg.ui.Components meet.
  * @constructor
- * @extends {moka.ui.Component}
+ * @extends {nrg.ui.Component}
  */
 goog.provide('xiv.ui.Modal');
 xiv.ui.Modal = function () {
     goog.base(this);   
-
-
-    /**
-     * @type {?moka.ui.ZipTabs}
-     * @private
-     */	
-    this.ProjectTab_ = null; 
-
-
-    /**
-     * @type {!Element}
-     * @private
-     */	
-    this.ProjectTabBounds_ = null; 
-
-
-    /**
-     * @type {Object.<string, Element>}
-     * @private
-     */
-    this.buttons_;
-
-
-    /**
-     * @type {xiv.ui.ThumbnailGallery}
-     * @private
-     */
-    this.ThumbnailGallery_;
-
-
-    /**
-     * @type {xiv.ui.ViewBoxHandler}
-     * @private
-     */
-    this.ViewBoxHandler_;
-
-
-    /**
-     * @type {goog.fx.AnimationParallelQueue}
-     */
-    this.animQueue_;
-
-
-    /**
-     * @type {Array.<goog.fx.dom.PredefinedEffect>}
-     */
-    this.anims_;
-
-
-    /**
-     * @dict
-     */
-    this.dims_;
-
-
-    this.initSubComponents();
-    this.adjustStyleToMode_();
-    if(this.ViewBoxHandler_){
-	this.ViewBoxHandler_.insertColumn(false);
-    }
-
-
-    //window.console.log("MODE", this.currMode_);
 }
-goog.inherits(xiv.ui.Modal, moka.ui.Component);
+goog.inherits(xiv.ui.Modal, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.Modal', xiv.ui.Modal);
 
 
@@ -192,6 +129,37 @@ xiv.ui.Modal.ModeTypes = {
 
 
 /**
+ * As stated.
+ * @param {!string} iconUrl
+ * @private
+ */
+xiv.ui.Modal.createButtons_ = function(iconUrl){
+
+    // Generate new button IDs
+    var buttonIds = {};
+    goog.object.forEach(xiv.ui.Modal.buttonTypes, function(buttonType, key){
+	buttonIds[key] = xiv.ui.Modal.ID_PREFIX + '.' + 
+			 goog.string.toTitleCase(key) + 'Button';
+    })
+
+    // Make buttons
+    var buttons = /**@type {!Object.<string, Element>}*/
+    nrg.dom.createBasicHoverButtonSet(goog.object.getValues(buttonIds));
+
+    // Make object that maps old keys to buttons.
+    var buttonsWithOriginalKeys =/**@dict*/{};
+    goog.object.forEach(buttonIds, function(newKey, oldKey){
+	buttonsWithOriginalKeys[oldKey] = buttons[newKey];
+	goog.dom.classes.set(buttons[newKey], 
+	    goog.getCssName(xiv.ui.Modal.CSS_CLASS_PREFIX, 
+			oldKey.toLowerCase() + '-' + 'button'));
+    })
+    return buttonsWithOriginalKeys
+}
+
+
+
+/**
  * @type {!xiv.ui.Modal.Mode}
  * @private
  */
@@ -207,36 +175,64 @@ xiv.ui.Modal.prototype.prevMode_;
 
 
 
+/**
+ * @type {nrg.ui.ZipTabs}
+ * @private
+ */	
+xiv.ui.Modal.prototype.ProjectTab_; 
+
+
 
 /**
- * As stated.
- * @param {!string} iconUrl
+ * @type {Element}
+ * @private
+ */	
+xiv.ui.Modal.prototype.ProjectTabBounds_; 
+
+
+
+/**
+ * @type {Object.<string, Element>}
  * @private
  */
-xiv.ui.Modal.createButtons_ = function(iconUrl){
+xiv.ui.Modal.prototype.buttons_;
 
-    // Generate new button IDs
-    var buttonIds =/**@type {!Object}*/{};
-    goog.object.forEach(xiv.ui.Modal.buttonTypes, function(buttonType, key){
-	buttonIds[key] = xiv.ui.Modal.ID_PREFIX + '.' + 
-			 goog.string.toTitleCase(key) + 'Button';
-    })
 
-    // Make buttons
-    var buttons = /**@type {!Object.<string, Element>}*/
-    moka.dom.createBasicHoverButtonSet(goog.object.getValues(buttonIds));
 
-    // Make object that maps old keys to buttons.
-    var buttonsWithOriginalKeys =/**@dict*/{};
-    goog.object.forEach(buttonIds, function(newKey, oldKey){
-	buttonsWithOriginalKeys[oldKey] = buttons[newKey];
-	goog.dom.classes.set(buttons[newKey], 
-	    goog.getCssName(xiv.ui.Modal.CSS_CLASS_PREFIX, 
-			oldKey.toLowerCase() + '-' + 'button'));
-    })
-    return buttonsWithOriginalKeys
-}
+/**
+ * @type {xiv.ui.ThumbnailGallery}
+ * @private
+ */
+xiv.ui.Modal.prototype.ThumbnailGallery_;
 
+
+
+/**
+ * @type {xiv.ui.ViewBoxHandler}
+ * @private
+ */
+xiv.ui.Modal.prototype.ViewBoxHandler_;
+
+
+
+/**
+ * @type {goog.fx.AnimationParallelQueue}
+ */
+xiv.ui.Modal.prototype.animQueue_;
+
+
+
+/**
+ * @type {Array.<goog.fx.dom.PredefinedEffect>}
+ */
+xiv.ui.Modal.prototype.anims_;
+
+
+
+/**
+ * @type {Object}
+ */
+xiv.ui.Modal.prototype.dims_;
 
 
 
@@ -264,7 +260,7 @@ xiv.ui.Modal.prototype.getThumbnailGallery = function() {
 
 
 /**
- * @return {moka.ui.ZipTabs} The projectTab
+ * @return {nrg.ui.ZipTabs} The projectTab
  * @public
  */
 xiv.ui.Modal.prototype.getProjectTab = function() {
@@ -290,6 +286,21 @@ xiv.ui.Modal.prototype.getPopupButton = function() {
 xiv.ui.Modal.prototype.getCloseButton = function() {
   return this.buttons_.CLOSE;
 }
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.ui.Modal.prototype.render = function(opt_parentElement) {
+    goog.base(this, 'render', opt_parentElement);
+    this.initSubComponents();
+    this.adjustStyleToMode_();
+    this.ViewBoxHandler_.insertColumn(false);
+    this.adjustStyleToMode_();
+    this.updateStyle();
+}
+
 
 
 
@@ -320,7 +331,6 @@ xiv.ui.Modal.prototype.setMode = function(mode) {
     }
 
     this.currMode_ = mode;
-    this.adjustStyleToMode_();
 }
 
 
@@ -439,7 +449,7 @@ xiv.ui.Modal.prototype.fadeInHiddenViewers_ = function() {
     this.ViewBoxHandler_.loop( function(ViewBox, i, j) { 
 	//window.console.log(ViewBox.getElement().style.opacity);
 	if (ViewBox.getElement().style.opacity == 0) {
-	    moka.fx.fadeIn(ViewBox.getElement(), xiv.ui.Modal.ANIM_LEN);
+	    nrg.fx.fadeIn(ViewBox.getElement(), xiv.ui.Modal.ANIM_LEN);
 	}
     })
 }
@@ -678,7 +688,7 @@ xiv.ui.Modal.prototype.computeViewBoxPositions_ = function () {
 xiv.ui.Modal.prototype.updateStyle = function () {
 
     this.computeDims_();
-    moka.style.setStyle(this.getElement(), {
+    nrg.style.setStyle(this.getElement(), {
 	'height' : this.dims_.H,
 	'width': this.dims_.W,
 	'left': this.dims_.X,
@@ -716,7 +726,7 @@ xiv.ui.Modal.prototype.updateStyle_ViewBoxes_ = function(){
     // xiv.ui.ViewBoxes	
     if (this.ViewBoxHandler_) {
 	this.ViewBoxHandler_.loop( function(ViewBox, i, j) { 
-	    moka.style.setStyle(ViewBox.getElement(), {
+	    nrg.style.setStyle(ViewBox.getElement(), {
 		'height': this.dims_.viewbox.H,
 		'width': this.dims_.viewbox.W ,
 		'left': this.dims_.viewbox.X[i][j],
@@ -733,10 +743,10 @@ xiv.ui.Modal.prototype.updateStyle_ViewBoxes_ = function(){
  * @private
  */
 xiv.ui.Modal.prototype.updateStyle_buttons_ = function(){
-    moka.style.setStyle(this.buttons_.INSERTROW, {
+    nrg.style.setStyle(this.buttons_.INSERTROW, {
 	'left': this.dims_.BUTTONS.INSERTROW.X
     })
-    moka.style.setStyle(this.buttons_.REMOVEROW, { 
+    nrg.style.setStyle(this.buttons_.REMOVEROW, { 
 	'left': this.dims_.BUTTONS.REMOVEROW.X
     })
 }
@@ -763,7 +773,7 @@ xiv.ui.Modal.prototype.initBackground_ = function() {
     bg.id = this.constructor.ID_PREFIX + '_Background_' + 
 	goog.string.createUniqueString();
     goog.dom.classes.set(bg, xiv.ui.Modal.CSS.BACKGROUND);
-    goog.dom.append(this.getElement(), bg);
+    goog.dom.appendChild(this.getElement(), bg);
 }
 
 
@@ -798,8 +808,10 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
     //
     // ProjectTab
     //
-    this.ProjectTab_ = new moka.ui.ZipTabs('RIGHT'); 
-    goog.dom.append(this.getElement(), this.ProjectTab_.getElement());
+    this.ProjectTab_ = new nrg.ui.ZipTabs('RIGHT'); 
+    this.ProjectTab_.render(this.getElement());
+    //goog.dom.append(this.getElement(), this.ProjectTab_.getElement());
+
     goog.dom.classes.add(this.ProjectTab_.getElement(), 
 			 xiv.ui.Modal.CSS.PROJECTTAB);
     
@@ -810,8 +822,7 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
     //
     this.ThumbnailGallery_ = new xiv.ui.ThumbnailGallery();
     this.ThumbnailGallery_.setHoverParent(this.getElement());
-    goog.dom.append(this.ProjectTab_.getElement(), 
-		    this.ThumbnailGallery_.getElement());
+    this.ThumbnailGallery_.render(this.ProjectTab_.getElement())
     this.setThumbnailGalleryEvents_();
 
     //
@@ -844,9 +855,9 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
 
 
     // Event listener
-    goog.events.listen(this.ProjectTab_, moka.ui.Resizable.EventType.RESIZE,
+    goog.events.listen(this.ProjectTab_, nrg.ui.Resizable.EventType.RESIZE,
 		       this.updateStyle.bind(this));
-    goog.events.listen(this.ProjectTab_, moka.ui.Resizable.EventType.RESIZE_END,
+    goog.events.listen(this.ProjectTab_, nrg.ui.Resizable.EventType.RESIZE_END,
 		       this.updateStyle.bind(this));
  
 }
@@ -1143,7 +1154,7 @@ xiv.ui.Modal.prototype.onViewBoxesChanged_ = function(e) {
 	// Fade out the new viewboxes.
 	if (e.newSet) {
 	    goog.array.forEach(e.newSet, function(newViewBox) {
-		moka.style.setStyle(newViewBox.getElement(), {'opacity': 0})
+		nrg.style.setStyle(newViewBox.getElement(), {'opacity': 0})
 	    })
 	}
 	// Animate the modal
@@ -1171,15 +1182,15 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
     delete this.dims_;
 
     // anims_
-    moka.ui.disposeAnimations(this.anims_);
+    nrg.ui.disposeAnimations(this.anims_);
     delete this.anims_;
 
     // animQueue_
-    moka.ui.disposeAnimationQueue(this.animQueue_);
+    nrg.ui.disposeAnimationQueue(this.animQueue_);
     delete this.animQueue_;
     
     // buttons_
-    moka.ui.disposeElementMap(this.buttons_);
+    nrg.ui.disposeElementMap(this.buttons_);
     delete this.buttons_;
 
     // ViewBoxHandler_

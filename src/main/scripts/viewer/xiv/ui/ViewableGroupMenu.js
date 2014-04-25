@@ -7,10 +7,10 @@ goog.require('goog.array');
 goog.require('goog.dom');
 
 // utils
-goog.require('moka.dom');
-goog.require('moka.style');
-goog.require('moka.fx');
-goog.require('moka.ui.ThumbnailGallery');
+goog.require('nrg.dom');
+goog.require('nrg.style');
+goog.require('nrg.fx');
+goog.require('nrg.ui.ThumbnailGallery');
 
 
 
@@ -20,7 +20,7 @@ goog.require('moka.ui.ThumbnailGallery');
  * when a user puts a Slicer mrb thumbnail into a ViewBox
  *
  * @constructor
- * @extends {moka.ui.Component}
+ * @extends {nrg.ui.Component}
  */
 goog.provide('xiv.ui.ViewableGroupMenu');
 xiv.ui.ViewableGroupMenu = function () {
@@ -56,7 +56,7 @@ xiv.ui.ViewableGroupMenu = function () {
 
 
     /**
-     * @type {?moka.ui.ThumbnailGallery}
+     * @type {?nrg.ui.ThumbnailGallery}
      * @private
      */
     this.ThumbnailGallery_ = null;
@@ -64,7 +64,7 @@ xiv.ui.ViewableGroupMenu = function () {
 
     this.init();
 }
-goog.inherits(xiv.ui.ViewableGroupMenu, moka.ui.Component);
+goog.inherits(xiv.ui.ViewableGroupMenu, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.ViewableGroupMenu', xiv.ui.ViewableGroupMenu);
 
 
@@ -120,13 +120,13 @@ xiv.ui.ViewableGroupMenu.prototype.getBackground = function() {
  * @public
  */
 xiv.ui.ViewableGroupMenu.prototype.show = function() {
-    moka.fx.fadeIn(this.getElement(), xiv.ANIM_SLOW);
+    nrg.fx.fadeIn(this.getElement(), xiv.ANIM_SLOW);
 }
 
 
 
 /**
- * @return {moka.ui.Thumbnail}
+ * @return {nrg.ui.Thumbnail}
  * @public
  */
 xiv.ui.ViewableGroupMenu.prototype.createAndAddThumbnail = 
@@ -145,7 +145,7 @@ function(imageUrl, displayText) {
  * @public
  */
 xiv.ui.ViewableGroupMenu.prototype.hide = function() {
-    moka.fx.fadeOut(this.getElement(), xiv.ANIM_MED);
+    nrg.fx.fadeOut(this.getElement(), xiv.ANIM_MED);
     goog.dom.removeNode(this.getElement());
 }
 
@@ -166,7 +166,7 @@ xiv.ui.ViewableGroupMenu.prototype.init = function () {
 	delete this.ThumbnailGallery_;
     }
 
-    this.ThumbnailGallery_ = new moka.ui.ThumbnailGallery();
+    this.ThumbnailGallery_ = new nrg.ui.ThumbnailGallery();
     goog.dom.append(this.getElement(), this.ThumbnailGallery_.getElement());
     goog.dom.classes.add(this.ThumbnailGallery_.getElement(), 
 			 xiv.ui.ViewableGroupMenu.CSS.THUMBNAILGALLERY);
@@ -188,11 +188,11 @@ xiv.ui.ViewableGroupMenu.prototype.init = function () {
 /**
  * Calls the 'VIEWSELECTED' event when a Thumbnail is clicked.
  *
- * @param {!moka.ui.Thumbnail} thumbnail R
+ * @param {!nrg.ui.Thumbnail} thumbnail R
  * @private
  */
 xiv.ui.ViewableGroupMenu.prototype.setThumbnailOnClick_ = function (thumbnail) {
-    goog.events.listen(thumbnail, moka.ui.Thumbnail.EventType.CLICK, 
+    goog.events.listen(thumbnail, nrg.ui.Thumbnail.EventType.CLICK, 
     function(e){
 	window.console.log("CLICK!");
 	this.dispatchEvent({

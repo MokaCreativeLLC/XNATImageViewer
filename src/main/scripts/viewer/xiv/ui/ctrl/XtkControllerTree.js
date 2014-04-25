@@ -5,8 +5,8 @@
 // goog
 goog.require('goog.object');
 
-// moka
-goog.require('moka.ui.Component');
+// nrg
+goog.require('nrg.ui.Component');
 
 // xtk
 goog.require('X.volume');
@@ -25,13 +25,13 @@ goog.require('xiv.ui.ctrl.AnnotationsController3D');
 /**
  *
  * @constructor
- * @extends {moka.ui.Component}
+ * @extends {nrg.ui.Component}
  */
 goog.provide('xiv.ui.ctrl.XtkControllerTree');
 xiv.ui.ctrl.XtkControllerTree = function() {
     goog.base(this);
 }
-goog.inherits(xiv.ui.ctrl.XtkControllerTree, moka.ui.Component);
+goog.inherits(xiv.ui.ctrl.XtkControllerTree, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree', 
 		  xiv.ui.ctrl.XtkControllerTree);
 

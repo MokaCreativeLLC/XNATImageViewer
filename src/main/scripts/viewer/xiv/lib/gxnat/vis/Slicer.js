@@ -5,8 +5,8 @@
 // goog
 goog.require('goog.string');
 
-// moka
-goog.require('moka.string');
+// nrg
+goog.require('nrg.string');
 
 // gxnat
 goog.require('gxnat');
@@ -233,7 +233,7 @@ gxnat.vis.Slicer.prototype.getThumbnailImage = function(opt_callback){
     // Get all files that match the image extension.
     //
     for (; i < len; i++) {
-	ext = moka.string.getFileExtension(this.mrbFiles_[i]);
+	ext = nrg.string.getFileExtension(this.mrbFiles_[i]);
 	if (gxnat.vis.Slicer.thumbnailExtensions.indexOf(ext) != -1) {
 	    this['thumbnailFiles'].push(this.mrbFiles_[i]);
 	}
@@ -263,7 +263,7 @@ gxnat.vis.Slicer.prototype.getThumbnailImage = function(opt_callback){
     //
     len = this['thumbnailFiles'].length;
     for (i=0; i < len; i++) {
-	if (moka.string.basename(moka.string.dirname(
+	if (nrg.string.basename(nrg.string.dirname(
 	    this['thumbnailFiles'][i])) != 'Data'){
 	    this.setThumbnailUrl(this['thumbnailFiles'][i]);
 	    break;

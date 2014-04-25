@@ -7,8 +7,8 @@ goog.require('goog.string');
 goog.require('goog.array');
 
 // utils
-goog.require('moka.string');
-goog.require('moka.ui.Component');
+goog.require('nrg.string');
+goog.require('nrg.ui.Component');
 
 // xiv
 goog.require('xiv.ui.layouts.LayoutFrame');
@@ -20,7 +20,7 @@ goog.require('xiv.ui.layouts.LayoutFrame');
  * xiv.ui.layouts.Layout
  *
  * @constructor
- * @extends {moka.ui.Component}
+ * @extends {nrg.ui.Component}
  */
 goog.provide('xiv.ui.layouts.Layout');
 xiv.ui.layouts.Layout = function() {
@@ -41,7 +41,7 @@ xiv.ui.layouts.Layout = function() {
      */
     this.LayoutFrames = {};
 }
-goog.inherits(xiv.ui.layouts.Layout, moka.ui.Component);
+goog.inherits(xiv.ui.layouts.Layout, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.layouts.Layout', xiv.ui.layouts.Layout);
 
 
@@ -208,6 +208,6 @@ xiv.ui.layouts.Layout.prototype.disposeInternal = function(){
     delete this.minLayoutFrameHeight_;
     delete this.minLayoutFrameWidth_;
 
-    moka.ui.disposeComponentMap(this.LayoutFrames_);
+    nrg.ui.disposeComponentMap(this.LayoutFrames_);
     delete this.LayoutFrames_;
 }

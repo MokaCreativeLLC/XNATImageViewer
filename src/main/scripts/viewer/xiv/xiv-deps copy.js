@@ -6,7 +6,7 @@ goog.addDependency('../../../../xiv.js',
     'goog.window',
     'X.loader',
     'X.parserIMA',
-    'moka.fx',
+    'nrg.fx',
     'gxnat',
     'gxnat.Path',
     'gxnat.ProjectTree',
@@ -33,12 +33,12 @@ goog.addDependency('../../../../ui/Modal.js',
     'goog.fx.dom.Slide',
     'goog.fx.dom.Resize',
     'goog.events',
-    'moka.ui.Component',
-    'moka.dom',
-    'moka.string',
-    'moka.style',
-    'moka.convert',
-    'moka.fx',
+    'nrg.ui.Component',
+    'nrg.dom',
+    'nrg.string',
+    'nrg.style',
+    'nrg.convert',
+    'nrg.fx',
     'xiv.ui.ViewBoxManager',
     'xiv.ui.ThumbnailHandler',
 ]); 
@@ -52,11 +52,11 @@ goog.addDependency('../../../../ui/XtkControllerMenu.js',
     'goog.array',
     'goog.string',
     'goog.dom',
-    'moka.string',
-    'moka.dom',
-    'moka.array',
-    'moka.style',
-    'moka.ui.ZippyTree',
+    'nrg.string',
+    'nrg.dom',
+    'nrg.array',
+    'nrg.style',
+    'nrg.ui.ZippyTree',
     'xiv.xtk.xtkHandler'
 ]);
 
@@ -83,11 +83,11 @@ goog.addDependency('../../../../ui/ThumbnailHandler.js',
     'goog.array',
     'goog.fx.DragDrop', 
     'goog.fx.DragDropGroup', 
-    'moka.string', 
-    'moka.fx', 
-    'moka.events.EventManager', 
-    'moka.ui.ThumbnailGallery',
-    'moka.ui.Thumbnail',
+    'nrg.string', 
+    'nrg.fx', 
+    'nrg.events.EventManager', 
+    'nrg.ui.ThumbnailGallery',
+    'nrg.ui.Thumbnail',
     'xiv.ui.Thumbnail'
 ]);
 
@@ -96,7 +96,7 @@ goog.addDependency('../../../../ui/Thumbnail.js',
 ['xiv.ui.Thumbnail'], [
     'goog.dom',
     'goog.string',
-    'moka.ui.Thumbnail',
+    'nrg.ui.Thumbnail',
 ]);
 
 
@@ -108,9 +108,9 @@ goog.addDependency('../../../../ui/ViewBox.js',
     'goog.dom', 
     'goog.array',
     'goog.object',
-    'moka.ui.Component',
-    'moka.events.EventManager',
-    'moka.style',
+    'nrg.ui.Component',
+    'nrg.events.EventManager',
+    'nrg.style',
     'xiv.ui.ViewLayoutHandler',
     'xiv.ui.ViewLayoutMenu',
     'xiv.ui.ViewBoxTabs',
@@ -133,11 +133,11 @@ goog.addDependency('../../../../ui/ViewBoxManager.js',
     'goog.fx.DragDrop',
     'goog.fx.DragDropGroup',
     'goog.fx.AnimationParallelQueue',
-    'moka.ui.Component',
-    'moka.string',
-    'moka.style',
-    'moka.fx',
-    'moka.events.EventManager',
+    'nrg.ui.Component',
+    'nrg.string',
+    'nrg.style',
+    'nrg.fx',
+    'nrg.events.EventManager',
     'xiv.ui.ViewBox'
 ]);
 
@@ -150,9 +150,9 @@ goog.addDependency('../../../../ui/XtkPlane.js',
     'goog.ui.Slider',
     'X.renderer2D',
     'X.renderer3D',
-    'moka.dom',
-    'moka.ui.Component',
-    'moka.style'
+    'nrg.dom',
+    'nrg.ui.Component',
+    'nrg.style'
 ]);
 
 
@@ -160,7 +160,7 @@ goog.addDependency('../../../../ui/ViewLayout.js',
 ['xiv.ui.ViewLayout'], [
     'goog.string',
     'goog.array',
-    'moka.string'
+    'nrg.string'
 ]);
 
 goog.addDependency('../../../../ui/ViewLayoutHandler.js', 
@@ -175,11 +175,11 @@ goog.addDependency('../../../../ui/ViewLayoutHandler.js',
     'goog.fx.dom.Slide',
     'goog.fx.dom.Resize',
     'goog.dom',
-    'moka.string',
-    'moka.fx',
-    'moka.dom',
-    'moka.array',
-    'moka.style',
+    'nrg.string',
+    'nrg.fx',
+    'nrg.dom',
+    'nrg.array',
+    'nrg.style',
     'xiv.ui.XtkPlane',
     'xiv.ui.ViewLayout'
 ]);
@@ -199,10 +199,10 @@ goog.addDependency('../../../../ui/ViewLayoutMenu.js',
     'goog.events',
     'goog.dom',
     'goog.fx',
-    'moka.ui.Component',
-    'moka.dom',
-    'moka.style',
-    'moka.fx',
+    'nrg.ui.Component',
+    'nrg.dom',
+    'nrg.style',
+    'nrg.fx',
     'xiv.ui.ViewLayout',
 ]);
 
@@ -217,11 +217,11 @@ goog.addDependency('../../../../ui/ViewBoxTabs.js',
     'goog.ui.TabPane',
     'goog.ui.TabPane.TabPage',
     'goog.events',
-    'moka.ui.Component',
-    'moka.convert',
-    'moka.ui.ScrollableContainer',
-    'moka.style',
-    'moka.events.EventManager'
+    'nrg.ui.Component',
+    'nrg.convert',
+    'nrg.ui.ScrollableContainer',
+    'nrg.style',
+    'nrg.events.EventManager'
 ]);
 
 
@@ -232,13 +232,13 @@ goog.addDependency('../../../../ui/Displayer/Xtk/Xtk.js',
     'goog.dom',
     'goog.array',
     'X.sphere',
-    'moka.ui.Component',
-    'moka.string',
-    'moka.style',
+    'nrg.ui.Component',
+    'nrg.string',
+    'nrg.style',
     'xiv.xtk.xtkHandler',
     'xiv.ui.XtkControllerMenu',
-    'moka.convert',
-    'moka.dom',
+    'nrg.convert',
+    'nrg.dom',
     'xiv.slicer',
     'xiv.ui.XtkPlaneManager',
     'xiv.ui.Displayer',
@@ -252,16 +252,16 @@ goog.addDependency('../../../../ui/Displayer/Displayer.js',
     'goog.string',
     'goog.dom',
     'goog.array',
-    'moka.ui.Component',
-      'moka.convert',
-    'moka.style',
+    'nrg.ui.Component',
+      'nrg.convert',
+    'nrg.style',
 ]);
 
 
 goog.addDependency('../../../../ui/XtkPlaneManager.js', 
 ['xiv.ui.XtkPlaneManager'], [
     'goog.array',
-    'moka.dom',
+    'nrg.dom',
     'xiv.ui.Displayer',
     'xiv.ui.XtkPlane',
 ]);
@@ -273,11 +273,11 @@ goog.addDependency('../../../../ui/XtkPlaneManager.js',
 goog.addDependency('../../../../ui/SlicerViewMenu.js', 
 ['xiv.ui.SlicerViewMenu'], [
     'goog.array',
-    'moka.dom',
-    'moka.ui.Component',
-    'moka.ui.Thumbnail',
-    'moka.ui.ScrollableContainer',
-    'moka.events.EventManager',
+    'nrg.dom',
+    'nrg.ui.Component',
+    'nrg.ui.Thumbnail',
+    'nrg.ui.ScrollableContainer',
+    'nrg.events.EventManager',
     
 ]);
 
@@ -294,7 +294,7 @@ goog.addDependency('../../../xiv/slicer/mrbProperties/mrbProperties.js',
 ['xiv.slicer.mrbProperties'], [
     'goog.array',
     'goog.string',
-    'moka.string'
+    'nrg.string'
 ]);
 
 

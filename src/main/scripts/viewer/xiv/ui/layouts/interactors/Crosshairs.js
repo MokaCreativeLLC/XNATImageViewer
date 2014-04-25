@@ -6,7 +6,7 @@
 goog.require('goog.dom');
 
 // utils
-goog.require('moka.ui.Component');
+goog.require('nrg.ui.Component');
 
 
 
@@ -15,13 +15,13 @@ goog.require('moka.ui.Component');
  * xiv.ui.layouts.interactors.Crosshairs
  *
  * @constructor
- * @extends {moka.ui.Component}
+ * @extends {nrg.ui.Component}
  */
 goog.provide('xiv.ui.layouts.interactors.Crosshairs');
 xiv.ui.layouts.interactors.Crosshairs = function() { 
     goog.base(this);
 }
-goog.inherits(xiv.ui.layouts.interactors.Crosshairs, moka.ui.Component);
+goog.inherits(xiv.ui.layouts.interactors.Crosshairs, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.layouts.interactors.Crosshairs', 
 		  xiv.ui.layouts.interactors.Crosshairs);
 

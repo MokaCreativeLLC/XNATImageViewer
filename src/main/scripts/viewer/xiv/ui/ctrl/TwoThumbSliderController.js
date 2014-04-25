@@ -3,7 +3,7 @@
  */
 
 //
-goog.require('moka.style');
+goog.require('nrg.style');
 
 // xiv
 goog.require('xiv.ui.ctrl.XtkController');
@@ -114,12 +114,12 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.createSlider_ = function() {
     //-------------------
     goog.dom.classes.add(this.slider_.getValueThumb(), 
 			 xiv.ui.ctrl.TwoThumbSliderController.CSS.SLIDER_THUMB);
-    moka.style.setHoverClass(this.slider_.getValueThumb(),  
+    nrg.style.setHoverClass(this.slider_.getValueThumb(),  
 		xiv.ui.ctrl.TwoThumbSliderController.CSS.SLIDER_THUMB_HOVER);
 
     goog.dom.classes.add(this.slider_.getExtentThumb(), 
 			 xiv.ui.ctrl.TwoThumbSliderController.CSS.SLIDER_THUMB);
-    moka.style.setHoverClass(this.slider_.getExtentThumb(),  
+    nrg.style.setHoverClass(this.slider_.getExtentThumb(),  
 		xiv.ui.ctrl.TwoThumbSliderController.CSS.SLIDER_THUMB_HOVER);
 
 

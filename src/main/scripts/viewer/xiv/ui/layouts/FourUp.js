@@ -6,8 +6,8 @@
 goog.require('goog.string');
 goog.require('goog.array');
 
-// moka
-goog.require('moka.string');
+// nrg
+goog.require('nrg.string');
 
 // xiv
 goog.require('xiv.ui.layouts.XyzvLayout');
@@ -99,11 +99,11 @@ xiv.ui.layouts.FourUp.prototype.setupLayoutFrame_X = function(){
     // Listen for the RESIZE event.
     //
     goog.events.listen(this.LayoutFrames['X'].getResizable(), 
-		       moka.ui.Resizable.EventType.RESIZE,
+		       nrg.ui.Resizable.EventType.RESIZE,
 		       this.onLayoutFrameResize_X.bind(this));
 
     goog.events.listen(this.LayoutFrames['X'].getResizable(), 
-		       moka.ui.Resizable.EventType.RESIZE_END,
+		       nrg.ui.Resizable.EventType.RESIZE_END,
 		       this.updateStyle.bind(this));
 }
 

@@ -7,8 +7,8 @@ goog.require('goog.string');
 goog.require('goog.array');
 goog.require('goog.object');
 
-// moka
-goog.require('moka.string');
+// nrg
+goog.require('nrg.string');
 
 // xiv
 goog.require('xiv.ui.layouts.Layout');
@@ -368,7 +368,8 @@ xiv.ui.layouts.XyzvLayout.prototype.addLayoutFrameSliders_ = function(){
     var slider;
 
     this.loopXyz(function(LayoutFrame, key) {			
-	    slider = new moka.ui.GenericSlider('horizontal');
+	    slider = new nrg.ui.Slider('horizontal');
+	    slider.render(LayoutFrame.getElement());
 
 	    slider.getElement().id = key + "_LayoutFrameSlider_" +
 		goog.string.createUniqueString();
@@ -377,7 +378,6 @@ xiv.ui.layouts.XyzvLayout.prototype.addLayoutFrameSliders_ = function(){
 	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.SLIDER] = slider;
 
 
-	    goog.dom.append(LayoutFrame.getElement(), slider.getElement());
 
 	    goog.dom.classes.addRemove(slider.getElement(), null,
 				       [xiv.ui.layouts.XyzvLayout.CSS.SLIDER]);

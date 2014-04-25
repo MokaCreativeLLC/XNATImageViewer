@@ -12,11 +12,11 @@ goog.require('goog.string');
 goog.require('goog.dom');
 
 // lib
-goog.require('moka.string');
-goog.require('moka.dom');
-goog.require('moka.array');
-goog.require('moka.style');
-goog.require('moka.ui.ZippyTree');
+goog.require('nrg.string');
+goog.require('nrg.dom');
+goog.require('nrg.array');
+goog.require('nrg.style');
+goog.require('nrg.ui.ZippyTree');
 
 
 
@@ -512,7 +512,7 @@ xiv.vis.XtkController.createRow = function (eltArr, opt_lefts) {
     // them out accordingly.
     //------------------    
     goog.array.forEach(eltArr, function(elt, i){
-	moka.style.setStyle(elt, {
+	nrg.style.setStyle(elt, {
 	    'position': 'absolute',
 	    'left': ((100 / eltArr.length) * i).toString() + '%',
 	})
@@ -527,7 +527,7 @@ xiv.vis.XtkController.createRow = function (eltArr, opt_lefts) {
     // of the elements according to opt_lefts.
     //------------------    
     goog.array.forEach(opt_lefts, function(left, i){
-	moka.style.setStyle(eltArr[i], {'left' : opt_lefts[i]});
+	nrg.style.setStyle(eltArr[i], {'left' : opt_lefts[i]});
     })
     
 
@@ -593,7 +593,7 @@ function(xtkObject){
     // the subfolder opacity controllers.
     //------------------
     goog.array.forEach(xtkObjects, function(xtkObject, i){
-	fileName =  moka.string.basename(goog.isArray(xtkObject.file) ? 
+	fileName =  nrg.string.basename(goog.isArray(xtkObject.file) ? 
 					 xtkObject.file[0] : xtkObject.file);
 
 	// Special case for annotations
@@ -662,7 +662,7 @@ xiv.vis.XtkController.createControllers_Volume = function(xtkObject){
     // and 2D toggle controls).
     //------------------
     goog.array.forEach(xtkObjects, function(xtkObject, i){
-	fileName =  moka.string.basename(
+	fileName =  nrg.string.basename(
 	    goog.isArray(xtkObject.file) ? xtkObject.file[0] : xtkObject.file);
 
 	//
@@ -751,7 +751,7 @@ xiv.vis.XtkController.addDicoms = function(xtkObjects){
     // (threshold, volume rendering).
     //------------------
     goog.array.forEach(xtkObjects, function(xtkObject, i){
-	fileName =  moka.string.basename(goog.isArray(xtkObject.file) ? xtkObject.file[0] : xtkObject.file);
+	fileName =  nrg.string.basename(goog.isArray(xtkObject.file) ? xtkObject.file[0] : xtkObject.file);
 
 	//
 	// Putting this first because we need the xObject
@@ -833,7 +833,7 @@ xiv.vis.XtkController.addFiber = function(xtkObjects){
     // Construct the fiber-specific controllers.
     //------------------
     goog.array.forEach(xtkObjects, function(xtkObject, i){
-	fileName =  moka.string.basename(goog.isArray(xtkObject.file) ? xtkObject.file[0] : xtkObject.file);
+	fileName =  nrg.string.basename(goog.isArray(xtkObject.file) ? xtkObject.file[0] : xtkObject.file);
 
 	opacity = this.createOpacity_(fileName, masterOpacity['slider']);
 	visible = this.createVisible_(fileName, displayAll['button']);
@@ -1054,7 +1054,7 @@ xiv.vis.XtkController.createSlider = function(opt_parent, opt_args) {
     //------------------
     // Make slider.
     //------------------
-    slider = new moka.ui.GenericSlider();
+    slider = new nrg.ui.Slider();
     this.getParent(opt_parent).appendChild(slider.getElement());
 
 
@@ -1102,7 +1102,7 @@ xiv.vis.XtkController.createSlider = function(opt_parent, opt_args) {
 /**
  * Makes a two-thumb slider to be added to a sliderRow.  We 
  * refer to goog.ui.TwoThumb slider for this, as opposed to a
- * sibling class of moka.ui.GenericSlider.
+ * sibling class of nrg.ui.Slider.
  *
  * @param {Element=} opt_parent
  * @param {Object=} opt_args
@@ -1157,14 +1157,14 @@ xiv.vis.XtkController.createTwoThumbSlider = function(opt_parent, opt_args) {
 	    child.className === 'goog-twothumbslider-extent-thumb') {
 	    goog.dom.classes.add(child, 
 			xiv.vis.XtkController.TWOTHUMBSLIDER_THUMB_CLASS);
-	    moka.style.setHoverClass(child,  
+	    nrg.style.setHoverClass(child,  
 		xiv.vis.XtkController.THUMB_HOVER_CLASS, 
 				      function(applyHover, removeHover){
 
 		//
 		// set Dragging class
 		//
-		moka.ui.GenericSlider.superClass_.addEventListener.call(
+		nrg.ui.Slider.superClass_.addEventListener.call(
 		    slider, goog.ui.SliderBase.EventType.DRAG_START, 
 		    function (e) {
 
@@ -1174,7 +1174,7 @@ xiv.vis.XtkController.createTwoThumbSlider = function(opt_parent, opt_args) {
 		    goog.dom.classes.add(child, 
 			xiv.vis.XtkController.THUMB_HOVER_CLASS);
 		});	  
-		moka.ui.GenericSlider.superClass_.addEventListener.call(
+		nrg.ui.Slider.superClass_.addEventListener.call(
 		    slider, goog.ui.SliderBase.EventType.DRAG_END, 
 		    function (e) {
 
