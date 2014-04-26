@@ -58,6 +58,15 @@ nrg.ui.ThumbnailGallery.CSS_SUFFIX = {
 
 
 /**
+ * @const
+ */
+nrg.ui.ThumbnailGallery.THUMB_SORT_ID = goog.string.createUniqueString();
+
+
+
+
+
+/**
  * @type {Object.<string, nrg.ui.Thumbnail>}
  * @private
  */
@@ -105,6 +114,31 @@ nrg.ui.ThumbnailGallery.prototype.thumbnailImageClasses_;
 
 
 
+/**
+ * @private
+ * @type {!boolean}
+ */
+nrg.ui.ThumbnailGallery.prototype.sortThumbnailsOnInsert_ = false;
+
+
+
+/**
+ * @private
+ * @type {!boolean} bool
+ */
+nrg.ui.ThumbnailGallery.prototype.sortThumbnailsOnInsert = function(bool){
+    this.sortThumbnailsOnInsert_ = bool;
+
+    window.console.log("SORT!", this.ZippyTree_);
+
+    if (goog.isDefAndNotNull(this.ZippyTree_) 
+	&& this.sortThumbnailsOnInsert_){
+	this.ZippyTree_.setCustomInsertMethod(
+	    nrg.ui.ThumbnailGallery.thumbnailSorter)
+    }
+}
+
+
 
 /**
  * @inheritDoc
@@ -117,10 +151,17 @@ nrg.ui.ThumbnailGallery.prototype.render = function(opt_parentElement) {
     //
     // Zippy Tree
     //
-    //this.ZippyTree_ = new nrg.ui.ZippyTree();
-    //this.ZippyTree_.render(this.getScrollArea());
-
     this.ZippyTree_ = new nrg.ui.ZippyTree();
+    
+    //
+    // Apply sort method
+    //
+    if (this.sortThumbnailsOnInsert_){
+	this.ZippyTree_.setCustomInsertMethod(
+	    nrg.ui.ThumbnailGallery.thumbnailSorter)
+    }
+
+
     goog.dom.append(this.getScrollArea(), this.ZippyTree_.getElement());
     //this.ZippyTree_.render(this.getScrollArea());
 
@@ -129,6 +170,59 @@ nrg.ui.ThumbnailGallery.prototype.render = function(opt_parentElement) {
 
     this.setZippyTreeEvents_();
 }
+
+
+
+/**
+ * Binary insertion sort algorithim: O(log n) worst case, 
+ * which means on set of Thumbnails it will be O(n * log n) worst case.  
+ *
+ * @public
+ * @param {!Element} holderElt
+ * @param {!Element} insertElt
+ */
+nrg.ui.ThumbnailGallery.thumbnailSorter = function(holderElt, insertElt){
+    //
+    // For no siblings...
+    //
+    if (!goog.isDefAndNotNull(holderElt.childNodes) || 
+	holderElt.childNodes.length == 0) {
+	goog.dom.appendChild(holderElt, insertElt);
+	return;
+    }
+
+    //
+    // Preliminary sort params
+    //
+    var siblings = goog.dom.getChildren(holderElt);
+    var insertEltText = insertElt[nrg.ui.ThumbnailGallery.THUMB_SORT_ID].
+	toLowerCase();    
+    var comparer;
+    var compareStr;
+    var len = siblings.length
+    var i = 0;
+
+
+    //
+    // Linear insert
+    //
+    for (; i < len; i++){
+	compareStr = siblings[i]
+	    [nrg.ui.ThumbnailGallery.THUMB_SORT_ID].toLowerCase();
+	comparer = insertEltText.localeCompare(compareStr)
+
+	// insert only when the text is less...
+	if (comparer == -1) {
+	    goog.dom.insertSiblingBefore(insertElt, siblings[i]);
+	    return;
+	}
+    }
+
+    //
+    // Otherwise, insert at the end...
+    //
+    goog.dom.appendChild(holderElt, insertElt);
+};
 
 
 
@@ -229,7 +323,10 @@ function(thumbnail, opt_folders) {
 		     nrg.ui.Slider.EventType.MOUSEWHEEL, 
 			 this.onHoverAndScroll_.bind(this));
 
-    //window.console.log(opt_folders, "\n\nMIN", opt_minFolderInd);
+    window.console.log('\n\nTHUMBNAIL SORT PROPERTY HERE');
+    thumbnail.getElement()[nrg.ui.ThumbnailGallery.THUMB_SORT_ID] = 
+	thumbnail.getText().childNodes[0].childNodes[0].innerHTML;
+
     this.ZippyTree_.addContents(thumbnail.getElement(), opt_folders);
 }
 
@@ -246,18 +343,16 @@ function(thumbnail, opt_folders) {
  */
 nrg.ui.ThumbnailGallery.prototype.createAndAddThumbnail = 
 function(imageUrl, displayText, opt_folders) {
-    var thumbnail = /**@type {!nrg.ui.Thumbnail} */
-    this.createThumbnail(imageUrl, displayText)
+    var thumbnail =  this.createThumbnail(imageUrl, displayText);
     this.addThumbnail(thumbnail, opt_folders);
     this.setThumbnailClasses_('image');
     this.setThumbnailClasses_('text');
     this.setThumbnailClasses_('thumbnail');
     this.mapSliderToContents();
     
-
     return thumbnail;
 }
-
+ 
 
 
 /**
@@ -450,6 +545,10 @@ nrg.ui.ThumbnailGallery.prototype.setDefaultClasses_ = function() {
 nrg.ui.ThumbnailGallery.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
+    // onInsert
+    delete this.sortThumbnailsOnInsert_;
+
+    
     // Thumbs
     nrg.ui.disposeComponentMap(this.Thumbs_);
     delete this.Thumbs_;

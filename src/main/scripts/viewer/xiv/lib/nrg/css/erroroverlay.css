@@ -17,9 +17,9 @@
 
 .nrg-ui-erroroverlay-no-webgl-image {
     position: absolute; 
-    top: calc(50% - 20px);
-    left: calc(50% - 20px);
-    width: 40px;
-    height: 40px;
-    content:url('/xnat/images/viewer/xiv/ui/Overlay/sadface.ico');
+    top: 50px;
+    left: calc(50% - 40px);
+    width: 80px;
+    height: 80px;
+    content:url('/xnat/images/viewer/xiv/ui/Overlay/sadbrain-white.png');
 }

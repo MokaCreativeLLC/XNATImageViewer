@@ -172,6 +172,7 @@ xiv.revertDocumentStyle_ = function() {
 xiv.prototype.testForExperimentalWebGL = function(){
 
     var canvas = goog.dom.createDom('canvas');
+    var gl;
 
     try { 
 	gl = canvas.getContext("webgl"); 
@@ -189,13 +190,7 @@ xiv.prototype.testForExperimentalWebGL = function(){
 	gl = null; 
     }
 
-    if(gl) { 
-	return true; 
-    }
-    else { 
-	alert('NO WEBGL!');
-	return false; 
-    }
+    return gl ? true : false;
 }
 
 
@@ -206,31 +201,33 @@ xiv.prototype.testForExperimentalWebGL = function(){
  */
 xiv.prototype.onNoExperimentalWebGL_ = function(){
     
-    var errorString = '<font size="30">:(</font><br><br>'+
-	'XImgView can\'t be used on this browser ' +
-	'because experimental-webgl is either unsupported ' +
-	'or disabled.<br>For more information:<br><br>' +
+    var errorString = '<br><br><br>'+
+	'It looks like ' +
+	'experimental-webgl on this browser is either unsupported ' +
+	'or disabled.<br><br>More info:<br><br>' +
 
     '<a href="https://github.com/xtk/X/wiki/X:Browsers">' + 
-	'https://github.com/xtk/X/wiki/X:Browsers' + '</a><br><br>' +
-
-    '<a href="http://apple.stackexchange.com/questions/14365/' + 
-	'how-to-disable-webgl-in-the-chrome-browser-on-mac-os-x">' + 
-	'http://apple.stackexchange.com/questions/14365/how-to-disable' + 
-	'-webgl-in-the-chrome-browser-on-mac-os-x' + '</a>';
+	'https://github.com/xtk/X/wiki/X:Browsers' + '</a>'
 
 
-    //alert(errorString);
-
-    
+    //alert(errorString);    
     var ErrorOverlay = new nrg.ui.ErrorOverlay(errorString);
-    //ErrorOverlay.addImage();
+
+    //
+    // Add bg and closebutton
+    //
     ErrorOverlay.addBackground();
     ErrorOverlay.addCloseButton();
     
-    //var errorImg = ErrorOverlay.addImage();
-    //goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE); 
+    //
+    // Add image
+    //
+    var errorImg = ErrorOverlay.addImage();
+    goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE); 
 
+    //
+    // Add above text and render
+    //
     ErrorOverlay.addText(errorString)
     ErrorOverlay.render();
 
@@ -267,8 +264,9 @@ xiv.prototype.show = function(){
     //
     // Set the Modal's opacity to 0, then attatch to document.
     //
-    this.Modal_.render();
     this.Modal_.getElement().style.opacity = 0;
+    this.Modal_.render();
+
 
     //
     // Set the button callbacks once rendered.
@@ -455,8 +453,13 @@ xiv.prototype.createModalPopup_ = function(){
  * @public
  */
 xiv.prototype.fetchViewableTrees = function(viewablesUri, opt_doneCallback){
+
+
+    //
+    // Get the viewable trees
+    //
     xiv.getViewableTreesFromXnat(viewablesUri, function(viewable){
-	//window.console.log('VIEWABLE', viewable);
+	window.console.log('VIEWABLE', viewable);
 	this.storeViewableTree_(viewable);
 	this.addViewableTreeToModal(viewable);
     }.bind(this), opt_doneCallback)
@@ -473,11 +476,13 @@ xiv.prototype.addViewableTreeToModal = function(ViewableTree){
     //window.console.log(ViewableTree);
     if (!this.Modal_.getThumbnailGallery()) { return };
     //window.console.log("Thumb gallery");
-    this.Modal_.getThumbnailGallery().createAndAddThumbnail(
+    var ThumbGallery = this.Modal_.getThumbnailGallery();
+
+    ThumbGallery.createAndAddThumbnail(
 	ViewableTree, // The viewable
 	xiv.extractViewableTreeFolders_(ViewableTree) // The folder tree
     );
-    this.Modal_.getThumbnailGallery().setHoverParent(this.Modal_.getElement());
+    ThumbGallery.setHoverParent(this.Modal_.getElement());
 }
 
 

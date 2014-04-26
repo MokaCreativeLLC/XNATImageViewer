@@ -821,6 +821,7 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
     // Thumbnail Gallery
     //
     this.ThumbnailGallery_ = new xiv.ui.ThumbnailGallery();
+    this.ThumbnailGallery_.sortThumbnailsOnInsert(true);
     this.ThumbnailGallery_.setHoverParent(this.getElement());
     this.ThumbnailGallery_.render(this.ProjectTab_.getElement())
     this.setThumbnailGalleryEvents_();

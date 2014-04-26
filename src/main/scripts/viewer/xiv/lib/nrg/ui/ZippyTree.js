@@ -158,6 +158,26 @@ nrg.ui.ZippyTree.prototype.fadeDur_ = 0;
 
 
 /**
+ * @type {Function}
+ * @private
+ */
+nrg.ui.ZippyTree.prototype.customInsertMethod_ ;
+
+
+
+/**
+ * @param {!Function} method
+ * @private
+ */
+nrg.ui.ZippyTree.prototype.setCustomInsertMethod = function(method){
+    window.console.log('thus custom insert method');
+    this.customInsertMethod_ = method;
+};
+
+
+
+
+/**
  * As stated.
  * @return {!boolean}
  * @public
@@ -295,7 +315,7 @@ nrg.ui.ZippyTree.prototype.addContent_ = function(element, opt_folders) {
  */
 nrg.ui.ZippyTree.prototype.createBranch_ = function(fldrs, pNode, opt_elt) {
     
-    var contHold = /**@type {!Element}*/ pNode.getContentHolder();
+    var contHold = pNode.getContentHolder();
 
     // If at end of branch
     if (fldrs.length == 0 && opt_elt){
@@ -387,7 +407,25 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
 	opt_elt.style.opacity = this.initOp_;
 	// IMPORTANT!
 	//window.console.log(contHold);
-	goog.dom.append(contHold, opt_elt);
+
+	// This is where you sort the nodes.
+	window.console.log('\n\nTHUMBNAIL SORTING OCCURS HERE');
+
+	if (goog.isDefAndNotNull(this.customInsertMethod_)) {
+	    window.console.log('CUSTOM INSERT METHOD!');
+	    this.customInsertMethod_(contHold, opt_elt);
+	} else {
+	/**
+	var siblings = goog.dom.getChildren(contHold);
+	var siblingTexts = [];
+	goog.array.forEach(siblings, function(sibling){
+	    siblingTexts.push(sibling['THUMB TEXT'])
+	})
+	siblingTexts = siblingTexts.sort(nrg.array.naturalCompare);
+	*/
+
+	    goog.dom.appendChild(contHold, opt_elt);
+	}
 	this.createFadeAnim_(opt_elt, function(){
 	    this.dispatchEvent({
 		type: nrg.ui.ZippyTree.EventType.CONTENTADDED
