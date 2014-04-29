@@ -465,6 +465,9 @@ nrg.ui.ThumbnailGallery.prototype.setThumbnailClasses_ =
  * @public
  */
 nrg.ui.ThumbnailGallery.prototype.addThumbnailClass = function (className) {
+    if (!goog.isDefAndNotNull(this.thumbnailClasses_)){
+	this.setDefaultClasses_();
+    }
     this.thumbnailClasses_.push(className);
     this.setThumbnailClasses_('thumbnail');
 }
@@ -524,7 +527,7 @@ nrg.ui.ThumbnailGallery.prototype.setDefaultClasses_ = function() {
     //------------------
     // Apply the Thumbnail classes by creating a dummy thumbnail.
     //------------------  
-    var tempThumb = /**@type {!nrg.ui.Thumbnail}*/ new nrg.ui.Thumbnail();
+    var tempThumb = new nrg.ui.Thumbnail();
     this.thumbnailClasses_ = goog.dom.classes.get(tempThumb.getElement());
     this.thumbnailClasses_.push(nrg.ui.ThumbnailGallery.CSS.THUMBNAIL);
     this.thumbnailImageClasses_ = goog.dom.classes.get(tempThumb.getImage());
@@ -550,24 +553,35 @@ nrg.ui.ThumbnailGallery.prototype.disposeInternal = function() {
 
     
     // Thumbs
-    nrg.ui.disposeComponentMap(this.Thumbs_);
-    delete this.Thumbs_;
+    if (goog.isDefAndNotNull(this.Thumbs_)){
+	nrg.ui.disposeComponentMap(this.Thumbs_);
+	delete this.Thumbs_;
+    }
 
     // Zippy Tree
-    goog.events.removeAll(this.ZippyTree_);
-    this.ZippyTree_.disposeInternal();
-    delete this.ZippyTree_;
-
+    if (goog.isDefAndNotNull(this.ZippyTree_)){
+	goog.events.removeAll(this.ZippyTree_);
+	this.ZippyTree_.disposeInternal();
+	delete this.ZippyTree_;
+    }
     
-    goog.array.clear(this.thumbnailClasses_);
-    delete this.thumbnailClasses_;
+    // Thumbnail classes
+    if (goog.isDefAndNotNull(this.thumbnailClasses_)){
+	goog.array.clear(this.thumbnailClasses_);
+	delete this.thumbnailClasses_;
+    }
 
-    goog.array.clear(this.thumbnailImageClasses_);
-    delete this.thumbnailImageClasses_;
+    // Image classes
+    if (goog.isDefAndNotNull(this.thumbnailImageClasses_)){
+	goog.array.clear(this.thumbnailImageClasses_);
+	delete this.thumbnailImageClasses_;
+    }
 
-    goog.array.clear(this.thumbnailTextClasses_);
-    delete this.thumbnailTextClasses_;
-
+    // Text classes
+    if (goog.isDefAndNotNull(this.thumbnailTextClasses_)){
+	goog.array.clear(this.thumbnailTextClasses_);
+	delete this.thumbnailTextClasses_;
+    }
     // other
     delete this.storedHoverThumbId_;
 }

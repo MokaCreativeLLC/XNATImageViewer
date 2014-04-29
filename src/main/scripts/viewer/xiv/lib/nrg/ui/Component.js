@@ -218,6 +218,27 @@ nrg.ui.Component.prototype.updateStyle = function() {
 
 
 
+/**
+ * @inheritDoc
+ */
+nrg.ui.Component.prototype.render = function(opt_parentElement) {
+    //
+    // Transfer the parent element if it's already rendered.
+    //
+    if (this.isInDocument() && 
+	this.getElement().parentNode !== opt_parentElement &&
+	goog.isDefAndNotNull(opt_parentElement)) {
+	goog.dom.appendChild(opt_parentElement, this.getElement());
+	return;
+    }
+
+    //
+    // Otherwise just render
+    //
+    goog.base(this, 'render', opt_parentElement);
+}
+
+
 
 /**
  * @inheritDoc

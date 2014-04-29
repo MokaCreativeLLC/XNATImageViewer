@@ -479,9 +479,10 @@ nrg.ui.Tabs.prototype.setTabPageContents = function (tabTitle, contents) {
     }
     else {
 	scrollableContainer = new nrg.ui.ScrollableContainer()
-	currTab.PAGE.appendChild(
-	    scrollableContainer.getElement());
+	scrollableContainer.render(currTab.PAGE);
 	scrollableContainer.addContents(contents);
+
+	
 	//window.console.log("PAGES", contents);
 	//window.console.log(scrollableContainer.getPageDict());
     }

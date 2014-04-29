@@ -86,20 +86,29 @@ nrg.ui.ScrollableContainer.prototype.Slider_;
 
 
 /**
- * @inheritDoc
+ * @private
  */
-nrg.ui.ScrollableContainer.prototype.render = function(opt_parentElement) {
-    goog.base(this, 'render', opt_parentElement);
- 
-    //
-    // Create Scroll area
-    //
+nrg.ui.ScrollableContainer.prototype.createScrollArea_ = function() {
     this.scrollArea_ = goog.dom.createDom("div", {
 	'id': this.constructor.ID_PREFIX + 
 	    '_ScrollArea_' + goog.string.createUniqueString(),
 	'class' :  nrg.ui.ScrollableContainer.CSS.SCROLLAREA
     });
     goog.dom.appendChild(this.getElement(), this.scrollArea_);
+}
+
+
+
+/**
+ * @inheritDoc
+ */
+nrg.ui.ScrollableContainer.prototype.render = function(opt_parentElement) {
+    goog.base(this, 'render', opt_parentElement);
+ 
+
+    if (!goog.isDefAndNotNull(this.scrollArea_)){
+	this.createScrollArea_();
+    }
 
 
     //
@@ -126,6 +135,9 @@ nrg.ui.ScrollableContainer.prototype.render = function(opt_parentElement) {
  * @public
  */
 nrg.ui.ScrollableContainer.prototype.addContents = function(elt) {
+    if (!this.isInDocument()){
+	this.render();
+    }
     goog.dom.append(this.scrollArea_, elt);
     this.mapSliderToContents();
 }
@@ -287,14 +299,17 @@ nrg.ui.ScrollableContainer.prototype.setSliderEvents_ = function() {
 nrg.ui.ScrollableContainer.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
     
-    goog.events.removeAll(this.Slider_);
-    this.Slider_.disposeInternal();
-    delete this.Slider_;
+    if (goog.isDefAndNotNull(this.Slider_)){
+	goog.events.removeAll(this.Slider_);
+	alert(this.Slider_);
+	this.Slider_.disposeInternal();
+	delete this.Slider_;
+    }
     
-
-    goog.dom.removeNode(this.scrollArea_);
-    delete this.scrollArea_;
-    
+    if (goog.isDefAndNotNull(this.scrollArea_)){
+	goog.dom.removeNode(this.scrollArea_);
+	delete this.scrollArea_;
+    }
 }
 
 

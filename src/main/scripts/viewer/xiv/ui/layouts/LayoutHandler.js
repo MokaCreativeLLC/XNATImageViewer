@@ -162,6 +162,23 @@ xiv.ui.layouts.LayoutHandler.prototype.masterLayout_ = null;
 
 
 /**
+ * @private
+ * @type {!boolean}
+ */ 
+xiv.ui.layouts.LayoutHandler.prototype.layoutChanging_ = false;
+
+
+/**
+* @public
+* @return {boolean}
+*/ 
+xiv.ui.layouts.LayoutHandler.prototype.layoutChanging = function(){
+    return this.layoutChanging_;
+};
+
+
+
+/**
 * @public
 * @param {boolean}
 */ 
@@ -532,6 +549,12 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeStart_ = function() {
     this.hideAllLayouts();
 
     //
+    // Track changing
+    //
+    this.layoutChanging_ = true;
+
+
+    //
     // Dispatch event
     //
     this.dispatchEvent({
@@ -588,6 +611,12 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
 	goog.dom.removeNode(elt);
 	delete elt;
     })
+
+
+    //
+    // Track changing
+    //
+    this.layoutChanging_ = false;
 
     //
     // Dispatch event

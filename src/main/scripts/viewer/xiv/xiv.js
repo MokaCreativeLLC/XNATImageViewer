@@ -116,7 +116,7 @@ xiv = function(mode, dataPath, rootUrl){
 
 
     this.loadExperiment_(this.dataPaths_[0], function() {
-	//this.loadProjectTree_();
+	this.loadProjectTree_();
     }.bind(this)); 
 
 
@@ -218,6 +218,7 @@ xiv.prototype.onNoExperimentalWebGL_ = function(){
     //
     ErrorOverlay.addBackground();
     ErrorOverlay.addCloseButton();
+
     
     //
     // Add image

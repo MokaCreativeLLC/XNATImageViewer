@@ -10,6 +10,8 @@ goog.require('goog.events');
 goog.require('goog.array');
 goog.require('goog.object');
 goog.require('goog.style');
+goog.require('goog.ui.ToggleButton');
+goog.require('goog.ui.ImagelessButtonRenderer');
 
 // nrg
 goog.require('nrg.ui.Component');
@@ -63,9 +65,13 @@ xiv.ui.ViewBox = function () {
      */
     this.menus_ = {
 	TOP: null,
+	TOP_LEFT: null,
 	LEFT: null,
+	BOTTOM_LEFT: null,
 	BOTTOM: null,
-	RIGHT: null
+	BOTTOM_RIGHT: null,
+	RIGHT: null,
+	TOP_RIGHT: null
     };
     this.addMenu_topLeft_();
 
@@ -203,6 +209,7 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     TABDRAGGER_HANDLE: 'tabdragger-handle',
     VIEWLAYOUTMENU: 'viewlayoutmenu',
     MENU_TOP_LEFT:  'menu-top-left',
+    MENU_LEFT:  'menu-left',
     VIEWLAYOUTHANDLER: 'viewlayouthandler',
     TABS: 'ziptabs',
     TAB_BOUNDS: 'ziptab-bounds',
@@ -348,15 +355,7 @@ xiv.ui.ViewBox.prototype.getViewableGroupMenu =  function() {
  * @public
  */
 xiv.ui.ViewBox.prototype.highlight =  function() {
-
-    goog.dom.classes.add(this.menus_.LEFT, 
-			 xiv.ui.ViewBox.CSS.COMPONENT_HIGHLIGHT);
-
-    if (!this.subComponentsInitialized_) { return };
-    //this.getElement().style.border = 'solid 1px rgb(25,255,255)';
-    goog.dom.classes.add(this.LayoutHandler_.getElement(), 
-			 xiv.ui.ViewBox.CSS.COMPONENT_HIGHLIGHT);
-    goog.dom.classes.add(this.ZipTabs_, 
+    goog.dom.classes.add(this.viewFrameElt_, 
 			 xiv.ui.ViewBox.CSS.COMPONENT_HIGHLIGHT);
 }
 
@@ -366,13 +365,7 @@ xiv.ui.ViewBox.prototype.highlight =  function() {
  * @public
  */
 xiv.ui.ViewBox.prototype.unhighlight =  function() {
-    goog.dom.classes.remove(this.menus_.LEFT, 
-			 xiv.ui.ViewBox.CSS.COMPONENT_HIGHLIGHT);
-
-    if (!this.subComponentsInitialized_) { return };
-    goog.dom.classes.remove(this.LayoutHandler_.getElement(), 
-			 xiv.ui.ViewBox.CSS.COMPONENT_HIGHLIGHT);
-    goog.dom.classes.remove(this.ZipTabs_, 
+    goog.dom.classes.remove(this.viewFrameElt_, 
 			 xiv.ui.ViewBox.CSS.COMPONENT_HIGHLIGHT);
 }
 
@@ -519,16 +512,24 @@ function(slider, volume) {
     var ind = 'indexX'
 
     // Y Vertical crosshair
-    this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Y')
-    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].vertical.style.left =
-	this.Renderer_.getPlaneY().getRenderer().getVerticalSliceX(
-	    volume[ind], true).toString() + 'px';
+    if (goog.isDefAndNotNull(this.LayoutHandler_.getCurrentLayout().
+			     getLayoutFrameByTitle('Y'))) {
+	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Y')
+	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].vertical.style.left =
+	    this.Renderer_.getPlaneY().getRenderer().getVerticalSliceX(
+		volume[ind], true).toString() + 'px';
+    }
+    
 
     // Z Vertical crosshair
-    this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Z')
-    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].vertical.style.left =
-	this.Renderer_.getPlaneZ().getRenderer().getVerticalSliceX(
-	    volume[ind], false).toString() + 'px';
+    if (goog.isDefAndNotNull(this.LayoutHandler_.getCurrentLayout().
+			     getLayoutFrameByTitle('Z'))) {
+	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Z')
+	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].vertical.style.left =
+	    this.Renderer_.getPlaneZ().getRenderer().getVerticalSliceX(
+		volume[ind], false).toString() + 'px';
+    }
+    
 }
 
 
@@ -541,18 +542,24 @@ function(slider, volume) {
     var ind = 'indexY'
 
     // X Vertical crosshair
-    this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('X')
-    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].
-	vertical.style.left =
-	this.Renderer_.getPlaneX().getRenderer().getVerticalSliceX(
-	    volume[ind], false).toString() + 'px';
+    if (goog.isDefAndNotNull(this.LayoutHandler_.getCurrentLayout().
+			     getLayoutFrameByTitle('X'))) {
+	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('X')
+	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].
+	    vertical.style.left =
+	    this.Renderer_.getPlaneX().getRenderer().getVerticalSliceX(
+		volume[ind], false).toString() + 'px';
+    }
 
     // Z Horizontal crosshair
-    this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Z')
-    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].
-	horizontal.style.top =
-	this.Renderer_.getPlaneZ().getRenderer().getHorizontalSliceY(
-	    volume[ind], false).toString() + 'px';
+    if (goog.isDefAndNotNull(this.LayoutHandler_.getCurrentLayout().
+			     getLayoutFrameByTitle('Z'))) {
+	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Z')
+	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].
+	    horizontal.style.top =
+	    this.Renderer_.getPlaneZ().getRenderer().getHorizontalSliceY(
+		volume[ind], false).toString() + 'px';
+    }
 }
 
 
@@ -565,16 +572,22 @@ function(slider, volume) {
     var ind = 'indexZ'
 
     // X Horizontal crosshair
-    this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('X')
-    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].horizontal.style.top =
-	this.Renderer_.getPlaneX().getRenderer().getHorizontalSliceY(
-	    volume[ind], false).toString() + 'px';
+    if (goog.isDefAndNotNull(this.LayoutHandler_.getCurrentLayout().
+			     getLayoutFrameByTitle('X'))) {
+	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('X')
+	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].horizontal.style.top =
+	    this.Renderer_.getPlaneX().getRenderer().getHorizontalSliceY(
+		volume[ind], false).toString() + 'px';
+    }
 
     // Y HORIZONTAL crosshair
-    this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Y')
-    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].horizontal.style.top =
-	this.Renderer_.getPlaneY().getRenderer().getHorizontalSliceY(
-	    volume[ind], false).toString() + 'px';
+    if (goog.isDefAndNotNull(this.LayoutHandler_.getCurrentLayout().
+			     getLayoutFrameByTitle('Y'))) {
+	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Y')
+	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].horizontal.style.top =
+	    this.Renderer_.getPlaneY().getRenderer().getHorizontalSliceY(
+		volume[ind], false).toString() + 'px';
+    }
 
 }
 
@@ -646,10 +659,16 @@ xiv.ui.ViewBox.prototype.showAllInteractors_ = function() {
  */
 xiv.ui.ViewBox.prototype.syncFrameDisplayToSlider_ = 
 function(slider, volume) {
-    if (!goog.isDefAndNotNull(volume)) return;
 
-    var frameDisplay = this.LayoutHandler_.getCurrentLayout().
-	getLayoutFrameByTitle(slider[xiv.ui.ViewBox.ORIENTATION_TAG])
+    var layoutFrame = this.LayoutHandler_.getCurrentLayout().
+	getLayoutFrameByTitle(slider[xiv.ui.ViewBox.ORIENTATION_TAG]);
+
+    if (!goog.isDefAndNotNull(volume) ||
+	!goog.isDefAndNotNull(layoutFrame)) { 
+	return;
+    }
+
+    var frameDisplay = layoutFrame
     [xiv.ui.layouts.Layout.INTERACTORS.FRAME_DISPLAY]
 
     frameDisplay.setTotalFrames(slider.getMaximum());
@@ -807,9 +826,14 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 	//
 	goog.events.listen(slider, nrg.ui.Slider.EventType.SLIDE, 
         function(e){
-	    this.syncVolumeToSlider_(e.target, currVol);
-	    this.syncCrosshairsToSlider_(e.target, currVol);
-	    this.syncFrameDisplayToSlider_(e.target, currVol);
+	    //
+	    // Don't move the sliders if the layout is transitioning
+	    //
+	    if (!this.LayoutHandler_.layoutChanging()){
+		this.syncVolumeToSlider_(e.target, currVol);
+		this.syncCrosshairsToSlider_(e.target, currVol);
+		this.syncFrameDisplayToSlider_(e.target, currVol);
+	    }
 	}.bind(this))
 
 	//
@@ -1200,6 +1224,7 @@ xiv.ui.ViewBox.prototype.initSubComponents_ = function() {
 
     this.initZipTabs_();
     this.initLayoutMenu_();
+    this.initToggleMenu_();
     this.initLayoutHandler_();
     this.syncLayoutMenuToLayoutHandler_();
     window.console.log("\n\n\nINIT SUB!", this.LayoutMenu_);
@@ -1335,10 +1360,25 @@ xiv.ui.ViewBox.prototype.initZipTabs_ = function(){
  */
 xiv.ui.ViewBox.prototype.addMenu_topLeft_ = function() {
 
-    this.menus_.LEFT = goog.dom.createDom("div",  {
+    this.menus_.TOP_LEFT = goog.dom.createDom("div",  {
 	'id': xiv.ui.ViewBox.ID_PREFIX + 
 	    '_menu_top_left_' + goog.string.createUniqueString(),
 	'class' : xiv.ui.ViewBox.CSS.MENU_TOP_LEFT,
+	'viewbox': this.getElement().id
+    });
+    goog.dom.append(this.getElement(), this.menus_.TOP_LEFT);
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.addMenu_left_ = function() {
+    this.menus_.LEFT = goog.dom.createDom("div",  {
+	'id': xiv.ui.ViewBox.ID_PREFIX + 
+	    '_menu_left_' + goog.string.createUniqueString(),
+	'class' : xiv.ui.ViewBox.CSS.MENU_LEFT,
 	'viewbox': this.getElement().id
     });
     goog.dom.append(this.getElement(), this.menus_.LEFT);
@@ -1361,27 +1401,35 @@ xiv.ui.ViewBox.prototype.addToMenu = function(menuLoc, element, opt_insertInd){
     element.style.marginTop = '6px';
     element.style.marginBottom = '6px';
 
-    var insertBeforeElt = /**@type {!Element} */ null;
+    var insertBeforeElt = null;
+    var currMenu;
 
     switch(menuLoc){
-    case 'LEFT':
-	if (goog.isNumber(opt_insertInd)){
-	    this.menus_.LEFT.insertBefore(element, 
-				this.menus_.LEFT.childNodes[opt_insertInd])
-	} else {
-	    goog.dom.append(this.menus_.LEFT, element);
-	}
-	
+    case 'TOP_LEFT':
+	currMenu = this.menus_.TOP_LEFT;
 	break;
-    case 'TOP':
-	goog.dom.append(this.menus_.TOP, element);
+    case 'LEFT':
+	currMenu = this.menus_.LEFT;
+	break;
+    case 'BOTTOM_LEFT':
+	currMenu = this.menus_.BOTTOM_LEFT;
+	break;
+    case 'TOP_RIGHT':
+	currMenu = this.menus_.TOP_RIGHT;
 	break;
     case 'RIGHT':
-	goog.dom.append(this.menus_.RIGHT, element);
+	currMenu = this.menus_.RIGHT;
 	break;
-    case 'BOTTOM':
-	goog.dom.append(this.menus_.BOTTOM, element);
+    case 'BOTTOM_RIGHT':
+	currMenu = this.menus_.BOTTOM_RIGHT;
 	break;
+    }
+
+    if (goog.isNumber(opt_insertInd)){
+	currMenu.insertBefore(element, 
+		currMenu.childNodes[opt_insertInd])
+    } else {
+	goog.dom.append(currMenu, element);
     }
 }
 
@@ -1393,7 +1441,7 @@ xiv.ui.ViewBox.prototype.addToMenu = function(menuLoc, element, opt_insertInd){
 */
 xiv.ui.ViewBox.prototype.initLayoutMenu_ = function(){
     this.LayoutMenu_ = new nrg.ui.SlideInMenu();
-    this.addToMenu('LEFT', this.LayoutMenu_.getElement());
+    this.addToMenu('TOP_LEFT', this.LayoutMenu_.getElement());
 
     goog.dom.classes.add(this.LayoutMenu_.getElement(), 
 	xiv.ui.ViewBox.CSS.VIEWLAYOUTMENU);
@@ -1405,6 +1453,48 @@ xiv.ui.ViewBox.prototype.initLayoutMenu_ = function(){
     goog.dom.append(this.getElement(), this.LayoutMenu_.getMenuHolder());
 }
 
+
+
+/**
+* As stated.
+* @private
+*/
+xiv.ui.ViewBox.prototype.initToggleMenu_ = function(){
+    this.addMenu_left_();
+    var threeDToggle = goog.dom.createDom('div')
+    nrg.style.setStyle(threeDToggle, {
+	'width': 10,
+	'height': 10,
+	'background-color': 'rgba(255,0,0,.8)'
+    })
+
+
+    var threeDToggle = goog.dom.createDom('div')
+    nrg.style.setStyle(threeDToggle, {
+	'width': 10,
+	'height': 10,
+	'background-color': 'rgba(255,0,0,.8)'
+    })
+
+    // Use a DIV with a background image as the icon, and a SPAN as the caption.
+    var iconbutton1 = new goog.ui.ToggleButton([
+	//goog.dom.createDom('div', 'icon insert-image-icon goog-inline-block'),
+	//'Insert Image'
+    ], goog.ui.ImagelessButtonRenderer.getInstance());
+    iconbutton1.render(this.menus_.LEFT);
+    iconbutton1.setContent(threeDToggle);
+
+
+    goog.events.listen(iconbutton1, goog.ui.Component.EventType.ACTION, 
+		       function(e){
+			   //alert('CLICKE! ' + iconbutton1.isChecked());
+			   window.console.log(e.target.isActive());
+		       });
+
+
+
+    this.addToMenu('LEFT', iconbutton1.getElement());
+}
 
 
 /**

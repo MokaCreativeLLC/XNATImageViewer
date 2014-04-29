@@ -498,7 +498,7 @@ xiv.ui.ViewBoxHandler.prototype.addDragDropHandle_ = function(ViewBox) {
     });
     dragDropHandle.setAttribute(xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR, 
 				ViewBox.getElement().id); 
-    ViewBox.addToMenu('LEFT', dragDropHandle, 0);
+    ViewBox.addToMenu('TOP_LEFT', dragDropHandle, 0);
 
     // Add to class property.
     if (!this.dragDropHandles_){ this.dragDropHandles_ = {}};

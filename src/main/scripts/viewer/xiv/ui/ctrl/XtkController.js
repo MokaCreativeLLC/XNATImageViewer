@@ -41,6 +41,20 @@ goog.require('xiv.ui.ctrl.RadioButtonController');
 goog.provide('xiv.ui.ctrl.XtkController');
 xiv.ui.ctrl.XtkController = function() {
     goog.base(this);
+
+    /**
+     * @type {Array.<xiv.ui.ctrl.XtkController>}
+     * @protected
+     */
+    this.masterControllers = [];
+
+
+
+    /**
+     * @type {Array.<xiv.ui.ctrl.XtkController}
+     * @protected
+     */
+    this.subControllers = [];
 }
 goog.inherits(xiv.ui.ctrl.XtkController, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.ctrl.XtkController', xiv.ui.ctrl.XtkController);
@@ -167,28 +181,10 @@ xiv.ui.ctrl.XtkController.prototype.folders_;
 
 
 /**
- * @type {Array.<xiv.ui.ctrl.XtkController>}
- * @protected
- */
-xiv.ui.ctrl.XtkController.prototype.masterControllers;
-
-
-
-/**
- * @type {Array.<xiv.ui.ctrl.XtkController}
- * @protected
- */
-xiv.ui.ctrl.XtkController.prototype.subControllers;
-
-
-
-/**
  * @inheritDoc
  */
 xiv.ui.ctrl.XtkController.prototype.render = function(opt_parentElement) {
     goog.base(this, 'render', opt_parentElement);
-    this.masterControllers = [];
-    this.subControllers = [];
 }
 
 
@@ -251,7 +247,16 @@ xiv.ui.ctrl.XtkController.prototype.setComponent = function(component) {
     var elt = this.component_;
     if (this.component_ instanceof goog.ui.Component){
 	elt = this.component_.getElement();
-	this.component_.render(this.getElement());
+
+	//
+	// Render the component if it isn't in the document
+	//
+	if (!this.component_.isInDocument()){
+	    this.component_.render(this.getElement());
+	} else {
+	    goog.dom.appendChild(this.getElement(), 
+				 this.component_.getElement());
+	}
     } else {
 	goog.dom.appendChild(this.getElement(), elt);
     }
@@ -322,6 +327,7 @@ function(_XtkControllerSubClass, label, changeCallback) {
 
     // create
     var controller = new _XtkControllerSubClass();
+    controller.render();
 
     // set events
     goog.events.listen(controller, 

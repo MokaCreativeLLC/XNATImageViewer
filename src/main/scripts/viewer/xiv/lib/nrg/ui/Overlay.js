@@ -75,6 +75,40 @@ nrg.ui.Overlay.prototype.images_;
 nrg.ui.Overlay.prototype.texts_;
 
 
+/**
+ * @type {!boolean}
+ * @private
+ */
+nrg.ui.Overlay.prototype.closeOnHover_ = false;
+
+
+/**
+ * @type {string}
+ * @private
+ */
+nrg.ui.Overlay.prototype.mouseOverKey_;
+
+
+
+
+/**
+ * @param {!boolean} closeOnHover
+ * @public
+ */
+nrg.ui.Overlay.prototype.toggleCloseOnHover = function(closeOnHover) {
+    this.closeOnHover_ = closeOnHover;
+
+    if (this.closeOnHover_){
+	this.mouseOverKey_  = 
+	goog.events.listen(this.getElement(), goog.events.EventType.MOUSEOVER, 
+			   this.fadeOutAndDispose_.bind(this));
+
+    } else {
+	goog.events.unlisten(this.mouseOverKey_);
+    }
+}
+
+
 
 /**
  * @public
@@ -218,4 +252,8 @@ nrg.ui.Overlay.prototype.disposeInternal = function() {
 	goog.dom.removeNode(this.background_);
 	delete this.background_;
     }
+
+
+    delete this.closeOnHover_;
+    delete this.mouseOverKey_;
 }
