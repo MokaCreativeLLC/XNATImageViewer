@@ -202,6 +202,11 @@ goog.addDependency('../../../nrg/ui/ErrorOverlay.js',
 ]);
 
 
+goog.addDependency('../../../nrg/ui/InfoOverlay.js', 
+['nrg.ui.InfoOverlay'], [
+    'nrg.ui.Overlay'
+]);
+
 goog.addDependency('../../../nrg/ui/Thumbnail.js', 
 ['nrg.ui.Thumbnail'], [
     'goog.dom',

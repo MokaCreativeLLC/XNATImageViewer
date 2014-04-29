@@ -151,6 +151,17 @@ xiv.vis.XtkEngine.prototype.getAnnotations_ = function(ViewableGroup) {
 
 
 /**
+ * @param {!boolean} on
+ * @public
+ */
+xiv.vis.XtkEngine.prototype.setVPlaneOn = function(on) {
+    this.PlaneV_.setOn(on);
+}
+
+
+
+
+/**
  * @param {xiv.vis.XtkPlane} Plane
  * @public
  */
@@ -202,11 +213,6 @@ xiv.vis.XtkEngine.prototype.setRenderPlaneEvents_ = function() {
 			       window.console.log("SHIFT UP 2!");
 			   }.bind(this))
     }.bind(this))
-
-
-
-
-
 }
 
 
@@ -420,7 +426,7 @@ xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
     
     if (goog.isDefAndNotNull(renderProps)) {
 	if (goog.isDefAndNotNull(renderProps.backgroundColor)) {
-	    this.PlaneV_.setBackgroundColors(
+	    this.PlaneV_.setBackground(
 		ViewableGroup.getRenderProperties().backgroundColor);
 	}
 
@@ -434,7 +440,7 @@ xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
     // Otherwise just set the default camera
     //
     else {
-	this.PlaneV_.setBackgroundColors();
+	this.PlaneV_.setBackground();
 	this.PlaneV_.setCamera();
     }
 

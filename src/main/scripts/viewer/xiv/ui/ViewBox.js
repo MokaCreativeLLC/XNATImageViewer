@@ -1468,14 +1468,6 @@ xiv.ui.ViewBox.prototype.initToggleMenu_ = function(){
 	'background-color': 'rgba(255,0,0,.8)'
     })
 
-
-    var threeDToggle = goog.dom.createDom('div')
-    nrg.style.setStyle(threeDToggle, {
-	'width': 10,
-	'height': 10,
-	'background-color': 'rgba(255,0,0,.8)'
-    })
-
     // Use a DIV with a background image as the icon, and a SPAN as the caption.
     var iconbutton1 = new goog.ui.ToggleButton([
 	//goog.dom.createDom('div', 'icon insert-image-icon goog-inline-block'),
@@ -1483,13 +1475,27 @@ xiv.ui.ViewBox.prototype.initToggleMenu_ = function(){
     ], goog.ui.ImagelessButtonRenderer.getInstance());
     iconbutton1.render(this.menus_.LEFT);
     iconbutton1.setContent(threeDToggle);
-
+    iconbutton1.setChecked(true);
 
     goog.events.listen(iconbutton1, goog.ui.Component.EventType.ACTION, 
 		       function(e){
 			   //alert('CLICKE! ' + iconbutton1.isChecked());
 			   window.console.log(e.target.isActive());
-		       });
+
+			   //
+			   // Turn 3D off
+			   //
+			   this.Renderer_.setVPlaneOn(e.target.isChecked());
+
+			   if (e.target.isChecked()) {
+			       e.target.getContentElement().style.
+				   backgroundColor = 'rgba(0,255,0,1)';
+			   } else {
+			       e.target.getContentElement().style.
+				   backgroundColor = 'rgba(255,0,0,1)';
+			       
+			   }
+		       }.bind(this));
 
 
 
