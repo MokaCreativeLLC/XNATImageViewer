@@ -77,7 +77,6 @@ gxnat.vis.ViewableGroup.prototype.getViewables = function() {
  */
 gxnat.vis.ViewableGroup.prototype.dispose = function() {
     goog.base(this, 'dispose');
-
     // Viewables
     goog.array.forEach(this.Viewables, function(Viewable){
 	if (goog.isArray(Viewable)){

@@ -259,21 +259,29 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.disposeInternal = function() {
     // Slider
     if (goog.isDefAndNotNull(this.slider_)){
 	goog.events.removeAll(this.slider_);
-	this.slider_.disposeInternal();
+	
+	//
+	// IMPORTANT!!! This is a hack around a google closure bug
+	// when disposing of a twoThumbSlider.
+	//
+	if (!goog.isDefAndNotNull(this.slider_.rangeModel)){
+	    this.slider_.rangeModel = new goog.ui.RangeModel;
+	}
+	this.slider_.dispose();
 	delete this.slider_;
     }
 
     // Value Input
     if (goog.isDefAndNotNull(this.valueInput_)){
 	goog.events.removeAll(this.valueInput_);
-	goog.dom.remove(this.valueInput_);
+	goog.dom.removeNode(this.valueInput_);
 	delete this.valueInput_;
     }
 
     // Extent Input
     if (goog.isDefAndNotNull(this.extentInput_)){
 	goog.events.removeAll(this.extentInput_);
-	goog.dom.remove(this.extentInput_);
+	goog.dom.removeNode(this.extentInput_);
 	delete this.extentInput_;
     }
 }

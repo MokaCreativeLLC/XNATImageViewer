@@ -375,7 +375,7 @@ xiv.ui.Modal.prototype.highlightInUseThumbnails = function () {
 xiv.ui.Modal.prototype.animateModal  = function () {
     // Get the dims.
     this.computeDims_();
-    window.console.log(this.dims_);
+    //window.console.log(this.dims_);
 
     // Setup.
     this.anims_ = goog.isDefAndNotNull(this.anims_) ? this.anims_ : [];
@@ -1176,7 +1176,6 @@ xiv.ui.Modal.prototype.onViewBoxesChanged_ = function(e) {
  */
 xiv.ui.Modal.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
-    window.console.log("TOTAL LISTENERS", goog.events.getTotalListenerCount());
 
     // dims
     goog.object.clear(this.dims_);

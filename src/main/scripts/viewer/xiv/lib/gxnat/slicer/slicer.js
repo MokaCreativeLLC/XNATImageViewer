@@ -346,9 +346,20 @@ gxnat.slicer.matchFileToSet = function(fileUrl, fileSet) {
 	//window.console.log("URL NAME", urlName);
 	if (setName.indexOf(urlName) == (setName.length - urlName.length)){
 
-	    //
-	    window.console.log("WARNING: Risky replace here.  Need to test.");
-	    return fileSet[i].replace(/%20/g, '%2520');
+	    var replacer = fileSet[i].replace(/%20/g, '%2520');
+
+
+	    if (replacer != fileSet[i]){
+		//
+		// Output warning
+		//
+		var replaceStr = "\nWARNING - Changing the encoding chars" + 
+		    " in the following url:\n\n" + fileSet[i] + 
+		    '\n\nis now\n\n' + replacer;
+		window.console.log(replaceStr);
+	    }
+
+	    return replacer;
 	}
     }
 }

@@ -44,7 +44,6 @@ goog.provide('xiv.ui.ViewBox');
 xiv.ui.ViewBox = function () {
     goog.base(this);
 
-
     /**
      * @type {Array.<gxnat.vis.ViewableTree>}
      * @private
@@ -87,88 +86,8 @@ xiv.ui.ViewBox = function () {
     });
     goog.dom.append(this.getElement(), this.viewFrameElt_);
 
-
-    /**
-     * @type {?xiv.ui.layouts.LayoutHandler}
-     * @protected
-     */
-    this.LayoutHandler_ = null;
-
-
-    /**
-     * @type {!Element}
-     * @private
-     */	
-    this.ZipTabBounds_ = null; 
-
-
-    /**
-     * @type {?nrg.ui.ZipTabs}
-     * @private
-     */	
-    this.ZipTabs_ = null; 
-
-
-
-    /**
-     * @type {!nrg.ui.SlideInMenu}
-     * @private
-     */
-    this.LayoutMenu_ = null;
-
-
-
-    /**
-     * @type {xiv.vis.XtkEngine}
-     * @private
-     */
-    this.Renderer_ = null;
-
-
-
-    /**
-     * @type {xiv.ui.ProgressBarPanel}
-     * @private
-     */
-    this.ProgressBarPanel_ = null;
-
-
-
-    /**
-     * @type {!xiv.ui.ViewableGroupMenu}
-     * @private
-     */
-    this.ViewableGroupMenu_ = null;
-
-
     
-    /**
-     * @type {!nrg.ui.ZippyTree}
-     * @private
-     */
-    this.Controllers3D_ = null;
-
-
-    /**
-     * @type {!nrg.ui.ZippyTree}
-     * @private
-     */
-    this.Controllers2D_ = null;
-
-
-
-    /**
-     * @type {!boolean}
-     * @private
-     */
-    this.subComponentsInitialized_ = false;
-
-
-    //window.console.log(resizable, resizable.getElement());
-    // style
-    //this.doNotHide(this.ViewableGroupMenu_.getElement());
-    //this.hideChildElements_();
-    
+    this.initProgressBarPanel_();
     this.updateStyle();
 }
 goog.inherits(xiv.ui.ViewBox, nrg.ui.Component);
@@ -291,7 +210,7 @@ xiv.ui.ViewBox.prototype.doNotHide_;
 
 
 /**
- * @type {!String}
+ * @type {!string}
  * @private
  */
 xiv.ui.ViewBox.prototype.loadState_ = 'empty';
@@ -299,7 +218,80 @@ xiv.ui.ViewBox.prototype.loadState_ = 'empty';
 
 
 
+/**
+ * @type {?xiv.ui.layouts.LayoutHandler}
+ * @protected
+ */
+xiv.ui.ViewBox.prototype.LayoutHandler_ = null;
 
+
+/**
+ * @type {?Element}
+ * @private
+ */	
+xiv.ui.ViewBox.prototype.ZipTabBounds_ = null; 
+
+
+/**
+ * @type {?nrg.ui.ZipTabs}
+ * @private
+ */	
+xiv.ui.ViewBox.prototype.ZipTabs_ = null; 
+
+
+
+/**
+ * @type {?nrg.ui.SlideInMenu}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.LayoutMenu_ = null;
+
+
+
+/**
+ * @type {?xiv.vis.XtkEngine}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.Renderer_ = null;
+
+
+
+/**
+ * @type {?xiv.ui.ProgressBarPanel}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.ProgressBarPanel_ = null;
+
+
+
+/**
+ * @type {?xiv.ui.ViewableGroupMenu}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.ViewableGroupMenu_ = null;
+
+
+
+/**
+ * @type {?nrg.ui.ZippyTree}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.Controllers3D_ = null;
+
+
+/**
+ * @type {?nrg.ui.ZippyTree}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.Controllers2D_ = null;
+
+
+
+/**
+ * @type {!boolean}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.hasLoadComponents_ = false;
 
 
 /**
@@ -422,8 +414,6 @@ xiv.ui.ViewBox.prototype.doNotHide = function(element){
  * @public
  */
 xiv.ui.ViewBox.prototype.setLayout = function(layout) {
-
-    window.console.log("SET LAYOUT", layout, this.LayoutMenu_);
     this.LayoutMenu_.setSelected(layout);
 }
 
@@ -982,13 +972,14 @@ xiv.ui.ViewBox.prototype.onLayoutResize_ = function(e){
  */
 xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 
-    this.ViewableGroupMenu_.init();
+    this.ViewableGroupMenu_.reset();
     goog.object.clear(this.ViewableGroups_);
     
     //
     // Store tree
     //
     if (!goog.array.contains(this.ViewableTrees_, ViewableTree)){
+	window.console.log('\n\n\n\nVIEWABLE TREE', ViewableTree);
 	this.ViewableTrees_.push(ViewableTree);	
     }
 
@@ -1020,7 +1011,7 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 	this.showSubComponent_(this.ViewableGroupMenu_, 400);
     }
     else {
-	this.load(viewGroups[0])
+	this.load(viewGroups[0], false)
     }
 }
 
@@ -1031,15 +1022,19 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
  * Loads a gxnat.vis.ViewableTree object into the appropriate renderers.
  *
  * @param {!gxnat.vis.ViewableTree | !gxnat.vis.ViewableGroup} ViewableTree.
+ * @param {!boolean} opt_initLoadComponents
  * @public
  */
-xiv.ui.ViewBox.prototype.load = function (ViewableSet) {
+xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 
-    //window.console.log("LOAD", ViewableSet);
+    opt_initLoadComponents = goog.isDefAndNotNull(opt_initLoadComponents) ?
+	opt_initLoadComponents : true;
 
-    if (!this.subComponentsInitialized_){
-	this.initSubComponents_();
-	this.setComponentEvents_();
+    if (opt_initLoadComponents) {
+	//alert('CLEAR LOAD');
+	this.disposeLoadComponents_();
+	this.initLoadComponents_();
+	this.setLoadComponentsEvents_();
     }
 
     
@@ -1224,7 +1219,7 @@ xiv.ui.ViewBox.prototype.loadTabs_Controllers_ = function() {
 /**
  * @inheritDoc
  */
-xiv.ui.ViewBox.prototype.initSubComponents_ = function() {
+xiv.ui.ViewBox.prototype.initLoadComponents_ = function() {
 
     this.initZipTabs_();
     this.initLayoutMenu_();
@@ -1233,10 +1228,9 @@ xiv.ui.ViewBox.prototype.initSubComponents_ = function() {
     this.syncLayoutMenuToLayoutHandler_();
     window.console.log("\n\n\nINIT SUB!", this.LayoutMenu_);
     this.initRenderer_();
-    this.initProgressBarPanel_();
     this.initViewableGroupMenu_();
 
-    this.subComponentsInitialized_ = true;
+    this.hasLoadComponents_ = true;
 }
 
 
@@ -1710,6 +1704,8 @@ xiv.ui.ViewBox.prototype.onMenuItemSelected_ = function(e) {
  */
 xiv.ui.ViewBox.prototype.initViewableGroupMenu_ = function(){
     this.ViewableGroupMenu_ = new xiv.ui.ViewableGroupMenu();
+    this.ViewableGroupMenu_.render(this.viewFrameElt_);
+
     goog.dom.append(this.viewFrameElt_, this.ViewableGroupMenu_.getElement());
     goog.dom.append(this.viewFrameElt_, 
 		    this.ViewableGroupMenu_.getBackground());
@@ -1723,7 +1719,7 @@ xiv.ui.ViewBox.prototype.initViewableGroupMenu_ = function(){
 			   window.console.log("VIEW SELECT", e);
 
 			   this.load(this.ViewableGroups_[
-			       goog.getUid(e.thumbnail)])
+			       goog.getUid(e.thumbnail)], false)
 		       }.bind(this))
 
     this.hideSubComponent_(this.ViewableGroupMenu_);
@@ -1774,9 +1770,8 @@ xiv.ui.ViewBox.prototype.hideChildElements_ = function() {
 * As stated.
 * @private
 */
-xiv.ui.ViewBox.prototype.setComponentEvents_ = function() {
+xiv.ui.ViewBox.prototype.setLoadComponentsEvents_ = function() {
     this.setTabsEvents_();
-    //this.setLayoutMenuEvents_();
 }
 
 
@@ -1860,7 +1855,6 @@ xiv.ui.ViewBox.prototype.updateStyle_LayoutHandler_ = function () {
 
 
 /**
- * As stated.
  * @private
  */
 xiv.ui.ViewBox.prototype.updateStyle_Renderer_ = function () {
@@ -1870,14 +1864,12 @@ xiv.ui.ViewBox.prototype.updateStyle_Renderer_ = function () {
 
 
 
-
 /**
  * As stated.
  * @private
  */
-xiv.ui.ViewBox.prototype.disposeInternal = function () {
-    goog.base(this, 'disposeInternal');
-
+xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
+    
 
     // 2D Controllers
     if (goog.isDefAndNotNull(this.Controllers2D_)){
@@ -1895,6 +1887,7 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     
     // Clear the reference to the groups
     goog.object.clear(this.ViewableGroups_);
+    goog.array.clear(this.ViewableTrees_);
 
 
     // Layout Handler
@@ -1916,7 +1909,7 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
 	
     // ZipTab Bounds
     if (goog.isDefAndNotNull(this.ZipTabBounds_)){
-	goog.dom.remove(this.ZipTabBounds_);
+	goog.dom.removeNode(this.ZipTabBounds_);
 	delete this.ZipTabBounds_;
     }    
 
@@ -1931,21 +1924,11 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
 	delete this.ZipTabs_;
     }
 
-
-    // Progress Bar Panel
-    if (goog.isDefAndNotNull(this.ProgressBarPanel_)){
-	this.ProgressBarPanel_.disposeInternal();
-	delete this.ProgressBarPanel_;
-    }
-
-
     // Renderer
     if (goog.isDefAndNotNull(this.Renderer_)){
-	
 	this.Renderer_.dispose();
-	delete this.Renderer_();
+	delete this.Renderer_;
     }
-  
 
 
     // ViewableGroupMenu
@@ -1953,15 +1936,39 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
 	this.ViewableGroupMenu_.disposeInternal();
 	delete this.ViewableGroupMenu_;
     }
-  
-    
+}
 
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.disposeInternal = function () {
+    goog.base(this, 'disposeInternal');
+    
+    //
+    // Dispose the load Components_
+    //
+    this.disposeLoadComponents_();
+
+    //
+    // Progress Bar Panel
+    //
+    if (goog.isDefAndNotNull(this.ProgressBarPanel_)){
+	this.ProgressBarPanel_.disposeInternal();
+	delete this.ProgressBarPanel_;
+    }    
+
+    //
     // Elements - viewFrame
+    //
     goog.dom.removeNode(this.viewFrameElt_);
     delete this.viewFrameElt_;
 
-
+    //
     // Elements - menus
+    //
     goog.object.forEach(this.menus_, function(menu, key){
 	goog.dom.removeNode(menu);
 	delete this.menus_[key];
@@ -1969,8 +1976,7 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     delete this.menus_;
 
 
-
     // Primitive types
     delete this.Viewables_;
-    delete this.subComponentsInitialized_;
+    delete this.hasLoadComponents_;
 }

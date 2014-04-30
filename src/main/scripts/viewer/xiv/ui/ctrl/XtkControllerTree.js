@@ -54,6 +54,38 @@ xiv.ui.ctrl.XtkControllerTree.CSS_SUFFIX = {};
 
 
 /**
+ * @type {xiv.ui.ctrl.VolumeController3D}
+ * @private
+ */
+xiv.ui.ctrl.XtkControllerTree.prototype.VolumeController3D_;
+
+
+
+/**
+ * @type {xiv.ui.ctrl.MeshController3D}
+ * @private
+ */
+xiv.ui.ctrl.XtkControllerTree.prototype.MeshController3D_;
+
+
+
+/**
+ * @type {xiv.ui.ctrl.AnnotationsController3D}
+ * @private
+ */
+xiv.ui.ctrl.XtkControllerTree.prototype.AnnotationsController3D_;
+
+
+
+/**
+ * @type {xiv.ui.ctrl.FiberController3D}
+ * @private
+ */
+xiv.ui.ctrl.XtkControllerTree.prototype.FiberController3D_;
+
+
+
+/**
  * @param {Array.<xiv.ui.ctrl.MasterController3D> |
  *         xiv.ui.ctrl.MasterController3D |
  *         Array.<xiv.ui.ctrl.MasterController2D> |
@@ -167,9 +199,27 @@ function(xObj, renderProps) {
  */
 xiv.ui.ctrl.XtkControllerTree.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
-    
-    window.console.log("need to implement dispose methods" + 
-		       " for XtkControllerTree");
+
+    if (goog.isDefAndNotNull(this.VolumeController3D_)){
+	this.VolumeController3D_.disposeInternal();
+	delete this.VolumeController3D_;
+    }
+
+
+    if (goog.isDefAndNotNull(this.MeshController3D_)){
+	this.MeshController3D_.disposeInternal();
+	delete this.MeshController3D_;
+    }
+
+    if (goog.isDefAndNotNull(this.AnnotationsController3D_)){
+	this.AnnotationsController3D_.disposeInternal();
+	delete this.AnnotationsController3D_;
+    }
+
+    if (goog.isDefAndNotNull(this.FiberController3D_)){
+	this.FiberController3D_.disposeInternal();
+	delete this.FiberController3D_;
+    }
 }
 
 

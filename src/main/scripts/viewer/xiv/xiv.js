@@ -350,18 +350,17 @@ xiv.prototype.loadProjectTree_ = function() {
     if (this.projectTreeLoadedStarted_) { return }
     this.projectTreeLoadedStarted_ = true;
 
-    var startPath = /**@type {!string}*/ this.dataPaths_[0];
+    var startPath = this.dataPaths_[0];
 
     // when tree loading is finished...
     (new gxnat.ProjectTree(startPath)).load( 
 	function(projTree){
 	    //window.console.log("PROJECT TREE");
 	    // Get the experiments in the tree
-	    var expts = /**@type {Array.string}*/ 
-	    projTree.getLevelUris('experiments');
+	    var expts = projTree.getLevelUris('experiments');
 	    
 	    // get the skip index
-	    var skipInd = /**@type {!number}*/ expts.indexOf(startPath);
+	    var skipInd = expts.indexOf(startPath);
 
 	    // Collapse further added zippys
 	    this.collapseAdditionalZippys_();
@@ -454,13 +453,8 @@ xiv.prototype.createModalPopup_ = function(){
  * @public
  */
 xiv.prototype.fetchViewableTrees = function(viewablesUri, opt_doneCallback){
-
-
-    //
-    // Get the viewable trees
-    //
     xiv.getViewableTreesFromXnat(viewablesUri, function(viewable){
-	window.console.log('VIEWABLE', viewable);
+	//window.console.log('VIEWABLE', viewable);
 	this.storeViewableTree_(viewable);
 	this.addViewableTreeToModal(viewable);
     }.bind(this), opt_doneCallback)

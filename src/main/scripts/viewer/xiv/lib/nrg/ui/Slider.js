@@ -547,26 +547,43 @@ nrg.ui.Slider.prototype.onThumbnailDragEnd_ = function (e) {
 nrg.ui.Slider.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
-    goog.events.removeAll(this);
-    goog.dom.removeNode(this.element_);
-    delete this.element_;
+    if (goog.isDefAndNotNull(this.element_)){
+	goog.events.removeAll(this);
+	goog.dom.removeNode(this.element_);
+	delete this.element_;
+    }
 
-    goog.events.removeAll(this.thumb_);
-    goog.dom.removeNode(this.thumb_);
-    delete this.thumb_;
+    if (goog.isDefAndNotNull(this.thumb_)){
+	goog.events.removeAll(this.thumb_);
+	goog.dom.removeNode(this.thumb_);
+	delete this.thumb_;
+    }
 
-    goog.events.removeAll(this.track_);
-    goog.dom.removeNode(this.track_);
-    delete this.track_;
+    if (goog.isDefAndNotNull(this.track_)){
+	goog.events.removeAll(this.track_);
+	goog.dom.removeNode(this.track_);
+	delete this.track_;
+    }
 
-    goog.array.forEach(this.MouseWheelHandlers_, function(handler){
-	goog.events.removeAll(handler);
-	handler.dispose();
-    })
-    goog.array.clear(this.MouseWheelHandlers_);
-    delete this.MouseWheelHandlers_;
+    if (goog.isDefAndNotNull(this.MouseWheelHandlers_)){
+	goog.array.forEach(this.MouseWheelHandlers_, function(handler){
+	    goog.events.removeAll(handler);
+	    handler.dispose();
+	})
+	goog.array.clear(this.MouseWheelHandlers_);
+	delete this.MouseWheelHandlers_;
+    }
 
-    delete this.thumbHoverClasses_;
-    delete this.trackHoverClasses_;
+    if (goog.isDefAndNotNull(this.thumbHoverClasses_)){
+	goog.array.clear(this.thumbHoverClasses_);
+	delete this.thumbHoverClasses_;
+    }
+
+    if (goog.isDefAndNotNull(this.trackHoverClasses_)){
+	goog.array.clear(this.trackHoverClasses_);
+	delete this.trackHoverClasses_;
+    }
+
+
     delete this.isSliding_;
 };

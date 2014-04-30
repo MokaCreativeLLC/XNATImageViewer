@@ -12,7 +12,7 @@ goog.require('goog.Disposable');
 /**
  * @struct
  * @param {!gxnat.slicer.Node}
- * @extends {goob.Disposable}
+ * @extends {goog.Disposable}
  */
 goog.provide('gxnat.vis.RenderProperties');
 gxnat.vis.RenderProperties = function(slicerNode){
@@ -73,6 +73,6 @@ goog.exportSymbol('gxnat.vis.RenderProperties', gxnat.vis.RenderProperties);
 * @inheritDoc
 */
 gxnat.vis.RenderProperties.prototype.dispose = function() {
-    goog.base(this);
+    goog.base(this, 'dispose');
     goog.object.clear(this);
 }

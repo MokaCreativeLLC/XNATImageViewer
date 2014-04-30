@@ -24,45 +24,7 @@ goog.require('nrg.ui.ThumbnailGallery');
  */
 goog.provide('xiv.ui.ViewableGroupMenu');
 xiv.ui.ViewableGroupMenu = function () {
-
     goog.base(this);
-
-
-    /**
-     * @type {!Element}
-     * @private
-     */
-    this.background_ = goog.dom.createDom('div', {
-	'id': this.constructor.ID_PREFIX + '_Background_' + 
-	    goog.string.createUniqueString(),
-    });
-    goog.dom.classes.add(this.background_, this.constructor.CSS.BACKGROUND);
-    goog.dom.append(this.getElement(), this.background_);
-
-
-
-    /**
-     * @type {!Element}
-     * @private
-     */
-    this.headerText_ = goog.dom.createDom('div', {
-	'id': this.constructor.ID_PREFIX + '_HeaderText_' + 
-	    goog.string.createUniqueString(),
-	'class': xiv.ui.ViewableGroupMenu.CSS.HEADER
-    });
-    this.headerText_.innerHTML = '<b> Select View <b>';
-    goog.dom.append(this.getElement(), this.headerText_);
-
-
-
-    /**
-     * @type {?nrg.ui.ThumbnailGallery}
-     * @private
-     */
-    this.ThumbnailGallery_ = null;
-
-
-    this.init();
 }
 goog.inherits(xiv.ui.ViewableGroupMenu, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.ViewableGroupMenu', xiv.ui.ViewableGroupMenu);
@@ -106,10 +68,63 @@ xiv.ui.ViewableGroupMenu.CSS_SUFFIX = {
 
 
 /**
+ * @type {?nrg.ui.ThumbnailGallery}
+ * @private
+ */
+xiv.ui.ViewableGroupMenu.prototype.ThumbnailGallery_ = null;
+
+
+
+/**
+ * @type {?Element}
+ * @private
+ */
+xiv.ui.ViewableGroupMenu.prototype.background_ = null;
+
+
+
+/**
+ * @type {!Element}
+ * @private
+ */
+xiv.ui.ViewableGroupMenu.prototype.headerText_ = null;
+
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.ui.ViewableGroupMenu.prototype.render = function() {
+    goog.base(this, 'render');
+
+    this.background_ = goog.dom.createDom('div', {
+	'id': this.constructor.ID_PREFIX + '_Background_' + 
+	    goog.string.createUniqueString(),
+    });
+    goog.dom.classes.add(this.background_, this.constructor.CSS.BACKGROUND);
+    goog.dom.append(this.getElement(), this.background_);
+
+    this.headerText_ = goog.dom.createDom('div', {
+	'id': this.constructor.ID_PREFIX + '_HeaderText_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.ViewableGroupMenu.CSS.HEADER
+    });
+    this.headerText_.innerHTML = '<b> Select View <b>';
+    goog.dom.append(this.getElement(), this.headerText_);
+
+    if (!goog.isDefAndNotNull(this.ThumbnailGallery_)){
+	this.reset();
+    }
+}
+
+
+
+/**
  * @public
  */
 xiv.ui.ViewableGroupMenu.prototype.getBackground = function() {
-    return this.background_
+    return this.background_;
 }
 
 
@@ -131,6 +146,10 @@ xiv.ui.ViewableGroupMenu.prototype.show = function() {
  */
 xiv.ui.ViewableGroupMenu.prototype.createAndAddThumbnail = 
 function(imageUrl, displayText) {
+    if (!goog.isDefAndNotNull(this.ThumbnailGallery_)){
+	this.reset();
+    }
+
     var thumb = 
 	this.ThumbnailGallery_.createAndAddThumbnail(imageUrl, displayText);
     this.setThumbnailOnClick_(thumb);
@@ -140,12 +159,10 @@ function(imageUrl, displayText) {
 
 
 /**
- * As stated.
- *
  * @public
  */
 xiv.ui.ViewableGroupMenu.prototype.hide = function() {
-    nrg.fx.fadeOut(this.getElement(), xiv.ANIM_MED);
+    nrg.fx.fadeOut(this.getElement(), 500);
     goog.dom.removeNode(this.getElement());
 }
 
@@ -159,7 +176,7 @@ xiv.ui.ViewableGroupMenu.prototype.hide = function() {
  * @param {!xiv.slicer.mrbProperties} mrbProperties
  * @public
  */
-xiv.ui.ViewableGroupMenu.prototype.init = function () {
+xiv.ui.ViewableGroupMenu.prototype.reset = function () {
 
     if (goog.isDefAndNotNull(this.ThumbnailGallery_)){
 	this.ThumbnailGallery_.disposeInternal();
@@ -167,7 +184,8 @@ xiv.ui.ViewableGroupMenu.prototype.init = function () {
     }
 
     this.ThumbnailGallery_ = new nrg.ui.ThumbnailGallery();
-    goog.dom.append(this.getElement(), this.ThumbnailGallery_.getElement());
+    this.ThumbnailGallery_.sortThumbnailsOnInsert(true);
+    this.ThumbnailGallery_.render(this.getElement());
     goog.dom.classes.add(this.ThumbnailGallery_.getElement(), 
 			 xiv.ui.ViewableGroupMenu.CSS.THUMBNAILGALLERY);
 
@@ -205,19 +223,35 @@ xiv.ui.ViewableGroupMenu.prototype.setThumbnailOnClick_ = function (thumbnail) {
 
 
 
-
+/**
+ * @inheritDoc
+ */
 xiv.ui.ViewableGroupMenu.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
-    window.console.log("IMPLEMENT DISPOSE INTERNAL HERE!");
-    
-    goog.events.removeAll(this);
 
-
-    goog.dom.removeNode(this.headerText_);
-    delete this.headerText_;
+    //
+    // Background
+    //
+    if (goog.isDefAndNotNull(this.background_)){
+	goog.dom.removeNode(this.background_);
+	delete this.background_;
+    }
     
-    this.ThumbnailGallery_.disposeInternal();
-    delete this.ThumbnailGallery_;
+    //
+    // Header text
+    //
+    if (goog.isDefAndNotNull(this.headerText_)){
+	goog.dom.removeNode(this.headerText_);
+	delete this.headerText_;
+    }
+    
+    //
+    // Thumbnail Gallery
+    //
+    if (goog.isDefAndNotNull(this.ThumbnailGallery_)){
+	this.ThumbnailGallery_.disposeInternal();
+	delete this.ThumbnailGallery_;
+    }
 }
 
 

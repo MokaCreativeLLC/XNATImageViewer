@@ -260,7 +260,9 @@ nrg.ui.Component.prototype.disposeInternal = function() {
     goog.events.removeAll(this);
 
     // Element
+    goog.events.removeAll(this.getElement());
     goog.dom.removeNode(this.getElement());
+    delete this.getElement();
 
     // Other
     this.iconBaseUrl = null;  

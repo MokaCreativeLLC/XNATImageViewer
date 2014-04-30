@@ -54,7 +54,7 @@ function(experimentUrl, viewableJson, opt_initComplete) {
      * @type {!string} 
      * @protected
      */
-    this.Path = /** @type {!gxnat.Path} */ new gxnat.Path(this.queryUrl);
+    this.Path = new gxnat.Path(this.queryUrl);
 
 
     //
@@ -197,29 +197,6 @@ gxnat.vis.AjaxViewableTree.prototype.getThumbnailImage =
 
 
 /**
- * @inheritDoc
- */
-gxnat.vis.AjaxViewableTree.prototype.dispose = function() {
-    goog.base(this, 'dispose');
-
-    // experiment url
-    delete this.experimentUrl;
-
-    // json
-    goog.object.clear(this.json);
-    delete this.json;
-
-    // queryurl
-    delete this.queryUrl;
-    
-    // dispose
-    this.Path.dispose();
-    delete this.Path;
-}
-
-
-
-/**
  * Static function to generate ViewableTrees based on a given XNAT url.  All of
  * the ViewableTrees that are generated are subclasses of 
  * gxnat.vis.AjaxViewableTree.
@@ -247,8 +224,32 @@ function(url, AjaxViewableTreeSubClass, opt_runCallback, opt_doneCallback) {
 	viewable = new AjaxViewableTreeSubClass(
 	    pathObj.pathByLevel('experiments'), json, opt_runCallback);
 
-	//window.console.log(viewable);
-	// sort list (shared, with custom parameters)
-	window.console.log("need to sort the viewable list");
     }, opt_doneCallback)
+}
+
+
+
+/**
+ * @inheritDoc
+ */
+gxnat.vis.AjaxViewableTree.prototype.dispose = function() {
+    goog.base(this, 'dispose');
+
+    // json
+    if (goog.isDefAndNotNull(this.json)){
+	goog.object.clear(this.json);
+	delete this.json;
+    }
+    
+    // dispose
+    if (goog.isDefAndNotNull(this.Path)){
+	this.Path.dispose();
+	delete this.Path;
+    }
+
+    // experiment url
+    delete this.experimentUrl;
+
+    // queryurl
+    delete this.queryUrl;
 }

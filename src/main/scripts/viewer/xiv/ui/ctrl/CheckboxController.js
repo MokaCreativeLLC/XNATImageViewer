@@ -93,7 +93,7 @@ xiv.ui.ctrl.CheckboxController.prototype.disposeInternal = function() {
     // Check box
     goog.events.removeAll(this.checkbox_);
     this.checkbox_.disposeInternal();
-    delete this.checkbox_();
+    delete this.checkbox_;
 }
 
 

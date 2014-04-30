@@ -301,7 +301,6 @@ nrg.ui.ScrollableContainer.prototype.disposeInternal = function() {
     
     if (goog.isDefAndNotNull(this.Slider_)){
 	goog.events.removeAll(this.Slider_);
-	alert(this.Slider_);
 	this.Slider_.disposeInternal();
 	delete this.Slider_;
     }

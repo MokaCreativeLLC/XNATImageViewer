@@ -459,5 +459,3 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_V = function() {
 
 
 
-
-

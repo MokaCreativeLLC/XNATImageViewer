@@ -428,8 +428,11 @@ xiv.ui.ctrl.XtkController.prototype.add_visible = function(xObj) {
  */
 xiv.ui.ctrl.XtkController.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
+
+    //
     //  subControllers
-    goog.array.forEach(this.subControllers, function(){
+    //
+    goog.array.forEach(this.subControllers, function(subController){
 	goog.events.removeAll(subController);
 	subController.disposeInternal();
 	subController = null;
@@ -437,18 +440,20 @@ xiv.ui.ctrl.XtkController.prototype.disposeInternal = function() {
     goog.array.clear(this.subControllers);
     delete this.subControllers;
 
-
+    //
     // Master controllers.
-    goog.object.forEach(this.masterControllers, function(controller){
-	goog.events.removeAll(controller);
-	controller.disposeInternal();
+    //
+    goog.array.forEach(this.masterControllers, function(ctrl){
+	goog.events.removeAll(ctrl);
+	ctrl.disposeInternal();
 	controller = null;
     })
     goog.array.clear(this.masterControllers);
     delete this.masterControllers;
 
-
+    //
     //  Component
+    //
     if (goog.isDefAndNotNull(this.component_)){
 	goog.events.removeAll(this.component_);
 	if (this.component_ instanceof goog.ui.Component){

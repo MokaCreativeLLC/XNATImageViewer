@@ -283,17 +283,17 @@ xiv.ui.ViewBoxHandler.prototype.removeColumn = function(opt_animate) {
 
     // Remove columns only if there's greater than one viewer in the modal.
     if (this.ViewBoxes_[0] && this.ViewBoxes_[0].length > 1) {
-	goog.array.forEach(this.ViewBoxes_, function(ViewBox, i) {
-	    var rowLen = /**@type {!number}*/ ViewBox.length - 1;
-	    nrg.fx.fadeTo(ViewBox[rowLen].getElement(), 
+	goog.array.forEach(this.ViewBoxes_, function(ViewBoxCol, i) {
+	    var rowLen =  ViewBoxCol.length - 1;
+	    nrg.fx.fadeTo(ViewBoxCol[rowLen].getElement(), 
 			    xiv.ui.ViewBoxHandler.ANIM_FAST, 0);
 
 	    goog.dom.removeNode(this.dragDropHandles_[
-		ViewBox[rowLen].getElement().id]);
+		ViewBoxCol[rowLen].getElement().id]);
 
 	    // Remove the xiv.ui.ViewBox
-	    ViewBox.disposeInternal();
-	    ViewBox.splice(rowLen, 1);		
+	    ViewBoxCol[rowLen].disposeInternal();
+	    ViewBoxCol.splice(rowLen, 1);		
 	}.bind(this))
     }
 
@@ -353,15 +353,16 @@ xiv.ui.ViewBoxHandler.prototype.removeRow = function(opt_animate) {
     // Remove rows only if there's greater than one
     // viewer in the modal.
     if (this.ViewBoxes_.length > 1) {
-	var delRow = /**@type {!Array.ViewBox}*/
-	this.ViewBoxes_[this.ViewBoxes_.length - 1];
+	var delRow = this.ViewBoxes_[this.ViewBoxes_.length - 1];
 	goog.array.forEach(delRow, function(currDelViewBox) { 
 	    nrg.fx.fadeTo(currDelViewBox.getElement(), 
 			    xiv.ui.ViewBoxHandler.ANIM_FAST, 0);
-	    currDelViewBox.disposeInternal();
 	    // Remove the drag drop handles
 	    goog.dom.removeNode(this.dragDropHandles_[
 		currDelViewBox.getElement().id]);
+
+	    currDelViewBox.disposeInternal();
+
 	}.bind(this))
 	this.ViewBoxes_.splice(this.ViewBoxes_.length -1, 1);
     }
@@ -476,7 +477,7 @@ xiv.ui.ViewBoxHandler.prototype.setViewBoxesParent = function(elt) {
  * @private
  */
 xiv.ui.ViewBoxHandler.prototype.createViewBox_ = function() {
-    var ViewBox = /**@type {!xiv.ui.ViewBox}*/ new xiv.ui.ViewBox();
+    var ViewBox = new xiv.ui.ViewBox();
     goog.dom.append(this.ViewBoxesParent_, ViewBox.getElement());
     this.addDragDropHandle_(ViewBox);
     this.setViewBoxEvents_(ViewBox);

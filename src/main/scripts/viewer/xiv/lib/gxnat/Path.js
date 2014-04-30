@@ -48,13 +48,11 @@ gxnat.Path.xnatLevelOrder = [
 
 
 /**
- * @public
+ * @inheritDoc
  */
 gxnat.Path.prototype.dispose = function(url) {
     goog.base(this, 'dispose');
-    window.console.log('PRE-CLEARED PATH', this);
     goog.object.clear(this);
-    window.console.log('CLEARED PATH', this);
 }
 
 

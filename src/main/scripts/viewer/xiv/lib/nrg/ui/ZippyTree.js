@@ -400,38 +400,37 @@ nrg.ui.ZippyTree.prototype.createFadeAnim_ = function(elt, opt_callback) {
  * @private
  */
 nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
+    //
     // Add the contentElt to the given node , if it exists.
+    //
     if (opt_elt) {
+	//
 	// IMPORTANT!
+	//
 	nrg.style.setStyle(opt_elt, {'position': 'relative'});
 	opt_elt.style.opacity = this.initOp_;
-	// IMPORTANT!
-	//window.console.log(contHold);
-
+	//
 	// This is where you sort the nodes.
-	window.console.log('\n\nTHUMBNAIL SORTING OCCURS HERE');
-
+	//
 	if (goog.isDefAndNotNull(this.customInsertMethod_)) {
-	    window.console.log('CUSTOM INSERT METHOD!');
 	    this.customInsertMethod_(contHold, opt_elt);
 	} else {
-	/**
-	var siblings = goog.dom.getChildren(contHold);
-	var siblingTexts = [];
-	goog.array.forEach(siblings, function(sibling){
-	    siblingTexts.push(sibling['THUMB TEXT'])
-	})
-	siblingTexts = siblingTexts.sort(nrg.array.naturalCompare);
-	*/
-
 	    goog.dom.appendChild(contHold, opt_elt);
 	}
+
+	//
+	// Fade in the end node
+	//
 	this.createFadeAnim_(opt_elt, function(){
 	    this.dispatchEvent({
 		type: nrg.ui.ZippyTree.EventType.CONTENTADDED
 	    });
 	}.bind(this));
     }
+
+    //
+    // indent the nodes
+    //
     this.indentNodes_();
     if (!this.AnimQueue_.isPlaying()) { this.AnimQueue_.play() }; 
 

@@ -53,10 +53,12 @@ gxnat.vis.ViewableTree.prototype.dispose = function() {
     goog.base(this, 'dispose');
 
     // ViewableGroups
-    goog.array.forEach(this.ViewableGroups, function(ViewableGroup){
-	ViewableGroup.dispose();
-    })
-    delete this.ViewableGroups;
+    if (goog.isDefAndNotNull(this.ViewableGroups)){
+	goog.array.forEach(this.ViewableGroups, function(ViewableGroup){
+	    ViewableGroup.dispose();
+	})
+	delete this.ViewableGroups;
+    }
 
 
     // Thumbnail Files

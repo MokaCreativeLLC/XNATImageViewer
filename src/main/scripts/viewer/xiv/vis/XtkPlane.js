@@ -14,62 +14,11 @@ goog.provide('xiv.vis.XtkPlane');
 xiv.vis.XtkPlane = function() {
     goog.base(this);
 
-
-    /**
-     * The TYPE of XTK renderer -- not to be confused with this.Renderer
-     * which is the instance of the renderer.
-     *
-     * @type {obj}
-     * @protected
-     */
-    this.XRenderer = null;
-
-
-
-    /**
-     * @type {?string}
-     * @protected
-     */
-    this.orientation = null;
-
-
-
-    /**
-     * @type {?goog.Timer}
-     * @private
-     */
-    this.progressTimer_ = null;
-
-
-
-    /**
-     * @type {?X.renderer2D | ?X.renderer3D}
-     * @protected
-     */  
-    this.Renderer = null;
-
-
-
-    /**
-     * @type {?Element}
-     * @protected
-     */  
-    this.container = null;
-
-
-
     /**
      * @type {!Array.string}
      * @private
      */
     this.xObjs_ = [];
-
-
-    /**
-     * @private
-     * @type {number}
-     */
-    this.renderProgress_;
 }
 goog.inherits(xiv.vis.XtkPlane, goog.events.EventTarget);
 goog.exportSymbol('xiv.vis.XtkPlane', xiv.vis.XtkPlane);
@@ -122,6 +71,57 @@ xiv.vis.XtkPlane.prototype.DisabledOverlay_;
 
 
 /**
+ * The TYPE of XTK renderer -- not to be confused with this.Renderer
+ * which is the instance of the renderer.
+ *
+ * @type {obj}
+ * @protected
+ */
+xiv.vis.XtkPlane.prototype.XRenderer = null;
+
+
+
+/**
+ * @type {?string}
+ * @protected
+ */
+xiv.vis.XtkPlane.prototype.orientation = null;
+
+
+
+/**
+ * @type {?goog.Timer}
+ * @private
+ */
+xiv.vis.XtkPlane.prototype.progressTimer_ = null;
+
+
+
+/**
+ * @type {?X.renderer2D | ?X.renderer3D}
+ * @protected
+ */  
+xiv.vis.XtkPlane.prototype.Renderer = null;
+
+
+
+/**
+ * @type {?Element}
+ * @protected
+ */  
+xiv.vis.XtkPlane.prototype.container = null;
+
+
+/**
+ * @private
+ * @type {number}
+ */
+xiv.vis.XtkPlane.prototype.renderProgress_;
+
+
+
+
+/**
  * @return {!string} The orientation.
  */
 xiv.vis.XtkPlane.prototype.getRenderer = function(){
@@ -164,6 +164,7 @@ xiv.vis.XtkPlane.prototype.setCamera = function(opt_cameraNode){
 
     if (goog.isDefAndNotNull(opt_cameraNode)){
 	this.camera_ = opt_cameraNode;
+	window.console.log('\n\n\n\n**********', opt_cameraNode);
 	this.Renderer.camera.focus = opt_cameraNode.focus;
 	this.Renderer.camera.position = opt_cameraNode.position;
 	this.Renderer.camera.up = opt_cameraNode.up;
@@ -278,7 +279,7 @@ xiv.vis.XtkPlane.prototype.checkRenderProgress_ = function() {
 	//
 	// check again...
 	//
-    }.bind(this), 500); 
+    }.bind(this), 100); 
 }
 
 
@@ -575,15 +576,22 @@ xiv.vis.XtkPlane.prototype.dispose = function() {
     }
     
     //
-    // Camera Node
+    // Camera Node - (don't delete because it belongs to the thumbnail)
     //
     if (goog.isDefAndNotNull(this.camera_)){
-	goog.object.clear(this.camera_);
 	delete this.camera_;
     }
 
+    //
+    // progress timer
+    //
+    if (goog.isDefAndNotNull(this.progressTimer_)){
+	this.progressTimer_.dispose();
+	delete this.progressTimer_;
+    }
 
-    // prototype
+
+    // primitive types
     delete this.isOn_;
     delete this.XRenderer;
     delete this.container;
@@ -591,11 +599,4 @@ xiv.vis.XtkPlane.prototype.dispose = function() {
     delete this.xObjs_;
     delete this.currVolume_;
     delete this.renderProgress_;
-
-
-    //
-    // progress timer
-    //
-    this.progressTimer_.dispose();
-    delete this.progressTimer_;
 };

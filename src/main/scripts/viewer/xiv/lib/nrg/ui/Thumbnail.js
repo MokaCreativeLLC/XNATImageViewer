@@ -145,8 +145,23 @@ nrg.ui.Thumbnail.prototype.getImage = function() {
  * @return {!Element} The thumbnail text.
  * @public
  */
-nrg.ui.Thumbnail.prototype.getText = function() {
+nrg.ui.Thumbnail.prototype.getTextElement = function() {
     return this.text_;	
+}
+
+
+
+/**
+ * @return {!string} The first string of the thumbnail text element.
+ * @public
+ */
+nrg.ui.Thumbnail.prototype.getText = function() {
+    var currTextChild = this.text_;
+    while (currTextChild.childNodes[0]){
+	currTextChild = currTextChild.childNodes[0];
+    }
+    return currTextChild.parentNode.innerHTML;
+    
 }
 
 

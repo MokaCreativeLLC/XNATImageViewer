@@ -60,7 +60,7 @@ nrg.ui.ThumbnailGallery.CSS_SUFFIX = {
 /**
  * @const
  */
-nrg.ui.ThumbnailGallery.THUMB_SORT_ID = goog.string.createUniqueString();
+nrg.ui.ThumbnailGallery.THUMB_SORT_TAG = goog.string.createUniqueString();
 
 
 
@@ -128,9 +128,6 @@ nrg.ui.ThumbnailGallery.prototype.sortThumbnailsOnInsert_ = false;
  */
 nrg.ui.ThumbnailGallery.prototype.sortThumbnailsOnInsert = function(bool){
     this.sortThumbnailsOnInsert_ = bool;
-
-    window.console.log("SORT!", this.ZippyTree_);
-
     if (goog.isDefAndNotNull(this.ZippyTree_) 
 	&& this.sortThumbnailsOnInsert_){
 	this.ZippyTree_.setCustomInsertMethod(
@@ -195,8 +192,8 @@ nrg.ui.ThumbnailGallery.thumbnailSorter = function(holderElt, insertElt){
     // Preliminary sort params
     //
     var siblings = goog.dom.getChildren(holderElt);
-    var insertEltText = insertElt[nrg.ui.ThumbnailGallery.THUMB_SORT_ID].
-	toLowerCase();    
+    var insertEltText = 
+	insertElt[nrg.ui.ThumbnailGallery.THUMB_SORT_TAG].toLowerCase(); 
     var comparer;
     var compareStr;
     var len = siblings.length
@@ -208,7 +205,7 @@ nrg.ui.ThumbnailGallery.thumbnailSorter = function(holderElt, insertElt){
     //
     for (; i < len; i++){
 	compareStr = siblings[i]
-	    [nrg.ui.ThumbnailGallery.THUMB_SORT_ID].toLowerCase();
+	    [nrg.ui.ThumbnailGallery.THUMB_SORT_TAG].toLowerCase();
 	comparer = insertEltText.localeCompare(compareStr)
 
 	// insert only when the text is less...
@@ -249,13 +246,13 @@ nrg.ui.ThumbnailGallery.prototype.getZippyTree = function(){
 nrg.ui.ThumbnailGallery.prototype.createThumbnail = function(imageUrl, 
 							     displayText) {
 
-    var thumbnail = /**@type {!nrg.ui.Thumbnail} */ new nrg.ui.Thumbnail();
+    var thumbnail = new nrg.ui.Thumbnail();
  
     goog.dom.classes.addRemove(thumbnail.getElement(), 
 			       goog.dom.classes.get(thumbnail.getElement()), 
 			       this.thumbnailClasses_);
-    goog.dom.classes.addRemove(thumbnail.getText(), 
-			       goog.dom.classes.get(thumbnail.getText()), 
+    goog.dom.classes.addRemove(thumbnail.getTextElement(), 
+			       goog.dom.classes.get(thumbnail.getTextElement()), 
 			       this.thumbnailTextClasses_);
     goog.dom.classes.addRemove(thumbnail.getImage(), 
 			       goog.dom.classes.get(thumbnail.getImage()), 
@@ -323,9 +320,11 @@ function(thumbnail, opt_folders) {
 		     nrg.ui.Slider.EventType.MOUSEWHEEL, 
 			 this.onHoverAndScroll_.bind(this));
 
-    window.console.log('\n\nTHUMBNAIL SORT PROPERTY HERE');
-    thumbnail.getElement()[nrg.ui.ThumbnailGallery.THUMB_SORT_ID] = 
-	thumbnail.getText().childNodes[0].childNodes[0].innerHTML;
+    //
+    // Create a sort ID for the thumbnail 
+    //
+    thumbnail.getElement()[nrg.ui.ThumbnailGallery.THUMB_SORT_TAG] = 
+	thumbnail.getText().toLowerCase();
 
     this.ZippyTree_.addContents(thumbnail.getElement(), opt_folders);
 }
@@ -445,7 +444,7 @@ nrg.ui.ThumbnailGallery.prototype.setThumbnailClasses_ =
 		break;
 	    case 'text':
 		classes = this.thumbnailTextClasses_;
-		element = this.Thumbs_[thumbID].getText();
+		element = this.Thumbs_[thumbID].getTextElement();
 		break;   
 	    default:
 		break;
@@ -533,7 +532,7 @@ nrg.ui.ThumbnailGallery.prototype.setDefaultClasses_ = function() {
     this.thumbnailImageClasses_ = goog.dom.classes.get(tempThumb.getImage());
     this.thumbnailImageClasses_.push(
 	nrg.ui.ThumbnailGallery.CSS.THUMBNAIL_IMAGE);
-    this.thumbnailTextClasses_ = goog.dom.classes.get(tempThumb.getText());
+    this.thumbnailTextClasses_ = goog.dom.classes.get(tempThumb.getTextElement());
     this.thumbnailTextClasses_.push(
 	nrg.ui.ThumbnailGallery.CSS.THUMBNAIL_TEXT);
     goog.dom.removeNode(tempThumb.getElement());

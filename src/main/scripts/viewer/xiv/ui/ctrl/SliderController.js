@@ -162,7 +162,7 @@ xiv.ui.ctrl.SliderController.prototype.disposeInternal = function() {
     // ValueInput
     if (goog.isDefAndNotNull(this.valueInput_)){
 	goog.events.removeAll(this.valueInput_);
-	goog.dom.remove(this.valueInput_);
+	goog.dom.removeNode(this.valueInput_);
 	delete this.valueInput_;
     }
 }
