@@ -216,6 +216,10 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     VIEWFRAME: 'viewframe',
     COMPONENT_HIGHLIGHT: 'component-highlight',
     VIEWABLEGROUPMENU: 'viewablegroupmenu',
+    BUTTON_THREEDTOGGLE: 'button-threedtoggle',
+    BUTTON_INFOTOGGLE: 'button-infotoggle',
+    BUTTON_HELPTOGGLE: 'button-helptoggle',
+    BUTTON_CROSSHAIRTOGGLE: 'button-crosshairtoggle',
 }
 
 
@@ -647,7 +651,7 @@ xiv.ui.ViewBox.prototype.hideAllInteractors_ = function() {
 /**
  * @private
  */
-xiv.ui.ViewBox.prototype.showAllInteractors_ = function() {
+ xiv.ui.ViewBox.prototype.showAllInteractors_ = function() {
     this.toggleAllInteractorsVisible_(true); 
 }
 
@@ -1454,52 +1458,145 @@ xiv.ui.ViewBox.prototype.initLayoutMenu_ = function(){
 }
 
 
+/**
+ 
+ * @param {!boolean} defaultState
+ * @param {!string} defaultClass
+ * @param {string=} opt_tooltip
+ * @param {Function=} opt_toolCheck
+ * @private
+ */
+xiv.ui.ViewBox.prototype.createToggleButton_ = 
+    function(defaultState, defaultClass, opt_tooltip, opt_onCheck) {
+	//
+	// Create the toggle button
+	//
+	var onClass = goog.getCssName(defaultClass, 'on')
+	var iconbutton = new goog.ui.ToggleButton([
+	    goog.dom.createDom('div', defaultClass),
+	]);
+	iconbutton.setTooltip(opt_tooltip);
+	//
+	// Go ahead and render it first (weird, because we reattach it again)
+	//
+	iconbutton.render(this.menus_.LEFT);
+
+	//
+	// Set the default check stated
+	//
+	iconbutton.setChecked(defaultState);
+	
+	//
+	// Add the 'on' class if it's default class is on
+	//
+	if (defaultState){
+	    goog.dom.classes.add(iconbutton.getContentElement().
+				 childNodes[0], onClass);
+	}
+
+	//
+	// Clean up the CSS
+	//
+	nrg.style.setStyle(iconbutton.getElement(), {
+	    'background': 'none',
+	    'background-color': 'rgba(0,255,0,1)',
+	    'border': 'none',
+	    'cursor': 'pointer'
+	})
+
+	//
+	// Clears the child node classes (they aren't very good)
+	//
+	goog.dom.classes.set(iconbutton.getElement().childNodes[0], '');
+
+	//
+	// Toggle event
+	//
+	goog.events.listen(iconbutton, goog.ui.Component.EventType.ACTION, 
+	function(e){
+	    if (goog.isDefAndNotNull(opt_onCheck)){
+		opt_onCheck(e);
+	    }
+	    if (e.target.isChecked()) {
+		goog.dom.classes.add(iconbutton.getContentElement().
+				     childNodes[0], onClass);
+	    } else {
+		goog.dom.classes.remove(iconbutton.getContentElement().
+					childNodes[0], onClass);
+	    }
+	}.bind(this));
+
+	//
+	// Adds to menu
+	//
+	this.addToMenu('LEFT', iconbutton.getElement());
+    }
+
+
 
 /**
-* As stated.
-* @private
-*/
+ * @private
+ */
+xiv.ui.ViewBox.prototype.create3DRenderToggle_ = function(){    
+    this.createToggleButton_(true, xiv.ui.ViewBox.CSS.BUTTON_THREEDTOGGLE,
+	'3D Rendering', function(e){
+	    this.Renderer_.setVPlaneOn(e.target.isChecked());
+	}.bind(this));
+}
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.createInfoToggle_ = function(){
+    this.createToggleButton_(true, xiv.ui.ViewBox.CSS.BUTTON_INFOTOGGLE,
+			    'Info. Display', function(e){}.bind(this));
+}
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.createHelpToggle_ = function(){
+    this.createToggleButton_(true, xiv.ui.ViewBox.CSS.BUTTON_HELPTOGGLE,
+			    'Help Overlay', function(e){}.bind(this));
+}
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.createCrosshairToggle_ = function(){
+    this.createToggleButton_(true, xiv.ui.ViewBox.CSS.BUTTON_CROSSHAIRTOGGLE,
+	'Crosshairs', function(e){
+	    var interactors = this.LayoutHandler_.getMasterInteractors();
+	    var visibility = e.target.isChecked() ? 'visible': 'hidden';
+	    goog.object.forEach(this.Renderer_.getPlanes(), 
+            function(Plane, planeOr) {
+		if (goog.isDefAndNotNull(interactors[planeOr]) &&
+		    goog.isDefAndNotNull(interactors[planeOr].CROSSHAIRS)){
+		    interactors[planeOr].CROSSHAIRS.vertical.style.visibility = 
+			visibility;
+		    interactors[planeOr].CROSSHAIRS.horizontal.
+			style.visibility = visibility;
+		}
+	    }.bind(this))  
+	}.bind(this));
+}
+
+
+
+
+
+/**
+ * @private
+ */
 xiv.ui.ViewBox.prototype.initToggleMenu_ = function(){
     this.addMenu_left_();
-    var threeDToggle = goog.dom.createDom('div')
-    nrg.style.setStyle(threeDToggle, {
-	'width': 10,
-	'height': 10,
-	'background-color': 'rgba(255,0,0,.8)'
-    })
-
-    // Use a DIV with a background image as the icon, and a SPAN as the caption.
-    var iconbutton1 = new goog.ui.ToggleButton([
-	//goog.dom.createDom('div', 'icon insert-image-icon goog-inline-block'),
-	//'Insert Image'
-    ], goog.ui.ImagelessButtonRenderer.getInstance());
-    iconbutton1.render(this.menus_.LEFT);
-    iconbutton1.setContent(threeDToggle);
-    iconbutton1.setChecked(true);
-
-    goog.events.listen(iconbutton1, goog.ui.Component.EventType.ACTION, 
-		       function(e){
-			   //alert('CLICKE! ' + iconbutton1.isChecked());
-			   window.console.log(e.target.isActive());
-
-			   //
-			   // Turn 3D off
-			   //
-			   this.Renderer_.setVPlaneOn(e.target.isChecked());
-
-			   if (e.target.isChecked()) {
-			       e.target.getContentElement().style.
-				   backgroundColor = 'rgba(0,255,0,1)';
-			   } else {
-			       e.target.getContentElement().style.
-				   backgroundColor = 'rgba(255,0,0,1)';
-			       
-			   }
-		       }.bind(this));
-
-
-
-    this.addToMenu('LEFT', iconbutton1.getElement());
+    this.create3DRenderToggle_();
+    this.createInfoToggle_();
+    this.createCrosshairToggle_();
+    this.createHelpToggle_();
 }
 
 

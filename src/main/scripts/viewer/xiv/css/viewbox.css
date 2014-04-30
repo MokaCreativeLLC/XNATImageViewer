@@ -128,6 +128,45 @@
 
 
 
+.xiv-ui-viewbox-button-threedtoggle {
+    width: 15px;
+    height: 15px;
+    content:url('/xnat/images/viewer/xiv/ui/ViewBoxManager/handle.png');
+}
+
+
+.xiv-ui-viewbox-button-threedtoggle-on {
+    content:url('/xnat/images/viewer/xiv/ui/Overlay/sadbrain-white.png');
+}
+
+.xiv-ui-viewbox-button-infotoggle {
+    width: 15px;
+    height: 15px;
+    content:url('/xnat/images/viewer/xiv/ui/ViewBoxManager/handle.png');
+}
+
+.xiv-ui-viewbox-button-infotoggle-on {
+    content:url('/xnat/images/viewer/xiv/ui/Overlay/sadbrain-white.png');
+}
+
+.xiv-ui-viewbox-button-helptoggle {
+    width: 15px;
+    height: 15px;
+    content:url('/xnat/images/viewer/xiv/ui/ViewBoxManager/handle.png');
+}
+
+.xiv-ui-viewbox-button-helptoggle-on {
+    content:url('/xnat/images/viewer/xiv/ui/Overlay/sadbrain-white.png');
+}
+
+.xiv-ui-viewbox-button-crosshairtoggle {
+    width: 15px;
+    height: 15px;
+    content:url('/xnat/images/viewer/xiv/ui/ViewBoxManager/handle.png');
+}
+.xiv-ui-viewbox-button-crosshairtoggle-on {
+    content:url('/xnat/images/viewer/xiv/ui/Overlay/sadbrain-white.png');
+}
 
 
 .xiv-ui-viewbox-component-highlight {

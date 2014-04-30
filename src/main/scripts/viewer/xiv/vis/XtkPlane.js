@@ -439,20 +439,20 @@ xiv.vis.XtkPlane.prototype.setOn = function(on) {
 	} else {
 	    this.DisabledOverlay_.getElement().style.visibility = 'visible';
 	}
-	nrg.fx.fadeIn(this.DisabledOverlay_.getElement(), 500, 
+	nrg.fx.fadeIn(this.DisabledOverlay_.getElement(), 300, 
 		      function(){
-	    this.storeCamera_();
-	    this.storeBackground_();
-	    this.Renderer.destroy();
-	    this.Renderer = null;
-	    this.container.style.background = 
-		xiv.vis.XtkPlane.DEFAULT_BACKGROUND;
-	}.bind(this));
+			  this.storeCamera_();
+			  this.storeBackground_();
+			  this.Renderer.destroy();
+			  this.Renderer = null;
+			  this.container.style.background = 
+			      xiv.vis.XtkPlane.DEFAULT_BACKGROUND;
+		      }.bind(this));
 
 
     } else {
 	this.restore();
-	nrg.fx.fadeOut(this.DisabledOverlay_.getElement(), 500, function(){
+	nrg.fx.fadeOut(this.DisabledOverlay_.getElement(), 300, function(){
 	    this.DisabledOverlay_.getElement().style.visibility = 'hidden';
 	}.bind(this));
     }
