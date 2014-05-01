@@ -169,12 +169,12 @@ xiv.ui.layouts.Layout.prototype.getTitle = function(){
 
 
 /**
- * @param {!xiv.ui.layout.LayoutFrame} plane
+ * @param {!xiv.ui.layout.LayoutFrame} frame
  */
-xiv.ui.layouts.Layout.prototype.addLayoutFrame = function(plane){
+xiv.ui.layouts.Layout.prototype.addLayoutFrame = function(frame){
     this.LayoutFrames = this.LayoutFrames ? this.LayoutFrames : {};
-    this.LayoutFrames[plane.getTitle()] = plane;
-    //window.console.log("PLANES", plane, this.LayoutFrames);
+    this.LayoutFrames[frame.getTitle()] = frame;
+    //window.console.log("FRAMES", frame, this.LayoutFrames);
 }
 
 

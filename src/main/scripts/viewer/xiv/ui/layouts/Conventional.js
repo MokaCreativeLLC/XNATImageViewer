@@ -176,7 +176,8 @@ xiv.ui.layouts.Conventional.prototype.setupLayoutFrame_V = function(){
  * @param {Function=};
  * @private
  */
-xiv.ui.layouts.Conventional.prototype.onXYLayoutFrameResize_ = function(callback){
+xiv.ui.layouts.Conventional.prototype.onXYLayoutFrameResize_ = 
+function(callback){
     this.calcDims();
 
     var xSize = goog.style.getSize(this.LayoutFrames['X'].getElement());
@@ -340,9 +341,12 @@ xiv.ui.layouts.Conventional.prototype.updateStyle = function(){
  */
 xiv.ui.layouts.Conventional.prototype.updateStyle_XY_ = function(plane) {
    
-    var vHandle = this.LayoutFrames['V'].getResizable().getResizeDragger('BOTTOM');
-    var boundaryElt = this.LayoutFrames[plane].getResizable().getBoundaryElement(); 
-    var planePos = goog.style.getPosition(this.LayoutFrames[plane].getElement());
+    var vHandle = this.LayoutFrames['V'].getResizable().
+	getResizeDragger('BOTTOM');
+    var boundaryElt = this.LayoutFrames[plane].getResizable().
+	getBoundaryElement(); 
+    var planePos = goog.style.getPosition(this.LayoutFrames[plane].
+					  getElement());
     var planeSize = goog.style.getSize(this.LayoutFrames[plane].getElement());
 
     //

@@ -155,7 +155,7 @@ nrg.fx.animGenStyles = [
     'left',
     'top',
     'width',
-    'height',
+    'height', 
     'opacity',
     'background-color',
     'color',
@@ -315,21 +315,88 @@ nrg.fx.generateAnim_BgColorTrans = function(elt, startDim, endDim, duration) {
 	    }
 	})
 
-	var startColor = /**@type{!string | !Array.number}*/
-	goog.color.parse(startDim['background-color']);
-	var endColor = /**@type{!string | !Array.number}*/
-	goog.color.parse(endDim['background-color']);    
+	try {
+	    var startColor = goog.color.parse(startDim['background-color']);
+	    var endColor = goog.color.parse(endDim['background-color']);    
 
-	// Only return animation if there's a change.
-	if (startColor.hex !== endColor.hex) {
-	    return new goog.fx.dom.BgColorTransform(
-		elt, 
-		goog.color.hexToRgb(startColor), 
-		goog.color.hexToRgb(endColor), 
-		duration, goog.fx.easing.easeOut);
+	    // Only return animation if there's a change.
+	    if (startColor.hex !== endColor.hex) {
+		return new goog.fx.dom.BgColorTransform(
+		    elt, 
+		    goog.color.hexToRgb(startColor), 
+		    goog.color.hexToRgb(endColor), 
+		    duration, goog.fx.easing.easeOut);
+	    }
+	}
+	catch (error){
+	    window.console.log("Skipping color transition anim: ", 
+			       error.message);
 	}
     }
 }
+
+
+
+/**
+ * @struct
+ * @param {!Object} asIsDims
+ * @param {!Object} toBeDims
+ */
+nrg.fx.TransitionDims = function(asIsDims, toBeDims){
+    this.asIs = asIsDims;
+    this.toBe = toBeDims;
+}
+
+
+
+/**
+ * @param {!Object} obj
+ * @return {!Object}
+ * @private
+ */ 
+nrg.fx.filterTransitionStyles = function(obj) {
+    return nrg.convert.filterZeroLengthStrings(
+	nrg.convert.filterNaN(obj));
+}
+
+
+
+/**
+ * @param {!Element} asIsElt
+ * @param {!Element} toBeElt
+ * @return {!nrg.fx.TransitionDims}
+ * @public
+ */ 
+nrg.fx.generateTransitionDims = 
+function(asIsElt, toBeElt) {
+
+    var unfilteredAsIs = xiv.ui.layouts.LayoutHandler.
+	getTransitionStyles_(asIsElt);
+    var filteredAsIs = nrg.fx.filterTransitionStyles(unfilteredAsIs);
+
+    // To-Be
+    var unfilteredToBe = xiv.ui.layouts.LayoutHandler.
+	getTransitionStyles_(toBeElt);
+    var filteredToBe = nrg.fx.filterTransitionStyles(unfilteredToBe);
+
+
+    //window.console.log("AS IS DIMS Unfiltered", unfilteredAsIs);
+    //window.console.log("AS IS DIMS filtered", filteredAsIs);
+    //window.console.log("TO BE DIMS Unfiltered", unfilteredToBe);
+    //window.console.log("TO BE DIMS filtered", filteredToBe);
+
+    //
+    // Put any key, value pairs that aren't in as-is in the to-be
+    //
+    goog.object.forEach(filteredAsIs, function(val, key){
+	if (!goog.isDefAndNotNull(filteredToBe[key])){
+	    filteredToBe[key] = val;
+	}
+    })
+
+    return new nrg.fx.TransitionDims(filteredAsIs, filteredToBe);
+}
+
 
 
 

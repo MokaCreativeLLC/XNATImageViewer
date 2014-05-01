@@ -168,6 +168,23 @@ xiv.ui.layouts.LayoutHandler.prototype.masterLayout_ = null;
 xiv.ui.layouts.LayoutHandler.prototype.layoutChanging_ = false;
 
 
+
+/**
+ * @type {!Object.<string, Object>}
+ * @private
+ */ 
+xiv.ui.layouts.LayoutHandler.prototype.asIsDims_ = null;
+
+
+
+/**
+ * @type {!Object.<string, Object>}
+ * @private
+ */  
+xiv.ui.layouts.LayoutHandler.prototype.toBeDims_ = null;
+
+
+
 /**
 * @public
 * @return {boolean}
@@ -302,7 +319,7 @@ function(title, opt_animateSwitch) {
 	// Add to the main element.
 	//
 	goog.dom.append(this.getElement(), 
-			     this.Layouts_[title].getElement());
+			this.Layouts_[title].getElement());
     }
     
     this.prevLayoutTitle_ = this.currLayoutTitle_;
@@ -334,8 +351,8 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutResize_ = function(e) {
  * @private
  */ 
 xiv.ui.layouts.LayoutHandler.getTransitionStyles_ = function(elt) {
-    var size = /**@type {!goog.math.Size}*/ goog.style.getSize(elt);
-    var pos = /**@type {!goog.math.Coordinate}*/  goog.style.getPosition(elt);
+    var size = goog.style.getSize(elt);
+    var pos = goog.style.getPosition(elt);
     return {	
 	'left': pos.x,
 	'top': pos.y,
@@ -343,6 +360,7 @@ xiv.ui.layouts.LayoutHandler.getTransitionStyles_ = function(elt) {
 	'height': size.height,
 	'opacity': parseInt(elt.style.opacity, 10),
 	'background-color': elt.style.backgroundColor,
+	'background': elt.style.background,
 	'color': elt.style.color,
 	'z-index': parseInt(elt.style.zIndex, 10)
     }
@@ -415,26 +433,22 @@ function() {
 
 
 /**
- * @param {Object} asIsDims
- * @param {Object} toBeDims
  * @param {number=} opt_duration The animation opt_duration. 
  * @return {Array.<goog.fx.Animation>}
  * @private
  */
 xiv.ui.layouts.LayoutHandler.prototype.generateTransitionAnims_ = 
-function(asIsDims, toBeDims, opt_duration){
+function(opt_duration){
     var anims =  [];
-    var counter = 0;
-    goog.object.forEach(this.transitionElts_, function(elt){
+    goog.object.forEach(this.transitionElts_, function(elt, key){
 	anims = goog.array.concat(anims, 
-		nrg.fx.generateAnimations(elt, asIsDims[counter], 
-					   toBeDims[counter], opt_duration));
-	counter++;
-    })
+		nrg.fx.generateAnimations(elt, 
+					  this.asIsDims_[key], 
+					  this.toBeDims_[key], 
+					  opt_duration));
+    }.bind(this))
     return anims;
 }
-
-
 
 
 
@@ -444,13 +458,13 @@ function(asIsDims, toBeDims, opt_duration){
  */ 
 xiv.ui.layouts.LayoutHandler.prototype.runLayoutChangeAnim_ = 
 function(opt_duration) {
-    var emptyStyleFilter = function(val, key) {
-	return !isNaN(val) && val.length != 0;
-    }
-    var newLayoutFrames = this.Layouts_[this.currLayoutTitle_].getLayoutFrames();
-    var asIsDims = [];
-    var toBeDims = [];
+
+    var newLayoutFrames = this.Layouts_[this.currLayoutTitle_].
+	getLayoutFrames();
     var transitionElt;
+
+    this.asIsDims_ = {};
+    this.toBeDims_ = {};
 
     //
     // Loop the previous layout frames
@@ -468,7 +482,6 @@ function(opt_duration) {
 	    // Store references to the plane's children
 	    //
 	    this.storeAndAppendLayoutFrameChildren_(plane, key, transitionElt);
-
 
 	    //
 	    // Append the plane children to transition
@@ -492,29 +505,25 @@ function(opt_duration) {
 
 
 
-
 	    //
 	    // If the new layout has the same panels (idenfified by key)
 	    // then we construct some animations.
 	    //
 	    if (goog.object.containsKey(newLayoutFrames, key)) {
-		// As-Is
-		asIsDims.push(goog.object.filter(
-		    xiv.ui.layouts.LayoutHandler.getTransitionStyles_(
-			plane.getElement()), 
-		    emptyStyleFilter));
+		var transitionDims = 
+		    nrg.fx.generateTransitionDims(
+			plane.getElement(), newLayoutFrames[key].getElement());
+		this.asIsDims_[key] = transitionDims.asIs;
+		this.toBeDims_[key] = transitionDims.toBe;
 
-		// To-Be
-		toBeDims.push(goog.object.filter(
-		    xiv.ui.layouts.LayoutHandler.getTransitionStyles_(
-			newLayoutFrames[key].getElement()), emptyStyleFilter));
+
 
 	    //
 	    // Otherwise we just fade the panels out...
 	    //
 	    } else {
-		asIsDims.push({'z-index' :  0});
-		toBeDims.push({'opacity' :  0});
+		this.asIsDims_[key] = {'z-index' :  0};
+		this.toBeDims_[key] = {'opacity' :  0};
 	    }
 
 	}.bind(this))
@@ -529,7 +538,7 @@ function(opt_duration) {
     //
     nrg.fx.parallelAnimate(
 	// Generate the sub-animations
-	this.generateTransitionAnims_(asIsDims, toBeDims, opt_duration), 
+	this.generateTransitionAnims_(opt_duration), 
 	// BEGIN - hide all
 	this.onLayoutChangeStart_.bind(this),
 	// ANIMATE - do nothing
@@ -593,8 +602,21 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
 	goog.array.forEach(this.planeChildren_[key], function(child){
 	    goog.dom.append(newLayoutFrame.getElement(), child);
 	})
-	
     }.bind(this));
+
+
+    //-------------------------------
+    // IMPORTANT!!!!!!!!!!!!!!
+    // 
+    // Style finalize
+    //-------------------------------
+    goog.object.forEach(newLayoutFrames, function(newLayoutFrame, key){
+	if (goog.isDefAndNotNull(this.toBeDims_[key])){ 
+	    nrg.style.setStyle(newLayoutFrame.getElement(), 
+			       this.toBeDims_[key]);
+	}
+    }.bind(this));
+
 
     //
     // Transfer the interactors over
@@ -606,12 +628,7 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
     //
     // Dispose of the transition elements
     //
-    goog.object.forEach(this.transitionElts_, function(elt){
-	window.console.log(goog.dom.getChildren(elt));
-	goog.dom.removeNode(elt);
-	delete elt;
-    })
-
+    this.disposeTransitionElts_();
 
     //
     // Track changing
@@ -630,6 +647,12 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
     // Show the new (current) layout
     //
     this.showCurrentLayout()
+
+    
+    //
+    // Dispose the transition dims
+    //
+    this.disposeTransitionDims_();
 }
 
 
@@ -659,10 +682,19 @@ xiv.ui.layouts.LayoutHandler.prototype.hideAllLayouts = function() {
 
 
 
+/**
+ * @private
+ */
+xiv.ui.layouts.LayoutHandler.prototype.disposeTransitionElts_ = function() {
+    goog.object.forEach(this.transitionElts_, function(elt){
+	window.console.log(goog.dom.getChildren(elt));
+	goog.dom.removeNode(elt);
+	delete elt;
+    })
+}
+
 
 /**
-
- *
  * @private
  */ 
 xiv.ui.layouts.LayoutHandler.prototype.setLayoutEvents_ = 
@@ -718,12 +750,39 @@ xiv.ui.layouts.LayoutHandler.prototype.updateStyle = function(){
 
 
 
+/**
+ * @private
+ */
+xiv.ui.layouts.LayoutHandler.prototype.disposeTransitionDims_ = function(){
+    // Dims
+    if (goog.isDefAndNotNull(this.asIsDims_)){
+	goog.object.forEach(this.asIsDims_, function(dims){
+	    goog.object.clear(dims);
+	    dims = null;
+	})
+	goog.object.clear(this.toBeDims_);
+	delete this.toBeDims_;
+    }
+    if (goog.isDefAndNotNull(this.toBeDims_)){
+	goog.object.forEach(this.toBeDims_, function(dims){
+	    goog.object.clear(dims);
+	    dims = null;
+	})
+	goog.object.clear(this.toBeDims_);
+	delete this.toBeDims_;
+    }
+
+}
+
+
 
 /**
 * @inheritDoc
 */
 xiv.ui.layouts.LayoutHandler.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
+
+    this.disposeTransitionDims_();
 
     //
     // Transition elements.  

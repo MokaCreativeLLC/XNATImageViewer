@@ -240,8 +240,8 @@ nrg.convert.arrayToRgb = function (val, opt_multiplier) {
     if ((!goog.isArray(val))){
 	throw new TypeError('Array expected!', val);
     }
-    var str = /**@type {!string} @const */ 'rgb('
-    var opt_multiplier = /**@type {!number} */ 
+    var str = 'rgb('
+    var opt_multiplier = 
     (opt_multiplier === undefined) ? 1 : opt_multiplier;
 
     goog.array.forEach(val, function(num){
@@ -249,4 +249,45 @@ nrg.convert.arrayToRgb = function (val, opt_multiplier) {
     })
     str = str.substring(0, str.length -1) + ')';
     return str;
+}
+
+
+
+/**
+ * @param {!Object} obj
+ * @return {!Object}
+ */ 
+nrg.convert.filterNaN = function(obj) {
+    var newObj = {}
+    goog.object.forEach(obj, function(val, key){
+	if (!isNaN(val)){
+	    newObj[key] = val;
+	} 
+	else {
+	    if (goog.isString(val)){
+		newObj[key] = val;		
+	    }
+	}
+    })
+    return newObj;
+}
+
+
+
+/**
+ * @param {!Object} obj
+ * @return {!Object}
+ */ 
+nrg.convert.filterZeroLengthStrings = function(obj) {
+    var newObj = {}
+    goog.object.forEach(obj, function(val, key){
+	if (goog.isString(val)){
+	    if (val.length > 0){
+		newObj[key] = val;
+	    }
+	} else {
+	    newObj[key] = val;
+	}
+    })
+    return newObj;
 }
