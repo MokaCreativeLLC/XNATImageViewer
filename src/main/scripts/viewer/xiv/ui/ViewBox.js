@@ -288,6 +288,15 @@ xiv.ui.ViewBox.prototype.Controllers2D_ = null;
 
 
 /**
+ * @type {?Array.<goog.ui.Button>}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.toggleButtons_ = null;
+
+
+
+
+/**
  * @type {!boolean}
  * @private
  */
@@ -1077,14 +1086,54 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 
 
     //window.console.log("RENDERING", ViewableSet, ViewableSet.getTitle);
-    
-    this.Renderer_.render(ViewableSet);
-    
+    try {
+	this.Renderer_.render(ViewableSet);
+    } catch(error) {
+	this.onRenderError_(error);
+    }
 
     // Remember the time in which the thumbnail was loaded
     this.thumbLoadTime_ = (new Date()).getTime();    
 }
  
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.onRenderError_ = function(error){
+    //alert('Render error: ' + error.message);
+    //window.console.log(error.message);
+    this.disposeLoadComponents_();
+
+    var ErrorOverlay = new nrg.ui.ErrorOverlay();
+
+    //
+    // Add bg and closebutton
+    //
+    ErrorOverlay.addBackground();
+    ErrorOverlay.addCloseButton();
+
+    
+    //
+    // Add image
+    //
+    var errorImg = ErrorOverlay.addImage();
+    goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE); 
+
+    //
+    // Add above text and render
+    //
+    ErrorOverlay.addText(error.message);
+    ErrorOverlay.render(this.viewFrameElt_);
+
+    //
+    // Fade in the error overlay
+    //
+    ErrorOverlay.getElement().style.opacity = 0;
+    ErrorOverlay.getElement().style.zIndex = 1000;
+    nrg.fx.fadeInFromZero(ErrorOverlay.getElement(), xiv.ANIM_TIME);
+}
 
 
 /**
@@ -1524,6 +1573,11 @@ xiv.ui.ViewBox.prototype.createToggleButton_ =
 	// Adds to menu
 	//
 	this.addToMenu('LEFT', iconbutton.getElement());
+
+	if (!goog.isDefAndNotNull(this.toggleButtons_)){
+	    this.toggleButtons_= [];
+	}
+	this.toggleButtons_.push(iconbutton);
     }
 
 
@@ -1579,6 +1633,14 @@ xiv.ui.ViewBox.prototype.createCrosshairToggle_ = function(){
 }
 
 
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.clearToggleMenu_ = function(){
+
+}
 
 
 
@@ -1935,6 +1997,22 @@ xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
     if (goog.isDefAndNotNull(this.ViewableGroupMenu_)){
 	this.ViewableGroupMenu_.disposeInternal();
 	delete this.ViewableGroupMenu_;
+    }
+
+    
+    
+    // toggle buttons MenuLeft
+    if (goog.isDefAndNotNull(this.toggleButtons_)){
+	goog.dom.removeNode(this.menus_.LEFT);
+	delete this.menus_.LEFT;
+	
+	goog.array.forEach(this.toggleButtons_, function(button){
+	    button.disposeInternal();
+	    goog.dom.removeNode(button.getElement());
+	    button = null;
+	})
+	goog.array.clear(this.toggleButtons_);
+	delete this.toggleButtons_;
     }
 }
 

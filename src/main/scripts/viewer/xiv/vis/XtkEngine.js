@@ -696,7 +696,7 @@ xiv.vis.XtkEngine.prototype.dispose = function () {
     goog.base(this, 'dispose');
     
     if (goog.isDefAndNotNull(this.ControllerTree_)){
-	this.ControllerTree_.disposeInternal();
+ 	this.ControllerTree_.disposeInternal();
 	delete this.ControllerTree_;
     }
 
@@ -1095,6 +1095,13 @@ xiv.vis.XtkEngine.createXObject = function(fileCollection) {
 	nrg.string.getFileExtension(fileCollection);
     var obj = this.generateXtkObjectFromExtension(ext);  
     
+    if (!goog.isDefAndNotNull(obj)){
+	var errorString = 'The following files are incompatible with ' + 
+	    'XImgView:<br><br>' 
+	    + nrg.string.basename(fileCollection[0]) 
+	    + '<br><br>No valid XObject to create from it!';
+	throw new Error(errorString);
+    }
 	
     var urlEncode = function(url){
 	var dirname = nrg.string.dirname(url);
@@ -1129,7 +1136,7 @@ xiv.vis.XtkEngine.createXObject = function(fileCollection) {
     //console.log("FIRST", fileCollection, obj);  
 
 
-
+    
     obj.file = fileCollection;
 
 
