@@ -927,14 +927,28 @@ xiv.ui.ViewBox.prototype.createControllerTabs_ = function() {
 
 
 
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.hideProgressBarPanel_ = function(){
+    this.hideSubComponent_(this.ProgressBarPanel_, 500, function(){
+	this.updateStyle();
+    }.bind(this));
+}
+
+
+
 
 /**
  * As stated.
  * @private
  */
-xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
+xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){    
+    //
+    // Untoggle wait for render errors
+    //
+    this.toggleWaitForRenderErrors_(false);
 
-    window.console.log("ON RENDER END!");
     //
     // Controllers
     //
@@ -943,9 +957,7 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     // Hide progress bar
     //
-    this.hideSubComponent_(this.ProgressBarPanel_, 500, function(){
-	this.updateStyle();
-    }.bind(this));
+    this.hideProgressBarPanel_();
 
     //
     // Sync interactors
@@ -1084,27 +1096,61 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 	this.showSubComponent_(this.ProgressBarPanel_, 0);
     }.bind(this))
 
+    //
+    // toggle wait for render errors
+    // 
+    this.toggleWaitForRenderErrors_(true);
 
-    //window.console.log("RENDERING", ViewableSet, ViewableSet.getTitle);
-    try {
-	this.Renderer_.render(ViewableSet);
-    } catch(error) {
-	this.onRenderError_(error);
-    }
+    //
+    // Render
+    //
+    this.Renderer_.render(ViewableSet);
 
+
+    //
     // Remember the time in which the thumbnail was loaded
+    //
     this.thumbLoadTime_ = (new Date()).getTime();    
 }
  
 
 
+
 /**
+ * @param {!boolean} toggle
  * @private
  */
-xiv.ui.ViewBox.prototype.onRenderError_ = function(error){
+xiv.ui.ViewBox.prototype.toggleWaitForRenderErrors_ = function(toggle) {
+    if (toggle === true) {
+	window.onerror = function(message, url, lineNumber) {  
+	    this.onRenderError_(message);
+	}.bind(this);
+    } else {
+	window.onerror = undefined;
+    }
+}
+
+
+/**
+ * @param {string} opt_errorMsg
+ * @private
+ */
+xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_errorMsg){
     //alert('Render error: ' + error.message);
     //window.console.log(error.message);
+    //
+    // Untoggle wait for render errors
+    //
+
+    this.hideProgressBarPanel_();
+
+
+    this.toggleWaitForRenderErrors_(false);
+
     this.disposeLoadComponents_();
+
+    var opt_errorMsg = 'There was an error rendering :(<br> ' + 
+	'The files are either incompatible with XImgView or corrupted.'; 
 
     var ErrorOverlay = new nrg.ui.ErrorOverlay();
 
@@ -1124,7 +1170,7 @@ xiv.ui.ViewBox.prototype.onRenderError_ = function(error){
     //
     // Add above text and render
     //
-    ErrorOverlay.addText(error.message);
+    ErrorOverlay.addText(opt_errorMsg || '');
     ErrorOverlay.render(this.viewFrameElt_);
 
     //
@@ -1133,6 +1179,9 @@ xiv.ui.ViewBox.prototype.onRenderError_ = function(error){
     ErrorOverlay.getElement().style.opacity = 0;
     ErrorOverlay.getElement().style.zIndex = 1000;
     nrg.fx.fadeInFromZero(ErrorOverlay.getElement(), xiv.ANIM_TIME);
+
+
+
 }
 
 
@@ -1692,6 +1741,7 @@ xiv.ui.ViewBox.prototype.initLayoutHandler_ = function(){
  * @private
  */
 xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
+
     this.LayoutMenu_.setMenuIconSrc(
 	'/xnat/images/viewer/xiv/ui/LayoutMenu/menu.png');
 
@@ -1740,6 +1790,8 @@ xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
     }.bind(this))
 
     // Set the layout when a menu item is clicked.
+
+    window.console.log(nrg.ui.SlideInMenu.EventType.ITEM_SELECTED);
     goog.events.listen(this.LayoutMenu_, 
 	nrg.ui.SlideInMenu.EventType.ITEM_SELECTED, 
 		       this.onMenuItemSelected_.bind(this));
@@ -1754,6 +1806,7 @@ xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
 xiv.ui.ViewBox.prototype.onMenuItemSelected_ = function(e) {
     window.console.log("ITEM SELECTED!", e.title, e.index);
     window.console.log('trigger LayoutHandler_ here!');
+    window.console.log("SET LAYOUT HERE?");
     this.LayoutHandler_.setLayout(e.title);
 }
 

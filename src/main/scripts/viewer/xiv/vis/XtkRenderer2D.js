@@ -141,6 +141,31 @@ xiv.vis.XtkRenderer2D.prototype.onSliceNavigation = function() {
 
 
 /**
+ * @inheritDoc
+ */
+xiv.vis.XtkRenderer2D.prototype.render = function() {
+    if (!this._canvas || !this._context) {
+	this.init();
+	return;
+    } else {
+	goog.base(this, 'render');
+    }
+}
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.vis.XtkRenderer2D.prototype.destroy = function() {
+    window.console.log('\n\n\nDESTROY 2D ', this._orienation);
+    goog.base(this, 'destroy');
+}
+
+
+
+
+/**
  * Returns the X coordinate of the container where the veritcal slice 
  * belongs.
  *

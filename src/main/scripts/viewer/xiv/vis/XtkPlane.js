@@ -15,7 +15,7 @@ xiv.vis.XtkPlane = function() {
     goog.base(this);
 
     /**
-     * @type {!Array.string}
+     * @type {!Array.<X.Object>}
      * @private
      */
     this.xObjs_ = [];
@@ -241,6 +241,13 @@ xiv.vis.XtkPlane.prototype.checkRenderProgress_ = function() {
 	this.progressTimer_ = null; 
 
 	//
+	// Return out if no renderer
+	//
+	if (!goog.isDefAndNotNull(this.Renderer)){
+	    return;
+	}
+
+	//
 	// get the progress-bar thumbnail from DOM
 	//
 	var progThumb = goog.dom.getElementByClass('progress-bar-thumb', 
@@ -335,6 +342,19 @@ xiv.vis.XtkPlane.prototype.onSliceNavigated_ = function(e) {
 
 
 /**
+ * @private
+ */
+xiv.vis.XtkPlane.prototype.destroyRenderer_ = function() {
+    if (goog.isDefAndNotNull(this.Renderer)) { 
+	this.Renderer.destroy();
+	this.Renderer = null;
+    } 
+}
+ 
+
+
+
+/**
  * @param {!Element} containerElt
  * @throws An error if the subclass construtor property 'XRenderer' is 
  *  undefined.
@@ -344,9 +364,7 @@ xiv.vis.XtkPlane.prototype.init = function(containerElt) {
     //
     // Destroy the existing renderer if it exists
     //
-    if (goog.isDefAndNotNull(this.Renderer)) { 
-	this.Renderer.destroy() 
-    } 
+    this.destroyRenderer_(); 
  
     if (!goog.isDefAndNotNull(this.XRenderer)){
 	throw new Error('XtkPlane subclass must have the' +
@@ -440,20 +458,17 @@ xiv.vis.XtkPlane.prototype.setOn = function(on) {
 	} else {
 	    this.DisabledOverlay_.getElement().style.visibility = 'visible';
 	}
-	nrg.fx.fadeIn(this.DisabledOverlay_.getElement(), 300, 
+	nrg.fx.fadeIn(this.DisabledOverlay_.getElement(), 200, 
 		      function(){
 			  this.storeCamera_();
 			  this.storeBackground_();
-			  this.Renderer.destroy();
-			  this.Renderer = null;
-			  this.container.style.background = 
-			      xiv.vis.XtkPlane.DEFAULT_BACKGROUND;
+			  this.removeXObjectsFromRenderer();
 		      }.bind(this));
 
 
     } else {
 	this.restore();
-	nrg.fx.fadeOut(this.DisabledOverlay_.getElement(), 300, function(){
+	nrg.fx.fadeOut(this.DisabledOverlay_.getElement(), 200, function(){
 	    this.DisabledOverlay_.getElement().style.visibility = 'hidden';
 	}.bind(this));
     }
@@ -464,11 +479,6 @@ xiv.vis.XtkPlane.prototype.setOn = function(on) {
  * @public
  */
 xiv.vis.XtkPlane.prototype.restore = function() {
-    //
-    // Re-init
-    //
-    this.init();
-
     //
     // Restore methods
     //
@@ -484,10 +494,22 @@ xiv.vis.XtkPlane.prototype.restore = function() {
 
 
 /**
+ * @protected
+ */
+xiv.vis.XtkPlane.prototype.removeXObjectsFromRenderer = function() {
+    goog.array.forEach(this.xObjs_, function(xObj){
+	if (goog.isDefAndNotNull(xObj)){
+	    this.Renderer.remove(xObj);
+	}
+    }.bind(this))
+}
+
+
+
+/**
  * @private
  */
 xiv.vis.XtkPlane.prototype.restoreXObjectsToRenderer_ = function() {
-    window.console.log('restore xobjects to renderer');
     goog.array.forEach(this.xObjs_, function(xObj){
 	this.Renderer.add(xObj);
     }.bind(this))
@@ -586,7 +608,11 @@ xiv.vis.XtkPlane.prototype.dispose = function() {
     // progress timer
     //
     if (goog.isDefAndNotNull(this.progressTimer_)){
-	this.progressTimer_.dispose();
+	window.console.log(this.progressTimer_);
+	if (goog.isDefAndNotNull(this.progressTimer_.dispose)){
+	    this.progressTimer_.stop();
+	    this.progressTimer_.dispose();
+	}
 	delete this.progressTimer_;
     }
 
