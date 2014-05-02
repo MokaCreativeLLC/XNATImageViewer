@@ -68,21 +68,6 @@ xiv.ui.layouts.FourUp.CSS_SUFFIX = {
 
 
 
-/**
- * @type {!number} 
- * @const
- */
-xiv.ui.layouts.FourUp.MIN_PLANE_WIDTH = 20;
-
-
-
-/**
- * @type {!number} 
- * @const
- */
-xiv.ui.layouts.FourUp.MIN_PLANE_HEIGHT = 20;
-
-
 
 /**
  * @inheritDoc
@@ -155,7 +140,8 @@ xiv.ui.layouts.FourUp.prototype.onLayoutFrameResize_X = function(e){
     // CHEAT Make the X RIGHT handle 100% of the height
     //
     var xRightHandle = 
-	this.LayoutFrames['X'].getResizable().getResizeDragger('RIGHT').getHandle();
+	this.LayoutFrames['X'].getResizable().getResizeDragger('RIGHT').
+	getHandle();
     xRightHandle.style.top = '0px';
     xRightHandle.style.height = (this.currSize.height).toString() + 'px';
 
@@ -173,14 +159,64 @@ xiv.ui.layouts.FourUp.prototype.onLayoutFrameResize_X = function(e){
 */
 xiv.ui.layouts.FourUp.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
+
+    this.scaleFrames_();
+
+    //
+    // IMPORTANT: this two must come first
+    //
+    this.updateStyle_Z();
+    this.updateStyle_V();
+
+    //
+    // Then these
+    //
     this.updateStyle_X();
+    this.updateStyle_Y();
+
 }
+
+
+
+
+/**
+ * @private
+ */
+xiv.ui.layouts.FourUp.prototype.scaleFrames_ = function(){
+    if ((this.prevSize.width !== this.currSize.width) || 
+	(this.prevSize.height !== this.currSize.height)) {
+
+	var frameSize;
+	var heightDiff = 1 - ((this.prevSize.height - this.currSize.height) / 
+	    this.prevSize.height);
+	var widthDiff = 1 - ((this.prevSize.width - this.currSize.width) / 
+			     this.prevSize.width);
+
+	this.loop(function(frame, key){
+	    frameSize = goog.style.getSize(frame.getElement());
+	    goog.style.setSize(frame.getElement(), 
+			       Math.max(frameSize.width * widthDiff, 
+					this.minLayoutFrameWidth_),
+			       Math.max(frameSize.height * heightDiff, 
+					this.minLayoutFrameHeight_));	    
+	}.bind(this))
+
+
+    }
+}
+
 
 
 /**
  * @inheritDoc
  */
 xiv.ui.layouts.FourUp.prototype.updateStyle_X = function() {
+
+    this.LayoutFrames['X'].getElement().style.top = 
+	this.LayoutFrames['Z'].getElement().style.height;
+
+
+
     //
     // Boundary
     //
@@ -197,7 +233,8 @@ xiv.ui.layouts.FourUp.prototype.updateStyle_X = function() {
     // Make the X TOP handle 100% of the width
     //
     var xTopHandle = 
-	this.LayoutFrames['X'].getResizable().getResizeDragger('TOP').getHandle();
+	this.LayoutFrames['X'].getResizable().getResizeDragger('TOP').
+	getHandle();
     xTopHandle.style.left = '0px';
     xTopHandle.style.width = (this.currSize.width).toString() + 'px';
 
@@ -212,10 +249,43 @@ xiv.ui.layouts.FourUp.prototype.updateStyle_X = function() {
     // CHEAT Make the X RIGHT handle 100% of the height
     //
     var xRightHandle = 
-	this.LayoutFrames['X'].getResizable().getResizeDragger('RIGHT').getHandle();
+	this.LayoutFrames['X'].getResizable().getResizeDragger('RIGHT').
+	getHandle();
     xRightHandle.style.top = '0px';
     xRightHandle.style.height = (this.currSize.height).toString() + 'px';
 }
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.ui.layouts.FourUp.prototype.updateStyle_Y = function() {
+    this.LayoutFrames['Y'].getElement().style.left = 
+	this.LayoutFrames['Z'].getElement().style.width;
+
+    this.LayoutFrames['Y'].getElement().style.top = 
+	this.LayoutFrames['Z'].getElement().style.height;
+}
+
+
+/**
+ * @inheritDoc
+ */
+xiv.ui.layouts.FourUp.prototype.updateStyle_Z = function() {
+    // Do nothing for now
+}
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.ui.layouts.FourUp.prototype.updateStyle_V = function() {
+    this.LayoutFrames['V'].getElement().style.left = 
+	this.LayoutFrames['Z'].getElement().style.width;
+}
+
 
 
 

@@ -1,0 +1,48 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.xiv-ui-layouts-twodrow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+
+
+.xiv-ui-layouts-twodrow-x,  .xiv-ui-layouts-twodrow-y, 
+.xiv-ui-layouts-twodrow-z {
+    position: absolute;
+    top: 0px;
+    height: 100%;
+    width: 33.33%;
+}
+
+
+.xiv-ui-layouts-twodrow-x {
+    left: 0px;
+}
+
+
+.xiv-ui-layouts-twodrow-y {
+    left: 33.33%; 
+}
+
+
+.xiv-ui-layouts-twodrow-z {
+    left: 66.66%; 
+}
+
+
+
+.xiv-ui-layouts-twodrow-x-resizeboundary,
+.xiv-ui-layouts-twodrow-y-resizeboundary,
+.xiv-ui-layouts-twodrow-z-resizeboundary {
+    position : absolute;
+    z-index: -1;
+}
+
+
+

@@ -513,10 +513,15 @@ function(planeOr, visible) {
 xiv.ui.ViewBox.prototype.syncCrosshairsToSliderX_ =  
 function(slider, volume) {
     var ind = 'indexX'
+    var yFrame = this.LayoutHandler_.getCurrentLayout().
+	getLayoutFrameByTitle('Y');
+    var zFrame = this.LayoutHandler_.getCurrentLayout().
+	getLayoutFrameByTitle('Z');
 
     // Y Vertical crosshair
-    if (goog.isDefAndNotNull(this.LayoutHandler_.getCurrentLayout().
-			     getLayoutFrameByTitle('Y'))) {
+    if (goog.isDefAndNotNull(yFrame) &&
+	goog.isDefAndNotNull(yFrame
+			    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])) {
 	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Y')
 	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].vertical.style.left =
 	    this.Renderer_.getPlaneY().getRenderer().getVerticalSliceX(
@@ -525,8 +530,9 @@ function(slider, volume) {
     
 
     // Z Vertical crosshair
-    if (goog.isDefAndNotNull(this.LayoutHandler_.getCurrentLayout().
-			     getLayoutFrameByTitle('Z'))) {
+   if (goog.isDefAndNotNull(zFrame) &&
+	goog.isDefAndNotNull(zFrame
+			    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])) {
 	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Z')
 	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].vertical.style.left =
 	    this.Renderer_.getPlaneZ().getRenderer().getVerticalSliceX(
@@ -542,11 +548,17 @@ function(slider, volume) {
  */
 xiv.ui.ViewBox.prototype.syncCrosshairsToSliderY_ =  
 function(slider, volume) {
-    var ind = 'indexY'
+    var ind = 'indexY';
+    var xFrame = this.LayoutHandler_.getCurrentLayout().
+	getLayoutFrameByTitle('X');
+    var zFrame = this.LayoutHandler_.getCurrentLayout().
+	getLayoutFrameByTitle('Z');
+
 
     // X Vertical crosshair
-    if (goog.isDefAndNotNull(this.LayoutHandler_.getCurrentLayout().
-			     getLayoutFrameByTitle('X'))) {
+    if (goog.isDefAndNotNull(xFrame) &&
+	goog.isDefAndNotNull(xFrame
+			    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])) {
 	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('X')
 	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].
 	    vertical.style.left =
@@ -555,8 +567,9 @@ function(slider, volume) {
     }
 
     // Z Horizontal crosshair
-    if (goog.isDefAndNotNull(this.LayoutHandler_.getCurrentLayout().
-			     getLayoutFrameByTitle('Z'))) {
+   if (goog.isDefAndNotNull(zFrame) &&
+	goog.isDefAndNotNull(zFrame
+			    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])) {
 	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Z')
 	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].
 	    horizontal.style.top =
@@ -572,24 +585,32 @@ function(slider, volume) {
  */
 xiv.ui.ViewBox.prototype.syncCrosshairsToSliderZ_ =  
 function(slider, volume) {
-    var ind = 'indexZ'
-
+    var ind = 'indexZ';
+    var xFrame = this.LayoutHandler_.getCurrentLayout().
+	getLayoutFrameByTitle('X');
+    var yFrame = this.LayoutHandler_.getCurrentLayout().
+	getLayoutFrameByTitle('Y');
+    window.console.log("SLIDER Z");
     // X Horizontal crosshair
-    if (goog.isDefAndNotNull(this.LayoutHandler_.getCurrentLayout().
-			     getLayoutFrameByTitle('X'))) {
+    if (goog.isDefAndNotNull(xFrame) &&
+	goog.isDefAndNotNull(xFrame
+			    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])) {
 	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('X')
 	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].horizontal.style.top =
 	    this.Renderer_.getPlaneX().getRenderer().getHorizontalSliceY(
 		volume[ind], false).toString() + 'px';
+	window.console.log("SLIDER Z x");
     }
 
     // Y HORIZONTAL crosshair
-    if (goog.isDefAndNotNull(this.LayoutHandler_.getCurrentLayout().
-			     getLayoutFrameByTitle('Y'))) {
+    if (goog.isDefAndNotNull(yFrame) &&
+	goog.isDefAndNotNull(yFrame
+			    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])) {
 	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Y')
 	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].horizontal.style.top =
 	    this.Renderer_.getPlaneY().getRenderer().getHorizontalSliceY(
 		volume[ind], false).toString() + 'px';
+	window.console.log("SLIDER Z y");
     }
 
 }
@@ -619,20 +640,21 @@ function(slider, volume) {
 /**
  * @private
  */
-xiv.ui.ViewBox.prototype.toggleAllInteractorsVisible_ = function(opt_visible) {
+xiv.ui.ViewBox.prototype.toggleInteractorsVisible_ = function(opt_visible) {
     var interactors = this.LayoutHandler_.getMasterInteractors();
     var opacity = (opt_visible === false) ? 0 : 1;
     goog.object.forEach(this.Renderer_.getPlanes(), function(Plane, planeOr) {
 	if (goog.isDefAndNotNull(interactors[planeOr]) &&
 	    goog.isDefAndNotNull(interactors[planeOr].SLIDER)){
-	    interactors[planeOr].SLIDER.getElement().style.opacity = 
-		opacity;
-	    interactors[planeOr].FRAME_DISPLAY.getElement().style.opacity = 
-		opacity;
-	    interactors[planeOr].CROSSHAIRS.vertical.style.opacity = 
-		opacity;
-	    interactors[planeOr].CROSSHAIRS.horizontal.style.opacity = 
-		opacity;
+
+	    nrg.fx.fadeTo(interactors[planeOr].SLIDER.getElement(), 
+			  200, opacity);
+	    nrg.fx.fadeTo(interactors[planeOr].FRAME_DISPLAY.getElement(), 
+			  200, opacity);
+	    nrg.fx.fadeTo(interactors[planeOr].CROSSHAIRS.vertical, 
+			  200, opacity);
+	    nrg.fx.fadeTo(interactors[planeOr].CROSSHAIRS.horizontal, 
+			  200, opacity);
 	}
     }.bind(this))  
 }
@@ -642,16 +664,16 @@ xiv.ui.ViewBox.prototype.toggleAllInteractorsVisible_ = function(opt_visible) {
 /**
  * @private
  */
-xiv.ui.ViewBox.prototype.hideAllInteractors_ = function() {
-    this.toggleAllInteractorsVisible_(false);
+xiv.ui.ViewBox.prototype.hideInteractors_ = function() {
+    this.toggleInteractorsVisible_(false);
 }
 
 
 /**
  * @private
  */
- xiv.ui.ViewBox.prototype.showAllInteractors_ = function() {
-    this.toggleAllInteractorsVisible_(true); 
+ xiv.ui.ViewBox.prototype.showInteractors_ = function() {
+    this.toggleInteractorsVisible_(true); 
 }
 
 
@@ -674,8 +696,10 @@ function(slider, volume) {
     var frameDisplay = layoutFrame
     [xiv.ui.layouts.Layout.INTERACTORS.FRAME_DISPLAY]
 
-    frameDisplay.setTotalFrames(slider.getMaximum());
-    frameDisplay.setCurrentFrame(slider.getValue());   
+    if (goog.isDefAndNotNull(frameDisplay)){
+	frameDisplay.setTotalFrames(slider.getMaximum());
+	frameDisplay.setCurrentFrame(slider.getValue());   
+    }
 }
 
 
@@ -716,6 +740,11 @@ xiv.ui.ViewBox.prototype.syncSlidersToVolume_ = function(opt_resetMaximum) {
 	currVol = Plane.getVolume();
 
 	//
+	// Exit if no volume
+	//
+	if (!goog.isDefAndNotNull(currVol)) { return };
+
+	//
 	// XTK specific designations
 	//
 	switch (orientation){
@@ -748,6 +777,7 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
     var interactors = this.LayoutHandler_.getMasterInteractors();
     var arrPos;
 
+    if (!goog.isDefAndNotNull(this.Renderer_)) { return };
 
     goog.object.forEach(this.Renderer_.getPlanes(), function(Plane, planeOr) {
 
@@ -789,6 +819,10 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 
 
 	var moveListen;
+	//
+	// Exit if no volume
+	//
+	if (!goog.isDefAndNotNull(Plane.getRenderer())) { return };
 
 	goog.events.listen(Plane.getRenderer(), 
 			   xiv.vis.XtkEngine.EventType.SHIFT_DOWN,
@@ -796,7 +830,7 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 
 	    window.console.log("SHIFT DOWN");
 	    //this.toggleCrosshairsVisible_(e.orientation, false);
-	    this.toggleAllInteractorsVisible_(false);
+	    this.hideInteractors_();
 	    this.syncSlidersToVolume_();
 	   
 	    //
@@ -815,7 +849,7 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 			   xiv.vis.XtkEngine.EventType.SHIFT_UP,
 	function(e){
 	    window.console.log("SHIFT UP");
-	    this.toggleAllInteractorsVisible_(true);
+	    this.showInteractors_();
 	    this.syncSlidersToVolume_();
 
 	    //
@@ -829,14 +863,9 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 	//
 	goog.events.listen(slider, nrg.ui.Slider.EventType.SLIDE, 
         function(e){
-	    //
-	    // Don't move the sliders if the layout is transitioning
-	    //
-	    if (!this.LayoutHandler_.layoutChanging()){
-		this.syncVolumeToSlider_(e.target, currVol);
-		this.syncCrosshairsToSlider_(e.target, currVol);
-		this.syncFrameDisplayToSlider_(e.target, currVol);
-	    }
+	    this.syncVolumeToSlider_(e.target, currVol);
+	    this.syncCrosshairsToSlider_(e.target, currVol);
+	    this.syncFrameDisplayToSlider_(e.target, currVol);
 	}.bind(this))
 
 	//
@@ -967,20 +996,50 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     // Update styles
     //
-    window.console.log("UPDATE STYLE");
     this.updateStyle();
-    
+    this.onLayoutResize_();
 }
 
 
 
 /**
- * As stated.
  * @private
  */
 xiv.ui.ViewBox.prototype.onLayoutResize_ = function(e){
-    window.console.log("LAYOUT RESIZE!");
+
     this.updateStyle_Renderer_();
+    this.LayoutHandler_.updateInteractors();
+
+    var interactors = this.LayoutHandler_.getMasterInteractors();
+    var interactorSet, slider, currVol;
+
+    if (!goog.isDefAndNotNull(this.Renderer_)) { return };
+
+    goog.object.forEach(this.Renderer_.getPlanes(), function(Plane, planeOr) {
+
+	//
+	// Exit out there's no slider or plane interactors.
+	//
+	if (!goog.isDefAndNotNull(interactors[planeOr]) ||
+	    !goog.isDefAndNotNull(interactors[planeOr].SLIDER)) { 
+	    return 
+	};
+
+
+	//
+	// NOTE: Keep these here.  We need to declare them within the 
+	// loop.
+	//
+	interactorSet = interactors[planeOr];
+	slider = interactorSet.SLIDER;
+	currVol = Plane.getVolume();
+	window.console.log(slider, currVol);
+	this.syncVolumeToSlider_(slider, currVol);
+	this.syncCrosshairsToSlider_(slider, currVol);
+	
+    }.bind(this));
+
+
 }
 
 
@@ -1144,7 +1203,6 @@ xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_errorMsg){
 
     this.hideProgressBarPanel_();
 
-
     this.toggleWaitForRenderErrors_(false);
 
     this.disposeLoadComponents_();
@@ -1199,6 +1257,9 @@ xiv.ui.ViewBox.prototype.onLayoutChangeStart_ = function(e){
 	    renderPlane.updateStyle();
 	}
     })
+
+
+    //this.hideInteractors_();
 }
 
 
@@ -1242,6 +1303,7 @@ xiv.ui.ViewBox.prototype.onLayoutChangeEnd_ = function(e){
     // Update the interactors
     //
     this.LayoutHandler_.updateInteractors();
+    //this.showInteractors_();
 }
 
 
@@ -1748,10 +1810,6 @@ xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
     // Add icons and title to LayoutMenu
     // Add object and title to LayoutHandler
     goog.object.forEach({
-	'Four-Up': {
-	    OBJ: xiv.ui.layouts.FourUp,
-	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/four-up.png'
-	},
 	'Sagittal': {
 	    OBJ: xiv.ui.layouts.Sagittal,
 	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/sagittal.png'
@@ -1768,13 +1826,21 @@ xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
 	    OBJ: xiv.ui.layouts.ThreeD,
 	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/3d.png'
 	},
-	'2D': {
-	    OBJ: xiv.ui.layouts.TwoD,
-	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/2d.png'
-	},
 	'Conventional': {
 	    OBJ: xiv.ui.layouts.Conventional,
 	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/conventional.png'
+	},
+	'Four-Up': {
+	    OBJ: xiv.ui.layouts.FourUp,
+	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/four-up.png'
+	},
+	'2D Row': {
+	    OBJ: xiv.ui.layouts.TwoDRow,
+	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/2drow.png'
+	},
+	'2D Widescreen': {
+	    OBJ: xiv.ui.layouts.TwoDWidescreen,
+	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/2dwidescreen.png'
 	},
     }, function(val, key){
 	this.LayoutMenu_.addMenuItem(key, val.ICON);
@@ -1908,6 +1974,7 @@ xiv.ui.ViewBox.prototype.setTabsEvents_ = function () {
  * @private
  */
 xiv.ui.ViewBox.prototype.onTabsResize_ = function() {
+    window.console.log('\n\non tabs resize!');
     this.updateStyle();
 }
 
@@ -1919,16 +1986,9 @@ xiv.ui.ViewBox.prototype.onTabsResize_ = function() {
  */
 xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
     //
-    // Merge any new arguments and update.
-    //
-    if (opt_args) {
-	nrg.style.setStyle(this.getElement(), opt_args);
-    }    
-
-    //
     // Parent update style
     //
-    goog.base(this, 'updateStyle');
+    goog.base(this, 'updateStyle', opt_args);
 
     //window.console.log("\n%\n%\n%\n\n\n^^^^^^^^^^^^^^");
 
@@ -1945,8 +2005,8 @@ xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
  * @private
  */
 xiv.ui.ViewBox.prototype.updateStyle_ZipTabs_ = function () {
-    if (!this.ZipTabs_) { return };
-    //window.console.log("\n%\n%\n%\n\n\n&&&&ZIP TABS");
+    if (!goog.isDefAndNotNull(this.ZipTabs_)) { return };
+    window.console.log("\n%\n%\n%\n\n\n&&&&ZIP TABS");
     this.ZipTabs_.updateStyle();
 }
 
@@ -1958,10 +2018,9 @@ xiv.ui.ViewBox.prototype.updateStyle_ZipTabs_ = function () {
  * @private
  */
 xiv.ui.ViewBox.prototype.updateStyle_LayoutHandler_ = function () {
-    if (!this.LayoutHandler_) { return };
-
-    //window.console.log("\n@\n@\n@\n@\n@UPDATE STYLE LAYOUT HANDLER", 
-    //this.ZipTabs_.getResizable().getHandle('TOP'));
+    if (!goog.isDefAndNotNull(this.LayoutHandler_)) { return };
+     window.console.log("\n%\n%\n%\n\n\n&&&&LAYOUT HANDLER");
+    //this.LayoutHandler_.getElement().style.height = 'calc(100% - 30px)';
     this.LayoutHandler_.getElement().style.height = 
 	this.ZipTabs_.getResizable().getHandle('TOP').style.top;
     this.LayoutHandler_.updateStyle();

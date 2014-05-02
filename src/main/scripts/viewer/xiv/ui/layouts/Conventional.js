@@ -70,21 +70,6 @@ xiv.ui.layouts.Conventional.CSS_SUFFIX = {
 
 
 
-/**
- * @type {!number} 
- * @const
- */
-xiv.ui.layouts.Conventional.MIN_PLANE_WIDTH = 20;
-
-
-
-/**
- * @type {!number} 
- * @const
- */
-xiv.ui.layouts.Conventional.MIN_PLANE_HEIGHT = 20;
-
-
 
 /**
  * @inheritDoc
@@ -201,7 +186,7 @@ function(callback){
 xiv.ui.layouts.Conventional.prototype.onLayoutFrameResize_X = function(e){
     this.onXYLayoutFrameResize_(function(xSize, ySize, zSize, deltaX){
 	var yWidth = Math.max(this.currSize.width - xSize.width - zSize.width, 
-			      xiv.ui.layouts.Conventional.MIN_PLANE_WIDTH);
+			      this.minLayoutFrameWidth_);
 	var xTop = this.currSize.height - xSize.height
 
 	//
@@ -326,11 +311,49 @@ xiv.ui.layouts.Conventional.prototype.onLayoutFrameResize_V = function(e){
 */
 xiv.ui.layouts.Conventional.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
-
+    window.console.log('Conventional update', this.currSize);
+    //this.calcDims();
     this.updateStyle_V();
+    this.updateXyzHeights_();
+    this.updateXyzWidths_();
+
     this.updateStyle_X();
     this.updateStyle_Y();
     this.updateStyle_Z();
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.layouts.Conventional.prototype.updateXyzHeights_ = function() {
+    var vHeight = parseInt(this.LayoutFrames['V'].getElement().style.height);
+    var xyzHeight = Math.max(
+	this.currSize.height - vHeight, this.minLayoutFrameHeight_);
+    this.loopXyz(function(frame, key){
+	frame.getElement().style.top = vHeight + 'px';
+	frame.getElement().style.height = xyzHeight + 'px';
+    })
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.layouts.Conventional.prototype.updateXyzWidths_ = function() {
+    var frameSize;
+    var widthDiff = 1 - ((this.prevSize.width - this.currSize.width) / 
+			   this.prevSize.width);
+    if (this.prevSize.width !== this.currSize.width) {
+	this.loopXyz(function(frame, key){
+	    frameSize = goog.style.getSize(frame.getElement());
+	    frame.getElement().style.width = 
+		Math.max(frameSize.width * widthDiff, 
+			 this.minLayoutFrameWidth_).toString() + 'px';
+	}.bind(this))
+    }
 }
 
 
@@ -411,6 +434,12 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_X = function() {
  */
 xiv.ui.layouts.Conventional.prototype.updateStyle_Y = function() {
     //
+    // Set the left of the frame
+    //
+    this.LayoutFrames['Y'].getElement().style.left = 
+	this.LayoutFrames['X'].getElement().style.width
+
+    //
     // Set the left of the boundary
     //
     nrg.style.setStyle(
@@ -427,16 +456,37 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_Y = function() {
 
 
 /**
+ * @inheritDoc
+ */
+xiv.ui.layouts.Conventional.prototype.updateStyle_Z = function() {
+    this.LayoutFrames['Z'].getElement().style.left = 
+	(parseInt(this.LayoutFrames['X'].getElement().style.width) + 
+	 parseInt(this.LayoutFrames['Y'].getElement().style.width)).toString() +
+	'px';
+}
+
+
+
+/**
 * @private
 */
 xiv.ui.layouts.Conventional.prototype.updateStyle_V = function() {
+
     //
-    // Top handle
+    // Scale accordingly
     //
-    var topHandle = this.LayoutFrames['V'].getResizable().getHandle('BOTTOM')
-    goog.style.setPosition(topHandle, 
-        0,  goog.style.getSize(this.LayoutFrames['V'].getElement()).height);
-    goog.style.setWidth(topHandle, this.currSize.width)
+    if ((this.prevSize.width !== this.currSize.width) || 
+	(this.prevSize.height !== this.currSize.height)) {
+
+	var frameSize = goog.style.getSize(this.LayoutFrames['V'].getElement());
+	var heightDiff = 1 - ((this.prevSize.height - this.currSize.height) / 
+	    this.prevSize.height);
+
+	goog.style.setSize(this.LayoutFrames['V'].getElement(), 
+	    this.currSize.width,
+	    Math.max(frameSize.height * heightDiff, 
+		     this.minLayoutFrameHeight_));
+    }
 
 
     //
@@ -451,6 +501,16 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_V = function() {
 	this.LayoutFrames['V'].getResizable().getBoundaryElement(), 
 	this.currSize.width - this.minLayoutFrameWidth_ * 3,
 	this.currSize.height - this.minLayoutFrameHeight_ * 2);
+
+    //
+    // Top handle
+    //
+    var topHandle = this.LayoutFrames['V'].getResizable().getHandle('BOTTOM')
+    goog.style.setPosition(topHandle, 
+        0,  goog.style.getSize(this.LayoutFrames['V'].getElement()).height);
+    goog.style.setWidth(topHandle, this.currSize.width)
+
+
 
     //
     // IMPORTANT!!

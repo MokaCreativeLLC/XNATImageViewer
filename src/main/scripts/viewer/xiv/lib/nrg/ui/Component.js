@@ -173,6 +173,23 @@ nrg.ui.Component.prototype.currPos;
 
 
 
+/**
+ * @type {goog.math.Size}
+ * @protected
+ */ 
+nrg.ui.Component.prototype.prevSize;
+
+
+
+
+/**
+ * @type {goog.math.Size}
+ * @protected
+ */ 
+nrg.ui.Component.prototype.prevPos;
+
+
+
 
 /**
  * @type {Array.<nrg.ui.Component>}
@@ -201,8 +218,32 @@ nrg.ui.Component.prototype.addSubComponent = function(subComponent) {
  * @protected
  */
 nrg.ui.Component.prototype.calcDims = function() {
+    
+    //
+    // Track the previous size
+    //
+    if (!goog.isDefAndNotNull(this.prevSize)){
+	this.prevSize = goog.style.getSize(this.getElement());
+    } else {
+	if ((this.prevSize.height !== this.currSize.height) ||
+	    (this.prevSize.width !== this.currSize.width)) {
+	    this.prevSize = this.currSize;
+	}
+    }
+
+
+    if (!goog.isDefAndNotNull(this.prevPos)){
+	this.prevPos = goog.style.getPosition(this.getElement());
+    } else {
+	if ((this.prevPos.x !== this.currPos.x) ||
+	    (this.prevPos.y !== this.currPos.y)) {
+	    this.prevPos = this.currPos;
+	}
+    }
+
+
     this.currSize = goog.style.getSize(this.getElement());
-    this.currPos = goog.style.getPosition(this.getElement());
+    this.currPos = goog.style.getPosition(this.getElement());  
 }
 
 
@@ -271,4 +312,6 @@ nrg.ui.Component.prototype.disposeInternal = function() {
     // Size and pos
     this.currSize = null;
     this.currPos = null;
+    this.prevSize = null;
+    this.prevPos = null;
 }

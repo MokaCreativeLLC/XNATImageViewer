@@ -215,8 +215,14 @@ goog.addDependency('../../../../ui/layouts/Transverse.js',
 ]);
 
 
-goog.addDependency('../../../../ui/layouts/TwoD.js', 
-['xiv.ui.layouts.TwoD'], [
+goog.addDependency('../../../../ui/layouts/TwoDRow.js', 
+['xiv.ui.layouts.TwoDRow'], [
+    'xiv.ui.layouts.XyzvLayout'
+]);
+
+
+goog.addDependency('../../../../ui/layouts/TwoDWidescreen.js', 
+['xiv.ui.layouts.TwoDWidescreen'], [
     'xiv.ui.layouts.XyzvLayout'
 ]);
 

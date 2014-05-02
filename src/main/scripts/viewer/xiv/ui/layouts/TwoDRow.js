@@ -16,17 +16,17 @@ goog.require('xiv.ui.layouts.XyzvLayout');
 
 
 /**
- * xiv.ui.layouts.TwoD
+ * xiv.ui.layouts.TwoDRow
  *
  * @constructor
  * @extends {xiv.ui.layouts.XyzvLayout}
  */
-goog.provide('xiv.ui.layouts.TwoD');
-xiv.ui.layouts.TwoD = function() { 
+goog.provide('xiv.ui.layouts.TwoDRow');
+xiv.ui.layouts.TwoDRow = function() { 
     goog.base(this, ['X', 'Y', 'Z']); 
 }
-goog.inherits(xiv.ui.layouts.TwoD, xiv.ui.layouts.XyzvLayout);
-goog.exportSymbol('xiv.ui.layouts.TwoD', xiv.ui.layouts.TwoD);
+goog.inherits(xiv.ui.layouts.TwoDRow, xiv.ui.layouts.XyzvLayout);
+goog.exportSymbol('xiv.ui.layouts.TwoDRow', xiv.ui.layouts.TwoDRow);
 
 
 
@@ -34,7 +34,7 @@ goog.exportSymbol('xiv.ui.layouts.TwoD', xiv.ui.layouts.TwoD);
  * @type {!string}
  * @public
  */
-xiv.ui.layouts.TwoD.TITLE = 'TwoD';
+xiv.ui.layouts.TwoDRow.TITLE = 'TwoDRow';
 
 
 
@@ -43,7 +43,7 @@ xiv.ui.layouts.TwoD.TITLE = 'TwoD';
  * @enum {string}
  * @public
  */
-xiv.ui.layouts.TwoD.EventType = {}
+xiv.ui.layouts.TwoDRow.EventType = {}
 
 
 
@@ -52,7 +52,7 @@ xiv.ui.layouts.TwoD.EventType = {}
  * @const
  * @expose
  */
-xiv.ui.layouts.TwoD.ID_PREFIX =  'xiv.ui.layouts.TwoD';
+xiv.ui.layouts.TwoDRow.ID_PREFIX =  'xiv.ui.layouts.TwoDRow';
 
 
 
@@ -60,7 +60,7 @@ xiv.ui.layouts.TwoD.ID_PREFIX =  'xiv.ui.layouts.TwoD';
  * @enum {string}
  * @public
  */
-xiv.ui.layouts.TwoD.CSS_SUFFIX = {
+xiv.ui.layouts.TwoDRow.CSS_SUFFIX = {
     X: 'x',
     Y: 'y',
     Z: 'z',
@@ -68,26 +68,11 @@ xiv.ui.layouts.TwoD.CSS_SUFFIX = {
 
 
 
-/**
- * @type {!number} 
- * @const
- */
-xiv.ui.layouts.TwoD.MIN_PLANE_WIDTH = 20;
-
-
-
-/**
- * @type {!number} 
- * @const
- */
-xiv.ui.layouts.TwoD.MIN_PLANE_HEIGHT = 20;
-
-
 
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.TwoD.prototype.setupLayoutFrame_X = function(){
+xiv.ui.layouts.TwoDRow.prototype.setupLayoutFrame_X = function(){
     goog.base(this, 'setupLayoutFrame_X');
     
     //
@@ -112,7 +97,7 @@ xiv.ui.layouts.TwoD.prototype.setupLayoutFrame_X = function(){
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.TwoD.prototype.setupLayoutFrame_Y = function(){
+xiv.ui.layouts.TwoDRow.prototype.setupLayoutFrame_Y = function(){
     goog.base(this, 'setupLayoutFrame_Y');
 
     //
@@ -137,7 +122,7 @@ xiv.ui.layouts.TwoD.prototype.setupLayoutFrame_Y = function(){
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.TwoD.prototype.setupLayoutFrame_Z = function(){
+xiv.ui.layouts.TwoDRow.prototype.setupLayoutFrame_Z = function(){
     goog.base(this, 'setupLayoutFrame_Z');
 
     // Do nothing for now
@@ -148,7 +133,7 @@ xiv.ui.layouts.TwoD.prototype.setupLayoutFrame_Z = function(){
  * @param {Function=};
  * @private
  */
-xiv.ui.layouts.TwoD.prototype.onXYLayoutFrameResize_ = function(callback){
+xiv.ui.layouts.TwoDRow.prototype.onXYLayoutFrameResize_ = function(callback){
     this.calcDims();
 
     var xSize = goog.style.getSize(this.LayoutFrames['X'].getElement());
@@ -169,10 +154,10 @@ xiv.ui.layouts.TwoD.prototype.onXYLayoutFrameResize_ = function(callback){
  * @override
  * @param {!Event} e
  */
-xiv.ui.layouts.TwoD.prototype.onLayoutFrameResize_X = function(e){
+xiv.ui.layouts.TwoDRow.prototype.onLayoutFrameResize_X = function(e){
     this.onXYLayoutFrameResize_(function(xSize, ySize, zSize, deltaX){
 	var yWidth = Math.max(this.currSize.width - xSize.width - zSize.width, 
-			      xiv.ui.layouts.TwoD.MIN_PLANE_WIDTH);
+			      this.minLayoutFrameWidth_);
 	var xTop = this.currSize.height - xSize.height
 
 	//
@@ -206,7 +191,7 @@ xiv.ui.layouts.TwoD.prototype.onLayoutFrameResize_X = function(e){
  * @override
  * @param {!Event} e
  */
-xiv.ui.layouts.TwoD.prototype.onLayoutFrameResize_Y = function(e){
+xiv.ui.layouts.TwoDRow.prototype.onLayoutFrameResize_Y = function(e){
     this.onXYLayoutFrameResize_(function(xSize, ySize, zSize, deltaX){
 	var yTop = this.currSize.height - ySize.height
 
@@ -250,9 +235,11 @@ xiv.ui.layouts.TwoD.prototype.onLayoutFrameResize_Y = function(e){
 /**
 * @inheritDoc
 */
-xiv.ui.layouts.TwoD.prototype.updateStyle = function(){
+xiv.ui.layouts.TwoDRow.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
 
+    this.updateXyzWidths_();
+    this.updateXyzHeights_();
     this.updateStyle_X();
     this.updateStyle_Y();
     this.updateStyle_Z();
@@ -261,10 +248,43 @@ xiv.ui.layouts.TwoD.prototype.updateStyle = function(){
 
 
 /**
+ * @private
+ */
+xiv.ui.layouts.TwoDRow.prototype.updateXyzHeights_ = function() {
+    var currHeight = this.currSize.height.toString() + 'px';
+    this.loopXyz(function(frame, key){
+	frame.getElement().style.height = currHeight;
+    })
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.layouts.TwoDRow.prototype.updateXyzWidths_ = function() {
+    var frameSize;
+    var widthDiff = 1 - ((this.prevSize.width - this.currSize.width) / 
+			 this.prevSize.width);
+
+    if (this.prevSize.width !== this.currSize.width) {
+	this.loopXyz(function(frame, key){
+	    frameSize = goog.style.getSize(frame.getElement());
+	    newWidth =
+	    frame.getElement().style.width =  
+		Math.max(frameSize.width * widthDiff, 
+			 this.minLayoutFrameWidth_).toString() + 'px';
+	}.bind(this))
+    }
+}
+
+
+
+/**
  * @param {!string} Either or the X or Y plane string.
  * @private
  */
-xiv.ui.layouts.TwoD.prototype.updateStyle_XY_ = function(plane) {
+xiv.ui.layouts.TwoDRow.prototype.updateStyle_XY_ = function(plane) {
 
     var boundaryElt = this.LayoutFrames[plane].getResizable().
 	getBoundaryElement(); 
@@ -305,7 +325,7 @@ xiv.ui.layouts.TwoD.prototype.updateStyle_XY_ = function(plane) {
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.TwoD.prototype.updateStyle_X = function() {
+xiv.ui.layouts.TwoDRow.prototype.updateStyle_X = function() {
     //
     // Set the left of the boundary
     //
@@ -325,7 +345,14 @@ xiv.ui.layouts.TwoD.prototype.updateStyle_X = function() {
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.TwoD.prototype.updateStyle_Y = function() {
+xiv.ui.layouts.TwoDRow.prototype.updateStyle_Y = function() {
+    //
+    // Set the left of the frame
+    //
+    this.LayoutFrames['Y'].getElement().style.left = 
+	this.LayoutFrames['X'].getElement().style.width
+
+
     //
     // Set the left of the boundary
     //
@@ -342,8 +369,15 @@ xiv.ui.layouts.TwoD.prototype.updateStyle_Y = function() {
 
 
 
-
-
+/**
+ * @inheritDoc
+ */
+xiv.ui.layouts.TwoDRow.prototype.updateStyle_Z = function() {
+    this.LayoutFrames['Z'].getElement().style.left = 
+	(parseInt(this.LayoutFrames['X'].getElement().style.width) + 
+	 parseInt(this.LayoutFrames['Y'].getElement().style.width)).toString() +
+	'px';
+}
 
 
 

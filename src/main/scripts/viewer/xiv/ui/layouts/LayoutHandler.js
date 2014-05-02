@@ -29,7 +29,8 @@ goog.require('xiv.ui.layouts.FourUp');
 goog.require('xiv.ui.layouts.Sagittal');
 goog.require('xiv.ui.layouts.Coronal');
 goog.require('xiv.ui.layouts.Transverse');
-goog.require('xiv.ui.layouts.TwoD');
+goog.require('xiv.ui.layouts.TwoDRow');
+goog.require('xiv.ui.layouts.TwoDWidescreen');
 goog.require('xiv.ui.layouts.ThreeD');
 
 
@@ -231,17 +232,20 @@ function(planeTitle){
  */
 xiv.ui.layouts.LayoutHandler.prototype.updateInteractors = function() {
     window.console.log("UPDATE INTERACTORS");
-    this.masterLayout_.updateInteractors();
+    if (goog.isDefAndNotNull(this.masterLayout_)){
+	this.masterLayout_.updateInteractors();
+    }
 }
 
 
 
 /**
  * @public
- * @param{} newLayout
+ * @return {?Object.<xiv.ui.layouts.XyzvLayout.InteractorSet>}
  */
 xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractors = function() {
-    return this.masterLayout_.getInteractors();
+    return goog.isDefAndNotNull(this.masterLayout_) ? 
+	this.masterLayout_.getInteractors() : null;
 }
 
 
@@ -743,9 +747,14 @@ function(callback){
 */
 xiv.ui.layouts.LayoutHandler.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
-    goog.object.forEach(this.Layouts_, function(layout){
-	layout.updateStyle();
-    })
+    
+    var currLayout = this.Layouts_[this.currLayoutTitle_];
+
+    window.console.log("lH update", 
+		       goog.object.getCount(currLayout.getLayoutFrames()))
+    if (goog.object.getCount(currLayout.getLayoutFrames()) > 1){
+	this.Layouts_[this.currLayoutTitle_].updateStyle();
+    }
 }
 
 

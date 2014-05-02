@@ -32,7 +32,7 @@ xiv.ui.layouts.XyzvLayout = function(opt_frames) {
     goog.base(this);
 
     opt_frames = goog.isDefAndNotNull(opt_frames) ? opt_frames :
-	goog.object.getValues(xiv.ui.layouts.XyzvLayout.PLANES);
+	goog.object.getValues(xiv.ui.layouts.XyzvLayout.FRAMES);
     opt_frames = goog.isArray(opt_frames) ? opt_frames : [opt_frames];
 
     goog.array.forEach(opt_frames, function(frameTitle, i){
@@ -79,7 +79,7 @@ xiv.ui.layouts.XyzvLayout.ID_PREFIX =  'xiv.ui.layouts.XyzvLayout';
  * @enum {string}
  * @public
  */
-xiv.ui.layouts.XyzvLayout.PLANES = {
+xiv.ui.layouts.XyzvLayout.FRAMES = {
     X: 'X',
     Y: 'Y',
     Z: 'Z',
@@ -186,9 +186,9 @@ function(frameTitles){
     // Validate length
     //
     if (frameTitles.length > 
-	goog.object.getCount(xiv.ui.layouts.XyzvLayout.PLANES)){
+	goog.object.getCount(xiv.ui.layouts.XyzvLayout.FRAMES)){
 	throw new Error('Invalid amount of frames ' + frameTitles + 
-			'. Must be ' + xiv.ui.layouts.XyzvLayout.PLANES);
+			'. Must be ' + xiv.ui.layouts.XyzvLayout.FRAMES);
     }
 
     //
@@ -196,11 +196,12 @@ function(frameTitles){
     //
     goog.array.forEach(frameTitles, function(title){
 	if (!goog.object.containsValue(
-	    xiv.ui.layouts.XyzvLayout.PLANES, title)){
+	    xiv.ui.layouts.XyzvLayout.FRAMES, title)){
 	    throw new Error('Invalid frame title ', title);
 	}
     }.bind(this))
 }
+
 
 
 
@@ -278,55 +279,6 @@ xiv.ui.layouts.XyzvLayout.prototype.setInteractors = function(interactors) {
 	}
     })   
 }
-
-
-
-/**
- * @public
- */
-xiv.ui.layouts.XyzvLayout.prototype.updateInteractors = function() {
-    goog.object.forEach(this.getInteractors(), 
-	function(interactorSet, planeOr){
-	    
-	    if (goog.isDefAndNotNull(interactorSet.SLIDER)){
-		interactorSet.SLIDER.updateStyle();
-	    }
-
-	    if (goog.isDefAndNotNull(interactorSet.CROSSHAIRS)){
-		interactorSet.CROSSHAIRS.updateStyle();
-	    }
-
-	    if (goog.isDefAndNotNull(interactorSet.FRAME_DISPLAY)){
-		interactorSet.CROSSHAIRS.updateStyle();
-	    }
-	})
-}
-
-
-
-/**
- * @public
- */
-xiv.ui.layouts.XyzvLayout.prototype.removeAllInteractors = function() {
-    goog.object.forEach(this.getInteractors(), 
-	function(interactorSet, planeOr){
-	    
-	    if (goog.isDefAndNotNull(interactorSet.SLIDER)){
-		interactorSet.SLIDER.disposeInternal();
-		delete interactorSet.SLIDER;
-	    }
-
-	    if (goog.isDefAndNotNull(interactorSet.CROSSHAIRS)){
-		interactorSet.CROSSHAIRS.disposeInternal();
-		delete interactorSet.CROSSHAIRS;
-	    }
-
-	    if (goog.isDefAndNotNull(interactorSet.FRAME_DISPLAY)){
-		interactorSet.FRAME_DISPLAY.disposeInternal();
-		delete interactorSet.FRAME_DISPLAY;
-	    }
-	})
-};
 
 
 
@@ -442,12 +394,12 @@ xiv.ui.layouts.XyzvLayout.prototype.addCrosshairs_ = function(){
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.loopXyz = function(callback){
-    goog.object.forEach(xiv.ui.layouts.XyzvLayout.PLANES, 
-	function(plane, key) {	
-	    plane = plane.toUpperCase();
-	    if ((!goog.isDefAndNotNull(this.LayoutFrames[plane])) 
-		|| (plane == 'V')) { return };
-	    callback(this.LayoutFrames[plane], plane);
+    goog.object.forEach(xiv.ui.layouts.XyzvLayout.FRAMES, 
+	function(frame, key) {	
+	    frame = frame.toUpperCase();
+	    if ((!goog.isDefAndNotNull(this.LayoutFrames[frame])) 
+		|| (frame == 'V')) { return };
+	    callback(this.LayoutFrames[frame], frame);
 	}.bind(this))
 };
 
@@ -458,10 +410,10 @@ xiv.ui.layouts.XyzvLayout.prototype.loopXyz = function(callback){
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.loop = function(callback){
-    goog.object.forEach(xiv.ui.layouts.XyzvLayout.PLANES, 
-	function(plane, key) {	
-	    plane = plane.toUpperCase();
-	    callback(this.LayoutFrames[plane], plane);
+    goog.object.forEach(xiv.ui.layouts.XyzvLayout.FRAMES, 
+	function(frame, key) {	
+	    frame = frame.toUpperCase();
+	    callback(this.LayoutFrames[frame], frame);
 	}.bind(this))
 };
 
@@ -488,7 +440,7 @@ xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrames_ = function(){
 
 
 /**
- * Sets up the relevant plane.  
+ * Sets up the relevant frame.  
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_X = function(){
@@ -500,7 +452,7 @@ xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_X = function(){
 
 
 /**
- * Sets up the relevant plane.  
+ * Sets up the relevant frame.  
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_Y = function(){
@@ -512,7 +464,30 @@ xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_Y = function(){
 
 
 /**
- * Sets up the relevant plane.  
+ * @param {Function=} callback
+ * @private
+ */
+xiv.ui.layouts.XyzvLayout.prototype.onXYLayoutFrameResize_ = 
+function(callback){
+    this.calcDims();
+
+    var xSize = goog.style.getSize(this.LayoutFrames['X'].getElement());
+    var ySize = goog.style.getSize(this.LayoutFrames['Y'].getElement());
+    var zSize = goog.style.getSize(this.LayoutFrames['Z'].getElement());
+
+    //
+    // Determine delta by tallying all the sizes
+    //
+    var deltaX = xSize.width + ySize.width + zSize.width - this.currSize.width;
+    
+    callback(xSize, ySize, zSize, deltaX)
+}
+
+
+
+
+/**
+ * Sets up the relevant frame.  
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_Z = function(){
@@ -524,7 +499,7 @@ xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_Z = function(){
 
 
 /**
- * Sets up the relevant plane.  
+ * Sets up the relevant frame.  
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_V = function(){
@@ -536,7 +511,7 @@ xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_V = function(){
 
 
 /**
- * Callback for when (or if) the relevant plane is resized.
+ * Callback for when (or if) the relevant frame is resized.
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_X = goog.nullFunction;
@@ -544,7 +519,7 @@ xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_X = goog.nullFunction;
 
 
 /**
- * Callback for when (or if) the relevant plane is resized.
+ * Callback for when (or if) the relevant frame is resized.
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_Y = goog.nullFunction;
@@ -552,7 +527,7 @@ xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_Y = goog.nullFunction;
 
 
 /**
- * Callback for when (or if) the relevant plane is resized.
+ * Callback for when (or if) the relevant frame is resized.
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_Z = goog.nullFunction;
@@ -560,7 +535,7 @@ xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_Z = goog.nullFunction;
 
 
 /**
- * Callback for when (or if) the relevant plane is resized.
+ * Callback for when (or if) the relevant frame is resized.
  * @protected
  */
 xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_V = goog.nullFunction;
@@ -568,7 +543,7 @@ xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_V = goog.nullFunction;
 
 
 /**
- * updateStyle function for the relevant plane.
+ * updateStyle function for the relevant frame.
  * @private
  */
 xiv.ui.layouts.XyzvLayout.prototype.updateStyle_X = goog.nullFunction;
@@ -576,14 +551,14 @@ xiv.ui.layouts.XyzvLayout.prototype.updateStyle_X = goog.nullFunction;
 
 
 /**
- * updateStyle function for the relevant plane.
+ * updateStyle function for the relevant frame.
  * @private
  */
 xiv.ui.layouts.XyzvLayout.prototype.updateStyle_Z = goog.nullFunction;
 
 
 /**
- * updateStyle function for the relevant plane.
+ * updateStyle function for the relevant frame.
  * @private
  */
 xiv.ui.layouts.XyzvLayout.prototype.updateStyle_Y = goog.nullFunction;
@@ -591,7 +566,7 @@ xiv.ui.layouts.XyzvLayout.prototype.updateStyle_Y = goog.nullFunction;
 
 
 /**
- * updateStyle function for the relevant plane.
+ * updateStyle function for the relevant frame.
  * @private
  */
 xiv.ui.layouts.XyzvLayout.prototype.updateStyle_V = goog.nullFunction;

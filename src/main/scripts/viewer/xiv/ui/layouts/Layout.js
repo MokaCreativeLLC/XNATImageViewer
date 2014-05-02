@@ -190,6 +190,55 @@ xiv.ui.layouts.Layout.prototype.dispatchResize = function(){
 
 
 /**
+ * @public
+ */
+xiv.ui.layouts.Layout.prototype.removeAllInteractors = function() {
+    goog.object.forEach(this.getInteractors(), 
+	function(interactorSet, planeOr){
+	    
+	    if (goog.isDefAndNotNull(interactorSet.SLIDER)){
+		interactorSet.SLIDER.disposeInternal();
+		delete interactorSet.SLIDER;
+	    }
+
+	    if (goog.isDefAndNotNull(interactorSet.CROSSHAIRS)){
+		interactorSet.CROSSHAIRS.disposeInternal();
+		delete interactorSet.CROSSHAIRS;
+	    }
+
+	    if (goog.isDefAndNotNull(interactorSet.FRAME_DISPLAY)){
+		interactorSet.FRAME_DISPLAY.disposeInternal();
+		delete interactorSet.FRAME_DISPLAY;
+	    }
+	})
+};
+
+
+
+/**
+ * @public
+ */
+xiv.ui.layouts.Layout.prototype.updateInteractors = function() {
+    goog.object.forEach(this.getInteractors(), 
+	function(interactorSet, planeOr){
+	    if (goog.isDefAndNotNull(interactorSet.SLIDER)){
+		interactorSet.SLIDER.updateStyle();
+		interactorSet.SLIDER.setValue(interactorSet.SLIDER.getValue());
+	    }
+
+	    if (goog.isDefAndNotNull(interactorSet.CROSSHAIRS)){
+		interactorSet.CROSSHAIRS.updateStyle();
+	    }
+
+	    if (goog.isDefAndNotNull(interactorSet.FRAME_DISPLAY)){
+		interactorSet.CROSSHAIRS.updateStyle();
+	    }
+	})
+}
+
+
+
+/**
 * @inheritDoc
 */
 xiv.ui.layouts.Layout.prototype.updateStyle = function(){

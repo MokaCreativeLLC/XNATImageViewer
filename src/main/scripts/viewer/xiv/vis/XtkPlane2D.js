@@ -73,7 +73,8 @@ function(sliceNum) {
  * @public
  */
 xiv.vis.XtkPlane2D.prototype.getVolume = function() {
-    return this.Renderer.getVolume();
+    return goog.isDefAndNotNull(this.Renderer) ? this.Renderer.getVolume() : 
+	null;
 }
 
 

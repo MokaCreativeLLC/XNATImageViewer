@@ -718,7 +718,6 @@ function(indexOrTitle, opt_deactivateOthers) {
     // Dispatch the event
     //
     this.dispatchSelected_(index);
-
 }
 
 
