@@ -153,6 +153,24 @@ xiv.ui.ctrl.SliderController.prototype.dispatchComponentEvent = function(){
 
 
 
+
+/**
+ * @inheritDoc
+ */
+xiv.ui.ctrl.SliderController.prototype.update = function() {
+    //
+    // Compensates for a bug
+    //
+    var component = this.getComponent();
+    component.updateStyle();
+    var oldValue = component.getValue();
+    component.setValue(0);
+    component.setValue(oldValue);
+
+}
+
+
+
 /**
  * @inheritDoc
  */

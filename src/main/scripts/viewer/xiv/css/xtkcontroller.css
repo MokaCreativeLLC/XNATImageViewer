@@ -30,13 +30,13 @@
     display: block;
     position: relative;
     width: 100%;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 
 .xiv-ui-ctrl-xtkcontroller-label {
     color: white;
-    font-size: 10px;
+    font-size: 12px;
     font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 

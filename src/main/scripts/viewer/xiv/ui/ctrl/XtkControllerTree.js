@@ -113,6 +113,24 @@ function(mainControls) {
  * @return {Array.<xiv.ui.ctrl.XtkController>}
  * @public
  */
+xiv.ui.ctrl.XtkControllerTree.prototype.updateControllers = function() {
+
+    //window.console.log(this.AnnotationsController3D_);
+    return this.getControllers([
+	this.VolumeController3D_,
+	this.MeshController3D_,
+	this.AnnotationsController3D_,
+	this.FiberController3D_
+    ])
+}
+
+
+
+
+/**
+ * @return {Array.<xiv.ui.ctrl.XtkController>}
+ * @public
+ */
 xiv.ui.ctrl.XtkControllerTree.prototype.getControllers3D = function() {
 
     //window.console.log(this.AnnotationsController3D_);

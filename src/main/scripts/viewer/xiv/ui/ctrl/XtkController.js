@@ -254,8 +254,11 @@ xiv.ui.ctrl.XtkController.prototype.setComponent = function(component) {
 	if (!this.component_.isInDocument()){
 	    this.component_.render(this.getElement());
 	} else {
-	    goog.dom.appendChild(this.getElement(), 
+	    if (this.component_.getElement().parentNode 
+		     !== this.getElement()) {
+		goog.dom.appendChild(this.getElement(), 
 				 this.component_.getElement());
+	    }
 	}
     } else {
 	goog.dom.appendChild(this.getElement(), elt);
@@ -345,6 +348,16 @@ function(_XtkControllerSubClass, label, changeCallback) {
 
 
 /**
+ * Updates the controller.
+ * 
+ * @public
+ */
+xiv.ui.ctrl.XtkController.prototype.update = function() {
+    // does nothing unless inherited.
+}
+
+
+/**
  * @param {!X.Object} xObj
  * @protected
  */
@@ -393,6 +406,8 @@ xiv.ui.ctrl.XtkController.prototype.add_opacity = function(xObj) {
 
     // set defaults
     opacity.getComponent().setValue(1);
+
+    opacity.getComponent().updateStyle();
 } 
 
 

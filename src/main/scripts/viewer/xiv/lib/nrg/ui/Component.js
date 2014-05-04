@@ -314,4 +314,9 @@ nrg.ui.Component.prototype.disposeInternal = function() {
     this.currPos = null;
     this.prevSize = null;
     this.prevPos = null;
+
+    //
+    // Clear any string properties
+    //
+    goog.object.clear(this);
 }

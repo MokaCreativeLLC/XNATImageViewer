@@ -247,6 +247,21 @@ xiv.vis.XtkEngine.prototype.setPrimaryRenderPlaneEvents_ = function() {
 
 
 /**
+ * @public
+ */
+xiv.vis.XtkEngine.prototype.updateControllers = function(){
+    goog.array.forEach(this.getControllers3D(), function(ctrl){
+	ctrl.update();
+    }.bind(this));
+
+    goog.array.forEach(this.getControllers2D(), function(ctrl){
+	ctrl.update();
+    }.bind(this));
+}
+
+
+
+/**
  * @return {Array.<xiv.ui.ctrl.XtkController>}
  * @public
  */
@@ -474,6 +489,8 @@ xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
 	this.render3dPlane();
     }
 }
+
+
 
 
 /**

@@ -5,12 +5,12 @@
 
 .nrg-ui-zippynode-header {
     position: relative;
-    background-color: rgb(50,50,50);
+    background-color: rgb(90,90,90);
     left: 0px;
     width: 100%;
-    font-size: 10px;
+    font-size: 12px;
     height: 1.5em;
-    color: rgb(120, 120, 120);
+    color: rgb(190, 190, 190);
     font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
     cursor: pointer;
     z-index: 1000;
@@ -21,7 +21,7 @@
 
 
 .nrg-ui-zippynode-header-mouseover {
-    background-color: rgb(90,90,90);
+    background-color: rgb(120,120,120);
     color: rgb(255,255,255);
 }
 

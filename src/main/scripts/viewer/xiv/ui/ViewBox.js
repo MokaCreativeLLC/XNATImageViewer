@@ -622,6 +622,10 @@ function(slider, volume) {
  */
 xiv.ui.ViewBox.prototype.syncCrosshairsToSlider_ = 
 function(slider, volume) {
+
+    if (!goog.isDefAndNotNull(volume)){
+	return;
+    }
     switch (slider[xiv.ui.ViewBox.ORIENTATION_TAG]){
     case 'X': 
 	this.syncCrosshairsToSliderX_(slider, volume);
@@ -950,7 +954,7 @@ xiv.ui.ViewBox.prototype.createControllerTabs_ = function() {
     if (goog.isDefAndNotNull(this.Controllers3D_)){
 	// Add to tab
 	this.ZipTabs_.setTabPageContents('3D', 
-					 this.Controllers3D_.getElement()); 
+					 this.Controllers3D_.getElement());
     }
 }
 
@@ -998,6 +1002,7 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     this.updateStyle();
     this.onLayoutResize_();
+    this.Renderer_.updateControllers();
 }
 
 
