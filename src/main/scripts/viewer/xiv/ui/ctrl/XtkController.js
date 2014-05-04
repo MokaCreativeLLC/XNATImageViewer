@@ -92,6 +92,14 @@ xiv.ui.ctrl.XtkController.EventType = {
 
 
 
+/**
+ * @type {!string} 
+ * @const
+ */
+xiv.ui.ctrl.XtkController.OBJ_KEY =  goog.string.createUniqueString();
+
+
+
 
 /**
  * Creates a div label 
@@ -374,13 +382,12 @@ xiv.ui.ctrl.XtkController.prototype.add_colorPalette = function(xObj) {
 
     // strore
     this.subControllers.push(color);
-    
+
+    color[xiv.ui.ctrl.XtkController.OBJ_KEY] = xObj;
+
     // set defaults
-    color.getComponent().setColor(goog.color.rgbArrayToHex(
-	xObj.color.map( function(x) { 
-	    return goog.math.clamp(parseFloat(x), 0, 1) * 255; 
-	})
-    ))
+    color.update();
+
 }
 
 
@@ -394,9 +401,11 @@ xiv.ui.ctrl.XtkController.prototype.add_opacity = function(xObj) {
     var opacity = this.createController( 
 	xiv.ui.ctrl.SliderController, 'Opacity', 
 	function(e){
-	    window.console.log(e.value);
 	    xObj.opacity = parseFloat(e.value);
 	});
+
+
+
 
     // set folder
     xiv.ui.ctrl.XtkController.setControllerFolders(xObj, opacity);
@@ -412,6 +421,8 @@ xiv.ui.ctrl.XtkController.prototype.add_opacity = function(xObj) {
 
 
 
+
+
 /**
  * @param {!X.Object} xObj
  * @return {!xiv.ui.ctr.XtkController}
@@ -424,6 +435,8 @@ xiv.ui.ctrl.XtkController.prototype.add_visible = function(xObj) {
 	 function(e){
 	     xObj.visible = e.checked;
 	 });
+
+
 
     // set folder
     xiv.ui.ctrl.XtkController.setControllerFolders(xObj, visibleCheckBox);

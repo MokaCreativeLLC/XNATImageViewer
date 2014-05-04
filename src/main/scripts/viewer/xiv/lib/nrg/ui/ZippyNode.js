@@ -382,9 +382,11 @@ nrg.ui.ZippyNode.prototype.disposeInternal = function(){
     delete this.contentHolder_;
     
     // Zippy
-    this.Zippy_.disposeInternal();
-    goog.events.removeAll(this.Zippy_);
-    delete this.Zippy_;
+    if (goog.isDefAndNotNull(this.Zippy_)){
+	this.Zippy_.disposeInternal();
+	goog.events.removeAll(this.Zippy_);
+	delete this.Zippy_;
+    }
 
     // Sub-Nodes
     nrg.ui.disposeComponentMap(this.Nodes_);

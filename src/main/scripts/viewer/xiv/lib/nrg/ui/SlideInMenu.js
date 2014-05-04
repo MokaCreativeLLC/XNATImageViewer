@@ -442,6 +442,8 @@ nrg.ui.SlideInMenu.prototype.getSelectedMenuItem = function() {
  * @private
  */
 nrg.ui.SlideInMenu.prototype.clearAnimQueue_ = function(){
+    if (!goog.isDefAndNotNull(this.animQueue_)) { return }
+
     //
     // Stop the queue
     //

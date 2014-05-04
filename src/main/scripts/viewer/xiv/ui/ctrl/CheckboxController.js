@@ -67,6 +67,19 @@ xiv.ui.ctrl.CheckboxController.CSS_SUFFIX = {
 };
 
 
+
+
+/**
+ * @param {!boolean} checked
+ * @public
+ */
+xiv.ui.ctrl.CheckboxController.prototype.setChecked = function(checked){
+    this.getComponent().setChecked(checked);
+    this.dispatchComponentEvent();
+}
+
+
+
 /**
  * @inheritDoc
  */

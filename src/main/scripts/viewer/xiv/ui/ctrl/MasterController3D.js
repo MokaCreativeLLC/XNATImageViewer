@@ -143,7 +143,7 @@ xiv.ui.ctrl.MasterController3D.prototype.onMasterDisplayAllChange_ =
 function(e) {
     goog.array.forEach(this.subControllers, function(subC){
 	if (subC.getLabel().innerHTML == 'Visible') {
-	    subC.getComponent().setChecked(e.checked);
+	    subC.setChecked(e.checked);
 	}
     })
 }

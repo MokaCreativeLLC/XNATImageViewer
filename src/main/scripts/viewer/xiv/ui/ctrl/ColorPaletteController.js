@@ -28,12 +28,13 @@ xiv.ui.ctrl.ColorPaletteController = function(){
      */
     this.colorSquare_ = goog.dom.createDom('div', {
 	'id': this.constructor.ID_PREFIX + 
-	    '_ColorPalette_' + goog.string.createUniqueString(),
+	    '_ColorSquare_' + goog.string.createUniqueString(),
 	'class': xiv.ui.ctrl.ColorPaletteController.CSS.COLORSQUARE
     })
     goog.dom.append(this.getElement(), this.colorSquare_);
     goog.events.listen(this.colorSquare_, goog.events.EventType.CLICK, 
-		       this.showColorPalette_.bind(this))
+    this.showColorPalette_.bind(this));
+
 
 
     /**
@@ -46,6 +47,8 @@ xiv.ui.ctrl.ColorPaletteController = function(){
     goog.events.listen(this.colorPalette_, goog.ui.Component.EventType.ACTION, 
 		       this.dispatchComponentEvent.bind(this));
     this.setComponent(this.colorPalette_);
+    goog.dom.classes.add(this.colorPalette_.getElement(), 
+			 this.constructor.CSS.COLORPALETTE);
     
 
     /**
@@ -60,6 +63,20 @@ xiv.ui.ctrl.ColorPaletteController = function(){
     goog.dom.append(document.body, this.colorPaletteHolder_);
     goog.dom.append(this.colorPaletteHolder_, this.colorPalette_.getElement());
     this.colorPaletteHolder_.style.visibility = 'hidden';
+
+
+    /**
+     * @type {!Element}
+     * @private
+     */
+    this.closeButton_ = goog.dom.createDom('div', {
+	'id': this.constructor.ID_PREFIX + 
+	    '_CloseButton_' + goog.string.createUniqueString(),
+	'class': xiv.ui.ctrl.ColorPaletteController.CSS.CLOSEBUTTON
+    })
+    goog.dom.append(this.colorPaletteHolder_, this.closeButton_);
+    goog.events.listen(this.closeButton_, goog.events.EventType.CLICK, 
+		       this.showColorPalette_.bind(this))
 }
 
 goog.inherits(xiv.ui.ctrl.ColorPaletteController, xiv.ui.ctrl.XtkController);
@@ -83,8 +100,24 @@ xiv.ui.ctrl.ColorPaletteController.ID_PREFIX =
  */
 xiv.ui.ctrl.ColorPaletteController.CSS_SUFFIX = {
     COLORSQUARE: 'colorsquare',
-    COLORPALETTEHOLDER: 'colorpaletteholder'
+    COLORPALETTEHOLDER: 'colorpaletteholder',
+    COLORPALETTE: 'colorpalette',
+    CLOSEBUTTON: 'closebutton'
 };
+
+
+
+/**
+ * @const
+ */
+xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_X = 20;
+
+
+
+/**
+ * @const
+ */
+xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_Y = 20;
 
 
 
@@ -92,26 +125,46 @@ xiv.ui.ctrl.ColorPaletteController.CSS_SUFFIX = {
  * @private
  */
 xiv.ui.ctrl.ColorPaletteController.prototype.showColorPalette_ = function() {
+
     this.colorPaletteHolder_.style.visibility =
      (this.colorPaletteHolder_.style.visibility == 'hidden') ? 
 	'visible' : 'hidden';
 
-    window.console.log(this.colorPaletteHolder_.style.visibility);
+    var offset = goog.style.getPageOffset(this.colorSquare_);
+    var colorSquareSize = goog.style.getSize(this.colorSquare_);
+    var panelSize = goog.style.getSize(this.colorPaletteHolder_);
 
-    /**
-    // Find the common ancestor
-    var commonAncestor = 
-    goog.dom.findCommonAncestor(this.colorPaletteHolder_, 
-				this.getComponent());
-    var boxPos = 
-    goog.style.getRelativePosition(this.getComponent(), commonAncestor);
+    var prelimX = offset.x + colorSquareSize.width + 
+	xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_X;
+    var prelimY = offset.y - 
+	xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_Y;
+    
+    var screenH = parseInt(window.innerHeight);
+    var screenW = parseInt(window.innerWidth);
+    
+    window.console.log(screenH, prelimY, panelSize.height);
 
-    window.console.log(commonAncestor);
-    */
+    if ((prelimY + panelSize.height) > screenH) {
+	prelimY -= (prelimY + panelSize.height) - screenH;
+    }
 
     goog.style.setPosition(this.colorPaletteHolder_, 
-			   goog.style.getPageOffset(this.getComponent()));
-    window.console.log(boxPos, goog.style.getPosition(this.colorPaletteHolder_))
+			   prelimX, prelimY);
+}
+
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.ui.ctrl.ColorPaletteController.prototype.update = function() {
+    var r = Math.floor(
+	this[xiv.ui.ctrl.XtkController.OBJ_KEY].color[0] * 255);
+    var g = Math.floor(this[xiv.ui.ctrl.XtkController.OBJ_KEY].color[1] * 255);
+    var b = Math.floor(this[xiv.ui.ctrl.XtkController.OBJ_KEY].color[2] * 255);
+    this.getComponent().setColor(goog.color.rgbArrayToHex(
+	[r,g,b]))
 }
 
 
@@ -142,7 +195,12 @@ function(e){
 xiv.ui.ctrl.ColorPaletteController.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
-    
+    // Close button
+    goog.events.removeAll(this.closeButton_);
+    goog.dom.removeNode(this.closeButton_);
+    delete this.closeButton_;
+
+
     // Color Square
     goog.events.removeAll(this.colorSquare_);
     goog.dom.removeNode(this.colorSquare_);

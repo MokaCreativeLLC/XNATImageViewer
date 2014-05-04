@@ -164,7 +164,7 @@ xiv.vis.XtkPlane.prototype.setCamera = function(opt_cameraNode){
 
     if (goog.isDefAndNotNull(opt_cameraNode)){
 	this.camera_ = opt_cameraNode;
-	window.console.log('\n\n\n\n**********', opt_cameraNode);
+
 	this.Renderer.camera.focus = opt_cameraNode.focus;
 	this.Renderer.camera.position = opt_cameraNode.position;
 	this.Renderer.camera.up = opt_cameraNode.up;
