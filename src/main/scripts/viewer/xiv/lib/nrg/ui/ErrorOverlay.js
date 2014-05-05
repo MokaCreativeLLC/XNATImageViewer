@@ -36,8 +36,22 @@ nrg.ui.ErrorOverlay.ID_PREFIX =  'nrg.ui.ErrorOverlay';
  * @enum {string}
  */
 nrg.ui.ErrorOverlay.CSS_SUFFIX = {
-    NO_WEBGL_IMAGE: 'no-webgl-image'
+    NO_WEBGL_IMAGE: 'no-webgl-image',
+    TEXT: 'text'
 };
+
+
+
+/**
+ * @inheritDoc
+ */
+nrg.ui.ErrorOverlay.prototype.addText = function(text) {
+    goog.base(this, 'addText', text);
+
+    var eltTexts = this.getTextElements();
+    goog.dom.classes.add(eltTexts[eltTexts.length - 1], 
+			nrg.ui.ErrorOverlay.CSS.TEXT)
+}
 
 
 

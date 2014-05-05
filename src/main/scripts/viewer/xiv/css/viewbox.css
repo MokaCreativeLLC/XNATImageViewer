@@ -11,6 +11,7 @@
     height: 500px;
     position: absolute;
     overflow: hidden;
+    z-index: 10;
 }
 
 
@@ -131,23 +132,28 @@
 .xiv-ui-viewbox-button-threedtoggle {
     width: 15px;
     height: 15px;
-    content:url('/xnat/images/viewer/xiv/ui/ViewBoxManager/handle.png');
+    content:url('/xnat/images/viewer/xiv/ui/ViewBox/Toggle-3D.png');
+    opacity: .5;
 }
 
 
 .xiv-ui-viewbox-button-threedtoggle-on {
-    content:url('/xnat/images/viewer/xiv/ui/ViewBox/info-on.png');
+    opacity: 1;
+    background-color: black;
 }
 
 .xiv-ui-viewbox-button-infotoggle {
     width: 15px;
     height: 15px;
-    content:url('/xnat/images/viewer/xiv/ui/ViewBox/info-off.png');
+    content:url('/xnat/images/viewer/xiv/ui/ViewBox/Toggle-Info.png');
+    opacity: .5;
+    background-color: black;
 }
 
 
 .xiv-ui-viewbox-button-infotoggle-on {
-    content:url('/xnat/images/viewer/xiv/ui/Overlay/sadbrain-white.png');
+    opacity: 1;
+    background-color: black;
 }
 
 
@@ -183,11 +189,13 @@
 .xiv-ui-viewbox-button-helptoggle {
     width: 15px;
     height: 15px;
-    content:url('/xnat/images/viewer/xiv/ui/ViewBoxManager/handle.png');
+    content:url('/xnat/images/viewer/xiv/ui/ViewBox/Toggle-Help.png');
+    opacity: .5;
 }
 
 .xiv-ui-viewbox-button-helptoggle-on {
-    content:url('/xnat/images/viewer/xiv/ui/Overlay/sadbrain-white.png');
+    opacity: 1;
+    background-color: black;
 }
 
 
@@ -224,10 +232,12 @@
 .xiv-ui-viewbox-button-crosshairtoggle {
     width: 15px;
     height: 15px;
-    content:url('/xnat/images/viewer/xiv/ui/ViewBoxManager/handle.png');
+    content:url('/xnat/images/viewer/xiv/ui/ViewBox/Toggle-Crosshairs.png');
+    opacity: .5;
 }
 .xiv-ui-viewbox-button-crosshairtoggle-on {
-    content:url('/xnat/images/viewer/xiv/ui/Overlay/sadbrain-white.png');
+    opacity: 1;
+    background-color: black;
 }
 
 

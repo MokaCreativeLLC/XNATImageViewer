@@ -868,11 +868,40 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
 /**
  * @private
  */
+xiv.ui.Modal.prototype.onViewBoxError_ = function(){
+    var draggers = 
+	goog.dom.getElementsByClass(
+	    'xiv-ui-thumbnailgallery-thumbnail-dragging');
+
+    goog.array.forEach(draggers, function(dragger){
+	goog.dom.removeNode(dragger);
+	dragger = null;
+    })
+    
+    //this.ThumbnailGallery_.initDragDrop_();
+    //this.onViewBoxesChanged_();
+    this.highlightInUseThumbnails();
+
+    //this.ThumbnailGallery_.thumbnailTargetGroup_.endDrag();
+    this.ThumbnailGallery_.thumbnailDragDropGroup_.endDrag({
+	dragCancelled : true
+    });
+
+}
+
+
+/**
+ * @private
+ */
 xiv.ui.Modal.prototype.initViewBoxHandler_ = function() {
     //window.console.log("INIT VIEW BOX HANDLER");
     this.ViewBoxHandler_ = new xiv.ui.ViewBoxHandler();
     this.ViewBoxHandler_.setViewBoxesParent(this.getElement());   
     this.setViewBoxHandlerEvents_();
+
+    goog.events.listen(this.ViewBoxHandler_, 
+		       xiv.ui.ViewBoxHandler.EventType.THUMBNAIL_LOADERROR,
+		       this.onViewBoxError_.bind(this))
 }
 
 
@@ -1147,11 +1176,11 @@ xiv.ui.Modal.prototype.onThumbnailLoaded_ = function(ViewBox){
 
 /**
  * Callback function for the LOADED event on the hovered ViewBox.
- * @param {Event} e The event.
+ * @param {Event=} e The event.
  * @private
  */
 xiv.ui.Modal.prototype.onViewBoxesChanged_ = function(e) {
-    if (e.animate) {
+    if (goog.isDefAndNotNull(e) && goog.isDefAndNotNull(e.animate)) {
 	// Fade out the new viewboxes.
 	if (e.newSet) {
 	    goog.array.forEach(e.newSet, function(newViewBox) {

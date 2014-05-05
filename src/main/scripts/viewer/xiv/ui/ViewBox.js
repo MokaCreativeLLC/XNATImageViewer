@@ -1213,11 +1213,9 @@ xiv.ui.ViewBox.prototype.toggleWaitForRenderErrors_ = function(toggle) {
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_errorMsg){
-    //alert('Render error: ' + error.message);
-    //window.console.log(error.message);
-    //
-    // Untoggle wait for render errors
-    //
+
+    
+    this.unhighlight();
 
     this.hideProgressBarPanel_();
 
@@ -1225,8 +1223,15 @@ xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_errorMsg){
 
     this.disposeLoadComponents_();
 
-    var opt_errorMsg = 'There was an error rendering :(<br> ' + 
-	'The files are either incompatible with XImgView or corrupted.'; 
+    opt_errorMsg = opt_errorMsg.replace('Uncaught Error: ', '') 
+	|| 'A render error occured :(<br>'; 
+    opt_errorMsg += 'Cancelling render.';
+
+    this.dispatchEvent({
+	type: xiv.ui.ViewBox.EventType.THUMBNAIL_LOADERROR,
+	message: opt_errorMsg
+    })
+
 
     var ErrorOverlay = new nrg.ui.ErrorOverlay();
 
@@ -1255,9 +1260,6 @@ xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_errorMsg){
     ErrorOverlay.getElement().style.opacity = 0;
     ErrorOverlay.getElement().style.zIndex = 1000;
     nrg.fx.fadeInFromZero(ErrorOverlay.getElement(), xiv.ANIM_TIME);
-
-
-
 }
 
 
@@ -1587,65 +1589,54 @@ xiv.ui.ViewBox.prototype.createToggleButton_ =
 	// Create the toggle button
 	//
 	var onClass = goog.getCssName(defaultClass, 'on')
-	var iconbutton = new goog.ui.ToggleButton([
-	    goog.dom.createDom('div', defaultClass),
-	]);
-	iconbutton.setTooltip(opt_tooltip);
-	//
-	// Go ahead and render it first (weird, because we reattach it again)
-	//
-	iconbutton.render(this.menus_.LEFT);
+	var iconbutton = goog.dom.createDom('div', defaultClass);
+	iconbutton.title = opt_tooltip;
+
 
 	//
 	// Set the default check stated
 	//
-	iconbutton.setChecked(defaultState);
+	iconbutton.setAttribute('checked', defaultState.toString());
 	
 	
 	//
 	// Add the 'on' class if it's default class is on
 	//
 	if (defaultState){
-	    goog.dom.classes.add(iconbutton.getContentElement().
-				 childNodes[0], onClass);
+	    goog.dom.classes.add(iconbutton, onClass);
 	}
 
 	//
 	// Clean up the CSS
 	//
-	nrg.style.setStyle(iconbutton.getElement(), {
-	    'background': 'none',
-	    'background-color': 'rgba(0,255,0,1)',
-	    'border': 'none',
-	    'cursor': 'pointer'
-	})
+	nrg.style.setStyle(iconbutton, {'cursor': 'pointer'})
 
-	//
-	// Clears the child node classes (they aren't very good)
-	//
-	goog.dom.classes.set(iconbutton.getElement().childNodes[0], '');
 
 	//
 	// Toggle event
 	//
-	goog.events.listen(iconbutton, goog.ui.Component.EventType.ACTION, 
+	goog.events.listen(iconbutton, goog.events.EventType.CLICK, 
 	function(e){
+
+	    e.target.setAttribute('checked', 
+		(e.target.getAttribute('checked') == 'true') ? 'false': 'true');
+
 	    if (goog.isDefAndNotNull(opt_onCheck)){
 		opt_onCheck(e);
 	    }
-	    if (e.target.isChecked()) {
-		goog.dom.classes.add(iconbutton.getContentElement().
-				     childNodes[0], onClass);
+	    if (e.target.getAttribute('checked') == 'true') {
+		goog.dom.classes.add(iconbutton, onClass);
 	    } else {
-		goog.dom.classes.remove(iconbutton.getContentElement().
-					childNodes[0], onClass);
+		goog.dom.classes.remove(iconbutton, onClass);
 	    }
+
+
 	}.bind(this));
 
 	//
 	// Adds to menu
 	//
-	this.addToMenu('LEFT', iconbutton.getElement());
+	this.addToMenu('LEFT', iconbutton);
 
 	if (!goog.isDefAndNotNull(this.toggleButtons_)){
 	    this.toggleButtons_= [];
@@ -1661,7 +1652,7 @@ xiv.ui.ViewBox.prototype.createToggleButton_ =
 xiv.ui.ViewBox.prototype.create3DRenderToggle_ = function(){    
     this.createToggleButton_(true, xiv.ui.ViewBox.CSS.BUTTON_THREEDTOGGLE,
 	'3D Rendering', function(e){
-	    this.Renderer_.setVPlaneOn(e.target.isChecked());
+	    this.Renderer_.setVPlaneOn((e.target.getAttribute('checked') == 'true'));
 	}.bind(this));
 }
 
@@ -1727,7 +1718,8 @@ xiv.ui.ViewBox.prototype.createInfoToggle_ = function(){
 			    'Info. Display', 
        function(e){
 	   nrg.fx.fadeTo(this.infoOverlay_.getElement(), 
-			 200,  e.target.isChecked() ? 1: 0);
+			 200,  (e.target.getAttribute('checked') == 'true') ? 
+			 1: 0);
        }.bind(this));
 }
 
@@ -1791,7 +1783,7 @@ xiv.ui.ViewBox.prototype.createHelpToggle_ = function(){
 
     this.createToggleButton_(false, xiv.ui.ViewBox.CSS.BUTTON_HELPTOGGLE,
 	'Help Overlay', function(e){
-	    if (e.target.isChecked()) {
+	    if ((e.target.getAttribute('checked') == 'true')) {
 		this.helpOverlay_.getElement().
 		    style.visibility = 'visible';
 		nrg.fx.fadeIn(this.helpOverlay_.getElement(), 
@@ -1820,7 +1812,8 @@ xiv.ui.ViewBox.prototype.createCrosshairToggle_ = function(){
     this.createToggleButton_(true, xiv.ui.ViewBox.CSS.BUTTON_CROSSHAIRTOGGLE,
 	'Crosshairs', function(e){
 	    var interactors = this.LayoutHandler_.getMasterInteractors();
-	    var visibility = e.target.isChecked() ? 'visible': 'hidden';
+	    var visibility = (e.target.getAttribute('checked') == 'true') ? 
+		'visible': 'hidden';
 	    goog.object.forEach(this.Renderer_.getPlanes(), 
             function(Plane, planeOr) {
 		if (goog.isDefAndNotNull(interactors[planeOr]) &&
@@ -2006,6 +1999,11 @@ xiv.ui.ViewBox.prototype.initViewableGroupMenu_ = function(){
  */
 xiv.ui.ViewBox.prototype.initRenderer_ = function(){
     this.Renderer_ = new xiv.vis.XtkEngine();
+
+    goog.events.listen(this.Renderer_, xiv.vis.XtkEngine.EventType.ERROR,
+	function(e){
+	    this.onRenderError_(e.message);
+	}.bind(this))
 }
 
 
@@ -2222,8 +2220,8 @@ xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
 	delete this.menus_.LEFT;
 	
 	goog.array.forEach(this.toggleButtons_, function(button){
-	    button.disposeInternal();
-	    goog.dom.removeNode(button.getElement());
+	    goog.events.removeAll(button);
+	    goog.dom.removeNode(button);
 	    button = null;
 	})
 	goog.array.clear(this.toggleButtons_);

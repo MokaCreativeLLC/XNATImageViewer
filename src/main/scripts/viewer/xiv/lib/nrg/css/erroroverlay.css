@@ -7,6 +7,10 @@
     background-color: black;
     border: solid 1px rgb(120,120,120);
     border-radius: 25px;
+    top: calc(50% - 150px);
+    left: calc(50% - 250px);
+    width: 500px;
+    height: 300px;
 }
 
 
@@ -17,9 +21,15 @@
 
 .nrg-ui-erroroverlay-no-webgl-image {
     position: absolute; 
-    top: 50px;
+    top: 20px;
     left: calc(50% - 40px);
     width: 80px;
     height: 80px;
     content:url('/xnat/images/viewer/xiv/ui/Overlay/sadbrain-white.png');
+}
+
+
+
+.nrg-ui-erroroverlay-text {
+    top: 115px;
 }

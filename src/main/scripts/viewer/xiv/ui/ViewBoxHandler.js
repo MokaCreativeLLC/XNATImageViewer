@@ -481,6 +481,9 @@ xiv.ui.ViewBoxHandler.prototype.createViewBox_ = function() {
     goog.dom.append(this.ViewBoxesParent_, ViewBox.getElement());
     this.addDragDropHandle_(ViewBox);
     this.setViewBoxEvents_(ViewBox);
+
+
+
     return ViewBox;    
 }
 

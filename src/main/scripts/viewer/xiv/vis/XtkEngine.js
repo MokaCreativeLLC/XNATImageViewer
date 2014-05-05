@@ -103,6 +103,7 @@ xiv.vis.XtkEngine.EventType = {
     SLICE_NAVIGATED: goog.events.getUniqueId('slice-navigated'),
     SHIFT_DOWN: goog.events.getUniqueId('shift-down'),
     SHIFT_UP: goog.events.getUniqueId('shift-up'),
+    ERROR: goog.events.getUniqueId('error')
 }
 
 
@@ -1113,10 +1114,8 @@ xiv.vis.XtkEngine.createXObject = function(fileCollection) {
     var obj = this.generateXtkObjectFromExtension(ext);  
     
     if (!goog.isDefAndNotNull(obj)){
-	var errorString = 'The following files are incompatible with ' + 
-	    'XImgView:<br><br>' 
-	    + nrg.string.basename(fileCollection[0]) 
-	    + '<br><br>No valid XObject to create from it!';
+	var errorString = 'It doesn\'t look like there are any renderable' +
+	    ' files in the set :(<br>';
 	throw new Error(errorString);
     }
 	
