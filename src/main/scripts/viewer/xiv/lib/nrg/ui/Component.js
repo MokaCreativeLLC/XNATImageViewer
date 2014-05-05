@@ -315,8 +315,4 @@ nrg.ui.Component.prototype.disposeInternal = function() {
     this.prevSize = null;
     this.prevPos = null;
 
-    //
-    // Clear any string properties
-    //
-    goog.object.clear(this);
 }

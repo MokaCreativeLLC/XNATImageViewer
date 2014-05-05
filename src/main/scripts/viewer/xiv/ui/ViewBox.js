@@ -139,6 +139,10 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     BUTTON_INFOTOGGLE: 'button-infotoggle',
     BUTTON_HELPTOGGLE: 'button-helptoggle',
     BUTTON_CROSSHAIRTOGGLE: 'button-crosshairtoggle',
+    INFOOVERLAY: 'infooverlay',
+    INFOOVERLAY_TEXT: 'infooverlay-text',
+    HELPOVERLAY: 'helpoverlay',
+    HELPOVERLAY_TEXT: 'helpoverlay-text'
 }
 
 
@@ -1057,6 +1061,7 @@ xiv.ui.ViewBox.prototype.onLayoutResize_ = function(e){
  */
 xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 
+    
     this.ViewableGroupMenu_.reset();
     goog.object.clear(this.ViewableGroups_);
     
@@ -1111,22 +1116,30 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
  * @public
  */
 xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
-
     opt_initLoadComponents = goog.isDefAndNotNull(opt_initLoadComponents) ?
 	opt_initLoadComponents : true;
-
+    
+    //
+    // Init the load components
+    //
     if (opt_initLoadComponents) {
-	//alert('CLEAR LOAD');
 	this.disposeLoadComponents_();
 	this.initLoadComponents_();
 	this.setLoadComponentsEvents_();
     }
 
-    
+    //
+    // ViewableTree handling
+    //
     if (ViewableSet instanceof gxnat.vis.ViewableTree){
 	this.loadViewableTree_(ViewableSet);
 	return;
     }
+
+    //
+    // We have to initialize certain toggle components here
+    //
+    this.createInfoToggle_();    
 
     //
     // Set plane containers
@@ -1326,61 +1339,6 @@ xiv.ui.ViewBox.prototype.adjustLayoutHandler_ = function(){
 
 
 
-
-/**
- * Load the xiv.Tabs associated with the object's xiv.ui.Thumbnail.
- * @private
- */
-xiv.ui.ViewBox.prototype.loadTabs_ = function() {  
-    this.ZipTabs_.reset();
-    this.loadTab_Info_();
-    if (this.Thumbnail_.getViewable().getCategory() == 'Slicer') {
-	this.loadTab_SlicerViews();
-    }
-    this.loadTabs_Controllers_();
-
-    this.updateStyle();
-}
-
-
-
-/**
- * As stated.
- * @private
- */
-xiv.ui.ViewBox.prototype.loadTab_Info_ = function() {
-    this.ZipTabs_.setTabPageContents('Info', 
-      this.Displayer_.createInfoTabContents(this.Thumbnail_.getViewable()));
-}
-
-
-
-/**
- * As stated.
- * @private
- */
-xiv.ui.ViewBox.prototype.loadTab_SlicerViews_ = function() {
-    this.ZipTabs_.setTabPageContents('Slicer Views', 
-		this.ViewableGroupMenu_.getThumbnailGallery());
-}
-
-
-
-/**
- * As stated.
- * @private
- */
-xiv.ui.ViewBox.prototype.loadTabs_Controllers_ = function() {
-    goog.object.forEach(this.Displayer_.getControllerMenu(), 
-	function(menuElt, key){
-	    if (menuElt){
-	        this.ZipTabs_.setTabPageContents(key, menuElt);
-	    }
-	}.bind(this))
-}
-
-
-
 /**
  * @inheritDoc
  */
@@ -1391,10 +1349,8 @@ xiv.ui.ViewBox.prototype.initLoadComponents_ = function() {
     this.initToggleMenu_();
     this.initLayoutHandler_();
     this.syncLayoutMenuToLayoutHandler_();
-    window.console.log("\n\n\nINIT SUB!", this.LayoutMenu_);
     this.initRenderer_();
     this.initViewableGroupMenu_();
-
     this.hasLoadComponents_ = true;
 }
 
@@ -1645,6 +1601,7 @@ xiv.ui.ViewBox.prototype.createToggleButton_ =
 	//
 	iconbutton.setChecked(defaultState);
 	
+	
 	//
 	// Add the 'on' class if it's default class is on
 	//
@@ -1713,8 +1670,65 @@ xiv.ui.ViewBox.prototype.create3DRenderToggle_ = function(){
  * @private
  */
 xiv.ui.ViewBox.prototype.createInfoToggle_ = function(){
+    
+    //
+    // Clear existing
+    //
+    if (goog.isDefAndNotNull(this.infoOverlay_)){
+	this.infoOverlay_.disposeInternal();
+    }
+    this.infoOverlay_ = new nrg.ui.Overlay();
+
+
+    //
+    // Generate widget text
+    //
+    var infoText = '';
+
+    //
+    // For viewables with a 'sessionInfo' property (i.e. Scans)
+    //
+    if ((this.ViewableTrees_.length > 0) && 
+	(goog.isDefAndNotNull(this.ViewableTrees_[0].getSessionInfo))) {
+	goog.object.forEach(this.ViewableTrees_[0].getSessionInfo(), 
+			    function(value, key){
+	    window.console.log(value);
+	    infoText += value['label'] + ': ' + value['value'] + '<br>';
+	})
+    }
+
+    //
+    // Slicer thumbnails -- the filename is sufficient for now.
+    //
+    else {
+	infoText = goog.string.path.basename(
+	    this.ViewableTrees_[0].getQueryUrl());
+    }
+    
+    //
+    // Add text and render
+    //
+    this.infoOverlay_.addText(infoText);
+    this.infoOverlay_.render(this.viewFrameElt_);
+
+    //
+    // Classes
+    //
+    goog.dom.classes.add(this.infoOverlay_.getElement(), 
+			 this.constructor.CSS.INFOOVERLAY);
+
+    goog.dom.classes.add(this.infoOverlay_.getTextElements()[0], 
+			 this.constructor.CSS.INFOOVERLAY_TEXT);
+    
+    //
+    // Toggle fades
+    // 
     this.createToggleButton_(true, xiv.ui.ViewBox.CSS.BUTTON_INFOTOGGLE,
-			    'Info. Display', function(e){}.bind(this));
+			    'Info. Display', 
+       function(e){
+	   nrg.fx.fadeTo(this.infoOverlay_.getElement(), 
+			 200,  e.target.isChecked() ? 1: 0);
+       }.bind(this));
 }
 
 
@@ -1722,8 +1736,80 @@ xiv.ui.ViewBox.prototype.createInfoToggle_ = function(){
  * @private
  */
 xiv.ui.ViewBox.prototype.createHelpToggle_ = function(){
-    this.createToggleButton_(true, xiv.ui.ViewBox.CSS.BUTTON_HELPTOGGLE,
-			    'Help Overlay', function(e){}.bind(this));
+    //
+    // Clear existing
+    //
+    if (goog.isDefAndNotNull(this.helpOverlay_)){
+	this.helpOverlay_.disposeInternal();
+    }
+    this.helpOverlay_ = new nrg.ui.Overlay();
+
+
+    //
+    // Generate widget text
+    //
+    var helpText =
+	"HELP (this will be much nicer soon!)<br><br>" +
+	"Hold 'SHIFT' over 2D frames for point-based slice scrolling.<br><br>" +
+	"Drag the left mouse button HORIZONTALLY over a 2D box to" +
+	" adjust contrast.<br><br>" +
+	"Drag the left mouse button VERTICALLY over a 2D box to" +
+	" adjust brightness.<br><br>" +
+	"Resize frames by dragging borders.<br><br>" +
+	"Change layouts by clicking the second button from the top.<br><br>" +
+	"Swap ViewBoxes by dragging the first button from the top.<br><br>" +
+	"Add and remove ViewBox columns and rows by clicking on triangle " + 
+	"buttons on the right and bottom modal borders.<br><br>";
+	"Click [IMAGE] for full screen viewing.<br><br>";
+	"Click [IMAGE] for popup viewing.<br><br>";
+
+    
+    //
+    // Add text and render
+    //
+    this.helpOverlay_.addText(helpText);
+
+    //
+    // Classes
+    //
+
+    goog.dom.classes.add(this.helpOverlay_.getElement(), 
+			 this.constructor.CSS.HELPOVERLAY);
+
+    goog.dom.classes.add(this.helpOverlay_.getTextElements()[0], 
+			 this.constructor.CSS.HELPOVERLAY_TEXT);
+    
+
+ 
+    this.helpOverlay_.render(this.viewFrameElt_);
+
+
+    //
+    // Toggle fades
+    // 
+
+
+    this.createToggleButton_(false, xiv.ui.ViewBox.CSS.BUTTON_HELPTOGGLE,
+	'Help Overlay', function(e){
+	    if (e.target.isChecked()) {
+		this.helpOverlay_.getElement().
+		    style.visibility = 'visible';
+		nrg.fx.fadeIn(this.helpOverlay_.getElement(), 
+			       200,  function(){
+				      this.helpOverlay_.getElement().
+					  style.visibility = 'visible';
+			       }.bind(this));
+	    } else {
+		nrg.fx.fadeOut(this.helpOverlay_.getElement(), 
+			       200,  function(){
+				      this.helpOverlay_.getElement().
+					  style.visibility = 'hidden';
+			      }.bind(this));
+
+	    }
+	}.bind(this));
+
+    
 }
 
 
@@ -1766,7 +1852,6 @@ xiv.ui.ViewBox.prototype.clearToggleMenu_ = function(){
 xiv.ui.ViewBox.prototype.initToggleMenu_ = function(){
     this.addMenu_left_();
     this.create3DRenderToggle_();
-    this.createInfoToggle_();
     this.createCrosshairToggle_();
     this.createHelpToggle_();
 }
@@ -2049,6 +2134,19 @@ xiv.ui.ViewBox.prototype.updateStyle_Renderer_ = function () {
  */
 xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
     
+    //
+    // Help Overlay
+    //
+    if (goog.isDefAndNotNull(this.helpOverlay_)){
+	this.helpOverlay_.disposeInternal();
+    }
+
+    //
+    // Info Overlay
+    //
+    if (goog.isDefAndNotNull(this.infoOverlay_)){
+	this.infoOverlay_.disposeInternal();
+    }
 
     // 2D Controllers
     if (goog.isDefAndNotNull(this.Controllers2D_)){

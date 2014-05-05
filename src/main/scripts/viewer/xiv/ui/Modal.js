@@ -1194,9 +1194,11 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
     delete this.buttons_;
 
     // ViewBoxHandler_
-    goog.events.removeAll(this.ViewBoxHandler_);
-    this.ViewBoxHandler_.disposeInternal();
-    delete this.ViewBoxHandler_;
+    if (goog.isDefAndNotNull(this.ViewBoxHandler_)){
+	goog.events.removeAll(this.ViewBoxHandler_);
+	this.ViewBoxHandler_.disposeInternal();
+	delete this.ViewBoxHandler_;
+    }
 
     // Zip Tabs
     goog.events.removeAll(this.ProjectTab_);

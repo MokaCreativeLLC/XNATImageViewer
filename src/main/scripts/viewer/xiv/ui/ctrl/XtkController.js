@@ -457,6 +457,8 @@ xiv.ui.ctrl.XtkController.prototype.add_visible = function(xObj) {
 xiv.ui.ctrl.XtkController.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
+    this[xiv.ui.ctrl.XtkController.OBJ_KEY] = null;
+
     //
     //  subControllers
     //

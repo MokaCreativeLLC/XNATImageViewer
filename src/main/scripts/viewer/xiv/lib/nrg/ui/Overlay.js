@@ -156,7 +156,6 @@ nrg.ui.Overlay.prototype.addImage = function(opt_src) {
 
 /**
  * @param {string=} opt_text The text for this
- * @return {Element} The image object.
  * @public
  */
 nrg.ui.Overlay.prototype.addText = function(opt_text) {
@@ -180,6 +179,15 @@ nrg.ui.Overlay.prototype.addText = function(opt_text) {
 }
 
 
+
+
+/**
+ * @return {Array.<Element>} The text elements.
+ * @public
+ */
+nrg.ui.Overlay.prototype.getTextElements = function() {
+    return this.texts_;
+}
 
 
 /**

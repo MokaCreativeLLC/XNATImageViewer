@@ -29,20 +29,13 @@ goog.require('nrg.ui.Component');
  * be in use.
  *
  * @constructor
- * @extends {nrg.ui.Component}
+ * @extends {nrg.ui.Overlay}
  */
 goog.provide('xiv.ui.InfoWidget');
 xiv.ui.InfoWidget = function () {
     goog.base(this);
-
-    /**
-     * @private
-     * @type {gxnat.vis.ViewableTree} 
-     */ 
-    this.viewableData_;
-
 }
-goog.inherits(xiv.ui.InfoWidget, nrg.ui.Component);
+goog.inherits(xiv.ui.InfoWidget, nrg.ui.Overlay);
 goog.exportSymbol('xiv.ui.InfoWidget', xiv.ui.InfoWidget);
 
 
@@ -60,28 +53,7 @@ xiv.ui.InfoWidget.prototype.ID_PREFIX =  'xiv.ui.InfoWidget';
  * @enum {string}  
  * @const
  */ 
-xiv.ui.InfoWidget.CSS_PREFIX = {
-
-
-}
-
-
-
-/**
- * Method that determines whether to use the argument 
- * argument Object to create Dicom-informational tabs
- * or Slicer-informational tabs.
- *
- * @param {!gxnat.viewableProperties} ViewableTree The properties
- *    to determine which tab to create.
- * @return {!Element} The tab as a div element.
- * @public
- */
-xiv.ui.InfoWidget.prototype.createInfoTabContents = function (ViewableTree) {	
-    return (ViewableTree.getCategory().toLowerCase() === 'slicer') ? 
-	this.createSlicerTab_(ViewableTree) : 
-	this.createDicomTab_(ViewableTree);
-}
+xiv.ui.InfoWidget.CSS_PREFIX = {}
 
 
 
@@ -100,7 +72,8 @@ xiv.ui.InfoWidget.prototype.createInfoTabContents = function (ViewableTree) {
  * @param {!string} value The value of the label text.
  * @return {Element} The label-value pair as a DOM element.
  */
-xiv.ui.InfoWidget.prototype.createLabelValuePair_ = function(parent, label, value) {
+xiv.ui.InfoWidget.prototype.createLabelValuePair_ = 
+function(parent, label, value) {
 
 
     var lab_ = goog.dom.createDom("div", {
@@ -293,7 +266,8 @@ xiv.ui.InfoWidget.prototype.createSlicerTab_ = function(xnatProperties) {
 	currLabel = key['label'];
 	currValue = key['value'];
 	currTop = prevBottom + 6;
-	labelValuePair = this.createLabelValuePair_(contents, currLabel, currValue);
+	labelValuePair = this.createLabelValuePair_(contents, 
+						    currLabel, currValue);
 	//nrg.dom.debug(labelValuePair);
 
 
@@ -304,7 +278,8 @@ xiv.ui.InfoWidget.prototype.createSlicerTab_ = function(xnatProperties) {
 	nrg.style.setStyle(labelValuePair, {'top': currTop});
 	goog.array.forEach(highImportanceKeys, function(highImportanceKey){
 	    if (currLabel === highImportanceKey) {
-		goog.dom.classes.add(labelValuePair, xiv.ui.InfoWidget.TABCONTENT_INFO_HIGHIMPORTANCE_CLASS);
+		goog.dom.classes.add(labelValuePair, 
+		xiv.ui.InfoWidget.TABCONTENT_INFO_HIGHIMPORTANCE_CLASS);
 	    }
 	})
 
@@ -312,7 +287,8 @@ xiv.ui.InfoWidget.prototype.createSlicerTab_ = function(xnatProperties) {
 	//
 	// Calculate the hieghts of the label/value pairs.
 	//
-	currDims = nrg.style.getComputedStyle(labelValuePair, ['height', 'top']);
+	currDims = nrg.style.getComputedStyle(labelValuePair, 
+					      ['height', 'top']);
 	prevBottom = 0;
 	for (dim in currDims){ 
 	    prevBottom += nrg.convert.toInt(currDims[dim]); 

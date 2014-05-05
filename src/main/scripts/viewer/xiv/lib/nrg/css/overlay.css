@@ -4,7 +4,7 @@
 
 
 .nrg-ui-overlay {
-    position: fixed;
+    position: absolute;
     left: 30%;
     top: 35%;
     width: 40%;
@@ -14,7 +14,6 @@
     z-index: 9;
     font-size: 12px;		
     font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
-    padding: 40px;
 }
 
 

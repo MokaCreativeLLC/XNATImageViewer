@@ -245,6 +245,7 @@ goog.addDependency('../../../../ui/ViewableGroupMenu.js',
 ]);
 
 
+
 goog.addDependency('../../../../ui/ViewBox.js', 
 ['xiv.ui.ViewBox'], [
     'goog.string',
@@ -260,7 +261,7 @@ goog.addDependency('../../../../ui/ViewBox.js',
     'xiv.ui.layouts.LayoutHandler',
     'xiv.vis.XtkEngine',
     'xiv.ui.ProgressBarPanel',
-    //'xiv.ui.SlicerViewMenu'
+    'nrg.ui.Overlay'
 ]);
 
 
