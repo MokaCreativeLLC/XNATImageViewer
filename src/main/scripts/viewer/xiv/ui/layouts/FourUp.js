@@ -163,7 +163,7 @@ xiv.ui.layouts.FourUp.prototype.updateStyle = function(){
     this.scaleFrames_();
 
     //
-    // IMPORTANT: this two must come first
+    // IMPORTANT: these two must come first
     //
     this.updateStyle_Z();
     this.updateStyle_V();
