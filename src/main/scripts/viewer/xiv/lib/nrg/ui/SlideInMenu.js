@@ -381,7 +381,7 @@ nrg.ui.SlideInMenu.prototype.setMenuItemIconSrc = function(title, src) {
  * @public
  */
 nrg.ui.SlideInMenu.prototype.getIndexFromTitle = function(title) {
-    window.console.log(this.menuItems_);
+    //window.console.log(this.menuItems_);
     return goog.object.getKeys(this.menuItems_).indexOf(title);
 }
 
@@ -572,7 +572,7 @@ nrg.ui.SlideInMenu.prototype.setHighlightedIndex = function(index) {
     //
     // Highlight the menuitem.
     //
-    window.console.log(this.menuItems_, index, this.getTitleFromIndex(index));
+    //window.console.log(this.menuItems_, index, this.getTitleFromIndex(index));
     goog.dom.classes.add(
 	this.menuItems_[this.getTitleFromIndex(index)].CONTENT, 
 		nrg.ui.SlideInMenu.CSS.MENUITEM_HIGHLIGHT);
@@ -729,7 +729,7 @@ function(indexOrTitle, opt_deactivateOthers) {
  * @private
  */
 nrg.ui.SlideInMenu.prototype.dispatchSelected_ = function(index){
-    window.console.log("DISPATCH SELECTED");
+    //window.console.log("DISPATCH SELECTED");
     this.dispatchEvent({
 	type: nrg.ui.SlideInMenu.EventType.ITEM_SELECTED,
 	index: index,

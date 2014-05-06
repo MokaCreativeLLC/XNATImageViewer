@@ -89,7 +89,7 @@ xiv.ui.ctrl.XtkController.prototype.add_displayAll = function(xObj) {
     displayAll.setFolders([xiv.ui.ctrl.XtkController.getObjectCategory(xObj)])
 
     // store
-    window.console.log("***********", displayAll);
+    //window.console.log("***********", displayAll);
     this.masterControllers.push(displayAll);
 
     // set defaults
@@ -112,7 +112,7 @@ xiv.ui.ctrl.XtkController.prototype.add_masterOpacity = function(xObj) {
 	xiv.ui.ctrl.XtkController.getObjectCategory(xObj)]);
 
     // store
-    window.console.log("***********", masterOpacity);
+    //window.console.log("***********", masterOpacity);
     this.masterControllers.push(masterOpacity);
 
     // set defaults

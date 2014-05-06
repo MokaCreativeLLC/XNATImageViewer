@@ -196,7 +196,7 @@ function(parentElement) {
     goog.events.listen(this.inputBox_, goog.events.EventType.INPUT, 
 		      this.onInput_.bind(this))
 
-    window.console.log("INPUT BOX", this.inputBox_, this.inputBox_.parentNode);
+    //window.console.log("INPUT", this.inputBox_, this.inputBox_.parentNode);
     this.updateAll_();
 }
 

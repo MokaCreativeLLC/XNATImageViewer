@@ -397,12 +397,12 @@ xiv.vis.XtkPlane.prototype.init = function(containerElt) {
 xiv.vis.XtkPlane.prototype.add = function(xObj) {
 
     if (!this.isOn_){
-	window.console.log('Not adding xObj to Plane' + this.orientation);
+	//window.console.log('Not adding xObj to Plane' + this.orientation);
 	return;
     }
 
     if(xObj['isSelectedVolume'] == true) {
-	console.log("add selected vol", xObj);
+	//console.log("add selected vol", xObj);
 	this.currVolume_ = xObj;
     }
     this.xObjs_.push(xObj);
@@ -521,7 +521,7 @@ xiv.vis.XtkPlane.prototype.restoreXObjectsToRenderer_ = function() {
  * @private
  */
 xiv.vis.XtkPlane.prototype.restoreCamera_ = function() {
-    window.console.log('restore camera!');
+    //window.console.log('restore camera!');
     if (goog.isDefAndNotNull(this.camera_)){
 	this.setCamera(this.camera_);
     }    
@@ -532,8 +532,8 @@ xiv.vis.XtkPlane.prototype.restoreCamera_ = function() {
  * @private
  */
 xiv.vis.XtkPlane.prototype.restoreBackground_ = function() {
-    window.console.log('restore background!');
-    window.console.log(this.background_);
+    //window.console.log('restore background!');
+    //window.console.log(this.background_);
     if (goog.isDefAndNotNull(this.background_)){
 	this.setBackground(this.background_);
     }    
@@ -546,7 +546,7 @@ xiv.vis.XtkPlane.prototype.restoreBackground_ = function() {
  */
 xiv.vis.XtkPlane.prototype.render = function() {
     if (!this.isOn_) { 
-	window.console.log('Plane' + this.orientation + ' is switched off.');
+	//window.console.log('Plane' + this.orientation + ' is switched off.');
 	return; 
     };
 
@@ -608,7 +608,7 @@ xiv.vis.XtkPlane.prototype.dispose = function() {
     // progress timer
     //
     if (goog.isDefAndNotNull(this.progressTimer_)){
-	window.console.log(this.progressTimer_);
+	//window.console.log(this.progressTimer_);
 	if (goog.isDefAndNotNull(this.progressTimer_.dispose)){
 	    this.progressTimer_.stop();
 	    this.progressTimer_.dispose();

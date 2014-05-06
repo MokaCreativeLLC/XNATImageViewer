@@ -170,7 +170,6 @@ nrg.ui.ZippyTree.prototype.customInsertMethod_ ;
  * @private
  */
 nrg.ui.ZippyTree.prototype.setCustomInsertMethod = function(method){
-    window.console.log('thus custom insert method');
     this.customInsertMethod_ = method;
 };
 

@@ -622,19 +622,16 @@ xiv.getViewableTreesFromXnat =
 function (url, opt_runCallback, opt_doneCallback) {
     var typeCount = goog.object.getCount(xiv.VIEWABLE_TYPES);
     var typesGotten = 0;
-
     goog.object.forEach(xiv.VIEWABLE_TYPES, function(vType){
       gxnat.vis.AjaxViewableTree.getViewableTrees(
 	  url, vType, opt_runCallback, function(){
 	  typesGotten++;
 	  if (typesGotten === typeCount){
-	      
-	      window.console.log("\n\n\nDONE GETTING VIEWABLES!\n\n\n");
-
+	      //window.console.log("\n\n\nDONE GETTING VIEWABLES!\n\n\n");
 	      if (opt_doneCallback) { 
 		  opt_doneCallback(); 
 	      }
 	 }
       })
-    });
+    })
 }

@@ -165,7 +165,7 @@ xiv.ui.ctrl.XtkControllerTree.prototype.getControllers2D = function() {
 xiv.ui.ctrl.XtkControllerTree.prototype.createControllers = 
 function(xObj, renderProps) {
 
-    window.console.log(xObj);
+    //window.console.log(xObj);
     if (xObj instanceof X.volume) {
 	if (!goog.isDefAndNotNull(this.VolumeController2D_)){
 	    this.VolumeController2D_ = new xiv.ui.ctrl.VolumeController2D();
@@ -183,7 +183,7 @@ function(xObj, renderProps) {
     }
 
     else if (xObj instanceof X.sphere) {
-	window.console.log('\n\n\nANNOT!!!!!');
+	//window.console.log('\n\n\nANNOT!!!!!');
 	if (!goog.isDefAndNotNull(this.AnnotationsController3D_)){
 	    this.AnnotationsController3D_ = 
 		new xiv.ui.ctrl.AnnotationsController3D();

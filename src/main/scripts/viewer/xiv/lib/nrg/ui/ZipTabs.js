@@ -250,16 +250,16 @@ nrg.ui.ZipTabs.prototype.onTabClicked_ = function(event, opt_dur) {
  * @private
  */
 nrg.ui.ZipTabs.prototype.onTabClickedTop_ = function(event, opt_dur) {
-    window.console.log(this.currSize.height , this.tabSize.height,  
-	nrg.ui.ZipTabs.BOUND_THRESHOLD_HORIZ);
+    //window.console.log(this.currSize.height , this.tabSize.height,  
+	//nrg.ui.ZipTabs.BOUND_THRESHOLD_HORIZ);
     if (Math.abs(this.currSize.height - this.tabSize.height) <= 
 	nrg.ui.ZipTabs.BOUND_THRESHOLD_HORIZ) {
-	window.console.log("SLIDE MAX");
+	//window.console.log("SLIDE MAX");
 	this.setActive(this.lastActiveTab_);
 	this.Resizable_.slideToLimits('TOP', 'MAX', opt_dur);
 
     } else if (this.getLastActiveTab() == this.getPreviousActiveTab()) {
-	window.console.log("SLIDE MIN");
+	//window.console.log("SLIDE MIN");
 	this.Resizable_.slideToLimits('TOP', 'MIN', opt_dur);
     }
 }

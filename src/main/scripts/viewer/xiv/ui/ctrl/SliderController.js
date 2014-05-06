@@ -144,7 +144,7 @@ xiv.ui.ctrl.SliderController.prototype.dispatchComponentEvent = function(){
     var val = this.getComponent().getValue().toFixed(2);
     this.valueInput_.value = val;
 
-    window.console.log("SLIDER", val);
+    //window.console.log("SLIDER", val);
     this.dispatchEvent({
 	type: xiv.ui.ctrl.XtkController.EventType.CHANGE,
 	value: val

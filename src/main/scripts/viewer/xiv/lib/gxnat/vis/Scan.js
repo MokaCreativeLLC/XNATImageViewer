@@ -94,7 +94,7 @@ gxnat.vis.Scan.prototype.getSessionInfo = function() {
  */
 gxnat.vis.Scan.prototype.addFiles = function(fileName) {
 
-    window.console.log("ADD FILES!");
+    //window.console.log("ADD FILES!");
     if (this.ViewableGroups.length == 0){
 	var scanGroup = new gxnat.vis.ViewableGroup();
 	scanGroup.setTitle('scan');

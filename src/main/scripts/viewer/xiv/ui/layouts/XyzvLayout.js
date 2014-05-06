@@ -265,7 +265,7 @@ xiv.ui.layouts.XyzvLayout.prototype.setInteractors = function(interactors) {
 	    goog.dom.appendChild(LayoutFrame.getElement(), 
 				 interactors[key].FRAME_DISPLAY.getElement());
 	    
-	    window.console.log(interactors[key].FRAME_DISPLAY.getElement())
+	    //window.console.log(interactors[key].FRAME_DISPLAY.getElement())
 
 	    //
 	    // Crosshairs

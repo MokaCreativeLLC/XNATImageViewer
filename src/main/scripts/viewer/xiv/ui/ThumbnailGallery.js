@@ -256,7 +256,6 @@ xiv.ui.ThumbnailGallery.prototype.clearDragDropGroups_ = function(){
  * @private
  */
 xiv.ui.ThumbnailGallery.prototype.initDragDrop_ = function(){
-    window.console.log("INIT DRAG DROP");
 
     this.thumbnailDragDropGroup_ =  new goog.fx.DragDropGroup();
     this.thumbnailTargetGroup_ = new goog.fx.DragDropGroup();

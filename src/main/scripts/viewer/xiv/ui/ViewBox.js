@@ -452,23 +452,20 @@ xiv.ui.ViewBox.prototype.onRendering_ = function(e){
     //window.console.log("ON RENDERING");
     if (e.value > .99 && !this.progFadeOut_){
 	
-	window.console.log("\n\n2DONE!!");
 	this.progFadeOut_ = true;
 	this.ProgressBarPanel_.setValue(100);
 
 	this.progTimer_ = goog.Timer.callOnce(function() {
 
-	    window.console.log("DONE!!");
 	    
 	    this.progTimer_ = null;
 	    this.onRenderEnd_();
 
-	    this.hideSubComponent_(this.ProgressBarPanel_, 400, function(){
-		window.console.log("HIDE ONCE!");
+	    this.hideSubComponent_(this.ProgressBarPanel_, 100, function(){
 		this.progFadeOut_ = null;
 	    }.bind(this));
 
-	}.bind(this), 1700); // check again in 500 ms
+	}.bind(this), 100);
 
 
 	
@@ -501,8 +498,7 @@ function(slider, volume) {
  */
 xiv.ui.ViewBox.prototype.toggleCrosshairsVisible_ =  
 function(planeOr, visible) {
-
-    window.console.log("TOGGLE CROSSHAIRS", planeOr, visible);
+    //window.console.log("TOGGLE CROSSHAIRS", planeOr, visible);
     this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle(planeOr)
     [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].toggleVisible(visible);
     
@@ -594,7 +590,7 @@ function(slider, volume) {
 	getLayoutFrameByTitle('X');
     var yFrame = this.LayoutHandler_.getCurrentLayout().
 	getLayoutFrameByTitle('Y');
-    window.console.log("SLIDER Z");
+    //window.console.log("SLIDER Z");
     // X Horizontal crosshair
     if (goog.isDefAndNotNull(xFrame) &&
 	goog.isDefAndNotNull(xFrame
@@ -603,7 +599,7 @@ function(slider, volume) {
 	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].horizontal.style.top =
 	    this.Renderer_.getPlaneX().getRenderer().getHorizontalSliceY(
 		volume[ind], false).toString() + 'px';
-	window.console.log("SLIDER Z x");
+	//window.console.log("SLIDER Z x");
     }
 
     // Y HORIZONTAL crosshair
@@ -614,7 +610,7 @@ function(slider, volume) {
 	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].horizontal.style.top =
 	    this.Renderer_.getPlaneY().getRenderer().getHorizontalSliceY(
 		volume[ind], false).toString() + 'px';
-	window.console.log("SLIDER Z y");
+	//window.console.log("SLIDER Z y");
     }
 
 }
@@ -836,7 +832,7 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 			   xiv.vis.XtkEngine.EventType.SHIFT_DOWN,
 	function(e){
 
-	    window.console.log("SHIFT DOWN");
+	    //window.console.log("SHIFT DOWN");
 	    //this.toggleCrosshairsVisible_(e.orientation, false);
 	    this.hideInteractors_();
 	    this.syncSlidersToVolume_();
@@ -856,7 +852,7 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 	goog.events.listen(Plane.getRenderer(), 
 			   xiv.vis.XtkEngine.EventType.SHIFT_UP,
 	function(e){
-	    window.console.log("SHIFT UP");
+	    //window.console.log("SHIFT UP");
 	    this.showInteractors_();
 	    this.syncSlidersToVolume_();
 
@@ -954,7 +950,7 @@ xiv.ui.ViewBox.prototype.createControllerTabs_ = function() {
     this.Controllers3D_ = this.generateControllers_(this.Controllers3D_, 
 	this.Renderer_.getControllers3D.bind(this.Renderer_));
 
-    window.console.log(this.Renderer_.getControllers3D());
+    //window.console.log(this.Renderer_.getControllers3D());
     if (goog.isDefAndNotNull(this.Controllers3D_)){
 	// Add to tab
 	this.ZipTabs_.setTabPageContents('3D', 
@@ -1042,7 +1038,7 @@ xiv.ui.ViewBox.prototype.onLayoutResize_ = function(e){
 	interactorSet = interactors[planeOr];
 	slider = interactorSet.SLIDER;
 	currVol = Plane.getVolume();
-	window.console.log(slider, currVol);
+	//window.console.log(slider, currVol);
 	this.syncVolumeToSlider_(slider, currVol);
 	this.syncCrosshairsToSlider_(slider, currVol);
 	
@@ -1069,7 +1065,7 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
     // Store tree
     //
     if (!goog.array.contains(this.ViewableTrees_, ViewableTree)){
-	window.console.log('\n\n\n\nVIEWABLE TREE', ViewableTree);
+	//window.console.log('\n\n\n\nVIEWABLE TREE', ViewableTree);
 	this.ViewableTrees_.push(ViewableTree);	
     }
 
@@ -1683,7 +1679,7 @@ xiv.ui.ViewBox.prototype.createInfoToggle_ = function(){
 	(goog.isDefAndNotNull(this.ViewableTrees_[0].getSessionInfo))) {
 	goog.object.forEach(this.ViewableTrees_[0].getSessionInfo(), 
 			    function(value, key){
-	    window.console.log(value);
+	    //window.console.log(value);
 	    infoText += value['label'] + ': ' + value['value'] + '<br>';
 	})
     }
@@ -1940,7 +1936,7 @@ xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
 
     // Set the layout when a menu item is clicked.
 
-    window.console.log(nrg.ui.SlideInMenu.EventType.ITEM_SELECTED);
+    //window.console.log(nrg.ui.SlideInMenu.EventType.ITEM_SELECTED);
     goog.events.listen(this.LayoutMenu_, 
 	nrg.ui.SlideInMenu.EventType.ITEM_SELECTED, 
 		       this.onMenuItemSelected_.bind(this));
@@ -1953,9 +1949,9 @@ xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
 * @private
 */
 xiv.ui.ViewBox.prototype.onMenuItemSelected_ = function(e) {
-    window.console.log("ITEM SELECTED!", e.title, e.index);
-    window.console.log('trigger LayoutHandler_ here!');
-    window.console.log("SET LAYOUT HERE?");
+    //window.console.log("ITEM SELECTED!", e.title, e.index);
+    //window.console.log('trigger LayoutHandler_ here!');
+    //window.console.log("SET LAYOUT HERE?");
     this.LayoutHandler_.setLayout(e.title);
 }
 
@@ -1980,7 +1976,7 @@ xiv.ui.ViewBox.prototype.initViewableGroupMenu_ = function(){
     goog.events.listen(this.ViewableGroupMenu_, 
 		       xiv.ui.ViewableGroupMenu.EventType.VIEWSELECTED, 
 		       function(e){
-			   window.console.log("VIEW SELECT", e);
+			   //window.console.log("VIEW SELECT", e);
 
 			   this.load(this.ViewableGroups_[
 			       goog.getUid(e.thumbnail)], false)
@@ -2062,7 +2058,7 @@ xiv.ui.ViewBox.prototype.setTabsEvents_ = function () {
  * @private
  */
 xiv.ui.ViewBox.prototype.onTabsResize_ = function() {
-    window.console.log('\n\non tabs resize!');
+    //window.console.log('\n\non tabs resize!');
     this.updateStyle();
 }
 
@@ -2094,7 +2090,7 @@ xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
  */
 xiv.ui.ViewBox.prototype.updateStyle_ZipTabs_ = function () {
     if (!goog.isDefAndNotNull(this.ZipTabs_)) { return };
-    window.console.log("\n%\n%\n%\n\n\n&&&&ZIP TABS");
+    //window.console.log("\n%\n%\n%\n\n\n&&&&ZIP TABS");
     this.ZipTabs_.updateStyle();
 }
 
@@ -2107,7 +2103,7 @@ xiv.ui.ViewBox.prototype.updateStyle_ZipTabs_ = function () {
  */
 xiv.ui.ViewBox.prototype.updateStyle_LayoutHandler_ = function () {
     if (!goog.isDefAndNotNull(this.LayoutHandler_)) { return };
-     window.console.log("\n%\n%\n%\n\n\n&&&&LAYOUT HANDLER");
+     //window.console.log("\n%\n%\n%\n\n\n&&&&LAYOUT HANDLER");
     //this.LayoutHandler_.getElement().style.height = 'calc(100% - 30px)';
     this.LayoutHandler_.getElement().style.height = 
 	this.ZipTabs_.getResizable().getHandle('TOP').style.top;

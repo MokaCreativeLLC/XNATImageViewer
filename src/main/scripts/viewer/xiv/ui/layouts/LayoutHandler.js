@@ -142,7 +142,7 @@ xiv.ui.layouts.LayoutHandler.CSS_SUFFIX = {}
  * @type {!number}
  * @const
  */
-xiv.ui.layouts.LayoutHandler.ANIM_TIME = 800;
+xiv.ui.layouts.LayoutHandler.ANIM_TIME = 500;
 
 
 
@@ -231,7 +231,7 @@ function(planeTitle){
  * @public
  */
 xiv.ui.layouts.LayoutHandler.prototype.updateInteractors = function() {
-    window.console.log("UPDATE INTERACTORS");
+    //window.console.log("UPDATE INTERACTORS");
     if (goog.isDefAndNotNull(this.masterLayout_)){
 	this.masterLayout_.updateInteractors();
     }
@@ -349,28 +349,6 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutResize_ = function(e) {
 
 
 
-/**
- * @param {number=}
- * @return {Object}
- * @private
- */ 
-xiv.ui.layouts.LayoutHandler.getTransitionStyles_ = function(elt) {
-    var size = goog.style.getSize(elt);
-    var pos = goog.style.getPosition(elt);
-    return {	
-	'left': pos.x,
-	'top': pos.y,
-	'width': size.width,
-	'height': size.height,
-	'opacity': parseInt(elt.style.opacity, 10),
-	'background-color': elt.style.backgroundColor,
-	'background': elt.style.background,
-	'color': elt.style.color,
-	'z-index': parseInt(elt.style.zIndex, 10)
-    }
-}
-
-
 
 /**
  * @param {number=} opt_time The optional time to animate.  Defaults to
@@ -391,7 +369,8 @@ xiv.ui.layouts.LayoutHandler.prototype.switchLayout = function(opt_time) {
 
     // If no previous layout or opt_time is zero, simply cut to the chase.
     if (opt_time == 0 || !this.prevLayoutTitle_) { 
-	this.showCurrentLayout();
+	this.setLayoutVisible_(this.currLayoutTitle_);
+	this.setLayoutOpacity_(this.currLayoutTitle_, 1);
 	return;
     }
 
@@ -467,8 +446,25 @@ function(opt_duration) {
 	getLayoutFrames();
     var transitionElt;
 
+    //
+    // We need to render the current layout to get an accurate idea
+    // of the dimensions to generate accurate transition animations.
+    //
+    this.setLayoutVisible_(this.currLayoutTitle_);
+    this.setLayoutOpacity_(this.currLayoutTitle_, 0);
+    
+    //
+    // Clear stored dims
+    //
+    if (goog.isDefAndNotNull(this.asIsDims_)){
+	goog.object.clear(this.asIsDims_);
+    }
+    if (goog.isDefAndNotNull(this.toBeDims_)){
+	goog.object.clear(this.toBeDims_);
+    }
     this.asIsDims_ = {};
     this.toBeDims_ = {};
+
 
     //
     // Loop the previous layout frames
@@ -520,6 +516,9 @@ function(opt_duration) {
 		this.asIsDims_[key] = transitionDims.asIs;
 		this.toBeDims_[key] = transitionDims.toBe;
 
+		//window.console.log("new elt", 
+		//	newLayoutFrames[key].getElement().style.height);
+		//window.console.log("TRANS", key, this.toBeDims_[key]);
 
 
 	    //
@@ -537,6 +536,7 @@ function(opt_duration) {
     //
     this.setTransitionElementChildren_();
 
+    //window.console.log('TO BE DIMS:', this.toBeDims_);
     //
     // run animation
     //
@@ -604,7 +604,7 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
     goog.object.forEach(newLayoutFrames, function(newLayoutFrame, key){
 	if (!goog.isDefAndNotNull(this.planeChildren_[key])){ return };
 	goog.array.forEach(this.planeChildren_[key], function(child){
-	    goog.dom.append(newLayoutFrame.getElement(), child);
+	    goog.dom.appendChild(newLayoutFrame.getElement(), child);
 	})
     }.bind(this));
 
@@ -625,8 +625,11 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
     //
     // Transfer the interactors over
     //
-    this.Layouts_[this.prevLayoutTitle_].transferInteractors(
-	this.Layouts_[this.currLayoutTitle_])
+    if (this.Layouts_[this.currLayoutTitle_] !==
+	this.masterLayout_) {
+	this.Layouts_[this.currLayoutTitle_].setInteractors(
+	    this.getMasterInteractors());
+    }
 
 
     //
@@ -640,6 +643,17 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
     this.layoutChanging_ = false;
 
     //
+    // Show the new (current) layout
+    //
+    this.setLayoutVisible_(this.currLayoutTitle_);
+    this.setLayoutOpacity_(this.currLayoutTitle_, 1);
+    
+    //
+    // Dispose the transition dims
+    //
+    this.disposeTransitionDims_();
+
+    //
     // Dispatch event
     //
     this.dispatchEvent({
@@ -648,29 +662,48 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
     })
 
     //
-    // Show the new (current) layout
-    //
-    this.showCurrentLayout()
-
-    
-    //
-    // Dispose the transition dims
-    //
-    this.disposeTransitionDims_();
+    // For safety
+    // 
+    this.updateStyle();
 }
 
 
 
 /**
- * @public
+ * @param {!string} layoutKey The layout key to apply the changes to.
+ * @param {!number} op
+ * @private
  */ 
-xiv.ui.layouts.LayoutHandler.prototype.showCurrentLayout = function() {
-    goog.object.forEach(this.Layouts_, function(layout, title){
-	layout.getElement().style.visibility = 
-	    (title == this.currLayoutTitle_) ? 'visible' : 'hidden';
-	layout.updateStyle();
-    }.bind(this))
+xiv.ui.layouts.LayoutHandler.prototype.setLayoutOpacity_ = 
+function(layoutKey, op) {
+    this.Layouts_[layoutKey].getElement().style.opacity = op;
+    this.Layouts_[layoutKey].updateStyle();
 }
+
+
+
+/**
+ * @param {!string} layoutKey The layout key to apply the changes to.
+ * @private
+ */ 
+xiv.ui.layouts.LayoutHandler.prototype.setLayoutVisible_ = 
+function(layoutKey) {
+    this.Layouts_[layoutKey].getElement().style.visibility = 'visible';
+    this.Layouts_[layoutKey].updateStyle();
+}
+
+
+
+/**
+ * @param {!string} layout The layout key to apply the changes to.
+ * @private
+ */ 
+xiv.ui.layouts.LayoutHandler.prototype.setLayoutHidden_ = 
+function(layoutKey) {
+    this.Layouts_[layoutKey].getElement().style.visibility = 'hidden';
+    this.Layouts_[layoutKey].updateStyle();
+}
+
 
 
 
@@ -691,7 +724,7 @@ xiv.ui.layouts.LayoutHandler.prototype.hideAllLayouts = function() {
  */
 xiv.ui.layouts.LayoutHandler.prototype.disposeTransitionElts_ = function() {
     goog.object.forEach(this.transitionElts_, function(elt){
-	window.console.log(goog.dom.getChildren(elt));
+	//window.console.log(goog.dom.getChildren(elt));
 	goog.dom.removeNode(elt);
 	delete elt;
     })
@@ -710,8 +743,10 @@ function(layout){
     goog.object.forEach(layout.getLayoutFrames(), function(plane){
 	goog.events.listen(plane.getElement(), goog.events.EventType.DBLCLICK, 
 			   function(e){
-			   window.console.log("NEED TO IMPLEMENT PLANE CLICK!",
-					      e.currentTarget);
+			       //
+			       // TODO: Consider implement layout change on 
+			       // plane double click
+			       //
 			   })
 
     })
@@ -750,8 +785,8 @@ xiv.ui.layouts.LayoutHandler.prototype.updateStyle = function(){
     
     var currLayout = this.Layouts_[this.currLayoutTitle_];
 
-    window.console.log("lH update", 
-		       goog.object.getCount(currLayout.getLayoutFrames()))
+    //window.console.log("lH update", 
+    //goog.object.getCount(currLayout.getLayoutFrames()))
     if (goog.object.getCount(currLayout.getLayoutFrames()) > 1){
 	this.Layouts_[this.currLayoutTitle_].updateStyle();
     }

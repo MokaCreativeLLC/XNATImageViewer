@@ -474,7 +474,7 @@ nrg.ui.Slider.prototype.removeTrackHoverClasses_ =  function(e){
  * @private
  */
 nrg.ui.Slider.prototype.onThumbMouseOver_ =  function(e){
-    window.console.log("THUMB MOUSE OVER!!");
+    //window.console.log("THUMB MOUSE OVER!!");
     this.addThumbHoverClasses_();
     this.addTrackHoverClasses_();
 }

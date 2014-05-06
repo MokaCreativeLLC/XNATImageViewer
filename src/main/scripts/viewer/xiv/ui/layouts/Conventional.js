@@ -311,7 +311,7 @@ xiv.ui.layouts.Conventional.prototype.onLayoutFrameResize_V = function(e){
 */
 xiv.ui.layouts.Conventional.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
-    window.console.log('Conventional update', this.currSize);
+    //window.console.log('Conventional update', this.currSize);
     //this.calcDims();
     this.updateStyle_V();
     this.updateXyzHeights_();
@@ -392,14 +392,13 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_XY_ = function(plane) {
     goog.style.setHeight(rightHandle, 
 			 this.currSize.height - vHandle.handlePos.y);
 
-    window.console.log("HEIGHT", this.currSize.height , vHandle.handlePos.y);
+    //window.console.log("HEIGHT", this.currSize.height , vHandle.handlePos.y);
     //
     // Top-right handle
     //
     goog.style.setPosition(
 	this.LayoutFrames[plane].getResizable().getHandle('TOP_RIGHT'), 
-	planePos.x + planeSize.width, 
-	planePos.y);
+	planePos.x + planeSize.width, planePos.y);
     
     //
     // IMPORTANT!!

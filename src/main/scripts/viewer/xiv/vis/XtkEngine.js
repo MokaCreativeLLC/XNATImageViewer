@@ -211,7 +211,7 @@ xiv.vis.XtkEngine.prototype.setRenderPlaneEvents_ = function() {
 	goog.events.listen(Plane, 
 			   xiv.vis.XtkEngine.EventType.SHIFT_UP,
 			   function(e){
-			       window.console.log("SHIFT UP 2!");
+			       //window.console.log("SHIFT UP 2!");
 			   }.bind(this))
     }.bind(this))
 }
@@ -305,17 +305,17 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
     if (goog.isDefAndNotNull(ViewableGroup.getRenderProperties() &&
 	goog.isDefAndNotNull(ViewableGroup.getRenderProperties().annotations))){
 	this.getAnnotations_(ViewableGroup);
-	window.console.log("\n\n\n\n\n************ANNOTATIONS!!!!");
+	//window.console.log("\n\n\n\n\n************ANNOTATIONS!!!!");
 	goog.array.forEach(this.currXObjects_['spheres'], function(annot){
 
-	    window.console.log("ANNOT", annot);
+	    //window.console.log("ANNOT", annot);
 	    this.ControllerTree_.createControllers(annot);
 	}.bind(this))
     }
 
    
-    window.console.log("*********CONTROLLER TREE!!!", 
-    this.ControllerTree_, this.currXObjects_);
+    //window.console.log("*********CONTROLLER TREE!!!", 
+    //this.ControllerTree_, this.currXObjects_);
 
 
     //
@@ -360,7 +360,7 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
  */
 xiv.vis.XtkEngine.prototype.render3dPlane = function(){
     
-    window.console.log("No volumes found! Only rendering in 3D!");
+    //window.console.log("No volumes found! Only rendering in 3D!");
     this.setPrimaryRenderPlane(this.PlaneV_);
     this.PlaneV_.init();
     goog.object.forEach(this.currXObjects_, function(xObjArr, key){
@@ -397,8 +397,8 @@ xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
     // Add the selected volume
     //
     otherXObjects.push(selVol);
-    window.console.log("SELECTED VOLUME", selVol, this.primaryRenderPlane_);
-    window.console.log("OTHER X OBJECTS", otherXObjects);
+    //window.console.log("SELECTED VOLUME", selVol, this.primaryRenderPlane_);
+    //window.console.log("OTHER X OBJECTS", otherXObjects);
 
     //
     // Add objects to primary render plane
@@ -523,7 +523,7 @@ xiv.vis.XtkEngine.prototype.renderNonPrimary_ = function(xObjects){
  */
 xiv.vis.XtkEngine.prototype.getSelectedVolume = function(){
 
-    window.console.log("\n*\n*\n*\n*\n*\n*GET SELECTED VOLUME!");
+    //window.console.log("\n*\n*\n*\n*\n*\n*GET SELECTED VOLUME!");
 
     if (this.currXObjects_['volumes'].length == 0) {return};
 
@@ -535,7 +535,7 @@ xiv.vis.XtkEngine.prototype.getSelectedVolume = function(){
     for (; i<len; i++){
 	var vol = this.currXObjects_['volumes'][i];
 	if (vol['isSelectedVolume']){
-	    window.console.log("\n*\n*\n*\n*\n*\n*SELECTED VOLUME FOUND!");
+	    //window.console.log("\n*\n*\n*\n*\n*\n*SELECTED VOLUME FOUND!");
 	    return vol;
 	}
     }
@@ -543,7 +543,7 @@ xiv.vis.XtkEngine.prototype.getSelectedVolume = function(){
     //
     // Default to the first volume if no selected volume
     //
-    window.console.log("\n*\n*\n*\n*\n*\n*SELECTED VOLUME NOT FOUND!");
+    //window.console.log("\n*\n*\n*\n*\n*\n*SELECTED VOLUME NOT FOUND!");
     this.currXObjects_['volumes'][0]['isSelectedVolume'] = true;
     return this.currXObjects_['volumes'][0];
     
@@ -648,7 +648,7 @@ xiv.vis.XtkEngine.prototype.onRendering_ = function(e){
  */
 xiv.vis.XtkEngine.prototype.onRenderEnd_ = function(e){
 
-    window.console.log("\n\nON RENDER END EGINE!");
+    //window.console.log("\n\nON RENDER END EGINE!");
     this.dispatchEvent({
 	type: xiv.vis.RenderEngine.EventType.RENDER_END,
 	value: e.value
@@ -893,7 +893,7 @@ function(annotationsNode, opt_radius) {
     //annotation.opacity = annotationObj['opacity'];
     //annotation.visible = annotationObj['visible'];
     
-    window.console.log("\n\n\n\t\tANNOT", annotation);
+    //window.console.log("\n\n\n\t\tANNOT", annotation);
     return annotation;
 };
 
@@ -1046,7 +1046,7 @@ xiv.vis.XtkEngine.getViewables = function(fileCollection) {
 	basename = goog.string.path.basename(fileCollection[i]).toLowerCase();
 	ext = goog.string.path.extension(basename);
 
-	window.console.log("IS DICOM", ext, this.isDicom(ext));
+	//window.console.log("IS DICOM", ext, this.isDicom(ext));
 	//
 	// Skip if the filename starts with a period
 	//
@@ -1078,7 +1078,7 @@ xiv.vis.XtkEngine.getViewables = function(fileCollection) {
     //-------------------------	
     // Rerturn the constructed 'viewableTypes' object.
     //-------------------------	
-    window.console.log("VIEWABLE TYPES", viewableTypes);
+    //window.console.log("VIEWABLE TYPES", viewableTypes);
 
 
     //----------------
@@ -1089,7 +1089,7 @@ xiv.vis.XtkEngine.getViewables = function(fileCollection) {
 	    goog.object.remove(viewableTypes, key); 
 	}
     })
-    window.console.log("VIEWABLE TYPES - culled", viewableTypes);
+    //window.console.log("VIEWABLE TYPES - culled", viewableTypes);
     return viewableTypes
 }
 

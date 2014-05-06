@@ -356,7 +356,7 @@ gxnat.slicer.matchFileToSet = function(fileUrl, fileSet) {
 		var replaceStr = "\nWARNING - Changing the encoding chars" + 
 		    " in the following url:\n\n" + fileSet[i] + 
 		    '\n\nis now\n\n' + replacer;
-		window.console.log(replaceStr);
+		//window.console.log(replaceStr);
 	    }
 
 	    return replacer;
@@ -430,7 +430,7 @@ function(sceneView, mrmlNode, callback) {
     // Get all of the .fcsv files at hand -- O(N).
     //
     goog.array.forEach(storageFiducials, function(fidElt){
-	window.console.log("STORED ELT", fidElt.getAttribute('fileName'))
+	//window.console.log("STORED ELT", fidElt.getAttribute('fileName'))
 	//fcsvUrls.push(gxnat.slicer.getFileUrlRelativeToMrbUrl(
 	//    fidElt.getAttribute('fileName'), mrmlNode.mrbUrl))
 
@@ -657,7 +657,7 @@ gxnat.slicer.getDisplayNodeTypes = function(sceneViewDisplayableElt) {
  */
 gxnat.slicer.getFibers = function(scene) {
 
-    window.console.log("TODO: SUSPENDING GET FIBERS -- remember to turn on");
+    //window.console.log("TODO: SUSPENDING GET FIBERS -- remember to turn on");
     return null;
     
     var fancyId = '';
@@ -768,9 +768,10 @@ gxnat.slicer.getVolumes = function(sceneView) {
 			    gxnat.slicer.GENERIC_COLORTABLE_FILE;
 
 		    } else {
-			window.console.log("Need to implement method for " + 
-					   "non-generic colortable file " + 
-					   "loading");
+			//
+			// TODO: Need to implement method for
+			// non-generic colortable file loading.
+			//
 			//window.console.log(node);
 			//window.console.log(node.getAttribute('colorNodeID'));
 		    }
@@ -800,8 +801,10 @@ gxnat.slicer.getVolumes = function(sceneView) {
 		goog.array.forEach(culledVolumes, function(cVol){
 		    if(cVol.node.getAttribute('id') == refVol){
 			cVol.labelMap = labelVol;
-			window.console.log('make sure the colortable txt' + 
-					   ' points to an existing file!');
+			//
+			// TODO: Make sure the colortable txt 
+			// points to an existing file!
+			//
 		    }
 		}.bind(this))
 	    }
@@ -841,7 +844,7 @@ gxnat.slicer.getMeshes = function(sceneView) {
 	mesh.properties = new gxnat.slicer.MeshDisplayNode(
 	    sceneView, mesh.node);
     })
-    window.console.log('TODO: Verify meshes that have color tables');
+    //window.console.log('TODO: Verify meshes that have color tables');
     /**
     node['properties']['colorTable'] = gxnat.slicer.getColorTableFile(scene, 
 				       node['properties']['displayNode']);

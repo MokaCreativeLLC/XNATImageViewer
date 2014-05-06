@@ -362,6 +362,30 @@ nrg.fx.filterTransitionStyles = function(obj) {
 
 
 /**
+ * @param {number=}
+ * @return {Object}
+ * @public
+ */ 
+nrg.fx.getTransitionStyles = function(elt) {
+    var size = goog.style.getSize(elt);
+    var pos = goog.style.getPosition(elt);
+    return {	
+	'left': pos.x,
+	'top': pos.y,
+	'width': size.width,
+	'height': size.height,
+	'opacity': parseInt(elt.style.opacity, 10),
+	'background-color': elt.style.backgroundColor,
+	'background': elt.style.background,
+	'color': elt.style.color,
+	'z-index': parseInt(elt.style.zIndex, 10)
+    }
+}
+
+
+
+
+/**
  * @param {!Element} asIsElt
  * @param {!Element} toBeElt
  * @return {!nrg.fx.TransitionDims}
@@ -370,15 +394,12 @@ nrg.fx.filterTransitionStyles = function(obj) {
 nrg.fx.generateTransitionDims = 
 function(asIsElt, toBeElt) {
 
-    var unfilteredAsIs = xiv.ui.layouts.LayoutHandler.
-	getTransitionStyles_(asIsElt);
+    var unfilteredAsIs = nrg.fx.getTransitionStyles(asIsElt);
     var filteredAsIs = nrg.fx.filterTransitionStyles(unfilteredAsIs);
 
     // To-Be
-    var unfilteredToBe = xiv.ui.layouts.LayoutHandler.
-	getTransitionStyles_(toBeElt);
+    var unfilteredToBe = nrg.fx.getTransitionStyles(toBeElt);
     var filteredToBe = nrg.fx.filterTransitionStyles(unfilteredToBe);
-
 
     //window.console.log("AS IS DIMS Unfiltered", unfilteredAsIs);
     //window.console.log("AS IS DIMS filtered", filteredAsIs);
@@ -429,7 +450,7 @@ nrg.fx.generateAnimations = function (elt, startDim, endDim, duration) {
 	switch(style){
 	    // we only need one, otherwise it'll create a repeat.
 	case 'left':  
-	    window.console.log("HERE!");
+	    //window.console.log("HERE!");
 	    anims.push(
 		nrg.fx.generateAnim_Slide(elt, startDim, endDim, duration));
 	    break;

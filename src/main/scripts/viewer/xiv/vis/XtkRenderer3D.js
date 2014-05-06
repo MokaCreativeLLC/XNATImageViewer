@@ -35,7 +35,7 @@ xiv.vis.XtkRenderer3D.prototype.onResize = function() {
  * @inheritDoc
  */
 xiv.vis.XtkRenderer2D.prototype.destroy = function() {
-    window.console.log('\n\n\nDESTROY 3D ', this._orienation);
+    //window.console.log('\n\n\nDESTROY 3D ', this._orienation);
     goog.base(this, 'destroy');
 }
 
@@ -60,8 +60,6 @@ xiv.vis.XtkRenderer3D.prototype.render = function() {
  * @inheritDoc
  */
 xiv.vis.XtkRenderer3D.prototype.remove = function(xObj) {
-    window.console.log(xObj);
-
     //
     // Catching some bizarre error...
     //
