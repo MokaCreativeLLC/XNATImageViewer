@@ -191,6 +191,12 @@ goog.addDependency('../../../../ui/layouts/XyzvLayout.js',
     'xiv.ui.layouts.Layout'
 ]);
 
+
+goog.addDependency('../../../../ui/layouts/SingleFrameLayout.js', 
+['xiv.ui.layouts.SingleFrameLayout'], [
+    'xiv.ui.layouts.XyzvLayout'
+]);
+
 goog.addDependency('../../../../ui/layouts/Conventional.js', 
 ['xiv.ui.layouts.Conventional'], [
     'xiv.ui.layouts.XyzvLayout'
@@ -199,19 +205,25 @@ goog.addDependency('../../../../ui/layouts/Conventional.js',
 
 goog.addDependency('../../../../ui/layouts/Sagittal.js', 
 ['xiv.ui.layouts.Sagittal'], [
-    'xiv.ui.layouts.XyzvLayout'
+    'xiv.ui.layouts.SingleFrameLayout'
 ]);
 
 
 goog.addDependency('../../../../ui/layouts/Coronal.js', 
 ['xiv.ui.layouts.Coronal'], [
-    'xiv.ui.layouts.XyzvLayout'
+    'xiv.ui.layouts.SingleFrameLayout'
 ]);
 
 
 goog.addDependency('../../../../ui/layouts/Transverse.js', 
 ['xiv.ui.layouts.Transverse'], [
-    'xiv.ui.layouts.XyzvLayout'
+    'xiv.ui.layouts.SingleFrameLayout'
+]);
+
+
+goog.addDependency('../../../../ui/layouts/ThreeD.js', 
+['xiv.ui.layouts.ThreeD'], [
+    'xiv.ui.layouts.SingleFrameLayout'
 ]);
 
 
@@ -223,13 +235,6 @@ goog.addDependency('../../../../ui/layouts/TwoDRow.js',
 
 goog.addDependency('../../../../ui/layouts/TwoDWidescreen.js', 
 ['xiv.ui.layouts.TwoDWidescreen'], [
-    'xiv.ui.layouts.XyzvLayout'
-]);
-
-
-
-goog.addDependency('../../../../ui/layouts/ThreeD.js', 
-['xiv.ui.layouts.ThreeD'], [
     'xiv.ui.layouts.XyzvLayout'
 ]);
 

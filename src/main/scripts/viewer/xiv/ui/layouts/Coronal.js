@@ -3,7 +3,7 @@
  */
 
 // xiv
-goog.require('xiv.ui.layouts.XyzvLayout');
+goog.require('xiv.ui.layouts.SingleFrameLayout');
 
 
 
@@ -11,7 +11,7 @@ goog.require('xiv.ui.layouts.XyzvLayout');
  * xiv.ui.layouts.Coronal
  *
  * @constructor
- * @extends {xiv.ui.layouts.XyzvLayout}
+ * @extends {xiv.ui.layouts.SingleFrameLayout}
  */
 goog.provide('xiv.ui.layouts.Coronal');
 xiv.ui.layouts.Coronal = function() { 
@@ -20,7 +20,7 @@ xiv.ui.layouts.Coronal = function() {
 	goog.getCssName(xiv.ui.layouts.LayoutFrame.ELEMENT_CLASS, 
 			this.constructor.TITLE.toLowerCase()))
 }
-goog.inherits(xiv.ui.layouts.Coronal, xiv.ui.layouts.XyzvLayout);
+goog.inherits(xiv.ui.layouts.Coronal, xiv.ui.layouts.SingleFrameLayout);
 goog.exportSymbol('xiv.ui.layouts.Coronal', xiv.ui.layouts.Coronal);
 
 

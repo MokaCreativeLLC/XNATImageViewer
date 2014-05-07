@@ -633,7 +633,7 @@ function(xObj, renderProperties){
  * @private
  */
 xiv.vis.XtkEngine.prototype.onRendering_ = function(e){
-    //window.console.log("\n\nON RENDERING! ", e.value, e.obj);
+    //window.console.log("ON RENDERING - ENGINE! ", e.value);
     this.dispatchEvent({
 	type: xiv.vis.RenderEngine.EventType.RENDERING,
 	value: e.value

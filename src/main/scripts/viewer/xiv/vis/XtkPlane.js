@@ -269,6 +269,7 @@ xiv.vis.XtkPlane.prototype.checkRenderProgress_ = function() {
 	// set the render progress
 	//
 	this.renderProgress_ = parseInt(progThumb.style.width, 10) / 100;
+	//window.console.log("\n\nRENDERING PLANE", this.renderProgress_);
 
 	//
 	// dispatch rednering event if not at 100%

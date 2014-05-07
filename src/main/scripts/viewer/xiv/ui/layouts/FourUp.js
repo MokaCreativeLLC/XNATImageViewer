@@ -186,18 +186,18 @@ xiv.ui.layouts.FourUp.prototype.scaleFrames_ = function(){
     if ((this.prevSize.width !== this.currSize.width) || 
 	(this.prevSize.height !== this.currSize.height)) {
 
-	var frameSize;
 	var heightDiff = 1 - ((this.prevSize.height - this.currSize.height) / 
 	    this.prevSize.height);
 	var widthDiff = 1 - ((this.prevSize.width - this.currSize.width) / 
 			     this.prevSize.width);
-
+	var frameHeight = (this.prevSize.height * heightDiff) / 2;
+	var frameWidth = (this.prevSize.width * widthDiff) / 2;
+	
 	this.loop(function(frame, key){
-	    frameSize = goog.style.getSize(frame.getElement());
 	    goog.style.setSize(frame.getElement(), 
-			       Math.max(frameSize.width * widthDiff, 
+			       Math.max(frameWidth, 
 					this.minLayoutFrameWidth_),
-			       Math.max(frameSize.height * heightDiff, 
+			       Math.max(frameHeight, 
 					this.minLayoutFrameHeight_));	    
 	}.bind(this))
 

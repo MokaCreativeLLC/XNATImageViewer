@@ -778,18 +778,11 @@ function(callback){
 
 
 /**
-* @inheritDoc
-*/
+ * @inheritDoc
+ */
 xiv.ui.layouts.LayoutHandler.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
-    
-    var currLayout = this.Layouts_[this.currLayoutTitle_];
-
-    //window.console.log("lH update", 
-    //goog.object.getCount(currLayout.getLayoutFrames()))
-    if (goog.object.getCount(currLayout.getLayoutFrames()) > 1){
-	this.Layouts_[this.currLayoutTitle_].updateStyle();
-    }
+    this.Layouts_[this.currLayoutTitle_].updateStyle();    
 }
 
 

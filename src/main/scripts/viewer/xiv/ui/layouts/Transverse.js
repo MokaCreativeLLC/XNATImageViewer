@@ -3,7 +3,7 @@
  */
 
 // xiv
-goog.require('xiv.ui.layouts.XyzvLayout');
+goog.require('xiv.ui.layouts.SingleFrameLayout');
 
 
 
@@ -11,7 +11,7 @@ goog.require('xiv.ui.layouts.XyzvLayout');
  * xiv.ui.layouts.Transverse
  *
  * @constructor
- * @extends {xiv.ui.layouts.XyzvLayout}
+ * @extends {xiv.ui.layouts.SingleFrameLayout}
  */
 goog.provide('xiv.ui.layouts.Transverse');
 xiv.ui.layouts.Transverse = function() { 
@@ -20,7 +20,7 @@ xiv.ui.layouts.Transverse = function() {
 	goog.getCssName(xiv.ui.layouts.LayoutFrame.ELEMENT_CLASS, 
 			this.constructor.TITLE.toLowerCase()))
 }
-goog.inherits(xiv.ui.layouts.Transverse, xiv.ui.layouts.XyzvLayout);
+goog.inherits(xiv.ui.layouts.Transverse, xiv.ui.layouts.SingleFrameLayout);
 goog.exportSymbol('xiv.ui.layouts.Transverse', xiv.ui.layouts.Transverse);
 
 

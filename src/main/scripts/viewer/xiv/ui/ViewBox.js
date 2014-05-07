@@ -437,7 +437,7 @@ xiv.ui.ViewBox.prototype.setLayout = function(layout) {
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
-
+    this.ProgressBarPanel_.setValue(0);
 }
 
 
@@ -448,31 +448,9 @@ xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
  * @private
  */
 xiv.ui.ViewBox.prototype.onRendering_ = function(e){
-
-    //window.console.log("ON RENDERING");
-    if (e.value > .99 && !this.progFadeOut_){
-	
-	this.progFadeOut_ = true;
-	this.ProgressBarPanel_.setValue(100);
-
-	this.progTimer_ = goog.Timer.callOnce(function() {
-
-	    
-	    this.progTimer_ = null;
-	    this.onRenderEnd_();
-
-	    this.hideSubComponent_(this.ProgressBarPanel_, 100, function(){
-		this.progFadeOut_ = null;
-	    }.bind(this));
-
-	}.bind(this), 100);
-
-
-	
-    } else {
-	this.showSubComponent_(this.ProgressBarPanel_, 0);
-	this.ProgressBarPanel_.setValue(e.value * 100);
-    }
+    //window.console.log("\n\nON RENDERING", e.value);
+    this.showSubComponent_(this.ProgressBarPanel_, 0);
+    this.ProgressBarPanel_.setValue(e.value * 100);
 }
 
 
@@ -961,12 +939,28 @@ xiv.ui.ViewBox.prototype.createControllerTabs_ = function() {
 
 
 /**
+ * Introduces a delay mechanism so we're not presented 
+ * with awkward progress bar issues.
+ *
+ * @param {number=} opt_delay The optional delay time.  Defaults to 1000.
+ * @param {Function=} callback The optional callback function.
  * @private
  */
-xiv.ui.ViewBox.prototype.hideProgressBarPanel_ = function(){
-    this.hideSubComponent_(this.ProgressBarPanel_, 500, function(){
-	this.updateStyle();
-    }.bind(this));
+xiv.ui.ViewBox.prototype.hideProgressBarPanel_ = 
+function(opt_delay, opt_callback){
+
+    //window.console.log("HIDE PROG!");
+    this.progTimer_ = goog.Timer.callOnce(function() {
+	this.progTimer_ = null;
+	//window.console.log("CALLBACK 1");
+	this.hideSubComponent_(this.ProgressBarPanel_, 500, function(){
+	    this.updateStyle();
+	    if (goog.isDefAndNotNull(opt_callback)){
+		//window.console.log("CALLBACK 2");
+		opt_callback();
+	    }
+	}.bind(this));
+    }.bind(this), goog.isNumber(opt_delay) ? opt_delay : 1000);
 }
 
 
@@ -977,6 +971,7 @@ xiv.ui.ViewBox.prototype.hideProgressBarPanel_ = function(){
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){    
+    //window.console.log("ON RENDER END!");
     //
     // Untoggle wait for render errors
     //
@@ -990,7 +985,15 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     // Hide progress bar
     //
-    this.hideProgressBarPanel_();
+    this.hideProgressBarPanel_(800, function(){
+	this.ProgressBarPanel_.setValue(0);
+	//
+	// Fade in load components
+	//
+	this.fadeInLoadComponents_(500);
+    }.bind(this));
+
+
 
     //
     // Sync interactors
@@ -1150,19 +1153,24 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     }.bind(this))
 
     //
-    // Events
+    // Events -listen once
     //
     goog.events.listenOnce(this.Renderer_, 
 		       xiv.vis.RenderEngine.EventType.RENDER_START, 
 		       this.onRenderStart_.bind(this));
 
     goog.events.listenOnce(this.Renderer_, 
+		       xiv.vis.RenderEngine.EventType.RENDER_END, 
+		       this.onRenderEnd_.bind(this));
+
+    //
+    // We want to keep listeing for the RENDERING
+    //
+    goog.events.listen(this.Renderer_, 
 		       xiv.vis.RenderEngine.EventType.RENDERING, 
 		       this.onRendering_.bind(this));
 
-    goog.events.listenOnce(this.Renderer_, 
-		       xiv.vis.RenderEngine.EventType.RENDER_END, 
-		       this.onRenderEnd_.bind(this));
+
 
 
     this.hideSubComponent_(this.ViewableGroupMenu_, 400, function(){
@@ -1338,18 +1346,35 @@ xiv.ui.ViewBox.prototype.adjustLayoutHandler_ = function(){
 
 
 /**
- * @inheritDoc
+ * @private
  */
 xiv.ui.ViewBox.prototype.initLoadComponents_ = function() {
 
     this.initZipTabs_();
-    this.initLayoutMenu_();
     this.initToggleMenu_();
     this.initLayoutHandler_();
     this.syncLayoutMenuToLayoutHandler_();
     this.initRenderer_();
     this.initViewableGroupMenu_();
     this.hasLoadComponents_ = true;
+}
+
+
+
+/**
+ * @param {number=} opt_fadeTime
+ * @private
+ */
+xiv.ui.ViewBox.prototype.fadeInLoadComponents_ = function(opt_fadeTime) {
+    opt_fadeTime = goog.isNumber(opt_fadeTime) ? opt_fadeTime : 500;
+    var anims = [];
+    var fadeables = [this.ZipTabs_.getElement(), this.menus_.LEFT,
+		     this.LayoutMenu_.getElement()];
+    goog.array.forEach(fadeables, function(fadeable){
+	anims.push(nrg.fx.generateAnim_Fade(fadeable, {'opacity':0}, 
+					    {'opacity':1}, opt_fadeTime)); 
+    })    
+    nrg.fx.parallelAnimate(anims);
 }
 
 
@@ -1439,7 +1464,7 @@ xiv.ui.ViewBox.prototype.initZipTabs_ = function(){
     // TabBounds
     //
     this.ZipTabBounds_ = goog.dom.createDom('div');
-    goog.dom.append(this.viewFrameElt_, this.ZipTabBounds_);
+    goog.dom.appendChild(this.viewFrameElt_, this.ZipTabBounds_);
     goog.dom.classes.add(this.ZipTabBounds_, 
 			 xiv.ui.ViewBox.CSS.TAB_BOUNDS);
 
@@ -1447,6 +1472,7 @@ xiv.ui.ViewBox.prototype.initZipTabs_ = function(){
     // Create the tabs
     //
     this.ZipTabs_ = new nrg.ui.ZipTabs('TOP'); 
+    this.ZipTabs_.getElement().style.opacity = 0;
     this.ZipTabs_.render(this.viewFrameElt_);
     goog.dom.classes.add(this.ZipTabs_.getElement(), xiv.ui.ViewBox.CSS.TABS);
 
@@ -1498,6 +1524,7 @@ xiv.ui.ViewBox.prototype.addMenu_left_ = function() {
 	'class' : xiv.ui.ViewBox.CSS.MENU_LEFT,
 	'viewbox': this.getElement().id
     });
+    this.menus_.LEFT.style.opacity = 0;
     goog.dom.append(this.getElement(), this.menus_.LEFT);
 }
 
@@ -1553,26 +1580,43 @@ xiv.ui.ViewBox.prototype.addToMenu = function(menuLoc, element, opt_insertInd){
 
 
 /**
-* As stated.
-* @private
-*/
-xiv.ui.ViewBox.prototype.initLayoutMenu_ = function(){
+ * @private
+ */
+xiv.ui.ViewBox.prototype.createLayoutMenu_ = function(){
     this.LayoutMenu_ = new nrg.ui.SlideInMenu();
-    this.addToMenu('TOP_LEFT', this.LayoutMenu_.getElement());
+    
+    //
+    // Add to left menu.
+    //
+    this.addToMenu('LEFT', this.LayoutMenu_.getElement());
 
+    //
+    // Class.
+    //
     goog.dom.classes.add(this.LayoutMenu_.getElement(), 
 	xiv.ui.ViewBox.CSS.VIEWLAYOUTMENU);
 
-    this.LayoutMenu_.setHidePosition(-40, 0);
-    this.LayoutMenu_.setShowPosition(24,0);
+    //
+    // Match settings
+    //
     this.LayoutMenu_.matchMenuIconToSelected(true);
     this.LayoutMenu_.matchMenuTitleToSelected(true);
-    goog.dom.append(this.getElement(), this.LayoutMenu_.getMenuHolder());
+
+    //
+    // Set opacities.
+    //
+    this.LayoutMenu_.getElement().style.opacity = 0;
+    this.LayoutMenu_.getMenuHolder().style.opacity = 0;
+    
+    //
+    // Append the holder to the view frame elt.
+    //
+    goog.dom.appendChild(this.viewFrameElt_, this.LayoutMenu_.getMenuHolder());
 }
 
 
+
 /**
- 
  * @param {!boolean} defaultState
  * @param {!string} defaultClass
  * @param {string=} opt_tooltip
@@ -1840,6 +1884,7 @@ xiv.ui.ViewBox.prototype.clearToggleMenu_ = function(){
  */
 xiv.ui.ViewBox.prototype.initToggleMenu_ = function(){
     this.addMenu_left_();
+    this.createLayoutMenu_();
     this.create3DRenderToggle_();
     this.createCrosshairToggle_();
     this.createHelpToggle_();
@@ -2069,23 +2114,29 @@ xiv.ui.ViewBox.prototype.onTabsResize_ = function() {
  * @inheritDoc
  */
 xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
-    //
-    // Parent update style
-    //
     goog.base(this, 'updateStyle', opt_args);
-
-    //window.console.log("\n%\n%\n%\n\n\n^^^^^^^^^^^^^^");
-
 
     this.updateStyle_ZipTabs_();
     this.updateStyle_LayoutHandler_();
     this.updateStyle_Renderer_();
+    this.updateStyle_LayoutMenu_();
 }
 
 
 
 /**
- * As stated.
+ * @private
+ */
+xiv.ui.ViewBox.prototype.updateStyle_LayoutMenu_ = function () {
+    if (!goog.isDefAndNotNull(this.LayoutMenu_)) { return };
+    var frameSize = goog.style.getSize(this.viewFrameElt_);
+    this.LayoutMenu_.setHidePosition(-100, frameSize.height/2 - 130);
+    this.LayoutMenu_.setShowPosition(0, frameSize.height/2 - 130);
+}
+
+
+
+/**
  * @private
  */
 xiv.ui.ViewBox.prototype.updateStyle_ZipTabs_ = function () {

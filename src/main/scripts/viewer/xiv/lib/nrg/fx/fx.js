@@ -505,7 +505,7 @@ nrg.fx.generateAnimations = function (elt, startDim, endDim, duration) {
  */
 nrg.fx.parallelAnimate = 
 function (anims, opt_onBegin, opt_onAnimate, opt_onEnd) {
-    var animQueue = /**@type {!goog.fx.AnimationParallelQueue}*/ 
+    var animQueue =  
     new goog.fx.AnimationParallelQueue();  
 
     goog.array.forEach(anims, function(anim){
