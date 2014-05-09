@@ -25,7 +25,7 @@
     left: calc(50% - 40px);
     width: 80px;
     height: 80px;
-    content:url('/xnat/images/viewer/xiv/ui/Overlay/sadbrain-white.png');
+    content:url('../../../../images/viewer/xiv/ui/Overlay/sadbrain-white.png');
 }
 
 

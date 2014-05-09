@@ -114,7 +114,7 @@ gxnat.vis.AjaxViewableTree.prototype.getFolderQuerySuffix = function() {
  * @public
  */
 gxnat.vis.AjaxViewableTree.prototype.makeFileUrl = function(xnatFileJson) {
-    var fileName = /** @type {!string} */
+    var fileName = 
     xnatFileJson[this.fileContentsKey];
     if (!goog.string.endsWith(fileName, '/')) {
 	return this.queryUrl + '!' + fileName;

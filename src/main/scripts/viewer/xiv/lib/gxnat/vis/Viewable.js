@@ -54,6 +54,7 @@ gxnat.vis.Viewable.prototype.addFiles = function(fileName) {
     if (!this.files_){
 	this.files_ = [];
     }
+    window.console.log('FILENAME:', fileName);
     this.files_.push(fileName)
 }
 

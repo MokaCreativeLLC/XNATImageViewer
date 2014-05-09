@@ -1929,42 +1929,50 @@ xiv.ui.ViewBox.prototype.initLayoutHandler_ = function(){
 xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
 
     this.LayoutMenu_.setMenuIconSrc(
-	'/xnat/images/viewer/xiv/ui/LayoutMenu/menu.png');
+	'../../../../../../images/viewer/xiv/ui/LayoutMenu/menu.png');
 
     // Add icons and title to LayoutMenu
     // Add object and title to LayoutHandler
     goog.object.forEach({
 	'Sagittal': {
 	    OBJ: xiv.ui.layouts.Sagittal,
-	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/sagittal.png'
+	    ICON: '../../../../../../../../../../' +
+		'images/viewer/xiv/ui/Layouts/sagittal.png'
 	},
 	'Coronal': {
 	    OBJ: xiv.ui.layouts.Coronal,
-	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/coronal.png'
+	    ICON: '../../../../../../../../../../' +
+		'images/viewer/xiv/ui/Layouts/coronal.png'
 	},
 	'Transverse': {
 	    OBJ: xiv.ui.layouts.Transverse,
-	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/transverse.png'
+	    ICON: '../../../../../../../../../../' +
+		'images/viewer/xiv/ui/Layouts/transverse.png'
 	},
 	'3D': {
 	    OBJ: xiv.ui.layouts.ThreeD,
-	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/3d.png'
+	    ICON: '../../../../../../../../../../' +
+		'images/viewer/xiv/ui/Layouts/3d.png'
 	},
 	'Conventional': {
 	    OBJ: xiv.ui.layouts.Conventional,
-	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/conventional.png'
+	    ICON: '../../../../../../../../../../' + 
+                   'images/viewer/xiv/ui/Layouts/conventional.png'
 	},
 	'Four-Up': {
 	    OBJ: xiv.ui.layouts.FourUp,
-	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/four-up.png'
+	    ICON: '../../../../../../../../../../' +
+		'images/viewer/xiv/ui/Layouts/four-up.png'
 	},
 	'2D Row': {
 	    OBJ: xiv.ui.layouts.TwoDRow,
-	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/2drow.png'
+	    ICON: '../../../../../../../../../../' +
+		'images/viewer/xiv/ui/Layouts/2drow.png'
 	},
 	'2D Widescreen': {
 	    OBJ: xiv.ui.layouts.TwoDWidescreen,
-	    ICON: '/xnat/images/viewer/xiv/ui/Layouts/2dwidescreen.png'
+	    ICON: '../../../../../../../../../../' +
+		'images/viewer/xiv/ui/Layouts/2dwidescreen.png'
 	},
     }, function(val, key){
 	this.LayoutMenu_.addMenuItem(key, val.ICON);

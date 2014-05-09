@@ -64,11 +64,11 @@ gxnat.Path.prototype.dispose = function(url) {
  * @private
  */
 gxnat.Path.prototype.deconstructUrl_ = function(url) {
-    var splitter = /** @type {!string}*/ url.split('/');
-    var levelHasValue = /** @type {!boolean}*/ true;
-    var i = /** @type {!number}*/ 0;
-    var j = /** @type {!number}*/ 0;
-    var len = /** @type {!number}*/ splitter.length;
+    var splitter = url.split('/');
+    var levelHasValue = true;
+    var i = 0;
+    var j = 0;
+    var len = splitter.length;
 
     for (i=0; i<len; i++) {
 	// Stay within the loop only if the XNAT level has
@@ -111,13 +111,13 @@ gxnat.Path.prototype.pathByLevel = function(level){
 	throw new Error("Invalid level: ", level);
     }
     
-    var returnString = /** @type {!string}*/ this['prefix'];
-    var currLevel = /** @type {!string}*/ '';
-    var currSub = /** @type {!string}*/ '';
-    var i = /**@type {!number}*/ 0;
-    var j = /**@type {!number}*/ 0;
-    var len = /**@type {!number}*/ gxnat.Path.xnatLevelOrder.length;
-    var len2 = /**@type {!number}*/ 0;
+    var returnString = this['prefix'];
+    var currLevel = '';
+    var currSub = '';
+    var i =  0;
+    var j =  0;
+    var len =  gxnat.Path.xnatLevelOrder.length;
+    var len2 =  0;
 
     for (i=0; i<len; i++){
 	currLevel = gxnat.Path.xnatLevelOrder[i];
@@ -171,7 +171,7 @@ gxnat.Path.graftUrl = function(prefixUrl, suffixUrl, graftSubString){
  * @public
  */
 gxnat.Path.getQueryPrefix = function(xnatServerRoot) {
-    var xnatQueryPrefix = /**@type {!string}*/xnatServerRoot + '/REST';
+    var xnatQueryPrefix = xnatServerRoot + '/REST';
     if (xnatQueryPrefix.length > 0 && 
         xnatQueryPrefix[xnatQueryPrefix.length - 1] === '/') {
 	xnatQueryPrefix = xnatQueryPrefix.substring(0, 
@@ -187,8 +187,8 @@ gxnat.Path.getQueryPrefix = function(xnatServerRoot) {
  * @public
  */
 gxnat.Path.forEachXnatLevel = function(callback){
-    var i = /**@type {!number}*/ 0;
-    var len = /**@type {!number}*/ gxnat.Path.xnatLevelOrder.length;
+    var i = 0;
+    var len = gxnat.Path.xnatLevelOrder.length;
     for (i=0; i < len; i++){
 	callback(gxnat.Path.xnatLevelOrder[i], i);
     }
@@ -204,9 +204,9 @@ gxnat.Path.forEachXnatLevel = function(callback){
  * @public
  */
 gxnat.Path.getDeepestSharedXnatLevel = function(uri1, uri2){
-    var path1 = /**@type {!gxnat.Path}*/ new gxnat.Path(uri1);
-    var path2 = /**@type {!gxnat.Path}*/ new gxnat.Path(uri2);
-    var sharedLevel = /**@type {sting} */ undefined;
+    var path1 = new gxnat.Path(uri1);
+    var path2 = new gxnat.Path(uri2);
+    var sharedLevel = undefined;
 
     //window.console.log(path1, path2);
     gxnat.Path.forEachXnatLevel(function(level){

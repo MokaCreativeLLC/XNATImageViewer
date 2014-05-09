@@ -74,8 +74,8 @@ gxnat.ProjectTree.prototype.load = function(callback){
     // Get the all of the stop level nodes in the XNAT server.
     gxnat.jsonGet(this.initPath_['prefix'] + '/' + this.STOP_LEVEL, 
 	function(stopLevelArr){
-	    var i = /**@type {!number} */ 0;
-	    var len = /**@type {!number} */ stopLevelArr.length;
+	    var i = 0;
+	    var len = stopLevelArr.length;
 
 	    // Count the number of experiments within the project that
 	    // was defined in the initPath_ attribute.
@@ -108,8 +108,7 @@ gxnat.ProjectTree.prototype.load = function(callback){
  */
 gxnat.ProjectTree.prototype.getTree = 
 function(currLevel, levelUri, callback){
-    var node = /**@type {!Object}*/ this.createEmptyTreeNode_(currLevel, 
-							      levelUri);
+    var node = this.createEmptyTreeNode_(currLevel, levelUri);
     // Return if at the STOP_LEVEL
     if (currLevel === this.STOP_LEVEL) {
 	this.stopLevelRetrieved_++;
@@ -161,12 +160,11 @@ gxnat.ProjectTree.prototype.createSubTree_ = function(node, callback){
  */
 gxnat.ProjectTree.prototype.createEmptyTreeNode_ = 
 function(currLevel, levelUri){
-    var node = /**@type {!Object}*/ { 
+    var node = { 
 	'_Path' : new gxnat.Path(levelUri)
     }
     // Construct next level attributes.
-    var nextLevelInd = /**@type {!number}*/
-    gxnat.Path.xnatLevelOrder.indexOf(currLevel) + 1;
+    var nextLevelInd = gxnat.Path.xnatLevelOrder.indexOf(currLevel) + 1;
     if (nextLevelInd != -1){
 	node['_nextLevel'] = gxnat.Path.xnatLevelOrder[nextLevelInd];
 	// If next level is not a string, we skip. See 
@@ -210,8 +208,8 @@ gxnat.ProjectTree.prototype.getLevelUris = function(getLevel){
 gxnat.ProjectTree.prototype.getLevelUris_ = function(getLevel, currLevel, 
 							 treeNode, uris) {
 
-    var i = /**@type {!number}*/ 0;
-    var len = /**@type {!number}*/ treeNode[currLevel].length;
+    var i = 0;
+    var len = treeNode[currLevel].length;
     //window.console.log('\n\nuris', treeNode, currLevel, getLevel, uris);
     for (i=0; i < len; i++){
 	if (currLevel === getLevel){
@@ -239,8 +237,8 @@ gxnat.ProjectTree.prototype.dispose = function(url) {
     this.initPath_.dispose();
     delete this.initPath_;
 
-    window.console.log('PRE-CLEARED TREE', this);
+    //window.console.log('PRE-CLEARED TREE', this);
     goog.object.clear(this);
-    window.console.log('CLEARED TREE', this);
+    //window.console.log('CLEARED TREE', this);
 
 }

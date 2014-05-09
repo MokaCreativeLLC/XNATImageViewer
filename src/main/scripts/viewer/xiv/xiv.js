@@ -86,6 +86,7 @@ xiv = function(mode, dataPath, rootUrl){
      */
     this.dataPaths_;
     this.addDataPath(dataPath);
+    window.console.log('add data path:', dataPath);
 
     /**
      * @type {boolean}
@@ -454,7 +455,7 @@ xiv.prototype.createModalPopup_ = function(){
  */
 xiv.prototype.fetchViewableTrees = function(viewablesUri, opt_doneCallback){
     xiv.getViewableTreesFromXnat(viewablesUri, function(viewable){
-	//window.console.log('VIEWABLE', viewable);
+	window.console.log('VIEWABLE', viewable);
 	this.storeViewableTree_(viewable);
 	this.addViewableTreeToModal(viewable);
     }.bind(this), opt_doneCallback)
@@ -519,7 +520,7 @@ xiv.prototype.storeViewableTree_ = function(viewable, path) {
  * @private
  */
 xiv.prototype.onZippyAdded_ = function(e) {
-    var prevDur = /**@type {!number}*/
+    var prevDur =
     e.currNode.getZippy().animationDuration;
     e.currNode.getZippy().animationDuration = 0;
     e.currNode.getZippy().setExpanded(false);

@@ -24,6 +24,9 @@ autoHeaders = ['\n']*3 + [autoHeader] + ['\n']*3
 def writeTarget(target, lines):
     """
     """
+    dirname = os.path.dirname(target)
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
     f = open(target,'w')
     for line in lines:
         f.write("%s\n" % line)
@@ -35,6 +38,9 @@ def writeTarget(target, lines):
 def makeBackup(target):
     """
     """
+    if not os.path.exists(target): 
+        return
+
     shutil.move(target, os.path.join(os.path.dirname(target), os.path.basename(target).split('.')[0] + '.BKP'))
 
 

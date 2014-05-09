@@ -132,7 +132,7 @@
 .xiv-ui-viewbox-button-threedtoggle {
     width: 15px;
     height: 15px;
-    content:url('/xnat/images/viewer/xiv/ui/ViewBox/Toggle-3D.png');
+    content:url('../../../../images/viewer/xiv/ui/ViewBox/Toggle-3D.png');
     opacity: .5;
 }
 
@@ -145,7 +145,7 @@
 .xiv-ui-viewbox-button-infotoggle {
     width: 15px;
     height: 15px;
-    content:url('/xnat/images/viewer/xiv/ui/ViewBox/Toggle-Info.png');
+    content:url('../../../../images/viewer/xiv/ui/ViewBox/Toggle-Info.png');
     opacity: .5;
     background-color: black;
 }
@@ -189,7 +189,7 @@
 .xiv-ui-viewbox-button-helptoggle {
     width: 15px;
     height: 15px;
-    content:url('/xnat/images/viewer/xiv/ui/ViewBox/Toggle-Help.png');
+    content:url('../../../../images/viewer/xiv/ui/ViewBox/Toggle-Help.png');
     opacity: .5;
 }
 
@@ -232,7 +232,7 @@
 .xiv-ui-viewbox-button-crosshairtoggle {
     width: 15px;
     height: 15px;
-    content:url('/xnat/images/viewer/xiv/ui/ViewBox/Toggle-Crosshairs.png');
+    content:url('../../../../images/viewer/xiv/ui/ViewBox/Toggle-Crosshairs.png');
     opacity: .5;
 }
 .xiv-ui-viewbox-button-crosshairtoggle-on {
