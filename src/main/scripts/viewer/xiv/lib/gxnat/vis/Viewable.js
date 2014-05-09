@@ -45,17 +45,35 @@ gxnat.vis.Viewable.prototype.getFiles = function() {
 }
 
 
-
 /**
  * @param {!string} fileName
  * @public
  */
-gxnat.vis.Viewable.prototype.addFiles = function(fileName) {
+gxnat.vis.Viewable.prototype.removeFile = function(fileName) {
+    window.conosle.log("REMOVING FILE", fileName);
+    goog.array.remove(this.files_, fileName);
+}
+
+
+/**
+ * @param {!string} fileName
+ * @param {Function=} fileFilter
+ * @public
+ */
+gxnat.vis.Viewable.prototype.addFiles = function(fileName, opt_fileFilter) {
     if (!this.files_){
 	this.files_ = [];
     }
-    window.console.log('FILENAME:', fileName);
-    this.files_.push(fileName)
+
+    if (goog.isDefAndNotNull(opt_fileFilter)){
+	var filteredFileName = opt_fileFilter(fileName);
+	if (!goog.isDefAndNotNull(filteredFileName)){
+	    window.console.log("Filtering", fileName);
+	    return; 
+	} 
+    }
+
+    this.files_.push(fileName);
 }
 
 

@@ -1078,7 +1078,7 @@ xiv.vis.XtkEngine.getViewables = function(fileCollection) {
     //-------------------------	
     // Rerturn the constructed 'viewableTypes' object.
     //-------------------------	
-    //window.console.log("VIEWABLE TYPES", viewableTypes);
+    window.console.log("VIEWABLE TYPES", viewableTypes);
 
 
     //----------------

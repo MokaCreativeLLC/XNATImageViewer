@@ -175,11 +175,25 @@ gxnat.vis.AjaxViewableTree.prototype.getFiles = function(callback){
 	    fileUrl = this.makeFileUrl(fileUrls[i]);
 	    //window.console.log("ABSOLUTE URL:", fileUrls[i], fileUrl); 
 	    if (fileUrl) { 
-		this.addFiles(fileUrl);
+		this.addFiles(fileUrl, this.fileFilter);
 	    }
 	}
 	callback();
     }.bind(this))
+}
+
+
+
+/**
+ * @param {!string} fileName
+ * @protected
+ */
+gxnat.vis.AjaxViewableTree.prototype.fileFilter = function(fileName){
+     // do nothing -- inherited by subclasses
+    if (fileName.indexOf('_MACOSX') > -1 ){
+	return null;;
+    }
+    return fileName;
 }
 
 

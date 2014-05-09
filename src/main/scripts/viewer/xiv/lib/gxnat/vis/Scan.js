@@ -90,6 +90,43 @@ gxnat.vis.Scan.prototype.getSessionInfo = function() {
 
 
 /**
+ * @const
+ * @type {!Array.<string>}
+ */
+gxnat.vis.Scan.filterableFileTypes = [    
+    '.jpg',
+    '.jpeg',
+    '.gif',
+    '.tif',
+    '.png',
+    '.txt'
+]
+
+
+/**
+ * @inheritDoc
+ */
+gxnat.vis.Scan.prototype.fileFilter = function(fileName){    
+
+    fileName = gxnat.vis.Scan.superClass_.fileFilter.call(this, fileName);
+
+    if (!goog.isDefAndNotNull(fileName)) { return };
+    
+    var i = 0;
+    var len = gxnat.vis.Scan.filterableFileTypes.length;
+
+    for (; i<len; i++) {
+	if (goog.string.caseInsensitiveEndsWith(fileName, 
+		gxnat.vis.Scan.filterableFileTypes[i])) {
+	    window.console.log('Found skippable scan file: ', fileName);
+	    return null;
+	} 
+    }
+    return fileName;
+}
+
+
+/**
  * @inheritDoc
  */
 gxnat.vis.Scan.prototype.addFiles = function(fileName) {
@@ -103,7 +140,8 @@ gxnat.vis.Scan.prototype.addFiles = function(fileName) {
     if (this.ViewableGroups[0].getViewables().length == 0){
 	this.ViewableGroups[0].addViewable(new gxnat.vis.Viewable());
     }
-    this.ViewableGroups[0].getViewables()[0].addFiles(fileName);
+    this.ViewableGroups[0].getViewables()[0].addFiles(fileName, 
+						      this.fileFilter);
 }
 
 
