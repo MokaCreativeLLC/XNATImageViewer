@@ -79,7 +79,7 @@ gxnat.ProjectTree.prototype.load = function(callback){
 
 	    // Count the number of experiments within the project that
 	    // was defined in the initPath_ attribute.
-	    for (i=0; i<len; i++){
+	    for (; i<len; i++){
 		if(stopLevelArr[i]['project'] === this.initPath_['projects']){
 		    this.stopLevelCount_++;
 		}
@@ -112,10 +112,6 @@ function(currLevel, levelUri, callback){
     // Return if at the STOP_LEVEL
     if (currLevel === this.STOP_LEVEL) {
 	this.stopLevelRetrieved_++;
-	// Run callback once all the experiments have been accounted for.
-	if (this.stopLevelRetrieved_ === this.stopLevelCount_) {
-	    callback(this)
-	}
 	return node;
     }
 
@@ -135,16 +131,49 @@ function(currLevel, levelUri, callback){
  */
 gxnat.ProjectTree.prototype.createSubTree_ = function(node, callback){
 
-    var subTree = /**@type {!Object}*/ {};
-    gxnat.jsonGet(node['_nextLevelQuery'], function(nextLevelJsonArr){
-	node['_nextLevelJsons'] = nextLevelJsonArr;
-	goog.array.forEach(nextLevelJsonArr, function(nextLevelObj){
-	    subTree = this.getTree(node['_nextLevel'], 
-				node['_Path']['originalUrl'] 
-				+ '/' + node['_nextLevel'] + '/' + 
-				nextLevelObj['ID'], callback)
-	    node[node['_nextLevel']].push(subTree);		
-	}.bind(this))
+    var subTree = {};
+
+    //
+    // First get the json of the node -- this gives us metdata
+    // relevant for later (such race, handedness etc. at the subj level)
+    //
+    gxnat.jsonGet(node['_Path']['originalUrl'], function(levelJsonArr){
+
+	//
+	// Store the metadata
+	//
+	node['METADATA'] = levelJsonArr['items'][0];
+
+	//
+	// then query for the next level
+	//
+	gxnat.jsonGet(node['_nextLevelQuery'], function(nextLevelJsonArr){
+	    node['_nextLevelJsons'] = nextLevelJsonArr;
+	    goog.array.forEach(nextLevelJsonArr, function(nextLevelObj){
+		subTree = this.getTree(node['_nextLevel'], 
+				       node['_Path']['originalUrl'] 
+				       + '/' + node['_nextLevel'] + '/' + 
+				       nextLevelObj['ID'], callback)
+		node[node['_nextLevel']].push(subTree);	
+
+		//
+		// Store the metadata
+		//
+		subTree['METADATA'] = nextLevelJsonArr[0];
+
+		//
+		// Run callback once all the experiments have been accounted 
+		// for.
+		//
+		if (this.stopLevelRetrieved_ === this.stopLevelCount_) {
+		    //window.console.log("HERE", this.STOP_LEVEL,
+		    //this, this['projects'][0]['subjects'][0]);
+		    callback(this)
+		}
+
+	
+	    }.bind(this))
+	}.bind(this))    
     }.bind(this))    
     return node;
 }
@@ -190,41 +219,82 @@ function(currLevel, levelUri){
  * @public
  */
 gxnat.ProjectTree.prototype.getLevelUris = function(getLevel){
-    var uris =  /**@type {!Array.string}*/ [];
+    var uris =  [];
     this.getLevelUris_(getLevel, 'projects', this, uris);
     return uris;
 }
 
 
-
 /**
  * Recursive function to derive the XNAT URIs. 
  * @param {!string} getLevel The XNAT level to get the UIS from. 
- * @param {!string} currLevel The current XNAT level of the recursion. 
+ * @param {!string} nextLevel The current XNAT level of the recursion. 
  * @param {!Object} treeNode The tree node object at the current level. 
  * @param {!Array.string} uris The array storing the uris. 
  * @private
  */
-gxnat.ProjectTree.prototype.getLevelUris_ = function(getLevel, currLevel, 
-							 treeNode, uris) {
+gxnat.ProjectTree.prototype.getLevelUris_ = 
+function(getLevel, nextLevel, treeNode, uris) {
 
     var i = 0;
-    var len = treeNode[currLevel].length;
-    //window.console.log('\n\nuris', treeNode, currLevel, getLevel, uris);
+    var len = treeNode[nextLevel].length;
+
+    //window.console.log('\n\nuris', nextLevel, getLevel, treeNode, 
+    //treeNode[nextLevel], treeNode[nextLevel].length);
+
     for (i=0; i < len; i++){
-	if (currLevel === getLevel){
-	    uris.push(treeNode[currLevel][i]['_Path']['originalUrl']);
-	    //window.console.log("A", uris);
+	if (nextLevel === getLevel){
+	    uris.push(treeNode[nextLevel][i]['_Path']['originalUrl']);
 	} else {
 	    this.getLevelUris_(getLevel, 
-			      treeNode[currLevel][i]
-			      ['_nextLevel'], 
-			      treeNode[currLevel][i], 
-			      uris);
+			       treeNode[nextLevel][i]['_nextLevel'], 
+			       treeNode[nextLevel][i], 
+			       uris);
 	}
     }
-    //window.console.log('uris', currLevel, getLevel, uris);
+    //window.console.log('uris 2', nextLevel, getLevel, uris);
 }
+
+
+
+
+/**
+ * @param {!string} getLevel The XNAT level to get the URIs from. 
+ * @return {!Array.<gxnat.ProjectTree>} The XNAT urs of the level.
+ * @public
+ */
+gxnat.ProjectTree.prototype.getNodesByLevel = function(getLevel){
+    var nodes =  [];
+    this.getNodesByLevel_(getLevel, 'projects', this, nodes);
+    return nodes;
+}
+
+
+/** 
+ * @param {!string} getLevel The XNAT level to get the UIS from. 
+ * @param {!string} nextLevel The current XNAT level of the recursion. 
+ * @param {!Object} treeNode The tree node object at the current level. 
+ * @param {!Array.string} nodes The array storing the nodes. 
+ * @private
+ */
+gxnat.ProjectTree.prototype.getNodesByLevel_ = 
+function(getLevel, nextLevel, treeNode, nodes) {
+    var i = 0;
+    var len = treeNode[nextLevel].length;
+
+    for (i=0; i < len; i++){
+	if (nextLevel === getLevel){
+	    nodes.push(treeNode[nextLevel][i]);
+	} else {
+	    this.getNodesByLevel_(getLevel, 
+			       treeNode[nextLevel][i]['_nextLevel'], 
+			       treeNode[nextLevel][i], 
+			       nodes);
+	}
+    }
+}
+
+
 
 
 

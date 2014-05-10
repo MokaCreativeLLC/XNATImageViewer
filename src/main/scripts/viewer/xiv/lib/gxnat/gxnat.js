@@ -69,8 +69,8 @@ gxnat.folderAbbrev = {
  * @public
  */
 gxnat.jsonGet = function(url, callback){
-    var queryChar =  /** @type {!string}*/ (url.indexOf('?') > -1) ? '&' : '?';
-    var queryUrl = /** @type {!string}*/ url + queryChar + "format=json";
+    var queryChar = (url.indexOf('?') > -1) ? '&' : '?';
+    var queryUrl = url + queryChar + "format=json";
     //window.console.log("\n\nxnat - jsonGet: ", queryUrl);
     gxnat.get(queryUrl, callback, 'json');
 }
@@ -92,13 +92,13 @@ gxnat.jsonGet = function(url, callback){
 gxnat.get = function(url, callback, opt_getType){
     //window.console.log("\n\nxnat - get: ", url);
     goog.net.XhrIo.send(url, function(e) {
-	var xhr = /** @type {!Object}*/ e.target;
+	var xhr = e.target;
 
 	switch (opt_getType) {
 	case undefined: 
 	    callback(xhr);
 	case 'json':
-	    var responseJson = /**@type {!Object}*/ xhr.getResponseJson();
+	    var responseJson = xhr.getResponseJson();
 	    if (responseJson.hasOwnProperty('ResultSet')){
 		callback(responseJson['ResultSet']['Result']);
 	    } else {

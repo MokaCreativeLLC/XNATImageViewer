@@ -116,10 +116,15 @@ xiv = function(mode, dataPath, rootUrl){
     this.createModal_();
 
 
+    //
+    // What we're doing here is as follows:
+    // Once the initial experiment has been retrieved, we get the entire
+    // project tree.
+    //
+    
     this.loadExperiment_(this.dataPaths_[0], function() {
 	this.loadProjectTree_();
     }.bind(this)); 
-
 
 };
 goog.inherits(xiv, goog.Disposable);
@@ -149,6 +154,16 @@ xiv.loadCustomExtensions = function() {
  */
 xiv.adjustDocumentStyle = function() {
     document.body.style.overflow = 'hidden';
+}
+
+
+
+/**
+ * @const
+ */
+xiv.VIEWABLE_TYPES = {
+    'Scan': gxnat.vis.Scan,
+    'Slicer': gxnat.vis.Slicer,
 }
 
 
@@ -333,12 +348,16 @@ xiv.prototype.dispose = function() {
 /**
  * @param {!string} exptUrl The experiment url to load the vieables from.
  * @param {Function=} opt_callback The optional callback.
+ * @param {Object=} opt_metadata
  * @private
  */
-xiv.prototype.loadExperiment_ = function(exptUrl, opt_callback) {
+xiv.prototype.loadExperiment_ = 
+function(exptUrl, opt_callback, opt_metadata) {
+ 
     this.addDataPath(exptUrl);
-    this.fetchViewableTrees(this.dataPaths_[this.dataPaths_.length - 1], 
-			opt_callback);
+    this.fetchViewableTreesAtExperiment(
+	this.dataPaths_[this.dataPaths_.length - 1], opt_callback, 
+	opt_metadata);
 }
 
 
@@ -356,9 +375,20 @@ xiv.prototype.loadProjectTree_ = function() {
     // when tree loading is finished...
     (new gxnat.ProjectTree(startPath)).load( 
 	function(projTree){
-	    //window.console.log("PROJECT TREE");
+
+	    window.console.log("\n\n\n\nPROJECT TREE", projTree);
+
 	    // Get the experiments in the tree
 	    var expts = projTree.getLevelUris('experiments');
+
+	    var projNodes = projTree.getNodesByLevel('projects');
+	    var subjNodes = projTree.getNodesByLevel('subjects');
+	    var exptNodes = projTree.getNodesByLevel('experiments');
+
+
+	    window.console.log('e nodes', exptNodes);
+	    window.console.log('p nodes', projNodes);
+	    window.console.log('subj nodes', subjNodes);
 	    
 	    // get the skip index
 	    var skipInd = expts.indexOf(startPath);
@@ -366,15 +396,72 @@ xiv.prototype.loadProjectTree_ = function() {
 	    // Collapse further added zippys
 	    this.collapseAdditionalZippys_();
 
-	    // store and add experiments not loaded.
-	    goog.array.forEach(expts, function(expt, i) {
-		if (i == skipInd) {return};
-		this.loadExperiment_(expt);
-	    }.bind(this))
-	    
 	    // store the tree
 	    this.setProjectTree_(projTree);
+	    
 
+	    var j = 0;
+	    var len = subjNodes.length;
+	    
+	    var metacol, currProjMeta, currSubjMeta, currExptMeta;
+
+	    window.console.log('epxts', expts);
+
+	    /**
+	       for (j=0; j<len; j++){
+	       if (expt.indexOf(projNodes[j]
+	       ['_Path']['originalUrl']) > -1){
+	       currSubjMetadata = projNodes[j]['METADATA'];
+	       }
+	       }
+
+
+	       for (j=0; j<len; j++){
+	       if (expt.indexOf(subjNodes[j]
+	       ['_Path']['originalUrl']) > -1){
+	       currSubjMetadata = subjNodes[j]['METADATA'];
+	       }
+	       }
+
+	    */
+	    
+	    var currExptUri;
+
+	    //
+	    // store and add experiments
+	    //
+	    goog.array.forEach(exptNodes, function(exptNode, i) {
+		currExptUri = exptNode['_Path']['originalUrl'];
+
+		len = projNodes.length;
+		for (j=0; j<len; j++){
+		    if (currExptUri.indexOf(projNodes[j]
+					    ['_Path']['originalUrl']) > -1){
+			currProjMeta = projNodes[j]['METADATA'];
+			break;
+		    }
+		}
+
+
+		len = subjNodes.length;
+		for (j=0; j<len; j++){
+		    if (currExptUri.indexOf(subjNodes[j]
+					    ['_Path']['originalUrl']) > -1){
+			currSubjMeta = subjNodes[j]['METADATA'];
+			break;
+		    }
+		}
+		window.console.log('\n\n\nHERE!')
+		window.console.log(exptNode);
+		metacol = new gxnat.vis.ViewableTree.metadataCollection(
+			currProjMeta, currSubjMeta, exptNode['METADATA']);
+		window.console.log(metacol);
+
+		//
+		// Load experiment
+		//
+		this.loadExperiment_(currExptUri, null, metacol);
+	    }.bind(this))
     }.bind(this))	
 }
 
@@ -449,15 +536,51 @@ xiv.prototype.createModalPopup_ = function(){
 /**
  * Gets the viewables from the xnat server.
  * @param {!string} viewablesUri The uri to retrieve the viewables from.
- * @param {function=} opt_doneCallback To the optional callback to run once the
+ * @param {Function=} opt_doneCallback To the optional callback to run once the
  *     viewables have been fetched.
+ * @param {Object=} opt_metadata
  * @public
  */
-xiv.prototype.fetchViewableTrees = function(viewablesUri, opt_doneCallback){
-    xiv.getViewableTreesFromXnat(viewablesUri, function(viewable){
-	window.console.log('VIEWABLE', viewable);
-	this.storeViewableTree_(viewable);
-	this.addViewableTreeToModal(viewable);
+xiv.prototype.fetchViewableTreesAtExperiment = 
+function(exptUri, opt_doneCallback, opt_metadata){
+    //window.console.log(exptUri);
+    //window.console.log(exptUri.split('/experiments/'))
+    // var subjectMetadata = gxnat.jsonGet(exptUri.split('/experiments/')[0]);
+    //window.console.log(subjectMetadata);
+
+    xiv.getViewableTreesFromXnat(exptUri, function(ViewableTree){
+
+	//window.console.log('VIEWABLE', ViewableTree)
+	//window.console.log('VIEWABLE INFO', ViewableTree.sessionInfo)
+
+	//
+	// Store the viewable tree (this checks whether or not it already
+	// exists).
+	//
+	var queryUrl = ViewableTree.getQueryUrl();
+	this.storeViewableTree_(ViewableTree, queryUrl, 
+	    //
+	    // Add the tree to the modal only if it's new
+	    //
+	    function(ViewableTree){
+		this.addViewableTreeToModal(ViewableTree);
+		//window.console.log('VIEWABLE INFO ', ViewableTree.sessionInfo)
+	    }.bind(this));
+
+
+	//
+	// We set the tree's metadata property afterwards in case we're 
+	// dealing with a pre-stored tree;
+	//
+	if (goog.isDefAndNotNull(opt_metadata)){
+	    this.ViewableTrees_[queryUrl].setProjectMetadata(
+		opt_metadata.project);
+	    this.ViewableTrees_[queryUrl].setSubjectMetadata(
+		opt_metadata.subject);
+	    this.ViewableTrees_[queryUrl].setExperimentMetadata(
+		opt_metadata.experiment);
+	}
+
     }.bind(this), opt_doneCallback)
 }
 
@@ -500,18 +623,19 @@ xiv.prototype.createModal_ = function(){
 
 /**
  * Stores the viewable in an object, using its path as a key.
- * @param {!gxnat.vis.ViewableTree} viewable The gxnat.vis.ViewableTree object 
-  * to 
- *    store.
- * @param {!string} path The XNAT path associated with the Viewable.
+ * @param {!gxnat.vis.ViewableTree} ViewableTree The gxnat.vis.ViewableTree 
+ *    object to store.
+ * @param {!string} path The XNAT path associated with the ViewableTree.
+ * @param {Function=} opt_onStore The function called if the ViewableTree 
+ *    is stored. This will not be called if the ViewableTree already exists.
  * @private
  */
-xiv.prototype.storeViewableTree_ = function(viewable, path) {
+xiv.prototype.storeViewableTree_ = function(ViewableTree, path, opt_onStore) {
     this.ViewableTrees_ = this.ViewableTrees_ ? this.ViewableTrees_ : {};
-    if (!this.ViewableTrees_.hasOwnProperty(path)){
-	 this.ViewableTrees_[path] = [];
+    if (!goog.isDefAndNotNull(this.ViewableTrees_[path])){
+	this.ViewableTrees_[path] = ViewableTree;
+	opt_onStore(ViewableTree)
     }
-    this.ViewableTrees_[path].push(viewable);
 };
 
 
@@ -542,11 +666,8 @@ xiv.prototype.dispose_ = function() {
     xiv.revertDocumentStyle_();
 
     // ViewableTrees
-    goog.object.forEach(this.ViewableTrees_, function(ViewableTreeArr, key){
-	goog.array.forEach(ViewableTreeArr, function(ViewableTree){
-	    ViewableTree.dispose();
-	});
-	goog.array.clear(ViewableTreeArr);
+    goog.object.forEach(this.ViewableTrees_, function(ViewableTree, key){
+	ViewableTree.dispose();
 	delete this.ViewableTrees_[key];
     }.bind(this))
     delete this.ViewableTrees_;
@@ -602,14 +723,6 @@ xiv.extractViewableTreeFolders_ = function(ViewableTree){
 
 
 
-
-xiv.VIEWABLE_TYPES = {
-    'Scan': gxnat.vis.Scan,
-    'Slicer': gxnat.vis.Slicer,
-}
-
-
-
 /**
  * Retrieves viewables, one-by-one, for manipulation in the opt_runCallback
  * argument, and when complete the opt_doneCallback.
@@ -629,7 +742,7 @@ function (url, opt_runCallback, opt_doneCallback) {
 	  typesGotten++;
 	  if (typesGotten === typeCount){
 	      //window.console.log("\n\n\nDONE GETTING VIEWABLES!\n\n\n");
-	      if (opt_doneCallback) { 
+	      if (goog.isDefAndNotNull(opt_doneCallback)) { 
 		  opt_doneCallback(); 
 	      }
 	 }

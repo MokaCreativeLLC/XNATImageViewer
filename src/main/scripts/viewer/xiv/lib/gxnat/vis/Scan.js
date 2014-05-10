@@ -24,13 +24,8 @@ goog.provide('gxnat.vis.Scan');
 gxnat.vis.Scan = function(experimentUrl, viewableJson, opt_initComplete) {
     this.setCategory('Scans');
     goog.base(this, experimentUrl, viewableJson, opt_initComplete);
-
-
-    /**
-     * @type {Object}
-     * @private
-     */
-    this.sessionInfo_ = goog.object.clone(gxnat.vis.Scan.sessionProperties);
+    //window.console.log("VIEWABLE JSON", viewableJson);
+    //window.console.log("VIEWABLE", this);
 }
 goog.inherits(gxnat.vis.Scan, gxnat.vis.AjaxViewableTree);
 goog.exportSymbol('gxnat.vis.Scan', gxnat.vis.Scan);
@@ -40,19 +35,21 @@ goog.exportSymbol('gxnat.vis.Scan', gxnat.vis.Scan);
 /**
  * @const
  */
+/**
 gxnat.vis.Scan.sessionProperties = {
-    "SessionID": {'label': "Session ID", 'value': ['EMPTY EXPT']},
-    "Accession #": {'label':"Accession #", 'value': ['Empty Accession']},
-    "Scanner" : {'label':"Scanner", 'value': ["SIEMENS Sonata"]},
-    "Format" : {'label':"Format", 'value': ["DICOM"]},
+    "SessionID": {'label': "Session ID", 'value': ['--']},
+    "Accession #": {'label':"Accession #", 'value': ['--']},
+    "Scanner" : {'label':"Scanner", 'value': ["--"]},
+    "Format" : {'label':"Format", 'value': ["--"]},
     "Age" : {'label':"Age", 'value': ["--"]},
     "Gender": {'label':"Gender", 'value': ["--"]},
     "Handedness": {'label':"Handedness", 'value': ["--"]},
-    "AcqDate" : {'label':"Acq.Date", 'value': ["09-14-2007"]},
-    "Scan" : {'label':"Scan", 'value': ['Empty Scan']},
-    "type" : {'label':"type", 'value': ["MPRAGE"]}
+    "AcqDate" : {'label':"Acq.Date", 'value': ["--"]},
+    "Scan" : {'label':"Scan", 'value': ['--']},
+    "Type" : {'label':"type", 'value': ["--"]},
+    "Quality" : {'label':"type", 'value': ["--"]},
 }
-
+*/
 
 
 /**
@@ -77,15 +74,6 @@ gxnat.vis.Scan.prototype.fileQuerySuffix = '/files';
  */
 gxnat.vis.Scan.prototype.fileContentsKey = 'URI';
 
-
-
-/**
- * @return {!Object}
- * @public
- */
-gxnat.vis.Scan.prototype.getSessionInfo = function() {
-    return this.sessionInfo_;
-}
 
 
 
@@ -118,7 +106,7 @@ gxnat.vis.Scan.prototype.fileFilter = function(fileName){
     for (; i<len; i++) {
 	if (goog.string.caseInsensitiveEndsWith(fileName, 
 		gxnat.vis.Scan.filterableFileTypes[i])) {
-	    window.console.log('Found skippable scan file: ', fileName);
+	    //window.console.log('Found skippable scan file: ', fileName);
 	    return null;
 	} 
     }
@@ -187,8 +175,5 @@ gxnat.vis.Scan.prototype.getThumbnailImage = function(opt_callback){
  */
 gxnat.vis.Scan.prototype.dispose = function(){
     goog.base(this, 'dispose');
-    
-    // Session info.
-    goog.object.clear(this.sessionInfo_);
-    delete this.sessionInfo_;
+
 }

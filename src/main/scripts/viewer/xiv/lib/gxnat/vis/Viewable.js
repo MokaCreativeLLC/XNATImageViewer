@@ -68,7 +68,7 @@ gxnat.vis.Viewable.prototype.addFiles = function(fileName, opt_fileFilter) {
     if (goog.isDefAndNotNull(opt_fileFilter)){
 	var filteredFileName = opt_fileFilter(fileName);
 	if (!goog.isDefAndNotNull(filteredFileName)){
-	    window.console.log("Filtering", fileName);
+	    //window.console.log("Filtering", fileName);
 	    return; 
 	} 
     }

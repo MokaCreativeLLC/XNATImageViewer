@@ -68,11 +68,19 @@ function(experimentUrl, viewableJson, opt_initComplete) {
 		opt_initComplete(this)
 	    }
 	}.bind(this));;
-    }.bind(this));    
+    }.bind(this));   
+
+
+
+    /**
+     * @type {Object}
+     * @protected
+     */
+    this.sessionInfo = {}; 
+    this.setViewableMetadata();
 }
 goog.inherits(gxnat.vis.AjaxViewableTree, gxnat.vis.ViewableTree);
 goog.exportSymbol('gxnat.vis.AjaxViewableTree', gxnat.vis.AjaxViewableTree);
-
 
 
 /**
@@ -94,6 +102,136 @@ gxnat.vis.AjaxViewableTree.prototype.getQueryUrl = function() {
     return this.queryUrl;
 }
 
+
+/**
+gxnat.vis.AjaxViewableTree.sessionProperties = {
+    "SessionID": {'label': "Session ID", 'value': ['--']},
+    "Accession #": {'label':"Accession #", 'value': ['--']},
+    "Scanner" : {'label':"Scanner", 'value': ["--"]},
+    "Format" : {'label':"Format", 'value': ["--"]},
+    "Age" : {'label':"Age", 'value': ["--"]},
+    "Gender": {'label':"Gender", 'value': ["--"]},
+    "Handedness": {'label':"Handedness", 'value': ["--"]},
+    "AcqDate" : {'label':"Acq.Date", 'value': ["--"]},
+    "Scan" : {'label':"Scan", 'value': ['--']},
+    "Type" : {'label':"type", 'value': ["--"]},
+    "Quality" : {'label':"type", 'value': ["--"]},
+}
+*/
+
+
+/**
+ * @return {!Object}
+ * @public
+ */
+gxnat.vis.AjaxViewableTree.prototype.getSessionInfo = function() {
+    return this.sessionInfo;
+}
+
+
+
+/**
+ * @inheritDoc
+ */
+gxnat.vis.AjaxViewableTree.prototype.setViewableMetadata = function(meta) {
+
+    if (goog.isDefAndNotNull(this.json['ID'])){
+	this.sessionInfo['Session ID'] = this.json['ID']
+    }
+
+    if (goog.isDefAndNotNull(this.json['Name'])){
+	this.sessionInfo['Name'] = this.json['Name']
+    }
+
+    if (goog.isDefAndNotNull(this.json['type'])){
+	this.sessionInfo['Type'] = this.json['type']
+    }
+
+    if (goog.isDefAndNotNull(this.json['quality'])){
+	this.sessionInfo['Quality'] = this.json['quality']
+    }
+
+    window.console.log('\n\nJSON', this.json);
+}
+
+
+
+/**
+ * @inheritDoc
+ */
+gxnat.vis.AjaxViewableTree.prototype.setProjectMetadata = function(meta) {
+    goog.base(this, 'setProjectMetadata', meta);
+
+    window.console.log('\n\nPROJ METADATA', this.projectMetadata);
+}
+
+
+/**
+ * @inheritDoc
+ */
+gxnat.vis.AjaxViewableTree.prototype.setSubjectMetadata = function(meta) {
+    goog.base(this, 'setSubjectMetadata', meta);
+    window.console.log(meta);
+    window.console.log('SUBJ METADATA', this.subjectMetadata);
+
+    if (goog.isDefAndNotNull(this.subjectMetadata['gender'])){
+	this.sessionInfo['Gender'] = this.subjectMetadata['gender'];
+    }
+
+    if (goog.isDefAndNotNull(this.subjectMetadata['yob'])){
+	this.sessionInfo['Year of Birth'] = this.subjectMetadata['yob'];
+    }
+
+    if (goog.isDefAndNotNull(this.subjectMetadata['handedness'])){
+	this.sessionInfo['Handedness'] = this.subjectMetadata['handedness'];
+    }
+
+    if (goog.isDefAndNotNull(this.subjectMetadata['race'])){
+	this.sessionInfo['Race'] = this.subjectMetadata['race'];
+    }
+
+    if (goog.isDefAndNotNull(this.subjectMetadata['age'])){
+	this.sessionInfo['Age'] = this.subjectMetadata['age'];
+    }
+
+    if (goog.isDefAndNotNull(this.subjectMetadata['acquisition_site'])){
+	this.sessionInfo['Acq. Site'] = 
+	    this.subjectMetadata['acquisition_site'];
+    }
+
+    if (goog.isDefAndNotNull(this.subjectMetadata['date'])){
+	this.sessionInfo['Date'] = this.subjectMetadata['date'];
+    }
+
+    if (goog.isDefAndNotNull(this.subjectMetadata['scanner'])){
+	this.sessionInfo['Scanner'] = this.subjectMetadata['scanner'];
+    }
+
+    /*
+      acquisition_site: "WashU"
+      date: "1993-03-08"
+      id: "localhost_E00001"
+      label: "1"
+      project: "1"
+      scanner: "Siemens"
+      subject_ID: "localhost_S00001"
+      visit_id: "5-10-2008"
+    */
+
+    window.console.log(this.getSessionInfo());
+}
+
+
+
+/**
+ * @inheritDoc
+ */
+gxnat.vis.AjaxViewableTree.prototype.setExperimentMetadata = function(meta) {
+    goog.base(this, 'setExperimentMetadata', meta);
+
+    window.console.log('Expt METADATA', this.experimentMetadata, 
+		       this.sessionInfo);
+}
 
 
 /**
@@ -139,7 +277,11 @@ gxnat.vis.AjaxViewableTree.prototype.makeFileUrl = function(xnatFileJson) {
 gxnat.vis.AjaxViewableTree.loopFolderContents = 
 function(viewableFolderUrl, runCallback, opt_doneCallback) {
     gxnat.jsonGet(viewableFolderUrl, function(viewablesJson){
-	//window.console.log(viewablesJson);
+	
+	if (!goog.isArray(viewablesJson)) {
+	    //runCallback(viewablesJson);
+	    //return;
+	}
 	goog.array.forEach(viewablesJson, function(viewable){
 	    //window.console.log("VIEWABLE:", viewable);
 	    runCallback(viewable)
@@ -225,16 +367,13 @@ gxnat.vis.AjaxViewableTree.prototype.getThumbnailImage =
  */
 gxnat.vis.AjaxViewableTree.getViewableTrees = 
 function(url, AjaxViewableTreeSubClass, opt_runCallback, opt_doneCallback) {
-    
     var pathObj =  new gxnat.Path(url);
     var queryFolder = 
     url + '/' + AjaxViewableTreeSubClass.prototype.getFolderQuerySuffix();
     var viewable = null;
-
-//    window.console.log('\n\n\nurl:', url, '\nqueryFolder:', queryFolder);
+    //window.console.log('\n\n\nurl:', url, '\nqueryFolder:', queryFolder);
     gxnat.vis.AjaxViewableTree.loopFolderContents(queryFolder, function(json){
 	//window.console.log(json, pathObj);
-
 	viewable = new AjaxViewableTreeSubClass(
 	    pathObj.pathByLevel('experiments'), json, opt_runCallback);
 
@@ -248,6 +387,12 @@ function(url, AjaxViewableTreeSubClass, opt_runCallback, opt_doneCallback) {
  */
 gxnat.vis.AjaxViewableTree.prototype.dispose = function() {
     goog.base(this, 'dispose');
+
+    
+    // Session info.
+    goog.object.clear(this.sessionInfo);
+    delete this.sessionInfo;
+
 
     // json
     if (goog.isDefAndNotNull(this.json)){

@@ -1692,7 +1692,8 @@ xiv.ui.ViewBox.prototype.createToggleButton_ =
 xiv.ui.ViewBox.prototype.create3DRenderToggle_ = function(){    
     this.createToggleButton_(true, xiv.ui.ViewBox.CSS.BUTTON_THREEDTOGGLE,
 	'3D Rendering', function(e){
-	    this.Renderer_.setVPlaneOn((e.target.getAttribute('checked') == 'true'));
+	    this.Renderer_.setVPlaneOn((e.target.getAttribute('checked') == 
+					'true'));
 	}.bind(this));
 }
 
@@ -1719,13 +1720,14 @@ xiv.ui.ViewBox.prototype.createInfoToggle_ = function(){
     //
     // For viewables with a 'sessionInfo' property (i.e. Scans)
     //
-    if ((this.ViewableTrees_.length > 0) && 
-	(goog.isDefAndNotNull(this.ViewableTrees_[0].getSessionInfo))) {
+    if (this.ViewableTrees_.length > 0) {
+	window.console.log(this.ViewableTrees_[0].sessionInfo)
+	window.console.log(this.ViewableTrees_[0].getSessionInfo())
 	goog.object.forEach(this.ViewableTrees_[0].getSessionInfo(), 
-			    function(value, key){
-	    //window.console.log(value);
-	    infoText += value['label'] + ': ' + value['value'] + '<br>';
-	})
+	    function(value, key){
+		//window.console.log(key, value);
+		infoText += key + ': ' + value + '<br>';
+	    })
     }
 
     //
