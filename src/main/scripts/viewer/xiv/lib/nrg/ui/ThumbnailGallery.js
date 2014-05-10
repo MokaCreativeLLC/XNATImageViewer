@@ -206,10 +206,10 @@ nrg.ui.ThumbnailGallery.thumbnailSorter = function(holderElt, insertElt){
     for (; i < len; i++){
 	compareStr = siblings[i]
 	    [nrg.ui.ThumbnailGallery.THUMB_SORT_TAG].toLowerCase();
-	comparer = insertEltText.localeCompare(compareStr)
+	comparer = goog.string.numerateCompare(insertEltText, compareStr)
 
 	// insert only when the text is less...
-	if (comparer == -1) {
+	if (comparer < 0) {
 	    goog.dom.insertSiblingBefore(insertElt, siblings[i]);
 	    return;
 	}
