@@ -192,10 +192,13 @@ nrg.ui.ThumbnailGallery.thumbnailSorter = function(holderElt, insertElt){
     // Preliminary sort params
     //
     var siblings = goog.dom.getChildren(holderElt);
+
+
     var insertEltText = 
 	insertElt[nrg.ui.ThumbnailGallery.THUMB_SORT_TAG].toLowerCase(); 
     var comparer;
     var compareStr;
+    var currSibling;
     var len = siblings.length
     var i = 0;
 
@@ -204,13 +207,21 @@ nrg.ui.ThumbnailGallery.thumbnailSorter = function(holderElt, insertElt){
     // Linear insert
     //
     for (; i < len; i++){
-	compareStr = siblings[i]
+
+	currSibling = siblings[i];
+	//window.console.log(currSibling);
+	if (!goog.isDefAndNotNull(currSibling
+	    [nrg.ui.ThumbnailGallery.THUMB_SORT_TAG])){
+	    continue;
+	}
+
+	compareStr = currSibling
 	    [nrg.ui.ThumbnailGallery.THUMB_SORT_TAG].toLowerCase();
 	comparer = goog.string.numerateCompare(insertEltText, compareStr)
 
 	// insert only when the text is less...
 	if (comparer < 0) {
-	    goog.dom.insertSiblingBefore(insertElt, siblings[i]);
+	    goog.dom.insertSiblingBefore(insertElt, currSibling);
 	    return;
 	}
     }
@@ -293,6 +304,25 @@ nrg.ui.ThumbnailGallery.prototype.setHoverParent = function(elt){
 	goog.dom.append(elt, thumbnail.getHoverable());
     })
 }
+
+
+/**
+ * @param {Array.<string>} folders The zippy structure.
+ */
+nrg.ui.ThumbnailGallery.prototype.addFolders = function(folders) {
+    var blankDiv = goog.dom.createDom('div', {
+	'id': 'blankDiv'
+    })
+
+    //
+    // Apply a little hack around the blank div for sorting.
+    //
+    blankDiv[nrg.ui.ThumbnailGallery.THUMB_SORT_TAG] = '-1';
+
+
+    this.ZippyTree_.addContents(blankDiv, folders);
+}
+
 
 
 

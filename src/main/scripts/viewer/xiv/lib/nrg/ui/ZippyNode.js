@@ -209,6 +209,16 @@ nrg.ui.ZippyNode.prototype.zippyType_ = goog.ui.AnimatedZippy;
 
 
 /**
+ * @return {!string} The node title
+ * @public
+ */
+nrg.ui.ZippyNode.prototype.getTitle = function() {
+    return this.title_
+}
+
+
+
+/**
  * @return {Object.<string, goog.ui.ZippyNode>} The node collection.
  * @public
  */

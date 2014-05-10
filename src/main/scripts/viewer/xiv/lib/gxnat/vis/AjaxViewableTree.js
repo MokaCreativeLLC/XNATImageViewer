@@ -150,8 +150,7 @@ gxnat.vis.AjaxViewableTree.prototype.setViewableMetadata = function(meta) {
     if (goog.isDefAndNotNull(this.json['quality'])){
 	this.sessionInfo['Quality'] = this.json['quality']
     }
-
-    window.console.log('\n\nJSON', this.json);
+    //window.console.log('\n\nJSON', this.json);
 }
 
 
@@ -161,8 +160,7 @@ gxnat.vis.AjaxViewableTree.prototype.setViewableMetadata = function(meta) {
  */
 gxnat.vis.AjaxViewableTree.prototype.setProjectMetadata = function(meta) {
     goog.base(this, 'setProjectMetadata', meta);
-
-    window.console.log('\n\nPROJ METADATA', this.projectMetadata);
+    //window.console.log('\n\nPROJ METADATA', this.projectMetadata);
 }
 
 
@@ -171,8 +169,8 @@ gxnat.vis.AjaxViewableTree.prototype.setProjectMetadata = function(meta) {
  */
 gxnat.vis.AjaxViewableTree.prototype.setSubjectMetadata = function(meta) {
     goog.base(this, 'setSubjectMetadata', meta);
-    window.console.log(meta);
-    window.console.log('SUBJ METADATA', this.subjectMetadata);
+    //window.console.log(meta);
+    //window.console.log('SUBJ METADATA', this.subjectMetadata);
 
     if (goog.isDefAndNotNull(this.subjectMetadata['gender'])){
 	this.sessionInfo['Gender'] = this.subjectMetadata['gender'];
@@ -218,7 +216,7 @@ gxnat.vis.AjaxViewableTree.prototype.setSubjectMetadata = function(meta) {
       visit_id: "5-10-2008"
     */
 
-    window.console.log(this.getSessionInfo());
+    //window.console.log(this.getSessionInfo());
 }
 
 
@@ -229,8 +227,8 @@ gxnat.vis.AjaxViewableTree.prototype.setSubjectMetadata = function(meta) {
 gxnat.vis.AjaxViewableTree.prototype.setExperimentMetadata = function(meta) {
     goog.base(this, 'setExperimentMetadata', meta);
 
-    window.console.log('Expt METADATA', this.experimentMetadata, 
-		       this.sessionInfo);
+    //window.console.log('Expt METADATA', this.experimentMetadata, 
+    //this.sessionInfo);
 }
 
 

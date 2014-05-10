@@ -103,6 +103,13 @@ xiv = function(mode, dataPath, rootUrl){
 
 
     /** 
+     * @type {Object}
+     * @private
+     */
+    this.loadedExperiments_ = {};
+
+
+    /** 
      * NOTE: Necessary!!! If not done it creates weird dependency 
      * issues if declared outside of the constructor method.
      *
@@ -121,11 +128,23 @@ xiv = function(mode, dataPath, rootUrl){
     // Once the initial experiment has been retrieved, we get the entire
     // project tree.
     //
-    
-    this.loadExperiment_(this.dataPaths_[0], function() {
-	this.loadProjectTree_();
-    }.bind(this)); 
 
+    var startPath = this.dataPaths_[0];
+
+    this.ProjectTree_ = new gxnat.ProjectTree(startPath);
+
+
+    this.ProjectTree_.partialLoad(startPath, function(tree){
+	this.onProjectTreeLoaded_(null, function(){
+	    this.loadAllUnloadedExperiments_();
+
+	    this.ProjectTree_.load(function(projTree){
+		this.onProjectTreeLoaded_(projTree)
+	    }.bind(this))
+	    
+	}.bind(this));
+
+    }.bind(this))
 };
 goog.inherits(xiv, goog.Disposable);
 goog.exportSymbol('xiv', xiv);
@@ -175,6 +194,33 @@ xiv.revertDocumentStyle_ = function() {
     document.body.style.overflow = 'visible';
 }
 
+
+
+/**
+ * @private {!string} exptUri 
+ * @private
+ */
+xiv.prototype.loadUnloadedExperiment_ = function(exptUri) {
+    var key = exptUri;
+    var expObj = this.loadedExperiments_[key];
+    if (!expObj['loaded']){
+	this.loadExperiment_(key, function(){
+	    this.loadedExperiments_[key]['loaded'] = true;
+	}.bind(this), expObj['METADATA']); 		
+    }
+}
+
+
+
+
+/**
+ * @private
+ */
+xiv.prototype.loadAllUnloadedExperiments_ = function() {
+    goog.object.forEach(this.loadedExperiments_, function(expObj, key){
+	this.loadUnloadedExperiment_(key);
+    }.bind(this))
+}
 
 
 
@@ -285,6 +331,36 @@ xiv.prototype.show = function(){
     this.Modal_.render();
 
 
+
+    //
+    // TREE XP!
+    //
+    window.console.log("LISTEN FOR TREE EXPANSION");
+    goog.events.listen(	
+	this.Modal_.getThumbnailGallery().getZippyTree(),
+	nrg.ui.ZippyNode.EventType.EXPANDED, function(e){
+	    var title = e.node.getTitle();
+	    if (title.indexOf(gxnat.folderAbbrev['experiments']) > -1){
+		
+		var exptTitle = 
+		    title.split(gxnat.folderAbbrev['experiments'] + ': ')[1];
+
+		window.console.log(this.loadedExperiments_);
+		goog.object.forEach(this.loadedExperiments_, 
+                function(eObj, key){
+		    
+		    window.console.log(eObj['Path']['experiments'], exptTitle, 
+				       eObj['Path']['experiments'] == exptTitle)
+		    if (eObj['Path']['experiments'] == exptTitle){
+			window.console.log("loadUnloaded!");
+			this.loadUnloadedExperiment_(key);
+		    }
+		}.bind(this))
+	    }
+	}.bind(this))
+
+
+
     //
     // Set the button callbacks once rendered.
     //
@@ -363,107 +439,98 @@ function(exptUrl, opt_callback, opt_metadata) {
 
 
 /** 
+ * @param {gxnat.ProjectTree=} opt_projTree
+ * @param {Function=} opt_doneCallback
  * @private
  */
-xiv.prototype.loadProjectTree_ = function() {
+xiv.prototype.onProjectTreeLoaded_ = function(opt_projTree, opt_doneCallback) {
 
-    if (this.projectTreeLoadedStarted_) { return }
-    this.projectTreeLoadedStarted_ = true;
+    var projTree = goog.isDefAndNotNull(opt_projTree) ? 
+	opt_projTree : this.ProjectTree_;
 
-    var startPath = this.dataPaths_[0];
+    window.console.log("\n\n\n\nPROJECT TREE", projTree);
 
-    // when tree loading is finished...
-    (new gxnat.ProjectTree(startPath)).load( 
-	function(projTree){
-
-	    window.console.log("\n\n\n\nPROJECT TREE", projTree);
-
-	    // Get the experiments in the tree
-	    var expts = projTree.getLevelUris('experiments');
-
-	    var projNodes = projTree.getNodesByLevel('projects');
-	    var subjNodes = projTree.getNodesByLevel('subjects');
-	    var exptNodes = projTree.getNodesByLevel('experiments');
+    // Get the experiments in the tree
+    var projNodes = projTree.getNodesByLevel('projects');
+    var subjNodes = projTree.getNodesByLevel('subjects');
+    var exptNodes = projTree.getNodesByLevel('experiments');
 
 
-	    window.console.log('e nodes', exptNodes);
-	    window.console.log('p nodes', projNodes);
-	    window.console.log('subj nodes', subjNodes);
-	    
-	    // get the skip index
-	    var skipInd = expts.indexOf(startPath);
-
-	    // Collapse further added zippys
-	    this.collapseAdditionalZippys_();
-
-	    // store the tree
-	    this.setProjectTree_(projTree);
-	    
-
-	    var j = 0;
-	    var len = subjNodes.length;
-	    
-	    var metacol, currProjMeta, currSubjMeta, currExptMeta;
-
-	    window.console.log('epxts', expts);
-
-	    /**
-	       for (j=0; j<len; j++){
-	       if (expt.indexOf(projNodes[j]
-	       ['_Path']['originalUrl']) > -1){
-	       currSubjMetadata = projNodes[j]['METADATA'];
-	       }
-	       }
+    //window.console.log('e nodes', exptNodes);
+    //window.console.log('p nodes', projNodes);
+    //window.console.log('subj nodes', subjNodes);
 
 
-	       for (j=0; j<len; j++){
-	       if (expt.indexOf(subjNodes[j]
-	       ['_Path']['originalUrl']) > -1){
-	       currSubjMetadata = subjNodes[j]['METADATA'];
-	       }
-	       }
+    // Collapse further added zippys
+    //this.collapseAdditionalZippys_();
+    
 
-	    */
-	    
-	    var currExptUri;
+    var j = 0;
+    var len = subjNodes.length;
+    var metacol, currProjMeta, currSubjMeta, currExptMeta;
 
-	    //
-	    // store and add experiments
-	    //
-	    goog.array.forEach(exptNodes, function(exptNode, i) {
-		currExptUri = exptNode['_Path']['originalUrl'];
+    //window.console.log('epxts', expts);
 
-		len = projNodes.length;
-		for (j=0; j<len; j++){
-		    if (currExptUri.indexOf(projNodes[j]
-					    ['_Path']['originalUrl']) > -1){
-			currProjMeta = projNodes[j]['METADATA'];
-			break;
-		    }
-		}
+    
+    var currExptUri;
+
+    //
+    // store and add experiments
+    //
+    goog.array.forEach(exptNodes, function(exptNode, i) {
+	currExptUri = exptNode['_Path']['originalUrl'];
+
+	len = projNodes.length;
+	for (j=0; j<len; j++){
+	    if (currExptUri.indexOf(projNodes[j]
+				    ['_Path']['originalUrl']) > -1){
+		currProjMeta = projNodes[j]['METADATA'];
+		break;
+	    }
+	}
 
 
-		len = subjNodes.length;
-		for (j=0; j<len; j++){
-		    if (currExptUri.indexOf(subjNodes[j]
-					    ['_Path']['originalUrl']) > -1){
-			currSubjMeta = subjNodes[j]['METADATA'];
-			break;
-		    }
-		}
-		window.console.log('\n\n\nHERE!')
-		window.console.log(exptNode);
-		metacol = new gxnat.vis.ViewableTree.metadataCollection(
-			currProjMeta, currSubjMeta, exptNode['METADATA']);
-		window.console.log(metacol);
+	len = subjNodes.length;
+	for (j=0; j<len; j++){
+	    if (currExptUri.indexOf(subjNodes[j]
+				    ['_Path']['originalUrl']) > -1){
+		currSubjMeta = subjNodes[j]['METADATA'];
+		break;
+	    }
+	}
+	//window.console.log('\n\n\nHERE!')
+	//window.console.log(exptNode);
+	metacol = new gxnat.vis.ViewableTree.metadataCollection(
+	    currProjMeta, currSubjMeta, exptNode['METADATA']);
+	//window.console.log(metacol);
 
-		//
-		// Load experiment
-		//
-		this.loadExperiment_(currExptUri, null, metacol);
-	    }.bind(this))
-    }.bind(this))	
+	//
+	// Load experiment
+	//
+	//this.loadExperiment_(currExptUri, null, metacol);
+	this.loadedExperiments_[currExptUri] = {
+	    'loaded' : false,
+	    'METADATA': metacol,
+	    'Path': new gxnat.Path(currExptUri)
+	}
+
+	//
+	// Only create the folders of the experiments
+	//
+	var folders = xiv.extractExperimentUrlFolders_(currExptUri);
+	this.addFoldersToModalThumbnailGallery(folders);
+	window.console.log("\n\nFOLDERS", folders);
+
+	//
+	// Apply the metadata to the preloaded thumbnails
+	//
+	if (goog.isDefAndNotNull(opt_doneCallback)){
+	    opt_doneCallback();
+	}
+    }.bind(this))
+
 }
+
 
 
 
@@ -555,7 +622,7 @@ function(exptUri, opt_doneCallback, opt_metadata){
 
 	//
 	// Store the viewable tree (this checks whether or not it already
-	// exists).
+	// exists) in the stored structure in XIV
 	//
 	var queryUrl = ViewableTree.getQueryUrl();
 	this.storeViewableTree_(ViewableTree, queryUrl, 
@@ -582,6 +649,16 @@ function(exptUri, opt_doneCallback, opt_metadata){
 	}
 
     }.bind(this), opt_doneCallback)
+}
+
+
+
+/**
+ * @param {Array.<string>} folders The zippy structure.
+ * @public
+ */
+xiv.prototype.addFoldersToModalThumbnailGallery = function(folders){
+    this.Modal_.getThumbnailGallery().addFolders(folders);
 }
 
 
@@ -695,13 +772,12 @@ xiv.prototype.dispose_ = function() {
 
 
 /**
- * Extracts the folders in the provided path and returns a set of folders
- * for querying thumbnails. 
- * @param {gxnat.vis.AjaxViewableTree} ViewableTree
+ * @param {!string} exptUrl
+ * @return {!Array.<string>}
  * @private
  */
-xiv.extractViewableTreeFolders_ = function(ViewableTree){
-    var pathObj = new gxnat.Path(ViewableTree.getExperimentUrl());
+xiv.extractExperimentUrlFolders_ = function(exptUrl){
+    var pathObj = new gxnat.Path(exptUrl);
     var folders = [];
     var key = '';
     var keyValid = gxnat.folderAbbrev[key];
@@ -714,9 +790,30 @@ xiv.extractViewableTreeFolders_ = function(ViewableTree){
 			 + ": " + pathObj[key]) 
 	}
     };
+    
+    return folders;
+}
 
-    // Apply Viewable category
-    folders.push(ViewableTree.getCategory());
+
+
+/**
+ * Extracts the folders in the provided path and returns a set of folders
+ * for querying thumbnails. 
+ * @param {gxnat.vis.AjaxViewableTree} ViewableTree
+ * @return {!Array.<string>}
+ * @private
+ */
+xiv.extractViewableTreeFolders_ = function(ViewableTree){
+    var folders = xiv.extractExperimentUrlFolders_(ViewableTree.
+						   getExperimentUrl());
+
+    //
+    // Only add non-scans to their own category folder
+    //
+    var category = ViewableTree.getCategory();
+    if (category !== 'Scans') {
+	folders.push(category);
+    }
     return folders;
 }
 
@@ -736,9 +833,9 @@ xiv.getViewableTreesFromXnat =
 function (url, opt_runCallback, opt_doneCallback) {
     var typeCount = goog.object.getCount(xiv.VIEWABLE_TYPES);
     var typesGotten = 0;
-    goog.object.forEach(xiv.VIEWABLE_TYPES, function(vType){
+    goog.object.forEach(xiv.VIEWABLE_TYPES, function(viewableType){
       gxnat.vis.AjaxViewableTree.getViewableTrees(
-	  url, vType, opt_runCallback, function(){
+	  url, viewableType, opt_runCallback, function(){
 	  typesGotten++;
 	  if (typesGotten === typeCount){
 	      //window.console.log("\n\n\nDONE GETTING VIEWABLES!\n\n\n");

@@ -27,12 +27,58 @@ goog.require('gxnat.Path');
 goog.provide('gxnat.ProjectTree');
 gxnat.ProjectTree = function(xnatProjUrl){
     //window.console.log("\n\nProject Tree init path: ", xnatProjUrl);
-    this.initPath_ = /** @type {!gxnat.Path} */
-    new gxnat.Path(xnatProjUrl);
+
+    /**
+     * @type {!gxnat.Path}
+     * @private
+     */
+    this.initPath_ = new gxnat.Path(xnatProjUrl);
+
+
+    //window.console.log(this.initPath_);
+   
+
     // Necessary as the starting node for the class
     this['projects'] = [];		 
 }
 goog.exportSymbol('gxnat.ProjectTree', gxnat.ProjectTree);
+
+
+
+/**
+ * @const
+ */
+gxnat.ProjectTree.NEXTLEVELQUERY_KEY = '_nextLevelQuery';
+
+
+/**
+ * @const
+ */
+gxnat.ProjectTree.NEXTLEVELJSON_KEY = '_nextLevelJsons';
+
+
+/**
+ * @const
+ */
+gxnat.ProjectTree.ORIGINALURL_KEY = 'originalUrl';
+
+
+/**
+ * @const
+ */
+gxnat.ProjectTree.PATH_KEY = '_Path';
+
+
+/**
+ * @const
+ */
+gxnat.ProjectTree.NEXTLEVEL_KEY = '_nextLevel';
+
+
+/**
+ * @const
+ */
+gxnat.ProjectTree.METADATA_KEY = 'METADATA';
 
 
 
@@ -61,8 +107,112 @@ gxnat.ProjectTree.prototype.stopLevelRetrieved_ = 0;
 
 
 /**
+ * @type {!gxnat.Path}
+ * @private
+ */
+gxnat.ProjectTree.prototype.partialPath_ = null;
+
+
+
+
+/**
+ * Loads the projects nodes ONLY pertianing to the initPath provided
+ * in the constructor. 
+ *
+ * @param {!string} startPath
+ * @param {!function} callback The callback function to run once the tree has
+ *   been fully loaded up the level defined by 
+ *   gxnat.ProjectTree.prototype.STOP_LEVEL.  This gets passed into the
+ *   getTree function.
+ * @public
+ */
+gxnat.ProjectTree.prototype.partialLoad = function(startPath, doneCallback){
+
+    var i=0;
+    var len = gxnat.Path.xnatLevelOrder.length;
+    var level;
+
+    this.partialPath_ = new gxnat.Path(startPath);
+    
+    
+    var node = this;
+    var levelUri = this.partialPath_['prefix'];
+
+    var nodeChain = [];
+
+    for (; i<len; i++) {
+
+	//
+	// Get the level
+	//
+	level = gxnat.Path.xnatLevelOrder[i];
+	if (!goog.isDefAndNotNull(node[level])){
+	    node[level] = [];
+	}
+
+	//
+	// Construct the level URI
+	//
+	levelUri += '/' + level + '/' + this.partialPath_[level];
+
+	//
+	// Create and store the new node
+	//
+	var newNode = this.createEmptyTreeNode_(level, levelUri);
+	node[level].push(newNode)
+	nodeChain.push(newNode);
+
+	//
+	// Set the new node
+	//
+	node = newNode;
+
+	//
+	// Break out if at STOP_LEVEL
+	//
+	if (level === this.STOP_LEVEL) { break; }
+    }
+
+
+    window.console.log(nodeChain);
+    
+    //currNode
+    var getChain = function(currNode, callback, doneCallback1) {
+
+	window.console.log('\n\nCURR NODE', currNode, nodeChain);
+
+	gxnat.jsonGet(currNode[gxnat.ProjectTree.PATH_KEY]['originalUrl'], 
+		      function(jsonArr){
+			  currNode[gxnat.ProjectTree.METADATA_KEY] = 
+			      jsonArr['items'][0];
+			  
+			  goog.array.remove(nodeChain, currNode);
+			  window.console.log(nodeChain);
+			  if (nodeChain.length == 0){
+			      window.console.log("DONE CALLBACK!", 
+						 doneCallback1);
+			      doneCallback1(this);
+			      return;
+			  } else {
+			       getChain(nodeChain[0], 
+					getChain.bind(this), doneCallback1);
+			  }
+		      }.bind(this))
+    }
+    window.console.log(nodeChain);
+    getChain(nodeChain[0], getChain.bind(this), doneCallback);
+
+    
+
+    window.console.log(this);
+}
+
+
+
+/**
  * Loads the project tree.  This is implemented because of the AJAX queries
  * needed and why it's not part of the constructor.
+ *
  * @param {!function} callback The callback function to run once the tree has
  *   been fully loaded up the level defined by 
  *   gxnat.ProjectTree.prototype.STOP_LEVEL.  This gets passed into the
@@ -71,27 +221,25 @@ gxnat.ProjectTree.prototype.stopLevelRetrieved_ = 0;
  */
 gxnat.ProjectTree.prototype.load = function(callback){
 
-    // Get the all of the stop level nodes in the XNAT server.
-    gxnat.jsonGet(this.initPath_['prefix'] + '/' + this.STOP_LEVEL, 
-	function(stopLevelArr){
-	    var i = 0;
-	    var len = stopLevelArr.length;
+    //--------------------
+    // FIRST, we get all of the experiments within the project 
+    // first, just to make sure have the correct count.
+    //------------------
+    var initQueryPath = this.initPath_['prefix'] + '/projects/' + 
+	this.initPath_['projects'] + '/' + this.STOP_LEVEL;
+    gxnat.jsonGet(initQueryPath, function(stopLevelArr){
+	    //
+	    // Store the number of experiments within the project.  
+	    //
+	    this.stopLevelCount_ = stopLevelArr.length;
 
-	    // Count the number of experiments within the project that
-	    // was defined in the initPath_ attribute.
-	    for (; i<len; i++){
-		if(stopLevelArr[i]['project'] === this.initPath_['projects']){
-		    this.stopLevelCount_++;
-		}
-	    }
-
-	    //window.console.log("CALLBACK", callback);
-	    // Call getTree
+	    //
+	    // Then call getTree recrusion
+	    //
 	    this['projects'].push(this.getTree('projects', 
 	    		this.initPath_.pathByLevel('projects'), callback)); 
 	}.bind(this))
 }
-
 
 
 
@@ -131,49 +279,72 @@ function(currLevel, levelUri, callback){
  */
 gxnat.ProjectTree.prototype.createSubTree_ = function(node, callback){
 
-    var subTree = {};
+    var subTree;
 
     //
     // First get the json of the node -- this gives us metdata
     // relevant for later (such race, handedness etc. at the subj level)
     //
-    gxnat.jsonGet(node['_Path']['originalUrl'], function(levelJsonArr){
+    gxnat.jsonGet(node[gxnat.ProjectTree.PATH_KEY]['originalUrl'], 
+       function(levelJsonArr){
 
 	//
 	// Store the metadata
 	//
-	node['METADATA'] = levelJsonArr['items'][0];
+	node[gxnat.ProjectTree.METADATA_KEY] = levelJsonArr['items'][0];
 
 	//
 	// then query for the next level
 	//
-	gxnat.jsonGet(node['_nextLevelQuery'], function(nextLevelJsonArr){
-	    node['_nextLevelJsons'] = nextLevelJsonArr;
-	    goog.array.forEach(nextLevelJsonArr, function(nextLevelObj){
-		subTree = this.getTree(node['_nextLevel'], 
-				       node['_Path']['originalUrl'] 
-				       + '/' + node['_nextLevel'] + '/' + 
-				       nextLevelObj['ID'], callback)
-		node[node['_nextLevel']].push(subTree);	
+	gxnat.jsonGet(node[gxnat.ProjectTree.NEXTLEVELQUERY_KEY], 
+           function(nextLevelJsonArr){
 
-		//
-		// Store the metadata
-		//
-		subTree['METADATA'] = nextLevelJsonArr[0];
+	       node[gxnat.ProjectTree.NEXTLEVELJSON_KEY] = nextLevelJsonArr;
 
-		//
-		// Run callback once all the experiments have been accounted 
-		// for.
-		//
-		if (this.stopLevelRetrieved_ === this.stopLevelCount_) {
-		    //window.console.log("HERE", this.STOP_LEVEL,
-		    //this, this['projects'][0]['subjects'][0]);
-		    callback(this)
-		}
+	       goog.array.forEach(nextLevelJsonArr, function(nextLevelObj){
 
-	
-	    }.bind(this))
-	}.bind(this))    
+		   //
+		   // Get the new subtree
+		   //
+		   subTree = this.getTree(
+		       //
+		       // The level of the subTree
+		       //
+		       node[gxnat.ProjectTree.NEXTLEVEL_KEY], 
+
+		       //
+		       // The queryURL of the subtree
+		       //
+		       node[gxnat.ProjectTree.PATH_KEY]['originalUrl'] 
+			   + '/' + 
+			   node[gxnat.ProjectTree.NEXTLEVEL_KEY] +
+		       '/' + nextLevelObj['ID'], 
+		       
+		       //
+		       // The callback once finished
+		       //
+		       callback)
+		   
+		   //
+		   // Store the subtree
+		   //
+		   node[node[gxnat.ProjectTree.NEXTLEVEL_KEY]].push(subTree);	
+
+		   //
+		   // Store the metadata
+		   //
+		   subTree[gxnat.ProjectTree.METADATA_KEY] = 
+		       nextLevelJsonArr[0];
+
+		   //
+		   // Run callback once all the experiments have been accounted 
+		   // for.
+		   //
+		   if (this.stopLevelRetrieved_ === this.stopLevelCount_) {
+		       callback(this)
+		   }
+	       }.bind(this))
+	   }.bind(this))    
     }.bind(this))    
     return node;
 }
@@ -189,19 +360,26 @@ gxnat.ProjectTree.prototype.createSubTree_ = function(node, callback){
  */
 gxnat.ProjectTree.prototype.createEmptyTreeNode_ = 
 function(currLevel, levelUri){
-    var node = { 
-	'_Path' : new gxnat.Path(levelUri)
-    }
+    var node = {};
+    node[gxnat.ProjectTree.PATH_KEY] = new gxnat.Path(levelUri);
+    
+    //
     // Construct next level attributes.
+    //
     var nextLevelInd = gxnat.Path.xnatLevelOrder.indexOf(currLevel) + 1;
     if (nextLevelInd != -1){
-	node['_nextLevel'] = gxnat.Path.xnatLevelOrder[nextLevelInd];
+	node[gxnat.ProjectTree.NEXTLEVEL_KEY] = 
+	    gxnat.Path.xnatLevelOrder[nextLevelInd];
+
+	//
 	// If next level is not a string, we skip. See 
 	// gxnat.Path.xnatLevelOrder for more info.
-	if (goog.isString(node['_nextLevel'])){
-	    node['_nextLevelQuery'] = node['_Path']['originalUrl'] 
-		+ '/' + node['_nextLevel'];
-	    node[node['_nextLevel']] = [];
+	//
+	if (goog.isString(node[gxnat.ProjectTree.NEXTLEVEL_KEY])){
+	    node[gxnat.ProjectTree.NEXTLEVELQUERY_KEY] = 
+		node[gxnat.ProjectTree.PATH_KEY]['originalUrl'] 
+		+ '/' + node[gxnat.ProjectTree.NEXTLEVEL_KEY];
+	    node[node[gxnat.ProjectTree.NEXTLEVEL_KEY]] = [];
 	}
     }
     return node;
@@ -244,10 +422,12 @@ function(getLevel, nextLevel, treeNode, uris) {
 
     for (i=0; i < len; i++){
 	if (nextLevel === getLevel){
-	    uris.push(treeNode[nextLevel][i]['_Path']['originalUrl']);
+	    uris.push(treeNode[nextLevel][i][gxnat.ProjectTree.PATH_KEY]
+		      ['originalUrl']);
 	} else {
 	    this.getLevelUris_(getLevel, 
-			       treeNode[nextLevel][i]['_nextLevel'], 
+			       treeNode[nextLevel][i]
+			       [gxnat.ProjectTree.NEXTLEVEL_KEY], 
 			       treeNode[nextLevel][i], 
 			       uris);
 	}
@@ -287,7 +467,8 @@ function(getLevel, nextLevel, treeNode, nodes) {
 	    nodes.push(treeNode[nextLevel][i]);
 	} else {
 	    this.getNodesByLevel_(getLevel, 
-			       treeNode[nextLevel][i]['_nextLevel'], 
+			       treeNode[nextLevel][i]
+				  [gxnat.ProjectTree.NEXTLEVEL_KEY], 
 			       treeNode[nextLevel][i], 
 			       nodes);
 	}
@@ -303,6 +484,11 @@ function(getLevel, nextLevel, treeNode, nodes) {
  */
 gxnat.ProjectTree.prototype.dispose = function(url) {
     //goog.base(this, 'dispose');
+
+    if (goog.isDefAndNotNull(this.partialPath_)){
+	this.partialPath_.dispose();
+	delete this.partialPath_;
+    }
 
     this.initPath_.dispose();
     delete this.initPath_;

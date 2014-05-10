@@ -238,9 +238,8 @@ nrg.ui.ZippyTree.prototype.traverse = function(callback, currNode) {
  */
 nrg.ui.ZippyTree.prototype.toggleFadeInFx = function(b) {
     this.fadeInFx_ = (b === true);
-    this.initOp_ = /**@type {!number}*/ this.fadeInFx_ ? 0 : 1;
-    this.fadeDur_ = /**@type {!number}*/ 
-    this.fadeInFx_ ? nrg.ui.ZippyTree.FADE_TIME : 0;
+    this.initOp_ = this.fadeInFx_ ? 0 : 1;
+    this.fadeDur_ = this.fadeInFx_ ? nrg.ui.ZippyTree.FADE_TIME : 0;
 }
 
 
@@ -345,11 +344,17 @@ nrg.ui.ZippyTree.prototype.createBranch_ = function(fldrs, pNode, opt_elt) {
  * @return {nrg.ui.ZippyNode} The created node.
  * @private
  */
-nrg.ui.ZippyNode.prototype.createNode_ = function(title, parent, pNode) {
+nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     //window.console.log('\n\nPARENT', parent);
     parent.style.opacity = this.initOp_;
-    var node = /**@type {!nrg.ui.ZippyNode}*/
-    new nrg.ui.ZippyNode(title, parent);
+    var node = new nrg.ui.ZippyNode(title, parent);
+
+    goog.events.listen(node, nrg.ui.ZippyNode.EventType.EXPANDED, function(){
+	this.dispatchEvent({
+	    type: nrg.ui.ZippyNode.EventType.EXPANDED,
+	    node: node
+	});
+    }.bind(this))
 
     pNode.getNodes()[title] = node;
 
