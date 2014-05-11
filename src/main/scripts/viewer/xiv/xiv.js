@@ -65,50 +65,6 @@ xiv = function(mode, dataPath, rootUrl){
      */
     this.queryPrefix_ = gxnat.Path.getQueryPrefix(rootUrl);
 
-
-    /** 
-     * @type {xiv.ui.Modal} 
-     * @private
-     */
-    this.Modal_;
-
-
-    /**
-     * @type {gxnat.ProjectTree}
-     * @private
-     */
-    this.ProjectTree_;
-
-
-    /**
-     * @type {Array.string}
-     * @private
-     */
-    this.dataPaths_;
-    this.addDataPath(dataPath);
-    window.console.log('add data path:', dataPath);
-
-    /**
-     * @type {boolean}
-     * @private
-     */
-    this.projectTreeLoadedStarted_ = false;
-
-
-    /** 
-     * @type {Object.<string, Array.<gxnat.vis.ViewableTree>>}
-     * @private
-     */
-    this.ViewableTrees_;
-
-
-    /** 
-     * @type {Object}
-     * @private
-     */
-    this.loadedExperiments_ = {};
-
-
     /** 
      * NOTE: Necessary!!! If not done it creates weird dependency 
      * issues if declared outside of the constructor method.
@@ -119,35 +75,29 @@ xiv = function(mode, dataPath, rootUrl){
     this.modalType_ = xiv.ui.Modal;
 
 
-    // Inits
-    this.createModal_();
-
-
     //
-    // What we're doing here is as follows:
-    // Once the initial experiment has been retrieved, we get the entire
-    // project tree.
+    // Add the data path
     //
-
-    var startPath = this.dataPaths_[0];
-
-    this.ProjectTree_ = new gxnat.ProjectTree(startPath);
-
-
-    this.ProjectTree_.partialLoad(startPath, function(tree){
-	this.onProjectTreeLoaded_(null, function(){
-	    this.loadAllUnloadedExperiments_();
-
-	    this.ProjectTree_.load(function(projTree){
-		this.onProjectTreeLoaded_(projTree)
-	    }.bind(this))
-	    
-	}.bind(this));
-
-    }.bind(this))
+    this.addDataPath(dataPath);
+    //window.console.log('add data path:', dataPath);
 };
 goog.inherits(xiv, goog.Disposable);
 goog.exportSymbol('xiv', xiv);
+
+
+
+/**
+ * @param {!boolean} loaded 
+ * @param {!Object} metadata 
+ * @param {!string} uri
+ *
+ * @struct
+ */
+xiv.experimentTracker = function(loaded, metadata, uri){
+    this.loaded = loaded
+    this.metadata =  metadata,
+    this.path = new gxnat.Path(uri)
+}
 
 
 
@@ -196,24 +146,126 @@ xiv.revertDocumentStyle_ = function() {
 
 
 
+/** 
+ * @type {xiv.ui.Modal} 
+ * @private
+ */
+xiv.prototype.Modal_;
+
+
+
 /**
- * @private {!string} exptUri 
+ * @type {gxnat.ProjectTree}
+ * @private
+ */
+xiv.prototype.ProjectTree_;
+
+
+
+/**
+ * @type {Array.string}
+ * @private
+ */
+xiv.prototype.dataPaths_;
+
+
+
+/** 
+ * @type {Object.<string, Array.<gxnat.vis.ViewableTree>>}
+ * @private
+ */
+xiv.prototype.ViewableTrees_;
+
+
+
+/** 
+ * @type {Object.<string, xiv.experimentTracker>}
+ * @private
+ */
+xiv.prototype.loadedExperiments_;
+
+
+
+/**
+ * @public
+ */
+xiv.prototype.begin = function() {
+
+    //
+    // Create the modal
+    //
+    this.createModal_();
+
+    //
+    // Create the project tree
+    //
+    this.ProjectTree_ = new gxnat.ProjectTree(this.dataPaths_[0]);
+
+    //
+    // Run a partial load on the tree using the given path
+    // (this won't load any other experiments within the project, ONLY
+    // the experiment pertaining to the given url).
+    //
+    this.ProjectTree_.partialLoad(this.dataPaths_[0], function(tree){
+
+	//
+	// Once the partial path is loaded run xiv's callback 
+	// 'onProjectTreeLoaded_'
+	//
+	this.onProjectTreeLoaded_(null, function(){
+
+	    //
+	    // Load all of the unloaded experiments (just one branch within
+	    // the project).
+	    //
+	    this.loadAllUnloadedExperiments_();
+
+	    //
+	    // Then, load the entire project tree.
+	    //
+	    this.ProjectTree_.load(function(projTree){
+
+		//
+		// When its loaded, store the various metadata for 
+		// ajax experiment creation.
+		//
+		this.onProjectTreeLoaded_(projTree, null, true)
+	    }.bind(this))
+	    
+	}.bind(this));
+    }.bind(this))
+
+    //
+    // Show the modal
+    //
+    this.show();
+}
+
+
+
+/**
+ * Loads the experiment idenified by the argument ONLY if it's loaded
+ * property is undefined.
+ *
+ * @param {!string} exptUri 
  * @private
  */
 xiv.prototype.loadUnloadedExperiment_ = function(exptUri) {
     var key = exptUri;
     var expObj = this.loadedExperiments_[key];
-    if (!expObj['loaded']){
+    if (!expObj.loaded){
 	this.loadExperiment_(key, function(){
-	    this.loadedExperiments_[key]['loaded'] = true;
-	}.bind(this), expObj['METADATA']); 		
+	    this.loadedExperiments_[key].loaded = true;
+	}.bind(this), expObj.metadata); 		
     }
 }
 
 
 
-
 /**
+ * Cycles through the loadedExperiments_ property, loading only those
+ * where the 'loaded' property is undefined.
+ *
  * @private
  */
 xiv.prototype.loadAllUnloadedExperiments_ = function() {
@@ -307,6 +359,53 @@ xiv.prototype.onNoExperimentalWebGL_ = function(){
 }
 
 
+/**
+ * @private
+ */
+xiv.prototype.setOnZippyTreeExpanded_ = function() {
+
+    //
+    // Listen for the Zippy Tree in the modal's thumbnail gallery to expand
+    //
+    goog.events.listen(	
+	this.Modal_.getThumbnailGallery().getZippyTree(),
+	nrg.ui.ZippyNode.EventType.EXPANDED, function(e){
+
+	    //
+	    // Get the title of the expanded node
+	    //
+	    var title = e.node.getTitle();
+	    if (title.indexOf(gxnat.folderAbbrev['experiments']) > -1){
+		
+		//
+		// Split at the first occurence of a space
+		// (somwhat unsafe)
+		// 
+		window.console.log('Somewhat unsafe way of associating' + 
+				   ' a zippy node with an experiment');
+		var exptTitle = title.split(' ')[1];
+		//window.console.log(this.loadedExperiments_);
+
+		//
+		// Loop through the loadedExperiments_ property
+		//
+		goog.object.forEach(this.loadedExperiments_, 
+                function(eObj, key){
+		    //window.console.log(eObj.path['experiments'], exptTitle, 
+		    //eObj.path['experiments'] == exptTitle)
+
+		    //
+		    // Load the experiment if it hasn't been loaded.
+		    //
+		    if (eObj.path['experiments'] == exptTitle){
+			//window.console.log("loadUnloaded!");
+			this.loadUnloadedExperiment_(key);
+		    }
+		}.bind(this))
+	    }
+	}.bind(this))
+}
+
 
 
 /**
@@ -330,36 +429,13 @@ xiv.prototype.show = function(){
     this.Modal_.getElement().style.opacity = 0;
     this.Modal_.render();
 
-
-
+    //----------------------------------------------
+    // IMPORTANT!!!!    DO NOT ERASE!!!!!!!
     //
-    // TREE XP!
-    //
-    window.console.log("LISTEN FOR TREE EXPANSION");
-    goog.events.listen(	
-	this.Modal_.getThumbnailGallery().getZippyTree(),
-	nrg.ui.ZippyNode.EventType.EXPANDED, function(e){
-	    var title = e.node.getTitle();
-	    if (title.indexOf(gxnat.folderAbbrev['experiments']) > -1){
-		
-		var exptTitle = 
-		    title.split(gxnat.folderAbbrev['experiments'] + ': ')[1];
-
-		window.console.log(this.loadedExperiments_);
-		goog.object.forEach(this.loadedExperiments_, 
-                function(eObj, key){
-		    
-		    window.console.log(eObj['Path']['experiments'], exptTitle, 
-				       eObj['Path']['experiments'] == exptTitle)
-		    if (eObj['Path']['experiments'] == exptTitle){
-			window.console.log("loadUnloaded!");
-			this.loadUnloadedExperiment_(key);
-		    }
-		}.bind(this))
-	    }
-	}.bind(this))
-
-
+    // We need to listen for the zippy tree (thumbnail gallery) expands
+    // in order to Async load unloaded experiments
+    //----------------------------------------------
+    this.setOnZippyTreeExpanded_();
 
     //
     // Set the button callbacks once rendered.
@@ -441,9 +517,11 @@ function(exptUrl, opt_callback, opt_metadata) {
 /** 
  * @param {gxnat.ProjectTree=} opt_projTree
  * @param {Function=} opt_doneCallback
+ * @param {boolean=} opt_collapse
  * @private
  */
-xiv.prototype.onProjectTreeLoaded_ = function(opt_projTree, opt_doneCallback) {
+xiv.prototype.onProjectTreeLoaded_ = function(opt_projTree, 
+					      opt_doneCallback, opt_collapse) {
 
     var projTree = goog.isDefAndNotNull(opt_projTree) ? 
 	opt_projTree : this.ProjectTree_;
@@ -454,16 +532,15 @@ xiv.prototype.onProjectTreeLoaded_ = function(opt_projTree, opt_doneCallback) {
     var projNodes = projTree.getNodesByLevel('projects');
     var subjNodes = projTree.getNodesByLevel('subjects');
     var exptNodes = projTree.getNodesByLevel('experiments');
-
-
     //window.console.log('e nodes', exptNodes);
     //window.console.log('p nodes', projNodes);
     //window.console.log('subj nodes', subjNodes);
 
 
     // Collapse further added zippys
-    //this.collapseAdditionalZippys_();
-    
+    if (opt_collapse === true) {
+	this.collapseAdditionalZippys_();
+    }
 
     var j = 0;
     var len = subjNodes.length;
@@ -507,19 +584,21 @@ xiv.prototype.onProjectTreeLoaded_ = function(opt_projTree, opt_doneCallback) {
 	//
 	// Load experiment
 	//
-	//this.loadExperiment_(currExptUri, null, metacol);
-	this.loadedExperiments_[currExptUri] = {
-	    'loaded' : false,
-	    'METADATA': metacol,
-	    'Path': new gxnat.Path(currExptUri)
+	
+	if (!goog.isDefAndNotNull(this.loadedExperiments_)){
+	    this.loadedExperiments_ = {};
 	}
+
+	//this.loadExperiment_(currExptUri, null, metacol);
+	this.loadedExperiments_[currExptUri] = new xiv.experimentTracker(
+	    false, metacol, currExptUri);
 
 	//
 	// Only create the folders of the experiments
 	//
 	var folders = xiv.extractExperimentUrlFolders_(currExptUri);
 	this.addFoldersToModalThumbnailGallery(folders);
-	window.console.log("\n\nFOLDERS", folders);
+	//window.console.log("\n\nFOLDERS", folders);
 
 	//
 	// Apply the metadata to the preloaded thumbnails
@@ -544,16 +623,6 @@ xiv.prototype.collapseAdditionalZippys_ = function() {
     goog.events.listen(this.Modal_.getThumbnailGallery().getZippyTree(),
        nrg.ui.ZippyTree.EventType.NODEADDED, this.onZippyAdded_);
 }
-
-
-
-/**
- * @param {!gxnat.ProjectTree}
- * @private
- */
-xiv.prototype.setProjectTree_ = function(tree){
-    this.ProjectTree_ = tree;
-} 
 
 
 
@@ -753,7 +822,6 @@ xiv.prototype.dispose_ = function() {
     if (this.ProjectTree_){
 	this.ProjectTree_.dispose();
 	delete this.ProjectTree_;
-	delete this.projectTreeLoadedStarted_;
     }
 
     // Others
@@ -831,12 +899,28 @@ xiv.extractViewableTreeFolders_ = function(ViewableTree){
  */
 xiv.getViewableTreesFromXnat = 
 function (url, opt_runCallback, opt_doneCallback) {
+
+    //
+    // Get the viewable types (e.g. Scans and Slicer scenes);
+    // 
     var typeCount = goog.object.getCount(xiv.VIEWABLE_TYPES);
     var typesGotten = 0;
+
+    //
+    // Loop through the types
+    //
     goog.object.forEach(xiv.VIEWABLE_TYPES, function(viewableType){
+
+	//
+	// Get the trees per type
+	//
       gxnat.vis.AjaxViewableTree.getViewableTrees(
 	  url, viewableType, opt_runCallback, function(){
 	  typesGotten++;
+
+	  //
+	  // Once we've gotten everything, run the done callback
+	  //
 	  if (typesGotten === typeCount){
 	      //window.console.log("\n\n\nDONE GETTING VIEWABLES!\n\n\n");
 	      if (goog.isDefAndNotNull(opt_doneCallback)) { 

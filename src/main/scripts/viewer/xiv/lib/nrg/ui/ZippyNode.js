@@ -115,7 +115,7 @@ nrg.ui.ZippyNode.ID_PREFIX = 'nrg.ui.ZippyNode';
  */
 nrg.ui.ZippyNode.EventType = {
   EXPANDED: goog.events.getUniqueId('expanded'),
-  COLLAPSED: goog.events.getUniqueId('contracted'),
+  COLLAPSED: goog.events.getUniqueId('collapsed'),
 };
 
 

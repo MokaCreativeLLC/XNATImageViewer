@@ -190,7 +190,7 @@ nrg.ui.ThumbnailGallery.thumbnailSorter = function(holderElt, insertElt){
 
     //
     // Preliminary sort params
-    //
+   //
     var siblings = goog.dom.getChildren(holderElt);
 
 
@@ -318,9 +318,8 @@ nrg.ui.ThumbnailGallery.prototype.addFolders = function(folders) {
     // Apply a little hack around the blank div for sorting.
     //
     blankDiv[nrg.ui.ThumbnailGallery.THUMB_SORT_TAG] = '-1';
-
-
     this.ZippyTree_.addContents(blankDiv, folders);
+    this.mapSliderToContents();
 }
 
 
@@ -357,6 +356,12 @@ function(thumbnail, opt_folders) {
 	thumbnail.getText().toLowerCase();
 
     this.ZippyTree_.addContents(thumbnail.getElement(), opt_folders);
+
+
+    //
+    // Remap the slider
+    //
+    this.mapSliderToContents();
 }
 
 
@@ -390,7 +395,15 @@ function(imageUrl, displayText, opt_folders) {
 nrg.ui.ThumbnailGallery.prototype.setZippyTreeEvents_ = function(){ 
     goog.events.listen(this.ZippyTree_,
 		       nrg.ui.ZippyTree.EventType.CONTENTADDED,
-		       this.mapSliderToContents.bind(this))
+		       this.mapSliderToContents.bind(this));
+
+    goog.events.listen(this.ZippyTree_,
+	nrg.ui.ZippyNode.EventType.EXPANDED,
+	this.mapSliderToContents.bind(this));
+
+    goog.events.listen(this.ZippyTree_,
+	nrg.ui.ZippyNode.EventType.COLLAPSED,
+	this.mapSliderToContents.bind(this));
 }
 
 
@@ -562,7 +575,8 @@ nrg.ui.ThumbnailGallery.prototype.setDefaultClasses_ = function() {
     this.thumbnailImageClasses_ = goog.dom.classes.get(tempThumb.getImage());
     this.thumbnailImageClasses_.push(
 	nrg.ui.ThumbnailGallery.CSS.THUMBNAIL_IMAGE);
-    this.thumbnailTextClasses_ = goog.dom.classes.get(tempThumb.getTextElement());
+    this.thumbnailTextClasses_ = 
+	goog.dom.classes.get(tempThumb.getTextElement());
     this.thumbnailTextClasses_.push(
 	nrg.ui.ThumbnailGallery.CSS.THUMBNAIL_TEXT);
     goog.dom.removeNode(tempThumb.getElement());

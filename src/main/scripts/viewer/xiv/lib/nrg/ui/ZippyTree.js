@@ -349,9 +349,24 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     parent.style.opacity = this.initOp_;
     var node = new nrg.ui.ZippyNode(title, parent);
 
+    //
+    // Listen and dispatch the EXPANDED event
+    //
     goog.events.listen(node, nrg.ui.ZippyNode.EventType.EXPANDED, function(){
 	this.dispatchEvent({
 	    type: nrg.ui.ZippyNode.EventType.EXPANDED,
+	    node: node
+	});
+    }.bind(this))
+
+
+    //
+    // Listen and dispatch the COLLASPED event
+    //
+    goog.events.listen(node, nrg.ui.ZippyNode.EventType.COLLAPSED, function(){
+	window.console.log('collapsed!');
+	this.dispatchEvent({
+	    type: nrg.ui.ZippyNode.EventType.COLLAPSED,
 	    node: node
 	});
     }.bind(this))

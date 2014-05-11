@@ -111,7 +111,7 @@ function launchXImgView(opt_dataPath, opt_modalState) {
     var sRoot = (opt_modalState === 'popup') ? '' : serverRoot;
 
     var XnatImageViewer = new xiv(opt_modalState, opt_dataPath, sRoot);
-    XnatImageViewer.show();
+    XnatImageViewer.begin();
 
     //window.console.log('opt_dataPath', opt_dataPath);
     //window.console.log('opt_modalState', opt_modalState);

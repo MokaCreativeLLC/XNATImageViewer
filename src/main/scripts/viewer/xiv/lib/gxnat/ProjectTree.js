@@ -119,33 +119,36 @@ gxnat.ProjectTree.prototype.partialPath_ = null;
  * Loads the projects nodes ONLY pertianing to the initPath provided
  * in the constructor. 
  *
- * @param {!string} startPath
+ * @param {!string} partialPath
  * @param {!function} callback The callback function to run once the tree has
  *   been fully loaded up the level defined by 
  *   gxnat.ProjectTree.prototype.STOP_LEVEL.  This gets passed into the
  *   getTree function.
  * @public
  */
-gxnat.ProjectTree.prototype.partialLoad = function(startPath, doneCallback){
-
+gxnat.ProjectTree.prototype.partialLoad = function(partialPath, doneCallback){
+    this.partialPath_ = new gxnat.Path(partialPath);
     var i=0;
     var len = gxnat.Path.xnatLevelOrder.length;
-    var level;
-
-    this.partialPath_ = new gxnat.Path(startPath);
-    
-    
     var node = this;
     var levelUri = this.partialPath_['prefix'];
-
     var nodeChain = [];
+    var level; 
+    var newNode;
 
+    //
+    // Loop xnat levels until we're at the STOP_LEVEL
+    //
     for (; i<len; i++) {
 
 	//
-	// Get the level
+	// Get the current level
 	//
 	level = gxnat.Path.xnatLevelOrder[i];
+
+	//
+	// Create the node level
+	//
 	if (!goog.isDefAndNotNull(node[level])){
 	    node[level] = [];
 	}
@@ -158,7 +161,7 @@ gxnat.ProjectTree.prototype.partialLoad = function(startPath, doneCallback){
 	//
 	// Create and store the new node
 	//
-	var newNode = this.createEmptyTreeNode_(level, levelUri);
+	newNode = this.createEmptyTreeNode_(level, levelUri);
 	node[level].push(newNode)
 	nodeChain.push(newNode);
 
@@ -173,39 +176,66 @@ gxnat.ProjectTree.prototype.partialLoad = function(startPath, doneCallback){
 	if (level === this.STOP_LEVEL) { break; }
     }
 
-
-    window.console.log(nodeChain);
-    
-    //currNode
-    var getChain = function(currNode, callback, doneCallback1) {
-
-	window.console.log('\n\nCURR NODE', currNode, nodeChain);
-
-	gxnat.jsonGet(currNode[gxnat.ProjectTree.PATH_KEY]['originalUrl'], 
-		      function(jsonArr){
-			  currNode[gxnat.ProjectTree.METADATA_KEY] = 
-			      jsonArr['items'][0];
-			  
-			  goog.array.remove(nodeChain, currNode);
-			  window.console.log(nodeChain);
-			  if (nodeChain.length == 0){
-			      window.console.log("DONE CALLBACK!", 
-						 doneCallback1);
-			      doneCallback1(this);
-			      return;
-			  } else {
-			       getChain(nodeChain[0], 
-					getChain.bind(this), doneCallback1);
-			  }
-		      }.bind(this))
-    }
-    window.console.log(nodeChain);
-    getChain(nodeChain[0], getChain.bind(this), doneCallback);
-
-    
-
-    window.console.log(this);
+    //
+    // Recursively get the tree branch.
+    //
+    //window.console.log(nodeChain);
+    this.getProjectTreeBranch(nodeChain[0], nodeChain, doneCallback);
+    //window.console.log(this);
 }
+
+
+/**
+ * Now we recursively cycle through the new nodes (stored in array), 
+ * acquiring the relevant metadata via AJAX queries.  We then 
+ * pop the node out of the array once we recieved its JSON.
+ *
+ * @param {!Object} currNode
+ * @param {!Object} nodeChain
+ * @param {!Function} onCompleteCallback
+ *
+ * @public
+ */
+gxnat.ProjectTree.prototype.getProjectTreeBranch = 
+function(currNode, nodeChain, onCompleteCallback) {
+    //window.console.log('\n\nCURR NODE', currNode, nodeChain);
+
+    //
+    // Get the JSON assiociated with tne node
+    //
+    gxnat.jsonGet(currNode[gxnat.ProjectTree.PATH_KEY]['originalUrl'], 
+	function(jsonArr){
+	    //
+	    // Store the metadata
+	    //
+	    currNode[gxnat.ProjectTree.METADATA_KEY] = jsonArr['items'][0];
+
+	    //
+	    // Pop the node out of the nodeChain array.
+	    //
+	    goog.array.remove(nodeChain, currNode);
+	    //window.console.log(nodeChain);
+
+	    //
+	    // Run the 'done' callback if there are no nodes left.
+	    //
+	    if (nodeChain.length == 0){
+		//window.console.log("DONE CALLBACK!", onCompleteCallback);
+		onCompleteCallback(this);
+		return;
+	    } 
+
+	    //
+	    // Otherwise recurse...
+	    //
+	    else {
+		this.getProjectTreeBranch(nodeChain[0], nodeChain, 
+					  onCompleteCallback);
+	    }
+	}.bind(this))
+}
+
+
 
 
 
@@ -247,6 +277,7 @@ gxnat.ProjectTree.prototype.load = function(callback){
  * Function that queries XNAT by each level node.  Levels are defined
  * by gxnat.Path.xnatLevelOrder.  Constructs a node based on the arguments
  * provided.
+ *
  * @param {!string} currLevel The level to create the current node from.
  * @param {!string} levelUri The uri of the level 
  * @param {!function} callback The callback function to run once the tree has
@@ -282,19 +313,19 @@ gxnat.ProjectTree.prototype.createSubTree_ = function(node, callback){
     var subTree;
 
     //
-    // First get the json of the node -- this gives us metdata
-    // relevant for later (such race, handedness etc. at the subj level)
+    // First get the json of the node.
     //
     gxnat.jsonGet(node[gxnat.ProjectTree.PATH_KEY]['originalUrl'], 
        function(levelJsonArr){
 
 	//
-	// Store the metadata
+	// Store the metadata -- this gives us information such as race,
+	// ID, handedness, etc. depending on the level.
 	//
 	node[gxnat.ProjectTree.METADATA_KEY] = levelJsonArr['items'][0];
 
 	//
-	// then query for the next level
+	// Then query for the next level of that node.
 	//
 	gxnat.jsonGet(node[gxnat.ProjectTree.NEXTLEVELQUERY_KEY], 
            function(nextLevelJsonArr){
