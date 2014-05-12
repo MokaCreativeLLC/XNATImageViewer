@@ -428,9 +428,9 @@ nrg.ui.ThumbnailGallery.prototype.clearHoverThumb_ = function(){
 */
 nrg.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){    
 
-    var mouseElt = /**@type {!Element} */
+    var mouseElt = 
     document.elementFromPoint(event.clientX, event.clientY);
-    var mouseThumb = /**@type {!Element} */
+    var mouseThumb =
     goog.dom.getAncestorByClass(mouseElt, nrg.ui.Thumbnail.ELEMENT_CLASS);
 
 

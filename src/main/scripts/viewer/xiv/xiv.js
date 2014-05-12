@@ -297,7 +297,8 @@ xiv.prototype.testForExperimentalWebGL = function(){
 
 
     try { 
-	gl = canvas.getContext("experimental-webgl"); 
+	gl = canvas.getContext("webgl") || 
+	    canvas.getContext("experimental-webgl"); 
 	glExperimental = true;
     }
     catch (x) { 	
@@ -316,7 +317,7 @@ xiv.prototype.testForExperimentalWebGL = function(){
 xiv.prototype.onNoExperimentalWebGL_ = function(){
     
     var errorString = '<br><br><br>'+
-	'It looks like ' +
+	'It looks like webgl or ' +
 	'experimental-webgl on this browser is either unsupported ' +
 	'or disabled.<br><br>More info:<br><br>' +
 
