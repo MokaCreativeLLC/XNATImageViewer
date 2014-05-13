@@ -124,6 +124,22 @@ nrg.ui.ThumbnailGallery.prototype.sortThumbnailsOnInsert_ = false;
 
 /**
  * @private
+ * @type {number=}
+ */
+nrg.ui.ThumbnailGallery.prototype.mouseX_;
+
+
+
+/**
+ * @private
+ * @type {number=}
+ */
+nrg.ui.ThumbnailGallery.prototype.mouseY_;
+
+
+
+/**
+ * @private
  * @type {!boolean} bool
  */
 nrg.ui.ThumbnailGallery.prototype.sortThumbnailsOnInsert = function(bool){
@@ -161,6 +177,8 @@ nrg.ui.ThumbnailGallery.prototype.render = function(opt_parentElement) {
 
     goog.dom.append(this.getScrollArea(), this.ZippyTree_.getElement());
     //this.ZippyTree_.render(this.getScrollArea());
+
+
 
     // Do fade in effects when zippy tree contents is added.
     this.ZippyTree_.toggleFadeInFx(true);
@@ -339,6 +357,11 @@ function(thumbnail, opt_folders) {
 
     // Bind clone to mouse wheel.
     this.getSlider().bindToMouseWheel(thumbnail.getHoverable());
+
+
+
+
+    
     goog.events.listen(this.getSlider(), 
 		     nrg.ui.Slider.EventType.MOUSEWHEEL, 
 			 this.onHoverAndScroll_.bind(this));
@@ -402,6 +425,20 @@ nrg.ui.ThumbnailGallery.prototype.setZippyTreeEvents_ = function(){
     goog.events.listen(this.ZippyTree_,
 	nrg.ui.ZippyNode.EventType.NODEADDED,
 	this.mapSliderToContents.bind(this));
+
+
+    // for FF and IE
+    goog.events.listen(this.getScrollArea(), goog.events.EventType.MOUSEOVER,
+		       this.storeMouseCoords_.bind(this));
+}
+
+
+/**
+ * @private
+ */
+nrg.ui.ThumbnailGallery.prototype.storeMouseCoords_ = function(e){ 
+    this.mouseX_ = e.clientX;
+    this.mouseY_ = e.clientY;
 }
 
 
@@ -420,14 +457,17 @@ nrg.ui.ThumbnailGallery.prototype.clearHoverThumb_ = function(){
 
 
 /**
-* Conducts the needed thumbnail element style changes when scrolling
-* and hovering over the thumbnail gallery.  
-* @private
-*/
-nrg.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(){    
+ * Conducts the needed thumbnail element style changes when scrolling
+ * and hovering over the thumbnail gallery.  
+ *
+ * @param {?Event}
+ * @private
+ */
+nrg.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(event){    
 
+    //window.console.log(event);
     var mouseElt = 
-    document.elementFromPoint(event.clientX, event.clientY);
+    document.elementFromPoint(this.mouseX_, this.mouseY_);
     var mouseThumb =
     goog.dom.getAncestorByClass(mouseElt, nrg.ui.Thumbnail.ELEMENT_CLASS);
 
@@ -591,6 +631,14 @@ nrg.ui.ThumbnailGallery.prototype.disposeInternal = function() {
 
     // onInsert
     delete this.sortThumbnailsOnInsert_;
+
+    // Thumbs
+    if (goog.isDefAndNotNull(this.mouseX_)){
+	delete this.mouseX_;
+    }
+    if (goog.isDefAndNotNull(this.mouseY_)){
+	delete this.mouseY_;
+    }
 
     
     // Thumbs

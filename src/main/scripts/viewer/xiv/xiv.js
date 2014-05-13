@@ -393,6 +393,8 @@ xiv.prototype.onExperimentZippyExpanded_ = function(path) {
  * @private
  */
 xiv.prototype.onZippyExpanded_ = function(e){
+    if (!goog.isDefAndNotNull(e.node[xiv.ZIPPY_DATA_KEY])) { return };
+
     var path = new gxnat.Path(e.node[xiv.ZIPPY_DATA_KEY]);
     var deepestLevel = path.getDeepestLevel();
 
