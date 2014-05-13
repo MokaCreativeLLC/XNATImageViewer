@@ -136,13 +136,18 @@ xiv.VIEWABLE_TYPES = {
 }
 
 
-
 /**
  * @private
  */
 xiv.revertDocumentStyle_ = function() {
     document.body.style.overflow = 'visible';
 }
+
+
+/**
+ * @const
+ */
+xiv.ZIPPY_DATA_KEY = goog.string.createUniqueString();
 
 
 
@@ -206,13 +211,14 @@ xiv.prototype.begin = function() {
     // (this won't load any other experiments within the project, ONLY
     // the experiment pertaining to the given url).
     //
-    this.ProjectTree_.partialLoad(this.dataPaths_[0], function(tree){
+    this.ProjectTree_.loadBranch(this.dataPaths_[0], function(tree){
 
 	//
 	// Once the partial path is loaded run xiv's callback 
-	// 'onProjectTreeLoaded_'
+	// 'onExperimentLoaded_'. This gets things setup for the current
+	// branch to display in the modal.
 	//
-	this.onProjectTreeLoaded_(null, function(){
+	this.onExperimentLoaded_(null, function(){
 
 	    //
 	    // Load all of the unloaded experiments (just one branch within
@@ -221,17 +227,23 @@ xiv.prototype.begin = function() {
 	    this.loadAllUnloadedExperiments_();
 
 	    //
-	    // Then, load the entire project tree.
+	    // Then, load the entire project tree, stopping at the 'subjects'
+	    // level.
 	    //
-	    this.ProjectTree_.load(function(projTree){
-
+	    
+	    this.ProjectTree_.loadSubjects(function(){
+		
+		//window.console.log("PRJ", this.ProjectTree_);
 		//
 		// When its loaded, store the various metadata for 
-		// ajax experiment creation.
+		// ajax experiment creation.  We then have to listen
+		// for the various zippys to expand, and conduct the relevant
+		// ajax calls after they are expanded.
 		//
-		this.onProjectTreeLoaded_(projTree, null, true)
+		this.onSubjectsLoaded_(null, true)
 	    }.bind(this))
 	    
+
 	}.bind(this));
     }.bind(this))
 
@@ -284,28 +296,21 @@ xiv.prototype.loadAllUnloadedExperiments_ = function() {
  * @public
  */
 xiv.prototype.testForExperimentalWebGL = function(){
-
     var canvas = goog.dom.createDom('canvas');
-    var gl;
+    var webGlFound;
 
+    //
+    // See if webGL is suppored
+    //
     try { 
-	gl = canvas.getContext("webgl"); 
-    }
-    catch (x) { 
-	gl = null; 
-    }
-
-
-    try { 
-	gl = canvas.getContext("webgl") || 
+	webGlFound = canvas.getContext("webgl") || 
 	    canvas.getContext("experimental-webgl"); 
-	glExperimental = true;
     }
     catch (x) { 	
-	gl = null; 
+	webGlFound = null; 
     }
 
-    return gl ? true : false;
+    return goog.isDefAndNotNull(webGlFound) ? true : false;
 }
 
 
@@ -334,7 +339,6 @@ xiv.prototype.onNoExperimentalWebGL_ = function(){
     ErrorOverlay.addBackground();
     ErrorOverlay.addCloseButton();
 
-    
     //
     // Add image
     //
@@ -360,51 +364,57 @@ xiv.prototype.onNoExperimentalWebGL_ = function(){
 }
 
 
+
+/**
+ * @param {!gxnat.Path} path The gxnat.Path object associated with the zippy.
+ * @private
+ */
+xiv.prototype.onSubjectZippyExpanded_ = function(path) {
+    //window.console.log("SUBJECT URL! ", path, path.getDeepestLevel());
+    this.ProjectTree_.loadExperiments(path, function(subjNode){
+	this.onExperimentLoaded_(null, null);	
+    }.bind(this), 'experiments');
+}
+
+
+
+/**
+ * @param {!gxnat.Path} path The gxnat.Path object associated with the zippy.
+ * @private
+ */
+xiv.prototype.onExperimentZippyExpanded_ = function(path) {
+    //window.console.log(path);
+    this.loadUnloadedExperiment_(path['originalUrl']);
+}
+
+
+
 /**
  * @private
  */
-xiv.prototype.setOnZippyTreeExpanded_ = function() {
+xiv.prototype.onZippyExpanded_ = function(e){
+    var path = new gxnat.Path(e.node[xiv.ZIPPY_DATA_KEY]);
+    var deepestLevel = path.getDeepestLevel();
 
-    //
-    // Listen for the Zippy Tree in the modal's thumbnail gallery to expand
-    //
-    goog.events.listen(	
-	this.Modal_.getThumbnailGallery().getZippyTree(),
-	nrg.ui.ZippyNode.EventType.EXPANDED, function(e){
+    switch (deepestLevel){
+    case 'subjects':
+	this.onSubjectZippyExpanded_(path);
+	break;
 
-	    //
-	    // Get the title of the expanded node
-	    //
-	    var title = e.node.getTitle();
-	    if (title.indexOf(gxnat.folderAbbrev['experiments']) > -1){
-		
-		//
-		// Split at the first occurence of a space
-		// (somwhat unsafe)
-		// 
-		window.console.log('Somewhat unsafe way of associating' + 
-				   ' a zippy node with an experiment');
-		var exptTitle = title.split(' ')[1];
-		//window.console.log(this.loadedExperiments_);
+    case 'experiments':
+	this.onExperimentZippyExpanded_(path);
+	break;
+    }
+}
 
-		//
-		// Loop through the loadedExperiments_ property
-		//
-		goog.object.forEach(this.loadedExperiments_, 
-                function(eObj, key){
-		    //window.console.log(eObj.path['experiments'], exptTitle, 
-		    //eObj.path['experiments'] == exptTitle)
 
-		    //
-		    // Load the experiment if it hasn't been loaded.
-		    //
-		    if (eObj.path['experiments'] == exptTitle){
-			//window.console.log("loadUnloaded!");
-			this.loadUnloadedExperiment_(key);
-		    }
-		}.bind(this))
-	    }
-	}.bind(this))
+
+/**
+ * @private
+ */
+xiv.prototype.setOnZippyExpanded_ = function() {
+    goog.events.listen(this.Modal_.getThumbnailGallery().getZippyTree(),
+	nrg.ui.ZippyNode.EventType.EXPANDED, this.onZippyExpanded_.bind(this));
 }
 
 
@@ -436,7 +446,7 @@ xiv.prototype.show = function(){
     // We need to listen for the zippy tree (thumbnail gallery) expands
     // in order to Async load unloaded experiments
     //----------------------------------------------
-    this.setOnZippyTreeExpanded_();
+    this.setOnZippyExpanded_();
 
     //
     // Set the button callbacks once rendered.
@@ -451,7 +461,7 @@ xiv.prototype.show = function(){
     //
     // Important that this be here
     //
-    nrg.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME );
+    nrg.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME);
 }
 
 
@@ -506,11 +516,68 @@ xiv.prototype.dispose = function() {
  */
 xiv.prototype.loadExperiment_ = 
 function(exptUrl, opt_callback, opt_metadata) {
- 
     this.addDataPath(exptUrl);
     this.fetchViewableTreesAtExperiment(
 	this.dataPaths_[this.dataPaths_.length - 1], opt_callback, 
 	opt_metadata);
+}
+
+
+
+/** 
+ * @param {Function=} opt_doneCallback
+ * @param {boolean=} opt_collapse
+ * @private
+ */
+xiv.prototype.onSubjectsLoaded_ = function(opt_doneCallback, opt_collapse) {
+    //
+    // Collapse further added zippys unless specified.
+    //
+    if (opt_collapse !== false) {
+	this.collapseAdditionalZippys_();
+    }
+
+    //
+    // Get the relevant nodes
+    //
+    var projNodes = this.ProjectTree_.getNodesByLevel('projects');
+    var subjNodes = this.ProjectTree_.getNodesByLevel('subjects');
+    //window.console.log('p nodes', projNodes);
+    //window.console.log('subj nodes', subjNodes);
+
+    var folders, folderUrls, level, path;
+    //
+    // store and add subjects to the thumbnail gallery
+    //
+    goog.array.forEach(subjNodes, function(subjNode, i) {
+	//
+	// Only create the folders of the experiments
+	//
+	folders = xiv.foldersFromUrl(subjNode['_Path']['originalUrl']);
+	folderUrls = [];
+	//window.console.log("\n\nFOLDERS", folders);
+
+	//
+	// Associate each Zippy folder with its url
+	//
+	goog.array.forEach(folders, function(folder, i) {
+	    folderUrls.push(
+		subjNode['_Path'].pathByLevel(gxnat.Path.xnatLevelOrder[i]))
+	})
+	
+	//
+	// Add folders to thumbnail gallery modal
+	//
+	this.addFoldersToModalThumbnailGallery(folders, folderUrls);
+
+	//
+	// Run the done callback, if provided
+	//
+	if (goog.isDefAndNotNull(opt_doneCallback)){
+	    opt_doneCallback();
+	}
+    }.bind(this))
+
 }
 
 
@@ -521,47 +588,50 @@ function(exptUrl, opt_callback, opt_metadata) {
  * @param {boolean=} opt_collapse
  * @private
  */
-xiv.prototype.onProjectTreeLoaded_ = function(opt_projTree, 
+xiv.prototype.onExperimentLoaded_ = function(opt_projTree, 
 					      opt_doneCallback, opt_collapse) {
 
-    var projTree = goog.isDefAndNotNull(opt_projTree) ? 
-	opt_projTree : this.ProjectTree_;
-
-    window.console.log("\n\n\n\nPROJECT TREE", projTree);
-
-    // Get the experiments in the tree
-    var projNodes = projTree.getNodesByLevel('projects');
-    var subjNodes = projTree.getNodesByLevel('subjects');
-    var exptNodes = projTree.getNodesByLevel('experiments');
-    //window.console.log('e nodes', exptNodes);
-    //window.console.log('p nodes', projNodes);
-    //window.console.log('subj nodes', subjNodes);
-
-
-    // Collapse further added zippys
+    //window.console.log("ON FIRST EXPER");
+    //
+    // If specificed, collapse further added zippys
+    //
     if (opt_collapse === true) {
 	this.collapseAdditionalZippys_();
     }
 
+
+    //
+    // Get the project tree
+    //
+    var projTree = goog.isDefAndNotNull(opt_projTree) ? 
+	opt_projTree : this.ProjectTree_;
+    //window.console.log("\n\n\n\nPROJECT TREE", projTree);
+
+    //
+    // Get the relevant nodes
+    //
+    var projNodes = projTree.getNodesByLevel('projects');
+    var subjNodes = projTree.getNodesByLevel('subjects');
+    var exptNodes = projTree.getNodesByLevel('experiments');
+    //window.console.log('e nodes', exptNodes, exptNodes.length);
+    //window.console.log('p nodes', projNodes);
+    //window.console.log('subj nodes', subjNodes);
+
+
     var j = 0;
     var len = subjNodes.length;
-    var metacol, currProjMeta, currSubjMeta, currExptMeta;
-
-    //window.console.log('epxts', expts);
-
-    
-    var currExptUri;
+    var metacol, currProjMeta, currSubjMeta, currExptMeta, currExptUri;
 
     //
     // store and add experiments
     //
     goog.array.forEach(exptNodes, function(exptNode, i) {
-	currExptUri = exptNode['_Path']['originalUrl'];
+	currExptUri = exptNode[gxnat.ProjectTree.PATH_KEY]['originalUrl'];
 
 	len = projNodes.length;
 	for (j=0; j<len; j++){
-	    if (currExptUri.indexOf(projNodes[j]
-				    ['_Path']['originalUrl']) > -1){
+	    if (currExptUri.indexOf(projNodes[j][gxnat.ProjectTree.PATH_KEY]
+				    ['originalUrl']) > -1){
 		currProjMeta = projNodes[j]['METADATA'];
 		break;
 	    }
@@ -570,17 +640,17 @@ xiv.prototype.onProjectTreeLoaded_ = function(opt_projTree,
 
 	len = subjNodes.length;
 	for (j=0; j<len; j++){
-	    if (currExptUri.indexOf(subjNodes[j]
-				    ['_Path']['originalUrl']) > -1){
+	    if (currExptUri.indexOf(subjNodes[j][gxnat.ProjectTree.PATH_KEY]
+				    ['originalUrl']) > -1){
 		currSubjMeta = subjNodes[j]['METADATA'];
 		break;
 	    }
 	}
-	//window.console.log('\n\n\nHERE!')
-	//window.console.log(exptNode);
+
+	window.console.log(exptNode);
 	metacol = new gxnat.vis.ViewableTree.metadataCollection(
 	    currProjMeta, currSubjMeta, exptNode['METADATA']);
-	//window.console.log(metacol);
+	window.console.log(exptNode['METADATA']);
 
 	//
 	// Load experiment
@@ -597,8 +667,21 @@ xiv.prototype.onProjectTreeLoaded_ = function(opt_projTree,
 	//
 	// Only create the folders of the experiments
 	//
-	var folders = xiv.extractExperimentUrlFolders_(currExptUri);
-	this.addFoldersToModalThumbnailGallery(folders);
+	var folders = xiv.foldersFromUrl(currExptUri);
+	folderUrls = [];
+	//window.console.log("\n\nFOLDERS 2", folders);
+
+	//
+	// Associate each Zippy folder with its url
+	//
+	goog.array.forEach(folders, function(folder, i) {
+	    folderUrls.push(
+		 exptNode[gxnat.ProjectTree.PATH_KEY].pathByLevel(gxnat.Path.xnatLevelOrder[i]))
+	})
+
+	//window.console.log("FOLDER URLS", folderUrls);
+	//window.console.log("Loaded experiments", this.loadedExperiments_);
+	this.addFoldersToModalThumbnailGallery(folders, folderUrls);
 	//window.console.log("\n\nFOLDERS", folders);
 
 	//
@@ -608,7 +691,6 @@ xiv.prototype.onProjectTreeLoaded_ = function(opt_projTree,
 	    opt_doneCallback();
 	}
     }.bind(this))
-
 }
 
 
@@ -725,10 +807,42 @@ function(exptUri, opt_doneCallback, opt_metadata){
 
 /**
  * @param {Array.<string>} folders The zippy structure.
+ * @param {Array.<Object>=} opt_correspondingData The optional corresponding
+ *    data to add the the zippys.
  * @public
  */
-xiv.prototype.addFoldersToModalThumbnailGallery = function(folders){
-    this.Modal_.getThumbnailGallery().addFolders(folders);
+xiv.prototype.addFoldersToModalThumbnailGallery = 
+function(folders, opt_correspondingData){
+    
+    var thumbGalZippy = this.Modal_.getThumbnailGallery().getZippyTree();
+
+    //
+    // Add the folders to the zippyTree
+    //
+    thumbGalZippy.createBranch(folders);
+
+    //
+    // Get the newly added folders
+    //
+    zippyNodes = thumbGalZippy.getFolderNodes(folders);
+ 
+    //
+    // Loop through the newly added folders and add their corresponding data
+    //
+    goog.array.forEach(zippyNodes, function(node, i){
+	if (goog.isDefAndNotNull(opt_correspondingData) && 
+	    goog.isDefAndNotNull(opt_correspondingData[i])){
+
+	    //
+	    // Only add the data if it isn't defined
+	    //
+	    if (!goog.isDefAndNotNull(node[xiv.ZIPPY_DATA_KEY])){
+		node[xiv.ZIPPY_DATA_KEY] = opt_correspondingData[i];
+		//window.console.log('CORRESP', node.getTitle(), 
+		//		   node[xiv.ZIPPY_DATA_KEY]);
+	    }
+	}
+    }.bind(this))
 }
 
 
@@ -792,10 +906,10 @@ xiv.prototype.storeViewableTree_ = function(ViewableTree, path, opt_onStore) {
  */
 xiv.prototype.onZippyAdded_ = function(e) {
     var prevDur =
-    e.currNode.getZippy().animationDuration;
-    e.currNode.getZippy().animationDuration = 0;
-    e.currNode.getZippy().setExpanded(false);
-    e.currNode.getZippy().animationDuration = prevDur;
+    e.node.getZippy().animationDuration;
+    e.node.getZippy().animationDuration = 0;
+    e.node.getZippy().setExpanded(false);
+    e.node.getZippy().animationDuration = prevDur;
 }
 
 
@@ -845,7 +959,7 @@ xiv.prototype.dispose_ = function() {
  * @return {!Array.<string>}
  * @private
  */
-xiv.extractExperimentUrlFolders_ = function(exptUrl){
+xiv.foldersFromUrl = function(exptUrl){
     var pathObj = new gxnat.Path(exptUrl);
     var folders = [];
     var key = '';
@@ -873,8 +987,7 @@ xiv.extractExperimentUrlFolders_ = function(exptUrl){
  * @private
  */
 xiv.extractViewableTreeFolders_ = function(ViewableTree){
-    var folders = xiv.extractExperimentUrlFolders_(ViewableTree.
-						   getExperimentUrl());
+    var folders = xiv.foldersFromUrl(ViewableTree.getExperimentUrl());
 
     //
     // Only add non-scans to their own category folder

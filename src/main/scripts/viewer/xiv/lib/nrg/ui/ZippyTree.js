@@ -256,6 +256,23 @@ nrg.ui.ZippyTree.prototype.getElement = function() {
 
 
 /**
+ * @param {!Array.<string>} folders The zippy folder titles.
+ * @return {Array.<nrg.ui.ZippyNode>}
+ */
+nrg.ui.ZippyTree.prototype.getFolderNodes = function(folders) {
+    var currNode = this;
+    var zippyNodes = [];
+    goog.array.forEach(folders, function(folder){
+	zippyNodes.push(currNode.getNodes()[folder]);
+	currNode = currNode.getNodes()[folder];
+    }.bind(this))
+    return zippyNodes;
+}
+
+
+
+
+/**
  * Main function for adding contents to the tree -- recursive.
  * @param {!Element | !Array.Elements} elements The elements to add.
  * @param {string= | Array.string=} opt_folders The folders where the elements
@@ -295,7 +312,7 @@ nrg.ui.ZippyTree.prototype.addContent_ = function(element, opt_folders) {
 		this.maxDepth_ = opt_folders.length;
 	    }
 	}
-	this.createBranch_(opt_folders, this, element);
+	this.createBranch(opt_folders, this, element);
 	this.indentNodes_();
     }
 }
@@ -304,33 +321,45 @@ nrg.ui.ZippyTree.prototype.addContent_ = function(element, opt_folders) {
 
 /**
  * Creates a branch within the tree in a recursive manner.
+ *
  * @param {!string | !Array.string} fldrs The folder or folders that create
  *    the tree nodes.
- * @param {!nrg.ui.ZippyNode} pNode The parent node that initiaties
- *    further 'createBranch_' calls.
+ * @param {nrg.ui.ZippyNode=} opt_pNode The parent node that initiaties
+ *    further 'createBranch' calls.  Defaults to 'this' if not specified.
  * @param {Element=} opt_elt The element to add at the end of the branch.
- * @private
+ * @public
  */
-nrg.ui.ZippyTree.prototype.createBranch_ = function(fldrs, pNode, opt_elt) {
-    
-    var contHold = pNode.getContentHolder();
+nrg.ui.ZippyTree.prototype.createBranch = function(fldrs, opt_pNode, opt_elt) {
+    //window.console.log(fldrs);
+    opt_pNode = goog.isDefAndNotNull(opt_pNode) ? opt_pNode: this;
+    var contHold = opt_pNode.getContentHolder();
 
+    //
     // If at end of branch
-    if (fldrs.length == 0 && opt_elt){
+    //
+    if (fldrs.length == 0){
 	this.onEndOfBranch_(contHold, opt_elt);
 	return;
-    }
+    } 
 
+    //
     // Otherwise, recurse
-    this.createBranch_(
+    //
+    this.createBranch(
+	//
 	// Slice off top index of folders .
+	//
 	(fldrs.length > 1) ? fldrs.slice(1) : [], 
 
+	//
 	// Get existing or create new node.
-	pNode.getNodes()[fldrs[0]] ? pNode.getNodes()[fldrs[0]] : 
-	this.createNode_(fldrs[0], contHold, pNode),
+	//
+	opt_pNode.getNodes()[fldrs[0]] ? opt_pNode.getNodes()[fldrs[0]] : 
+	this.createNode_(fldrs[0], contHold, opt_pNode),
 
+	//
 	// maintain the end element.
+	//
 	opt_elt); 
 }
 
@@ -338,6 +367,7 @@ nrg.ui.ZippyTree.prototype.createBranch_ = function(fldrs, pNode, opt_elt) {
 
 /**
  * Conducts node creation specific for the ZippyTree.
+ *
  * @param {!string} title The node title.
  * @param {!Element} parent The parent element.
  * @param {!nrg.ui.ZippyNode} pNode The parent node.
@@ -346,6 +376,10 @@ nrg.ui.ZippyTree.prototype.createBranch_ = function(fldrs, pNode, opt_elt) {
  */
 nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     //window.console.log('\n\nPARENT', parent);
+
+    //
+    // Create parameters
+    //
     parent.style.opacity = this.initOp_;
     var node = new nrg.ui.ZippyNode(title, parent);
 
@@ -371,17 +405,36 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
 	});
     }.bind(this))
 
+    //
+    // Set the parent node
+    //
     pNode.getNodes()[title] = node;
 
+    //
+    // Set styles
+    //
     node.getHeader().style.opacity = this.initOp_;
     parent.style.opacity = 1;
 
+    //
+    // Fade in the node
+    //
     this.createFadeAnim_(node.getHeader());
+
+    //
+    // Indent the node
+    //
     this.indentNodes_();
+
+    //
+    // Dispatch the NODEADDED event
+    //
     this.dispatchEvent({
 	type: nrg.ui.ZippyTree.EventType.NODEADDED,
-	currNode: node
+	node: node
     });
+
+
     return node;
 }
 
@@ -412,7 +465,7 @@ nrg.ui.ZippyTree.prototype.createFadeAnim_ = function(elt, opt_callback) {
 
 
 /**
- * Method for when an end of branch is reached.  Called from 'createBranch_'.
+ * Method for when an end of branch is reached.  Called from 'createBranch'.
  * @param {!Element} contHold The contentHolder element.
  * @param {Element=} opt_elt The optional element to add at the end of the 
  *    branch.
@@ -452,7 +505,6 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
     //
     this.indentNodes_();
     if (!this.AnimQueue_.isPlaying()) { this.AnimQueue_.play() }; 
-
 }
 
 

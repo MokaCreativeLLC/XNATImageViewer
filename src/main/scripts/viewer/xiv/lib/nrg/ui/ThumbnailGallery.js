@@ -306,19 +306,13 @@ nrg.ui.ThumbnailGallery.prototype.setHoverParent = function(elt){
 }
 
 
+
+
 /**
  * @param {Array.<string>} folders The zippy structure.
  */
 nrg.ui.ThumbnailGallery.prototype.addFolders = function(folders) {
-    var blankDiv = goog.dom.createDom('div', {
-	'id': 'blankDiv'
-    })
-
-    //
-    // Apply a little hack around the blank div for sorting.
-    //
-    blankDiv[nrg.ui.ThumbnailGallery.THUMB_SORT_TAG] = '-1';
-    this.ZippyTree_.addContents(blankDiv, folders);
+    this.ZippyTree_.createBranch(folders);
     this.mapSliderToContents();
 }
 
@@ -403,6 +397,10 @@ nrg.ui.ThumbnailGallery.prototype.setZippyTreeEvents_ = function(){
 
     goog.events.listen(this.ZippyTree_,
 	nrg.ui.ZippyNode.EventType.COLLAPSED,
+	this.mapSliderToContents.bind(this));
+
+    goog.events.listen(this.ZippyTree_,
+	nrg.ui.ZippyNode.EventType.NODEADDED,
 	this.mapSliderToContents.bind(this));
 }
 

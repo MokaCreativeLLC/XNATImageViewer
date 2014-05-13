@@ -92,8 +92,57 @@ gxnat.Path.prototype.deconstructUrl_ = function(url) {
 	this[splitter[i]] = splitter[i+1];
 	i++;
     }
+
+    //
+    // find the deepest level
+    //
+    this.findDeepestLevel_();
 }
 
+
+
+/**
+ * @private
+ */
+gxnat.Path.prototype.findDeepestLevel_ = function() {
+    var j, len2, subLevel;
+    var deepestFound = false;
+
+    gxnat.Path.forEachXnatLevel(function(level, i){
+	//window.console.log(level);
+	if (goog.isArray(level)){
+	    j = 0;
+	    len2 = level.length;
+	    for (; j<len2; j++){
+		subLevel = level[j];
+		if (!goog.isDefAndNotNull(this[subLevel]) && !deepestFound){
+		    this.deepestLevel_ = gxnat.Path.xnatLevelOrder[i-1];
+		    deepestFound = true;
+		}
+	    }
+	} 
+
+	else if (!goog.isDefAndNotNull(this[level]) && !deepestFound){
+	    this.deepestLevel_ = gxnat.Path.xnatLevelOrder[i-1]; 
+	    deepestFound = true;
+	}
+
+    }.bind(this))
+}
+
+
+
+
+/**
+ * @return {string} The deepest XNAT path level.
+ * @public
+ */
+gxnat.Path.prototype.getDeepestLevel = function() {
+    if (!goog.isDefAndNotNull(this.deepestLevel_)){
+	this.findDeepestLevel_;
+    }
+    return this.deepestLevel_;
+}
 
 
 
