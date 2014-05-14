@@ -79,25 +79,17 @@ xiv = function(mode, dataPath, rootUrl){
     // Add the data path
     //
     this.addDataPath(dataPath);
+
+    /**
+     * @type {gxnat.Path}
+     * @private
+     */
+    this.initPath_ = new gxnat.Path(this.dataPaths_[0]);
     //window.console.log('add data path:', dataPath);
 };
 goog.inherits(xiv, goog.Disposable);
 goog.exportSymbol('xiv', xiv);
 
-
-
-/**
- * @param {!boolean} loaded 
- * @param {!Object} metadata 
- * @param {!string} uri
- *
- * @struct
- */
-xiv.experimentTracker = function(loaded, metadata, uri){
-    this.loaded = loaded
-    this.metadata =  metadata,
-    this.path = new gxnat.Path(uri)
-}
 
 
 
@@ -184,10 +176,64 @@ xiv.prototype.ViewableTrees_;
 
 
 /** 
- * @type {Object.<string, xiv.experimentTracker>}
+ * @type {Array.<!string>}
  * @private
  */
 xiv.prototype.loadedExperiments_;
+
+
+
+/** 
+ * @type {gxnat.PrjectTree.TreeNode}
+ * @private
+ */
+xiv.prototype.initProjNode_;
+
+
+
+/** 
+ * @type {gxnat.PrjectTree.TreeNode}
+ * @private
+ */
+xiv.prototype.initSubjNode_;
+
+
+
+/** 
+ * @type {gxnat.PrjectTree.TreeNode}
+ * @private
+ */
+xiv.prototype.initExptNode_;
+
+
+/** 
+ * @type {nrg.ui.ZippyNode}
+ * @private
+ */
+xiv.prototype.initProjFolderNode_;
+
+
+
+/** 
+ * @type {nrg.ui.ZippyNode}
+ * @private
+ */
+xiv.prototype.initSubjFolderNode_;
+
+
+
+/** 
+ * @type {nrg.ui.ZippyNode}
+ * @private
+ */
+xiv.prototype.initExptFolderNode_;
+
+
+/** 
+ * @type {!boolean}
+ * @private
+ */
+xiv.prototype.initPathExpanding_ = false;
 
 
 
@@ -202,89 +248,112 @@ xiv.prototype.begin = function() {
     this.createModal_();
 
     //
-    // Create the project tree
-    //
-    this.ProjectTree_ = new gxnat.ProjectTree(this.dataPaths_[0]);
-
-    //
-    // Run a partial load on the tree using the given path
-    // (this won't load any other experiments within the project, ONLY
-    // the experiment pertaining to the given url).
-    //
-    this.ProjectTree_.loadBranch(this.dataPaths_[0], function(tree){
-
-	//
-	// Once the partial path is loaded run xiv's callback 
-	// 'onExperimentLoaded_'. This gets things setup for the current
-	// branch to display in the modal.
-	//
-	this.onExperimentLoaded_(null, function(){
-
-	    //
-	    // Load all of the unloaded experiments (just one branch within
-	    // the project).
-	    //
-	    this.loadAllUnloadedExperiments_();
-
-	    //
-	    // Then, load the entire project tree, stopping at the 'subjects'
-	    // level.
-	    //
-	    
-	    this.ProjectTree_.loadSubjects(function(){
-		
-		//window.console.log("PRJ", this.ProjectTree_);
-		//
-		// When its loaded, store the various metadata for 
-		// ajax experiment creation.  We then have to listen
-		// for the various zippys to expand, and conduct the relevant
-		// ajax calls after they are expanded.
-		//
-		this.onSubjectsLoaded_(null, true)
-	    }.bind(this))
-	    
-
-	}.bind(this));
-    }.bind(this))
-
-    //
     // Show the modal
     //
     this.show();
+
+
+    //
+    // Create the project tree
+    //
+    this.collapseZippys_();
+    this.ProjectTree_ = new gxnat.ProjectTree(this.dataPaths_[0]);
+    this.ProjectTree_.loadProject(function(projNode){
+
+	this.initProjNode_ = projNode;
+	var folders = this.createFoldersFromTreeNodes_(projNode);
+	var zippyTree = this.Modal_.getThumbnailGallery().getZippyTree();
+
+	//
+	// Expand the project folder
+	//
+	this.initProjFolderNode_ = 
+	    zippyTree.setExpanded(goog.array.flatten(folders)[0])
+
+	this.ProjectTree_.loadSubjects(function(subjNodes){
+	    //
+	    // Set the subject node pertaining to the current data path
+	    // to be on top
+	    //
+	    var tempPath = this.initPath_.pathByLevel('subjects');
+	    this.initSubjNode_ = this.ProjectTree_.getSubjectNodeByUri(
+		tempPath);
+	    goog.array.remove(subjNodes, this.initSubjNode_);
+	    goog.array.insertAt(subjNodes, this.initSubjNode_, 0);
+
+	    //
+	    // toggle this property to expand the experiment
+	    //
+	    this.initPathExpanding_ = true;
+
+	    //
+	    // Expand the init Subject's zippy and store that zippy 
+	    // to expand the experiment after
+	    //
+	    var folders = this.createFoldersFromTreeNodes_(subjNodes);
+	    this.initSubjFolderNode_ = this.Modal_.getThumbnailGallery().
+		getZippyTree().setExpanded(goog.array.flatten(folders)[1], 
+					   this.initProjFolderNode_);
+
+	}.bind(this))
+    }.bind(this));
 }
 
 
 
+
 /**
- * Loads the experiment idenified by the argument ONLY if it's loaded
- * property is undefined.
- *
- * @param {!string} exptUri 
+ * @param {!Array.<gxnat.ProjectTree.TreeNode> | !gxnat.ProjectTree.TreeNode} 
+ *     treeNodes
+ * @return {Array.<Array.string>>} The folder collection/
  * @private
  */
-xiv.prototype.loadUnloadedExperiment_ = function(exptUri) {
-    var key = exptUri;
-    var expObj = this.loadedExperiments_[key];
-    if (!expObj.loaded){
-	this.loadExperiment_(key, function(){
-	    this.loadedExperiments_[key].loaded = true;
-	}.bind(this), expObj.metadata); 		
+xiv.prototype.createFoldersFromTreeNodes_ = function(treeNodes){
+    if (!goog.isArray(treeNodes)){
+	treeNodes = [treeNodes];
     }
-}
 
+    //
+    // folderUris
+    //
+    var folderUris = gxnat.ProjectTree.getNodeUris(treeNodes);
+    var allFolders = [];
+    //
+    // Creates the folder names
+    //
+    var tempPath, newFolderUris;
+    goog.array.forEach(folderUris, function(folderUri){
+	//folders.push(xiv.foldersFromUrl(folderUri));
+	tempPath = new gxnat.Path(folderUri);
+	folders = xiv.foldersFromUrl(folderUri);
+	allFolders.push(folders);
+	newFolderUris = [];
 
+	goog.array.forEach(folders, function(folder, i){
 
-/**
- * Cycles through the loadedExperiments_ property, loading only those
- * where the 'loaded' property is undefined.
- *
- * @private
- */
-xiv.prototype.loadAllUnloadedExperiments_ = function() {
-    goog.object.forEach(this.loadedExperiments_, function(expObj, key){
-	this.loadUnloadedExperiment_(key);
+	    switch (i){
+	    case 0:
+		newFolderUris.push(tempPath['prefix'] + '/projects/' + 
+				   tempPath['projects']);
+		break;
+	    case 1:
+		newFolderUris.push(newFolderUris[0] + '/subjects/' + 
+				   tempPath['subjects']);
+		
+		break;
+	    case 2:
+		newFolderUris.push(newFolderUris[1] + '/experiments/' + 
+				   tempPath['experiments']);
+		break;
+	    }
+	})
+	window.console.log(folders, newFolderUris);	
+	this.addFoldersToGallery_(folders, newFolderUris);
     }.bind(this))
+ 
+    return allFolders;
 }
+
 
 
 
@@ -370,9 +439,48 @@ xiv.prototype.onNoExperimentalWebGL_ = function(){
  * @private
  */
 xiv.prototype.onSubjectZippyExpanded_ = function(path) {
-    //window.console.log("SUBJECT URL! ", path, path.getDeepestLevel());
-    this.ProjectTree_.loadExperiments(path, function(subjNode){
-	this.onExperimentLoaded_(null, null);	
+    window.console.log("SUBJECT URL! ", path, path.getDeepestLevel());
+    this.ProjectTree_.loadExperiments(path['originalUrl'], function(exptNodes){
+
+	//
+	// If we are in the init subject
+	//
+	if (path.pathByLevel('subjects') == 
+	    this.initPath_.pathByLevel('subjects')){
+	    
+	    //
+	    // Exit out of the init Expt node is defined
+	    //
+	    if (goog.isDefAndNotNull(this.initExptNode_)){
+		return;
+	    } 
+	    else {
+		//
+		// Set the subject node pertaining to the current data path
+		// to be on top
+		//
+		var tempPath = this.initPath_.pathByLevel('experiments');
+		this.initExptNode_ = this.ProjectTree_.
+		    getExperimentNodeByUri(tempPath);
+		goog.array.remove(exptNodes, this.initExptNode_);
+		goog.array.insertAt(exptNodes, this.initExptNode_, 0);
+	    }
+	}
+
+	//
+	// This will check for redundance.
+	//
+	var folders = this.createFoldersFromTreeNodes_(exptNodes);
+
+	//
+	// Expand the init experiment zippy
+	//
+	if (this.initPathExpanding_){	    
+	    this.initExptFolderNode_ = this.Modal_.getThumbnailGallery().
+		getZippyTree().setExpanded(goog.array.flatten(folders)[2], 
+					   this.initSubjFolderNode_);
+	    this.initPathExpanding_ = false;
+	}
     }.bind(this), 'experiments');
 }
 
@@ -383,8 +491,7 @@ xiv.prototype.onSubjectZippyExpanded_ = function(path) {
  * @private
  */
 xiv.prototype.onExperimentZippyExpanded_ = function(path) {
-    //window.console.log(path);
-    this.loadUnloadedExperiment_(path['originalUrl']);
+    this.loadExperiment_(path['originalUrl']);
 }
 
 
@@ -513,188 +620,71 @@ xiv.prototype.dispose = function() {
 /**
  * @param {!string} exptUrl The experiment url to load the vieables from.
  * @param {Function=} opt_callback The optional callback.
- * @param {Object=} opt_metadata
  * @private
  */
 xiv.prototype.loadExperiment_ = 
-function(exptUrl, opt_callback, opt_metadata) {
-    this.addDataPath(exptUrl);
-    this.fetchViewableTreesAtExperiment(
-	this.dataPaths_[this.dataPaths_.length - 1], opt_callback, 
-	opt_metadata);
+function(exptUrl, opt_callback) {
+    //
+    // Exit out if the experiment is loaded
+    //
+    if (!goog.isDefAndNotNull(this.loadedExperiments_)) { 
+	this.loadedExperiments_ = [] 
+    }
+    else if (this.loadedExperiments_.indexOf(exptUrl) > -1) { 
+	window.console.log('don\'t need to reload', exptUrl);
+	return;
+    };
+
+    //
+    // Get the experiment node
+    //
+    var exptNode = this.ProjectTree_.getExperimentNodeByUri(exptUrl);
+
+    //
+    // Load the metadata of the experiment -- this will check for redundancy,
+    // so it won't query the server again if it exists already
+    //
+    this.ProjectTree_.loadExperimentMetadata(exptNode, function(){
+
+	//
+	// Get the node branch
+	//
+	var branch = this.ProjectTree_.getBranch(exptNode);
+
+	//
+	// Create the metadata object
+	//
+	var metadata = new gxnat.vis.ViewableTree.metadataCollection(
+	    branch['projects'][gxnat.ProjectTree.METADATA_KEY], 
+	    branch['subjects'][gxnat.ProjectTree.METADATA_KEY], 
+	    branch['experiments'][gxnat.ProjectTree.METADATA_KEY]);
+
+	//
+	// Get the viewable trees
+	//
+	this.fetchViewableTreesAtExperiment(exptUrl, function(){
+	    this.loadedExperiments_.push(exptUrl);
+	    if (goog.isDefAndNotNull(opt_callback)){
+		opt_callback();
+	    }
+	}.bind(this), metadata);
+
+
+
+    }.bind(this));    
 }
 
 
-
-/** 
- * @param {Function=} opt_doneCallback
- * @param {boolean=} opt_collapse
+/**
  * @private
  */
-xiv.prototype.onSubjectsLoaded_ = function(opt_doneCallback, opt_collapse) {
-    //
-    // Collapse further added zippys unless specified.
-    //
-    if (opt_collapse !== false) {
-	this.collapseAdditionalZippys_();
-    }
-
-    //
-    // Get the relevant nodes
-    //
-    var projNodes = this.ProjectTree_.getNodesByLevel('projects');
-    var subjNodes = this.ProjectTree_.getNodesByLevel('subjects');
-    //window.console.log('p nodes', projNodes);
-    //window.console.log('subj nodes', subjNodes);
-
-    var folders, folderUrls, level, path;
-    //
-    // store and add subjects to the thumbnail gallery
-    //
-    goog.array.forEach(subjNodes, function(subjNode, i) {
-	//
-	// Only create the folders of the experiments
-	//
-	folders = xiv.foldersFromUrl(subjNode['_Path']['originalUrl']);
-	folderUrls = [];
-	//window.console.log("\n\nFOLDERS", folders);
-
-	//
-	// Associate each Zippy folder with its url
-	//
-	goog.array.forEach(folders, function(folder, i) {
-	    folderUrls.push(
-		subjNode['_Path'].pathByLevel(gxnat.Path.xnatLevelOrder[i]))
-	})
-	
-	//
-	// Add folders to thumbnail gallery modal
-	//
-	this.addFoldersToModalThumbnailGallery(folders, folderUrls);
-
-	//
-	// Run the done callback, if provided
-	//
-	if (goog.isDefAndNotNull(opt_doneCallback)){
-	    opt_doneCallback();
-	}
-    }.bind(this))
-
+xiv.prototype.onZippyAdded_ = function(e) {
+    var prevDur =
+    e.node.getZippy().animationDuration;
+    e.node.getZippy().animationDuration = 0;
+    e.node.getZippy().setExpanded(false);
+    e.node.getZippy().animationDuration = prevDur;
 }
-
-
-
-/** 
- * @param {gxnat.ProjectTree=} opt_projTree
- * @param {Function=} opt_doneCallback
- * @param {boolean=} opt_collapse
- * @private
- */
-xiv.prototype.onExperimentLoaded_ = function(opt_projTree, 
-					      opt_doneCallback, opt_collapse) {
-
-    //window.console.log("ON FIRST EXPER");
-    //
-    // If specificed, collapse further added zippys
-    //
-    if (opt_collapse === true) {
-	this.collapseAdditionalZippys_();
-    }
-
-
-    //
-    // Get the project tree
-    //
-    var projTree = goog.isDefAndNotNull(opt_projTree) ? 
-	opt_projTree : this.ProjectTree_;
-    //window.console.log("\n\n\n\nPROJECT TREE", projTree);
-
-    //
-    // Get the relevant nodes
-    //
-    var projNodes = projTree.getNodesByLevel('projects');
-    var subjNodes = projTree.getNodesByLevel('subjects');
-    var exptNodes = projTree.getNodesByLevel('experiments');
-    //window.console.log('e nodes', exptNodes, exptNodes.length);
-    //window.console.log('p nodes', projNodes);
-    //window.console.log('subj nodes', subjNodes);
-
-
-    var j = 0;
-    var len = subjNodes.length;
-    var metacol, currProjMeta, currSubjMeta, currExptMeta, currExptUri;
-
-    //
-    // store and add experiments
-    //
-    goog.array.forEach(exptNodes, function(exptNode, i) {
-	currExptUri = exptNode[gxnat.ProjectTree.PATH_KEY]['originalUrl'];
-
-	len = projNodes.length;
-	for (j=0; j<len; j++){
-	    if (currExptUri.indexOf(projNodes[j][gxnat.ProjectTree.PATH_KEY]
-				    ['originalUrl']) > -1){
-		currProjMeta = projNodes[j]['METADATA'];
-		break;
-	    }
-	}
-
-
-	len = subjNodes.length;
-	for (j=0; j<len; j++){
-	    if (currExptUri.indexOf(subjNodes[j][gxnat.ProjectTree.PATH_KEY]
-				    ['originalUrl']) > -1){
-		currSubjMeta = subjNodes[j]['METADATA'];
-		break;
-	    }
-	}
-
-	window.console.log(exptNode);
-	metacol = new gxnat.vis.ViewableTree.metadataCollection(
-	    currProjMeta, currSubjMeta, exptNode['METADATA']);
-	window.console.log(exptNode['METADATA']);
-
-	//
-	// Load experiment
-	//
-	
-	if (!goog.isDefAndNotNull(this.loadedExperiments_)){
-	    this.loadedExperiments_ = {};
-	}
-
-	//this.loadExperiment_(currExptUri, null, metacol);
-	this.loadedExperiments_[currExptUri] = new xiv.experimentTracker(
-	    false, metacol, currExptUri);
-
-	//
-	// Only create the folders of the experiments
-	//
-	var folders = xiv.foldersFromUrl(currExptUri);
-	folderUrls = [];
-	//window.console.log("\n\nFOLDERS 2", folders);
-
-	//
-	// Associate each Zippy folder with its url
-	//
-	goog.array.forEach(folders, function(folder, i) {
-	    folderUrls.push(
-		 exptNode[gxnat.ProjectTree.PATH_KEY].pathByLevel(gxnat.Path.xnatLevelOrder[i]))
-	})
-
-	//window.console.log("FOLDER URLS", folderUrls);
-	//window.console.log("Loaded experiments", this.loadedExperiments_);
-	this.addFoldersToModalThumbnailGallery(folders, folderUrls);
-	//window.console.log("\n\nFOLDERS", folders);
-
-	//
-	// Apply the metadata to the preloaded thumbnails
-	//
-	if (goog.isDefAndNotNull(opt_doneCallback)){
-	    opt_doneCallback();
-	}
-    }.bind(this))
-}
-
 
 
 
@@ -703,8 +693,10 @@ xiv.prototype.onExperimentLoaded_ = function(opt_projTree,
  *
  * @private
  */
-xiv.prototype.collapseAdditionalZippys_ = function() {
+xiv.prototype.collapseZippys_ = function() {
+    window.console.log("COLLAPSE ZIPPYS 1");
     if (!this.Modal_.getThumbnailGallery()) { return };
+    window.console.log("COLLAPSE ZIPPYS");
     goog.events.listen(this.Modal_.getThumbnailGallery().getZippyTree(),
        nrg.ui.ZippyTree.EventType.NODEADDED, this.onZippyAdded_);
 }
@@ -811,9 +803,9 @@ function(exptUri, opt_doneCallback, opt_metadata){
  * @param {Array.<string>} folders The zippy structure.
  * @param {Array.<Object>=} opt_correspondingData The optional corresponding
  *    data to add the the zippys.
- * @public
+ * @private
  */
-xiv.prototype.addFoldersToModalThumbnailGallery = 
+xiv.prototype.addFoldersToGallery_ = 
 function(folders, opt_correspondingData){
     
     var thumbGalZippy = this.Modal_.getThumbnailGallery().getZippyTree();
@@ -904,18 +896,6 @@ xiv.prototype.storeViewableTree_ = function(ViewableTree, path, opt_onStore) {
 
 
 /**
- * @private
- */
-xiv.prototype.onZippyAdded_ = function(e) {
-    var prevDur =
-    e.node.getZippy().animationDuration;
-    e.node.getZippy().animationDuration = 0;
-    e.node.getZippy().setExpanded(false);
-    e.node.getZippy().animationDuration = prevDur;
-}
-
-
-/**
  * Dispose function called back after the modal is faded out.
  *
  * @private
@@ -946,6 +926,17 @@ xiv.prototype.dispose_ = function() {
     delete this.rootUrl_;
     delete this.queryPrefix_;
     delete this.iconUrl_;
+
+    this.initPath_.dispose();
+    delete this.initPath_;
+
+    delete this.initPathExpanding_;
+    delete this.initProjNode_;
+    delete this.initSubjNode_;
+    delete this.initExptNode_;
+    delete this.initProjFolderNode_;
+    delete this.initSubjFolderNode_;
+    delete this.initExptFolderNode_;
 
     // Modal
     goog.events.removeAll(this.Modal_);

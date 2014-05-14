@@ -291,11 +291,13 @@ nrg.ui.ZippyNode.prototype.setAnimated = function(animated){
  */
 nrg.ui.ZippyNode.prototype.setZippyEvents_ExpandAndCollapse_ = function() {
     goog.events.listen(this.Zippy_,goog.object.getValues(goog.ui.Zippy.Events), 
-    function(e) { 		
-	if (e.target.isExpanded()) {
-	    this.onZippyExpanded_();
-	} else {
-	    this.onZippyCollapsed_();
+    function(e) { 
+	if (!this.Zippy_.isBusy()) {
+	    if (e.target.isExpanded()) {
+		this.onZippyExpanded_();
+	    } else {
+		this.onZippyCollapsed_();
+	    }
 	}
     }.bind(this));
 }

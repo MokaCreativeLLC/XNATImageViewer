@@ -494,12 +494,14 @@ xiv.ui.ViewBoxHandler.prototype.createViewBox_ = function() {
  * @private
  */
 xiv.ui.ViewBoxHandler.prototype.addDragDropHandle_ = function(ViewBox) {
-    var dragDropHandle = /**@type {!Element}*/ 
+    var dragDropHandle =
     goog.dom.createDom("img",  {
 	'id': xiv.ui.ViewBoxHandler.ID_PREFIX + 
 	    '_dragHandle_' + goog.string.createUniqueString(),
 	'class' : xiv.ui.ViewBoxHandler.CSS.HANDLE
     });
+    dragDropHandle.src = 
+	'../../../../images/viewer/xiv/ui/ViewBoxManager/handle.png';
     dragDropHandle.setAttribute(xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR, 
 				ViewBox.getElement().id); 
     ViewBox.addToMenu('TOP_LEFT', dragDropHandle, 0);

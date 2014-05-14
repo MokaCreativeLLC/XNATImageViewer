@@ -110,7 +110,7 @@ nrg.ui.ZippyTree.CSS_SUFFIX = {
  * @const
  * @type {!number}
  */
-nrg.ui.ZippyTree.FADE_TIME = 120;
+nrg.ui.ZippyTree.FADE_TIME = 300;
 
 
 
@@ -256,6 +256,27 @@ nrg.ui.ZippyTree.prototype.getElement = function() {
 
 
 /**
+ * @param {!string} folder The zippy folder to expanded (id'ed by title)
+ * @param {nrg.ui.ZippyNode=} The opitional zippy node, defaults to 'this'.
+ * @return {nrg.ui.ZippyNode} The expanded zippy node.
+ */
+nrg.ui.ZippyTree.prototype.setExpanded = function(folder, opt_startNode) {
+    window.console.log("set EXPAND", folder, opt_startNode);
+
+    opt_startNode = goog.isDefAndNotNull(opt_startNode) ? opt_startNode : this;
+
+    window.console.log(opt_startNode.getNodes());
+
+    if (goog.isDefAndNotNull(opt_startNode.getNodes()[folder])){
+	var currNode = opt_startNode.getNodes()[folder];
+	currNode.getZippy().setExpanded();
+	return currNode;
+    }
+}
+
+
+
+/**
  * @param {!Array.<string>} folders The zippy folder titles.
  * @return {Array.<nrg.ui.ZippyNode>}
  */
@@ -302,7 +323,7 @@ nrg.ui.ZippyTree.prototype.addContents = function(elements, opt_folders) {
  * @private
  */
 nrg.ui.ZippyTree.prototype.addContent_ = function(element, opt_folders) {
-    //window.console.log("ADD CONTENT", element);
+    
     if (!opt_folders){
 	goog.dom.append(this.rootElt_, element);
     } else {
@@ -342,6 +363,15 @@ nrg.ui.ZippyTree.prototype.createBranch = function(fldrs, opt_pNode, opt_elt) {
 	return;
     } 
 
+
+    //
+    // Set max depth
+    //
+    if (fldrs.length > 0 && fldrs.length > this.maxDepth_){
+	this.maxDepth_ = fldrs.length + 1;
+    } 
+
+
     //
     // Otherwise, recurse
     //
@@ -375,7 +405,7 @@ nrg.ui.ZippyTree.prototype.createBranch = function(fldrs, opt_pNode, opt_elt) {
  * @private
  */
 nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
-    //window.console.log('\n\nPARENT', parent);
+    window.console.log('\n\nPARENT', parent);
 
     //
     // Create parameters
@@ -387,6 +417,8 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     // Listen and dispatch the EXPANDED event
     //
     goog.events.listen(node, nrg.ui.ZippyNode.EventType.EXPANDED, function(){
+	window.console.log('expanded!');
+	this.indentNodes_();
 	this.dispatchEvent({
 	    type: nrg.ui.ZippyNode.EventType.EXPANDED,
 	    node: node
@@ -399,6 +431,7 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     //
     goog.events.listen(node, nrg.ui.ZippyNode.EventType.COLLAPSED, function(){
 	window.console.log('collapsed!');
+	this.indentNodes_();
 	this.dispatchEvent({
 	    type: nrg.ui.ZippyNode.EventType.COLLAPSED,
 	    node: node
@@ -447,8 +480,8 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
  * @private
  */
 nrg.ui.ZippyTree.prototype.createFadeAnim_ = function(elt, opt_callback) {
-    var anim = /** @type {goog.fx.dom.FadeIn} */
-    new goog.fx.dom.FadeIn(elt, this.fadeDur_);
+    window.console.log(this.fadeDur_);
+    var anim = new goog.fx.dom.FadeIn(elt, this.fadeDur_);
     if (!this.AnimQueue_.isPlaying()){		
 	this.AnimQueue_.add(anim)
     } else {
@@ -517,16 +550,14 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
  * @private
  */
 nrg.ui.ZippyTree.prototype.indentNodes_ = function(currNode, currDepth){
-
-    var currNodeset = /**@type {Object.<string, goog.ui.ZippyNode>}*/ 
-    currNode ? currNode.getNodes(): this.getNodes();    
+    var currNodeset = currNode ? currNode.getNodes(): this.getNodes();    
     currDepth = currDepth ? currDepth : 0; 
 
     // If at the end of the tree...
     if (!currNodeset || (goog.object.getCount(currNodeset) == 0)){ 
 	currDepth--;
 	this.indentNodeElements_(currNode.getContentHolder().childNodes, 
-				 currDepth)
+				 currDepth);
 	return; 
     }
 

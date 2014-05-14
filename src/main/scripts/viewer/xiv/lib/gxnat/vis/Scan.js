@@ -95,14 +95,12 @@ gxnat.vis.Scan.filterableFileTypes = [
  * @inheritDoc
  */
 gxnat.vis.Scan.prototype.fileFilter = function(fileName){    
-
     fileName = gxnat.vis.Scan.superClass_.fileFilter.call(this, fileName);
 
     if (!goog.isDefAndNotNull(fileName)) { return };
     
     var i = 0;
     var len = gxnat.vis.Scan.filterableFileTypes.length;
-
     for (; i<len; i++) {
 	if (goog.string.caseInsensitiveEndsWith(fileName, 
 		gxnat.vis.Scan.filterableFileTypes[i])) {
@@ -159,8 +157,7 @@ gxnat.vis.Scan.prototype.getThumbnailImage = function(opt_callback){
     //
     var sortedFiles = this.ViewableGroups[0].getViewables()[0].getFiles().
 	sort(nrg.array.naturalCompare);
-    var imgInd = /** @type {!number} */
-    Math.floor((sortedFiles.length) / 2);
+    var imgInd = Math.floor((sortedFiles.length) / 2);
     //window.console.log(this['files'], this['files'].length, imgInd);
     this.setThumbnailUrl(sortedFiles[imgInd] + gxnat.JPEG_CONVERT_SUFFIX);
     if (opt_callback){

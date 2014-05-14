@@ -1,4 +1,4 @@
-/**
+ /**
  * @preserve Copyright 2014 Washington University
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  * @author herrickr@mir.wustl.edu (Rick Herrick)
@@ -66,12 +66,20 @@ gxnat.folderAbbrev = {
  * handle communication with the XNAT server.
  * @param {!string} url The XNAT url to run the operation on.
  * @param {!function} callback The callback to send the results to.
+ * @param {string=} opt_suffix The optional suffix to add.
  * @public
  */
-gxnat.jsonGet = function(url, callback){
+gxnat.jsonGet = function(url, callback, opt_suffix){
     var queryChar = (url.indexOf('?') > -1) ? '&' : '?';
     var queryUrl = url + queryChar + "format=json";
-    //window.console.log("\n\nxnat - jsonGet: ", queryUrl);
+    if (goog.isDefAndNotNull(opt_suffix)){
+	
+	if (opt_suffix[0] !== '&') {
+	    opt_suffix = '&' + opt_suffix;
+	}
+	queryUrl += opt_suffix;
+    }
+    window.console.log("\n\nxnat - jsonGet: ", queryUrl);
     gxnat.get(queryUrl, callback, 'json');
 }
 

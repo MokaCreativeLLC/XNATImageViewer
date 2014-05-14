@@ -104,23 +104,6 @@ gxnat.vis.AjaxViewableTree.prototype.getQueryUrl = function() {
 
 
 /**
-gxnat.vis.AjaxViewableTree.sessionProperties = {
-    "SessionID": {'label': "Session ID", 'value': ['--']},
-    "Accession #": {'label':"Accession #", 'value': ['--']},
-    "Scanner" : {'label':"Scanner", 'value': ["--"]},
-    "Format" : {'label':"Format", 'value': ["--"]},
-    "Age" : {'label':"Age", 'value': ["--"]},
-    "Gender": {'label':"Gender", 'value': ["--"]},
-    "Handedness": {'label':"Handedness", 'value': ["--"]},
-    "AcqDate" : {'label':"Acq.Date", 'value': ["--"]},
-    "Scan" : {'label':"Scan", 'value': ['--']},
-    "Type" : {'label':"type", 'value': ["--"]},
-    "Quality" : {'label':"type", 'value': ["--"]},
-}
-*/
-
-
-/**
  * @return {!Object}
  * @public
  */
@@ -188,8 +171,8 @@ gxnat.vis.AjaxViewableTree.prototype.setSubjectMetadata = function(meta) {
 	this.sessionInfo['Race'] = this.subjectMetadata['race'];
     }
 
-    if (goog.isDefAndNotNull(this.subjectMetadata['age'])){
-	this.sessionInfo['Age'] = this.subjectMetadata['age'];
+    if (goog.isDefAndNotNull(this.subjectMetadata['dob'])){
+	this.sessionInfo['DOB'] = this.subjectMetadata['dob'];
     }
 
     if (goog.isDefAndNotNull(this.subjectMetadata['acquisition_site'])){
