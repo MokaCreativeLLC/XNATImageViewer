@@ -110,7 +110,7 @@ nrg.ui.ZippyTree.CSS_SUFFIX = {
  * @const
  * @type {!number}
  */
-nrg.ui.ZippyTree.FADE_TIME = 300;
+nrg.ui.ZippyTree.FADE_TIME = 100;
 
 
 
@@ -405,7 +405,7 @@ nrg.ui.ZippyTree.prototype.createBranch = function(fldrs, opt_pNode, opt_elt) {
  * @private
  */
 nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
-    window.console.log('\n\nPARENT', parent);
+    //window.console.log('\n\nPARENT', parent);
 
     //
     // Create parameters
@@ -417,7 +417,7 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     // Listen and dispatch the EXPANDED event
     //
     goog.events.listen(node, nrg.ui.ZippyNode.EventType.EXPANDED, function(){
-	window.console.log('expanded!');
+	//window.console.log('expanded!');
 	this.indentNodes_();
 	this.dispatchEvent({
 	    type: nrg.ui.ZippyNode.EventType.EXPANDED,
@@ -430,7 +430,7 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     // Listen and dispatch the COLLASPED event
     //
     goog.events.listen(node, nrg.ui.ZippyNode.EventType.COLLAPSED, function(){
-	window.console.log('collapsed!');
+	//window.console.log('collapsed!');
 	this.indentNodes_();
 	this.dispatchEvent({
 	    type: nrg.ui.ZippyNode.EventType.COLLAPSED,
@@ -450,9 +450,11 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     parent.style.opacity = 1;
 
     //
-    // Fade in the node
+    // Fade in the node only if specified
     //
-    this.createFadeAnim_(node.getHeader());
+    if (this.fadeInFx_) {
+	this.createFadeAnim_(node.getHeader());
+    }
 
     //
     // Indent the node
@@ -480,7 +482,8 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
  * @private
  */
 nrg.ui.ZippyTree.prototype.createFadeAnim_ = function(elt, opt_callback) {
-    window.console.log(this.fadeDur_);
+    
+    //window.console.log(this.fadeDur_);
     var anim = new goog.fx.dom.FadeIn(elt, this.fadeDur_);
     if (!this.AnimQueue_.isPlaying()){		
 	this.AnimQueue_.add(anim)

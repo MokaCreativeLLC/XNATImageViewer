@@ -256,47 +256,46 @@ xiv.prototype.begin = function() {
     //
     // Create the project tree
     //
+    var nodeCount = 0;
+
     this.collapseZippys_();
     this.ProjectTree_ = new gxnat.ProjectTree(this.dataPaths_[0]);
-    this.ProjectTree_.loadProject(function(projNode){
+    this.ProjectTree_.loadInitBranch(function(node){
+	//
+	// Create zippy folders
+	//
+	var folders = this.createFoldersFromTreeNodes_(node);
 
-	this.initProjNode_ = projNode;
-	var folders = this.createFoldersFromTreeNodes_(projNode);
+	//
+	// Expand folders
+	//
+	folders = goog.array.flatten(folders);
 	var zippyTree = this.Modal_.getThumbnailGallery().getZippyTree();
 
-	//
-	// Expand the project folder
-	//
-	this.initProjFolderNode_ = 
-	    zippyTree.setExpanded(goog.array.flatten(folders)[0])
+	if (nodeCount == 0){
+	    this.initProjNode_ = node;
+	    this.initProjFolderNode_ = 
+		zippyTree.setExpanded(folders[folders.length - 1])
+	}
 
-	this.ProjectTree_.loadSubjects(function(subjNodes){
-	    //
-	    // Set the subject node pertaining to the current data path
-	    // to be on top
-	    //
-	    var tempPath = this.initPath_.pathByLevel('subjects');
-	    this.initSubjNode_ = this.ProjectTree_.getSubjectNodeByUri(
-		tempPath);
-	    goog.array.remove(subjNodes, this.initSubjNode_);
-	    goog.array.insertAt(subjNodes, this.initSubjNode_, 0);
+	if (nodeCount == 1){
+	    this.initSubjNode_ = node;
+	    this.initSubjFolderNode_ = 
+		zippyTree.setExpanded(folders[folders.length - 1], 
+				      this.initProjFolderNode_)
+	}
 
-	    //
-	    // toggle this property to expand the experiment
-	    //
-	    this.initPathExpanding_ = true;
+	if (nodeCount == 2){
+	    this.initBranchLoad_ = true;
+	    this.initExptNode_ = node;
+	    this.initExptFolderNode_ = 
+		zippyTree.setExpanded(folders[folders.length - 1], 
+				      this.initSubjFolderNode_)
+	}
 
-	    //
-	    // Expand the init Subject's zippy and store that zippy 
-	    // to expand the experiment after
-	    //
-	    var folders = this.createFoldersFromTreeNodes_(subjNodes);
-	    this.initSubjFolderNode_ = this.Modal_.getThumbnailGallery().
-		getZippyTree().setExpanded(goog.array.flatten(folders)[1], 
-					   this.initProjFolderNode_);
-
-	}.bind(this))
-    }.bind(this));
+	nodeCount++;
+	window.console.log(this.ProjectTree_);
+    }.bind(this))
 }
 
 
@@ -347,7 +346,7 @@ xiv.prototype.createFoldersFromTreeNodes_ = function(treeNodes){
 		break;
 	    }
 	})
-	window.console.log(folders, newFolderUris);	
+	//window.console.log(folders, newFolderUris);	
 	this.addFoldersToGallery_(folders, newFolderUris);
     }.bind(this))
  
@@ -440,6 +439,14 @@ xiv.prototype.onNoExperimentalWebGL_ = function(){
  */
 xiv.prototype.onSubjectZippyExpanded_ = function(path) {
     window.console.log("SUBJECT URL! ", path, path.getDeepestLevel());
+
+    //
+    // The init Expt node must be there before we can listen to this.
+    //
+    // NOTE: A pretty dirty solution, but a necessary one.
+    //
+    if (!goog.isDefAndNotNull(this.initExptNode_)) { return };
+
     this.ProjectTree_.loadExperiments(path['originalUrl'], function(exptNodes){
 
 	//
@@ -649,7 +656,7 @@ function(exptUrl, opt_callback) {
 	//
 	// Get the node branch
 	//
-	var branch = this.ProjectTree_.getBranch(exptNode);
+	var branch = this.ProjectTree_.getBranchFromEndNode(exptNode);
 
 	//
 	// Create the metadata object
@@ -667,10 +674,19 @@ function(exptUrl, opt_callback) {
 	    if (goog.isDefAndNotNull(opt_callback)){
 		opt_callback();
 	    }
+
+	    if (this.initBranchLoad_){
+		
+		this.ProjectTree_.loadSubjects(function(subjNode){
+		    //
+		    // Expand the init Subject's zippy and store that zippy 
+		    // to expand the experiment after
+		    //
+		    this.initBranchLoad_ = false;
+		    this.createFoldersFromTreeNodes_(subjNode);
+		}.bind(this))
+	    }
 	}.bind(this), metadata);
-
-
-
     }.bind(this));    
 }
 
@@ -682,7 +698,12 @@ xiv.prototype.onZippyAdded_ = function(e) {
     var prevDur =
     e.node.getZippy().animationDuration;
     e.node.getZippy().animationDuration = 0;
-    e.node.getZippy().setExpanded(false);
+
+    if (this.initBranchLoad_) {
+	e.node.getZippy().setExpanded(true);
+    } else {
+	e.node.getZippy().setExpanded(false);
+    }
     e.node.getZippy().animationDuration = prevDur;
 }
 
@@ -694,11 +715,9 @@ xiv.prototype.onZippyAdded_ = function(e) {
  * @private
  */
 xiv.prototype.collapseZippys_ = function() {
-    window.console.log("COLLAPSE ZIPPYS 1");
     if (!this.Modal_.getThumbnailGallery()) { return };
-    window.console.log("COLLAPSE ZIPPYS");
     goog.events.listen(this.Modal_.getThumbnailGallery().getZippyTree(),
-       nrg.ui.ZippyTree.EventType.NODEADDED, this.onZippyAdded_);
+       nrg.ui.ZippyTree.EventType.NODEADDED, this.onZippyAdded_.bind(this));
 }
 
 

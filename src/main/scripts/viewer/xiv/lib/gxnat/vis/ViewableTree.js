@@ -80,7 +80,7 @@ gxnat.vis.ViewableTree.prototype.experimentMetadata = null;
  * @public
  */
 gxnat.vis.ViewableTree.prototype.setProjectMetadata = function(meta) {
-    window.console.log("PROJECT METADATA", meta);
+    //window.console.log("PROJECT METADATA", meta);
     this.projectMetadata = meta;
 }
 
@@ -91,7 +91,7 @@ gxnat.vis.ViewableTree.prototype.setProjectMetadata = function(meta) {
  * @public
  */
 gxnat.vis.ViewableTree.prototype.setSubjectMetadata = function(meta) {
-    window.console.log("SUBJECT METADATA", meta);
+    //window.console.log("SUBJECT METADATA", meta);
     this.subjectMetadata = meta;
 }
 
@@ -102,7 +102,7 @@ gxnat.vis.ViewableTree.prototype.setSubjectMetadata = function(meta) {
  * @public
  */
 gxnat.vis.ViewableTree.prototype.setExperimentMetadata = function(meta) {
-    window.console.log("EXPT METADATA", meta);
+    //window.console.log("EXPT METADATA", meta);
     this.experimentMetadata = meta;
 }
 

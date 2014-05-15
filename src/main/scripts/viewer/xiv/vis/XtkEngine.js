@@ -807,6 +807,7 @@ xiv.vis.XtkEngine.niftiExtensions_ = [
 xiv.vis.XtkEngine.imageExtensions_ = [
     'jpeg',
     'jpg',
+    'gif',
     'png',
     'img'
 ];

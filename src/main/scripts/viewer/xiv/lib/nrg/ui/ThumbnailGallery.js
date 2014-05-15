@@ -181,7 +181,7 @@ nrg.ui.ThumbnailGallery.prototype.render = function(opt_parentElement) {
 
 
     // Do fade in effects when zippy tree contents is added.
-    this.ZippyTree_.toggleFadeInFx(true);
+    //this.ZippyTree_.toggleFadeInFx(true);
 
     this.setZippyTreeEvents_();
 }
