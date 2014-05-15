@@ -701,8 +701,9 @@ function(subject, callback) {
     //
     // Construct the experiment query path
     //
+    var imageSessionStr = '?xsiType=xnat:imageSessionData';
     var exptsUri = subjNode[gxnat.ProjectTree.PATH_KEY]
-    ['originalUrl'] + '/experiments';
+    ['originalUrl'] + '/experiments' + imageSessionStr;
 
     //
     // Query for the subjects within the project

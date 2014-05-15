@@ -260,6 +260,7 @@ xiv.prototype.begin = function() {
 
     this.collapseZippys_();
     this.ProjectTree_ = new gxnat.ProjectTree(this.dataPaths_[0]);
+    this.initPathExpanding_ = false;
     this.ProjectTree_.loadInitBranch(function(node){
 	//
 	// Create zippy folders
@@ -445,7 +446,7 @@ xiv.prototype.onSubjectZippyExpanded_ = function(path) {
     //
     // NOTE: A pretty dirty solution, but a necessary one.
     //
-    if (!goog.isDefAndNotNull(this.initExptNode_)) { return };
+    if (this.initPathExpanding_) { return };
 
     this.ProjectTree_.loadExperiments(path['originalUrl'], function(exptNodes){
 
@@ -629,8 +630,7 @@ xiv.prototype.dispose = function() {
  * @param {Function=} opt_callback The optional callback.
  * @private
  */
-xiv.prototype.loadExperiment_ = 
-function(exptUrl, opt_callback) {
+xiv.prototype.loadExperiment_ = function(exptUrl, opt_callback) {
     //
     // Exit out if the experiment is loaded
     //

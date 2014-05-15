@@ -30,9 +30,6 @@ goog.provide('gxnat.vis.Slicer');
 gxnat.vis.Slicer = function(experimentUrl, viewableJson, 
 				      opt_initComplete) {
 
-    // Set the category
-    this.setCategory('Slicer Scenes');
-
 
     /**
      * @type {!Array.<string>}
@@ -40,27 +37,26 @@ gxnat.vis.Slicer = function(experimentUrl, viewableJson,
      */
     this.mrbFiles_ = [];
 
-    
     //
     // Call parent init to get the base properties
     //
-    goog.base(this, experimentUrl, viewableJson, function() {
+    goog.base(this, 'Slicer Scenes', experimentUrl, viewableJson);
 
-	// Then get mrml nodes
-	gxnat.slicer.getMrmlNodes(this.mrbFiles_, this.queryUrl, 
-        function(mrmlNodes) {
+    //
+    // Then get the files
+    //
+    this.getFiles(function(){
 
-	    // Then we get the sceneViewNodes within the mrml nodes.
-	    gxnat.slicer.getSceneViewNodes(mrmlNodes, 
-		function(sceneViewNodes){
+	//
+	// Then get the thumbnail image
+	//
+	this.getThumbnailImage(function(){
 
-		    // Then convert SceneView nodes to viewableGroups
-		    this.convertToViewableGroups(sceneViewNodes, mrmlNodes,
-						 opt_initComplete);
-
-		    //window.console.log("\n\nSCN VIEW NODES", sceneViewNodes);
-		}.bind(this))	
-	}.bind(this))
+	    //
+	    // Then get the mrml nodes
+	    //
+	    this.getMrmlNodes_(opt_initComplete);
+	}.bind(this));
     }.bind(this))
 }
 goog.inherits(gxnat.vis.Slicer, gxnat.vis.AjaxViewableTree);
@@ -101,6 +97,35 @@ gxnat.vis.Slicer.prototype.fileQuerySuffix = '?listContents=true';
  * @protected
  */
 gxnat.vis.Slicer.prototype.fileContentsKey = 'File Name';
+
+
+
+/**
+ * @param {Function=} opt_initComplete The callback when the init process is 
+ *     complete.
+ * @private
+ */
+gxnat.vis.Slicer.prototype.getMrmlNodes_ = function(opt_initComplete){
+    //
+    // Then get mrml nodes
+    //
+    gxnat.slicer.getMrmlNodes(this.mrbFiles_, this.queryUrl, 
+	function(mrmlNodes) {
+	    //
+	    // Then we get the sceneViewNodes within the mrml nodes.
+	    //
+	    gxnat.slicer.getSceneViewNodes(mrmlNodes, 
+		function(sceneViewNodes){
+		    //
+		    // Then convert SceneView nodes to viewableGroups
+		    //
+		    this.convertToViewableGroups(sceneViewNodes, 
+						 mrmlNodes,
+						 opt_initComplete);
+		}.bind(this))	
+	}.bind(this))
+
+}
 
 
 

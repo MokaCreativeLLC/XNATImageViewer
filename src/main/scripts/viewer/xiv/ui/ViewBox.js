@@ -1131,7 +1131,15 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     // ViewableTree handling
     //
     if (ViewableSet instanceof gxnat.vis.ViewableTree){
-	this.loadViewableTree_(ViewableSet);
+	
+	if (ViewableSet.filesGotten()) {
+	    this.loadViewableTree_(ViewableSet);
+	} 
+	else {
+	    ViewableSet.getFiles(function(){
+		this.loadViewableTree_(ViewableSet);
+	    }.bind(this))
+	}
 	return;
     }
 
@@ -1368,8 +1376,10 @@ xiv.ui.ViewBox.prototype.initLoadComponents_ = function() {
 xiv.ui.ViewBox.prototype.fadeInLoadComponents_ = function(opt_fadeTime) {
     opt_fadeTime = goog.isNumber(opt_fadeTime) ? opt_fadeTime : 500;
     var anims = [];
-    var fadeables = [this.ZipTabs_.getElement(), this.menus_.LEFT,
-		     this.LayoutMenu_.getElement()];
+    var fadeables = [this.ZipTabs_.getElement(), 
+		     this.menus_.LEFT,
+		     this.LayoutMenu_.getElement(), 
+		     this.LayoutHandler_.getElement()];
     goog.array.forEach(fadeables, function(fadeable){
 	anims.push(nrg.fx.generateAnim_Fade(fadeable, {'opacity':0}, 
 					    {'opacity':1}, opt_fadeTime)); 
@@ -1621,17 +1631,22 @@ xiv.ui.ViewBox.prototype.createLayoutMenu_ = function(){
  * @param {!string} defaultClass
  * @param {string=} opt_tooltip
  * @param {Function=} opt_toolCheck
+ * @param {src=} opt_src
  * @private
  */
 xiv.ui.ViewBox.prototype.createToggleButton_ = 
-    function(defaultState, defaultClass, opt_tooltip, opt_onCheck) {
+    function(defaultState, defaultClass, opt_tooltip, opt_onCheck, opt_src) {
 	//
 	// Create the toggle button
 	//
 	var onClass = goog.getCssName(defaultClass, 'on')
-	var iconbutton = goog.dom.createDom('div', defaultClass);
+	var iconbutton = goog.dom.createDom('img', defaultClass);
 	iconbutton.title = opt_tooltip;
 
+
+	if (goog.isDefAndNotNull(opt_src)){
+	    iconbutton.src = opt_src;
+	}
 
 	//
 	// Set the default check stated
@@ -1694,7 +1709,7 @@ xiv.ui.ViewBox.prototype.create3DRenderToggle_ = function(){
 	'3D Rendering', function(e){
 	    this.Renderer_.setVPlaneOn((e.target.getAttribute('checked') == 
 					'true'));
-	}.bind(this));
+	}.bind(this), serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-3D.png');
 }
 
 
@@ -1721,8 +1736,8 @@ xiv.ui.ViewBox.prototype.createInfoToggle_ = function(){
     // For viewables with a 'sessionInfo' property (i.e. Scans)
     //
     if (this.ViewableTrees_.length > 0) {
-	window.console.log(this.ViewableTrees_[0].sessionInfo)
-	window.console.log(this.ViewableTrees_[0].getSessionInfo())
+	//window.console.log(this.ViewableTrees_[0].sessionInfo)
+	//window.console.log(this.ViewableTrees_[0].getSessionInfo())
 	goog.object.forEach(this.ViewableTrees_[0].getSessionInfo(), 
 	    function(value, key){
 		//window.console.log(key, value);
@@ -1762,7 +1777,7 @@ xiv.ui.ViewBox.prototype.createInfoToggle_ = function(){
 	   nrg.fx.fadeTo(this.infoOverlay_.getElement(), 
 			 200,  (e.target.getAttribute('checked') == 'true') ? 
 			 1: 0);
-       }.bind(this));
+       }.bind(this), serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Info.png');
 }
 
 
@@ -1841,7 +1856,8 @@ xiv.ui.ViewBox.prototype.createHelpToggle_ = function(){
 			      }.bind(this));
 
 	    }
-	}.bind(this));
+	}.bind(this), serverRoot + 
+			     '/images/viewer/xiv/ui/ViewBox/Toggle-Help.png');
 
     
 }
@@ -1866,7 +1882,9 @@ xiv.ui.ViewBox.prototype.createCrosshairToggle_ = function(){
 			style.visibility = visibility;
 		}
 	    }.bind(this))  
-	}.bind(this));
+	}.bind(this), 
+		serverRoot + 
+		'/images/viewer/xiv/ui/ViewBox/Toggle-Crosshairs.png');
 }
 
 
@@ -1899,6 +1917,7 @@ xiv.ui.ViewBox.prototype.initToggleMenu_ = function(){
 */
 xiv.ui.ViewBox.prototype.initLayoutHandler_ = function(){
     this.LayoutHandler_ = new xiv.ui.layouts.LayoutHandler();
+    this.LayoutHandler_.getElement().style.opacity = 0;
     goog.dom.append(this.viewFrameElt_, this.LayoutHandler_.getElement());
     goog.dom.classes.add(this.LayoutHandler_.getElement(), 
 			 xiv.ui.ViewBox.CSS.VIEWLAYOUTHANDLER);
@@ -1931,50 +1950,44 @@ xiv.ui.ViewBox.prototype.initLayoutHandler_ = function(){
 xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
 
     this.LayoutMenu_.setMenuIconSrc(
-	'../../../../../../images/viewer/xiv/ui/LayoutMenu/menu.png');
+	serverRoot + '/images/viewer/xiv/ui/LayoutMenu/menu.png');
 
     // Add icons and title to LayoutMenu
     // Add object and title to LayoutHandler
     goog.object.forEach({
 	'Sagittal': {
 	    OBJ: xiv.ui.layouts.Sagittal,
-	    ICON: '../../../../../../../../../../' +
-		'images/viewer/xiv/ui/Layouts/sagittal.png'
+	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/sagittal.png'
 	},
 	'Coronal': {
 	    OBJ: xiv.ui.layouts.Coronal,
-	    ICON: '../../../../../../../../../../' +
-		'images/viewer/xiv/ui/Layouts/coronal.png'
+	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/coronal.png'
 	},
 	'Transverse': {
 	    OBJ: xiv.ui.layouts.Transverse,
-	    ICON: '../../../../../../../../../../' +
+	    ICON: '/xnat/' +
 		'images/viewer/xiv/ui/Layouts/transverse.png'
 	},
 	'3D': {
 	    OBJ: xiv.ui.layouts.ThreeD,
-	    ICON: '../../../../../../../../../../' +
+	    ICON: '/xnat/' +
 		'images/viewer/xiv/ui/Layouts/3d.png'
 	},
 	'Conventional': {
 	    OBJ: xiv.ui.layouts.Conventional,
-	    ICON: '../../../../../../../../../../' + 
-                   'images/viewer/xiv/ui/Layouts/conventional.png'
+	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/conventional.png'
 	},
 	'Four-Up': {
 	    OBJ: xiv.ui.layouts.FourUp,
-	    ICON: '../../../../../../../../../../' +
-		'images/viewer/xiv/ui/Layouts/four-up.png'
+	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/four-up.png'
 	},
 	'2D Row': {
 	    OBJ: xiv.ui.layouts.TwoDRow,
-	    ICON: '../../../../../../../../../../' +
-		'images/viewer/xiv/ui/Layouts/2drow.png'
+	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/2drow.png'
 	},
 	'2D Widescreen': {
 	    OBJ: xiv.ui.layouts.TwoDWidescreen,
-	    ICON: '../../../../../../../../../../' +
-		'images/viewer/xiv/ui/Layouts/2dwidescreen.png'
+	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/2dwidescreen.png'
 	},
     }, function(val, key){
 	this.LayoutMenu_.addMenuItem(key, val.ICON);

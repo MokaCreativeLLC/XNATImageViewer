@@ -501,7 +501,7 @@ xiv.ui.ViewBoxHandler.prototype.addDragDropHandle_ = function(ViewBox) {
 	'class' : xiv.ui.ViewBoxHandler.CSS.HANDLE
     });
     dragDropHandle.src = 
-	'../../../../images/viewer/xiv/ui/ViewBoxManager/handle.png';
+	serverRoot + '/images/viewer/xiv/ui/ViewBoxManager/handle.png';
     dragDropHandle.setAttribute(xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR, 
 				ViewBox.getElement().id); 
     ViewBox.addToMenu('TOP_LEFT', dragDropHandle, 0);

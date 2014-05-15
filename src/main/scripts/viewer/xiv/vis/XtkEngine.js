@@ -322,6 +322,8 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
     // Volumes, meshes and fibers
     //
     goog.array.forEach(ViewableGroup.getViewables(), function(Viewable){
+
+	//window.console.log(ViewableGroup, Viewable, Viewable.getFiles());
 	currXObj = xiv.vis.XtkEngine.createXObject(Viewable.getFiles());
 	renderProps = Viewable.getRenderProperties();
 

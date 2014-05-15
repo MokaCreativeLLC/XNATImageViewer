@@ -143,7 +143,7 @@ xiv.ui.Modal.createButtons_ = function(iconUrl){
     })
 
     // Make buttons
-    var buttons = /**@type {!Object.<string, Element>}*/
+    var buttons = 
     nrg.dom.createBasicHoverButtonSet(goog.object.getValues(buttonIds));
 
     // Make object that maps old keys to buttons.
@@ -789,6 +789,41 @@ xiv.ui.Modal.prototype.initButtons_ = function() {
     }.bind(this))
     this.setFullScreenButtonEvents_();
     this.setRowColumnInsertRemoveEvents_();
+
+    this.buttons_.CLOSE.innerHTML = '<img src=' +
+	serverRoot + '/images/viewer/xiv/ui/Modal/close.png' + 
+	' width="100%">';
+
+    this.buttons_.FULLSCREEN.innerHTML = '<img src=' + 
+	serverRoot + '/images/viewer/xiv/ui/Modal/fullscreen.png' + 
+	' width="100%">';
+
+    this.buttons_.WINDOWED.innerHTML = '<img src=' + 
+	serverRoot + '/images/viewer/xiv/ui/Modal/windowed.png' + 
+	' width="100%">';
+
+    this.buttons_.POPUP.innerHTML = '<img src=' + 
+	serverRoot + '/images/viewer/xiv/ui/Modal/popup.png' + 
+	 ' width="100%">';
+
+
+    this.buttons_.INSERTROW.innerHTML = '<img src=' + 
+	serverRoot + '/images/viewer/xiv/ui/Modal/insertrow.png' + 
+	' width="100%">';
+
+    this.buttons_.INSERTCOLUMN.innerHTML = '<img src=' + 
+	serverRoot + '/images/viewer/xiv/ui/Modal/insertcolumn.png' + 
+	' width="100%">';
+
+
+    this.buttons_.REMOVEROW.innerHTML = '<img src=' + 
+	serverRoot + '/images/viewer/xiv/ui/Modal/removerow.png' + 
+	' width="100%">';
+
+    this.buttons_.REMOVECOLUMN.innerHTML = '<img src=' + 
+	serverRoot + '/images/viewer/xiv/ui/Modal/removecolumn.png' + 
+	' width="100%">';
+	
 }
 
 

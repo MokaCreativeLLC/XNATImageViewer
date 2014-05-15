@@ -17,17 +17,17 @@ goog.require('gxnat.vis.ViewableTree');
  * necessitating for callback management.
  *
  * @constructor
+ * @param {!string} category The category of the viewable.
  * @param {!string} experimentUrl The experiment-level url of the viewable.
  * @param {!Object} viewableJson The json associated with the viewable.
- * @param {Function=} opt_initComplete The callback when the init process is 
- *     complete.
  * @extends {goog.vis.ViewableTree}
  */
 goog.provide('gxnat.vis.AjaxViewableTree');
 gxnat.vis.AjaxViewableTree = 
-function(experimentUrl, viewableJson, opt_initComplete) {
+function(category, experimentUrl, viewableJson) {
     goog.base(this);
 
+    this.setCategory(category);
 
     /**
      * @type {!string}
@@ -57,30 +57,37 @@ function(experimentUrl, viewableJson, opt_initComplete) {
     this.Path = new gxnat.Path(this.queryUrl);
 
 
-    //
-    // File get query
-    //
-    this.getFiles(function(){
-	//window.console.log("FILES GOT...NOW GETTING THUMBNAIL IMAGE");
-	this.getThumbnailImage(function(){
-	    if (opt_initComplete){
-		//window.console.log("THUMBNAIL GOT", this['thumbnailUrl']);
-		opt_initComplete(this)
-	    }
-	}.bind(this));;
-    }.bind(this));   
-
-
-
     /**
      * @type {Object}
      * @protected
      */
-    this.sessionInfo = {}; 
+    this.sessionInfo = {};
+
+    //
+    // set the metadata
+    //
     this.setViewableMetadata();
 }
 goog.inherits(gxnat.vis.AjaxViewableTree, gxnat.vis.ViewableTree);
 goog.exportSymbol('gxnat.vis.AjaxViewableTree', gxnat.vis.AjaxViewableTree);
+
+
+
+/**
+ * @type {!boolean}
+ */
+gxnat.vis.AjaxViewableTree.prototype.filesGotten_ = false;
+
+
+
+/**
+ * @return {!boolean}
+ * @public
+ */
+gxnat.vis.AjaxViewableTree.prototype.filesGotten = function(){
+    return this.filesGotten_;
+}
+
 
 
 /**
@@ -116,7 +123,7 @@ gxnat.vis.AjaxViewableTree.prototype.getSessionInfo = function() {
 /**
  * @inheritDoc
  */
-gxnat.vis.AjaxViewableTree.prototype.setViewableMetadata = function(meta) {
+gxnat.vis.AjaxViewableTree.prototype.setViewableMetadata = function() {
 
     if (goog.isDefAndNotNull(this.json['ID'])){
 	this.sessionInfo['Session ID'] = this.json['ID']
@@ -294,7 +301,8 @@ gxnat.vis.AjaxViewableTree.prototype.getFiles = function(callback){
     //window.console.log(this, fileQueryUrl);
     gxnat.jsonGet(fileQueryUrl, function(fileUrls){
 	//window.console.log(fileUrls);
-	for (i=0, len = fileUrls.length; i < len; i++) {
+	len = fileUrls.length;
+	for (; i < len; i++) {
 	    fileUrl = this.makeFileUrl(fileUrls[i]);
 	    //window.console.log("ABSOLUTE URL:", fileUrls[i], fileUrl); 
 	    if (fileUrl) { 
@@ -302,6 +310,7 @@ gxnat.vis.AjaxViewableTree.prototype.getFiles = function(callback){
 	    }
 	}
 	callback();
+	this.filesGotten_ = true;
     }.bind(this))
 }
 
@@ -370,6 +379,8 @@ gxnat.vis.AjaxViewableTree.prototype.dispose = function() {
     goog.base(this, 'dispose');
 
     
+    delete this.filesGotten_;
+
     // Session info.
     goog.object.clear(this.sessionInfo);
     delete this.sessionInfo;

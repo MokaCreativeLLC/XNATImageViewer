@@ -22,10 +22,22 @@ goog.require('gxnat.vis.ViewableGroup');
  */
 goog.provide('gxnat.vis.Scan');
 gxnat.vis.Scan = function(experimentUrl, viewableJson, opt_initComplete) {
-    this.setCategory('Scans');
-    goog.base(this, experimentUrl, viewableJson, opt_initComplete);
-    //window.console.log("VIEWABLE JSON", viewableJson);
-    //window.console.log("VIEWABLE", this);
+    //
+    // superclass
+    //
+    goog.base(this, 'Scans', experimentUrl, viewableJson);
+
+    //
+    // Get the thumbnail image
+    //
+    this.getThumbnailImage();
+
+    //
+    // Call init complete
+    //
+    if (opt_initComplete){
+	opt_initComplete(this);
+    }
 }
 goog.inherits(gxnat.vis.Scan, gxnat.vis.AjaxViewableTree);
 goog.exportSymbol('gxnat.vis.Scan', gxnat.vis.Scan);
@@ -81,13 +93,15 @@ gxnat.vis.Scan.prototype.fileContentsKey = 'URI';
  * @const
  * @type {!Array.<string>}
  */
-gxnat.vis.Scan.filterableFileTypes = [    
-    '.jpg',
-    '.jpeg',
-    '.gif',
-    '.tif',
-    '.png',
-    '.txt'
+gxnat.vis.Scan.acceptableFileTypes = [    
+    'dcm',
+    'dicom',
+    'ima',
+    'nii',
+    'nii.gz',
+    'nrrd',
+    'mgh',
+    'mgz',
 ]
 
 
@@ -96,19 +110,21 @@ gxnat.vis.Scan.filterableFileTypes = [
  */
 gxnat.vis.Scan.prototype.fileFilter = function(fileName){    
     fileName = gxnat.vis.Scan.superClass_.fileFilter.call(this, fileName);
-
+    window.console.log("FILENAME", fileName);
     if (!goog.isDefAndNotNull(fileName)) { return };
     
     var i = 0;
-    var len = gxnat.vis.Scan.filterableFileTypes.length;
+    var len = gxnat.vis.Scan.acceptableFileTypes.length;
     for (; i<len; i++) {
+	//window.console.log(fileName);
 	if (goog.string.caseInsensitiveEndsWith(fileName, 
-		gxnat.vis.Scan.filterableFileTypes[i])) {
-	    //window.console.log('Found skippable scan file: ', fileName);
-	    return null;
+		'.' + gxnat.vis.Scan.acceptableFileTypes[i])) {
+	    //window.console.log('Found usable scan file: ', fileName);
+	    return fileName;
 	} 
     }
-    return fileName;
+    window.console.log('Found skippable scan file: ', fileName);
+    return null;
 }
 
 
@@ -149,17 +165,22 @@ gxnat.vis.Scan.prototype.getThumbnailImage = function(opt_callback){
 
     //window.console.log(this, this.ViewableGroups[0]);
 
-    if (!this.ViewableGroups || !this.ViewableGroups[0]) { return };
+    //if (!this.ViewableGroups || !this.ViewableGroups[0]) { return };
+
     //
-    // Select the image in the middle of the list to 
-    // serve as the thumbnail after sorting the fileURIs
-    // using natural sort.
+    // Use the cached XNAT Thumbnail image - for performance.
     //
-    var sortedFiles = this.ViewableGroups[0].getViewables()[0].getFiles().
-	sort(nrg.array.naturalCompare);
-    var imgInd = Math.floor((sortedFiles.length) / 2);
-    //window.console.log(this['files'], this['files'].length, imgInd);
-    this.setThumbnailUrl(sortedFiles[imgInd] + gxnat.JPEG_CONVERT_SUFFIX);
+
+    // reference
+    var refStr = "/xnat/REST/experiments/localhost_E00003/scans/1a" + 
+	"/resources/SNAPSHOTS/files?file_content=THUMBNAIL&index=0"
+
+    var thumbUrl = this.Path['prefix'] + '/experiments/' + 
+	this.Path['experiments'] + '/scans/' + this.Path['scans'] + 
+	"/resources/SNAPSHOTS/files?file_content=THUMBNAIL&index=0";
+
+    this.setThumbnailUrl(thumbUrl);
+
     if (opt_callback){
 	opt_callback(this);
     }
