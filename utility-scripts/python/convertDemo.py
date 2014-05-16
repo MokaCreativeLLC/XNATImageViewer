@@ -71,7 +71,7 @@ def convertDemoToPopup(demoPath):
         #
         # Replace the appropriate paths
         #
-        line = line.replace('src/main', '/xnat').strip()
+        line = line.replace('src/main', '../../..').strip()
         
 
         #
@@ -82,6 +82,12 @@ def convertDemoToPopup(demoPath):
 
         if isModeLine(line):
             line = 'var mode = \'live\';';
+
+        #
+        # Need to add the server root
+        #
+        if ('goog.require' in line):
+            line = line + '\nvar serverRoot;';
         
         newlines.append(line)
 

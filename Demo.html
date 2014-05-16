@@ -98,8 +98,16 @@ goog.require('xiv');
  * @param {!string} opt_modalState The modal state to set the image viewer to.
  *     Defaults to 'windowed'.  Options are 'windowed', 'popup', 'fullscreen', 
  *     'fullscreen-popup'.
+ * @param {!string} opt_serverRoot The optional server root.
  */
-function launchXImgView(opt_dataPath, opt_modalState) {
+function launchXImgView(opt_dataPath, opt_modalState, opt_serverRoot) {
+
+    //
+    // Need to set server root,
+    //
+    if (opt_serverRoot){
+        serverRoot = opt_serverRoot;
+    }
 
     var vmPath = 'projects/$om.getProject()/subjects/$om.getSubjectId()/';
     vmPath += 'experiments/$om.getId()';

@@ -751,7 +751,7 @@ xiv.prototype.createModalPopup_ = function(){
 
     var dataPath = this.dataPaths_[0];
     var pOnload = function() {
-	popup.launchXImgView(dataPath, 'popup');
+	popup.launchXImgView(dataPath, 'popup', serverRoot);
     }
 
     popup.onload = pOnload.bind(this);
