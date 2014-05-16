@@ -115,10 +115,24 @@ nrg.ui.ZippyTree.FADE_TIME = 100;
 
 
 /**
+ * @const
+ */
+nrg.ui.ZippyTree.NODE_DEPTH_KEY = '_nodeDepth';
+
+
+
+/**
+ * @const
+ */
+nrg.ui.ZippyTree.MAX_DEPTH_KEY = '_maxDepth';
+
+
+
+/**
  * @type {!number}
  * @private
  */
-nrg.ui.ZippyTree.prototype.maxDepth_ = 0;
+nrg.ui.ZippyTree.prototype.maxDepth_ = 1;
 
 
 
@@ -232,7 +246,9 @@ nrg.ui.ZippyTree.prototype.traverse = function(callback, currNode) {
 
 
 /**
- * Toggles whether to apply the fade in effects.
+ * Toggles whether to apply the fade in effects.  O(n) since you're looking
+ * at every node in the tree.
+ *
  * @param {!boolean} b Toggler.
  * @public
  */
@@ -245,7 +261,6 @@ nrg.ui.ZippyTree.prototype.toggleFadeInFx = function(b) {
 
 
 /**
- * As stated.
  * @return {!Element} The element.
  * @public
  */
@@ -261,11 +276,9 @@ nrg.ui.ZippyTree.prototype.getElement = function() {
  * @return {nrg.ui.ZippyNode} The expanded zippy node.
  */
 nrg.ui.ZippyTree.prototype.setExpanded = function(folder, opt_startNode) {
-    window.console.log("set EXPAND", folder, opt_startNode);
-
+    //window.console.log("set EXPAND", folder, opt_startNode);
     opt_startNode = goog.isDefAndNotNull(opt_startNode) ? opt_startNode : this;
-
-    window.console.log(opt_startNode.getNodes());
+    //window.console.log(opt_startNode.getNodes());
 
     if (goog.isDefAndNotNull(opt_startNode.getNodes()[folder])){
 	var currNode = opt_startNode.getNodes()[folder];
@@ -334,7 +347,6 @@ nrg.ui.ZippyTree.prototype.addContent_ = function(element, opt_folders) {
 	    }
 	}
 	this.createBranch(opt_folders, this, element);
-	this.indentNodes_();
     }
 }
 
@@ -348,10 +360,20 @@ nrg.ui.ZippyTree.prototype.addContent_ = function(element, opt_folders) {
  * @param {nrg.ui.ZippyNode=} opt_pNode The parent node that initiaties
  *    further 'createBranch' calls.  Defaults to 'this' if not specified.
  * @param {Element=} opt_elt The element to add at the end of the branch.
+ * @param (Number=} opt_currDepth The optional depth of the node.  Defaults to
+ *     1.
  * @public
  */
-nrg.ui.ZippyTree.prototype.createBranch = function(fldrs, opt_pNode, opt_elt) {
-    //window.console.log(fldrs);
+nrg.ui.ZippyTree.prototype.createBranch = 
+function(fldrs, opt_pNode, opt_elt, opt_currDepth) {
+    //
+    // set the current depth
+    //
+    opt_currDepth = goog.isDefAndNotNull(opt_currDepth) ? opt_currDepth : 1;
+
+    //
+    // Set the parent node
+    //
     opt_pNode = goog.isDefAndNotNull(opt_pNode) ? opt_pNode: this;
     var contHold = opt_pNode.getContentHolder();
 
@@ -360,38 +382,128 @@ nrg.ui.ZippyTree.prototype.createBranch = function(fldrs, opt_pNode, opt_elt) {
     //
     if (fldrs.length == 0){
 	this.onEndOfBranch_(contHold, opt_elt);
+	
+	//
+	// Indent the end element
+	//
+	if (goog.isDefAndNotNull(opt_elt)){
+	    this.indentElement_(opt_elt, opt_currDepth - 2);
+	}
 	return;
     } 
-
 
     //
     // Set max depth
     //
     if (fldrs.length > 0 && fldrs.length > this.maxDepth_){
-	this.maxDepth_ = fldrs.length + 1;
+	this.maxDepth_ = fldrs.length;
     } 
 
+    //
+    // Generate the current node or use an existing node
+    //
+    var currNode = opt_pNode.getNodes()[fldrs[0]] ? 
+	opt_pNode.getNodes()[fldrs[0]] : 
+	this.createNode_(fldrs[0], contHold, opt_pNode);
 
     //
-    // Otherwise, recurse
+    // Indent the element
+    //
+    this.indentNode_(currNode, opt_currDepth);
+
+    
+    //
+    // And recurse
     //
     this.createBranch(
-	//
-	// Slice off top index of folders .
-	//
+
+	// slice off top index of folders .
 	(fldrs.length > 1) ? fldrs.slice(1) : [], 
 
-	//
-	// Get existing or create new node.
-	//
-	opt_pNode.getNodes()[fldrs[0]] ? opt_pNode.getNodes()[fldrs[0]] : 
-	this.createNode_(fldrs[0], contHold, opt_pNode),
+	// current node
+	currNode,
 
-	//
-	// maintain the end element.
-	//
-	opt_elt); 
+	// end element.
+	opt_elt,
+
+	// depth
+	opt_currDepth + 1); 
 }
+
+
+
+/**
+ * Indents a node base on a provided depth.  Takes some precuations
+ * for certain child elements of the nodes (like the header)
+ *
+ * @param {!nrg.ui.ZippyTree} node The node to indent.
+ * @param {!number} depth The depth to indent at.
+ * @private
+ */
+nrg.ui.ZippyTree.prototype.indentNode_ = function(node, depth){
+    this.indentElement_(node.getHeader(), depth-1);
+}
+
+
+
+/**
+ * Indents an element base on a provided depth.
+ *
+ * @param {!Element} elt The element to indent.
+ * @param {!number} depth The depth to indent at.
+ * @param {boolean=} opt_applyWidth Whether to apply the indent to Width CSS
+ *     attribute.
+ * @param {boolean=} opt_applyLeft Whether to apply the indent to Left CSS
+ *     attribute.
+ * @private
+ */
+nrg.ui.ZippyTree.prototype.indentElement_ = 
+function(elt, depth, opt_applyWidth, opt_applyLeft){
+    //window.console.log('indent element_', elt, depth);
+    
+    if (elt[nrg.ui.ZippyTree.MAX_DEPTH_KEY] == this.maxDepth_) { 
+	//window.console.log(elt, ' is already indented.');
+	return 
+    } 
+    else if (!goog.isDefAndNotNull(elt[nrg.ui.ZippyTree.MAX_DEPTH_KEY])) {
+	elt[nrg.ui.ZippyTree.MAX_DEPTH_KEY] = this.maxDepth_;
+    }
+
+    //
+    // Catch any bad values
+    //
+    depth = (depth < 0) ? 0 : depth;
+
+    //
+    // Add the MAX_DEPTH and NODE_DEPTH properties
+    //
+    if (!goog.isDefAndNotNull(elt[nrg.ui.ZippyTree.NODE_DEPTH_KEY])) {
+	elt[nrg.ui.ZippyTree.NODE_DEPTH_KEY] = depth;
+    }
+
+    //
+    // Only change the indentation IF the its MAX_DEPTH property has
+    // changed with the tree's maxDepth_
+    //
+
+    //
+    // We have do do this funny calculation b/c 
+    //
+
+    if (!goog.isDefAndNotNull(opt_applyWidth) || 
+	opt_applyWidth == true){
+	var width = 100 - (depth * nrg.ui.ZippyTree.INDENT_PCT);
+	elt.style.width = (width).toString() + '%';
+    }
+    if (!goog.isDefAndNotNull(opt_applyLeft) || 
+	opt_applyLeft == true) {
+	elt.style.left = (depth * 
+			  nrg.ui.ZippyTree.INDENT_PCT).toString() + '%';
+    }
+
+      
+}
+
 
 
 
@@ -414,11 +526,17 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     var node = new nrg.ui.ZippyNode(title, parent);
 
     //
+    // Inherit width and depth CSS from parent
+    //
+    node.getHeader().style.left = 'inherit';
+    node.getHeader().style.width = 'inherit';
+
+    //
     // Listen and dispatch the EXPANDED event
     //
     goog.events.listen(node, nrg.ui.ZippyNode.EventType.EXPANDED, function(){
 	//window.console.log('expanded!');
-	this.indentNodes_();
+	//this.indentNodes_();
 	this.dispatchEvent({
 	    type: nrg.ui.ZippyNode.EventType.EXPANDED,
 	    node: node
@@ -431,7 +549,7 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     //
     goog.events.listen(node, nrg.ui.ZippyNode.EventType.COLLAPSED, function(){
 	//window.console.log('collapsed!');
-	this.indentNodes_();
+	//this.indentNodes_();
 	this.dispatchEvent({
 	    type: nrg.ui.ZippyNode.EventType.COLLAPSED,
 	    node: node
@@ -455,11 +573,6 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     if (this.fadeInFx_) {
 	this.createFadeAnim_(node.getHeader());
     }
-
-    //
-    // Indent the node
-    //
-    this.indentNodes_();
 
     //
     // Dispatch the NODEADDED event
@@ -539,54 +652,9 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
     //
     // indent the nodes
     //
-    this.indentNodes_();
     if (!this.AnimQueue_.isPlaying()) { this.AnimQueue_.play() }; 
 }
 
-
-
-/**
- * Recursively indents the treeNodes based on their depth.
- * @param {!nrg.ui.ZippyNode} currNode The node to run the indentation 
- *    calculation on.
- * @param {!number} currDepth The depth of the currNode.
- * @private
- */
-nrg.ui.ZippyTree.prototype.indentNodes_ = function(currNode, currDepth){
-    var currNodeset = currNode ? currNode.getNodes(): this.getNodes();    
-    currDepth = currDepth ? currDepth : 0; 
-
-    // If at the end of the tree...
-    if (!currNodeset || (goog.object.getCount(currNodeset) == 0)){ 
-	currDepth--;
-	this.indentNodeElements_(currNode.getContentHolder().childNodes, 
-				 currDepth);
-	return; 
-    }
-
-    // Otherwise, recurse for each sub-node...
-    goog.object.forEach(currNodeset, function(loopNode){
-	this.indentNodeElements_(loopNode.getHeader(), currDepth)
-	this.indentNodes_(loopNode, currDepth+1);
-    }.bind(this))
-}
-
-
-
-/**
- * Performs indent calculations on a given element.
- * @param {!Element | !Array.Element} The element or elements to indent.
- * @param {!number} depth The depth of the element.
- * @private
- */
-nrg.ui.ZippyTree.prototype.indentNodeElements_ = function(elts, depth) {
-    elts = goog.dom.isElement(elts) ? [elts] : elts;
-    goog.array.forEach(elts, function(elt) {
-	elt.style.width = (100 - (this.maxDepth_ * 
-			      this.constructor.INDENT_PCT)).toString() + '%';
-	elt.style.left = (depth * this.constructor.INDENT_PCT).toString() + '%';
-    }.bind(this))
-}
 
 
 

@@ -87,7 +87,7 @@ def convertDemoToPopup(demoPath):
         # Need to add the server root
         #
         if ('goog.require' in line):
-            line = line + '\nvar serverRoot;';
+            line = line + "\nserverRoot = '';";
         
         newlines.append(line)
 

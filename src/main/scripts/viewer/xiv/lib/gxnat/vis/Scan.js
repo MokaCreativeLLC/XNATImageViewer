@@ -110,7 +110,7 @@ gxnat.vis.Scan.acceptableFileTypes = [
  */
 gxnat.vis.Scan.prototype.fileFilter = function(fileName){    
     fileName = gxnat.vis.Scan.superClass_.fileFilter.call(this, fileName);
-    window.console.log("FILENAME", fileName);
+    //window.console.log("FILENAME", fileName);
     if (!goog.isDefAndNotNull(fileName)) { return };
     
     var i = 0;

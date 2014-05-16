@@ -229,11 +229,20 @@ xiv.prototype.initSubjFolderNode_;
 xiv.prototype.initExptFolderNode_;
 
 
+
 /** 
  * @type {!boolean}
  * @private
  */
-xiv.prototype.initPathExpanding_ = false;
+xiv.prototype.initExperimentExpanding_ = false;
+
+
+
+/** 
+ * @type {!boolean}
+ * @private
+ */
+xiv.prototype.initSubjecttExpanding_ = false;
 
 
 
@@ -260,17 +269,15 @@ xiv.prototype.begin = function() {
 
     this.collapseZippys_();
     this.ProjectTree_ = new gxnat.ProjectTree(this.dataPaths_[0]);
-    this.initPathExpanding_ = false;
     this.ProjectTree_.loadInitBranch(function(node){
 	//
 	// Create zippy folders
 	//
-	var folders = this.createFoldersFromTreeNodes_(node);
+	var folders = this.createFoldersFromTreeNode_(node);
 
 	//
 	// Expand folders
 	//
-	folders = goog.array.flatten(folders);
 	var zippyTree = this.Modal_.getThumbnailGallery().getZippyTree();
 
 	if (nodeCount == 0){
@@ -280,6 +287,7 @@ xiv.prototype.begin = function() {
 	}
 
 	if (nodeCount == 1){
+	    this.initSubjectExpanding_ = true;
 	    this.initSubjNode_ = node;
 	    this.initSubjFolderNode_ = 
 		zippyTree.setExpanded(folders[folders.length - 1], 
@@ -287,7 +295,7 @@ xiv.prototype.begin = function() {
 	}
 
 	if (nodeCount == 2){
-	    this.initBranchLoad_ = true;
+	    this.initExperimentExpanding_ = true;
 	    this.initExptNode_ = node;
 	    this.initExptFolderNode_ = 
 		zippyTree.setExpanded(folders[folders.length - 1], 
@@ -295,63 +303,43 @@ xiv.prototype.begin = function() {
 	}
 
 	nodeCount++;
-	window.console.log(this.ProjectTree_);
+	//window.console.log(this.ProjectTree_);
     }.bind(this))
 }
 
 
 
+/**
+ * @param {!gxnat.ProjectTree.TreeNode} treeNode
+ * @return {Array.<Array.string>>} The folder titles.
+ * @private
+ */
+xiv.prototype.getFolderTitlesFromTreeNode_ = function(treeNode){
+    
+    //window.console.log(treeNode);
+
+    var branch = this.ProjectTree_.getBranchFromEndNode(treeNode);
+    var branchTitles = this.ProjectTree_.getBranchTitles(treeNode);
+    var i = 0;
+    goog.object.forEach(branch, function(treeNode, key){
+	branchTitles[i] = gxnat.folderAbbrev[key] + ': ' + branchTitles[i];
+	i++;
+    })
+    return branchTitles;
+}
+
 
 /**
- * @param {!Array.<gxnat.ProjectTree.TreeNode> | !gxnat.ProjectTree.TreeNode} 
- *     treeNodes
+ * @param {!gxnat.ProjectTree.TreeNode} treeNode
  * @return {Array.<Array.string>>} The folder collection/
  * @private
  */
-xiv.prototype.createFoldersFromTreeNodes_ = function(treeNodes){
-    if (!goog.isArray(treeNodes)){
-	treeNodes = [treeNodes];
-    }
-
-    //
-    // folderUris
-    //
-    var folderUris = gxnat.ProjectTree.getNodeUris(treeNodes);
-    var allFolders = [];
-    //
-    // Creates the folder names
-    //
-    var tempPath, newFolderUris;
-    goog.array.forEach(folderUris, function(folderUri){
-	//folders.push(xiv.foldersFromUrl(folderUri));
-	tempPath = new gxnat.Path(folderUri);
-	folders = xiv.foldersFromUrl(folderUri);
-	allFolders.push(folders);
-	newFolderUris = [];
-
-	goog.array.forEach(folders, function(folder, i){
-
-	    switch (i){
-	    case 0:
-		newFolderUris.push(tempPath['prefix'] + '/projects/' + 
-				   tempPath['projects']);
-		break;
-	    case 1:
-		newFolderUris.push(newFolderUris[0] + '/subjects/' + 
-				   tempPath['subjects']);
-		
-		break;
-	    case 2:
-		newFolderUris.push(newFolderUris[1] + '/experiments/' + 
-				   tempPath['experiments']);
-		break;
-	    }
-	})
-	//window.console.log(folders, newFolderUris);	
-	this.addFoldersToGallery_(folders, newFolderUris);
-    }.bind(this))
- 
-    return allFolders;
+xiv.prototype.createFoldersFromTreeNode_ = function(treeNode){
+    var branchUris = this.ProjectTree_.getBranchUris(treeNode);    
+    var branchTitles = this.getFolderTitlesFromTreeNode_(treeNode);
+    //window.console.log(branchTitles, branchUris);
+    this.addFoldersToGallery_(branchTitles, branchUris);
+    return branchTitles;
 }
 
 
@@ -439,56 +427,40 @@ xiv.prototype.onNoExperimentalWebGL_ = function(){
  * @private
  */
 xiv.prototype.onSubjectZippyExpanded_ = function(path) {
-    window.console.log("SUBJECT URL! ", path, path.getDeepestLevel());
+    //window.console.log("SUBJECT URL! ", path, path.getDeepestLevel());
 
-    //
-    // The init Expt node must be there before we can listen to this.
-    //
-    // NOTE: A pretty dirty solution, but a necessary one.
-    //
-    if (this.initPathExpanding_) { return };
-
-    this.ProjectTree_.loadExperiments(path['originalUrl'], function(exptNodes){
+    this.ProjectTree_.loadExperiments(path['originalUrl'], null, 
+	function(exptNodes){
 
 	//
 	// If we are in the init subject
 	//
 	if (path.pathByLevel('subjects') == 
-	    this.initPath_.pathByLevel('subjects')){
+	    this.initPath_.pathByLevel('subjects')  && 
+	    this.initSubjectExpanding_){
+	    //
+	    // Set the subject node pertaining to the current data path
+	    // to be on top
+	    //
+	    //window.console.log('\n\n\n*********', exptNodes);
+	    var tempPath = this.initPath_.pathByLevel('experiments');
+	    this.initExptNode_ = this.ProjectTree_.
+		getExperimentNodeByUri(tempPath);
+	    goog.array.remove(exptNodes, this.initExptNode_);
+	    goog.array.insertAt(exptNodes, this.initExptNode_, 0);
+	    this.initSubjectExpanding_ = false;
+	    //window.console.log('\n\n\n*********', exptNodes);
 	    
-	    //
-	    // Exit out of the init Expt node is defined
-	    //
-	    if (goog.isDefAndNotNull(this.initExptNode_)){
-		return;
-	    } 
-	    else {
-		//
-		// Set the subject node pertaining to the current data path
-		// to be on top
-		//
-		var tempPath = this.initPath_.pathByLevel('experiments');
-		this.initExptNode_ = this.ProjectTree_.
-		    getExperimentNodeByUri(tempPath);
-		goog.array.remove(exptNodes, this.initExptNode_);
-		goog.array.insertAt(exptNodes, this.initExptNode_, 0);
-	    }
 	}
 
 	//
 	// This will check for redundance.
 	//
-	var folders = this.createFoldersFromTreeNodes_(exptNodes);
+	goog.array.forEach(exptNodes, function(exptNode){
+	    //window.console.log(exptNode);
+	    this.createFoldersFromTreeNode_(exptNode);
+	}.bind(this))
 
-	//
-	// Expand the init experiment zippy
-	//
-	if (this.initPathExpanding_){	    
-	    this.initExptFolderNode_ = this.Modal_.getThumbnailGallery().
-		getZippyTree().setExpanded(goog.array.flatten(folders)[2], 
-					   this.initSubjFolderNode_);
-	    this.initPathExpanding_ = false;
-	}
     }.bind(this), 'experiments');
 }
 
@@ -648,46 +620,51 @@ xiv.prototype.loadExperiment_ = function(exptUrl, opt_callback) {
     var exptNode = this.ProjectTree_.getExperimentNodeByUri(exptUrl);
 
     //
-    // Load the metadata of the experiment -- this will check for redundancy,
-    // so it won't query the server again if it exists already
+    // Get the node branch
     //
-    this.ProjectTree_.loadExperimentMetadata(exptNode, function(){
+    var branch = this.ProjectTree_.getBranchFromEndNode(exptNode);
 
-	//
-	// Get the node branch
-	//
-	var branch = this.ProjectTree_.getBranchFromEndNode(exptNode);
+    //
+    // Create the metadata object
+    //
+    var metadata = new gxnat.vis.ViewableTree.metadataCollection(
+	branch['projects'][gxnat.ProjectTree.METADATA_KEY], 
+	branch['subjects'][gxnat.ProjectTree.METADATA_KEY], 
+	branch['experiments'][gxnat.ProjectTree.METADATA_KEY]);
 
-	//
-	// Create the metadata object
-	//
-	var metadata = new gxnat.vis.ViewableTree.metadataCollection(
-	    branch['projects'][gxnat.ProjectTree.METADATA_KEY], 
-	    branch['subjects'][gxnat.ProjectTree.METADATA_KEY], 
-	    branch['experiments'][gxnat.ProjectTree.METADATA_KEY]);
+    //
+    // Get the viewable trees
+    //
+    this.fetchViewableTreesAtExperiment(exptUrl, function(){
+	this.loadedExperiments_.push(exptUrl);
+	if (goog.isDefAndNotNull(opt_callback)){
+	    opt_callback();
+	}
 
-	//
-	// Get the viewable trees
-	//
-	this.fetchViewableTreesAtExperiment(exptUrl, function(){
-	    this.loadedExperiments_.push(exptUrl);
-	    if (goog.isDefAndNotNull(opt_callback)){
-		opt_callback();
-	    }
+	if (this.initExperimentExpanding_){
+	    this.initExperimentExpanding_ = false;
 
-	    if (this.initBranchLoad_){
-		
-		this.ProjectTree_.loadSubjects(function(subjNode){
-		    //
-		    // Expand the init Subject's zippy and store that zippy 
-		    // to expand the experiment after
-		    //
-		    this.initBranchLoad_ = false;
-		    this.createFoldersFromTreeNodes_(subjNode);
-		}.bind(this))
-	    }
-	}.bind(this), metadata);
-    }.bind(this));    
+	    //
+	    // Contract other experiments
+	    //
+	    goog.object.forEach(this.initSubjFolderNode_.getNodes(), 
+				function(node){
+				    if (node != this.initExptFolderNode_){
+					node.setExpanded(false);
+				    }
+				}.bind(this))
+	    
+	    this.ProjectTree_.loadSubjects(function(subjNode){
+		//
+		// Expand the init Subject's zippy and store that zippy 
+		// to expand the experiment after
+		//
+		//window.console.log("SUBN JH", subjNode);
+		this.createFoldersFromTreeNode_(subjNode);
+	    }.bind(this))
+	}
+    }.bind(this), metadata);
+  
 }
 
 
@@ -698,12 +675,7 @@ xiv.prototype.onZippyAdded_ = function(e) {
     var prevDur =
     e.node.getZippy().animationDuration;
     e.node.getZippy().animationDuration = 0;
-
-    if (this.initBranchLoad_) {
-	e.node.getZippy().setExpanded(true);
-    } else {
-	e.node.getZippy().setExpanded(false);
-    }
+    e.node.setExpanded(false);
     e.node.getZippy().animationDuration = prevDur;
 }
 
@@ -827,6 +799,7 @@ function(exptUri, opt_doneCallback, opt_metadata){
 xiv.prototype.addFoldersToGallery_ = 
 function(folders, opt_correspondingData){
     
+    //window.console.log("ADD FOLDERS", folders);
     var thumbGalZippy = this.Modal_.getThumbnailGallery().getZippyTree();
 
     //
@@ -871,9 +844,22 @@ xiv.prototype.addViewableTreeToModal = function(ViewableTree){
     //window.console.log("Thumb gallery");
     var ThumbGallery = this.Modal_.getThumbnailGallery();
 
+    var endNode = this.ProjectTree_.getExperimentNodeByUri(
+	    ViewableTree.getExperimentUrl());
+
+    var folderPath = this.getFolderTitlesFromTreeNode_(endNode);
+    
+    
+    //
+    // Only add an additional folder if the ViewableTree is a slicer scene
+    //
+    if (ViewableTree.getCategory() != 'Scans'){
+	folderPath.push(ViewableTree.getCategory());
+    }
+    
     ThumbGallery.createAndAddThumbnail(
 	ViewableTree, // The viewable
-	xiv.extractViewableTreeFolders_(ViewableTree) // The folder tree
+	folderPath
     );
     ThumbGallery.setHoverParent(this.Modal_.getElement());
 }
@@ -949,7 +935,8 @@ xiv.prototype.dispose_ = function() {
     this.initPath_.dispose();
     delete this.initPath_;
 
-    delete this.initPathExpanding_;
+    delete this.initExperimentExpanding_;
+    delete this.initSubjectExpanding_;
     delete this.initProjNode_;
     delete this.initSubjNode_;
     delete this.initExptNode_;
@@ -988,29 +975,6 @@ xiv.foldersFromUrl = function(exptUrl){
     
     return folders;
 }
-
-
-
-/**
- * Extracts the folders in the provided path and returns a set of folders
- * for querying thumbnails. 
- * @param {gxnat.vis.AjaxViewableTree} ViewableTree
- * @return {!Array.<string>}
- * @private
- */
-xiv.extractViewableTreeFolders_ = function(ViewableTree){
-    var folders = xiv.foldersFromUrl(ViewableTree.getExperimentUrl());
-
-    //
-    // Only add non-scans to their own category folder
-    //
-    var category = ViewableTree.getCategory();
-    if (category !== 'Scans') {
-	folders.push(category);
-    }
-    return folders;
-}
-
 
 
 

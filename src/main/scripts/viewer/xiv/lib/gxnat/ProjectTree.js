@@ -35,6 +35,7 @@ gxnat.ProjectTree = function(xnatProjUrl){
      */
     this.initPath_ = new gxnat.Path(xnatProjUrl);
 
+
     //
     // Necessary as the starting node for the class
     //
@@ -66,7 +67,12 @@ gxnat.ProjectTree.TreeNode = function(levelUriOrPath){
     this[gxnat.ProjectTree.PATH_KEY] = goog.isString(levelUriOrPath) ? 
 	new gxnat.Path(levelUriOrPath) : levelUriOrPath;
     
-  
+    //
+    // Store the current level
+    //
+    this[gxnat.ProjectTree.LEVEL_KEY] = 
+	this[gxnat.ProjectTree.PATH_KEY].getDeepestLevel();  
+
     //
     // Construct next level attributes.
     //
@@ -115,6 +121,13 @@ gxnat.ProjectTree.TreeNode.prototype.dispose = function(url) {
 /**
  * @const
  */
+gxnat.ProjectTree.LEVEL_KEY = goog.string.createUniqueString();
+
+
+
+/**
+ * @const
+ */
 gxnat.ProjectTree.NEXTLEVELQUERY_KEY = goog.string.createUniqueString();
 
 
@@ -123,13 +136,6 @@ gxnat.ProjectTree.NEXTLEVELQUERY_KEY = goog.string.createUniqueString();
  * @const
  */
 gxnat.ProjectTree.NEXTLEVELJSON_KEY = goog.string.createUniqueString();
-
-
-
-/**
- * @const
- */
-gxnat.ProjectTree.ORIGINALURL_KEY = goog.string.createUniqueString();
 
 
 
@@ -146,10 +152,12 @@ gxnat.ProjectTree.PATH_KEY = goog.string.createUniqueString();
 gxnat.ProjectTree.NEXTLEVEL_KEY = goog.string.createUniqueString();
 
 
+
 /**
  * @const
  */
 gxnat.ProjectTree.NEXTLEVELLOADED_KEY = goog.string.createUniqueString();
+
 
 
 /**
@@ -209,7 +217,9 @@ gxnat.ProjectTree.SUBJECT_METADATA = [
     'gender',
     'handedness',
     'dob',
-    'age'
+    'age',
+    'label',
+    'URI'
 ]
 
 
@@ -217,7 +227,8 @@ gxnat.ProjectTree.SUBJECT_METADATA = [
  * @const
  */
 gxnat.ProjectTree.EXPERIMENT_METADATA = [
-    // nothing yet
+    'label',
+    'URI'
 ]
 
 
@@ -242,28 +253,46 @@ gxnat.ProjectTree.getColumnQuery = function(columnTitles){
 
 
 
-/**
- * @param {!Array.<gxnat.ProjectTree.TreeNode> | !gxnat.ProjectTree.TreeNode} 
- *     treeNodes
- * @return {!Array.string} The node uris
- */
-gxnat.ProjectTree.getNodeUris = function(treeNodes){
-    if (!goog.isArray(treeNodes)){
-	treeNodes = [treeNodes];
-    }
-    var nodeUris = [];
-    goog.array.forEach(treeNodes, function(treeNode){
-	nodeUris.push(treeNode[gxnat.ProjectTree.PATH_KEY]['originalUrl'])
-    })
-    return nodeUris;
-}
-
-
 /** 
  * @type {!gxnat.ProjectTree.TreeNode}
  * @private
  */
 gxnat.ProjectTree.prototype.Proj_;
+
+
+
+/**
+ * @param {!gxnat.ProjectTree.TreeNode} treeNode
+ * @return {!Array.string} The node uris
+ */
+gxnat.ProjectTree.prototype.getBranchTitles = function(treeNode) {
+    var nodeTitles = [];
+    goog.object.forEach(this.getBranchFromEndNode(treeNode), 
+    function(treeNode, key){
+	if (key == 'projects') {
+	    nodeTitles.push(treeNode[gxnat.ProjectTree.METADATA_KEY]['name']);
+	} else {
+	    nodeTitles.push(treeNode[gxnat.ProjectTree.METADATA_KEY]['label']);
+	}
+    })
+    return nodeTitles;
+}
+
+
+
+
+/**
+ * @param {!gxnat.ProjectTree.TreeNode} treeNode
+ * @return {!Array.string} The node uris
+ */
+gxnat.ProjectTree.prototype.getBranchUris = function(treeNode){
+    var nodeUris = [];
+    goog.object.forEach(this.getBranchFromEndNode(treeNode), 
+    function(treeNode, key){
+	nodeUris.push(treeNode[gxnat.ProjectTree.PATH_KEY]['originalUrl'])
+    })
+    return nodeUris;
+}
 
 
 
@@ -373,19 +402,18 @@ function(endNodeObj, opt_onNodeAdded, opt_onDone) {
 	if (!goog.isDefAndNotNull(this[gxnat.ProjectTree.EXPT_DIRECT]
 				  [exptPath])) {
 
-	    //
-	    // Start with loading the subject metadta
-	    //
-	    this.loadSubjectMetadata(subjPath, function(){
-		this.loadExperiment(exptPath, function(exptNode){
 
-		    window.console.log("EXPT NODE", exptNode);
-
-		    if (goog.isDefAndNotNull(opt_onNodeAdded)){
-			opt_onNodeAdded(exptNode);
-		    }
-		    this.loadBranch(endNodePath, opt_onNodeAdded, opt_onDone);
-		}.bind(this))
+	    //
+	    // Then the experiment
+	    //
+	    this.loadExperiment(exptPath, function(exptNode){
+		//
+		// Then recurse
+		//
+		if (goog.isDefAndNotNull(opt_onNodeAdded)){
+		    opt_onNodeAdded(exptNode);
+		}
+		this.loadBranch(endNodePath, opt_onNodeAdded, opt_onDone);
 	    }.bind(this))
 	    return;
 	}
@@ -573,6 +601,8 @@ function(opt_onNodeAdded, opt_onDone) {
 		// Run DONE callback
 		//
 		if (goog.isDefAndNotNull(opt_onDone)){
+
+		    window.console.log("HERE ON DONE");
 		    opt_onDone(this.Proj_['subjects'])
 		}
 	    }
@@ -593,28 +623,37 @@ gxnat.ProjectTree.prototype.loadSubject = function(subjUri, opt_onAdded) {
     if (goog.isDefAndNotNull(this[gxnat.ProjectTree.SUBJ_DIRECT][subjUri])){
 	return;
     }
-    
+
     //
     // Create and store new subject node
     //
     subjNode = new gxnat.ProjectTree.TreeNode(subjUri);
 
     //
-    // Store in the tree
+    // Load the metadata
     //
-    this.Proj_['subjects'].push(subjNode);
+    this.loadSubjectMetadata(subjNode, function(subjNode){
 
-    //
-    // Store directly
-    //
-    this[gxnat.ProjectTree.SUBJ_DIRECT][subjUri] = subjNode;
-  
-    //
-    // Add callback
-    //
-    if (goog.isDefAndNotNull(opt_onAdded)){
-	opt_onAdded(subjNode);
-    }
+	//
+	// Store in the tree
+	//
+	this.Proj_['subjects'].push(subjNode);
+
+	//
+	// Store directly
+	//
+	this[gxnat.ProjectTree.SUBJ_DIRECT][subjUri] = subjNode;
+	
+	//
+	// Add callback
+	//
+	if (goog.isDefAndNotNull(opt_onAdded)){
+	    opt_onAdded(subjNode);
+	}
+
+    }.bind(this))
+
+ 
 }
 
 
@@ -661,15 +700,13 @@ function(experiment, callback) {
 
 /** 
  * @param {!string | !gxnat.ProjectTree.TreeNode | !gxnat.Path} subject
- * @param {!Function} callback The callback function to run once the tree has
- *   been fully loaded up the level defined by 
- *   gxnat.ProjectTree.prototype.DEFAULT_STOP_LEVEL or by the opt_stopLevel 
- *   argument.  This gets passed into the getTree function.
+ * @param {Function=} opt_onAdded
+ * @param {Function=} opt_onDone
  * @public
  */
 gxnat.ProjectTree.prototype.loadExperiments = 
-function(subject, callback) {
-
+function(subject, opt_onAdded, opt_onDone) {
+    //window.console.log('load experiments');
     //
     // Get the appropriate subject node
     //
@@ -683,47 +720,52 @@ function(subject, callback) {
 
     if (goog.isDefAndNotNull(subjNode[gxnat.ProjectTree.NEXTLEVELLOADED_KEY])
        && subjNode[gxnat.ProjectTree.NEXTLEVELLOADED_KEY] == true){
-	//window.console.log('Don\'t need to reload the experiments');
+	window.console.log('Don\'t need to reload the experiments of ' + 
+			  subjNode[gxnat.ProjectTree.PATH_KEY]['originalUrl']);
 	return;
     }
-    
-    //
-    // Load the subject metadata if it doesn't exist FIRST.
-    //
-    if (!goog.isDefAndNotNull(subjNode[gxnat.ProjectTree.METADATA_KEY])){
-	this.loadSubjectMetadata(subjNode, function(subjNode){
-	    this.loadExperiments(subjNode, callback);
-	}.bind(this))
-	return;
-    }
-
 
     //
     // Construct the experiment query path
     //
+    var exptUri = subjNode[gxnat.ProjectTree.PATH_KEY]
+    ['originalUrl'] + '/experiments';
     var imageSessionStr = '?xsiType=xnat:imageSessionData';
-    var exptsUri = subjNode[gxnat.ProjectTree.PATH_KEY]
-    ['originalUrl'] + '/experiments' + imageSessionStr;
+    var exptsQueryUri = exptUri + imageSessionStr;
+    
+    //window.console.log('\n\n\n',exptUri);
+    //window.console.log('\n\n\n',exptsQueryUri);
+
 
     //
     // Query for the subjects within the project
     //
     var exptNode;
-    gxnat.jsonGet(exptsUri, function(exptJsons){
+    gxnat.jsonGet(exptsQueryUri, function(exptJsons){
 	//
 	// Loop through the exptJsons
 	//
 	goog.array.forEach(exptJsons, function(exptJson){
-	    this.loadExperiment(exptsUri + '/' + exptJson['ID']);
-	    
-	    //
-	    // Run the callback if we've hit all subjects
-	    //
-	    if (subjNode['experiments'].length == exptJsons.length){
-		subjNode[gxnat.ProjectTree.NEXTLEVELLOADED_KEY] = true;
-		callback(subjNode['experiments'])
-	    }
-  
+
+	    //window.console.log("\n\n\n\nEPXT JSON", exptJson);
+	    this.loadExperiment(exptUri + '/' + exptJson['ID'], 
+            function(exptNode){
+		if (goog.isDefAndNotNull(opt_onAdded)){
+		    opt_onAdded(exptNode);
+		}
+		//
+		// Run the callback if we've hit all subjects
+		//
+		
+		//window.console.log(subjNode['experiments']);
+		if (subjNode['experiments'].length == exptJsons.length){
+		    subjNode[gxnat.ProjectTree.NEXTLEVELLOADED_KEY] = true;
+		    if (goog.isDefAndNotNull(opt_onDone)) {
+			//window.console.log('ONE DONE!');
+			opt_onDone(subjNode['experiments'])
+		    }
+		}
+	    }.bind(this));
 	}.bind(this))
     }.bind(this))
 }
@@ -739,6 +781,7 @@ gxnat.ProjectTree.prototype.loadExperiment = function(exptUri, opt_onAdded) {
     // Exit out if we already have the expt
     //
     if (goog.isDefAndNotNull(this[gxnat.ProjectTree.EXPT_DIRECT][exptUri])){
+	//window.console.log('Don\'t need to relaoad ',  exptUri)
 	return;
     }
     
@@ -747,25 +790,36 @@ gxnat.ProjectTree.prototype.loadExperiment = function(exptUri, opt_onAdded) {
     //
     exptNode = new gxnat.ProjectTree.TreeNode(exptUri);
 
-    //
-    // Store in the tree
-    //
-    this[gxnat.ProjectTree.SUBJ_DIRECT]
-    [exptNode[gxnat.ProjectTree.PATH_KEY].pathByLevel('subjects')]
-    ['experiments'].push(exptNode);
-
+    //window.console.log('\n\n\n\n', exptNode, 
+    //exptNode[gxnat.ProjectTree.PATH_KEY]
+    //['originalUrl']);
 
     //
-    // Store directly
+    // Load the metadata then store
     //
-    this[gxnat.ProjectTree.EXPT_DIRECT][exptUri] = exptNode;
-  
-    //
-    // Add callback
-    //
-    if (goog.isDefAndNotNull(opt_onAdded)){
-	opt_onAdded(exptNode);
-    }
+    this.loadExperimentMetadata(exptNode, function(exptNode){
+
+	var subjNode = this[gxnat.ProjectTree.SUBJ_DIRECT]
+	[exptNode[gxnat.ProjectTree.PATH_KEY].pathByLevel('subjects')];
+	//
+	// Store in the tree
+	//
+	subjNode['experiments'].push(exptNode);
+
+
+	//
+	// Store directly
+	//
+	this[gxnat.ProjectTree.EXPT_DIRECT][exptUri] = exptNode;
+	
+	//
+	// Add callback
+	//
+	if (goog.isDefAndNotNull(opt_onAdded)){
+	    opt_onAdded(exptNode);
+	}
+
+    }.bind(this));
 }
 
 

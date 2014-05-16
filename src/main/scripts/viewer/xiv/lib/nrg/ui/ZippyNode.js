@@ -273,6 +273,17 @@ nrg.ui.ZippyNode.prototype.getZippy = function () {
 
 
 /**
+ * @param {!boolean} exp
+ * @public
+ */
+nrg.ui.ZippyNode.prototype.setExpanded = function (exp) { 
+    this.Zippy_.setExpanded(exp);
+};
+
+
+
+
+/**
  * As stated.  NOTE: This function needs to be called before contents are set.
  * @return {!boolean} animated 'true' to set the zippys animated, 'false' 
  *     otherwise.

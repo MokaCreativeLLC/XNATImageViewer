@@ -79,7 +79,7 @@ gxnat.jsonGet = function(url, callback, opt_suffix){
 	}
 	queryUrl += opt_suffix;
     }
-    window.console.log("\n\nxnat - jsonGet: ", queryUrl);
+    //window.console.log('Getting XNAT json: \'' +  queryUrl + '\'');
     gxnat.get(queryUrl, callback, 'json');
 }
 
