@@ -1237,7 +1237,7 @@ xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_errorMsg){
 
     opt_errorMsg = opt_errorMsg.replace('Uncaught Error: ', '') 
 	|| 'A render error occured :(<br>'; 
-    opt_errorMsg += 'Cancelling render.';
+    opt_errorMsg += '. Canceling render.';
 
     this.dispatchEvent({
 	type: xiv.ui.ViewBox.EventType.THUMBNAIL_LOADERROR,
