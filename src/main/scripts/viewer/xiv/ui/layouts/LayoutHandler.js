@@ -232,9 +232,12 @@ function(planeTitle){
  */
 xiv.ui.layouts.LayoutHandler.prototype.updateInteractors = function() {
     //window.console.log("UPDATE INTERACTORS");
-    if (goog.isDefAndNotNull(this.masterLayout_)){
-	this.masterLayout_.updateInteractors();
-    }
+
+    //
+    // exit out if no master layout
+    //
+    if (!goog.isDefAndNotNull(this.masterLayout_)) { return }
+    this.masterLayout_.updateInteractors();
 }
 
 
@@ -248,6 +251,43 @@ xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractors = function() {
 	this.masterLayout_.getInteractors() : null;
 }
 
+
+/**
+ * @public
+ * @param {!string} plane The plane to retrieve the interactors from.
+ * @return {xiv.ui.layouts.XyzvLayout.InteractorSet}
+ */
+xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractorsByPlane = 
+function(plane) {
+    return goog.isDefAndNotNull(this.masterLayout_) ? 
+	this.masterLayout_.getInteractorsByPlane(plane) : null;
+}
+
+
+/**
+ * @public
+ * @param {!string} plane The plane to retrieve the interactors from.
+ * @return {xiv.ui.layouts.LayoutFrame}
+ */
+xiv.ui.layouts.LayoutHandler.prototype.getMasterFrameByPlane = 
+function(plane) {
+    return goog.isDefAndNotNull(this.masterLayout_) ? 
+	this.masterLayout_.getFrameByPlane(plane) : null;
+}
+
+
+
+/**
+ * @param {!string} plane The plane of the layout frame.
+ * @param {!string} interactorKey The key of the interactor.
+ * @return {xiv.ui.layouts.XyzvLayout.InteractorSet}
+ * @public
+ */
+xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractorByPlane =  
+function(plane, interactorKey) {
+     return goog.isDefAndNotNull(this.masterLayout_) ? 
+	this.masterLayout_.getInteractorByPlane(plane, interactorKey) : null;
+};
 
 
 /**
@@ -324,13 +364,47 @@ function(title, opt_animateSwitch) {
 	//
 	goog.dom.append(this.getElement(), 
 			this.Layouts_[title].getElement());
+	
     }
     
     this.prevLayoutTitle_ = this.currLayoutTitle_;
     this.currLayoutTitle_ = title;
+
+
+    //
+    // IMPORTANT!!
+    //
+    this.bindLayoutToSliderMousewheels_();
+
+    //
+    // Switch the layout
+    //
     this.switchLayout((opt_animateSwitch === false) ? 
 			   0 : xiv.ui.layouts.LayoutHandler.ANIM_TIME);
 }
+
+
+/**
+ * @private
+ */ 
+xiv.ui.layouts.LayoutHandler.prototype.bindLayoutToSliderMousewheels_ = 
+function() {
+    //
+    // Bind the slider mousewheel
+    //
+    var slider;
+    var currFrames = this.Layouts_[this.currLayoutTitle_].getLayoutFrames();
+    goog.object.forEach(currFrames, function(frame, key){
+	slider = this.getMasterInteractorByPlane(key, 
+		xiv.ui.layouts.Layout.INTERACTORS.SLIDER);
+	if (goog.isDefAndNotNull(slider) && !goog.isDefAndNotNull(
+	    frame[xiv.ui.layouts.LayoutHandler.SLIDER_BOUND])) {
+		slider.bindToMouseWheel(frame.getElement());
+		frame[xiv.ui.layouts.LayoutHandler.SLIDER_BOUND] = true;
+	}
+    }.bind(this))
+}
+
 
 
 
@@ -576,6 +650,11 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeStart_ = function() {
     })
 }
 
+
+/**
+ * @const
+ */
+xiv.ui.layouts.LayoutHandler.SLIDER_BOUND = goog.string.createUniqueString();
 
 
 /**

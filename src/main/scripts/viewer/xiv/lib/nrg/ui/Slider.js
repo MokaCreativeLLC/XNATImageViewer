@@ -145,6 +145,23 @@ nrg.ui.Slider.prototype.track_;
 nrg.ui.Slider.prototype.thumb_; 
 
 
+/**
+ * @type {!boolean}
+ * @private
+ */
+nrg.ui.Slider.prototype.suspendSlideEvent_ = false;
+
+
+
+/**
+ * @param {!boolean} bool
+ * @public
+ */
+nrg.ui.Slider.prototype.suspendSlideEvent =  function (bool) {
+    this.suspendSlideEvent_ = bool;
+}
+
+
 
 /**
  * @inheritDoc
@@ -232,9 +249,6 @@ nrg.ui.Slider.prototype.getThumb = function(){
  */
 nrg.ui.Slider.prototype.bindToMouseWheel = function (element) {
 
-    /**
-     * @type {!goog.events.MouseWheelHandler} 
-     */
     var mouseWheelHandler = new goog.events.MouseWheelHandler(element);
     mouseWheelHandler.addEventListener(
 	goog.events.MouseWheelHandler.EventType.MOUSEWHEEL,
@@ -310,8 +324,8 @@ nrg.ui.Slider.prototype.setCssClasses_ = function(orientation) {
  * @private
  */
 nrg.ui.Slider.prototype.onMouseWheelScroll_ = function (event) {
-    //window.console.log("mousewheel scroll");
-    this.setValue(Math.round(this.getValue() - event.deltaY / 3));
+    //window.console.log("mousewheel scroll", event.deltaY);
+    this.setValue(Math.round(this.getValue() - ((event.deltaY < 0) ? -1 : 1)));
     this.dispatchEvent({
 	type: nrg.ui.Slider.EventType.MOUSEWHEEL
     });
@@ -387,18 +401,34 @@ nrg.ui.Slider.prototype.initEvents_ = function() {
 nrg.ui.Slider.prototype.onChange_ =  function (e) {
     nrg.dom.stopPropagation(e);
 
-    
+    //
+    // Add the hover classes
+    //
     if (this.isSliding_) {
 	this.addThumbHoverClasses_();
 	this.addTrackHoverClasses_();
     }
 
-    this.dispatchEvent({
-	type: nrg.ui.Slider.EventType.SLIDE,
-	value: this.getValue(),
-	minimum: this.getMinimum(),
-	maximum: this.getMaximum()
-    });
+    //
+    // Only fire event if suspend == false
+    //
+    if (!this.suspendSlideEvent_){
+	//
+	// Otherwise, fire the vents
+	//
+	this.dispatchEvent({
+	    type: nrg.ui.Slider.EventType.SLIDE,
+	    value: this.getValue(),
+	    minimum: this.getMinimum(),
+	    maximum: this.getMaximum()
+	});
+    }
+
+    //
+    // always set this.suspendSlideEvent_ to false
+    //
+    this.suspendSlideEvent_ = false;
+
 }
 
 
@@ -546,6 +576,8 @@ nrg.ui.Slider.prototype.onThumbnailDragEnd_ = function (e) {
  */
 nrg.ui.Slider.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
+
+    delete this.suspendSlideEvent_;
 
     if (goog.isDefAndNotNull(this.element_)){
 	goog.events.removeAll(this);

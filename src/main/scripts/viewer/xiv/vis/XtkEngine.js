@@ -179,18 +179,7 @@ xiv.vis.XtkEngine.prototype.setPrimaryRenderPlane = function(Plane) {
  * @private
  */
 xiv.vis.XtkEngine.prototype.onSliceNavigated_ = function(e) {
-    /**
-    this.dispatchEvent({
-	type: xiv.vis.XtkEngine.EventType.SLICE_NAVIGATED,
-	indexX: this._topLevelObjects[0]['indexX'],
-	indexY: this._topLevelObjects[0]['indexY'],
-	indexZ: this._topLevelObjects[0]['indexZ'],
-	orientation: this._orientation,
-	shiftDown: this._interactor._shiftDown
-    })
-    */
-    //window.console.log("ENGINE SLICE NAVIGATED");
-    this.dispatchEvent(e);
+    this.dispatchEvent(e)
 }
 
 

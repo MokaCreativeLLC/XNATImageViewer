@@ -20,7 +20,6 @@ goog.require('X.renderer2D');
 goog.provide('xiv.vis.XtkRenderer2D');
 xiv.vis.XtkRenderer2D = function () {
     goog.base(this);
-
 }
 goog.inherits(xiv.vis.XtkRenderer2D, X.renderer2D);
 goog.exportSymbol('xiv.vis.XtkRenderer2D', xiv.vis.XtkRenderer2D);
@@ -64,7 +63,9 @@ xiv.vis.XtkRenderer2D.prototype.getVolume = function() {
  * @public
  */
 xiv.vis.XtkRenderer2D.prototype.onScroll = function() {
+    //window.console.log(this.interactor.config.MOUSEWHEEL_ENABLED);
     this.onSliceNavigation();
+    //window.console.log(this._topLevelObjects[0]);
 }
 
 
@@ -121,6 +122,22 @@ xiv.vis.XtkRenderer2D.prototype.init = function() {
 	    this.onShiftUp_(e);
 	}
     }.bind(this)
+
+
+    //
+    // IMPORTANT!!
+    //
+    this.disableMousewheel_();
+}
+
+
+
+/**
+ * @private
+ */
+xiv.vis.XtkRenderer2D.prototype.disableMousewheel_ = function() {
+    this.interactor.config.MOUSEWHEEL_ENABLED = false;
+    this.interactor.init();
 }
 
 
@@ -128,14 +145,22 @@ xiv.vis.XtkRenderer2D.prototype.init = function() {
  * @inheritDoc
  */
 xiv.vis.XtkRenderer2D.prototype.onSliceNavigation = function() {
+    //window.console.log("SLICE NAV!");
+
+    //
+    // DO nothing as we're disabling the mousewheel
+    //
+
+    /**
     this.dispatchEvent({
 	type: xiv.vis.XtkEngine.EventType.SLICE_NAVIGATED,
-	indexX: this._topLevelObjects[0]['indexX'],
-	indexY: this._topLevelObjects[0]['indexY'],
-	indexZ: this._topLevelObjects[0]['indexZ'],
-	orientation: this._orientation,
+	volume: this._topLevelObjects[0],
+	changeValue: this._topLevelObjects[0]
+	    ['index' + this._orientation],
+	changeOrientation: this._orientation,
 	shiftDown: this._interactor._shiftDown
     })
+    */
 }
 
 
@@ -150,6 +175,8 @@ xiv.vis.XtkRenderer2D.prototype.render = function() {
     } else {
 	goog.base(this, 'render');
     }
+
+    //this.interactor.config.MOUSEWHEEL_ENABLED = false;
 }
 
 

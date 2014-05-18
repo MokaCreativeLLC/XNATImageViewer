@@ -660,8 +660,9 @@ xiv.ui.ViewBox.prototype.hideInteractors_ = function() {
 
 
 
-
 /**
+ * @param {!nrg.ui.Slider} slider
+ * @param {X.volume} volume
  * @private
  */
 xiv.ui.ViewBox.prototype.syncFrameDisplayToSlider_ = 
@@ -687,6 +688,8 @@ function(slider, volume) {
 
 
 /**
+ * @param {!nrg.ui.Slider} slider
+ * @param {X.volume} volume
  * @private
  */
 xiv.ui.ViewBox.prototype.syncSliderToFrameDisplay_ = 
@@ -703,6 +706,8 @@ function(frameDisplay, volume) {
 
 
 /**
+ * @param {!nrg.ui.Slider} slider
+ * @param {X.volume} volume
  * @private
  */
 xiv.ui.ViewBox.prototype.syncSlidersToVolume_ = function(opt_resetMaximum) {
@@ -753,6 +758,8 @@ xiv.ui.ViewBox.prototype.syncSlidersToVolume_ = function(opt_resetMaximum) {
 
 
 /**
+ * @param {!nrg.ui.Slider} slider
+ * @param {X.volume} volume
  * @private
  */
 xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {  
@@ -797,15 +804,15 @@ xiv.ui.ViewBox.prototype.syncLayoutInteractorsToRenderer_ = function() {
 	this.syncCrosshairsToSlider_(slider, currVol);
 	this.syncFrameDisplayToSlider_(slider, currVol);
 
-
-
-
 	var moveListen;
 	//
 	// Exit if no volume
 	//
 	if (!goog.isDefAndNotNull(Plane.getRenderer())) { return };
 
+	//
+	// SHIFT_DOWN interaction
+	//
 	goog.events.listen(Plane.getRenderer(), 
 			   xiv.vis.XtkEngine.EventType.SHIFT_DOWN,
 	function(e){
@@ -1346,7 +1353,7 @@ xiv.ui.ViewBox.prototype.onLayoutChangeEnd_ = function(e){
  */
 xiv.ui.ViewBox.prototype.adjustLayoutHandler_ = function(){
     this.LayoutHandler_.setViewPlanes(this.Displayer_.ViewPlanes, 
-					  this.Displayer_.Interactors);
+				      this.Displayer_.Interactors);
     this.LayoutHandler_.animateLayoutChange(false);
     this.LayoutHandler_.setLayout('none');
 }
@@ -2064,6 +2071,9 @@ xiv.ui.ViewBox.prototype.initViewableGroupMenu_ = function(){
 xiv.ui.ViewBox.prototype.initRenderer_ = function(){
     this.Renderer_ = new xiv.vis.XtkEngine();
 
+    //
+    // Errors!
+    //
     goog.events.listen(this.Renderer_, xiv.vis.XtkEngine.EventType.ERROR,
 	function(e){
 	    this.onRenderError_(e.message);

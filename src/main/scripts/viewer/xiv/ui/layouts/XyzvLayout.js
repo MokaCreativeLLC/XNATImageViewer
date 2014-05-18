@@ -247,8 +247,6 @@ xiv.ui.layouts.XyzvLayout.prototype.setInteractors = function(interactors) {
 	    //
 	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.SLIDER] =
 		interactors[key].SLIDER;
-	    goog.dom.appendChild(LayoutFrame.getElement(), 
-				interactors[key].SLIDER.getElement());
 	    goog.dom.removeNode(
 		interactors[key].SLIDER.getElement());
 	    goog.dom.appendChild(LayoutFrame.getElement(), 
@@ -297,7 +295,7 @@ xiv.ui.layouts.XyzvLayout.prototype.addInteractors = function() {
 
 
 /**
- * @return {Object.<xiv.ui.layouts.XyzvLayout.InteractorSet>}
+ * @return {Object.<string, xiv.ui.layouts.XyzvLayout.InteractorSet>}
  * @public
  */
 xiv.ui.layouts.XyzvLayout.prototype.getInteractors = function() {
@@ -309,6 +307,46 @@ xiv.ui.layouts.XyzvLayout.prototype.getInteractors = function() {
 	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])
     }) 
     return interactors
+};
+
+
+/**
+ * @param {!string} plane The plane of the layout frame.
+ * @return {xiv.ui.layouts.XyzvLayout.InteractorSet}
+ * @public
+ */
+xiv.ui.layouts.XyzvLayout.prototype.getInteractorsByPlane = function(plane) {
+    var LayoutFrame = this.LayoutFrames[plane];
+    return new xiv.ui.layouts.XyzvLayout.InteractorSet(
+	LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.SLIDER], 
+	LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.FRAME_DISPLAY],
+	LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])
+
+};
+
+
+/**
+ * @param {!string} plane The plane of the layout frame.
+ * @param {!string} interactorKey The key of the interactor.
+ * @return {xiv.ui.layouts.XyzvLayout.InteractorSet}
+ * @public
+ */
+xiv.ui.layouts.XyzvLayout.prototype.getInteractorByPlane = 
+function(plane, interactorKey) {
+    //window.console.log(plane, interactorKey);
+    //window.console.log(this.LayoutFrames);
+    return this.LayoutFrames[plane][interactorKey];
+};
+
+
+/**
+ * @param {!string} plane The plane of the layout frame.
+ * @return {xiv.ui.layouts.LayoutFrame}
+ * @public
+ */
+xiv.ui.layouts.XyzvLayout.prototype.getFrameByPlane = 
+function(plane) {
+    return this.LayoutFrames[plane];
 };
 
 
