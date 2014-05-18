@@ -324,8 +324,19 @@ nrg.ui.Slider.prototype.setCssClasses_ = function(orientation) {
  * @private
  */
 nrg.ui.Slider.prototype.onMouseWheelScroll_ = function (event) {
-    //window.console.log("mousewheel scroll", event.deltaY);
-    this.setValue(Math.round(this.getValue() - ((event.deltaY < 0) ? -1 : 1)));
+    //window.console.log("mousewheel scroll", this.getOrientation(), 
+    //event.deltaX, event.deltaY);
+
+    //
+    // Give priority to largest delta
+    //
+    var largestDelta = (Math.abs(event.deltaY) < Math.abs(event.deltaX)) ? 
+	event.deltaX : event.deltaY;
+
+ 
+    this.setValue(Math.round(this.getValue() - 
+			     ((largestDelta < 0) ? -1 : 1)));
+    
     this.dispatchEvent({
 	type: nrg.ui.Slider.EventType.MOUSEWHEEL
     });
