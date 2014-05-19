@@ -22,14 +22,15 @@ goog.require('nrg.ui.Component');
  * A ZippyNode represents a collection of elements releveant to creating
  * a Zippy folder hierarchy (ZippyTree).  
  *
- * @param {!string} The title of the node.
- * @param {!element} The parent element of the zippy.
+ * @param {!string} title The title of the node.
+ * @param {!element} parentElement The parent element of the zippy.
+ * @param {opt_expanded} opt_expanded Defaults to false.
  *
  * @constructor
  * @extends {nrg.ui.Component}
  */
 goog.provide('nrg.ui.ZippyNode');
-nrg.ui.ZippyNode = function (title, parentElement) {
+nrg.ui.ZippyNode = function (title, parentElement, opt_expanded) {
     goog.base(this);
 
     /**
@@ -75,7 +76,9 @@ nrg.ui.ZippyNode = function (title, parentElement) {
      * @type {!goog.ui.AnimatedZippy | !goog.ui.Zippy}
      * @private
      */
-    this.Zippy_ = new this.zippyType_(this.header_, this.contentHolder_, true);
+    this.Zippy_ = new this.zippyType_(this.header_, this.contentHolder_, 
+		      goog.isDefAndNotNull(opt_expanded) ? 
+				      opt_expanded : false);
 
 
     /**

@@ -265,6 +265,7 @@ xiv.prototype.begin = function() {
     //
     // Create the project tree
     //
+    var zippyTree = this.Modal_.getThumbnailGallery().getZippyTree();
     var nodeCount = 0;
 
     this.collapseZippys_();
@@ -274,32 +275,29 @@ xiv.prototype.begin = function() {
 	// Create zippy folders
 	//
 	var folders = this.createFoldersFromTreeNode_(node);
-
-	//
-	// Expand folders
-	//
-	var zippyTree = this.Modal_.getThumbnailGallery().getZippyTree();
-
+	
 	if (nodeCount == 0){
+	    //window.console.log("TEST: toggling fadeIn fx of zippy tree.");
+	    //zippyTree.toggleFadeInFx(true);
 	    this.initProjNode_ = node;
-	    this.initProjFolderNode_ = 
-		zippyTree.setExpanded(folders[folders.length - 1])
+	    this.initProjFolderNode_ = zippyTree.setExpanded(folders[0])
 	}
 
 	if (nodeCount == 1){
 	    this.initSubjectExpanding_ = true;
 	    this.initSubjNode_ = node;
-	    this.initSubjFolderNode_ = 
-		zippyTree.setExpanded(folders[folders.length - 1], 
-				      this.initProjFolderNode_)
+	    this.initSubjFolderNode_ = zippyTree.setExpanded(folders[1], 
+						this.initProjFolderNode_)
 	}
 
 	if (nodeCount == 2){
 	    this.initExperimentExpanding_ = true;
 	    this.initExptNode_ = node;
 	    this.initExptFolderNode_ = 
-		zippyTree.setExpanded(folders[folders.length - 1], 
+		zippyTree.setExpanded(folders[2], 
 				      this.initSubjFolderNode_)
+
+	    //zippyTree.playFx();
 	}
 
 	nodeCount++;
@@ -603,6 +601,9 @@ xiv.prototype.dispose = function() {
  * @private
  */
 xiv.prototype.loadExperiment_ = function(exptUrl, opt_callback) {
+
+    //window.console.log("fetch viewable trees 1");
+
     //
     // Exit out if the experiment is loaded
     //
@@ -636,12 +637,14 @@ xiv.prototype.loadExperiment_ = function(exptUrl, opt_callback) {
     // Get the viewable trees
     //
     this.fetchViewableTreesAtExperiment(exptUrl, function(){
+	//window.console.log("fetch viewable trees");
 	this.loadedExperiments_.push(exptUrl);
 	if (goog.isDefAndNotNull(opt_callback)){
 	    opt_callback();
 	}
 
 	if (this.initExperimentExpanding_){
+	    //this.Modal_.getThumbnailGallery().getZippyTree().playFx();
 	    this.initExperimentExpanding_ = false;
 
 	    //
@@ -649,9 +652,7 @@ xiv.prototype.loadExperiment_ = function(exptUrl, opt_callback) {
 	    //
 	    goog.object.forEach(this.initSubjFolderNode_.getNodes(), 
 				function(node){
-				    if (node != this.initExptFolderNode_){
-					node.setExpanded(false);
-				    }
+				    
 				}.bind(this))
 	    
 	    this.ProjectTree_.loadSubjects(function(subjNode){
@@ -675,7 +676,6 @@ xiv.prototype.onZippyAdded_ = function(e) {
     var prevDur =
     e.node.getZippy().animationDuration;
     e.node.getZippy().animationDuration = 0;
-    e.node.setExpanded(false);
     e.node.getZippy().animationDuration = prevDur;
 }
 

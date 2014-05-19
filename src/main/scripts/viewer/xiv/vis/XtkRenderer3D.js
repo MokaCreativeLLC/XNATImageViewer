@@ -41,6 +41,18 @@ xiv.vis.XtkRenderer2D.prototype.destroy = function() {
 
 
 
+/**
+ * @inheritDoc
+ */
+xiv.vis.XtkRenderer3D.prototype.onProgress = function(e) {
+    //window.console.log('3D', e._value);
+    goog.base(this, 'onProgress', e);
+    this.dispatchEvent({
+	type: xiv.vis.RenderEngine.EventType.RENDERING,
+	value: e._value
+    })
+};
+
 
 /**
  * @inheritDoc

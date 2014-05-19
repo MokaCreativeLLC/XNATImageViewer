@@ -53,6 +53,12 @@ gxnat.vis.Slicer = function(experimentUrl, viewableJson,
 	this.getThumbnailImage(function(){
 
 	    //
+	    // set the metadata
+	    //
+	    this.setViewableMetadata();
+
+
+	    //
 	    // Then get the mrml nodes
 	    //
 	    this.getMrmlNodes_(opt_initComplete);

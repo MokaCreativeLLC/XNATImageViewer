@@ -227,73 +227,6 @@ xiv.vis.XtkPlane.prototype.setBackground = function(opt_bgColorNode) {
 
 
 /**
- * Searches the DOM and for XTK's render bar.  This was chosen over inheriting
- * the 'onProgress' method in the XtkRenderer classes because it created 
- * awkard timing issues for UX.
- * 
- * @protected
- */
-xiv.vis.XtkPlane.prototype.checkRenderProgress_ = function() {
-    this.progressTimer_ = goog.Timer.callOnce(function() {
-	//
-	// destroy the timer
-	//
-	this.progressTimer_ = null; 
-
-	//
-	// Return out if no renderer
-	//
-	if (!goog.isDefAndNotNull(this.Renderer)){
-	    return;
-	}
-
-	//
-	// get the progress-bar thumbnail from DOM
-	//
-	var progThumb = goog.dom.getElementByClass('progress-bar-thumb', 
-						   this.Renderer.container);
-
-	//
-	// exit out if at 100% and send RENDER_END event.
-	//
-	if (!progThumb){
-	    this.renderProgress_ = 1;
-	    this.dispatchEvent({
-		type: xiv.vis.RenderEngine.EventType.RENDER_END,
-		value: this.renderProgress_
-	    })
-	    return;
-	}
-
-	//
-	// set the render progress
-	//
-	this.renderProgress_ = parseInt(progThumb.style.width, 10) / 100;
-	//window.console.log("\n\nRENDERING PLANE", this.renderProgress_);
-
-	//
-	// dispatch rednering event if not at 100%
-	//
-	this.dispatchEvent({
-	    type: xiv.vis.RenderEngine.EventType.RENDERING,
-	    value: this.renderProgress_
-	})
-
-	//
-	// recurse
-	//
-	this.checkRenderProgress_();
-
-	//
-	// check again...
-	//
-    }.bind(this), 100); 
-}
-
-
-
-
-/**
  * @return {?XObject} The currently loaded xtk volume.
  */
 xiv.vis.XtkPlane.prototype.getCurrentVolume = function(){
@@ -377,6 +310,16 @@ xiv.vis.XtkPlane.prototype.init = function(containerElt) {
     this.Renderer.init();
 
 
+    //
+    // RENDERING EVENT
+    //
+    goog.events.listen(this.Renderer, xiv.vis.RenderEngine.EventType.RENDERING, 
+	function(e){
+	    this.dispatchEvent({
+		type: xiv.vis.RenderEngine.EventType.RENDERING,
+		value: e.value
+	    })
+	}.bind(this));
 
 
 
@@ -552,7 +495,6 @@ xiv.vis.XtkPlane.prototype.render = function() {
     };
 
     this.Renderer.render();  
-    this.checkRenderProgress_();
 };
 
 

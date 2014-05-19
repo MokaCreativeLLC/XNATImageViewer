@@ -210,14 +210,12 @@ gxnat.ProjectTree.PROJECT_METADATA = [
  * @const
  */
 gxnat.ProjectTree.SUBJECT_METADATA = [
-    'height',
-    'weight',
-    'race',
-    'ethnicity',
+    //'race',
+    //'ethnicity',
     'gender',
     'handedness',
-    'dob',
-    'age',
+    //'dob',
+    //'age',
     'label',
     'URI'
 ]

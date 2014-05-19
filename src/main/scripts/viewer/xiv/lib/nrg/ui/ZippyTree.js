@@ -43,25 +43,10 @@ nrg.ui.ZippyTree = function () {
 
     //---------------------------------------------
     // These calls need to happen after the element_ is created!!
-    goog.base(this, '', this.rootElt_); 
+    goog.base(this, '', this.rootElt_, true); 
     // Hide the header because it inherits from ZippyNode -- we don't need it.
     goog.dom.classes.add(this.getHeader(), nrg.ui.ZippyTree.CSS.ROOT_NODE);
     //---------------------------------------------
-
-
-    /**
-     * @type {!Array}
-     * @private
-     */
-    this.secondaryAnimQueue_ = [];
-
-
-    /**
-     * @type {!goog.fx.AnimationSerialQueue}
-     * @private
-     */
-    this.AnimQueue_= new goog.fx.AnimationSerialQueue();
-    goog.events.listen(this.AnimQueue_, 'end', this.continueAnim_.bind(this));
 }
 goog.inherits(nrg.ui.ZippyTree, nrg.ui.ZippyNode);
 goog.exportSymbol('nrg.ui.ZippyTree', nrg.ui.ZippyTree);
@@ -110,7 +95,7 @@ nrg.ui.ZippyTree.CSS_SUFFIX = {
  * @const
  * @type {!number}
  */
-nrg.ui.ZippyTree.FADE_TIME = 100;
+nrg.ui.ZippyTree.FADE_TIME = 300;
 
 
 
@@ -180,13 +165,28 @@ nrg.ui.ZippyTree.prototype.customInsertMethod_ ;
 
 
 /**
+ * @type {?Array}
+ * @private
+ */
+nrg.ui.ZippyTree.prototype.secondaryAnimQueue_ = null;
+
+
+
+/**
+ * @type {?goog.fx.AnimationSerialQueue}
+ * @private
+ */
+nrg.ui.ZippyTree.prototype.AnimQueue_ = null;
+
+
+
+/**
  * @param {!Function} method
  * @private
  */
 nrg.ui.ZippyTree.prototype.setCustomInsertMethod = function(method){
     this.customInsertMethod_ = method;
 };
-
 
 
 
@@ -198,7 +198,6 @@ nrg.ui.ZippyTree.prototype.setCustomInsertMethod = function(method){
 nrg.ui.ZippyTree.prototype.isEmpty = function() {
     return goog.dom.getChildren(this.getContentHolder()).length === 0;
 };
-
 
 
 
@@ -244,22 +243,6 @@ nrg.ui.ZippyTree.prototype.traverse = function(callback, currNode) {
 
 
 
-
-/**
- * Toggles whether to apply the fade in effects.  O(n) since you're looking
- * at every node in the tree.
- *
- * @param {!boolean} b Toggler.
- * @public
- */
-nrg.ui.ZippyTree.prototype.toggleFadeInFx = function(b) {
-    this.fadeInFx_ = (b === true);
-    this.initOp_ = this.fadeInFx_ ? 0 : 1;
-    this.fadeDur_ = this.fadeInFx_ ? nrg.ui.ZippyTree.FADE_TIME : 0;
-}
-
-
-
 /**
  * @return {!Element} The element.
  * @public
@@ -271,7 +254,7 @@ nrg.ui.ZippyTree.prototype.getElement = function() {
 
 
 /**
- * @param {!string} folder The zippy folder to expanded (id'ed by title)
+ * @param {!string} folder The zippy folder to expand (id'ed by title)
  * @param {nrg.ui.ZippyNode=} The opitional zippy node, defaults to 'this'.
  * @return {nrg.ui.ZippyNode} The expanded zippy node.
  */
@@ -282,7 +265,27 @@ nrg.ui.ZippyTree.prototype.setExpanded = function(folder, opt_startNode) {
 
     if (goog.isDefAndNotNull(opt_startNode.getNodes()[folder])){
 	var currNode = opt_startNode.getNodes()[folder];
-	currNode.getZippy().setExpanded();
+	var currZippy = currNode.getZippy();
+	currZippy.setExpanded(true);
+	return currNode;
+    }
+}
+
+
+/**
+ * @param {!string} folder The zippy folder to collapse (id'ed by title)
+ * @param {nrg.ui.ZippyNode=} The opitional zippy node, defaults to 'this'.
+ * @return {nrg.ui.ZippyNode} The expanded zippy node.
+ */
+nrg.ui.ZippyTree.prototype.setCollapsed = function(folder, opt_startNode) {
+    //window.console.log("set EXPAND", folder, opt_startNode);
+    opt_startNode = goog.isDefAndNotNull(opt_startNode) ? opt_startNode : this;
+    //window.console.log(opt_startNode.getNodes());
+
+    if (goog.isDefAndNotNull(opt_startNode.getNodes()[folder])){
+	var currNode = opt_startNode.getNodes()[folder];
+	var currZippy = currNode.getZippy();
+	currZippy.setExpanded(false);
 	return currNode;
     }
 }
@@ -523,7 +526,8 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     // Create parameters
     //
     parent.style.opacity = this.initOp_;
-    var node = new nrg.ui.ZippyNode(title, parent);
+    var node = new nrg.ui.ZippyNode(title, parent, false);
+    //node.setExpanded(false);
 
     //
     // Inherit width and depth CSS from parent
@@ -598,9 +602,16 @@ nrg.ui.ZippyTree.prototype.createFadeAnim_ = function(elt, opt_callback) {
     
     //window.console.log(this.fadeDur_);
     var anim = new goog.fx.dom.FadeIn(elt, this.fadeDur_);
+
+    anim.play();
+    return;
+
     if (!this.AnimQueue_.isPlaying()){		
-	this.AnimQueue_.add(anim)
+	this.AnimQueue_.add(anim);
     } else {
+	//this.AnimQueue_.pause();
+	//this.AnimQueue_.add(anim);
+	//this.AnimQueue_.play();
 	this.secondaryAnimQueue_.push(anim);
     }
 
@@ -608,6 +619,46 @@ nrg.ui.ZippyTree.prototype.createFadeAnim_ = function(elt, opt_callback) {
 	anim.addEventListener(goog.fx.Transition.EventType.END, function(e){ 
 	    opt_callback(e);
 	})
+    }
+}
+
+
+
+/**
+ * @public
+ */
+nrg.ui.ZippyTree.prototype.playFx = function(){
+    if (this.fadeInFx_ && !this.AnimQueue_.isPlaying()){
+	this.AnimQueue_.play();
+    }
+}
+
+
+/**
+ * Toggles whether to apply the fade in effects.  O(n) since you're looking
+ * at every node in the tree.
+ *
+ * @param {!boolean} b Toggler.
+ * @public
+ */
+nrg.ui.ZippyTree.prototype.toggleFadeInFx = function(b) {
+    this.fadeInFx_ = (b === true);
+    this.initOp_ = this.fadeInFx_ ? 0 : 1;
+    this.fadeDur_ = this.fadeInFx_ ? nrg.ui.ZippyTree.FADE_TIME : 0;
+
+    if (this.fadeInFx_){
+	//
+	// Dispose animations
+	//
+	this.disposeAnims_();
+
+	//
+	// Run queue
+	//
+	this.secondaryAnimQueue_ = [];
+	this.AnimQueue_ = new goog.fx.AnimationParallelQueue();
+	goog.events.listen(this.AnimQueue_, 'end', 
+			   this.continueAnim_.bind(this));
     }
 }
 
@@ -642,17 +693,22 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
 	//
 	// Fade in the end node
 	//
-	this.createFadeAnim_(opt_elt, function(){
-	    this.dispatchEvent({
-		type: nrg.ui.ZippyTree.EventType.CONTENTADDED
-	    });
-	}.bind(this));
-    }
+	if (this.fadeInFx_) { 
+	    this.createFadeAnim_(opt_elt, function(){
+		this.dispatchEvent({
+		    type: nrg.ui.ZippyTree.EventType.CONTENTADDED
+		});
+	    }.bind(this));
+	    return;
+	} 
 
-    //
-    // indent the nodes
-    //
-    if (!this.AnimQueue_.isPlaying()) { this.AnimQueue_.play() }; 
+	//
+	// Otherwise, dispatch
+	// 
+	this.dispatchEvent({
+	    type: nrg.ui.ZippyTree.EventType.CONTENTADDED
+	});
+    }
 }
 
 
@@ -682,19 +738,33 @@ nrg.ui.ZippyTree.prototype.continueAnim_ = function() {
 
 
 /**
-* @inheritDoc
-*/
+ * @private
+ */
+nrg.ui.ZippyTree.prototype.disposeAnims_ = function(){
+
+    if (goog.isDefAndNotNull(this.secondaryAnimationQueue_)){
+	nrg.ui.disposeAnimations(this.secondaryAnimationQueue_);
+	delete this.secondaryAnimationQueue_;
+    }
+
+    if (goog.isDefAndNotNull(this.AnimQueue_)){
+	nrg.ui.disposeAnimationQueue(this.AnimQueue_);
+	delete this.AnimQueue_;
+    }
+}
+
+
+
+/**
+ * @inheritDoc
+ */
 nrg.ui.ZippyTree.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
 
     goog.dom.removeNode(this.rootElt_);
     this.rootElt_;
 
-    nrg.ui.disposeAnimations(this.secondaryAnimationQueue_);
-    delete this.secondaryAnimationQueue_;
-
-    nrg.ui.disposeAnimationQueue(this.AnimQueue_);
-    delete this.AnimQueue_;
+    this.disposeAnims_();
 
     delete this.maxDepth_;
     delete this.fadeInFx_;

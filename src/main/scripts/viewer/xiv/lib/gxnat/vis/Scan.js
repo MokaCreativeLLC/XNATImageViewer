@@ -27,10 +27,12 @@ gxnat.vis.Scan = function(experimentUrl, viewableJson, opt_initComplete) {
     //
     goog.base(this, 'Scans', experimentUrl, viewableJson);
 
+    
     //
     // Get the thumbnail image
     //
     this.getThumbnailImage();
+
 
     //
     // Call init complete
@@ -48,20 +50,54 @@ goog.exportSymbol('gxnat.vis.Scan', gxnat.vis.Scan);
  * @const
  */
 /**
-gxnat.vis.Scan.sessionProperties = {
-    "SessionID": {'label': "Session ID", 'value': ['--']},
-    "Accession #": {'label':"Accession #", 'value': ['--']},
-    "Scanner" : {'label':"Scanner", 'value': ["--"]},
-    "Format" : {'label':"Format", 'value': ["--"]},
-    "Age" : {'label':"Age", 'value': ["--"]},
-    "Gender": {'label':"Gender", 'value': ["--"]},
-    "Handedness": {'label':"Handedness", 'value': ["--"]},
-    "AcqDate" : {'label':"Acq.Date", 'value': ["--"]},
-    "Scan" : {'label':"Scan", 'value': ['--']},
-    "Type" : {'label':"type", 'value': ["--"]},
-    "Quality" : {'label':"type", 'value': ["--"]},
-}
+   gxnat.vis.Scan.sessionProperties = {
+   "SessionID": {'label': "Session ID", 'value': ['--']},
+   "Accession #": {'label':"Accession #", 'value': ['--']},
+   "Scanner" : {'label':"Scanner", 'value': ["--"]},
+   "Format" : {'label':"Format", 'value': ["--"]},
+   "Age" : {'label':"Age", 'value': ["--"]},
+   "Gender": {'label':"Gender", 'value': ["--"]},
+   "Handedness": {'label':"Handedness", 'value': ["--"]},
+   "AcqDate" : {'label':"Acq.Date", 'value': ["--"]},
+   "Scan" : {'label':"Scan", 'value': ['--']},
+   "Type" : {'label':"type", 'value': ["--"]},
+   "Quality" : {'label':"type", 'value': ["--"]},
+   }
 */
+
+
+/**
+ * @const
+ * @type {!Array.<string>}
+ */
+gxnat.vis.Scan.acceptableFileTypes = [    
+    'dcm',
+    'dicom',
+    'ima',
+    'nii',
+    'nii.gz',
+    'nrrd',
+    'mgh',
+    'mgz',
+]
+
+
+
+/**
+ * @param {!string} abbrev
+ * @return {string}
+ */
+gxnat.vis.Scan.getOrientationFromAbbreviation = function(abbrev){
+    switch (abbrev){
+    case 'Sag':
+	return 'Sagittal';
+    case 'Cor':
+	return 'Coronal';
+    case 'Tra':
+	return 'Transverse';
+    }
+}
+
 
 
 /**
@@ -88,21 +124,79 @@ gxnat.vis.Scan.prototype.fileContentsKey = 'URI';
 
 
 
+/**
+ * @type {!Object}
+ * @private
+ */
+gxnat.vis.Scan.prototype.scanMetadata_;
+
+
+
 
 /**
- * @const
- * @type {!Array.<string>}
+ * @inheritDoc
  */
-gxnat.vis.Scan.acceptableFileTypes = [    
-    'dcm',
-    'dicom',
-    'ima',
-    'nii',
-    'nii.gz',
-    'nrrd',
-    'mgh',
-    'mgz',
-]
+gxnat.vis.Scan.prototype.setViewableMetadata = function(){
+    //
+    // Call superclass
+    //
+    goog.base(this, 'setViewableMetadata');
+
+    //
+    // Orientation
+    //
+    if (goog.isDefAndNotNull(this.scanMetadata_['parameters/orientation'])){
+	this.sessionInfo['Orientation'] = 
+	    this.constructor.getOrientationFromAbbreviation(
+		this.scanMetadata_['parameters/orientation']);
+
+	//
+	// Store the orientation as a property
+	//
+	this.orientation = this.sessionInfo['Orientation'];
+    }
+    
+    //
+    // Acq. Type
+    //
+    if (goog.isDefAndNotNull(this.scanMetadata_['parameters/acqType'])){
+	this.sessionInfo['Acq. Type'] = this.scanMetadata_['parameters/acqType']
+    }
+}
+
+
+
+/**
+ * @inheritDoc
+ */
+gxnat.vis.Scan.prototype.getFiles = function(callback){
+
+    //http://localhost:8080/xnat/REST/projects/2/subjects/
+    //localhost_S00004/experiments/localhost_E00017/scans/7?format=json
+
+    //
+    // Get the scan metadata first
+    //
+    gxnat.jsonGet(this.Path['originalUrl'], function(scanMetadata) {
+	//
+	// Store the metadata
+	//
+	this.scanMetadata_ = scanMetadata['items'][0]['data_fields'];
+	//window.console.log("SCAN JSON", this.scanMetadata_);
+	
+	//
+	// set the metadata
+	//
+	this.setViewableMetadata();
+
+	//
+	// Call superclass
+	//
+	gxnat.vis.Scan.superClass_.getFiles.call(this, callback);
+    }.bind(this))
+
+}
+
 
 
 /**
@@ -194,4 +288,8 @@ gxnat.vis.Scan.prototype.getThumbnailImage = function(opt_callback){
 gxnat.vis.Scan.prototype.dispose = function(){
     goog.base(this, 'dispose');
 
+    if (goog.isDefAndNotNull(this.scanMetadata_)){
+	goog.object.clear(this.scanMetadata_);
+    }
+    delete this.scanMetadata_;
 }

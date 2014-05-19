@@ -106,12 +106,28 @@ xiv.vis.XtkRenderer2D.prototype.onShiftUp_ = function(e) {
 }
 
 
+/**
+ * @inheritDoc
+ */
+xiv.vis.XtkRenderer2D.prototype.onProgress = function(e) {
+    //window.console.log('2D', e._value);
+    goog.base(this, 'onProgress', e);
+    this.dispatchEvent({
+	type: xiv.vis.RenderEngine.EventType.RENDERING,
+	value: e._value
+    })
+};
+
 
 
 /**
  * @public
  */
 xiv.vis.XtkRenderer2D.prototype.init = function() {
+
+
+    this.config['PROGRESSBAR_ENABLED'] = false;
+
     goog.base(this, 'init');
 
     this.interactor.onMouseMove = function(e){

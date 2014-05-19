@@ -132,6 +132,13 @@ xiv.vis.XtkEngine.ANATOMICAL_TO_CARTESIAN =  {
 
 
 
+/**
+ * @type {!boolean}
+ * @private
+ */
+xiv.vis.XtkEngine.prototype.renderEndCalled_ = false;
+
+
 
 /**
  * @param {!gxnat.vis.ViewableGroup} ViewableGroup
@@ -214,8 +221,8 @@ xiv.vis.XtkEngine.prototype.setPrimaryRenderPlaneEvents_ = function() {
     // Unlisten on the given planes
     goog.object.forEach(this.getPlanes(), function(Plane, planeOr){
 	goog.events.listen(Plane, 
-			     xiv.vis.RenderEngine.EventType.RENDERING, 
-			     this.onRendering_.bind(this))
+			   xiv.vis.RenderEngine.EventType.RENDERING, 
+			   this.onRendering_.bind(this))
 	goog.events.listen(Plane, 
 			     xiv.vis.RenderEngine.EventType.RENDER_END, 
 			     this.onRenderEnd_.bind(this))
@@ -418,6 +425,9 @@ xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
  * @return {Array.<xiv.vis.XtkPlane>}
  */
 xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
+
+    this.renderEndCalled_ = false;
+
 
     //
     // Create the XObjects
@@ -625,10 +635,35 @@ function(xObj, renderProperties){
  */
 xiv.vis.XtkEngine.prototype.onRendering_ = function(e){
     //window.console.log("ON RENDERING - ENGINE! ", e.value);
-    this.dispatchEvent({
-	type: xiv.vis.RenderEngine.EventType.RENDERING,
-	value: e.value
-    })
+
+    if (e.value == 1){
+
+	//
+	// DANGEROUS!  Hacky way of calling RenderEnd but XTK kicks back
+	// errors if we call RENDER_END this early.
+	//
+	if (!this.renderEndCalled_) {
+
+	    this.dispatchEvent({
+		type: xiv.vis.RenderEngine.EventType.RENDERING,
+		value: e.value
+	    })
+	    
+	   var timer = goog.Timer.callOnce(function(){
+
+
+		this.onRenderEnd_(e);
+		this.renderEndCalled_ = true;
+	   }.bind(this), 500)
+	}
+    }
+    
+    else {
+	this.dispatchEvent({
+	    type: xiv.vis.RenderEngine.EventType.RENDERING,
+	    value: e.value
+	})
+    }
 }
 
 
@@ -639,7 +674,7 @@ xiv.vis.XtkEngine.prototype.onRendering_ = function(e){
  */
 xiv.vis.XtkEngine.prototype.onRenderEnd_ = function(e){
 
-    //window.console.log("\n\nON RENDER END EGINE!");
+    window.console.log("\n\nON RENDER END EGINE!");
     this.dispatchEvent({
 	type: xiv.vis.RenderEngine.EventType.RENDER_END,
 	value: e.value
@@ -730,10 +765,7 @@ xiv.vis.XtkEngine.prototype.dispose = function () {
     this.PlaneV_.dispose();
     delete this.PlaneV_;
 
-
-
-
-
+    delete this.renderEndCalled_;
 }
 
 

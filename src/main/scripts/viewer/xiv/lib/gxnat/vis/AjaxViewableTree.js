@@ -62,11 +62,6 @@ function(category, experimentUrl, viewableJson) {
      * @protected
      */
     this.sessionInfo = {};
-
-    //
-    // set the metadata
-    //
-    this.setViewableMetadata();
 }
 goog.inherits(gxnat.vis.AjaxViewableTree, gxnat.vis.ViewableTree);
 goog.exportSymbol('gxnat.vis.AjaxViewableTree', gxnat.vis.AjaxViewableTree);
@@ -162,9 +157,9 @@ gxnat.vis.AjaxViewableTree.prototype.setSubjectMetadata = function(meta) {
     //window.console.log(meta);
     //window.console.log('SUBJ METADATA', this.subjectMetadata);
 
-    if (goog.isDefAndNotNull(this.subjectMetadata['gender'])){
-	this.sessionInfo['Gender'] = this.subjectMetadata['gender'];
-    }
+    //if (goog.isDefAndNotNull(this.subjectMetadata['gender'])){
+    //	this.sessionInfo['Gender'] = this.subjectMetadata['gender'];
+    //}
 
     if (goog.isDefAndNotNull(this.subjectMetadata['yob'])){
 	this.sessionInfo['Year of Birth'] = this.subjectMetadata['yob'];
@@ -175,11 +170,11 @@ gxnat.vis.AjaxViewableTree.prototype.setSubjectMetadata = function(meta) {
     }
 
     if (goog.isDefAndNotNull(this.subjectMetadata['race'])){
-	this.sessionInfo['Race'] = this.subjectMetadata['race'];
+	//this.sessionInfo['Race'] = this.subjectMetadata['race'];
     }
 
     if (goog.isDefAndNotNull(this.subjectMetadata['dob'])){
-	this.sessionInfo['DOB'] = this.subjectMetadata['dob'];
+	//this.sessionInfo['DOB'] = this.subjectMetadata['dob'];
     }
 
     if (goog.isDefAndNotNull(this.subjectMetadata['acquisition_site'])){

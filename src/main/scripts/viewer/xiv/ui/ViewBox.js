@@ -989,6 +989,19 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     this.createControllerTabs_();
 
+
+    //window.console.log("HIDE PROG!");
+
+    
+    goog.array.forEach(goog.dom.getElementsByClass('xtk-progress-bar'), 
+		       function(bar){
+			   bar.visibility = 'hidden';
+		       });
+
+    if (goog.isDefAndNotNull(this.ViewableTrees_[0].getOrientation())){
+	this.setLayout(this.ViewableTrees_[0].getOrientation());
+    }
+
     //
     // Hide progress bar
     //
@@ -1083,8 +1096,18 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
     // Get the default layout
     //
     if (this.ViewableTrees_.length == 1) {
-	this.setLayout(
-	    xiv.ui.ViewBox.defaultLayout[ViewableTree.getCategory()]);
+
+	//
+	// Set the layout if there's an orientation property
+	// associated with the viewable tree.
+	//
+	if (goog.isDefAndNotNull(ViewableTree.getOrientation())){
+	    //this.setLayout(ViewableTree.getOrientation());
+	}
+	//else  {
+	    this.setLayout(
+		xiv.ui.ViewBox.defaultLayout[ViewableTree.getCategory()]);
+	//}
     }
 
     //
@@ -1107,7 +1130,7 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 	this.showSubComponent_(this.ViewableGroupMenu_, 400);
     }
     else {
-	this.load(viewGroups[0], false)
+	this.load(viewGroups[0], false);
     }
 }
 
@@ -1200,6 +1223,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     //
     // Render
     //
+ 
     this.Renderer_.render(ViewableSet);
 
 
@@ -1747,8 +1771,11 @@ xiv.ui.ViewBox.prototype.createInfoToggle_ = function(){
 	//window.console.log(this.ViewableTrees_[0].getSessionInfo())
 	goog.object.forEach(this.ViewableTrees_[0].getSessionInfo(), 
 	    function(value, key){
+
+		if (value.length > 0){
 		//window.console.log(key, value);
-		infoText += key + ': ' + value + '<br>';
+		    infoText += key + ': ' + value + '<br>';
+		}
 	    })
     }
 

@@ -76,6 +76,22 @@ gxnat.vis.ViewableTree.prototype.experimentMetadata = null;
 
 
 /**
+ * @type {?string}
+ * @protected
+ */
+gxnat.vis.ViewableTree.prototype.orientation = null;
+
+
+/**
+ * @return {?string}
+ */
+gxnat.vis.ViewableTree.prototype.getOrientation = function(){
+    return this.orientation;
+}
+
+
+
+/**
  * @return {!Object} meta
  * @public
  */
@@ -152,4 +168,7 @@ gxnat.vis.ViewableTree.prototype.dispose = function() {
 	goog.array.clear(this.thumbnailFiles_);
     }
     delete this.thumbnailFiles_;
+
+
+    delete this.orientation;
 }
