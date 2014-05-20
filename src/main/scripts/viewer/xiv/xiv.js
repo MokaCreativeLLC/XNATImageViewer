@@ -869,11 +869,13 @@ xiv.prototype.addViewableTreeToModal = function(ViewableTree){
 	folderPath.push(ViewableTree.getCategory());
     }
     
-    ThumbGallery.createAndAddThumbnail(
-	ViewableTree, // The viewable
-	folderPath
-    );
-    ThumbGallery.setHoverParent(this.Modal_.getElement());
+    ViewableTree.getFileList(function(){
+	ThumbGallery.createAndAddThumbnail(
+	    ViewableTree, // The viewable
+	    folderPath
+	);
+	ThumbGallery.setHoverParent(this.Modal_.getElement());
+    }.bind(this))
 }
 
 

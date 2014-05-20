@@ -121,7 +121,7 @@ gxnat.vis.AjaxViewableTree.prototype.getSessionInfo = function() {
 gxnat.vis.AjaxViewableTree.prototype.setViewableMetadata = function() {
 
     if (goog.isDefAndNotNull(this.json['ID'])){
-	this.sessionInfo['Session ID'] = this.json['ID']
+	this.sessionInfo['Scan ID'] = this.json['ID']
     }
 
     if (goog.isDefAndNotNull(this.json['Name'])){
@@ -285,7 +285,7 @@ function(viewableFolderUrl, runCallback, opt_doneCallback) {
  *    have been gotten.
  * @public
  */
-gxnat.vis.AjaxViewableTree.prototype.getFiles = function(callback){
+gxnat.vis.AjaxViewableTree.prototype.getFileList = function(callback){
     //window.console.log("GET FILES", this);
     var fileQueryUrl = this.queryUrl + this.fileQuerySuffix;
     var absoluteUrl = '';    
@@ -322,7 +322,7 @@ gxnat.vis.AjaxViewableTree.prototype.fileFilter = function(fileName){
     }
     return fileName;
 }
-
+ 
 
 
 /**

@@ -31,8 +31,13 @@ gxnat.vis.Scan = function(experimentUrl, viewableJson, opt_initComplete) {
     //
     // Get the thumbnail image
     //
-    this.getThumbnailImage();
+    //this.getThumbnailImage();
 
+    //this.getFileList(function(){
+	//window.console.log("GET FILES DONE!");
+	//this.loadViewableTree_(ViewableSet);
+	//this.getThumbnailImage();
+    //}.bind(this))
 
     //
     // Call init complete
@@ -169,7 +174,7 @@ gxnat.vis.Scan.prototype.setViewableMetadata = function(){
 /**
  * @inheritDoc
  */
-gxnat.vis.Scan.prototype.getFiles = function(callback){
+gxnat.vis.Scan.prototype.getFileList = function(callback){
 
     //http://localhost:8080/xnat/REST/projects/2/subjects/
     //localhost_S00004/experiments/localhost_E00017/scans/7?format=json
@@ -192,7 +197,10 @@ gxnat.vis.Scan.prototype.getFiles = function(callback){
 	//
 	// Call superclass
 	//
-	gxnat.vis.Scan.superClass_.getFiles.call(this, callback);
+	gxnat.vis.Scan.superClass_.getFileList.call(this, function(){
+	    this.getThumbnailImage();
+	    callback();
+	}.bind(this));
     }.bind(this))
 
 }
@@ -256,10 +264,33 @@ gxnat.vis.Scan.prototype.makeFileUrl = function(xnatFileJson) {
  * @inheritDoc
  */
 gxnat.vis.Scan.prototype.getThumbnailImage = function(opt_callback){
+    //window.console.log('GET THUMBNAIL IMAGE');
+    var useMontage = false;
 
-    //window.console.log(this, this.ViewableGroups[0]);
+    if (!useMontage) {
+    
+	//window.console.log('NOT USING MONTAGE');
+	//window.console.log(this, this.ViewableGroups[0]);
 
-    //if (!this.ViewableGroups || !this.ViewableGroups[0]) { return };
+	if (!this.ViewableGroups || !this.ViewableGroups[0]) { return };
+
+	//
+	// Select the image in the middle of the list to 
+	// serve as the thumbnail after sorting the fileURIs
+	// using natural sort.
+	//
+	var sortedFiles = this.ViewableGroups[0].getViewables()[0].getFiles().
+	    sort(goog.string.numerateCompare);
+	var imgInd = Math.floor((sortedFiles.length) / 2);
+	
+	this.setThumbnailUrl(sortedFiles[imgInd] + gxnat.JPEG_CONVERT_SUFFIX);
+
+	window.console.log("THUMB URL", this.getThumbnailUrl());
+	if (goog.isDefAndNotNull(opt_callback)){
+	    opt_callback(this);
+	}
+	return;
+    }
 
     //
     // Use the cached XNAT Thumbnail image - for performance.
@@ -275,7 +306,7 @@ gxnat.vis.Scan.prototype.getThumbnailImage = function(opt_callback){
 
     this.setThumbnailUrl(thumbUrl);
 
-    if (opt_callback){
+    if (goog.isDefAndNotNull(opt_callback)){
 	opt_callback(this);
     }
 }

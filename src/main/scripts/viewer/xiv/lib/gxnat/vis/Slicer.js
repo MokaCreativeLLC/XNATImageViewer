@@ -30,7 +30,6 @@ goog.provide('gxnat.vis.Slicer');
 gxnat.vis.Slicer = function(experimentUrl, viewableJson, 
 				      opt_initComplete) {
 
-
     /**
      * @type {!Array.<string>}
      * @private
@@ -42,10 +41,12 @@ gxnat.vis.Slicer = function(experimentUrl, viewableJson,
     //
     goog.base(this, 'Slicer Scenes', experimentUrl, viewableJson);
 
+
+/**
     //
     // Then get the files
     //
-    this.getFiles(function(){
+    this.getFileList(function(){
 
 	//
 	// Then get the thumbnail image
@@ -64,6 +65,11 @@ gxnat.vis.Slicer = function(experimentUrl, viewableJson,
 	    this.getMrmlNodes_(opt_initComplete);
 	}.bind(this));
     }.bind(this))
+*/
+
+    if (opt_initComplete){
+	opt_initComplete(this);
+    }
 }
 goog.inherits(gxnat.vis.Slicer, gxnat.vis.AjaxViewableTree);
 goog.exportSymbol('gxnat.vis.Slicer', gxnat.vis.Slicer);
@@ -103,6 +109,37 @@ gxnat.vis.Slicer.prototype.fileQuerySuffix = '?listContents=true';
  * @protected
  */
 gxnat.vis.Slicer.prototype.fileContentsKey = 'File Name';
+
+
+
+/**
+ * @inheritDoc
+ */
+gxnat.vis.Slicer.prototype.getFileList = function(callback){
+
+    gxnat.vis.Scan.superClass_.getFileList.call(this, function(){
+	//this.getThumbnailImage();
+	//callback();
+	//
+	// Then get the thumbnail image
+	//
+	this.getThumbnailImage(function(){
+
+	    //
+	    // set the metadata
+	    //
+	    this.setViewableMetadata();
+
+
+	    //
+	    // Then get the mrml nodes
+	    //
+	    this.getMrmlNodes_(callback);
+	}.bind(this));
+
+    }.bind(this));
+}
+
 
 
 

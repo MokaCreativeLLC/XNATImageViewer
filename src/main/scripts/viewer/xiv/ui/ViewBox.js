@@ -1166,9 +1166,9 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 	    this.loadViewableTree_(ViewableSet);
 	} 
 	else {
-	    ViewableSet.getFiles(function(){
+	    //ViewableSet.getFiles(function(){
 		this.loadViewableTree_(ViewableSet);
-	    }.bind(this))
+	    //}.bind(this))
 	}
 	return;
     }
