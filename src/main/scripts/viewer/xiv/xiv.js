@@ -430,6 +430,9 @@ xiv.prototype.onSubjectZippyExpanded_ = function(path) {
     this.ProjectTree_.loadExperiments(path['originalUrl'], null, 
 	function(exptNodes){
 
+	    
+
+
 	//
 	// If we are in the init subject
 	//
@@ -655,13 +658,22 @@ xiv.prototype.loadExperiment_ = function(exptUrl, opt_callback) {
 				    
 				}.bind(this))
 	    
-	    this.ProjectTree_.loadSubjects(function(subjNode){
+	    this.ProjectTree_.loadSubjects(null, function(subjNodes){
 		//
 		// Expand the init Subject's zippy and store that zippy 
 		// to expand the experiment after
 		//
 		//window.console.log("SUBN JH", subjNode);
-		this.createFoldersFromTreeNode_(subjNode);
+		goog.array.forEach(subjNodes, function(subjNode){
+		    this.createFoldersFromTreeNode_(subjNode);
+		}.bind(this))
+
+
+
+		//
+		// This updates the slider size
+		//
+		this.Modal_.getThumbnailGallery().mapSliderToContents();
 	    }.bind(this))
 	}
     }.bind(this), metadata);

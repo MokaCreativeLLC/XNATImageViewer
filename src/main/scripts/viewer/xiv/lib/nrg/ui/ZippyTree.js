@@ -527,6 +527,8 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     //
     parent.style.opacity = this.initOp_;
     var node = new nrg.ui.ZippyNode(title, parent, false);
+    //var node = new nrg.ui.ZippyNode(title, parent, false, 
+    //				    nrg.ui.ZippyTree.folderSorter);
     //node.setExpanded(false);
 
     //
@@ -578,6 +580,7 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
 	this.createFadeAnim_(node.getHeader());
     }
 
+    
     //
     // Dispatch the NODEADDED event
     //
@@ -665,6 +668,72 @@ nrg.ui.ZippyTree.prototype.toggleFadeInFx = function(b) {
 
 
 /**
+ * Binary insertion sort algorithim: O(log n) worst case, 
+ * which means on set of Thumbnails it will be O(n * log n) worst case.  
+ *
+ * @public
+ * @param {!Element} holderElt
+ * @param {!Element} insertElt
+ */
+nrg.ui.ZippyTree.folderSorter = function(holderElt, insertElt){
+    //window.console.log("FOLDER SORTER!");
+    //
+    // For no siblings...
+    //
+    if (!goog.isDefAndNotNull(holderElt.childNodes) || 
+	holderElt.childNodes.length == 0) {
+	goog.dom.appendChild(holderElt, insertElt);
+	return;
+    }
+
+    //
+    // Preliminary sort params
+    //
+    var siblings = goog.dom.getChildren(holderElt);
+
+
+    var insertEltText = 
+	insertElt[nrg.ui.ZippyNode.NODE_STORT_TAG].toLowerCase(); 
+    var comparer;
+    var compareStr;
+    var currSibling;
+    var len = siblings.length
+    var i = 0;
+
+
+    //
+    // Linear insert
+    //
+    for (; i < len; i++){
+
+	currSibling = siblings[i];
+	//window.console.log(currSibling);
+	if (!goog.isDefAndNotNull(currSibling
+	    [nrg.ui.ZippyNode.NODE_STORT_TAG])){
+	    continue;
+	}
+
+	compareStr = currSibling
+	    [nrg.ui.ZippyNode.NODE_STORT_TAG].toLowerCase();
+	comparer = goog.string.numerateCompare(insertEltText, compareStr)
+
+	// insert only when the text is less...
+	if (comparer < 0) {
+	    goog.dom.insertSiblingBefore(insertElt, currSibling);
+	    return;
+	}
+    }
+
+    //
+    // Otherwise, insert at the end...
+    //
+    goog.dom.appendChild(holderElt, insertElt);
+};
+
+
+
+
+/**
  * Method for when an end of branch is reached.  Called from 'createBranch'.
  * @param {!Element} contHold The contentHolder element.
  * @param {Element=} opt_elt The optional element to add at the end of the 
@@ -681,8 +750,9 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
 	//
 	nrg.style.setStyle(opt_elt, {'position': 'relative'});
 	opt_elt.style.opacity = this.initOp_;
+
 	//
-	// This is where you sort the nodes.
+	// This is where you sort the nodes!!
 	//
 	if (goog.isDefAndNotNull(this.customInsertMethod_)) {
 	    this.customInsertMethod_(contHold, opt_elt);

@@ -24,14 +24,17 @@ goog.require('nrg.ui.Component');
  *
  * @param {!string} title The title of the node.
  * @param {!element} parentElement The parent element of the zippy.
- * @param {opt_expanded} opt_expanded Defaults to false.
+ * @param {boolean=} opt_expanded Defaults to false.
+ * @param {Function=} opt_insertMethod The optional insert method.
  *
  * @constructor
  * @extends {nrg.ui.Component}
  */
 goog.provide('nrg.ui.ZippyNode');
-nrg.ui.ZippyNode = function (title, parentElement, opt_expanded) {
+nrg.ui.ZippyNode = 
+function (title, parentElement, opt_expanded, opt_insertMethod) {
     goog.base(this);
+
 
     /**
      * @type {!string}
@@ -45,8 +48,18 @@ nrg.ui.ZippyNode = function (title, parentElement, opt_expanded) {
      * @private
      */
     this.header_ = nrg.ui.ZippyNode.createZippyHeader_(title);
-    parentElement.appendChild(this.header_); // IMPORTANT!!!!
 
+    //
+    // Sort tag
+    //
+    this.header_[nrg.ui.ZippyNode.NODE_STORT_TAG] = title.toLowerCase();
+
+    if (goog.isDefAndNotNull(opt_insertMethod)) {
+	opt_insertMethod(parentElement, this.header_);
+    }
+    else {
+	parentElement.appendChild(this.header_); // IMPORTANT!!!!
+    }
 
     /**
      * @type {!Element}
@@ -200,6 +213,13 @@ nrg.ui.ZippyNode.createZippyHeader_ = function(title) {
 	'class': nrg.ui.ZippyNode.CSS.HEADER
     });
 }
+
+
+
+/**
+ * @const
+ */
+nrg.ui.ZippyNode.NODE_STORT_TAG = goog.string.createUniqueString();
 
 
 

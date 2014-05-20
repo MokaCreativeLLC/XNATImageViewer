@@ -208,7 +208,7 @@ nrg.ui.ThumbnailGallery.thumbnailSorter = function(holderElt, insertElt){
 
     //
     // Preliminary sort params
-   //
+    //
     var siblings = goog.dom.getChildren(holderElt);
 
 

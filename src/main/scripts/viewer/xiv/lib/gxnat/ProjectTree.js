@@ -1,4 +1,4 @@
-/**
+ /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
@@ -101,6 +101,33 @@ gxnat.ProjectTree.TreeNode = function(levelUriOrPath){
 }
 goog.inherits(gxnat.ProjectTree.TreeNode, goog.Disposable);
 goog.exportSymbol('gxnat.ProjectTree.TreeNode', gxnat.ProjectTree.TreeNode);
+
+
+/**
+ * @type {!string}
+ * @private
+ */
+gxnat.ProjectTree.TreeNode.prototype.title_;
+
+
+
+/**
+ * @param {!string} title
+ * @public
+ */
+gxnat.ProjectTree.TreeNode.prototype.setTitle = function(title) {
+    this.title_ = title;
+}
+
+
+
+/**
+ * @param {!string} title
+ * @public
+ */
+gxnat.ProjectTree.TreeNode.prototype.getTitle = function(title) {
+    return this.title_;
+}
 
 
 
@@ -232,6 +259,18 @@ gxnat.ProjectTree.EXPERIMENT_METADATA = [
 
 
 
+/**
+ * @param {gxnat.ProjectTree.TreeNode} node1
+ * @param {gxnat.ProjectTree.TreeNode} node2
+ * @return {!number}
+ * @public
+ */
+gxnat.ProjectTree.compareNodeTitles = function(node1, node2){
+    //window.console.log("SORTING: ", node1.getTitle(), node2.getTitle());
+    return goog.string.numerateCompare(node1.getTitle(), node2.getTitle());
+}
+
+
 
 /**
  * @param {Array.<string>} columnTitles
@@ -267,6 +306,7 @@ gxnat.ProjectTree.prototype.getBranchTitles = function(treeNode) {
     var nodeTitles = [];
     goog.object.forEach(this.getBranchFromEndNode(treeNode), 
     function(treeNode, key){
+	//window.console.log(treeNode[gxnat.ProjectTree.METADATA_KEY]);
 	if (key == 'projects') {
 	    nodeTitles.push(treeNode[gxnat.ProjectTree.METADATA_KEY]['name']);
 	} else {
@@ -378,10 +418,12 @@ function(endNodeObj, opt_onNodeAdded, opt_onDone) {
 	if (!goog.isDefAndNotNull(this[gxnat.ProjectTree.SUBJ_DIRECT]
 				  [subjPath])){
 	    this.loadSubject(subjPath, function(subjNode){
-		if (goog.isDefAndNotNull(opt_onNodeAdded)){
-		    opt_onNodeAdded(subjNode);
-		}
-		this.loadBranch(endNodePath, opt_onNodeAdded, opt_onDone);
+		this.loadSubjectMetadata(subjNode, function(){
+		    if (goog.isDefAndNotNull(opt_onNodeAdded)){
+			opt_onNodeAdded(subjNode);
+		    }
+		    this.loadBranch(endNodePath, opt_onNodeAdded, opt_onDone);
+		}.bind(this))
 	    }.bind(this))
 	    return;
 	}
@@ -477,6 +519,8 @@ gxnat.ProjectTree.prototype.loadProject = function(callback) {
 	//
 	node[gxnat.ProjectTree.METADATA_KEY] = projJson[0];
 
+	node.setTitle(node[gxnat.ProjectTree.METADATA_KEY]['name']);
+
 	//
 	// Run the callback
 	//
@@ -530,6 +574,14 @@ function(subject, callback) {
     } 
 
     //
+    // Don't need do query if we already have the metadata
+    //
+    if (goog.isDefAndNotNull(subjNode[gxnat.ProjectTree.METADATA_KEY])){
+	callback(subjNode);
+	return;
+    }
+    
+    //
     // Metadata query strings
     //
     var subjMetadataQueryPrefix = this.initPath_['prefix'] + '/subjects';
@@ -540,6 +592,7 @@ function(subject, callback) {
 
     gxnat.jsonGet(subjMetadataQueryPrefix, function(subjMetadataJson){
 	subjNode[gxnat.ProjectTree.METADATA_KEY] = subjMetadataJson[0];
+	subjNode.setTitle(subjNode[gxnat.ProjectTree.METADATA_KEY]['label']);
 	callback(subjNode)
     }.bind(this), subjQuery)
 }
@@ -566,24 +619,60 @@ function(opt_onNodeAdded, opt_onDone) {
     //
     // Query strings for getting the subject list
     //
-    var subjectsUri = this.Proj_[gxnat.ProjectTree.PATH_KEY]
-    ['originalUrl'] + '/subjects';
+    //var subjectsUri = this.Proj_[gxnat.ProjectTree.PATH_KEY]
+    //['originalUrl'] + '/subjects';
+
+    var subjectsUri = this.Proj_[gxnat.ProjectTree.PATH_KEY]['prefix'] +
+	'/subjects';
+    var subjUriSuffix = '&project=' +
+	this.Proj_[gxnat.ProjectTree.PATH_KEY]['projects'] + 
+	gxnat.ProjectTree.getColumnQuery(gxnat.ProjectTree.SUBJECT_METADATA);
+    //window.console.log(subjectsUri, subjUriSuffix);
 
 
     //
     // Query for the subjects within the project
     //
     var subjNode;
+    var subjQueryUri;
     gxnat.jsonGet(subjectsUri, function(subjJsons){
 	//
 	// Loop through the subjJsons
 	//
 	goog.array.forEach(subjJsons, function(subjJson){
+
+
 	    //
 	    // load subject
 	    //
-	    this.loadSubject(subjectsUri + '/' + subjJson['ID'], 
-			     opt_onNodeAdded);
+	    subjQueryUri = this.Proj_[gxnat.ProjectTree.PATH_KEY]['prefix'] + 
+		'/projects/' + 
+		this.Proj_[gxnat.ProjectTree.PATH_KEY]['projects'] + 
+		'/subjects/' + subjJson['ID'];
+	    subjNode = this.loadSubject(subjQueryUri);
+
+	    //
+	    // Add the Subject metadata here
+	    //
+	    // IMPORTANT!!!
+	    //
+	    // This is a workaround for XNAT performance -- it's a little too 
+	    // slow to query for the subject directly.
+	    //
+	    if (!goog.isDefAndNotNull(subjNode[
+		gxnat.ProjectTree.METADATA_KEY])){
+		subjNode[gxnat.ProjectTree.METADATA_KEY] = subjJson;
+		subjNode.setTitle(subjNode[gxnat.ProjectTree.METADATA_KEY]
+				  ['label']);
+
+	    }
+
+	    //
+	    // Run callback
+	    //
+	    if (goog.isDefAndNotNull(opt_onNodeAdded)){
+		opt_onNodeAdded(subjNode);
+	    }
 
 	    //
 	    // Run the callback if we've hit all subjects
@@ -599,13 +688,20 @@ function(opt_onNodeAdded, opt_onDone) {
 		// Run DONE callback
 		//
 		if (goog.isDefAndNotNull(opt_onDone)){
-
-		    window.console.log("HERE ON DONE");
-		    opt_onDone(this.Proj_['subjects'])
+		    //window.console.log("HERE ON DONE");
+		    var subjNodes = this.Proj_['subjects'];
+		    //
+		    // sort nodes by title
+		    //
+		    subjNodes.sort(gxnat.ProjectTree.compareNodeTitles);
+		    opt_onDone(subjNodes)
 		}
+
+
+
 	    }
 	}.bind(this))
-    }.bind(this))
+    }.bind(this), subjUriSuffix)
 }
 
 
@@ -613,13 +709,16 @@ function(opt_onNodeAdded, opt_onDone) {
 /**
  * @param {!string} subjUri
  * @param {Function=} opt_onAdded
+ * @return {gxnat.ProjectTree.TreeNode} The subjectNode
  */
 gxnat.ProjectTree.prototype.loadSubject = function(subjUri, opt_onAdded) { 
+
+    //window.console.log("LOAD SUBJECT", subjUri);
     //
     // Exit out if we already have the subject
     //
     if (goog.isDefAndNotNull(this[gxnat.ProjectTree.SUBJ_DIRECT][subjUri])){
-	return;
+	return this[gxnat.ProjectTree.SUBJ_DIRECT][subjUri];
     }
 
     //
@@ -628,30 +727,23 @@ gxnat.ProjectTree.prototype.loadSubject = function(subjUri, opt_onAdded) {
     subjNode = new gxnat.ProjectTree.TreeNode(subjUri);
 
     //
-    // Load the metadata
+    // Store in the tree
     //
-    this.loadSubjectMetadata(subjNode, function(subjNode){
+    this.Proj_['subjects'].push(subjNode);
 
-	//
-	// Store in the tree
-	//
-	this.Proj_['subjects'].push(subjNode);
+    //
+    // Store directly
+    //
+    this[gxnat.ProjectTree.SUBJ_DIRECT][subjUri] = subjNode;
+    
+    //
+    // Add callback
+    //
+    if (goog.isDefAndNotNull(opt_onAdded)){
+	opt_onAdded(subjNode);
+    }
 
-	//
-	// Store directly
-	//
-	this[gxnat.ProjectTree.SUBJ_DIRECT][subjUri] = subjNode;
-	
-	//
-	// Add callback
-	//
-	if (goog.isDefAndNotNull(opt_onAdded)){
-	    opt_onAdded(subjNode);
-	}
-
-    }.bind(this))
-
- 
+    return subjNode;
 }
 
 
@@ -690,6 +782,8 @@ function(experiment, callback) {
 
     gxnat.jsonGet(exptMetadataQueryPrefix, function(exptMetadataJson){
 	exptNode[gxnat.ProjectTree.METADATA_KEY] = exptMetadataJson[0];
+	exptNode.setTitle(exptNode[gxnat.ProjectTree.METADATA_KEY]
+			  ['label']);
 	callback(exptNode)
     }.bind(this), exptQuery)
 }
@@ -760,7 +854,9 @@ function(subject, opt_onAdded, opt_onDone) {
 		    subjNode[gxnat.ProjectTree.NEXTLEVELLOADED_KEY] = true;
 		    if (goog.isDefAndNotNull(opt_onDone)) {
 			//window.console.log('ONE DONE!');
-			opt_onDone(subjNode['experiments'])
+			var exptNodes = subjNode['experiments'];
+			exptNodes.sort(gxnat.ProjectTree.compareNodeTitles);
+			opt_onDone(exptNodes)
 		    }
 		}
 	    }.bind(this));
