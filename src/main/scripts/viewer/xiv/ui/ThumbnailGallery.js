@@ -130,11 +130,14 @@ xiv.ui.ThumbnailGallery.prototype.thumbnailTargetGroup_ = null;
  *     Thumbnail from.
  * @param {!string | !Array.string} folders The folders which the thumbnails 
  *     belong to.
+ * @return {xiv.ui.Thumbnail}
  * @public
  */
 xiv.ui.ThumbnailGallery.prototype.createAndAddThumbnail = 
 function(_Viewable, folders) {
-    this.addThumbnail(this.createThumbnail(_Viewable), folders);
+    var thumb = this.createThumbnail(_Viewable);
+    this.addThumbnail(thumb, folders);
+    return thumb;
 }
 
 

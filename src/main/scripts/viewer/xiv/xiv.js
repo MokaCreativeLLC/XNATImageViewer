@@ -868,13 +868,15 @@ xiv.prototype.addViewableTreeToModal = function(ViewableTree){
     if (ViewableTree.getCategory() != 'Scans'){
 	folderPath.push(ViewableTree.getCategory());
     }
+
+    var thumb = ThumbGallery.createAndAddThumbnail(
+	ViewableTree, // The viewable
+	folderPath
+    );
+    ThumbGallery.setHoverParent(this.Modal_.getElement());
     
     ViewableTree.getFileList(function(){
-	ThumbGallery.createAndAddThumbnail(
-	    ViewableTree, // The viewable
-	    folderPath
-	);
-	ThumbGallery.setHoverParent(this.Modal_.getElement());
+	thumb.setImage(ViewableTree.getThumbnailUrl());
     }.bind(this))
 }
 

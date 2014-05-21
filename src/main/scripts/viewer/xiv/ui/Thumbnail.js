@@ -33,7 +33,7 @@ xiv.ui.Thumbnail = function (Viewable_) {
     //window.console.log("THUMB1:", Viewable_, this.ViewableTree_['thumbnailUrl']);
     //window.console.log("THUMB2:", Viewable_, this.ViewableTree_['files']);
 
-    this.setImage(this.ViewableTree_.getThumbnailUrl());
+    //this.setImage(this.ViewableTree_.getThumbnailUrl());
     this.createText_();
     this.createHoverable();
     goog.dom.classes.add(this.getHoverable(), 
