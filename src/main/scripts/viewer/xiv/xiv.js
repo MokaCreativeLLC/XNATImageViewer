@@ -876,7 +876,9 @@ xiv.prototype.addViewableTreeToModal = function(ViewableTree){
     ThumbGallery.setHoverParent(this.Modal_.getElement());
     
     ViewableTree.getFileList(function(){
+	//ThumbGallery.setHoverParent(this.Modal_.getElement());
 	thumb.setImage(ViewableTree.getThumbnailUrl());
+	thumb.updateHoverable();
     }.bind(this))
 }
 

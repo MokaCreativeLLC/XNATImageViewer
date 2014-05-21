@@ -36,9 +36,6 @@ xiv.ui.Thumbnail = function (Viewable_) {
     //this.setImage(this.ViewableTree_.getThumbnailUrl());
     this.createText_();
     this.createHoverable();
-    goog.dom.classes.add(this.getHoverable(), 
-			 xiv.ui.Thumbnail.CSS_CLASS_PREFIX);
-       
 }
 goog.inherits(xiv.ui.Thumbnail, nrg.ui.Thumbnail);
 goog.exportSymbol('xiv.ui.Thumbnail', xiv.ui.Thumbnail);
@@ -60,6 +57,35 @@ xiv.ui.Thumbnail.ID_PREFIX =  'xiv.ui.Thumbnail';
  */
 xiv.ui.Thumbnail.CSS_SUFFIX = {};
 
+
+
+/**
+ * @inheritDoc
+ */
+xiv.ui.Thumbnail.prototype.updateHoverable = function(){
+
+    window.console.log('update hoverable');
+    var img = goog.dom.getElementsByTagNameAndClass('img', 
+			nrg.ui.Thumbnail.CSS.IMAGE, 
+						    this.getHoverable());
+    //window.console.log(img[0]);
+    img = img[0];
+
+    img.src = this.getImage().src;
+    //window.console.log(img);
+}
+
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.ui.Thumbnail.prototype.createHoverable = function(){
+    goog.base(this, 'createHoverable');
+    goog.dom.classes.add(this.getHoverable(), 
+			 xiv.ui.Thumbnail.CSS_CLASS_PREFIX);
+}
 
 
 
