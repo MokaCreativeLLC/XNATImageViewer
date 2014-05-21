@@ -858,7 +858,6 @@ xiv.prototype.addViewableTreeToModal = function(ViewableTree){
 
     var endNode = this.ProjectTree_.getExperimentNodeByUri(
 	    ViewableTree.getExperimentUrl());
-
     var folderPath = this.getFolderTitlesFromTreeNode_(endNode);
     
     
@@ -868,17 +867,22 @@ xiv.prototype.addViewableTreeToModal = function(ViewableTree){
     if (ViewableTree.getCategory() != 'Scans'){
 	folderPath.push(ViewableTree.getCategory());
     }
-
-    var thumb = ThumbGallery.createAndAddThumbnail(
-	ViewableTree, // The viewable
-	folderPath
-    );
-    ThumbGallery.setHoverParent(this.Modal_.getElement());
     
     ViewableTree.getFileList(function(){
 	//ThumbGallery.setHoverParent(this.Modal_.getElement());
-	thumb.setImage(ViewableTree.getThumbnailUrl());
-	thumb.updateHoverable();
+	//window.console.log('FILES!', ViewableTree.getViewableGroups().length);
+	//
+	// IMPORTANT!!! This filters out empty viewables
+	//
+	if (ViewableTree.getViewableGroups().length > 0){
+	    var thumb = ThumbGallery.createAndAddThumbnail(
+		ViewableTree, // The viewable
+		folderPath
+	    );
+	    ThumbGallery.setHoverParent(this.Modal_.getElement());
+	    thumb.setImage(ViewableTree.getThumbnailUrl());
+	    thumb.updateHoverable();
+	}
     }.bind(this))
 }
 

@@ -449,6 +449,7 @@ xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
  */
 xiv.ui.ViewBox.prototype.onRendering_ = function(e){
     //window.console.log("\n\nON RENDERING", e.value);
+    this.ProgressBarPanel_.setLabel('');
     this.showSubComponent_(this.ProgressBarPanel_, 0);
     this.ProgressBarPanel_.setValue(e.value * 100);
 }
@@ -1145,9 +1146,18 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
  * @public
  */
 xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
+
+    if (!goog.isDefAndNotNull(ViewableSet)){
+	this.onRenderError_('The data set is empty!');
+	return;
+    }
+
+
     opt_initLoadComponents = goog.isDefAndNotNull(opt_initLoadComponents) ?
 	opt_initLoadComponents : true;
-    
+
+    this.hideSubComponent_(this.ViewableGroupMenu_, 400);
+        
     //
     // Init the load components
     //
@@ -1161,15 +1171,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     // ViewableTree handling
     //
     if (ViewableSet instanceof gxnat.vis.ViewableTree){
-	
-	if (ViewableSet.filesGotten()) {
-	    this.loadViewableTree_(ViewableSet);
-	} 
-	else {
-	    //ViewableSet.getFiles(function(){
-		this.loadViewableTree_(ViewableSet);
-	    //}.bind(this))
-	}
+	this.loadViewableTree_(ViewableSet);
 	return;
     }
 
@@ -1210,10 +1212,10 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 
 
 
+    this.showSubComponent_(this.ProgressBarPanel_, 0);
+    this.ProgressBarPanel_.setLabel('Gathering File Info...', false);
 
-    this.hideSubComponent_(this.ViewableGroupMenu_, 400, function(){
-	this.showSubComponent_(this.ProgressBarPanel_, 0);
-    }.bind(this))
+
 
     //
     // toggle wait for render errors
@@ -1223,7 +1225,6 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     //
     // Render
     //
- 
     this.Renderer_.render(ViewableSet);
 
 
@@ -1268,7 +1269,7 @@ xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_errorMsg){
 
     opt_errorMsg = opt_errorMsg.replace('Uncaught Error: ', '') 
 	|| 'A render error occured :(<br>'; 
-    opt_errorMsg += '. Canceling render.';
+    //opt_errorMsg += '. Canceling render.';
 
     this.dispatchEvent({
 	type: xiv.ui.ViewBox.EventType.THUMBNAIL_LOADERROR,
@@ -1289,7 +1290,9 @@ xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_errorMsg){
     // Add image
     //
     var errorImg = ErrorOverlay.addImage();
-    goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE); 
+    goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE);
+    errorImg.src = serverRoot + 
+	'/images/viewer/xiv/ui/Overlay/sadbrain-white.png';
 
     //
     // Add above text and render
@@ -1426,9 +1429,10 @@ xiv.ui.ViewBox.prototype.fadeInLoadComponents_ = function(opt_fadeTime) {
  * @param {Function=} opt_callback The optional callback.
  * @private
  */
-xiv.ui.ViewBox.prototype.hideSubComponent_ = function(subComponent, 
-						      opt_fadeTime,
-						      opt_callback) {
+xiv.ui.ViewBox.prototype.hideSubComponent_ = 
+function(subComponent, opt_fadeTime, opt_callback) {
+    if (!goog.isDefAndNotNull(subComponent)) { return }
+
     opt_fadeTime = (goog.isNumber(opt_fadeTime) && opt_fadeTime >=0) ? 
 	opt_fadeTime : 0;
 
@@ -1443,8 +1447,8 @@ xiv.ui.ViewBox.prototype.hideSubComponent_ = function(subComponent,
 	onOut();
 	return;
     } 
-
     nrg.fx.fadeOut(subComponent.getElement(), opt_fadeTime, onOut);
+  
 }
 
 
@@ -1740,7 +1744,8 @@ xiv.ui.ViewBox.prototype.create3DRenderToggle_ = function(){
 	'3D Rendering', function(e){
 	    this.Renderer_.setVPlaneOn((e.target.getAttribute('checked') == 
 					'true'));
-	}.bind(this), serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-3D.png');
+	}.bind(this), serverRoot + 
+			     '/images/viewer/xiv/ui/ViewBox/Toggle-3D.png');
 }
 
 
@@ -1772,9 +1777,12 @@ xiv.ui.ViewBox.prototype.createInfoToggle_ = function(){
 	goog.object.forEach(this.ViewableTrees_[0].getSessionInfo(), 
 	    function(value, key){
 
-		if (value.length > 0){
-		//window.console.log(key, value);
-		    infoText += key + ': ' + value + '<br>';
+		if (goog.isDefAndNotNull(value)){
+
+		    if (value.length > 0){
+			//window.console.log(key, value);
+			infoText += key + ': ' + value + '<br>';
+		    }
 		}
 	    })
     }

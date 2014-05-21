@@ -285,7 +285,7 @@ gxnat.vis.Scan.prototype.getThumbnailImage = function(opt_callback){
 	
 	this.setThumbnailUrl(sortedFiles[imgInd] + gxnat.JPEG_CONVERT_SUFFIX);
 
-	window.console.log("THUMB URL", this.getThumbnailUrl());
+	//window.console.log("THUMB URL", this.getThumbnailUrl());
 	if (goog.isDefAndNotNull(opt_callback)){
 	    opt_callback(this);
 	}

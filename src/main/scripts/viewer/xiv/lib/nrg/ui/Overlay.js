@@ -114,11 +114,14 @@ nrg.ui.Overlay.prototype.toggleCloseOnHover = function(closeOnHover) {
  * @public
  */
 nrg.ui.Overlay.prototype.addCloseButton = function() {
-    this.closeButton_ = goog.dom.createDom('div', {
+    this.closeButton_ = goog.dom.createDom('img', {
 	'id': this.constructor.ID_PREFIX + '_CloseButton_' + 
 	    goog.string.createUniqueString(),
 	'class': nrg.ui.Overlay.CSS.CLOSEBUTTON
     })
+
+    this.closeButton_.src = serverRoot + 
+	'/images/viewer/xiv/ui/Modal/close.png';
     goog.dom.appendChild(this.getElement(), this.closeButton_);
 
     goog.events.listen(this.closeButton_, goog.events.EventType.CLICK,

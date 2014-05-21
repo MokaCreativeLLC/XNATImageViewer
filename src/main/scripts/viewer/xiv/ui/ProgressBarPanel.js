@@ -119,11 +119,11 @@ xiv.ui.ProgressBarPanel.prototype.showValue_ = false;
  * @param {string=}
  * @param {boolean=}
  */
-xiv.ui.ProgressBarPanel.prototype.setLabel = function(opt_label, opt_showValue) {
-    if (!this.label_ && goog.isString(opt_label) && (opt_label.length > 0)) {
-	this.labelText_ = opt_label;
-    }
-    this.showValue_ = (opt_showValue === true);
+xiv.ui.ProgressBarPanel.prototype.setLabel = 
+function(opt_label, opt_showValue) {
+    this.labelText_ = opt_label;
+    this.showValue_ = goog.isDefAndNotNull(opt_showValue) && 
+	(opt_showValue === false) ? false : true;
     this.setValue(this.ProgressBar_.getValue());
 }
 
@@ -133,10 +133,17 @@ xiv.ui.ProgressBarPanel.prototype.setLabel = function(opt_label, opt_showValue) 
  * @param {!number} val
  */
 xiv.ui.ProgressBarPanel.prototype.setValue = function(val) {
-
     this.ProgressBar_.setValue(val);
-    this.labelHolder_.innerHTML = this.labelText_ + ' ' 
-	+ this.ProgressBar_.getValue().toString() + '%';
+    this.labelHolder_.innerHTML = this.labelText_;
+
+    if (this.showValue_){
+	if (this.labelText_.length > 0){
+	    this.labelHolder_.innerHTML += ' ';
+	}
+	this.labelHolder_.innerHTML += 
+	this.ProgressBar_.getValue().toString() + '%';
+    }
+
     goog.dom.classes.remove(this.progBarHolder_, 'progress-bar-horizontal');
 }
 

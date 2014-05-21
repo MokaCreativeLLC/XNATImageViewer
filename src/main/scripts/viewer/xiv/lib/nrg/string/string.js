@@ -55,7 +55,8 @@ nrg.string.dirname = function (uri) {
  * @public
  */
 nrg.string.getFileExtension = function(file) {
-
+    if (!goog.isDefAndNotNull(file)) { return };
+    
     //------------------
     // Extract all letters following last period.
     //------------------

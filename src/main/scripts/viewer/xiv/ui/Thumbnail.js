@@ -30,8 +30,6 @@ xiv.ui.Thumbnail = function (Viewable_) {
      */    
     this.ViewableTree_ = Viewable_;
 
-    //window.console.log("THUMB1:", Viewable_, this.ViewableTree_['thumbnailUrl']);
-    //window.console.log("THUMB2:", Viewable_, this.ViewableTree_['files']);
 
     //this.setImage(this.ViewableTree_.getThumbnailUrl());
     this.createText_();
@@ -63,16 +61,12 @@ xiv.ui.Thumbnail.CSS_SUFFIX = {};
  * @inheritDoc
  */
 xiv.ui.Thumbnail.prototype.updateHoverable = function(){
-
-    window.console.log('update hoverable');
+    //window.console.log('update hoverable');
     var img = goog.dom.getElementsByTagNameAndClass('img', 
-			nrg.ui.Thumbnail.CSS.IMAGE, 
+						    nrg.ui.Thumbnail.CSS.IMAGE, 
 						    this.getHoverable());
-    //window.console.log(img[0]);
     img = img[0];
-
     img.src = this.getImage().src;
-    //window.console.log(img);
 }
 
 

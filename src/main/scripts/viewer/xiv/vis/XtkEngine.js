@@ -317,12 +317,16 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
     //
     // Volumes, meshes and fibers
     //
+    var fileList;
     goog.array.forEach(ViewableGroup.getViewables(), function(Viewable){
+	fileList = Viewable.getFiles();
+	if (!goog.isDefAndNotNull(fileList)) { return };
 
 	//window.console.log(ViewableGroup, Viewable, Viewable.getFiles());
-	currXObj = xiv.vis.XtkEngine.createXObject(Viewable.getFiles());
+	currXObj = xiv.vis.XtkEngine.createXObject(fileList);
 	renderProps = Viewable.getRenderProperties();
 
+	if (!currXObj) { return }
 	//
 	// Create controllers
 	//
@@ -673,8 +677,7 @@ xiv.vis.XtkEngine.prototype.onRendering_ = function(e){
  * @private
  */
 xiv.vis.XtkEngine.prototype.onRenderEnd_ = function(e){
-
-    window.console.log("\n\nON RENDER END EGINE!");
+    //window.console.log("\n\nON RENDER END EGINE!");
     this.dispatchEvent({
 	type: xiv.vis.RenderEngine.EventType.RENDER_END,
 	value: e.value
@@ -1130,16 +1133,14 @@ xiv.vis.XtkEngine.getViewables = function(fileCollection) {
  */
 xiv.vis.XtkEngine.createXObject = function(fileCollection) {
 
-    //window.console.log("FILE COLLECT", fileCollection);
-
+    //window.console.log("FILE COLLECT", fileCollection);fileCollection[0]
     var ext = (goog.isArray(fileCollection)) ? 
 	nrg.string.getFileExtension(fileCollection[0]) : 
 	nrg.string.getFileExtension(fileCollection);
     var obj = this.generateXtkObjectFromExtension(ext);  
     
     if (!goog.isDefAndNotNull(obj)){
-	var errorString = 'It doesn\'t look like there are any renderable' +
-	    ' files in the set :(<br>';
+	var errorString = 'No renderable files in the set :(<br>';
 	throw new Error(errorString);
     }
 	
