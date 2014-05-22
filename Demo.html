@@ -101,6 +101,12 @@ goog.require('xiv');
  * @param {!string} opt_serverRoot The optional server root.
  */
 function launchXImgView(opt_dataPath, opt_modalState, opt_serverRoot) {
+    //
+    // Verify compatibility
+    //
+    if (!xiv.isCompatible()){
+        return;
+    } 
 
     //
     // Need to set server root,

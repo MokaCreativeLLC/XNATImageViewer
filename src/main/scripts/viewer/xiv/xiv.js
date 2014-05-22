@@ -9,6 +9,7 @@ goog.require('goog.dom');
 goog.require('goog.array');
 goog.require('goog.window');
 goog.require('goog.Disposable');
+goog.require('goog.labs.userAgent.browser');
 
 // xtk
 goog.require('X.loader');
@@ -92,6 +93,202 @@ goog.exportSymbol('xiv', xiv);
 
 
 
+/**
+ * @public
+ * @return {boolean}
+ */
+xiv.isCompatible = function(){
+    var isCompatible = true;
+    //window.console.log('BROWSER', goog.labs.userAgent.browser.getVersion());
+
+    //---------------------
+    // IE 9 and below
+    //---------------------
+    if (goog.labs.userAgent.browser.isIE()){
+	var version = parseInt(goog.labs.userAgent.browser.getVersion());
+	//alert(version);
+	if (version < 11){
+	    xiv.onOutdatedBrowser_();
+	    isCompatible = false;
+	}
+    }
+
+    window.console.log(isCompatible, xiv.checkForWebGL(), 
+		       isCompatible && !xiv.checkForWebGL())
+    //----------------------
+    //  WebGL
+    //----------------------
+    if (isCompatible && !xiv.checkForWebGL()){
+	xiv.onWebGLDisabled_();
+	isCompatible = false;
+    }
+
+
+    return isCompatible;
+}
+
+
+/**
+ * @private
+ */
+xiv.onOutdatedBrowser_ = function(){
+    var errorString = '<br>'+
+	'XImgView is supported on the following browsers:<br>' +
+	'Google Chrome, Version 12+<br>' + 
+	'Firefox, Version 4+<br>' + 
+	'Safari, Version 5.1+<br>' + 
+	'Opera Next, Version 12+<br>' +
+	'Internet Explorer, Version 11+<br>';
+
+
+    //alert(errorString);    
+    var ErrorOverlay = new nrg.ui.ErrorOverlay(errorString);
+
+    //
+    // Add bg and closebutton
+    //
+    ErrorOverlay.addBackground();
+    ErrorOverlay.addCloseButton();
+
+    //
+    // Add image
+    //
+    var errorImg = ErrorOverlay.addImage();
+    goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE);
+    errorImg.src = serverRoot + 
+	'/images/viewer/xiv/ui/Overlay/sadbrain-white.png';
+
+    //
+    // Positions the overlay relative to the window as opposed to the 
+    // document.
+    //
+    ErrorOverlay.getElement().style.position = 'fixed'
+    ErrorOverlay.getElement().style.height = '240px'
+
+    //
+    // Add above text and render
+    //
+    ErrorOverlay.addText(errorString)
+    ErrorOverlay.render();
+
+    //
+    // Fade in the error overlay
+    //
+    ErrorOverlay.getElement().style.opacity = 0;
+    nrg.fx.fadeInFromZero(ErrorOverlay.getElement(), xiv.ANIM_TIME );
+}
+
+
+
+/**
+ * @private
+ */
+xiv.onWebGLDisabled_ = function(){
+    var errorString = '<br>'+
+	'It looks like ' +
+	'<a style="color: #00FFFF" ' + 
+	'href="https://developer.mozilla.org/en-US/docs/Web/WebGL/' + 
+	'Getting_started_with_WebGL">WebGL or Experimental-WebGL</a>' + 
+	' is disabled.<br><br>How to enable WebGL in '; 
+    var browserName;
+    var howToUrl = ':<br> <a  style="color: #00FFFF" href=';;
+
+    if (goog.labs.userAgent.browser.isIE()){
+	browserName = 'Internet Explorer'
+	howToUrl += 
+      '"http://msdn.microsoft.com/en-us/library/ie/bg182648(v=vs.85).aspx">' + 
+	'http://msdn.microsoft.com/en-us/library/ie/bg182648(v=vs.85).aspx' 
+	    + '</a>'
+    }
+    else if (goog.labs.userAgent.browser.isChrome()){
+	browserName = 'Chrome'
+	howToUrl += 
+	    '"https://www.biodigitalhuman.com/home/enabling-webgl.html">' + 
+	'https://www.biodigitalhuman.com/home/enabling-webgl.html' + '</a>'
+    }
+    else if (goog.labs.userAgent.browser.isFirefox()){
+	browserName = 'Firefox'
+	howToUrl += 
+	    '"https://www.biodigitalhuman.com/home/enabling-webgl.html">' + 
+	'https://www.biodigitalhuman.com/home/enabling-webgl.html' + '</a>'
+    }
+    else if (goog.labs.userAgent.browser.isSafari()){
+	browserName = 'Safari'
+	howToUrl += '"https://discussions.apple.com/thread/3300585?start=0">' + 
+	'https://discussions.apple.com/thread/3300585?start=0' + '</a>'
+    }
+    else if (goog.labs.userAgent.browser.isOpera()){
+	browserName = 'Opera'
+	howToUrl += '"http://techdows.com/2012/06/turn-on-hardware-acceleration-and-webgl-in-opera-12.html">' + 
+	'http://techdows.com/2012/06/turn-on-hardware-acceleration-and-webgl-in-opera-12.html' + '</a>'
+    }
+
+
+    errorString += browserName + howToUrl;
+
+    //alert(errorString);    
+    var ErrorOverlay = new nrg.ui.ErrorOverlay(errorString);
+
+    //
+    // Add bg and closebutton
+    //
+    ErrorOverlay.addBackground();
+    ErrorOverlay.addCloseButton();
+
+    //
+    // Add image
+    //
+    var errorImg = ErrorOverlay.addImage();
+    goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE); 
+    errorImg.src = serverRoot + 
+	'/images/viewer/xiv/ui/Overlay/sadbrain-white.png';
+
+    //
+    // Add above text and render
+    //
+    ErrorOverlay.addText(errorString)
+    ErrorOverlay.render();
+
+    //
+    // Positions the overlay relative to the window as opposed to the 
+    // document.
+    //
+    ErrorOverlay.getElement().style.position = 'fixed'
+
+    //
+    // Fade in the error overlay
+    //
+    ErrorOverlay.getElement().style.opacity = 0;
+    nrg.fx.fadeInFromZero(ErrorOverlay.getElement(), xiv.ANIM_TIME );
+}
+
+
+
+/**
+ * NOTE: Derived from: 
+ * http://stackoverflow.com/questions/11871077/proper-way-to-detect-
+ *     webgl-support
+ *
+ * @public
+ */
+xiv.checkForWebGL = function(){
+    var canvas = goog.dom.createDom('canvas');
+    var webGlFound;
+
+    //
+    // See if webGL is suppored
+    //
+    try { 
+	webGlFound = canvas.getContext("webgl") || 
+	    canvas.getContext("experimental-webgl"); 
+    }
+    catch (x) { 	
+	webGlFound = null; 
+    }
+    return goog.isDefAndNotNull(webGlFound) ? true : false;
+}
+
+
 
 /** 
  * @type {!number} 
@@ -140,6 +337,7 @@ xiv.revertDocumentStyle_ = function() {
  * @const
  */
 xiv.ZIPPY_DATA_KEY = goog.string.createUniqueString();
+
 
 
 
@@ -344,83 +542,6 @@ xiv.prototype.createFoldersFromTreeNode_ = function(treeNode){
 
 
 /**
- * NOTE: Derived from: 
- * http://stackoverflow.com/questions/11871077/proper-way-to-detect-
- *     webgl-support
- *
- * @public
- */
-xiv.prototype.testForExperimentalWebGL = function(){
-    var canvas = goog.dom.createDom('canvas');
-    var webGlFound;
-
-    //
-    // See if webGL is suppored
-    //
-    try { 
-	webGlFound = canvas.getContext("webgl") || 
-	    canvas.getContext("experimental-webgl"); 
-    }
-    catch (x) { 	
-	webGlFound = null; 
-    }
-
-    return goog.isDefAndNotNull(webGlFound) ? true : false;
-}
-
-
-
-
-/**
- * @private
- */
-xiv.prototype.onNoExperimentalWebGL_ = function(){
-    
-    var errorString = '<br><br><br>'+
-	'It looks like webgl or ' +
-	'experimental-webgl on this browser is either unsupported ' +
-	'or disabled.<br><br>More info:<br><br>' +
-
-    '<a href="https://github.com/xtk/X/wiki/X:Browsers">' + 
-	'https://github.com/xtk/X/wiki/X:Browsers' + '</a>'
-
-
-    //alert(errorString);    
-    var ErrorOverlay = new nrg.ui.ErrorOverlay(errorString);
-
-    //
-    // Add bg and closebutton
-    //
-    ErrorOverlay.addBackground();
-    ErrorOverlay.addCloseButton();
-
-    //
-    // Add image
-    //
-    var errorImg = ErrorOverlay.addImage();
-    goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE); 
-
-    //
-    // Add above text and render
-    //
-    ErrorOverlay.addText(errorString)
-    ErrorOverlay.render();
-
-    //
-    // Fade in the error overlay
-    //
-    ErrorOverlay.getElement().style.opacity = 0;
-    nrg.fx.fadeInFromZero(ErrorOverlay.getElement(), xiv.ANIM_TIME );
-
-    //
-    // Dispose of XIV
-    //
-    this.dispose();
-}
-
-
-
-/**
  * @param {!gxnat.Path} path The gxnat.Path object associated with the zippy.
  * @private
  */
@@ -516,14 +637,6 @@ xiv.prototype.setOnZippyExpanded_ = function() {
  */
 xiv.prototype.show = function(){
     
-    //
-    // Test for Experimental WebGL
-    //
-    if (!this.testForExperimentalWebGL()){
-	this.onNoExperimentalWebGL_();
-	return;
-    }
-
     //
     // Set the Modal's opacity to 0, then attatch to document.
     //
