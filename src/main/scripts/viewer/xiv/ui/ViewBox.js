@@ -2007,13 +2007,11 @@ xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
 	},
 	'Transverse': {
 	    OBJ: xiv.ui.layouts.Transverse,
-	    ICON: '/xnat/' +
-		'images/viewer/xiv/ui/Layouts/transverse.png'
+	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/transverse.png'
 	},
 	'3D': {
 	    OBJ: xiv.ui.layouts.ThreeD,
-	    ICON: '/xnat/' +
-		'images/viewer/xiv/ui/Layouts/3d.png'
+	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/3d.png'
 	},
 	'Conventional': {
 	    OBJ: xiv.ui.layouts.Conventional,

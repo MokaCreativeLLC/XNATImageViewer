@@ -814,8 +814,8 @@ nrg.ui.SlideInMenu.prototype.setMenuEvents_ = function() {
     //
     // Mouseover / Mouseout hover over the main icon.
     //
-    nrg.style.setHoverClass(this.icon_, 
-			      nrg.ui.SlideInMenu.CSS.ICON_HOVERED);
+    //nrg.style.setHoverClass(this.icon_, 
+    //nrg.ui.SlideInMenu.CSS.ICON_HOVERED);
 
     //
     // Onclick: Menu items (i.e. the view planes) - select-

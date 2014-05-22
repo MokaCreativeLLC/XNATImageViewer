@@ -12,7 +12,7 @@
 .nrg-ui-slideinmenu-icon {
     max-width:100%;
     max-height:100%;
-    opacity: .5; 
+    opacity: 1; 
 }
 
 
@@ -39,7 +39,7 @@
 
 .nrg-ui-slideinmenu-menuitem {
     overflow: visible;
-    margin-left: 13px;
+    margin-left: 5px;
     margin-top: 7px;
     height: 20px;
 }
@@ -51,8 +51,8 @@
 
 .nrg-ui-slideinmenu-menuitem-icon {
     position: absolute;
-    margin-top: -8px;
+    margin-top: -3px;
     left: 5px;
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
 }
