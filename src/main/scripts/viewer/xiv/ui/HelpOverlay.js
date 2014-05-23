@@ -77,15 +77,17 @@ xiv.ui.HelpOverlay.prototype.ScrollableZippyTree_;
  * @inheritDoc
  */
 xiv.ui.HelpOverlay.prototype.render = function(opt_parentElement){
-    goog.base(this, 'render', opt_parentElement);
-
-    goog.dom.classes.add(this.getOverlay(), 
-			 this.constructor.CSS.OVERLAY);
 
     this.addCloseButton();
     this.addBackground();
     this.getBackground().style.backgroundColor = 
 	'rgba(80,80,80,.8)';
+
+
+    goog.base(this, 'render', opt_parentElement);
+
+    goog.dom.classes.add(this.getOverlay(), 
+			 this.constructor.CSS.OVERLAY);
 
 
     this.ScrollableZippyTree_ = new nrg.ui.ScrollableZippyTree();
@@ -198,6 +200,13 @@ xiv.ui.HelpOverlay.prototype.addContents_ = function(){
     goog.dom.classes.add(this.getTextElements()[0], 
 			 this.constructor.CSS.TEXT);
 
+    //
+    //
+    //
+    this.getTextElements()[0].style.height = '15px';
+    this.ScrollableZippyTree_.getSlider().bindToMouseWheel(
+	this.getTextElements()[0]);
+
     var allLines = [imageManipLines, viewboxToggles, modalToggles];
     goog.array.forEach(allLines, function(lineArr, i){
 
@@ -226,7 +235,10 @@ xiv.ui.HelpOverlay.prototype.addContents_ = function(){
 	// Add text and render
 	//
 	this.addText(currTable);
-	goog.dom.classes.add(this.getTextElements()[i+1], 
+
+	var lastAddedText = this.getTextElements()[i+1];
+	window.console.log(lastAddedText)
+	goog.dom.classes.add(lastAddedText, 
 			     this.constructor.CSS.TEXT);
 
 	var folderName;
@@ -242,9 +254,11 @@ xiv.ui.HelpOverlay.prototype.addContents_ = function(){
 	    folderName = 'Modal Toggles';
 	    break;
 	}
-	this.getTextElements()[i+1].style.top = '0px';
-	this.ScrollableZippyTree_.addContents(this.getTextElements()[i+1], 
-			 [folderName]);
+	lastAddedText.style.top = '0px';
+
+	goog.dom.removeNode(lastAddedText);
+	this.ScrollableZippyTree_.getSlider().bindToMouseWheel(lastAddedText);
+	this.ScrollableZippyTree_.addContents(lastAddedText, [folderName]);
     }.bind(this))
 }
 

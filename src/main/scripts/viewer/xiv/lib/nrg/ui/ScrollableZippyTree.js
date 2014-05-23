@@ -84,10 +84,16 @@ nrg.ui.ScrollableZippyTree.prototype.render = function(opt_parentElement) {
     // Add the zippy tree
     //
     goog.dom.appendChild(this.getScrollArea(), this.ZippyTree.getElement());
+
     //
     // Set the zippy tree events
     //
     this.setZippyTreeEvents();
+
+    //
+    // Respond to scroll deltas
+    //
+    this.Slider.setUseDeltaToScroll(true, .3);
 }
 
 
@@ -101,6 +107,16 @@ nrg.ui.ScrollableZippyTree.prototype.render = function(opt_parentElement) {
 nrg.ui.ScrollableZippyTree.prototype.addContents = 
 function(elements, opt_folders) {
     this.ZippyTree.addContents(elements, opt_folders);
+    //var slider = this.getSlider();
+    elements = !goog.isArray(elements) ? [elements] : elements;
+    
+    goog.array.forEach(elements, function(element){
+	//this.Slider.bindToMouseWheel(element);
+    }.bind(this))
+    //
+    // Bind to mousewheel
+    //
+    this.getSlider().bindToMouseWheel(this.ZippyTree.getElement());
 }
 
 

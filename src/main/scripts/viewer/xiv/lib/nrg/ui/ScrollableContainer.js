@@ -79,9 +79,9 @@ nrg.ui.ScrollableContainer.prototype.scrollArea_;
 
 /**
  * @type {nrg.ui.Slider}
- * @private
+ * @protected
  */
-nrg.ui.ScrollableContainer.prototype.Slider_;
+nrg.ui.ScrollableContainer.prototype.Slider;
 
 
 
@@ -114,8 +114,8 @@ nrg.ui.ScrollableContainer.prototype.render = function(opt_parentElement) {
     //
     // Create Slider
     //
-    this.Slider_ = new nrg.ui.Slider('vertical');
-    this.Slider_.render(this.getElement());
+    this.Slider = new nrg.ui.Slider('vertical');
+    this.Slider.render(this.getElement());
 
     //
     // Set Slider UI and callbacks
@@ -161,7 +161,7 @@ nrg.ui.ScrollableContainer.prototype.getElement = function(){
  * @public
  */
 nrg.ui.ScrollableContainer.prototype.getSlider = function(){
-    return this.Slider_;
+    return this.Slider;
 }
 
 
@@ -193,17 +193,17 @@ nrg.ui.ScrollableContainer.prototype.updateStyle = function (opt_args) {
  * @private
  */
 nrg.ui.ScrollableContainer.prototype.setSliderStyles_ = function(){
-    goog.dom.classes.add(this.Slider_.getElement(), 
+    goog.dom.classes.add(this.Slider.getElement(), 
 			 nrg.ui.ScrollableContainer.CSS.SLIDER);
-    goog.dom.classes.add(this.Slider_.getThumb(), 
+    goog.dom.classes.add(this.Slider.getThumb(), 
 			 nrg.ui.ScrollableContainer.CSS.SLIDER_THUMB);
-    goog.dom.classes.add(this.Slider_.getTrack(), 
+    goog.dom.classes.add(this.Slider.getTrack(), 
 			 nrg.ui.ScrollableContainer.CSS.SLIDER_TRACK);
 
-    this.Slider_.addThumbHoverClass(
+    this.Slider.addThumbHoverClass(
 	nrg.ui.ScrollableContainer.CSS.SLIDER_THUMB_HOVERED)
 
-    this.Slider_.addTrackHoverClass(
+    this.Slider.addTrackHoverClass(
 	nrg.ui.ScrollableContainer.CSS.SLIDER_TRACK_HOVERED);
 }
 
@@ -224,7 +224,7 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
     goog.style.getSize(this.scrollArea_).height
 	
     var beforeRange = /**@type {!Array.number}*/
-    [this.Slider_.getMinimum(), this.Slider_.getMaximum()];
+    [this.Slider.getMinimum(), this.Slider.getMaximum()];
 
     var afterRange = /**@type {!Array.number}*/
     [0, scrollAreaHeight - widgetHeight];
@@ -240,7 +240,7 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 	// The slider thumbnail's height is a function of
 	// how much scroll area is hidden.  Want to make sure the height
 	// is proportional to the contents.
-	nrg.style.setStyle(this.Slider_.getThumb(), {
+	nrg.style.setStyle(this.Slider.getThumb(), {
 	    'opacity': 1,
 	    'height': widgetHeight * (widgetHeight / scrollAreaHeight)
 	});
@@ -251,13 +251,13 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 	//widgetHeight * (widgetHeight / scrollAreaHeight))
 
 	// Enable the slider
-	this.Slider_.setEnabled(true);
+	this.Slider.setEnabled(true);
 	
 
 	// Move the scroll area to the top (as the slider's thumbnail
 	// is at the top).
-	var sendVal = /**@type {!number}*/ this.Slider_.getMaximum() - 
-	    this.Slider_.getValue();
+	var sendVal = /**@type {!number}*/ this.Slider.getMaximum() - 
+	    this.Slider.getValue();
 	var remap = /**@type {!number}*/
 	    nrg.convert.remap1D(sendVal, beforeRange, afterRange);
 	var t = /**@type {!number}*/ remap['remappedVal'];
@@ -271,9 +271,9 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
     //------------------	
     }
     else {
-	this.Slider_.getThumb().style.opacity = 0;
-	this.Slider_.setEnabled(false);
-	this.Slider_.setValue(100);
+	this.Slider.getThumb().style.opacity = 0;
+	this.Slider.setEnabled(false);
+	this.Slider.setValue(100);
     }	
 }
 
@@ -285,9 +285,9 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
  * @private
  */
 nrg.ui.ScrollableContainer.prototype.setSliderEvents_ = function() {
-    goog.events.listen(this.Slider_, nrg.ui.Slider.EventType.SLIDE,
+    goog.events.listen(this.Slider, nrg.ui.Slider.EventType.SLIDE,
 				   this.mapSliderToContents.bind(this));  
-    this.Slider_.bindToMouseWheel(this.element_);
+    this.Slider.bindToMouseWheel(this.getElement());
 }
 
 
@@ -299,10 +299,10 @@ nrg.ui.ScrollableContainer.prototype.setSliderEvents_ = function() {
 nrg.ui.ScrollableContainer.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
     
-    if (goog.isDefAndNotNull(this.Slider_)){
-	goog.events.removeAll(this.Slider_);
-	this.Slider_.disposeInternal();
-	delete this.Slider_;
+    if (goog.isDefAndNotNull(this.Slider)){
+	goog.events.removeAll(this.Slider);
+	this.Slider.disposeInternal();
+	delete this.Slider;
     }
     
     if (goog.isDefAndNotNull(this.scrollArea_)){

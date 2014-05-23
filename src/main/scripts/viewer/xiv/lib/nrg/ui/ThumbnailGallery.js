@@ -311,9 +311,6 @@ function(thumbnail, opt_folders) {
     // Bind clone to mouse wheel.
     this.getSlider().bindToMouseWheel(thumbnail.getHoverable());
 
-
-
-
     
     goog.events.listen(this.getSlider(), 
 		     nrg.ui.Slider.EventType.MOUSEWHEEL, 
@@ -325,7 +322,7 @@ function(thumbnail, opt_folders) {
     thumbnail.getElement()[nrg.ui.ThumbnailGallery.THUMB_SORT_TAG] = 
 	thumbnail.getText().toLowerCase();
 
-    this.ZippyTree.addContents(thumbnail.getElement(), opt_folders);
+    this.addContents(thumbnail.getElement(), opt_folders);
 
 
     //

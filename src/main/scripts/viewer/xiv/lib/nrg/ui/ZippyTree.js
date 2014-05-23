@@ -796,13 +796,26 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
  * @private
  */
 nrg.ui.ZippyTree.prototype.arrangeNodes_ = function(contentHolder) {
-    var headers = goog.dom.getElementsByClass(nrg.ui.ZippyNode.CSS.HEADER, 
-					      contentHolder);
-    var holderContentsLen = goog.dom.getChildren(contentHolder).length;
+    var headers = [];
+    var holderChildren = goog.dom.getChildren(contentHolder);
+    var holderContentsLen = holderChildren.length;
+
+    //
+    // Get all the holder elements
+    //
+    goog.array.forEach(holderChildren, function(holderChild){
+	if (goog.dom.classlist.contains(
+	    holderChild, nrg.ui.ZippyNode.CSS.HEADER)){
+	    headers.push(holderChild);
+	}
+    })
 
 
-    if (headers.length == holderContentsLen) { return }
+    if (headers.length == holderContentsLen) { return };
    
+    //
+    // Add all of the holder elements to the bottom
+    //
     goog.array.forEach(headers, function(headerElt){
 	goog.dom.insertChildAt(contentHolder, headerElt, holderContentsLen);
     })

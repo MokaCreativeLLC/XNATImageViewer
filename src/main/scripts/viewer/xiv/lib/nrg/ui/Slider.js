@@ -91,7 +91,7 @@ nrg.ui.Slider.CSS_SUFFIX = {
 
 
 /**
- * @param {Array.<goog.events.MouseWheelHandler>}
+ * @param {Object.<string, goog.events.MouseWheelHandler>}
  * @private
  */ 
 nrg.ui.Slider.prototype.MouseWheelHandlers_;
@@ -249,15 +249,18 @@ nrg.ui.Slider.prototype.getThumb = function(){
  */
 nrg.ui.Slider.prototype.bindToMouseWheel = function (element) {
 
-    var mouseWheelHandler = new goog.events.MouseWheelHandler(element);
-    mouseWheelHandler.addEventListener(
-	goog.events.MouseWheelHandler.EventType.MOUSEWHEEL,
-	this.onMouseWheelScroll_, false, this);
-
-    if (!this.MouseWheelHandlers_ || (this.MouseWheelHandlers_.length == 0)) {
-	this.MouseWheelHandlers_ = [];
+    if (!goog.isDefAndNotNull(this.MouseWheelHandlers_)) {
+	this.MouseWheelHandlers_ = {};
     }
-    this.MouseWheelHandlers_.push(mouseWheelHandler);
+
+    if (!goog.isDefAndNotNull(this.MouseWheelHandlers_[element.id])) {
+	window.console.log("BINDING", element.id);
+	var mouseWheelHandler = new goog.events.MouseWheelHandler(element);
+	mouseWheelHandler.addEventListener(
+	    goog.events.MouseWheelHandler.EventType.MOUSEWHEEL,
+	    this.onMouseWheelScroll_, false, this);
+	this.MouseWheelHandlers_[element.id] = mouseWheelHandler;
+    }
 }
 
 
@@ -315,6 +318,33 @@ nrg.ui.Slider.prototype.setCssClasses_ = function(orientation) {
 }
 
 
+/**
+ * @private 
+ * @type {!boolean}
+ */
+nrg.ui.Slider.prototype.useDeltaToScroll_ = false;
+
+
+/**
+ * @private 
+ * @type {!number}
+ */
+nrg.ui.Slider.prototype.deltaMultiplyer_ = 1;
+
+
+
+/**
+ * @param {!boolean} bool
+ * @param {!number} opt_mult
+ */
+nrg.ui.Slider.prototype.setUseDeltaToScroll = function(bool, opt_mult){
+    this.useDeltaToScroll_ = bool;
+    if (goog.isNumber(opt_mult)){
+	this.deltaMultiplyer_ = opt_mult;
+    }
+};
+
+
 
 /**
  * Runs the callbacks and manages the mousewheel events when 
@@ -333,10 +363,14 @@ nrg.ui.Slider.prototype.onMouseWheelScroll_ = function (event) {
     var largestDelta = (Math.abs(event.deltaY) < Math.abs(event.deltaX)) ? 
 	event.deltaX : event.deltaY;
 
- 
-    this.setValue(Math.round(this.getValue() - 
+    if (this.useDeltaToScroll_){
+	this.setValue(Math.round(this.getValue() - largestDelta * 
+				 this.deltaMultiplyer_));
+    } 
+    else {
+	this.setValue(Math.round(this.getValue() - 
 			     ((largestDelta < 0) ? -1 : 1)));
-    
+    }
     this.dispatchEvent({
 	type: nrg.ui.Slider.EventType.MOUSEWHEEL
     });
@@ -609,11 +643,11 @@ nrg.ui.Slider.prototype.disposeInternal = function() {
     }
 
     if (goog.isDefAndNotNull(this.MouseWheelHandlers_)){
-	goog.array.forEach(this.MouseWheelHandlers_, function(handler){
+	goog.object.forEach(this.MouseWheelHandlers_, function(handler){
 	    goog.events.removeAll(handler);
 	    handler.dispose();
 	})
-	goog.array.clear(this.MouseWheelHandlers_);
+	goog.object.clear(this.MouseWheelHandlers_);
 	delete this.MouseWheelHandlers_;
     }
 
@@ -627,6 +661,7 @@ nrg.ui.Slider.prototype.disposeInternal = function() {
 	delete this.trackHoverClasses_;
     }
 
-
+    delete this.useDeltaToScroll_;
+    delete this.deltaMultiplyer_;
     delete this.isSliding_;
 };
