@@ -5,6 +5,16 @@
 
 .nrg-ui-overlay {
     position: absolute;
+    left: 0%;
+    top: 0%;
+    width: 100%;
+    height: 100%;    
+}
+
+
+
+.nrg-ui-overlay-overlay {
+    position: absolute;
     left: 30%;
     top: 35%;
     width: 40%;
@@ -18,13 +28,13 @@
 
 
 .nrg-ui-overlay-background {
-    position: fixed;
+    position: absolute;
     left: 0px;
     top: 0px;
     width: 100%;
     height: 100%;
     background-color: rgba(20, 20, 20, .6);
-    z-index: -1;
+    z-index: 200;
     display: inline-block;
 }
 

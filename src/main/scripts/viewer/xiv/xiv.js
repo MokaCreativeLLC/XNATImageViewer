@@ -99,31 +99,52 @@ goog.exportSymbol('xiv', xiv);
  */
 xiv.isCompatible = function(){
     var isCompatible = true;
-    //window.console.log('BROWSER', goog.labs.userAgent.browser.getVersion());
-
-    //---------------------
-    // IE 9 and below
-    //---------------------
-    if (goog.labs.userAgent.browser.isIE()){
-	var version = parseInt(goog.labs.userAgent.browser.getVersion());
-	//alert(version);
-	if (version < 11){
-	    xiv.onOutdatedBrowser_();
-	    isCompatible = false;
+    var version = goog.labs.userAgent.browser.getVersion();
+    var browserList = {
+	'Chrome': {
+	    isBrowser: goog.labs.userAgent.browser.isChrome(),
+	    minVersion: 11
+	},
+	'IE': {
+	    isBrowser: goog.labs.userAgent.browser.isIE(),
+	    minVersion: 11
+	},
+	'Safari': {
+	    isBrowser: goog.labs.userAgent.browser.isSafari(),
+	    minVersion: 5.1
+	},
+	'Opera': {
+	    isBrowser: goog.labs.userAgent.browser.isOpera(),
+	    minVersion: 12
+	},
+	'Firefox': {
+	    isBrowser: goog.labs.userAgent.browser.isFirefox(),
+	    minVersion: 4
 	}
     }
 
-    window.console.log(isCompatible, xiv.checkForWebGL(), 
-		       isCompatible && !xiv.checkForWebGL())
+    var oldBrowserDetected = false;
+    goog.object.forEach(browserList, function(browser){
+	if (browser.isBrowser && !oldBrowserDetected){
+	    //window.console.log(browser.minVersion, version,
+	    //goog.string.compareVersions(browser.minVersion, version)
+	    //)
+	    if (goog.string.compareVersions(browser.minVersion, version)
+	       == 1){
+		xiv.onOutdatedBrowser_();
+		isCompatible = false;
+		oldBrowserDetected = true;
+	    }	    
+	}
+    })
+
     //----------------------
-    //  WebGL
+    //  WebGL Check
     //----------------------
     if (isCompatible && !xiv.checkForWebGL()){
 	xiv.onWebGLDisabled_();
 	isCompatible = false;
     }
-
-
     return isCompatible;
 }
 

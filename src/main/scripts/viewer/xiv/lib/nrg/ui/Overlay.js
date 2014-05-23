@@ -8,8 +8,6 @@
 goog.require('nrg.ui.Component');
 
 
-
-
 /**
  *
  * @constructor
@@ -17,7 +15,8 @@ goog.require('nrg.ui.Component');
  */
 goog.provide('nrg.ui.Overlay');
 nrg.ui.Overlay = function () {
-    goog.base(this);   
+    goog.base(this);
+    this.createOverlay_();
 }
 goog.inherits(nrg.ui.Overlay, nrg.ui.Component);
 goog.exportSymbol('nrg.ui.Overlay', nrg.ui.Overlay);
@@ -32,15 +31,34 @@ goog.exportSymbol('nrg.ui.Overlay', nrg.ui.Overlay);
 nrg.ui.Overlay.ID_PREFIX =  'nrg.ui.Overlay';
 
 
+/**
+ * Event types.
+ * @enum {string}
+ * @public
+ */
+nrg.ui.Overlay.EventType = {
+  OPENED: goog.events.getUniqueId('open'),
+  CLOSED: goog.events.getUniqueId('close')
+}
+
 
 /**
  * @enum {string}
  */
 nrg.ui.Overlay.CSS_SUFFIX = {
+    OVERLAY: 'overlay',
     BACKGROUND: 'background',
     CLOSEBUTTON: 'closebutton',
     TEXT: 'text'
 };
+
+
+
+/**
+ * @type {Element}
+ * @private
+ */
+nrg.ui.Overlay.prototype.overlay_;
 
 
 
@@ -79,6 +97,14 @@ nrg.ui.Overlay.prototype.texts_;
  * @type {!boolean}
  * @private
  */
+nrg.ui.Overlay.prototype.destroyOnClose_ = false;
+
+
+
+/**
+ * @type {!boolean}
+ * @private
+ */
 nrg.ui.Overlay.prototype.closeOnHover_ = false;
 
 
@@ -90,22 +116,42 @@ nrg.ui.Overlay.prototype.mouseOverKey_;
 
 
 
+/**
+ * @private
+ */
+nrg.ui.Overlay.prototype.createOverlay_ = function() {
+    this.overlay_ = goog.dom.createDom('div', {
+	'id': this.constructor.ID_PREFIX + '_Overlay_' + 
+	    goog.string.createUniqueString(),
+	'class': nrg.ui.Overlay.CSS.OVERLAY
+    })
+}
+
+
 
 /**
  * @param {!boolean} closeOnHover
  * @public
  */
-nrg.ui.Overlay.prototype.toggleCloseOnHover = function(closeOnHover) {
+nrg.ui.Overlay.prototype.setCloseOnHover = function(closeOnHover) {
     this.closeOnHover_ = closeOnHover;
-
     if (this.closeOnHover_){
 	this.mouseOverKey_  = 
 	goog.events.listen(this.getElement(), goog.events.EventType.MOUSEOVER, 
-			   this.fadeOutAndDispose_.bind(this));
-
+			   this.close.bind(this));
     } else {
 	goog.events.unlisten(this.mouseOverKey_);
     }
+}
+
+
+
+/**
+ * @param {!boolean} doc
+ * @public
+ */
+nrg.ui.Overlay.prototype.setDestroyOnClose = function(doc) {
+    this.destroyOnClose_ = doc;
 }
 
 
@@ -119,13 +165,11 @@ nrg.ui.Overlay.prototype.addCloseButton = function() {
 	    goog.string.createUniqueString(),
 	'class': nrg.ui.Overlay.CSS.CLOSEBUTTON
     })
-
     this.closeButton_.src = serverRoot + 
 	'/images/viewer/xiv/ui/Modal/close.png';
-    goog.dom.appendChild(this.getElement(), this.closeButton_);
-
+    goog.dom.appendChild(this.overlay_, this.closeButton_);
     goog.events.listen(this.closeButton_, goog.events.EventType.CLICK,
-		       this.fadeOutAndDispose_.bind(this));
+		       this.close.bind(this));
 }
 
 
@@ -147,7 +191,7 @@ nrg.ui.Overlay.prototype.addImage = function(opt_src) {
     }
 
     this.images_.push(image);
-    goog.dom.appendChild(this.getElement(), image);
+    goog.dom.appendChild(this.overlay_, image);
 
     if (goog.isDefAndNotNull(opt_src)){
 	image.src = opt_src;
@@ -167,18 +211,23 @@ nrg.ui.Overlay.prototype.addText = function(opt_text) {
 	    goog.string.createUniqueString(),
 	'class': nrg.ui.Overlay.CSS.TEXT
     })
-
     if (!goog.isDefAndNotNull(this.texts_)){
 	this.texts_ = [];
     }
-
     this.texts_.push(text);
-
     text.innerHTML = opt_text || '';
-
-    goog.dom.appendChild(this.getElement(), text);
-
+    goog.dom.appendChild(this.overlay_, text);
     return text;
+}
+
+
+
+
+/**
+ * @inheritDoc
+ */
+nrg.ui.Overlay.prototype.getOverlay = function() {
+    return this.overlay_;
 }
 
 
@@ -202,17 +251,49 @@ nrg.ui.Overlay.prototype.addBackground = function() {
 	    goog.string.createUniqueString(),
 	'class': nrg.ui.Overlay.CSS.BACKGROUND
     })
-    goog.dom.appendChild(this.getElement(), this.background_);
 }
 
 
 
 /**
- * @private
+ * @return {?Element}
+ * @public
  */
-nrg.ui.Overlay.prototype.fadeOutAndDispose_ = function(opt_parentElement) {
-    nrg.fx.fadeOut(this.getElement(), 500, function(){
-	this.disposeInternal();
+nrg.ui.Overlay.prototype.getBackground = function() {
+    return this.background_;
+}
+
+
+
+
+/**
+ * @param {number=} opt_fadeTime The optional fade time.  Defaults to 500.
+ * @public
+ */
+nrg.ui.Overlay.prototype.close = function(opt_fadeTime) {
+    opt_fadeTime = goog.isDefAndNotNull(opt_fadeTime) &&
+	goog.isNumber(opt_fadeTime) ? opt_fadeTime : 500;
+
+    //
+    // background fade, if needed.
+    //
+    if (goog.isDefAndNotNull(this.background_) && 
+	(this.background_.parentNode == this.getElement().parentNode)){
+	nrg.fx.fadeOut(this.background_, opt_fadeTime);	
+    }
+
+    window.console.log(opt_fadeTime);
+
+    //
+    // element fade
+    //
+    nrg.fx.fadeOut(this.getElement(), opt_fadeTime, function(){
+	this.dispatchEvent({
+	    type: nrg.ui.Overlay.EventType.CLOSED,
+	})
+	if (this.destroyOnClose_){
+	    this.disposeInternal();
+	}
     }.bind(this));
 }
 
@@ -223,9 +304,29 @@ nrg.ui.Overlay.prototype.fadeOutAndDispose_ = function(opt_parentElement) {
  */
 nrg.ui.Overlay.prototype.render = function(opt_parentElement) {
     goog.base(this, 'render', opt_parentElement);
+
+    goog.dom.appendChild(this.getElement(), this.overlay_);
+
     if (goog.isDefAndNotNull(this.background_)){
-	//goog.dom.appendChild(this.getElement(), this.background_);
+	
+	//
+	// Non-document parents
+	//
+	if (goog.isDefAndNotNull(opt_parentElement) &&
+	    (opt_parentElement != document.body)) {
+	    goog.dom.appendChild(this.getElement(), this.background_);
+	}
+
+	//
+	// Document parents
+	//
+	else {
+	    goog.dom.appendChild(document.body, this.background_);
+	    this.background_.style.position = 'fixed';
+	    this.getElement().style.zIndex = 500;
+	}
     }
+
 }
 
 
@@ -236,7 +337,12 @@ nrg.ui.Overlay.prototype.render = function(opt_parentElement) {
 nrg.ui.Overlay.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
-    
+     if (goog.isDefAndNotNull(this.overlay_)){
+	 goog.dom.removeNode(this.overlay_);
+	 delete this.overlay_;
+    }
+
+   
     if (goog.isDefAndNotNull(this.texts_)){
 	goog.array.forEach(this.texts_, function(text){
 	    goog.dom.removeNode(text);
@@ -264,7 +370,7 @@ nrg.ui.Overlay.prototype.disposeInternal = function() {
 	delete this.background_;
     }
 
-
+    delete this.destroyOnClose_;
     delete this.closeOnHover_;
     delete this.mouseOverKey_;
 }

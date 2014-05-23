@@ -4,6 +4,11 @@
 
 
 .nrg-ui-erroroverlay {
+}
+
+
+
+.nrg-ui-erroroverlay-overlay {
     background-color: black;
     border: solid 1px rgb(120,120,120);
     border-radius: 25px;

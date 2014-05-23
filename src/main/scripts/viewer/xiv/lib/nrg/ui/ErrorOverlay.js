@@ -17,6 +17,7 @@ goog.require('nrg.ui.Overlay');
 goog.provide('nrg.ui.ErrorOverlay');
 nrg.ui.ErrorOverlay = function () {
     goog.base(this);   
+    goog.dom.classes.add(this.overlay_, nrg.ui.ErrorOverlay.CSS.OVERLAY);
 }
 goog.inherits(nrg.ui.ErrorOverlay, nrg.ui.Overlay);
 goog.exportSymbol('nrg.ui.ErrorOverlay', nrg.ui.ErrorOverlay);
@@ -36,6 +37,7 @@ nrg.ui.ErrorOverlay.ID_PREFIX =  'nrg.ui.ErrorOverlay';
  * @enum {string}
  */
 nrg.ui.ErrorOverlay.CSS_SUFFIX = {
+    OVERLAY: 'overlay',
     NO_WEBGL_IMAGE: 'no-webgl-image',
     TEXT: 'text'
 };

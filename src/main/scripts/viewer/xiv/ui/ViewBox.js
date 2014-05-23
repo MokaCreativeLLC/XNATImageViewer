@@ -12,6 +12,7 @@ goog.require('goog.object');
 goog.require('goog.style');
 goog.require('goog.ui.ToggleButton');
 goog.require('goog.ui.ImagelessButtonRenderer');
+goog.require('goog.testing.events');
 
 // nrg
 goog.require('nrg.ui.Component');
@@ -142,6 +143,7 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     INFOOVERLAY: 'infooverlay',
     INFOOVERLAY_TEXT: 'infooverlay-text',
     HELPOVERLAY: 'helpoverlay',
+    HELPOVERLAY_OVERLAY: 'helpoverlay-overlay',
     HELPOVERLAY_TEXT: 'helpoverlay-text'
 }
 
@@ -1258,7 +1260,6 @@ xiv.ui.ViewBox.prototype.toggleWaitForRenderErrors_ = function(toggle) {
  */
 xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_errorMsg){
 
-    
     this.unhighlight();
 
     this.hideProgressBarPanel_();
@@ -1667,6 +1668,7 @@ xiv.ui.ViewBox.prototype.createLayoutMenu_ = function(){
  * @param {string=} opt_tooltip
  * @param {Function=} opt_toolCheck
  * @param {src=} opt_src
+ * @return {Element}
  * @private
  */
 xiv.ui.ViewBox.prototype.createToggleButton_ = 
@@ -1732,6 +1734,8 @@ xiv.ui.ViewBox.prototype.createToggleButton_ =
 	    this.toggleButtons_= [];
 	}
 	this.toggleButtons_.push(iconbutton);
+
+	return iconbutton;
     }
 
 
@@ -1804,7 +1808,7 @@ xiv.ui.ViewBox.prototype.createInfoToggle_ = function(){
     //
     // Classes
     //
-    goog.dom.classes.add(this.infoOverlay_.getElement(), 
+    goog.dom.classes.add(this.infoOverlay_.getOverlay(), 
 			 this.constructor.CSS.INFOOVERLAY);
 
     goog.dom.classes.add(this.infoOverlay_.getTextElements()[0], 
@@ -1834,75 +1838,232 @@ xiv.ui.ViewBox.prototype.createHelpToggle_ = function(){
 	this.helpOverlay_.disposeInternal();
     }
     this.helpOverlay_ = new nrg.ui.Overlay();
+    this.helpOverlay_.addCloseButton();
+    this.helpOverlay_.addBackground();
+    this.helpOverlay_.getBackground().style.backgroundColor = 
+	'rgba(80,80,80,.8)';
+    this.helpOverlay_.setDestroyOnClose(false);
 
+
+    //
+    // Zippy Tree
+    //
+    scrollableContainer_ = new nrg.ui.ScrollableContainer();
+    scrollableContainer_.render(this.helpOverlay_.getOverlay());
+    scrollableContainer_.getElement().style.position = 'absolute';
+    scrollableContainer_.getElement().style.top = '50px';
+    scrollableContainer_.getElement().style.left = '15px';
+    scrollableContainer_.getElement().style.width = 'calc(100% - 60px)';
+    scrollableContainer_.getElement().style.height = 'calc(100% - 40px)';
+    
+
+    zippyTree_ = new nrg.ui.ZippyTree();
+    scrollableContainer_.addContents(zippyTree_.getElement());
 
     //
     // Generate widget text
-    //
-    var helpText =
-	"HELP (this will be much nicer soon!)<br><br>" +
-	"Hold 'SHIFT' over 2D frames for point-based slice scrolling.<br><br>" +
-	"Drag the left mouse button HORIZONTALLY over a 2D box to" +
-	" adjust contrast.<br><br>" +
-	"Drag the left mouse button VERTICALLY over a 2D box to" +
-	" adjust brightness.<br><br>" +
-	"Resize frames by dragging borders.<br><br>" +
-	"Change layouts by clicking the second button from the top.<br><br>" +
-	"Swap ViewBoxes by dragging the first button from the top.<br><br>" +
-	"Add and remove ViewBox columns and rows by clicking on triangle " + 
-	"buttons on the right and bottom modal borders.<br><br>";
-	"Click [IMAGE] for full screen viewing.<br><br>";
-	"Click [IMAGE] for popup viewing.<br><br>";
-
+    //    
+    var imageManipLines = [
+	['Zoom', 'right-click + drag', '2D and 3D panels'],
+	['Reposition', 'middle-click + drag', '2D and 3D panels'],
+	['Slice-scroll', 'shift + mousemove', '2D panels'],
+	['Contrast', 'left-click + drag horizontally', '2D panels'],
+	['Brightness', 'left-click + drag vertically', '2D panels'],
+	['Resize', 'left-click + drag', 'panel borders'],
+    ]
     
+    var viewboxToggles = [
+	['Change Layouts:', '[image]'],
+	['3D Rendering on/fff:', 
+	 '<img style="height:15px;width:15px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-3D.png'
+	 + '"></img>'	 
+	],
+	['Crosshairs show/hide:', 
+	 '<img style="height:15px;width:15px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Crosshairs.png'
+	 + '"></img>'	 
+	],
+	['Help show/hide:', 
+	 '<img style="height:15px;width:15px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Help.png'
+	 + '"></img>'	 
+	],
+	['Info. Metadata show/hide:', 
+	 '<img style="height:15px;width:15px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Info.png'
+	 + '"></img>'	 
+	],
+    ]
+
+    var modalToggles = [
+	['Add ViewBox Row:', 
+	 '<img style="height:6px;width:12px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/Modal/insertrow.png'
+	 + '"></img>'
+	],
+	['Remove ViewBox Row:', 
+	 '<img style="height:6px;width:12px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/Modal/removerow.png'
+	 + '"></img>'
+	],
+	['Add ViewBox Column:', 
+	 '<img style="height:12px;width:6px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/Modal/insertcolumn.png'
+	 + '"></img>'
+	],
+	['Remove ViewBox Column:',
+	 '<img style="height:12px;width:6px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/Modal/removecolumn.png'
+	 + '"></img>'
+	],
+	['Full-screen view:', 
+	 '<img style="height:12px;width:12px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/Modal/fullscreen.png'
+	 + '"></img>'
+	],
+	['Pop-up view:',
+	 '<img style="height:12px;width:12px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/Modal/popup.png'
+	 + '"></img>'
+	]
+    ]
+
     //
-    // Add text and render
+    // Help Text
     //
+    var helpText = "<b>HELP</b><br><br>";
     this.helpOverlay_.addText(helpText);
+    goog.dom.classes.add(this.helpOverlay_.getTextElements()[0], 
+			 this.constructor.CSS.HELPOVERLAY_TEXT);
+
+    var allLines = [imageManipLines, viewboxToggles, modalToggles];
+    goog.array.forEach(allLines, function(lineArr, i){
+
+	var currTable = '<table style="width:100%" RULES=ROWS FRAME=HSIDES ' + 
+	    ' BORDERCOLOR="gray">';
+
+	goog.array.forEach(lineArr, function(line){
+	    currTable += '<tr>'
+	    goog.array.forEach(line, function(cell){
+		currTable += '<td height=25>' + cell + '</td>';
+	    })
+	    currTable += '</tr>';
+	})
+
+	currTable += '</table>';
+	//
+	// Add text and render
+	//
+	this.helpOverlay_.addText(currTable);
+	goog.dom.classes.add(this.helpOverlay_.getTextElements()[i+1], 
+			     this.constructor.CSS.HELPOVERLAY_TEXT);
+
+	var folderName;
+	currText = i+1;
+	switch(currText){
+	    case 1:
+	    folderName = 'Image Manipulation';
+	    break;
+	    case 2:
+	    folderName = 'ViewBox Toggles';
+	    break;
+	    case 3:
+	    folderName = 'Modal Toggles';
+	    break;
+	}
+	this.helpOverlay_.getTextElements()[i+1].style.top = '0px';
+	zippyTree_.addContents(this.helpOverlay_.getTextElements()[i+1], 
+			       [folderName]);
+    }.bind(this))
+
 
     //
     // Classes
     //
-
     goog.dom.classes.add(this.helpOverlay_.getElement(), 
 			 this.constructor.CSS.HELPOVERLAY);
+    goog.dom.classes.add(this.helpOverlay_.getOverlay(), 
+			 this.constructor.CSS.HELPOVERLAY_OVERLAY);
 
-    goog.dom.classes.add(this.helpOverlay_.getTextElements()[0], 
-			 this.constructor.CSS.HELPOVERLAY_TEXT);
     
-
- 
+    //
+    //  Render the overlay
+    //
     this.helpOverlay_.render(this.viewFrameElt_);
-
 
     //
     // Toggle fades
     // 
+    var tb = 
+	this.createToggleButton_(false, xiv.ui.ViewBox.CSS.BUTTON_HELPTOGGLE,
+	'Help Overlay', this.onHelpOverlayToggled_.bind(this), 
+	 serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Help.png');
 
-
-    this.createToggleButton_(false, xiv.ui.ViewBox.CSS.BUTTON_HELPTOGGLE,
-	'Help Overlay', function(e){
-	    if ((e.target.getAttribute('checked') == 'true')) {
-		this.helpOverlay_.getElement().
-		    style.visibility = 'visible';
-		nrg.fx.fadeIn(this.helpOverlay_.getElement(), 
-			       200,  function(){
-				      this.helpOverlay_.getElement().
-					  style.visibility = 'visible';
-			       }.bind(this));
-	    } else {
-		nrg.fx.fadeOut(this.helpOverlay_.getElement(), 
-			       200,  function(){
-				      this.helpOverlay_.getElement().
-					  style.visibility = 'hidden';
-			      }.bind(this));
-
-	    }
-	}.bind(this), serverRoot + 
-			     '/images/viewer/xiv/ui/ViewBox/Toggle-Help.png');
-
-    
+    //
+    // Listen for the close event
+    //
+    goog.events.listen(this.helpOverlay_, nrg.ui.Overlay.EventType.CLOSED,
+		       function() {
+			 goog.testing.events.fireClickEvent(tb);
+		       }.bind(this))
 }
+
+
+/**
+ * @param {Event | boolean} e
+ * @private
+ */
+xiv.ui.ViewBox.prototype.onHelpOverlayToggled_ = function(e){
+    var checked = false;
+    if (goog.isObject(e)){
+	checked = (e.target.getAttribute('checked') == 'true') ? true : false;
+    } else {
+	checked = e;
+    }
+    if (checked) {
+	this.openHelpOverlay_();
+    } else {
+	this.closeHelpOverlay_();
+    }
+
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.openHelpOverlay_ = function(){
+    this.helpOverlay_.getElement().style.visibility = 'visible';
+    this.helpOverlay_.getElement().style.opacity = 0;
+    nrg.fx.fadeIn(this.helpOverlay_.getElement(), 500,  function(){
+	//this.helpOverlay_.getElement().style.visibility = 'visible';
+    }.bind(this));
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.closeHelpOverlay_ = function(){
+    //
+    // If already closed, just set the visibility to hidden
+    //
+    if (this.helpOverlay_.getElement().style.opacity == 0) {
+	this.helpOverlay_.getElement().style.visibility = 'hidden';
+    };
+
+    //
+    // Otherwise close
+    //
+    nrg.fx.fadeOut(this.helpOverlay_.getElement(), 500,  function(){
+	this.helpOverlay_.getElement().
+	    style.visibility = 'hidden';
+    }.bind(this));
+}
+
 
 
 /**
