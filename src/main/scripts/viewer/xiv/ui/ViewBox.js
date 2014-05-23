@@ -1853,12 +1853,27 @@ xiv.ui.ViewBox.prototype.createHelpToggle_ = function(){
     scrollableContainer_.getElement().style.position = 'absolute';
     scrollableContainer_.getElement().style.top = '50px';
     scrollableContainer_.getElement().style.left = '15px';
-    scrollableContainer_.getElement().style.width = 'calc(100% - 60px)';
-    scrollableContainer_.getElement().style.height = 'calc(100% - 40px)';
+    scrollableContainer_.getElement().style.width = 'calc(100% - 50px)';
+    scrollableContainer_.getElement().style.height = 'calc(100% - 80px)';
     
 
     zippyTree_ = new nrg.ui.ZippyTree();
     scrollableContainer_.addContents(zippyTree_.getElement());
+
+    goog.events.listen(zippyTree_,
+		       nrg.ui.ZippyTree.EventType.CONTENTADDED,
+		       scrollableContainer_.mapSliderToContents.bind(
+			   scrollableContainer_));
+
+
+    goog.events.listen(zippyTree_,
+	nrg.ui.ZippyNode.EventType.EXPANDED,
+	scrollableContainer_.mapSliderToContents.bind(scrollableContainer_));
+
+
+    goog.events.listen(zippyTree_,
+	nrg.ui.ZippyNode.EventType.COLLAPSED,
+	scrollableContainer_.mapSliderToContents.bind(scrollableContainer_));
 
     //
     // Generate widget text
