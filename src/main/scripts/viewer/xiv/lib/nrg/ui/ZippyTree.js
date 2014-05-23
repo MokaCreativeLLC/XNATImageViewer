@@ -311,6 +311,7 @@ nrg.ui.ZippyTree.prototype.getFolderNodes = function(folders) {
 
 /**
  * Main function for adding contents to the tree -- recursive.
+ *
  * @param {!Element | !Array.Elements} elements The elements to add.
  * @param {string= | Array.string=} opt_folders The folders where the elements
  *    belong.
@@ -761,6 +762,12 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
 	}
 
 	//
+	// Make sure folders are always at the end of the 
+	// of the contHold
+	//
+	this.arrangeNodes_(contHold)
+
+	//
 	// Fade in the end node
 	//
 	if (this.fadeInFx_) { 
@@ -781,6 +788,25 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
     }
 }
 
+
+/**
+ * Arranges all headers to be the bottom child element of the content holder.
+ * 
+ * @param {!Element} contentHolder
+ * @private
+ */
+nrg.ui.ZippyTree.prototype.arrangeNodes_ = function(contentHolder) {
+    var headers = goog.dom.getElementsByClass(nrg.ui.ZippyNode.CSS.HEADER, 
+					      contentHolder);
+    var holderContentsLen = goog.dom.getChildren(contentHolder).length;
+
+
+    if (headers.length == holderContentsLen) { return }
+   
+    goog.array.forEach(headers, function(headerElt){
+	goog.dom.insertChildAt(contentHolder, headerElt, holderContentsLen);
+    })
+}
 
 
 

@@ -137,6 +137,18 @@ goog.addDependency('../../../nrg/ui/Slider.js',
 ]);  
 
 
+goog.addDependency('../../../nrg/ui/ScrollableZippyTree.js', 
+['nrg.ui.ScrollableZippyTree'], [
+'goog.string',
+'goog.dom', 
+'goog.events', 
+'goog.object', 
+'nrg.ui.ScrollableContainer',
+'nrg.ui.ZippyTree'
+]); 
+
+
+
 goog.addDependency('../../../nrg/ui/ScrollableContainer.js', 
 ['nrg.ui.ScrollableContainer'], [
 'goog.string',
@@ -228,7 +240,7 @@ goog.addDependency('../../../nrg/ui/ThumbnailGallery.js',
     'nrg.dom',
     'nrg.style',
     'nrg.ui.Thumbnail',
-    'nrg.ui.ScrollableContainer',
+    'nrg.ui.ScrollableZippyTree',
     'nrg.ui.Component'
 ]);
 

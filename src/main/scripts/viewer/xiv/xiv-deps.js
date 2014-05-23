@@ -250,6 +250,12 @@ goog.addDependency('../../../../ui/ViewableGroupMenu.js',
 ]);
 
 
+goog.addDependency('../../../../ui/HelpOverlay.js', 
+['xiv.ui.HelpOverlay'], [
+    'nrg.ui.Overlay',
+    'nrg.ui.ScrollableZippyTree'
+]);
+
 
 goog.addDependency('../../../../ui/ViewBox.js', 
 ['xiv.ui.ViewBox'], [

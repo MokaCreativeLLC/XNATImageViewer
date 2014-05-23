@@ -13,23 +13,22 @@ goog.require('goog.object');
 goog.require('nrg.style');
 goog.require('nrg.dom');
 goog.require('nrg.ui.Thumbnail');
-goog.require('nrg.ui.ScrollableContainer');
-goog.require('nrg.ui.ZippyTree');
+goog.require('nrg.ui.ScrollableZippyTree');
 
 
 
 /**
- * Thumbnail Galleries are subclass of ScrollableContainer that specifically 
+ * Thumbnail Galleries are subclass of ScrollableZippyTree that specifically 
  * contain nrg.ui.Thumbnail objects and methods pertaining to their 
  * interaction.
  * @constructor
- * @extends {nrg.ui.ScrollableContainer}
+ * @extends {nrg.ui.ScrollableZippyTree}
  */
 goog.provide('nrg.ui.ThumbnailGallery');
 nrg.ui.ThumbnailGallery = function () {
     goog.base(this);
 }
-goog.inherits(nrg.ui.ThumbnailGallery, nrg.ui.ScrollableContainer);
+goog.inherits(nrg.ui.ThumbnailGallery, nrg.ui.ScrollableZippyTree);
 goog.exportSymbol('nrg.ui.ThumbnailGallery', nrg.ui.ThumbnailGallery);
 
 
@@ -79,14 +78,6 @@ nrg.ui.ThumbnailGallery.prototype.Thumbs_;
  * @private
  */
 nrg.ui.ThumbnailGallery.prototype.storedHoverThumbId_;
-
-
-
-/**
- * @private
- * @type {nrg.ui.ZippyTree}
- */
-nrg.ui.ThumbnailGallery.prototype.ZippyTree_;
 
 
 
@@ -144,9 +135,9 @@ nrg.ui.ThumbnailGallery.prototype.mouseY_;
  */
 nrg.ui.ThumbnailGallery.prototype.sortThumbnailsOnInsert = function(bool){
     this.sortThumbnailsOnInsert_ = bool;
-    if (goog.isDefAndNotNull(this.ZippyTree_) 
+    if (goog.isDefAndNotNull(this.ZippyTree) 
 	&& this.sortThumbnailsOnInsert_){
-	this.ZippyTree_.setCustomInsertMethod(
+	this.ZippyTree.setCustomInsertMethod(
 	    nrg.ui.ThumbnailGallery.thumbnailSorter)
     }
 }
@@ -162,28 +153,12 @@ nrg.ui.ThumbnailGallery.prototype.render = function(opt_parentElement) {
     this.setDefaultClasses_();    
 
     //
-    // Zippy Tree
-    //
-    this.ZippyTree_ = new nrg.ui.ZippyTree();
-    
-    //
     // Apply sort method
     //
     if (this.sortThumbnailsOnInsert_){
-	this.ZippyTree_.setCustomInsertMethod(
+	this.ZippyTree.setCustomInsertMethod(
 	    nrg.ui.ThumbnailGallery.thumbnailSorter)
     }
-
-
-    goog.dom.append(this.getScrollArea(), this.ZippyTree_.getElement());
-    //this.ZippyTree_.render(this.getScrollArea());
-
-
-
-    // Do fade in effects when zippy tree contents is added.
-    //this.ZippyTree_.toggleFadeInFx(true);
-
-    this.setZippyTreeEvents_();
 }
 
 
@@ -252,17 +227,6 @@ nrg.ui.ThumbnailGallery.thumbnailSorter = function(holderElt, insertElt){
 
 
 
-
-/**
- * @return {nrg.ui.ZippyTree}
- * @private
- */
-nrg.ui.ThumbnailGallery.prototype.getZippyTree = function(){
-    return this.ZippyTree_;
-}
-
-
-
 /**
  * Makes and returns a nrg.ui.Thumbmnail, removing the default 
  * element classes, and applying the classes pertinent to the
@@ -327,17 +291,6 @@ nrg.ui.ThumbnailGallery.prototype.setHoverParent = function(elt){
 
 
 /**
- * @param {Array.<string>} folders The zippy structure.
- */
-nrg.ui.ThumbnailGallery.prototype.addFolders = function(folders) {
-    this.ZippyTree_.createBranch(folders);
-    this.mapSliderToContents();
-}
-
-
-
-
-/**
  * Adds a thumbnail to the gallery, or a gallery zippy if the opt_folders 
  * argument is provided.
  *
@@ -372,7 +325,7 @@ function(thumbnail, opt_folders) {
     thumbnail.getElement()[nrg.ui.ThumbnailGallery.THUMB_SORT_TAG] = 
 	thumbnail.getText().toLowerCase();
 
-    this.ZippyTree_.addContents(thumbnail.getElement(), opt_folders);
+    this.ZippyTree.addContents(thumbnail.getElement(), opt_folders);
 
 
     //
@@ -407,25 +360,10 @@ function(imageUrl, displayText, opt_folders) {
 
 
 /**
- * @private
+ * @inheritDoc
  */
-nrg.ui.ThumbnailGallery.prototype.setZippyTreeEvents_ = function(){ 
-    goog.events.listen(this.ZippyTree_,
-		       nrg.ui.ZippyTree.EventType.CONTENTADDED,
-		       this.mapSliderToContents.bind(this));
-
-    goog.events.listen(this.ZippyTree_,
-	nrg.ui.ZippyNode.EventType.EXPANDED,
-	this.mapSliderToContents.bind(this));
-
-    goog.events.listen(this.ZippyTree_,
-	nrg.ui.ZippyNode.EventType.COLLAPSED,
-	this.mapSliderToContents.bind(this));
-
-    goog.events.listen(this.ZippyTree_,
-	nrg.ui.ZippyNode.EventType.NODEADDED,
-	this.mapSliderToContents.bind(this));
-
+nrg.ui.ThumbnailGallery.prototype.setZippyTreeEvents = function(){ 
+    goog.base(this, 'setZippyTreeEvents');
 
     // for FF and IE
     goog.events.listen(this.getScrollArea(), goog.events.EventType.MOUSEOVER,
@@ -648,10 +586,10 @@ nrg.ui.ThumbnailGallery.prototype.disposeInternal = function() {
     }
 
     // Zippy Tree
-    if (goog.isDefAndNotNull(this.ZippyTree_)){
-	goog.events.removeAll(this.ZippyTree_);
-	this.ZippyTree_.disposeInternal();
-	delete this.ZippyTree_;
+    if (goog.isDefAndNotNull(this.ZippyTree)){
+	goog.events.removeAll(this.ZippyTree);
+	this.ZippyTree.disposeInternal();
+	delete this.ZippyTree;
     }
     
     // Thumbnail classes
