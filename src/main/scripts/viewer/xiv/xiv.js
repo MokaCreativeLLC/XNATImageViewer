@@ -480,28 +480,54 @@ xiv.prototype.begin = function() {
     //
     this.show();
 
+    //
+    // Start the load chain
+    //
+    this.startLoadChain_();
+}
+
+
+
+
+/**
+ * @private
+ */
+xiv.prototype.startLoadChain_ = function(){
 
     //
-    // Create the project tree
+    // Get the modal's zippy tree
     //
     var zippyTree = this.Modal_.getThumbnailGallery().getZippyTree();
     var nodeCount = 0;
 
+    //
+    // Make sure everything is collapsed
+    //
     this.collapseZippys_();
+
+
+    //
+    // Create the project tree
+    //
     this.ProjectTree_ = new gxnat.ProjectTree(this.dataPaths_[0]);
     this.ProjectTree_.loadInitBranch(function(node){
+
 	//
 	// Create zippy folders
 	//
 	var folders = this.createFoldersFromTreeNode_(node);
 	
+	//
+	// For the first project
+	//
 	if (nodeCount == 0){
-	    //window.console.log("TEST: toggling fadeIn fx of zippy tree.");
-	    //zippyTree.toggleFadeInFx(true);
 	    this.initProjNode_ = node;
 	    this.initProjFolderNode_ = zippyTree.setExpanded(folders[0])
 	}
 
+	//
+	// For the first scan
+	//
 	if (nodeCount == 1){
 	    this.initSubjectExpanding_ = true;
 	    this.initSubjNode_ = node;
@@ -509,18 +535,18 @@ xiv.prototype.begin = function() {
 						this.initProjFolderNode_)
 	}
 
+	//
+	// For the first project
+	//
 	if (nodeCount == 2){
 	    this.initExperimentExpanding_ = true;
 	    this.initExptNode_ = node;
 	    this.initExptFolderNode_ = 
 		zippyTree.setExpanded(folders[2], 
 				      this.initSubjFolderNode_)
-
-	    //zippyTree.playFx();
 	}
 
 	nodeCount++;
-	//window.console.log(this.ProjectTree_);
     }.bind(this))
 }
 
@@ -624,7 +650,6 @@ xiv.prototype.onExperimentZippyExpanded_ = function(path) {
  */
 xiv.prototype.onZippyExpanded_ = function(e){
     if (!goog.isDefAndNotNull(e.node[xiv.ZIPPY_DATA_KEY])) { return };
-
     var path = new gxnat.Path(e.node[xiv.ZIPPY_DATA_KEY]);
     var deepestLevel = path.getDeepestLevel();
 
@@ -632,7 +657,6 @@ xiv.prototype.onZippyExpanded_ = function(e){
     case 'subjects':
 	this.onSubjectZippyExpanded_(path);
 	break;
-
     case 'experiments':
 	this.onExperimentZippyExpanded_(path);
 	break;

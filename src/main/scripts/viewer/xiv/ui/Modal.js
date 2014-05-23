@@ -947,8 +947,17 @@ xiv.ui.Modal.prototype.initViewBoxHandler_ = function() {
  */ 
 xiv.ui.Modal.prototype.onFullScreenButtonClicked_ = function() {
     this.prevMode_ = this.currMode_;
+
+    if (goog.dom.fullscreen.isFullScreen()){
+	goog.dom.fullscreen.exitFullScreen(this.getElement()); 
+	this.setMode(xiv.ui.Modal.ModeTypes.WINDOWED);
+	this.buttons_.FULLSCREEN.style.visibility = 'visible';
+	this.buttons_.WINDOWED.style.visibility = 'hidden';
+	return;
+    }
+
     goog.dom.fullscreen.requestFullScreen(this.getElement()); 
-    this.setMode(xiv.ui.Modal.ModeType.FULLSCREEN);
+    this.setMode(xiv.ui.Modal.ModeTypes.FULLSCREEN);
     this.buttons_.FULLSCREEN.style.visibility = 'hidden';
     this.buttons_.WINDOWED.style.visibility = 'visible';
 }
