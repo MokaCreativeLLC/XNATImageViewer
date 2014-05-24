@@ -56,24 +56,25 @@ gxnat.vis.Viewable.prototype.removeFile = function(fileName) {
 
 
 /**
- * @param {!string} fileName
+ * @param {!string | !Array.<string>} fileNames
  * @param {Function=} fileFilter
  * @public
  */
-gxnat.vis.Viewable.prototype.addFiles = function(fileName, opt_fileFilter) {
-    if (!this.files_){
-	this.files_ = [];
-    }
+gxnat.vis.Viewable.prototype.addFiles = function(fileNames, opt_fileFilter) {
+    if (!goog.isDefAndNotNull(this.files_)) { this.files_ = [] }
 
-    if (goog.isDefAndNotNull(opt_fileFilter)){
-	var filteredFileName = opt_fileFilter(fileName);
-	if (!goog.isDefAndNotNull(filteredFileName)){
-	    //window.console.log("Filtering", fileName);
-	    return; 
-	} 
-    }
+    if (!goog.isArray(fileNames)) { fileNames = [fileNames] }
 
-    this.files_.push(fileName);
+    goog.array.forEach(fileNames, function(fileName){
+	if (goog.isDefAndNotNull(opt_fileFilter)){
+	    var filteredFileName = opt_fileFilter(fileName);
+	    if (!goog.isDefAndNotNull(filteredFileName)){
+		//window.console.log("Filtering", fileName);
+		return; 
+	    } 
+	}
+	this.files_.push(fileName);
+    }.bind(this))
 }
 
 

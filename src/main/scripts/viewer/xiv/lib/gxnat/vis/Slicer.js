@@ -19,16 +19,16 @@ goog.require('gxnat.vis.ViewableGroup');
 /**
  * Subclass of the 'Viewable' class pertaining to Slicer .mrb files.
  *
- * @param {!string} experimentUrl The experiment-level url of the viewable.
- * @param {!Object} viewableJson The json associated with the viewable.
+ * @param {Object=} opt_viewableJson The json associated with the viewable.
+ * @param {string=} opt_experimentUrl The experiment-level url of the viewable.
  * @param {Function=} opt_initComplete The callback when the init process is 
  *     complete.
  * @constructor
  * @extends {gxnat.vis.AjaxViewableTree}
  */
 goog.provide('gxnat.vis.Slicer');
-gxnat.vis.Slicer = function(experimentUrl, viewableJson, 
-				      opt_initComplete) {
+gxnat.vis.Slicer = 
+function(opt_viewableJson, opt_experimentUrl, opt_initComplete) {
 
     /**
      * @type {!Array.<string>}
@@ -39,7 +39,7 @@ gxnat.vis.Slicer = function(experimentUrl, viewableJson,
     //
     // Call parent init to get the base properties
     //
-    goog.base(this, 'Slicer Scenes', experimentUrl, viewableJson);
+    goog.base(this, 'Slicer Scenes', opt_viewableJson, opt_experimentUrl);
 
 
 /**
@@ -349,11 +349,13 @@ gxnat.vis.Slicer.prototype.getThumbnailImage = function(opt_callback){
 
 
 
-
-
-
-
-
-gxnat.vis.Slicer.prototype.addFiles = function(fileName) {
-    this.mrbFiles_.push(fileName)
+/**
+ * @param {!string | !Array.<string>} fileNames
+ * @public
+ */
+gxnat.vis.Slicer.prototype.addFiles = function(fileNames) {
+    if (!goog.isArray(fileNames)) { fileNames = [fileNames] };
+    goog.array.forEach(fileNames, function(fileName){
+	this.mrbFiles_.push(fileName);
+    }.bind(this))
 }

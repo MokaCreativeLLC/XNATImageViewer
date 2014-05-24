@@ -46,6 +46,12 @@ goog.addDependency('../../../../vis/XtkRenderer3D.js',
 ]);
 
 
+goog.addDependency('../../../../compatibility/compatibility.js', 
+['xiv.compatibility'], [
+]);
+
+
+
 goog.addDependency('../../../../ui/ui.js', 
 ['xiv.ui'], [
 ]);

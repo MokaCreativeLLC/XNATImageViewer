@@ -193,10 +193,37 @@ nrg.ui.Component.prototype.prevPos;
 
 /**
  * @type {Array.<nrg.ui.Component>}
+ * @protected
+ */
+nrg.ui.Component.prototype.subComponents;
+
+
+
+/**
+ * @type {string}
+ * @protectec
+ */
+nrg.ui.Component.prototype.imagePrefix = '';
+
+
+
+/**
+ * @param {!string} prefix
  * @public
  */
-nrg.ui.Component.prototype.subComponents_;
+nrg.ui.Component.prototype.setImagePrefix = function(prefix) {
+    this.imagePrefix = prefix;
+}
 
+
+
+/**
+ * @return {string}
+ * @public
+ */
+nrg.ui.Component.prototype.getImagePrefix = function(imagePrefix) {
+    return this.imagePrefix;
+}
 
 
 
@@ -205,10 +232,10 @@ nrg.ui.Component.prototype.subComponents_;
  * @protected
  */
 nrg.ui.Component.prototype.addSubComponent = function(subComponent) {
-    if (!goog.isDefAndNotNull(this.subComponents_)){
-	this.subComponents_ = [];
+    if (!goog.isDefAndNotNull(this.subComponents)){
+	this.subComponents = [];
     }
-    this.subComponents_.push(subComponent);
+    this.subComponents.push(subComponent);
 }
 
 
@@ -288,13 +315,13 @@ nrg.ui.Component.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
     // SubComponents
-    if (goog.isDefAndNotNull(this.subComponents_)){
-	goog.array.forEach(this.subComponents_, function(subC){
+    if (goog.isDefAndNotNull(this.subComponents)){
+	goog.array.forEach(this.subComponents, function(subC){
 	    goog.events.removeAll(subC);
 	    subC.disposeInternal();
 	    subC = null;
 	})
-	goog.array.clear(this.subComponents_);
+	goog.array.clear(this.subComponents);
     }
 
     // Events
@@ -308,6 +335,7 @@ nrg.ui.Component.prototype.disposeInternal = function() {
     // Other
     this.iconBaseUrl = null;  
     this.iconUrl = null; 
+    this.imagePrefix = null;
 
     // Size and pos
     this.currSize = null;

@@ -295,7 +295,6 @@ xiv.ui.Modal.prototype.getCloseButton = function() {
 xiv.ui.Modal.prototype.render = function(opt_parentElement) {
     goog.base(this, 'render', opt_parentElement);
     this.initSubComponents();
-    this.adjustStyleToMode_();
     this.ViewBoxHandler_.insertColumn(false);
     this.adjustStyleToMode_();
     this.updateStyle();
@@ -791,37 +790,37 @@ xiv.ui.Modal.prototype.initButtons_ = function() {
     this.setRowColumnInsertRemoveEvents_();
 
     this.buttons_.CLOSE.innerHTML = '<img src=' +
-	serverRoot + '/images/viewer/xiv/ui/Modal/close.png' + 
+	this.imagePrefix + '/images/viewer/xiv/ui/Modal/close.png' + 
 	' width="100%">';
 
     this.buttons_.FULLSCREEN.innerHTML = '<img src=' + 
-	serverRoot + '/images/viewer/xiv/ui/Modal/fullscreen.png' + 
+	this.imagePrefix + '/images/viewer/xiv/ui/Modal/fullscreen.png' + 
 	' width="100%">';
 
     this.buttons_.WINDOWED.innerHTML = '<img src=' + 
-	serverRoot + '/images/viewer/xiv/ui/Modal/windowed.png' + 
+	this.imagePrefix + '/images/viewer/xiv/ui/Modal/windowed.png' + 
 	' width="100%">';
 
     this.buttons_.POPUP.innerHTML = '<img src=' + 
-	serverRoot + '/images/viewer/xiv/ui/Modal/popup.png' + 
+	this.imagePrefix + '/images/viewer/xiv/ui/Modal/popup.png' + 
 	 ' width="100%">';
 
 
     this.buttons_.INSERTROW.innerHTML = '<img src=' + 
-	serverRoot + '/images/viewer/xiv/ui/Modal/insertrow.png' + 
+	this.imagePrefix + '/images/viewer/xiv/ui/Modal/insertrow.png' + 
 	' width="100%">';
 
     this.buttons_.INSERTCOLUMN.innerHTML = '<img src=' + 
-	serverRoot + '/images/viewer/xiv/ui/Modal/insertcolumn.png' + 
+	this.imagePrefix + '/images/viewer/xiv/ui/Modal/insertcolumn.png' + 
 	' width="100%">';
 
 
     this.buttons_.REMOVEROW.innerHTML = '<img src=' + 
-	serverRoot + '/images/viewer/xiv/ui/Modal/removerow.png' + 
+	this.imagePrefix + '/images/viewer/xiv/ui/Modal/removerow.png' + 
 	' width="100%">';
 
     this.buttons_.REMOVECOLUMN.innerHTML = '<img src=' + 
-	serverRoot + '/images/viewer/xiv/ui/Modal/removecolumn.png' + 
+	this.imagePrefix + '/images/viewer/xiv/ui/Modal/removecolumn.png' + 
 	' width="100%">';
 	
 }
@@ -1024,24 +1023,30 @@ function(opt_listenMethod){
  * @private
  */
 xiv.ui.Modal.prototype.adjustStyleToMode_ = function(){
-    
-    //window.console.log("ADJUST MODE", this.currMode_);
 
     if (this.currMode_ !== xiv.ui.Modal.ModeTypes.WINDOWED) {
 	this.getElement().style.borderRadius = 0;
     } 
 
     if (this.currMode_ == xiv.ui.Modal.ModeTypes.POPUP) {
-	this.buttons_.POPUP.style.visibilty = 'hidden';
-	this.buttons_.FULLSCREEN.style.visibilty = 'visible';
+	//
+	// Remove the popup and close buttons
+	//
+	goog.dom.removeNode(this.buttons_.POPUP);
+	goog.dom.removeNode(this.buttons_.CLOSE);
+
+	this.buttons_.FULLSCREEN.style.visibility = 'visible';
+	this.buttons_.FULLSCREEN.style.top = '23px';
+	this.buttons_.WINDOWED.style.top = '23px';
     } 
     else if (this.currMode_ == xiv.ui.Modal.ModeTypes.FULLSCREEN_POPUP) {
-	this.buttons_.POPUP.style.visibilty = 'hidden';
-	this.buttons_.FULLSCREEN.style.visibilty = 'hidden';
+	this.buttons_.POPUP.style.visibility = 'hidden';
+	this.buttons_.FULLSCREEN.style.visibility = 'hidden';
+
     } 
     else if (this.currMode_ == xiv.ui.Modal.ModeTypes.FULLSCREEN) {
-	this.buttons_.POPUP.style.visibilty = 'visible';
-	this.buttons_.FULLSCREEN.style.visibilty = 'hidden';
+	this.buttons_.POPUP.style.visibility = 'visible';
+	this.buttons_.FULLSCREEN.style.visibility = 'hidden';
     }
 }
 

@@ -30,8 +30,6 @@ xiv.ui.Thumbnail = function (Viewable_) {
      */    
     this.ViewableTree_ = Viewable_;
 
-
-    //this.setImage(this.ViewableTree_.getThumbnailUrl());
     this.createText_();
     this.createHoverable();
 }
@@ -88,27 +86,47 @@ xiv.ui.Thumbnail.prototype.createHoverable = function(){
  * @private
  */
 xiv.ui.Thumbnail.prototype.createText_ = function(){
+    window.console.log(this.ViewableTree_);
 
-    var splitArr = /**@type {!Array.string}*/ 
-    this.ViewableTree_.getQueryUrl().split("/");
+    //
+    // Derive the header text
+    //
+    var headerText = 'Scan ';
 
-    var headerText =  /**@type {!string}*/ 
-    splitArr[splitArr.length - 1].split(".")[0];
 
-    var displayText =  /**@type {!string}*/ '';
-    displayText += "<b><font size = '2'>" + headerText  + "</font></b><br>";
+    //
+    // Checking the sessionInfo property (most ideal option) to make header.
+    //
+    var treeSessionInfo = this.ViewableTree_.getSessionInfo();
+    if (goog.isDefAndNotNull(treeSessionInfo['Scan ID'])){
+	headerText += treeSessionInfo['Scan ID'];
+    }
 
-    if (this.ViewableTree_.hasOwnProperty('getSessionInfo')){
-	displayText += "Frmt: " + this.ViewableTree_.getSessionInfo()
-        ["Format"]['value'].toString()  + "<br>";
+    //
+    // Otherwise, by splitting the URL (less ideal option).
+    //
+    else if (goog.isDefAndNotNull(this.ViewableTree_.getQueryUrl())){
+	var splitArr = this.ViewableTree_.getQueryUrl().split("/");
+	headerText += splitArr[splitArr.length - 1].split(".")[0];
     }
 
 
-    /**
-    displayText += 'Type: ' + this.ViewableTree_['sessionInfo']
-             ["type"]['value']   + "</b><br>";
-    displayText += 'Expt: ' + this.ViewableTree_['sessionInfo']['experiments'];
-    */
+    //
+    // Construct display text
+    //
+    var displayText =  '';
+    displayText += "<b><font size = '3'>" + headerText  + "</font></b><br>";
+
+    //
+    // Other metadata to display
+    //
+    var metaDisplayKeys = ['Total Frames', 'Scan Type', 'Orientation'];
+    goog.array.forEach(metaDisplayKeys, function(key){
+	if (goog.isDefAndNotNull(treeSessionInfo[key])){
+	    displayText += "<font size = '1.5'>" + key + ": " + 
+		treeSessionInfo[key]  + "<br>";
+	}
+    }.bind(this))
 
     this.setText(displayText);
 }

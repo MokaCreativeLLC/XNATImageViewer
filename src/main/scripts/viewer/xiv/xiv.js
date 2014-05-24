@@ -35,11 +35,12 @@ goog.require('xiv.ui.Modal');
  * @param {!string} mode The mode of the image viewer.
  * @param {!string} dataPath The data path to begin viewable query from.
  * @param {!string} rootUrl The serverRoot.
+ * @param {!boolean} isDemoMode If in demo mode.
  * @extends {goog.Disposable}
  * @constructor
  */
 goog.provide('xiv');
-xiv = function(mode, dataPath, rootUrl){
+xiv = function(mode, dataPath, rootUrl, isDemoMode){
 
     // Inits on the constructor.
     xiv.loadCustomExtensions();
@@ -51,6 +52,13 @@ xiv = function(mode, dataPath, rootUrl){
      * @private
      */
     this.mode_ = mode || 'windowed';
+
+
+    /**
+     * @type {!boolean}
+     * @private
+     */
+    this.isDemoMode_ = isDemoMode;
 
 
     /** 
@@ -91,223 +99,6 @@ xiv = function(mode, dataPath, rootUrl){
 goog.inherits(xiv, goog.Disposable);
 goog.exportSymbol('xiv', xiv);
 
-
-
-/**
- * @public
- * @return {boolean}
- */
-xiv.isCompatible = function(){
-    var isCompatible = true;
-    var version = goog.labs.userAgent.browser.getVersion();
-    var browserList = {
-	'Chrome': {
-	    isBrowser: goog.labs.userAgent.browser.isChrome(),
-	    minVersion: 11
-	},
-	'IE': {
-	    isBrowser: goog.labs.userAgent.browser.isIE(),
-	    minVersion: 11
-	},
-	'Safari': {
-	    isBrowser: goog.labs.userAgent.browser.isSafari(),
-	    minVersion: 5.1
-	},
-	'Opera': {
-	    isBrowser: goog.labs.userAgent.browser.isOpera(),
-	    minVersion: 12
-	},
-	'Firefox': {
-	    isBrowser: goog.labs.userAgent.browser.isFirefox(),
-	    minVersion: 4
-	}
-    }
-
-    var oldBrowserDetected = false;
-    goog.object.forEach(browserList, function(browser){
-	if (browser.isBrowser && !oldBrowserDetected){
-	    //window.console.log(browser.minVersion, version,
-	    //goog.string.compareVersions(browser.minVersion, version)
-	    //)
-	    if (goog.string.compareVersions(browser.minVersion, version)
-	       == 1){
-		xiv.onOutdatedBrowser_();
-		isCompatible = false;
-		oldBrowserDetected = true;
-	    }	    
-	}
-    })
-
-    //----------------------
-    //  WebGL Check
-    //----------------------
-    if (isCompatible && !xiv.checkForWebGL()){
-	xiv.onWebGLDisabled_();
-	isCompatible = false;
-    }
-    return isCompatible;
-}
-
-
-/**
- * @private
- */
-xiv.onOutdatedBrowser_ = function(){
-    var errorString = '<br>'+
-	'XImgView is supported on the following browsers:<br>' +
-	'Google Chrome, Version 12+<br>' + 
-	'Firefox, Version 4+<br>' + 
-	'Safari, Version 5.1+<br>' + 
-	'Opera Next, Version 12+<br>' +
-	'Internet Explorer, Version 11+<br>';
-
-
-    //alert(errorString);    
-    var ErrorOverlay = new nrg.ui.ErrorOverlay(errorString);
-
-    //
-    // Add bg and closebutton
-    //
-    ErrorOverlay.addBackground();
-    ErrorOverlay.addCloseButton();
-
-    //
-    // Add image
-    //
-    var errorImg = ErrorOverlay.addImage();
-    goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE);
-    errorImg.src = serverRoot + 
-	'/images/viewer/xiv/ui/Overlay/sadbrain-white.png';
-
-    //
-    // Positions the overlay relative to the window as opposed to the 
-    // document.
-    //
-    ErrorOverlay.getElement().style.position = 'fixed'
-    ErrorOverlay.getElement().style.height = '240px'
-
-    //
-    // Add above text and render
-    //
-    ErrorOverlay.addText(errorString)
-    ErrorOverlay.render();
-
-    //
-    // Fade in the error overlay
-    //
-    ErrorOverlay.getElement().style.opacity = 0;
-    nrg.fx.fadeInFromZero(ErrorOverlay.getElement(), xiv.ANIM_TIME );
-}
-
-
-
-/**
- * @private
- */
-xiv.onWebGLDisabled_ = function(){
-    var errorString = '<br>'+
-	'It looks like ' +
-	'<a style="color: #00FFFF" ' + 
-	'href="https://developer.mozilla.org/en-US/docs/Web/WebGL/' + 
-	'Getting_started_with_WebGL">WebGL or Experimental-WebGL</a>' + 
-	' is disabled.<br><br>How to enable WebGL in '; 
-    var browserName;
-    var howToUrl = ':<br> <a  style="color: #00FFFF" href=';;
-
-    if (goog.labs.userAgent.browser.isIE()){
-	browserName = 'Internet Explorer'
-	howToUrl += 
-      '"http://msdn.microsoft.com/en-us/library/ie/bg182648(v=vs.85).aspx">' + 
-	'http://msdn.microsoft.com/en-us/library/ie/bg182648(v=vs.85).aspx' 
-	    + '</a>'
-    }
-    else if (goog.labs.userAgent.browser.isChrome()){
-	browserName = 'Chrome'
-	howToUrl += 
-	    '"https://www.biodigitalhuman.com/home/enabling-webgl.html">' + 
-	'https://www.biodigitalhuman.com/home/enabling-webgl.html' + '</a>'
-    }
-    else if (goog.labs.userAgent.browser.isFirefox()){
-	browserName = 'Firefox'
-	howToUrl += 
-	    '"https://www.biodigitalhuman.com/home/enabling-webgl.html">' + 
-	'https://www.biodigitalhuman.com/home/enabling-webgl.html' + '</a>'
-    }
-    else if (goog.labs.userAgent.browser.isSafari()){
-	browserName = 'Safari'
-	howToUrl += '"https://discussions.apple.com/thread/3300585?start=0">' + 
-	'https://discussions.apple.com/thread/3300585?start=0' + '</a>'
-    }
-    else if (goog.labs.userAgent.browser.isOpera()){
-	browserName = 'Opera'
-	howToUrl += '"http://techdows.com/2012/06/turn-on-hardware-acceleration-and-webgl-in-opera-12.html">' + 
-	'http://techdows.com/2012/06/turn-on-hardware-acceleration-and-webgl-in-opera-12.html' + '</a>'
-    }
-
-
-    errorString += browserName + howToUrl;
-
-    //alert(errorString);    
-    var ErrorOverlay = new nrg.ui.ErrorOverlay(errorString);
-
-    //
-    // Add bg and closebutton
-    //
-    ErrorOverlay.addBackground();
-    ErrorOverlay.addCloseButton();
-
-    //
-    // Add image
-    //
-    var errorImg = ErrorOverlay.addImage();
-    goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE); 
-    errorImg.src = serverRoot + 
-	'/images/viewer/xiv/ui/Overlay/sadbrain-white.png';
-
-    //
-    // Add above text and render
-    //
-    ErrorOverlay.addText(errorString)
-    ErrorOverlay.render();
-
-    //
-    // Positions the overlay relative to the window as opposed to the 
-    // document.
-    //
-    ErrorOverlay.getElement().style.position = 'fixed'
-
-    //
-    // Fade in the error overlay
-    //
-    ErrorOverlay.getElement().style.opacity = 0;
-    nrg.fx.fadeInFromZero(ErrorOverlay.getElement(), xiv.ANIM_TIME );
-}
-
-
-
-/**
- * NOTE: Derived from: 
- * http://stackoverflow.com/questions/11871077/proper-way-to-detect-
- *     webgl-support
- *
- * @public
- */
-xiv.checkForWebGL = function(){
-    var canvas = goog.dom.createDom('canvas');
-    var webGlFound;
-
-    //
-    // See if webGL is suppored
-    //
-    try { 
-	webGlFound = canvas.getContext("webgl") || 
-	    canvas.getContext("experimental-webgl"); 
-    }
-    catch (x) { 	
-	webGlFound = null; 
-    }
-    return goog.isDefAndNotNull(webGlFound) ? true : false;
-}
 
 
 
@@ -375,6 +166,14 @@ xiv.prototype.Modal_;
  * @private
  */
 xiv.prototype.ProjectTree_;
+
+
+
+/**
+ * @type {string}
+ * @private
+ */
+xiv.prototype.serverRoot_;
 
 
 
@@ -453,7 +252,7 @@ xiv.prototype.initExptFolderNode_;
  * @type {!boolean}
  * @private
  */
-xiv.prototype.initExperimentExpanding_ = false;
+xiv.prototype.initExptExpanding_ = false;
 
 
 
@@ -461,7 +260,35 @@ xiv.prototype.initExperimentExpanding_ = false;
  * @type {!boolean}
  * @private
  */
-xiv.prototype.initSubjecttExpanding_ = false;
+xiv.prototype.initSubjExpanding_ = false;
+
+
+
+/**
+ * @type {string}
+ * @private
+ */
+xiv.prototype.serverRoot_;
+
+
+
+/**
+ * @param {!string} _serverRoot
+ * @public
+ */
+xiv.prototype.setServerRoot = function(_serverRoot) {
+    this.serverRoot_ = _serverRoot
+}
+
+
+
+/**
+ * @return {string}
+ * @public
+ */
+xiv.prototype.getServerRoot = function(serverRoot) {
+    return this.serverRoot_;
+}
 
 
 
@@ -483,16 +310,147 @@ xiv.prototype.begin = function() {
     //
     // Start the load chain
     //
-    this.startLoadChain_();
+    if (!this.isDemoMode_){
+	this.startLiveLoadChain_();
+    } else {
+	this.startDemoLoadChain_();
+    }
 }
 
+
+
+/**
+ * Creates the modal element.
+ *
+ * @private
+ */
+xiv.prototype.createModal_ = function(){
+    //
+    // Create new Modal object
+    //
+    this.Modal_ = new this.modalType_();
+
+    //
+    // Set the image prefix of the modal
+    //
+    this.Modal_.setImagePrefix(serverRoot);
+
+    //
+    // Set the mode of the modal
+    //
+    this.Modal_.setMode(this.mode_);
+
+    //
+    // Link window's onresize to Modal's updateStyle
+    //
+    window.onresize = function () { 
+	this.Modal_.updateStyle() 
+    }.bind(this);
+}
+
+
+
+/**
+ * Begins the XNAT Image Viewer.
+ *
+ * @public
+ */
+xiv.prototype.show = function(){
+    //
+    // Set the Modal's opacity to 0, then attatch to document.
+    //
+    this.Modal_.getElement().style.opacity = 0;
+    this.Modal_.render();
+
+    //----------------------------------------------
+    // IMPORTANT!!!!    DO NOT ERASE!!!!!!!
+    //
+    // We need to listen for the zippy tree (thumbnail gallery) expands
+    // in order to Async load unloaded experiments
+    //----------------------------------------------
+    this.setOnZippyExpanded_();
+
+    //
+    // Set the button callbacks once rendered.
+    //
+    this.setModalButtonCallbacks_();
+
+    //
+    // The the project tab expanded
+    //
+    this.Modal_.getProjectTab().setExpanded(true, 0, 1000);
+
+    //
+    // Important that this be here
+    //
+    nrg.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME);
+}
 
 
 
 /**
  * @private
  */
-xiv.prototype.startLoadChain_ = function(){
+xiv.prototype.startDemoLoadChain_ = function(){
+    this.addFoldersToGallery_(['Test Project 1', 
+			       'Test Subject 1', 
+			       'Test Experiment 1-1']);
+
+    this.addFoldersToGallery_(['Test Project 1', 
+			       'Test Subject 1', 
+			       'Test Experiment 1-1',
+			       'Slicer Scenes']);
+
+    this.addFoldersToGallery_(['Test Project 1', 
+			       'Test Subject 1', 
+			       'Test Experiment 1-2']);
+
+    this.addFoldersToGallery_(['Test Project 1', 
+			       'Test Subject 2', 
+			       'Test Experiment 2-1']);
+
+    var ThumbGallery = this.Modal_.getThumbnailGallery();
+    
+    var scans = [];
+    goog.array.forEach(SAMPLE_SCANS, function(sampleScan, i){
+	//window.console.log(sampleScan);
+	var scan = new xiv.VIEWABLE_TYPES['Scan']();
+	scan.addFiles(sampleScan);
+	scan.setFilesGotten(true);
+	window.console.log(scan);
+
+	var sessionInfo = scan.getSessionInfo();
+
+	sessionInfo['Acq. Type'] =  "3D";
+	sessionInfo['Orientation'] = "Sagittal";
+	sessionInfo['Scan ID'] = "6";
+	sessionInfo['Type'] = "t2_spc_1mm_p2";
+
+	this.addViewableTreeToModal(scan, 
+				   ['Test Project 1', 
+				    'Test Subject 1', 
+				    'Test Experiment 1-1']);
+
+	window.console.log("NEED TO SET THUMBNAIL TEXT");
+    }.bind(this))
+
+    /**
+    var thumb = ThumbGallery.createAndAddThumbnail(
+	ViewableTree, // The viewable
+	folderPath
+    );
+    ThumbGallery.setHoverParent(this.Modal_.getElement());
+    thumb.setImage(ViewableTree.getThumbnailUrl());
+    thumb.updateHoverable();
+    */
+}
+
+
+
+/**
+ * @private
+ */
+xiv.prototype.startLiveLoadChain_ = function(){
 
     //
     // Get the modal's zippy tree
@@ -529,7 +487,7 @@ xiv.prototype.startLoadChain_ = function(){
 	// For the first scan
 	//
 	if (nodeCount == 1){
-	    this.initSubjectExpanding_ = true;
+	    this.initSubjExpanding_ = true;
 	    this.initSubjNode_ = node;
 	    this.initSubjFolderNode_ = zippyTree.setExpanded(folders[1], 
 						this.initProjFolderNode_)
@@ -539,7 +497,7 @@ xiv.prototype.startLoadChain_ = function(){
 	// For the first project
 	//
 	if (nodeCount == 2){
-	    this.initExperimentExpanding_ = true;
+	    this.initExptExpanding_ = true;
 	    this.initExptNode_ = node;
 	    this.initExptFolderNode_ = 
 		zippyTree.setExpanded(folders[2], 
@@ -574,7 +532,7 @@ xiv.prototype.getFolderTitlesFromTreeNode_ = function(treeNode){
 
 /**
  * @param {!gxnat.ProjectTree.TreeNode} treeNode
- * @return {Array.<Array.string>>} The folder collection/
+ * @return {Array.<Array.string>>} The folder collection
  * @private
  */
 xiv.prototype.createFoldersFromTreeNode_ = function(treeNode){
@@ -593,43 +551,45 @@ xiv.prototype.createFoldersFromTreeNode_ = function(treeNode){
  * @private
  */
 xiv.prototype.onSubjectZippyExpanded_ = function(path) {
-    //window.console.log("SUBJECT URL! ", path, path.getDeepestLevel());
+    //window.console.log(path, path.getDeepestLevel());
 
+    //
+    // Begin the loadExperiments sequence...
+    //
     this.ProjectTree_.loadExperiments(path['originalUrl'], null, 
 	function(exptNodes){
 
-	    
-
-
 	//
-	// If we are in the init subject
+	// If we are in the init subject, then... 
 	//
 	if (path.pathByLevel('subjects') == 
 	    this.initPath_.pathByLevel('subjects')  && 
-	    this.initSubjectExpanding_){
+	    this.initSubjExpanding_){
+
 	    //
-	    // Set the subject node pertaining to the current data path
-	    // to be on top
+	    // We set the experiment node pertaining to the current data path
+	    // to be on top of ALL other experiments
 	    //
+
 	    //window.console.log('\n\n\n*********', exptNodes);
 	    var tempPath = this.initPath_.pathByLevel('experiments');
 	    this.initExptNode_ = this.ProjectTree_.
 		getExperimentNodeByUri(tempPath);
 	    goog.array.remove(exptNodes, this.initExptNode_);
 	    goog.array.insertAt(exptNodes, this.initExptNode_, 0);
-	    this.initSubjectExpanding_ = false;
+	    this.initSubjExpanding_ = false;
 	    //window.console.log('\n\n\n*********', exptNodes);
 	    
 	}
 
 	//
-	// This will check for redundance.
+	// Then, we create folders from tree node.
+	// This will also check for redundance.
 	//
 	goog.array.forEach(exptNodes, function(exptNode){
 	    //window.console.log(exptNode);
 	    this.createFoldersFromTreeNode_(exptNode);
 	}.bind(this))
-
     }.bind(this), 'experiments');
 }
 
@@ -673,44 +633,6 @@ xiv.prototype.setOnZippyExpanded_ = function() {
 	nrg.ui.ZippyNode.EventType.EXPANDED, this.onZippyExpanded_.bind(this));
 }
 
-
-
-/**
- * Begins the XNAT Image Viewer.
- *
- * @public
- */
-xiv.prototype.show = function(){
-    
-    //
-    // Set the Modal's opacity to 0, then attatch to document.
-    //
-    this.Modal_.getElement().style.opacity = 0;
-    this.Modal_.render();
-
-    //----------------------------------------------
-    // IMPORTANT!!!!    DO NOT ERASE!!!!!!!
-    //
-    // We need to listen for the zippy tree (thumbnail gallery) expands
-    // in order to Async load unloaded experiments
-    //----------------------------------------------
-    this.setOnZippyExpanded_();
-
-    //
-    // Set the button callbacks once rendered.
-    //
-    this.setModalButtonCallbacks_();
-
-    //
-    // The the project tab expanded
-    //
-    this.Modal_.getProjectTab().setExpanded(true, 0, 1000);
-
-    //
-    // Important that this be here
-    //
-    nrg.fx.fadeInFromZero(this.Modal_.getElement(), xiv.ANIM_TIME);
-}
 
 
 
@@ -804,9 +726,9 @@ xiv.prototype.loadExperiment_ = function(exptUrl, opt_callback) {
 	    opt_callback();
 	}
 
-	if (this.initExperimentExpanding_){
+	if (this.initExptExpanding_){
 	    //this.Modal_.getThumbnailGallery().getZippyTree().playFx();
-	    this.initExperimentExpanding_ = false;
+	    this.initExptExpanding_ = false;
 
 	    //
 	    // Contract other experiments
@@ -886,23 +808,26 @@ xiv.prototype.setModalButtonCallbacks_ = function(){
  * @private
  */
 xiv.prototype.createModalPopup_ = function(){
-
+    //
+    // Create the popup
+    //
     var popup = open(this.rootUrl_ + '/scripts/viewer/xiv/popup.html', 
 		   'XNAT Image Viewer', 'width=600,height=600');
     popup.focus();
 
+    //
+    // Set the popup to re-launch the image viewere once opened
+    //
     var dataPath = this.dataPaths_[0];
     var pOnload = function() {
 	popup.launchXImgView(dataPath, 'popup', serverRoot);
     }
-
     popup.onload = pOnload.bind(this);
 
-    // Dispose
+    //
+    // Dispose of the existing
+    //
     this.dispose();
-
-    // Reload window
-    //window.location.reload();
 }
 
 
@@ -1006,57 +931,83 @@ function(folders, opt_correspondingData){
 /**
  * Adds a viewable to the modal.
  * @param {gxnat.vis.ViewableTree} ViewableTree The Viewable to add.
+ * @param {!Array.<string>=} opt_folderList The optional folders.  They're 
+ *    derived from the ViewableTree argument, otherwise.
  * @public
  */
-xiv.prototype.addViewableTreeToModal = function(ViewableTree){
-    //window.console.log(ViewableTree);
-    if (!this.Modal_.getThumbnailGallery()) { return };
-    //window.console.log("Thumb gallery");
+xiv.prototype.addViewableTreeToModal = 
+function(ViewableTree, opt_folderList){
+    window.console.log("Add Viewable Tree to Modal", ViewableTree);
+
+    //
+    // Get the thumbnail gallery
+    //
     var ThumbGallery = this.Modal_.getThumbnailGallery();
 
-    var endNode = this.ProjectTree_.getExperimentNodeByUri(
+    //
+    // Do nothing if there's no thumbnail gallery
+    //
+    if (!goog.isDefAndNotNull(ThumbGallery)) { return };
+
+
+    //
+    // Derive the folderList if it's not provided
+    //
+    if (!goog.isDefAndNotNull(opt_folderList)){
+	//
+	// Get the experiment node of the ViewableTree
+	//
+	var endNode = this.ProjectTree_.getExperimentNodeByUri(
 	    ViewableTree.getExperimentUrl());
-    var folderPath = this.getFolderTitlesFromTreeNode_(endNode);
-    
-    
+	opt_folderList = this.getFolderTitlesFromTreeNode_(endNode);
+    }
+
+
     //
     // Only add an additional folder if the ViewableTree is a slicer scene
     //
     if (ViewableTree.getCategory() != 'Scans'){
-	folderPath.push(ViewableTree.getCategory());
+	opt_folderList.push(ViewableTree.getCategory());
     }
-    
+
+    //
+    // IMPORTANT!!
+    // 
+    // Query for the fileList of the ViewableTree.  Once the files have been
+    // retrieved, then we add the ViewableTree to the thumbnail gallery.
+    //
     ViewableTree.getFileList(function(){
-	//ThumbGallery.setHoverParent(this.Modal_.getElement());
-	//window.console.log('FILES!', ViewableTree.getViewableGroups().length);
+
 	//
-	// IMPORTANT!!! This filters out empty viewables
+	// IMPORTANT!!! 
+	//
+	// Filters out empty ViewableTrees!!
 	//
 	if (ViewableTree.getViewableGroups().length > 0){
+
+	    //
+	    // Create and add the thumbnail, with its folders
+	    //
 	    var thumb = ThumbGallery.createAndAddThumbnail(
-		ViewableTree, // The viewable
-		folderPath
-	    );
+		ViewableTree, opt_folderList);
+
+	    //
+	    // Set the hoverable parent for the thumbnail gallery.
+	    // TODO: Determine if this needs to be called *every* time (?)
+	    //
 	    ThumbGallery.setHoverParent(this.Modal_.getElement());
+
+	    //
+	    // Set the thumbnail's image.
+	    //
 	    thumb.setImage(ViewableTree.getThumbnailUrl());
+
+	    //
+	    // Update the hoverable of the thumbnail for positioning.
+	    //
 	    thumb.updateHoverable();
 	}
     }.bind(this))
-}
-
-
-
-/**
- * Creates the modal element.
- *
- * @private
- */
-xiv.prototype.createModal_ = function(){
-    this.Modal_ = new this.modalType_();
-    this.Modal_.setMode(this.mode_);
-    window.onresize = function () { 
-	this.Modal_.updateStyle() 
-    }.bind(this);
 }
 
 
@@ -1115,8 +1066,8 @@ xiv.prototype.dispose_ = function() {
     this.initPath_.dispose();
     delete this.initPath_;
 
-    delete this.initExperimentExpanding_;
-    delete this.initSubjectExpanding_;
+    delete this.initExptExpanding_;
+    delete this.initSubjExpanding_;
     delete this.initProjNode_;
     delete this.initSubjNode_;
     delete this.initExptNode_;

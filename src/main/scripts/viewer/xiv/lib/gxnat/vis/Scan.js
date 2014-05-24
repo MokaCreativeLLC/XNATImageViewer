@@ -13,31 +13,25 @@ goog.require('gxnat.vis.ViewableGroup');
 /**
  * Subclass of the 'AjaxViewableTree' class pertaining to Slicer .mrb files.
  * 
- * @param {!string} experimentUrl The experiment-level url of the viewable.
- * @param {!Object} viewableJson The json associated with the viewable.
- * @param {function=} opt_initComplete The callback when the init process is 
+ * @param {Object=} opt_viewableJson The json associated with the viewable.
+ * @param {string=} opt_experimentUrl The experiment-level url of the viewable.
+ * @param {Function=} opt_initComplete The callback when the init process is 
  *     complete.
  * @constructor
  * @extends {gxnat.vis.AjaxViewableTree}
  */
 goog.provide('gxnat.vis.Scan');
-gxnat.vis.Scan = function(experimentUrl, viewableJson, opt_initComplete) {
+gxnat.vis.Scan = 
+function(opt_viewableJson, opt_experimentUrl, opt_initComplete) {
     //
     // superclass
     //
-    goog.base(this, 'Scans', experimentUrl, viewableJson);
+    goog.base(this, 'Scans', opt_viewableJson, opt_experimentUrl);
 
-    
     //
-    // Get the thumbnail image
+    // Set the init frames to 0
     //
-    //this.getThumbnailImage();
-
-    //this.getFileList(function(){
-	//window.console.log("GET FILES DONE!");
-	//this.loadViewableTree_(ViewableSet);
-	//this.getThumbnailImage();
-    //}.bind(this))
+    this.sessionInfo['Total Frames'] = 0;
 
     //
     // Call init complete
@@ -175,9 +169,20 @@ gxnat.vis.Scan.prototype.setViewableMetadata = function(){
  * @inheritDoc
  */
 gxnat.vis.Scan.prototype.getFileList = function(callback){
+    //
+    // Run callback if we already have the files
+    //
+    if (this.filesGotten){
+	window.console.log("FILES GOTTEN!", this.filesGotten);
+	callback();
+	return;
+    }
 
+    //
+    // A sample query looks like this:
     //http://localhost:8080/xnat/REST/projects/2/subjects/
     //localhost_S00004/experiments/localhost_E00017/scans/7?format=json
+    //
 
     //
     // Get the scan metadata first
@@ -233,7 +238,7 @@ gxnat.vis.Scan.prototype.fileFilter = function(fileName){
 /**
  * @inheritDoc
  */
-gxnat.vis.Scan.prototype.addFiles = function(fileName) {
+gxnat.vis.Scan.prototype.addFiles = function(fileNames) {
 
     //window.console.log("ADD FILES!");
     if (this.ViewableGroups.length == 0){
@@ -244,8 +249,12 @@ gxnat.vis.Scan.prototype.addFiles = function(fileName) {
     if (this.ViewableGroups[0].getViewables().length == 0){
 	this.ViewableGroups[0].addViewable(new gxnat.vis.Viewable());
     }
-    this.ViewableGroups[0].getViewables()[0].addFiles(fileName, 
+    this.ViewableGroups[0].getViewables()[0].addFiles(fileNames, 
 						      this.fileFilter);
+
+    this.sessionInfo['Total Frames'] = 
+	this.ViewableGroups[0].getViewables()[0].getFiles().length;
+
 }
 
 

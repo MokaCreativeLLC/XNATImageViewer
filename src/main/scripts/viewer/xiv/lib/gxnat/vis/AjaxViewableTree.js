@@ -18,44 +18,41 @@ goog.require('gxnat.vis.ViewableTree');
  *
  * @constructor
  * @param {!string} category The category of the viewable.
- * @param {!string} experimentUrl The experiment-level url of the viewable.
- * @param {!Object} viewableJson The json associated with the viewable.
+ * @param {Object=} opt_viewableJson The json associated with the viewable.
+ * @param {string=} opt_experimentUrl The experiment-level url of the viewable.
  * @extends {goog.vis.ViewableTree}
  */
 goog.provide('gxnat.vis.AjaxViewableTree');
 gxnat.vis.AjaxViewableTree = 
-function(category, experimentUrl, viewableJson) {
+function(category,  opt_viewableJson, opt_experimentUrl) {
     goog.base(this);
 
+    //
+    // Set the category
+    //
     this.setCategory(category);
 
+    //
+    // Add the path parameters
+    //
+    if (goog.isDefAndNotNull(opt_experimentUrl) && 
+	goog.isDefAndNotNull(opt_viewableJson)){
+
+	this.experimentUrl = opt_experimentUrl;   
+
+	this.queryUrl = gxnat.Path.graftUrl(this.experimentUrl, 
+					    opt_viewableJson['URI'], 
+					    'experiments');
+
+	this.Path = new gxnat.Path(this.queryUrl);
+    }
+
+
     /**
-     * @type {!string}
+     * @type {Object<string, string>=}
      * @protected
      */
-    this.experimentUrl = experimentUrl;
-
-
-    /**
-     * @type {!Object<string, string>}
-     * @protected
-     */
-    this.json = viewableJson;
-
-
-    /**
-     * @type {!string} 
-     * @protected
-     */    
-    this.queryUrl = gxnat.Path.graftUrl(this.experimentUrl, this.json['URI'], 
-					'experiments');
-    
-    /**
-     * @type {!string} 
-     * @protected
-     */
-    this.Path = new gxnat.Path(this.queryUrl);
-
+    this.json = opt_viewableJson;
 
     /**
      * @type {Object}
@@ -69,9 +66,56 @@ goog.exportSymbol('gxnat.vis.AjaxViewableTree', gxnat.vis.AjaxViewableTree);
 
 
 /**
- * @type {!boolean}
+ * @const
+ * @private
  */
-gxnat.vis.AjaxViewableTree.prototype.filesGotten_ = false;
+gxnat.vis.AjaxViewableTree.VIEWABLE_KEY_MAP = {
+    'ID': 'Scan ID',
+    'Name': 'Name',
+    'type': 'Scan Type'
+}
+
+
+
+/**
+ * @const
+ * @private
+ */
+gxnat.vis.AjaxViewableTree.SUBJECT_KEY_MAP = {
+    'yob': 'Year of Birth',
+    'acquisition_site': 'Acq. Site',
+    'date': 'Date',
+    'scanner': 'Scanner'
+}
+
+
+
+/**
+ * @type {string=}
+ * @protected
+ */
+gxnat.vis.AjaxViewableTree.prototype.experimentUrl;
+
+
+/**
+ * @type {string=} 
+ * @protected
+ */    
+gxnat.vis.AjaxViewableTree.prototype.queryUrl;
+
+/**
+ * @type {gxnat.Path=} 
+ * @protected
+ */
+gxnat.vis.AjaxViewableTree.prototype.Path;
+
+
+
+/**
+ * @type {!boolean}
+ * @protected
+ */
+gxnat.vis.AjaxViewableTree.prototype.filesGotten = false;
 
 
 
@@ -79,8 +123,18 @@ gxnat.vis.AjaxViewableTree.prototype.filesGotten_ = false;
  * @return {!boolean}
  * @public
  */
-gxnat.vis.AjaxViewableTree.prototype.filesGotten = function(){
-    return this.filesGotten_;
+gxnat.vis.AjaxViewableTree.prototype.getFilesGotten = function(){
+    return this.filesGotten;
+}
+
+
+
+/**
+ * @param {!boolean}
+ * @public
+ */
+gxnat.vis.AjaxViewableTree.prototype.setFilesGotten = function(bool){
+    this.filesGotten = bool;
 }
 
 
@@ -119,23 +173,12 @@ gxnat.vis.AjaxViewableTree.prototype.getSessionInfo = function() {
  * @inheritDoc
  */
 gxnat.vis.AjaxViewableTree.prototype.setViewableMetadata = function() {
-
-    if (goog.isDefAndNotNull(this.json['ID'])){
-	this.sessionInfo['Scan ID'] = this.json['ID']
-    }
-
-    if (goog.isDefAndNotNull(this.json['Name'])){
-	this.sessionInfo['Name'] = this.json['Name']
-    }
-
-    if (goog.isDefAndNotNull(this.json['type'])){
-	this.sessionInfo['Type'] = this.json['type']
-    }
-
-    if (goog.isDefAndNotNull(this.json['quality'])){
-	this.sessionInfo['Quality'] = this.json['quality']
-    }
-    //window.console.log('\n\nJSON', this.json);
+    goog.object.forEach(gxnat.vis.AjaxViewableTree.VIEWABLE_KEY_MAP, 
+    function(val, key){
+	if (goog.isDefAndNotNull(this.json[key])){
+	    this.sessionInfo[val] = this.json[key]
+	}
+    }.bind(this))
 }
 
 
@@ -154,41 +197,13 @@ gxnat.vis.AjaxViewableTree.prototype.setProjectMetadata = function(meta) {
  */
 gxnat.vis.AjaxViewableTree.prototype.setSubjectMetadata = function(meta) {
     goog.base(this, 'setSubjectMetadata', meta);
-    //window.console.log(meta);
-    //window.console.log('SUBJ METADATA', this.subjectMetadata);
+     goog.object.forEach(gxnat.vis.AjaxViewableTree.SUBJECT_KEY_MAP, 
+     function(val, key){
+	if (goog.isDefAndNotNull(this.subjectMetadata[key])){
+	    this.sessionInfo[val] = this.subjectMetadata[key]
+	}
+    }.bind(this))
 
-    //if (goog.isDefAndNotNull(this.subjectMetadata['gender'])){
-    //	this.sessionInfo['Gender'] = this.subjectMetadata['gender'];
-    //}
-
-    if (goog.isDefAndNotNull(this.subjectMetadata['yob'])){
-	this.sessionInfo['Year of Birth'] = this.subjectMetadata['yob'];
-    }
-
-    if (goog.isDefAndNotNull(this.subjectMetadata['handedness'])){
-	this.sessionInfo['Handedness'] = this.subjectMetadata['handedness'];
-    }
-
-    if (goog.isDefAndNotNull(this.subjectMetadata['race'])){
-	//this.sessionInfo['Race'] = this.subjectMetadata['race'];
-    }
-
-    if (goog.isDefAndNotNull(this.subjectMetadata['dob'])){
-	//this.sessionInfo['DOB'] = this.subjectMetadata['dob'];
-    }
-
-    if (goog.isDefAndNotNull(this.subjectMetadata['acquisition_site'])){
-	this.sessionInfo['Acq. Site'] = 
-	    this.subjectMetadata['acquisition_site'];
-    }
-
-    if (goog.isDefAndNotNull(this.subjectMetadata['date'])){
-	this.sessionInfo['Date'] = this.subjectMetadata['date'];
-    }
-
-    if (goog.isDefAndNotNull(this.subjectMetadata['scanner'])){
-	this.sessionInfo['Scanner'] = this.subjectMetadata['scanner'];
-    }
 
     /*
       acquisition_site: "WashU"
@@ -286,6 +301,18 @@ function(viewableFolderUrl, runCallback, opt_doneCallback) {
  * @public
  */
 gxnat.vis.AjaxViewableTree.prototype.getFileList = function(callback){
+
+    //
+    // Run callback if we already have the files
+    //
+    if (this.filesGotten){
+	callback();
+	return;
+    }
+
+    //
+    // Otherwise, run query
+    //
     //window.console.log("GET FILES", this);
     var fileQueryUrl = this.queryUrl + this.fileQuerySuffix;
     var absoluteUrl = '';    
@@ -305,7 +332,7 @@ gxnat.vis.AjaxViewableTree.prototype.getFileList = function(callback){
 	    }
 	}
 	callback();
-	this.filesGotten_ = true;
+	this.filesGotten = true;
     }.bind(this))
 }
 
@@ -360,7 +387,7 @@ function(url, AjaxViewableTreeSubClass, opt_runCallback, opt_doneCallback) {
     gxnat.vis.AjaxViewableTree.loopFolderContents(queryFolder, function(json){
 	//window.console.log(json, pathObj);
 	viewable = new AjaxViewableTreeSubClass(
-	    pathObj.pathByLevel('experiments'), json, opt_runCallback);
+	     json, pathObj.pathByLevel('experiments'), opt_runCallback);
 
     }, opt_doneCallback)
 }
@@ -374,7 +401,7 @@ gxnat.vis.AjaxViewableTree.prototype.dispose = function() {
     goog.base(this, 'dispose');
 
     
-    delete this.filesGotten_;
+    delete this.filesGotten;
 
     // Session info.
     goog.object.clear(this.sessionInfo);
