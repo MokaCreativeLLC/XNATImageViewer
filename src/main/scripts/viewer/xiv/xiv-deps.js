@@ -1,3 +1,26 @@
+goog.addDependency('../../../../sample-data/sampleData.js', 
+['xiv.sampleData'], []);
+
+goog.addDependency('../../../../sample-data/Sample.js', 
+['xiv.sampleData.Sample'], []);
+
+goog.addDependency('../../../../sample-data/SampleCollection.js', 
+['xiv.sampleData.SampleCollection'], []);
+
+goog.addDependency('../../../../sample-data/Scans.js', 
+['xiv.sampleData.Scans'], [
+    'xiv.sampleData.SampleCollection',
+    'xiv.sampleData.Sample',
+]);
+
+
+goog.addDependency('../../../../sample-data/SlicerScenes.js', 
+['xiv.sampleData.SlicerScenes'], [
+    'xiv.sampleData.SampleCollection',
+    'xiv.sampleData.Sample',
+]);
+
+
 goog.addDependency('../../../../vis/vis.js', 
 ['xiv.vis'], []);
 

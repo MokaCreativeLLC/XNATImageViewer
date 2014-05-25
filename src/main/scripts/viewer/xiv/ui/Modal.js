@@ -73,7 +73,7 @@ xiv.ui.Modal.CSS_SUFFIX = {
 /**
  * @enum {string}
  */
-xiv.ui.Modal.buttonTypes = {
+xiv.ui.Modal.ButtonTypes = {
     CLOSE : 'Close XNAT Image Viewer.',
     FULLSCREEN: 'Enter full-screen mode.',
     POPUP: 'Popup to new window.',
@@ -83,14 +83,6 @@ xiv.ui.Modal.buttonTypes = {
     REMOVECOLUMN: 'Remove ViewBox column',
     INSERTCOLUMN: 'Insert ViewBox column',
 }
-
-
-
-/**
- * @type {!number} 
- * @const
- */
-xiv.ui.Modal.ANIM_LEN = 500;
 
 
 
@@ -137,7 +129,7 @@ xiv.ui.Modal.createButtons_ = function(iconUrl){
 
     // Generate new button IDs
     var buttonIds = {};
-    goog.object.forEach(xiv.ui.Modal.buttonTypes, function(buttonType, key){
+    goog.object.forEach(xiv.ui.Modal.ButtonTypes, function(buttonType, key){
 	buttonIds[key] = xiv.ui.Modal.ID_PREFIX + '.' + 
 			 goog.string.toTitleCase(key) + 'Button';
     })
@@ -156,6 +148,14 @@ xiv.ui.Modal.createButtons_ = function(iconUrl){
     })
     return buttonsWithOriginalKeys
 }
+
+
+
+/**
+ * @type {!number} 
+ * @const
+ */
+xiv.ui.Modal.prototype.animLen_ = 500;
 
 
 
@@ -269,7 +269,6 @@ xiv.ui.Modal.prototype.getProjectTab = function() {
 
 
 /**
- * As stated.
  * @return {!Element} The described element.
  * @public
  */
@@ -279,12 +278,20 @@ xiv.ui.Modal.prototype.getPopupButton = function() {
 
 
 /**
- * As stated.
  * @return {!Element} The described element.
  * @public
  */
 xiv.ui.Modal.prototype.getCloseButton = function() {
   return this.buttons_.CLOSE;
+}
+
+
+/**
+ * @return {!Element} The described element.
+ * @public
+ */
+xiv.ui.Modal.prototype.getFullScreenButton = function() {
+  return this.buttons_.FULLSCREEN;
 }
 
 
@@ -448,7 +455,7 @@ xiv.ui.Modal.prototype.fadeInHiddenViewers_ = function() {
     this.ViewBoxHandler_.loop( function(ViewBox, i, j) { 
 	//window.console.log(ViewBox.getElement().style.opacity);
 	if (ViewBox.getElement().style.opacity == 0) {
-	    nrg.fx.fadeIn(ViewBox.getElement(), xiv.ui.Modal.ANIM_LEN);
+	    nrg.fx.fadeIn(ViewBox.getElement(), this.animLen_);
 	}
     })
 }
@@ -463,7 +470,7 @@ xiv.ui.Modal.prototype.createModalResizeAnimation_ = function () {
     var modalResize = /**@type {!goog.fx.dom.Resize}*/ new goog.fx.dom.Resize(
 	this.getElement(), [this.getElement().offsetWidth, 
 			    this.getElement().offsetHeight], 
-	[this.dims_.W, this.dims_.H], xiv.ui.Modal.ANIM_LEN, 
+	[this.dims_.W, this.dims_.H], this.animLen_, 
 	goog.fx.easing.easeOut);
     this.anims_.push(modalResize);
 
@@ -483,7 +490,7 @@ xiv.ui.Modal.prototype.createModalSlideAnimation_ = function () {
 	this.getElement(), [this.getElement().offsetLeft, 
 			    this.getElement().offsetTop], 
 	[this.dims_.X, this.dims_.Y], 
-	xiv.ui.Modal.ANIM_LEN, goog.fx.easing.easeOut));
+	this.animLen_, goog.fx.easing.easeOut));
 }
 
 
@@ -500,7 +507,7 @@ xiv.ui.Modal.prototype.createViewBoxSlideAnimations_ = function () {
 	this.anims_.push(new goog.fx.dom.Slide(
 	    elt, [elt.offsetLeft, elt.offsetTop], 
 	    [this.dims_.viewbox.X[i][j], this.dims_.viewbox.Y[i][j]], 
-	    xiv.ui.Modal.ANIM_LEN, goog.fx.easing.easeOut));	
+	    this.animLen_, goog.fx.easing.easeOut));	
     }.bind(this))
 }
 
@@ -517,7 +524,7 @@ xiv.ui.Modal.prototype.createViewBoxResizeAnimations_ = function () {
 	this.anims_.push(new goog.fx.dom.Resize(
 	    elt, [elt.offsetWidth, elt.offsetHeight], 
 	    [this.dims_.viewbox.W, this.dims_.viewbox.H], 
-	    xiv.ui.Modal.ANIM_LEN, goog.fx.easing.easeOut));	
+	    this.animLen_, goog.fx.easing.easeOut));	
     }.bind(this))
 }
 
@@ -1294,6 +1301,38 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
 }
 
 
+goog.exportSymbol('xiv.ui.Modal.ID_PREFIX', xiv.ui.Modal.ID_PREFIX);
+goog.exportSymbol('xiv.ui.Modal.CSS_SUFFIX', xiv.ui.Modal.CSS_SUFFIX);
 
+goog.exportSymbol('xiv.ui.Modal.Mode', xiv.ui.Modal.Mode);
+goog.exportSymbol('xiv.ui.Modal.ModeTypes', xiv.ui.Modal.ModeTypes);
+goog.exportSymbol('xiv.ui.Modal.ButtonTypes', xiv.ui.Modal.ButtonTypes);
 
-
+goog.exportSymbol('xiv.ui.Modal.prototype.getViewBoxHandler', 
+		  xiv.ui.Modal.prototype.getViewBoxHandler);
+goog.exportSymbol('xiv.ui.Modal.prototype.getThumbnailGallery', 
+		  xiv.ui.Modal.prototype.getThumbnailGallery);
+goog.exportSymbol('xiv.ui.Modal.prototype.getProjectTab', 
+		  xiv.ui.Modal.prototype.getProjectTab);
+goog.exportSymbol('xiv.ui.Modal.prototype.getPopupButton', 
+		  xiv.ui.Modal.prototype.getPopupButton);
+goog.exportSymbol('xiv.ui.Modal.prototype.getCloseButton', 
+		  xiv.ui.Modal.prototype.getCloseButton);
+goog.exportSymbol('xiv.ui.Modal.prototype.getFullScreenButton', 
+		  xiv.ui.Modal.prototype.getFullScreenButton);
+goog.exportSymbol('xiv.ui.Modal.prototype.render', 
+		  xiv.ui.Modal.prototype.render);
+goog.exportSymbol('xiv.ui.Modal.prototype.setMode', 
+		  xiv.ui.Modal.prototype.setMode);
+goog.exportSymbol('xiv.ui.Modal.prototype.getMode', 
+		  xiv.ui.Modal.prototype.getMode);
+goog.exportSymbol('xiv.ui.Modal.prototype.highlightInUseThumbnails', 
+		  xiv.ui.Modal.prototype.highlightInUseThumbnails);
+goog.exportSymbol('xiv.ui.Modal.prototype.animateModal', 
+		  xiv.ui.Modal.prototype.animateModal);
+goog.exportSymbol('xiv.ui.Modal.prototype.updateStyle', 
+		  xiv.ui.Modal.prototype.updateStyle);
+goog.exportSymbol('xiv.ui.Modal.prototype.initSubComponents', 
+		  xiv.ui.Modal.prototype.initSubComponents);
+goog.exportSymbol('xiv.ui.Modal.prototype.disposeInternal', 
+		  xiv.ui.Modal.prototype.disposeInternal);

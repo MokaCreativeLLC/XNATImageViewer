@@ -58,7 +58,7 @@ gxnat.slicer.extractMrmls = function(fileList){
  */
 gxnat.slicer.getMrmlAsXml = function(mrmlUrl, callback) {
     gxnat.get(mrmlUrl, function(mrmlText){
-	//window.console.log(mrmlText);
+	window.console.log(mrmlText);
 	callback(new goog.dom.xml.loadXml(mrmlText));
     }, 'text');
 }
@@ -79,7 +79,7 @@ gxnat.slicer.getMrmlNodes = function(fileList, mrbUrl, callback) {
     var mrmlNodes = [];
     var counter = 0;
 
-    //window.console.log("MRML URLS", mrmlUrls);
+    window.console.log("MRML URLS", mrmlUrls);
 
     goog.array.forEach(mrmlUrls, function(mrmlUrl){
 	gxnat.slicer.getMrmlAsXml(mrmlUrl, function(mDoc) {

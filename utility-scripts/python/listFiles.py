@@ -6,7 +6,7 @@ def getFiles(walkPath):
     """ Use os.walk to walk through the file list.
     """
     fileDict = {}
-    walkPath = '../../sample-data'
+    walkPath = '../../sample-data/slicer-scenes'
     for root, dirs, files in os.walk(walkPath):
        for f in files:
            if not root in  fileDict:

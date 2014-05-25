@@ -168,6 +168,15 @@ gxnat.vis.AjaxViewableTree.prototype.getSessionInfo = function() {
 }
 
 
+/**
+ * @param {!Object} sessionInfo
+ * @public
+ */
+gxnat.vis.AjaxViewableTree.prototype.setSessionInfo = function(sessionInfo) {
+    this.sessionInfo = sessionInfo;
+}
+
+
 
 /**
  * @inheritDoc

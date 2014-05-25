@@ -42,31 +42,6 @@ function(opt_viewableJson, opt_experimentUrl, opt_initComplete) {
     goog.base(this, 'Slicer Scenes', opt_viewableJson, opt_experimentUrl);
 
 
-/**
-    //
-    // Then get the files
-    //
-    this.getFileList(function(){
-
-	//
-	// Then get the thumbnail image
-	//
-	this.getThumbnailImage(function(){
-
-	    //
-	    // set the metadata
-	    //
-	    this.setViewableMetadata();
-
-
-	    //
-	    // Then get the mrml nodes
-	    //
-	    this.getMrmlNodes_(opt_initComplete);
-	}.bind(this));
-    }.bind(this))
-*/
-
     if (opt_initComplete){
 	opt_initComplete(this);
     }
@@ -116,6 +91,15 @@ gxnat.vis.Slicer.prototype.fileContentsKey = 'File Name';
  * @inheritDoc
  */
 gxnat.vis.Slicer.prototype.getFileList = function(callback){
+
+    //
+    // Run callback if we already have the files
+    //
+    if (this.filesGotten){
+	this.getMrmlNodes_(callback);
+	return;
+    }
+
 
     gxnat.vis.Scan.superClass_.getFileList.call(this, function(){
 	//this.getThumbnailImage();
@@ -350,8 +334,7 @@ gxnat.vis.Slicer.prototype.getThumbnailImage = function(opt_callback){
 
 
 /**
- * @param {!string | !Array.<string>} fileNames
- * @public
+ * @inheritDoc
  */
 gxnat.vis.Slicer.prototype.addFiles = function(fileNames) {
     if (!goog.isArray(fileNames)) { fileNames = [fileNames] };

@@ -173,7 +173,6 @@ gxnat.vis.Scan.prototype.getFileList = function(callback){
     // Run callback if we already have the files
     //
     if (this.filesGotten){
-	window.console.log("FILES GOTTEN!", this.filesGotten);
 	callback();
 	return;
     }

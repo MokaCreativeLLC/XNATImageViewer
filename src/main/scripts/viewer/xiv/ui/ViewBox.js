@@ -2084,8 +2084,7 @@ xiv.ui.ViewBox.prototype.onMenuItemSelected_ = function(e) {
     //window.console.log('trigger LayoutHandler_ here!');
     //window.console.log("SET LAYOUT HERE?");
     this.LayoutHandler_.setLayout(e.title);
-    window.console.log(this.LayoutHandler_.getElement());
-
+    //window.console.log(this.LayoutHandler_.getElement());
     //
     // Update the help overlay
     //

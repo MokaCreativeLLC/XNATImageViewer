@@ -248,13 +248,12 @@ nrg.ui.Slider.prototype.getThumb = function(){
  * @public
  */
 nrg.ui.Slider.prototype.bindToMouseWheel = function (element) {
-
     if (!goog.isDefAndNotNull(this.MouseWheelHandlers_)) {
 	this.MouseWheelHandlers_ = {};
     }
 
     if (!goog.isDefAndNotNull(this.MouseWheelHandlers_[element.id])) {
-	window.console.log("BINDING", element.id);
+	//window.console.log("BINDING", element.id);
 	var mouseWheelHandler = new goog.events.MouseWheelHandler(element);
 	mouseWheelHandler.addEventListener(
 	    goog.events.MouseWheelHandler.EventType.MOUSEWHEEL,
@@ -274,7 +273,6 @@ nrg.ui.Slider.prototype.bindToMouseWheel = function (element) {
  */
 nrg.ui.Slider.prototype.updateStyle = function () {
     var pos = this.getValue();
-
     this.setValue(Math.max(this.getMinimum(), 
 			   Math.min(pos + 1, this.getMaximum())))
     this.setValue(pos);   

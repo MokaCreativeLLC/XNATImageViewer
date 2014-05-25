@@ -91,7 +91,7 @@ xiv.ui.Thumbnail.prototype.createText_ = function(){
     //
     // Derive the header text
     //
-    var headerText = 'Scan ';
+    var headerText = '';
 
 
     //
@@ -128,6 +128,9 @@ xiv.ui.Thumbnail.prototype.createText_ = function(){
 	}
     }.bind(this))
 
+    //
+    // Set the text
+    //
     this.setText(displayText);
 }
 
