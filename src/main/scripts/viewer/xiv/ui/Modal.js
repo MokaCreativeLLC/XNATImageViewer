@@ -182,7 +182,7 @@ xiv.ui.Modal.prototype.animLen_ = 500;
  * @type {!string}
  * @private
  */
-xiv.ui.Modal.prototype.currState_ = xiv.ui.Modal.States.FULLSCREEN;
+xiv.ui.Modal.prototype.currState_ = xiv.ui.Modal.States.DEMO;
 
 
 
@@ -976,8 +976,11 @@ xiv.ui.Modal.prototype.adaptToState_ = function(){
 			 goog.getCssName(this.constructor.CSS.ELEMENT, 
 					 this.currState_))
 
-    
-    if (this.currState_ == xiv.ui.Modal.States.WINDOWED) {
+    if (this.currState_ == xiv.ui.Modal.States.DEMO) {
+	this.buttons_.FULLSCREEN.style.visibility = 'visible';
+	this.buttons_.WINDOWED.style.visibility = 'hidden';
+    } 
+    else if (this.currState_ == xiv.ui.Modal.States.WINDOWED) {
 	this.buttons_.FULLSCREEN.style.visibility = 'visible';
 	this.buttons_.WINDOWED.style.visibility = 'hidden';
     } 

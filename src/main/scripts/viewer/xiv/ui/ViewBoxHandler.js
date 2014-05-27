@@ -269,8 +269,25 @@ xiv.ui.ViewBoxHandler.prototype.removeColumn = function(opt_animate) {
     if (this.ViewBoxes_[0] && this.ViewBoxes_[0].length > 1) {
 	goog.array.forEach(this.ViewBoxes_, function(ViewBoxCol, i) {
 	    var rowLen =  ViewBoxCol.length - 1;
+	    if (goog.isDefAndNotNull(ViewBoxCol[rowLen].
+				     getThumbnailLoadTime())){
+
+		//
+		// Check if ViewBox is in use.
+		//
+		ViewBoxCol[rowLen].showInUseDialog();
+		ViewBoxCol[rowLen].setInUseSelect(function(ViewBox) {
+		    ViewBox.clearThumbnailLoadTime();
+		    this.removeColumn(opt_animate);
+		}.bind(this));
+		return;
+	    }
+
 	    nrg.fx.fadeTo(ViewBoxCol[rowLen].getElement(), 
 			    nrg.ui.Component.animationLengths.FAST, 0);
+
+
+
 
 	    goog.dom.removeNode(this.dragDropHandles_[
 		ViewBoxCol[rowLen].getElement().id]);
@@ -339,6 +356,15 @@ xiv.ui.ViewBoxHandler.prototype.removeRow = function(opt_animate) {
     if (this.ViewBoxes_.length > 1) {
 	var delRow = this.ViewBoxes_[this.ViewBoxes_.length - 1];
 	goog.array.forEach(delRow, function(currDelViewBox) { 
+	    //
+	    // Check if ViewBox is in use.
+	    //
+	    currDelViewBox.showInUseDialog();
+	    currDelViewBox.setInUseSelect(function(ViewBox) {
+		ViewBox.clearThumbnailLoadTime();
+		this.removeRow(opt_animate);
+	    }.bind(this));
+
 	    nrg.fx.fadeTo(currDelViewBox.getElement(), 
 			    nrg.ui.Component.animationLengths.FAST, 0);
 	    // Remove the drag drop handles
@@ -693,11 +719,16 @@ xiv.ui.ViewBoxHandler.prototype.getFirstEmpty = function() {
     // return the first one.
     //
     var ViewBoxes = this.getViewBoxes();
-    ViewBoxes.sort(function(a, b){
-	if (a.getThumbnailLoadTime() < b.getThumbnailLoadTime()) return -1;
-	if (a.getThumbnailLoadTime() > b.getThumbnailLoadTime()) return 1;
-	return 0;
-    })
+    if (goog.isArray(ViewBoxes)){
+	ViewBoxes.sort(function(a, b){
+	    if (a.getThumbnailLoadTime() < b.getThumbnailLoadTime()) return -1;
+	    if (a.getThumbnailLoadTime() > b.getThumbnailLoadTime()) return 1;
+	    return 0;
+	})
+    }
+    else {
+	ViewBoxes = [ViewBoxes];
+    }
     return ViewBoxes[0];
 }
 

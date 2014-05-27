@@ -13,6 +13,7 @@ goog.require('goog.style');
 goog.require('goog.ui.ToggleButton');
 goog.require('goog.ui.ImagelessButtonRenderer');
 goog.require('goog.testing.events');
+goog.require('goog.ui.Dialog');
 
 // nrg
 goog.require('nrg.ui.Component');
@@ -148,7 +149,8 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     INFOOVERLAY_TEXT: 'infooverlay-text',
     HELPOVERLAY: 'helpoverlay',
     HELPOVERLAY_OVERLAY: 'helpoverlay-overlay',
-    HELPOVERLAY_TEXT: 'helpoverlay-text'
+    HELPOVERLAY_TEXT: 'helpoverlay-text',
+    INUSEDIALOG: 'inusedialog',
 }
 
 
@@ -305,6 +307,13 @@ xiv.ui.ViewBox.prototype.toggleButtons_ = null;
 
 
 
+/**
+ * @type {goog.ui.Dialog}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.inUseDialog_;
+
+
 
 /**
  * @type {!boolean}
@@ -396,6 +405,15 @@ xiv.ui.ViewBox.prototype.unhighlight =  function() {
  */
 xiv.ui.ViewBox.prototype.getThumbnailLoadTime =  function() {
     return this.thumbLoadTime_;
+}
+
+
+
+/**
+ * @public
+ */
+xiv.ui.ViewBox.prototype.clearThumbnailLoadTime =  function() {
+    this.thumbLoadTime_ = undefined;
 }
 
 
@@ -1156,16 +1174,35 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
  */
 xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 
+    //
+    // Prompt user to load if something is already loaded
+    //
+    if (goog.isDefAndNotNull(this.thumbLoadTime_)){
+	this.showInUseDialog();
+	this.setInUseSelect(function(){
+	    this.thumbLoadTime_ = undefined;
+	    this.load(ViewableSet, opt_initLoadComponents);
+	}.bind(this));
+	return;
+    }  
+
+
+    //
+    // Output error if there's no data in the set.
+    //
     if (!goog.isDefAndNotNull(ViewableSet)){
 	this.onRenderError_('The data set is empty!');
 	return;
     }
 
 
+    //
+    // Show / hide load components
+    //
     opt_initLoadComponents = goog.isDefAndNotNull(opt_initLoadComponents) ?
 	opt_initLoadComponents : true;
-
     this.hideSubComponent_(this.ViewableGroupMenu_, 400);
+
         
     //
     // Init the load components
@@ -1400,7 +1437,7 @@ xiv.ui.ViewBox.prototype.adjustLayoutHandler_ = function(){
  * @private
  */
 xiv.ui.ViewBox.prototype.initLoadComponents_ = function() {
-
+    this.initInUseDialog_();
     this.initZipTabs_();
     this.initToggleMenu_();
     this.initLayoutHandler_();
@@ -1494,7 +1531,6 @@ xiv.ui.ViewBox.prototype.showSubComponent_ = function(subComponent,
 
 
 /**
-* As stated.
 * @private
 */
 xiv.ui.ViewBox.prototype.initProgressBarPanel_ = function(){
@@ -1503,14 +1539,108 @@ xiv.ui.ViewBox.prototype.initProgressBarPanel_ = function(){
     this.ProgressBarPanel_.getElement().style.opacity = 0;
     this.ProgressBarPanel_.getElement().style.zIndex = 100000;
     this.hideSubComponent_(this.ProgressBarPanel_);
-
 }
 
 
 
+/**
+ * @param {Function=} opt_onYes
+ * @param {Function=} opt_onNo
+ * @public
+ */
+xiv.ui.ViewBox.prototype.setInUseSelect = function(opt_onYes, opt_onNo){
+    goog.events.listenOnce(this.inUseDialog_, goog.ui.Dialog.EventType.SELECT, 
+    function(e) {
+	if (e.key === 'yes' && goog.isDefAndNotNull(opt_onYes)){
+	    opt_onYes(this);
+	}
+	if (e.key === 'no' && goog.isDefAndNotNull(opt_onNo)){
+	    opt_onNo(this);
+	}
+    }.bind(this));
+}
+
+
 
 /**
-* As stated.
+* @public
+*/
+xiv.ui.ViewBox.prototype.showInUseDialog = function(){
+    this.inUseDialog_.setVisible(true);
+    var dialogElt = this.inUseDialog_.getElement();
+    this.inUseDialog_.setContent('ViewBox in use.  Proceed anyway?');
+    //
+    // Set the appriopriate elements to not have a background.
+    //
+    var blackablesArr = [
+	goog.dom.getElementsByClass('modal-dialog-title', dialogElt),
+	goog.dom.getElementsByClass('modal-dialog-content', dialogElt),
+	goog.dom.getElementsByClass('modal-dialog-buttons', dialogElt),
+    ];
+    goog.array.forEach(blackablesArr, function(blackableArr){
+	goog.array.forEach(blackableArr, function(elt){
+	    elt.style.backgroundColor = 'none';
+	    elt.style.background = 'none';	    
+	}.bind(this))
+    }.bind(this))
+    
+    //
+    // Add the class.
+    //
+    goog.dom.classes.add(dialogElt, this.constructor.CSS.INUSEDIALOG);
+
+    this.inUseDialog_.reposition();
+    this.inUseDialog_.setModal(true);
+
+    var viewFrameEltSize = goog.style.getSize(this.viewFrameElt_);
+    var inUseBg = this.inUseDialog_.getBackgroundElement();
+    nrg.style.setStyle(inUseBg, {
+	'width': viewFrameEltSize.width,
+	'height': viewFrameEltSize.height,
+	'z-index': 199 
+    })
+    
+    //
+    // Reposition
+    // 
+    var dialogSize = goog.style.getSize(dialogElt);
+    dialogElt.style.left = 'calc(50% - ' + dialogSize.width/2 + 'px)';
+    dialogElt.style.top = 'calc(50% - ' + dialogSize.height/2 + 'px)';
+
+
+    //
+    // transition
+    //
+    var dialogElt = this.inUseDialog_.getElement();
+    
+    var popupShowTransition = goog.fx.dom.FadeIn(dialogElt,
+	nrg.ui.Component.animationLengths.FAST);
+    var popupHideTransition = goog.fx.dom.FadeOut(dialogElt,
+	nrg.ui.Component.animationLengths.FAST);
+    var bgShowTransition = goog.fx.dom.FadeIn(dialogElt,
+	nrg.ui.Component.animationLengths.FAST);
+    var bgHideTransition = goog.fx.dom.FadeOut(dialogElt,
+	nrg.ui.Component.animationLengths.FAST);
+
+  this.inUseDialog_.setTransition(popupShowTransition, popupHideTransition,
+				  bgShowTransition, bgHideTransition);
+}
+
+
+
+/**
+* @private
+*/
+xiv.ui.ViewBox.prototype.initInUseDialog_ = function(){
+    this.inUseDialog_ = new goog.ui.Dialog();
+    this.inUseDialog_.setHasTitleCloseButton(false);
+    this.inUseDialog_.setButtonSet(goog.ui.Dialog.ButtonSet.YES_NO);
+    this.inUseDialog_.render(this.viewFrameElt_);
+}
+
+
+
+/**
 * @private
 */
 xiv.ui.ViewBox.prototype.initZipTabs_ = function(){
@@ -2413,6 +2543,12 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     }.bind(this))
     delete this.menus_;
 
+
+    // in use dialog
+    if (goog.isDefAndNotNull(this.inUseDialog_)){
+	this.inUseDialog_.disposeInternal();
+	delete this.inUseDialog_;
+    }
 
     // Primitive types
     delete this.Viewables_;
