@@ -33,34 +33,47 @@ goog.require('xiv.ui.Modal');
 
 /**
  * The main XNAT Image Viewer class.
- * @param {!string} mode The mode of the image viewer.
+ * @param {!state} xivState The state of XIV ('live' or 'demo').
+ * @param {!string} modalState The state of the xiv's Modal object.
  * @param {!string} dataPath The data path to begin viewable query from.
  * @param {!string} rootUrl The serverRoot.
- * @param {!boolean} isDemoMode If in demo mode.
  * @extends {goog.Disposable}
  * @constructor
  */
 goog.provide('xiv');
-xiv = function(mode, dataPath, rootUrl, isDemoMode){
+xiv = function(xivState, modalState, dataPath, rootUrl){
+    //
+    // Superclass init
+    //
     goog.base(this);
 
-    // Inits on the constructor.
+
+    // 
+    // Load the custom extensions
+    //
     xiv.loadCustomExtensions();
+
+
+    //
+    // Adjust the document style (this gets reverted when we close out
+    // of the viwer)
+    //
     xiv.adjustDocumentStyle();
-
-
-    /**
-     * @type {!string}
-     * @private
-     */
-    this.mode_ = mode || 'windowed';
 
 
     /**
      * @type {!boolean}
      * @private
      */
-    this.isDemoMode_ = isDemoMode;
+    this.currState_ = goog.isDefAndNotNull(xivState) ? xivState : 
+	xiv.States.DEMO;
+
+
+    /**
+     * @type {!string}
+     * @private
+     */
+    this.modalState_ = modalState;
 
 
     /** 
@@ -76,6 +89,7 @@ xiv = function(mode, dataPath, rootUrl, isDemoMode){
      */
     this.queryPrefix_ = gxnat.Path.getQueryPrefix(rootUrl);
 
+
     /** 
      * NOTE: Necessary!!! If not done it creates weird dependency 
      * issues if declared outside of the constructor method.
@@ -90,18 +104,19 @@ xiv = function(mode, dataPath, rootUrl, isDemoMode){
     // Add the data path
     //
     this.addDataPath_(dataPath);
-
-    /**
-     * @type {gxnat.Path}
-     * @private
-     */
-    this.initPath_ = new gxnat.Path(this.dataPaths_[0]);
-    //window.console.log('add data path:', dataPath);
 };
 goog.inherits(xiv, goog.Disposable);
 goog.exportSymbol('xiv', xiv);
 
 
+
+/**
+ * @enum {string}
+ */
+xiv.States = {
+    DEMO: 'demo',
+    LIVE: 'live'
+}
 
 
 /**
@@ -166,6 +181,14 @@ xiv.prototype.animTime_ = 300;
  * @private
  */
 xiv.prototype.introTabSlideTime_ = 1000;
+
+
+
+/**
+ * @type {gxnat.Path}
+ * @private
+ */
+xiv.prototype.initPath_;
 
 
 
@@ -316,13 +339,12 @@ xiv.prototype.begin = function() {
     //
     // Demo load chain
     //
-    if (this.isDemoMode_){
+    if (this.currState_ == xiv.States.DEMO){
 	//
 	// Remove the popup (we don't need it)
 	//
 	goog.dom.removeNode(this.Modal_.getPopupButton());
 	goog.dom.removeNode(this.Modal_.getCloseButton());
-	this.Modal_.getFullScreenButton().style.top = '23px'
 
 	//
 	// Load the tree only when the tab is done with its init move
@@ -335,6 +357,10 @@ xiv.prototype.begin = function() {
 
     } 
     
+    //
+    // Set the state to windowed
+    //
+    this.Modal_.setState(this.modalState_);
     //
     // Live load chain
     //
@@ -360,15 +386,12 @@ xiv.prototype.createModal_ = function(){
     this.Modal_.setImagePrefix(serverRoot);
 
     //
-    // Set the mode of the modal
-    //
-    this.Modal_.setMode(this.mode_);
-
-    //
     // Link window's onresize to Modal's updateStyle
     //
-    window.onresize = function () { 
-	this.Modal_.updateStyle() 
+    window.onresize = function () {
+	if (goog.isDefAndNotNull(this.Modal_)){
+	    this.Modal_.updateStyle();
+	} 
     }.bind(this);
 }
 
@@ -662,11 +685,17 @@ xiv.prototype.hide = function(opt_callback){
  */
 xiv.prototype.addDataPath_ = function(path) {
     this.dataPaths_ = this.dataPaths_ ? this.dataPaths_ : [];
+
+    
     var updatedPath = (path[0] !== "/") ? "/" + path : path;
     if (this.dataPaths_.indexOf(this.queryPrefix_ + updatedPath) === -1) {
 	var finalPath = (updatedPath.indexOf(this.queryPrefix_) === -1) ?
 	    this.queryPrefix_ + updatedPath : updatedPath;
 	this.dataPaths_.push(finalPath); 
+    }
+
+    if (this.dataPaths_.length == 1){
+	this.initPath_ = new gxnat.Path(this.dataPaths_[0]);
     }
 }
 
@@ -816,8 +845,10 @@ xiv.prototype.createModalPopup_ = function(){
     //
     // Create the popup
     //
-    var popup = open(this.rootUrl_ + '/scripts/viewer/xiv/popup.html', 
-		   'XNAT Image Viewer', 'width=600,height=600');
+    //alert(this.queryPrefix_, this.dataPaths_[0].split(this.queryPrefix_));
+    var popup = open(this.rootUrl_ + '/scripts/viewer/xiv/popup.html?' + 
+		     this.dataPaths_[0],//.split(this.queryPrefix_)[1], 
+		   'XImgView', 'width=1200,height=800');
     popup.focus();
 
     //
@@ -825,7 +856,7 @@ xiv.prototype.createModalPopup_ = function(){
     //
     var dataPath = this.dataPaths_[0];
     var pOnload = function() {
-	popup.launchXImgView(dataPath, 'popup', serverRoot);
+	popup.launchXImgView(dataPath, xiv.ui.Modal.States.POPUP, serverRoot);
     }
     popup.onload = pOnload.bind(this);
 
@@ -943,8 +974,8 @@ function(folders, opt_correspondingData){
  */
 xiv.prototype.addViewableTreeToModal_ = 
 function(ViewableTree, opt_folderList){
-    window.console.log("Add Viewable Tree to Modal", ViewableTree, 
-		       opt_folderList);
+    //window.console.log("Add Viewable Tree to Modal", ViewableTree, 
+    //opt_folderList);
 
     //
     // Get the thumbnail gallery
@@ -1070,9 +1101,11 @@ xiv.prototype.dispose_ = function() {
     delete this.rootUrl_;
     delete this.queryPrefix_;
     delete this.iconUrl_;
-
-    this.initPath_.dispose();
-    delete this.initPath_;
+    
+    if (goog.isDefAndNotNull(this.initPath_)){
+	this.initPath_.dispose();
+	delete this.initPath_;
+    }
 
     delete this.initExptExpanding_;
     delete this.initSubjExpanding_;

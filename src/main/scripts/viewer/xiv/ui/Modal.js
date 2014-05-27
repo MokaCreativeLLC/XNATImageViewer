@@ -54,6 +54,7 @@ goog.exportSymbol('xiv.ui.Modal', xiv.ui.Modal);
 xiv.ui.Modal.ID_PREFIX =  'xiv.ui.Modal';
 
 
+
 /**
  * @enum {string}
  */
@@ -68,6 +69,22 @@ xiv.ui.Modal.CSS_SUFFIX = {
     PROJECTTAB_DRAGGER : 'projecttab-dragger',
     PROJECTTAB_DRAGGER_HANDLE : 'projecttab-dragger-handle',
 }
+
+
+
+/**
+ * @enum {string}
+ * @expose
+ */
+xiv.ui.Modal.States = {
+    FULLSCREEN: 'fullscreen',
+    POPUP: 'popup',
+    FULLSCREEN_POPUP: 'fullscreen-popup',
+    WINDOWED: 'windowed',
+    DEMO: 'demo',
+    DEMO_FULLSCREEN: 'demp-fullscreen',
+}
+
 
 
 /**
@@ -85,61 +102,31 @@ xiv.ui.Modal.ButtonTypes = {
 }
 
 
-
-/**
- * Constant upon instantiation.  See:
- * https://groups.google.com/forum/#!msg/closure-library-discuss/
- *    CJQGRIhkS9U/YEc3-7j4QoQJ
- * 
- * @struct
- * @param {!string} name
- * @param {number=} opt_wRatio The optional width ratio (defaults to 1).
- * @param {number=} opt_hRatio The optional height ratio (defaults to 1).
- */
-xiv.ui.Modal.Mode = function(name, opt_wRatio, opt_hRatio) {
-    this.VIEWBOX_HORIZ_MARGIN = 25;
-    this.VIEWBOX_VERT_MARGIN = 25;
-    this.VIEWBOX_MIN_H =  320;
-    this.VIEWBOX_MIN_W = 320;
-    this.NAME = name;
-    this.W_RATIO = opt_wRatio || 1;
-    this.H_RATIO = opt_hRatio || 1;
-}
-
-
-
-/**
- * @struct
- */
-xiv.ui.Modal.ModeTypes = {
-    FULLSCREEN:  new xiv.ui.Modal.Mode('fullscreen'),
-    POPUP: new xiv.ui.Modal.Mode('popup'),
-    FULLSCREEN_POPUP: new xiv.ui.Modal.Mode('fullscreen-popup'),
-    WINDOWED: new xiv.ui.Modal.Mode('windowed', .95, .95)
-}
-
-
-
 /**
  * As stated.
  * @param {!string} iconUrl
  * @private
  */
 xiv.ui.Modal.createButtons_ = function(iconUrl){
-
+    //
     // Generate new button IDs
+    //
     var buttonIds = {};
     goog.object.forEach(xiv.ui.Modal.ButtonTypes, function(buttonType, key){
 	buttonIds[key] = xiv.ui.Modal.ID_PREFIX + '.' + 
 			 goog.string.toTitleCase(key) + 'Button';
     })
 
+    //
     // Make buttons
+    //
     var buttons = 
     nrg.dom.createBasicHoverButtonSet(goog.object.getValues(buttonIds));
 
+    //
     // Make object that maps old keys to buttons.
-    var buttonsWithOriginalKeys =/**@dict*/{};
+    //
+    var buttonsWithOriginalKeys = {};
     goog.object.forEach(buttonIds, function(newKey, oldKey){
 	buttonsWithOriginalKeys[oldKey] = buttons[newKey];
 	goog.dom.classes.set(buttons[newKey], 
@@ -152,6 +139,38 @@ xiv.ui.Modal.createButtons_ = function(iconUrl){
 
 
 /**
+ * @const
+ * @private
+ */
+xiv.ui.Modal.prototype.horizMargin_ = 29;
+
+
+
+/**
+ * @const
+ * @private
+ */
+xiv.ui.Modal.prototype.verticalMargin_ = 29;
+
+
+
+/**
+ * @const
+ * @private
+ */
+xiv.ui.Modal.prototype.minHeight_ = 320;
+
+
+
+/**
+ * @const
+ * @private
+ */
+xiv.ui.Modal.prototype.minWidth_ = 320;
+
+
+
+/**
  * @type {!number} 
  * @const
  */
@@ -160,10 +179,10 @@ xiv.ui.Modal.prototype.animLen_ = 500;
 
 
 /**
- * @type {!xiv.ui.Modal.Mode}
+ * @type {!string}
  * @private
  */
-xiv.ui.Modal.prototype.currMode_ = xiv.ui.Modal.ModeTypes.WINDOWED;
+xiv.ui.Modal.prototype.currState_ = xiv.ui.Modal.States.FULLSCREEN;
 
 
 
@@ -171,7 +190,7 @@ xiv.ui.Modal.prototype.currMode_ = xiv.ui.Modal.ModeTypes.WINDOWED;
  * @type {string}
  * @private
  */
-xiv.ui.Modal.prototype.prevMode_;
+xiv.ui.Modal.prototype.prevState_;
 
 
 
@@ -303,51 +322,32 @@ xiv.ui.Modal.prototype.render = function(opt_parentElement) {
     goog.base(this, 'render', opt_parentElement);
     this.initSubComponents();
     this.ViewBoxHandler_.insertColumn(false);
-    this.adjustStyleToMode_();
-    this.updateStyle();
+    this.setState(this.currState_);
 }
 
 
 
 
 /**
- * As stated.
- * @param {!string | !xiv.ui.Modal.Mode} mode The mode to test
+ * @param {!string} state The state to set.
  * @public
  */
-xiv.ui.Modal.prototype.setMode = function(mode) {
-    
-    // first check if mode is a string
-    if (goog.isString(mode)){
-	for (var key in xiv.ui.Modal.ModeTypes) {
-
-	    //window.console.log(key, xiv.ui.Modal.ModeTypes[key].NAME);
-	    if (xiv.ui.Modal.ModeTypes[key].NAME == mode){
-		mode = xiv.ui.Modal.ModeTypes[key];
-		break;
-	    }
-	}
+xiv.ui.Modal.prototype.setState = function(state) {
+    if (goog.isDefAndNotNull(this.currState_)){
+	this.prevState_ = this.currState_;
     }
-
-    // If we still have string or it's not a valide mode, throw the error.
-    if (goog.isString(mode) || 
-	!goog.object.containsValue(xiv.ui.Modal.ModeTypes, mode)){
-	window.console.log(xiv.ui.Modal.ModeTypes);
-	throw new TypeError('Invalid xiv.ui.Modal mode: ' + mode);
-    }
-
-    this.currMode_ = mode;
+    this.currState_ = state;
+    this.adaptToState_();
 }
 
 
 
 /**
- * As stated.
- * @return {!Object} The button object.
+ * @return {!string} The state.
  * @public
  */
-xiv.ui.Modal.prototype.getMode = function() {
-  return this.currMode_;
+xiv.ui.Modal.prototype.getState = function() {
+  return this.currState_;
 }
 
 
@@ -379,23 +379,28 @@ xiv.ui.Modal.prototype.highlightInUseThumbnails = function () {
  * @public
  */
 xiv.ui.Modal.prototype.animateModal  = function () {
+    //
     // Get the dims.
+    //
     this.computeDims_();
     //window.console.log(this.dims_);
 
+    //
     // Setup.
+    //
     this.anims_ = goog.isDefAndNotNull(this.anims_) ? this.anims_ : [];
     this.animQueue_ = goog.isDefAndNotNull(this.animQueue_) ? 
 	this.animQueue_ : new goog.fx.AnimationParallelQueue();
 
+    //
     // Create anims
-    this.createModalSlideAnimation_();
-    this.createModalResizeAnimation_();
+    //
     this.createViewBoxSlideAnimations_();
     this.createViewBoxResizeAnimations_();
 
-	
+    //
     // Events.
+    //
     goog.events.listen(this.animQueue_, 'end', 
 	this.onModalAnimationEnd_.bind(this));
 
@@ -403,7 +408,9 @@ xiv.ui.Modal.prototype.animateModal  = function () {
 	this.animQueue_.add(anim);
     }.bind(this))
 
+    //
     // Play.
+    //
     this.animQueue_.play();
     this.highlightInUseThumbnails();
 }
@@ -411,7 +418,6 @@ xiv.ui.Modal.prototype.animateModal  = function () {
 
 
 /**
- * As stated.
  * @private
  */
 xiv.ui.Modal.prototype.onModalAnimationAnimate_ = function() {
@@ -423,12 +429,13 @@ xiv.ui.Modal.prototype.onModalAnimationAnimate_ = function() {
 
 
 /**
- * As stated.
  * @private
  */
 xiv.ui.Modal.prototype.onModalAnimationEnd_ = function() {
 
+    //
     // Destroy anims
+    //
     goog.array.forEach(this.anims_, function(anim){
 	this.animQueue_.remove(anim);
 	goog.events.removeAll(anim);
@@ -436,10 +443,14 @@ xiv.ui.Modal.prototype.onModalAnimationEnd_ = function() {
 	anim.disposeInternal();
     }.bind(this))
 
+    //
     // Clear anims array
+    //
     goog.array.clear(this.anims_);
 
+    //
     // Update
+    //
     this.updateStyle();
     this.fadeInHiddenViewers_();
 }
@@ -451,63 +462,31 @@ xiv.ui.Modal.prototype.onModalAnimationEnd_ = function() {
  * @private
  */
 xiv.ui.Modal.prototype.fadeInHiddenViewers_ = function() {
+    //
     // Fade in new viewers.
+    //
     this.ViewBoxHandler_.loop( function(ViewBox, i, j) { 
 	//window.console.log(ViewBox.getElement().style.opacity);
 	if (ViewBox.getElement().style.opacity == 0) {
-	    nrg.fx.fadeIn(ViewBox.getElement(), this.animLen_);
+	    nrg.fx.fadeIn(ViewBox.getElement(), 
+			  nrg.ui.Component.animationLengths.MEDIUM);
 	}
     })
 }
 
 
 
-
 /**
- * @private
- */
-xiv.ui.Modal.prototype.createModalResizeAnimation_ = function () {
-    var modalResize = /**@type {!goog.fx.dom.Resize}*/ new goog.fx.dom.Resize(
-	this.getElement(), [this.getElement().offsetWidth, 
-			    this.getElement().offsetHeight], 
-	[this.dims_.W, this.dims_.H], this.animLen_, 
-	goog.fx.easing.easeOut);
-    this.anims_.push(modalResize);
-
-    // Events
-    // NOTE: This listener gets removed in this.onModalAnimationEnd_
-    goog.events.listen(modalResize, 'animate', 
-		       this.onModalAnimationAnimate_.bind(this))
-}
-
-
-
-/**
- * @private
- */
-xiv.ui.Modal.prototype.createModalSlideAnimation_ = function () {
-    this.anims_.push(new goog.fx.dom.Slide(
-	this.getElement(), [this.getElement().offsetLeft, 
-			    this.getElement().offsetTop], 
-	[this.dims_.X, this.dims_.Y], 
-	this.animLen_, goog.fx.easing.easeOut));
-}
-
-
-
-/**
- * As stated.
  * @private
  */
 xiv.ui.Modal.prototype.createViewBoxSlideAnimations_ = function () {
-    var elt = /** @type {Element} */ null; 
-
+    var elt = null; 
     this.ViewBoxHandler_.loop( function(ViewBox, i, j) { 
 	elt = ViewBox.getElement();
 	this.anims_.push(new goog.fx.dom.Slide(
 	    elt, [elt.offsetLeft, elt.offsetTop], 
 	    [this.dims_.viewbox.X[i][j], this.dims_.viewbox.Y[i][j]], 
-	    this.animLen_, goog.fx.easing.easeOut));	
+	    nrg.ui.Component.animationLengths.MEDIUM, goog.fx.easing.easeOut));	
     }.bind(this))
 }
 
@@ -517,14 +496,13 @@ xiv.ui.Modal.prototype.createViewBoxSlideAnimations_ = function () {
  * @private
  */
 xiv.ui.Modal.prototype.createViewBoxResizeAnimations_ = function () {
-    var elt = /** @type {Element} */ null; 
-
+    var elt = null; 
     this.ViewBoxHandler_.loop( function(ViewBox, i, j) { 
 	elt = ViewBox.getElement();
 	this.anims_.push(new goog.fx.dom.Resize(
 	    elt, [elt.offsetWidth, elt.offsetHeight], 
 	    [this.dims_.viewbox.W, this.dims_.viewbox.H], 
-	    this.animLen_, goog.fx.easing.easeOut));	
+	    nrg.ui.Component.animationLengths.MEDIUM, goog.fx.easing.easeOut));	
     }.bind(this))
 }
 
@@ -533,33 +511,18 @@ xiv.ui.Modal.prototype.createViewBoxResizeAnimations_ = function () {
 
 /**
  * Calculates the xiv.ui.Modal's dimensions based on pixel values.
+ *
  * Translates the dimenions to the other widget dimenions.  This is primarily
  * for resize purposes or row / column insertion and removal.
  * @private
  */
 xiv.ui.Modal.prototype.computeDims_ = function () {
     this.dims_ = goog.isDefAndNotNull(this.dims_) ? this.dims_ : {};
-    this.computeModalDims_();
-
+    this.calcDims();
     this.computeZipTabsDims_();
-    //window.console.log("THUMB", this.dims_);
     this.computeViewBoxDims_();
     this.computeViewBoxPositions_();
-    this.computeModalPosition_();
     this.computeButtonPositions_();
-}
-
-
-
-/**
- * @private
- */ 
-xiv.ui.Modal.prototype.computeModalDims_ = function() {
-    var scalerH = this.currMode_.H_RATIO;
-    var scalerW = this.currMode_.W_RATIO;
-    this.dims_ = goog.isDefAndNotNull(this.dims_) ? this.dims_ : {};
-    this.dims_.H = window.innerHeight * scalerH;
-    this.dims_.W = window.innerWidth * scalerW;
 }
 
 
@@ -573,16 +536,15 @@ xiv.ui.Modal.prototype.computeZipTabsDims_ = function() {
     this.dims_.thumbgallery.W = 
 	goog.style.getSize(this.ProjectTab_.getElement()).width
 
-    this.dims_.thumbgallery.H = this.dims_.H - 
-	this.currMode_.VIEWBOX_VERT_MARGIN * 2;
+    this.dims_.thumbgallery.H = this.currSize.height - 
+	this.verticalMargin_ * 2;
     this.dims_.thumbgallery.Y = 
-	this.currMode_.VIEWBOX_VERT_MARGIN;
+	this.verticalMargin_;
 }
 
 
 
 /**
- * As stated.
  * @private
  */ 
 xiv.ui.Modal.prototype.computeViewBoxDims_ = function() {
@@ -591,41 +553,27 @@ xiv.ui.Modal.prototype.computeViewBoxDims_ = function() {
     this.dims_.viewbox.ROWS = this.ViewBoxHandler_.rowCount();
 
     this.dims_.viewbox.H = 
-	(this.dims_.H - ((this.dims_.viewbox.ROWS + 1) * 
-	this.currMode_.VIEWBOX_HORIZ_MARGIN)) / 
+	(this.currSize.height - ((this.dims_.viewbox.ROWS + 1) * 
+	this.horizMargin_)) / 
 	this.dims_.viewbox.ROWS;
 
 
     this.dims_.viewbox.W = 
     // The total width to work with
-	(this.dims_.W - this.dims_.thumbgallery.W - 
-	this.currMode_.VIEWBOX_HORIZ_MARGIN) / 
-	this.dims_.viewbox.COLS - this.currMode_.VIEWBOX_HORIZ_MARGIN;
+	(this.currSize.width - this.dims_.thumbgallery.W - 
+	this.horizMargin_) / 
+	this.dims_.viewbox.COLS - this.horizMargin_;
 
     //window.console.log('Viewboxwidth', this.dims_);
 }
 
-
-
-
-
-/**
- * As stated.
- * @private
- */ 
-xiv.ui.Modal.prototype.computeModalPosition_ = function () {
-    this.dims_.X = (window.innerWidth - this.dims_.W)/2 ;
-    this.dims_.Y = (window.innerHeight - this.dims_.H)/2;
-}
     
 
 /**
- * As stated.
  * @private
  */ 
 xiv.ui.Modal.prototype.computeButtonPositions_ = function () {
-    var tWidth = /**@type {!number}*/
-    this.dims_.viewbox.X[0][0] + 
+    var tWidth = this.dims_.viewbox.X[0][0] + 
     (this.dims_.viewbox.X[0][this.dims_.viewbox.COLS-1] + 
 	this.dims_.viewbox.W - 
     this.dims_.viewbox.X[0][0])/2 
@@ -642,23 +590,18 @@ xiv.ui.Modal.prototype.computeButtonPositions_ = function () {
 
 
 /**
- * As stated.
  * @private
  */ 
 xiv.ui.Modal.prototype.computeViewBoxPositions_ = function () {
-  
     this.dims_.viewbox.X = [];
     this.dims_.viewbox.Y = [];
+    this.dims_.viewbox.START = this.dims_.thumbgallery.W + this.verticalMargin_;
 
-    this.dims_.viewbox.START = this.dims_.thumbgallery.W + 
-	this.currMode_.VIEWBOX_VERT_MARGIN;
-
-    var l = /**@type {!number}*/ 0;
+    var l = 0;
     this.ViewBoxHandler_.loop(function(ViewBox, i, j) { 
 	
 	l = this.dims_.viewbox.START + j * (
-	    this.dims_.viewbox.W + 
-		this.currMode_.VIEWBOX_VERT_MARGIN);
+	    this.dims_.viewbox.W + this.verticalMargin_);
 
 	//window.console.log("L", l);
 	//window.console.log(this.dims_.viewbox.START , j , 
@@ -673,12 +616,10 @@ xiv.ui.Modal.prototype.computeViewBoxPositions_ = function () {
 	    this.dims_.viewbox.Y.push([]);
 	}
 	
-	this.dims_.viewbox.Y[i][j] = (-1 + i * 
-		(this.dims_.viewbox.H + 
-		 this.currMode_.VIEWBOX_HORIZ_MARGIN));
+	this.dims_.viewbox.Y[i][j] = (-1 + i * (this.dims_.viewbox.H + 
+		 this.horizMargin_));
 
-	this.dims_.viewbox.Y[i][j] +=  
-	this.currMode_.VIEWBOX_HORIZ_MARGIN;	
+	this.dims_.viewbox.Y[i][j] += this.horizMargin_;	
     }.bind(this))
 }
 
@@ -688,18 +629,12 @@ xiv.ui.Modal.prototype.computeViewBoxPositions_ = function () {
  * Method for updating the style of the '_modal' element
  * due to window resizing, or any event that requires the 
  * xiv.ui.Modal element change its dimensions.
- * @param {Object.<string, string | number>=}
+ *
  * @public
  */
 xiv.ui.Modal.prototype.updateStyle = function () {
 
     this.computeDims_();
-    nrg.style.setStyle(this.getElement(), {
-	'height' : this.dims_.H,
-	'width': this.dims_.W,
-	'left': this.dims_.X,
-	'top': this.dims_.Y,
-    });
     this.updateStyle_ProjectTab_();
     this.updateStyle_ViewBoxes_();
     this.updateStyle_buttons_();
@@ -772,6 +707,7 @@ xiv.ui.Modal.prototype.initSubComponents = function() {
 
 /**
  * Creates the background of the modal.
+ *
  * @private
  */
 xiv.ui.Modal.prototype.initBackground_ = function() {
@@ -786,6 +722,7 @@ xiv.ui.Modal.prototype.initBackground_ = function() {
 
 /**
  * Creates the modal's buttons.
+ *
  * @private
  */
 xiv.ui.Modal.prototype.initButtons_ = function() {
@@ -793,7 +730,7 @@ xiv.ui.Modal.prototype.initButtons_ = function() {
     goog.object.forEach(this.buttons_, function(button, key){
 	goog.dom.append(this.getElement(), button);
     }.bind(this))
-    this.setFullScreenButtonEvents_();
+ 
     this.setRowColumnInsertRemoveEvents_();
 
     this.buttons_.CLOSE.innerHTML = '<img src=' +
@@ -948,54 +885,45 @@ xiv.ui.Modal.prototype.initViewBoxHandler_ = function() {
 
 
 /**
+ * @private
+ */ 
+xiv.ui.Modal.prototype.onCloseButtonClicked_ = function() {
+    if (this.currState_ === xiv.ui.Modal.States.FULLSCREEN){
+	goog.dom.fullscreen.exitFullScreen();
+    }
+}
+
+
+
+/**
  * Events for when the fullscreen button is clicked.
+ *
  * @private
  */ 
 xiv.ui.Modal.prototype.onFullScreenButtonClicked_ = function() {
-    this.prevMode_ = this.currMode_;
-
-    if (goog.dom.fullscreen.isFullScreen()){
-	goog.dom.fullscreen.exitFullScreen(this.getElement()); 
-	this.setMode(xiv.ui.Modal.ModeTypes.WINDOWED);
-	this.buttons_.FULLSCREEN.style.visibility = 'visible';
-	this.buttons_.WINDOWED.style.visibility = 'hidden';
-	return;
+    goog.dom.fullscreen.requestFullScreen(this.getElement().parentNode); 
+    if (this.currState_ === xiv.ui.Modal.States.POPUP){
+	this.setState(xiv.ui.Modal.States.FULLSCREEN_POPUP);
     }
-
-    goog.dom.fullscreen.requestFullScreen(this.getElement()); 
-    this.setMode(xiv.ui.Modal.ModeTypes.FULLSCREEN);
-    this.buttons_.FULLSCREEN.style.visibility = 'hidden';
-    this.buttons_.WINDOWED.style.visibility = 'visible';
+    else {
+	this.setState(xiv.ui.Modal.States.FULLSCREEN);
+    }
 }
 
 
 
 /**
  * Events for when the 'windowed' button is clicked.
+ *
  * @private
  */ 
 xiv.ui.Modal.prototype.onWindowedButtonClicked_ = function() {
     goog.dom.fullscreen.exitFullScreen(); 
-    this.setMode(this.prevMode_);
-    this.buttons_.FULLSCREEN.style.visibility = 'visible';
-    this.buttons_.WINDOWED.style.visibility = 'hidden';
+    this.setState(this.prevState_);
 }
 
 
-
 /**
- * As stated.
- * @private
- */   
-xiv.ui.Modal.prototype.setFullScreenButtonEvents_ = function(){
-    this.buttons_.WINDOWED.style.visibility = 'hidden';
-}
-
-
-
-/**
- * As stated.
- *
  * @param {Function=} opt_listenMethod (i.e. goog.events.listen or 
  *     goog.events.unlisten.  Defaults to goog.events.listen.
  * @private
@@ -1021,40 +949,59 @@ function(opt_listenMethod){
 
     opt_listenMethod(this.buttons_.REMOVECOLUMN, goog.events.EventType.CLICK, 
 	this.ViewBoxHandler_.removeColumn.bind(this.ViewBoxHandler_));
+
+    opt_listenMethod(this.buttons_.CLOSE, goog.events.EventType.CLICK, 
+	this.onCloseButtonClicked_.bind(this));
 }
 
 
 
-/**
- * As stated.
+/**.
  * @private
  */
-xiv.ui.Modal.prototype.adjustStyleToMode_ = function(){
+xiv.ui.Modal.prototype.adaptToState_ = function(){
+    //
+    // Remove previous state's CSS
+    //
+    if (goog.isDefAndNotNull(this.prevState_)){
+    goog.dom.classes.remove(this.getElement(), 
+			    goog.getCssName(this.constructor.CSS.ELEMENT, 
+					    this.prevState_))
+    }
 
-    if (this.currMode_ !== xiv.ui.Modal.ModeTypes.WINDOWED) {
-	this.getElement().style.borderRadius = 0;
-    } 
+    //
+    // Add new state's CSS
+    //
+    goog.dom.classes.add(this.getElement(), 
+			 goog.getCssName(this.constructor.CSS.ELEMENT, 
+					 this.currState_))
 
-    if (this.currMode_ == xiv.ui.Modal.ModeTypes.POPUP) {
-	//
-	// Remove the popup and close buttons
-	//
-	goog.dom.removeNode(this.buttons_.POPUP);
-	goog.dom.removeNode(this.buttons_.CLOSE);
-
+    
+    if (this.currState_ == xiv.ui.Modal.States.WINDOWED) {
 	this.buttons_.FULLSCREEN.style.visibility = 'visible';
-	this.buttons_.FULLSCREEN.style.top = '23px';
-	this.buttons_.WINDOWED.style.top = '23px';
+	this.buttons_.WINDOWED.style.visibility = 'hidden';
     } 
-    else if (this.currMode_ == xiv.ui.Modal.ModeTypes.FULLSCREEN_POPUP) {
+
+    else if (this.currState_ == xiv.ui.Modal.States.POPUP) {
+	this.buttons_.POPUP.style.visibility = 'hidden';
+	this.buttons_.CLOSE.style.visibility = 'hidden';
+	this.buttons_.FULLSCREEN.style.visibility = 'visible';
+	this.buttons_.WINDOWED.style.visibility = 'hidden';
+    } 
+
+    else if (this.currState_ == xiv.ui.Modal.States.FULLSCREEN_POPUP) {
 	this.buttons_.POPUP.style.visibility = 'hidden';
 	this.buttons_.FULLSCREEN.style.visibility = 'hidden';
-
+	this.buttons_.WINDOWED.style.visibility = 'visible';
     } 
-    else if (this.currMode_ == xiv.ui.Modal.ModeTypes.FULLSCREEN) {
+
+    else if (this.currState_ == xiv.ui.Modal.States.FULLSCREEN) {
 	this.buttons_.POPUP.style.visibility = 'visible';
 	this.buttons_.FULLSCREEN.style.visibility = 'hidden';
+	this.buttons_.WINDOWED.style.visibility = 'visible';
     }
+
+    this.updateStyle();
 }
 
 
@@ -1154,11 +1101,12 @@ xiv.ui.Modal.prototype.onThumbnailDragOver_ = function(e){
 
 /**
  * Callback function for the CLICKED event on the hovered thumbnail.
+ *
  * @param {Event} e The event object. 
  * @private
  */
 xiv.ui.Modal.prototype.onThumbnailClicked_ = function(e){
-    this.ViewBoxHandler_.getFirstEmpty().loadThumbnail(e.thumbnail);
+    this.ViewBoxHandler_.getFirstEmpty().load(e.Thumbnail.getViewable());
 }
 
 
@@ -1170,8 +1118,8 @@ xiv.ui.Modal.prototype.onThumbnailClicked_ = function(e){
  * @private
  */
 xiv.ui.Modal.prototype.onThumbnailDroppedIntoViewBox_ = function(e) {
-    var ViewBox = /**@type {!xiv.ui.ViewBox}*/ 
-    this.ViewBoxHandler_.getViewBoxByElement(e.targetElement);
+    var ViewBox =  
+	this.ViewBoxHandler_.getViewBoxByElement(e.targetElement);
     ViewBox.load(e.Thumbnail.getViewable());
     ViewBox.unhighlight();
 }
@@ -1296,16 +1244,14 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
     delete this.ThumbnailGallery_;
 
     // others
-    delete this.currMode_
-    delete this.prevMode_;
+    delete this.currState_
+    delete this.prevState_;
 }
 
 
+goog.exportSymbol('xiv.ui.Modal.States', xiv.ui.Modal.States);
 goog.exportSymbol('xiv.ui.Modal.ID_PREFIX', xiv.ui.Modal.ID_PREFIX);
 goog.exportSymbol('xiv.ui.Modal.CSS_SUFFIX', xiv.ui.Modal.CSS_SUFFIX);
-
-goog.exportSymbol('xiv.ui.Modal.Mode', xiv.ui.Modal.Mode);
-goog.exportSymbol('xiv.ui.Modal.ModeTypes', xiv.ui.Modal.ModeTypes);
 goog.exportSymbol('xiv.ui.Modal.ButtonTypes', xiv.ui.Modal.ButtonTypes);
 
 goog.exportSymbol('xiv.ui.Modal.prototype.getViewBoxHandler', 
@@ -1322,10 +1268,10 @@ goog.exportSymbol('xiv.ui.Modal.prototype.getFullScreenButton',
 		  xiv.ui.Modal.prototype.getFullScreenButton);
 goog.exportSymbol('xiv.ui.Modal.prototype.render', 
 		  xiv.ui.Modal.prototype.render);
-goog.exportSymbol('xiv.ui.Modal.prototype.setMode', 
-		  xiv.ui.Modal.prototype.setMode);
-goog.exportSymbol('xiv.ui.Modal.prototype.getMode', 
-		  xiv.ui.Modal.prototype.getMode);
+goog.exportSymbol('xiv.ui.Modal.prototype.setState', 
+		  xiv.ui.Modal.prototype.setState);
+goog.exportSymbol('xiv.ui.Modal.prototype.getState', 
+		  xiv.ui.Modal.prototype.getState);
 goog.exportSymbol('xiv.ui.Modal.prototype.highlightInUseThumbnails', 
 		  xiv.ui.Modal.prototype.highlightInUseThumbnails);
 goog.exportSymbol('xiv.ui.Modal.prototype.animateModal', 

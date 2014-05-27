@@ -19,6 +19,7 @@ goog.require('nrg.ui.Component');
 goog.require('nrg.style');
 goog.require('nrg.ui.ZipTabs');
 goog.require('nrg.ui.SlideInMenu');
+goog.require('nrg.ui.ErrorOverlay');
 
 // xiv
 goog.require('xiv.vis.RenderEngine');
@@ -27,6 +28,7 @@ goog.require('xiv.ui.ProgressBarPanel');
 goog.require('xiv.ui.layouts.LayoutHandler');
 goog.require('xiv.ui.ViewableGroupMenu');
 goog.require('xiv.ui.HelpOverlay');
+
 
 
 /**
@@ -387,6 +389,7 @@ xiv.ui.ViewBox.prototype.unhighlight =  function() {
 
 /**
  * Get the associated thumbnail load time for this object.
+ *
  * @return {number} The date (in millseconds) when the last thumbnail was 
  *     loaded into the ViewBox.
  * @public
@@ -442,6 +445,7 @@ xiv.ui.ViewBox.prototype.setLayout = function(layout) {
  */
 xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
     this.ProgressBarPanel_.setValue(0);
+    this.ProgressBarPanel_.showValue(true);
 }
 
 
@@ -455,6 +459,7 @@ xiv.ui.ViewBox.prototype.onRendering_ = function(e){
     //window.console.log("\n\nON RENDERING", e.value);
     this.ProgressBarPanel_.setLabel('');
     this.showSubComponent_(this.ProgressBarPanel_, 0);
+    this.ProgressBarPanel_.showValue(true);
     this.ProgressBarPanel_.setValue(e.value * 100);
 }
 
@@ -1214,11 +1219,12 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 		       xiv.vis.RenderEngine.EventType.RENDERING, 
 		       this.onRendering_.bind(this));
 
-
-
+    //
+    // Show the progress bar, first
+    //
     this.showSubComponent_(this.ProgressBarPanel_, 0);
-    this.ProgressBarPanel_.setLabel('Gathering File Info...', false);
-
+    //this.ProgressBarPanel_.setLabel('Gathering File Info...', false);
+    //this.ProgressBarPanel_.showValue(false);
 
 
     //

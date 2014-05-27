@@ -237,7 +237,7 @@ xiv.ui.HelpOverlay.prototype.addContents_ = function(){
 	this.addText(currTable);
 
 	var lastAddedText = this.getTextElements()[i+1];
-	window.console.log(lastAddedText)
+	//window.console.log(lastAddedText)
 	goog.dom.classes.add(lastAddedText, 
 			     this.constructor.CSS.TEXT);
 

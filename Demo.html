@@ -77,9 +77,7 @@ goog.require('xiv.compatibility');
 //
 // globals
 //
-XIMGVIEW_MODE = 'demo';
-VM_PATH = 'projects/$om.getProject()/subjects/$om.getSubjectId()/' +
-          'experiments/$om.getId()';
+XIV_STATE = 'demo';
 
 
 /**
@@ -98,13 +96,10 @@ VM_PATH = 'projects/$om.getProject()/subjects/$om.getSubjectId()/' +
  *          'experiments/$om.getId()')
  *
  * @param {!string} opt_modalState The modal state to set the image viewer to.
- *     Defaults to 'windowed'.  Options are 'windowed', 'popup', 'fullscreen', 
- *     'fullscreen-popup'.
  *
  * @param {!string} opt_serverRoot The optional server root.
  */
 function launchXImgView(opt_dataPath, opt_modalState, opt_serverRoot) {
-
     //
     // Verify compatibilities (browser, WebGL, etc.)
     //
@@ -117,8 +112,8 @@ function launchXImgView(opt_dataPath, opt_modalState, opt_serverRoot) {
     // Need to set the global serverRoot property if opt_serverRoot is 
     // argument is given.
     //
-    // NOTE: serverRoot automatically provided in the live version (in the VM)
-    // but in the demo version, we have to provide this global variable.
+    // NOTE: 'serverRoot' is automatically provided in the live version (in the 
+    // VM) but in the demo version, we have to provide this global variable.
     //
     if (opt_serverRoot){
         serverRoot = opt_serverRoot;
@@ -128,27 +123,41 @@ function launchXImgView(opt_dataPath, opt_modalState, opt_serverRoot) {
     //
     // Set the modalState argument ('windowed', 'popup', etc.)
     //
-    opt_modalState = opt_modalState || 'windowed';
+    var modalState = goog.isDefAndNotNull(opt_modalState) ? opt_modalState : 
+        xiv.ui.Modal.States.WINDOWED;
 
 
     //
-    // Set the dataPath argument (i.e. where to query the data from).  Not
-    // necessary in the DEMO.
+    // Set the dataPath argument (i.e. where to query the data from).  
     //
-    opt_dataPath = opt_dataPath || VM_PATH;
+    // NOTE: If we're in popup mode, we take the data path from the URL of the
+    // page, which is fed in as a query string
+    //
+    var dataPath = '';
+    if (opt_modalState === xiv.ui.Modal.States.POPUP) {
+        dataPath = document.URL.split('?')[1];
+        //alert(dataPath);
+    }
+    else {
+        dataPath = goog.isDefAndNotNull(opt_dataPath) ? opt_dataPath : 
+            'projects/$om.getProject()/subjects/$om.getSubjectId()/' +
+            'experiments/$om.getId()';
+    }
 
 
+
     //
-    // Set the rootUrl argument -- varies depending on modal state.
+    // Set the rootUrl argument -- varies depending on modal state, 
+    // hence why we differentiate between dataPath and rootUrl.
     //
-    var rootUrl = (opt_modalState === 'popup') ? '' : serverRoot;
+    var rootUrl = (opt_modalState === xiv.ui.Modal.States.POPUP) ? '' : 
+        serverRoot;
 
 
     //
     // Create the viewer, passing in above arguments.
     //
-    var XnatImageViewer = 
-       new xiv(opt_modalState, opt_dataPath, rootUrl, XIMGVIEW_MODE == 'demo');
+    var XnatImageViewer = new xiv(XIV_STATE, modalState, dataPath, rootUrl);
 
 
     //
@@ -175,6 +184,8 @@ function launchXImgView(opt_dataPath, opt_modalState, opt_serverRoot) {
     window.console.log('XImgView launch (serverRoot)', serverRoot); 
     //window.console.log('imagePath', imagePath);
 };
+
+
 </script>
 </head>
 <body>
@@ -182,13 +193,19 @@ function launchXImgView(opt_dataPath, opt_modalState, opt_serverRoot) {
 <script>
 
 //
+// Special case for popup's that are refreshed
+//
+if (document.URL.indexOf('popup.html') > -1) {
+    launchXImgView('', xiv.ui.Modal.States.POPUP, serverRoot);
+}
+
+//
 // Launch viewer automatically if in demo mode
 //
-if (XIMGVIEW_MODE == 'demo') {
-    //
-    // Launch the viewer
-    //
-    launchXImgView('','','src/main');
+if (XIV_STATE == 'demo') {
+    launchXImgView('', '', 'src/main');
+}
+
 
 function getMethods(obj) {
 
@@ -254,10 +271,10 @@ var printMethods = function (obj, objName) {
     return allPublicMethods;
 }
 
-window.console.log(printMethods(xiv.ui.Modal, 'xiv.ui.Modal'));
+//window.console.log(printMethods(xiv.ui.Modal, 'xiv.ui.Modal'));
 
 //alert(getMethods(xiv.prototype).join("\n"));
-}
+
 
 </script>
 </body>

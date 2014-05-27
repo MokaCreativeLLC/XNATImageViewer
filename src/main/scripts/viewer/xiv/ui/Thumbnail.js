@@ -86,7 +86,7 @@ xiv.ui.Thumbnail.prototype.createHoverable = function(){
  * @private
  */
 xiv.ui.Thumbnail.prototype.createText_ = function(){
-    window.console.log(this.ViewableTree_);
+    //window.console.log(this.ViewableTree_);
 
     //
     // Derive the header text

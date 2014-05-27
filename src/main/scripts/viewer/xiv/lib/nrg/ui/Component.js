@@ -139,6 +139,21 @@ nrg.ui.Component.applyCssHierarchy = function(obj) {
 
 
 /**
+ * Animation lengths.
+ *
+ * @enum {string}
+ * @public
+ */
+nrg.ui.Component.animationLengths = {
+    FAST : 150,
+    MEDIUM: 300,
+    SLOW: 600,
+}
+
+
+
+
+/**
  * @type {string}
  * @protected
  */  

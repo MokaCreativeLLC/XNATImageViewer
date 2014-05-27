@@ -153,13 +153,12 @@ function(_Viewable, folders) {
 xiv.ui.ThumbnailGallery.prototype.createThumbnail = function(_Viewable) {
 
     //window.console.log(_Viewable['thumbnailUrl']);
-    var thumbnail = 
-    new xiv.ui.Thumbnail(_Viewable);
+    var thumbnail = new xiv.ui.Thumbnail(_Viewable);
     goog.events.listen(thumbnail, nrg.ui.Thumbnail.EventType.CLICK, function(){
 	//window.console.log("THUM", thumbnail);
 	this.dispatchEvent({
 	    type: xiv.ui.ThumbnailGallery.EventType.THUMBNAIL_CLICK,
-	    thumbnail: thumbnail
+	    Thumbnail: thumbnail
 	});
     }.bind(this))
     return thumbnail;

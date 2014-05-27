@@ -65,7 +65,10 @@ goog.addDependency('../../../nrg/ui/Component.js', ['nrg.ui.Component'], [
 ]);
 
 
-
+goog.addDependency('../../../nrg/ui/Overlay.js', 
+['nrg.ui.Overlay'], [
+    'nrg.ui.Component'
+]);
 
 goog.addDependency('../../../nrg/ui/Resizable.js', 
 ['nrg.ui.Resizable'], [
@@ -197,15 +200,6 @@ goog.addDependency('../../../nrg/ui/ZippyTree.js',
 'nrg.ui.ZippyNode'
 ]);
 
-
-
-
-
-
-goog.addDependency('../../../nrg/ui/Overlay.js', 
-['nrg.ui.Overlay'], [
-    'nrg.ui.Component'
-]);
 
 
 goog.addDependency('../../../nrg/ui/ErrorOverlay.js', 

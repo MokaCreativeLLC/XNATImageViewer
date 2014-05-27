@@ -119,14 +119,20 @@ xiv.ui.ProgressBarPanel.prototype.showValue_ = false;
  * @param {string=}
  * @param {boolean=}
  */
-xiv.ui.ProgressBarPanel.prototype.setLabel = 
-function(opt_label, opt_showValue) {
+xiv.ui.ProgressBarPanel.prototype.setLabel = function(opt_label) {
     this.labelText_ = opt_label;
+}
+
+
+
+/**
+ * @param {boolean=}
+ */
+xiv.ui.ProgressBarPanel.prototype.showValue = function(opt_showValue) {
     this.showValue_ = goog.isDefAndNotNull(opt_showValue) && 
 	(opt_showValue === false) ? false : true;
     this.setValue(this.ProgressBar_.getValue());
 }
-
 
 
 /**

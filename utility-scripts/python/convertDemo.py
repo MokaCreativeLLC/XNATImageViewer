@@ -26,7 +26,7 @@ autoHeaders = ['\n']*3 + [autoHeader] + ['\n']*3
 #
 # Tags
 #
-XIMGVIEW_MODE_TAG = 'XIMGVIEW_MODE'
+XIV_STATE_TAG = 'XIV_STATE'
 
 
 def writeTarget(target, lines):
@@ -86,10 +86,10 @@ def convertDemoToPopup(demoPath):
         # Set the Image viewer mode
         #
         if isModalStateLine(line):
-            line = 'var modalState = \'popup\';';
+            line = 'var modalState = xiv.ui.Modal.States.POPUP;';
 
         if isModeLine(line):
-            line = XIMGVIEW_MODE_TAG + ' = \'live\';';
+            line = XIV_STATE_TAG + ' = \'live\';';
 
         #
         # Need to add the server root
@@ -103,7 +103,7 @@ def convertDemoToPopup(demoPath):
 
 
 def isModeLine(line):
-    return ' = ' in line and XIMGVIEW_MODE_TAG in line \
+    return ' = ' in line and XIV_STATE_TAG in line \
         and line.count('=') == 1 and not 'new' in line
 
 
@@ -146,9 +146,9 @@ def convertDemoToVM(demoPath):
         # Set the Image viewer mode
         #
         if isModeLine(line):
-            line = XIMGVIEW_MODE_TAG + ' = \'live\';';
+            line = XIV_STATE_TAG + ' = \'live\';';
         elif isModalStateLine(line):
-            line = 'var modalState = \'windowed\';';
+            line = 'var modalState = xiv.ui.Modal.States.WINDOWED;';
 
             
         #

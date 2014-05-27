@@ -11,12 +11,22 @@
     position: fixed;
     background-color: rgba(0,0,0,1);
     border: none;
-    border-radius: 20px;
-    top: 0%;
-    left: 0%;
+    z-index: 2;
+    top: 0px;
+    left: 0px;
     height: 100%;
     width: 100%;
-    z-index: 2;
+}
+
+
+.xiv-ui-modal-windowed {
+    position: fixed;
+    border: solid 1px black;
+    border-radius: 20px;
+    top: 10px;
+    left: 10px;
+    height: calc(100% - 20px);
+    width: calc(100% - 20px);
 }
 
 
@@ -56,7 +66,7 @@
 .xiv-ui-modal-fullscreen-button, .xiv-ui-modal-windowed-button {
     position: absolute; 
     cursor: pointer;
-    top: 29px;
+    top: 27px;
     left: 100%;
     margin-left: -20px;
     width: 11px;
@@ -76,7 +86,7 @@
 .xiv-ui-modal-popup-button {
     position: absolute; 
     cursor: pointer;
-    top: 50px;
+    top: 45px;
     left: 100%;
     margin-left: -21px;
     width: 12px;
@@ -120,7 +130,7 @@
 .xiv-ui-modal-insertrow-button, .xiv-ui-modal-removerow-button {
     top: 100%;
     left: 50%;
-    margin-top: -19px;
+    margin-top: -23px;
     width: 12px;
     height: 6px;    
 }
@@ -139,9 +149,9 @@
 
 .xiv-ui-modal-projecttab-bounds {
     position: absolute;
-    top: 25px;
+    top: 29px;
     left: 0px;
-    height: calc(100% - 50px);
+    height: calc(100% - 58px);
     width: 30%;
     background-color: rgba(120,220,120, 0);
 }
@@ -149,8 +159,8 @@
 
 .xiv-ui-modal-projecttab {
     left: 0px;
-    height: calc(100% - 50px);
-    top: 25px;
+    height: calc(100% - 58px);
+    top: 29px;
 }
 
 
@@ -158,8 +168,8 @@
     left: calc(100%);
     width: 10px;
     background-color: rgba(45,45,45,1);
-    top: 25px;
-    height: calc(100% - 50px);
+    top: 29px;
+    height: calc(100% - 58px);
 }
 
 

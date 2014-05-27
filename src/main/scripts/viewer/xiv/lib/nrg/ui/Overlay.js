@@ -2,8 +2,6 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-// goog
-
 // nrg
 goog.require('nrg.ui.Component');
 

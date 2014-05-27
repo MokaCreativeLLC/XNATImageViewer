@@ -1,5 +1,6 @@
 goog.require('nrg.ui.ErrorOverlay');
 
+
 /**
  * @constructor
  */
