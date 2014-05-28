@@ -279,3 +279,20 @@ xiv.ui.HelpOverlay.prototype.disposeInternal = function(){
     }
 }
 
+
+goog.exportSymbol('xiv.ui.HelpOverlay.EventType',
+	xiv.ui.HelpOverlay.EventType);
+goog.exportSymbol('xiv.ui.HelpOverlay.ID_PREFIX',
+	xiv.ui.HelpOverlay.ID_PREFIX);
+goog.exportSymbol('xiv.ui.HelpOverlay.CSS_SUFFIX',
+	xiv.ui.HelpOverlay.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.HelpOverlay.LAYOUT_IMAGE_ID',
+	xiv.ui.HelpOverlay.LAYOUT_IMAGE_ID);
+goog.exportSymbol('xiv.ui.HelpOverlay.prototype.constructor',
+	xiv.ui.HelpOverlay.prototype.constructor);
+goog.exportSymbol('xiv.ui.HelpOverlay.prototype.render',
+	xiv.ui.HelpOverlay.prototype.render);
+goog.exportSymbol('xiv.ui.HelpOverlay.prototype.setLayoutButton',
+	xiv.ui.HelpOverlay.prototype.setLayoutButton);
+goog.exportSymbol('xiv.ui.HelpOverlay.prototype.disposeInternal',
+	xiv.ui.HelpOverlay.prototype.disposeInternal);

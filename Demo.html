@@ -218,7 +218,7 @@ function getMethods(obj) {
       // Non-prototype properties
       //
       
-      window.console.log(id, obj[id]);
+      //window.console.log(id, obj[id]);
       if (id == 'constructor'){
          //window.console.log(obj[id]);
       }
@@ -248,6 +248,11 @@ var printMethods = function (obj, objName) {
           pMethod = objName + '.' + pMethod;
           exportString = 'goog.exportSymbol(\'' + 
           pMethod + '\', ' +  pMethod + ');'
+
+          if (exportString.length > 78){
+             exportString = exportString.split(', ');
+             exportString = exportString[0] + ',\n\t' + exportString[1];
+          }
           allMethods += exportString + '\n';
        })
        return allMethods;
@@ -272,7 +277,8 @@ var printMethods = function (obj, objName) {
     return allPublicMethods;
 }
 
-//window.console.log(printMethods(xiv.ui.Modal, 'xiv.ui.Modal'));
+window.console.log(printMethods(xiv.ui.HelpOverlay, 
+                                'xiv.ui.HelpOverlay'));
 
 //alert(getMethods(xiv.prototype).join("\n"));
 

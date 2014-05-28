@@ -58,7 +58,7 @@ gxnat.slicer.extractMrmls = function(fileList){
  */
 gxnat.slicer.getMrmlAsXml = function(mrmlUrl, callback) {
     gxnat.get(mrmlUrl, function(mrmlText){
-	window.console.log(mrmlText);
+	//window.console.log(mrmlText);
 	callback(new goog.dom.xml.loadXml(mrmlText));
     }, 'text');
 }
