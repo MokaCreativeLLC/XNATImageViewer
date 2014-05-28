@@ -173,10 +173,6 @@ xiv.ui.layouts.FourUp.prototype.updateStyle = function(){
     //
     this.updateStyle_X();
     this.updateStyle_Y();
-
-
-    window.console.log("GOOG", this.LayoutFrames['X']);
-
 }
 
 

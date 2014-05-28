@@ -49,11 +49,7 @@ xiv.ui.layouts.SingleFrameLayout.ID_PREFIX =
 xiv.ui.layouts.SingleFrameLayout.prototype.scaleFrames_ = function(){
     if ((this.prevSize.width !== this.currSize.width) || 
 	(this.prevSize.height !== this.currSize.height)) {
-
-
-	window.console.log("SCALE FRAMES!");
-
-
+	//window.console.log("SCALE FRAMES!");
 	var heightDiff = 1 - ((this.prevSize.height - this.currSize.height) / 
 	    this.prevSize.height);
 	var widthDiff = 1 - ((this.prevSize.width - this.currSize.width) / 
@@ -61,8 +57,7 @@ xiv.ui.layouts.SingleFrameLayout.prototype.scaleFrames_ = function(){
 	var frameHeight = (this.prevSize.height * heightDiff);
 	var frameWidth = (this.prevSize.width * widthDiff);
 	
-
-	window.console.log(frameWidth, frameHeight);
+	//window.console.log(frameWidth, frameHeight);
 
 	this.loop(function(frame, key){
 	    if (!goog.isDefAndNotNull(frame)) { return }

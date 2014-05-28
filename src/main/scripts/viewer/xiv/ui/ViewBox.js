@@ -734,6 +734,25 @@ function(frameDisplay, volume) {
 
 
 /**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.setSlidersHalfway_ = function() {
+    var interactors = this.LayoutHandler_.getMasterInteractors();
+    var slider;
+    goog.object.forEach(this.Renderer_.getPlanes(), function(Plane, planeOr) {
+	if (!goog.isDefAndNotNull(interactors[planeOr]) ||
+	    !goog.isDefAndNotNull(interactors[planeOr].SLIDER)) { 
+	    return; 
+	};
+	slider = interactors[planeOr].SLIDER;
+	slider.setValue(slider.getMaximum()/2);
+    }.bind(this))
+}
+
+
+
+
+/**
  * @param {!nrg.ui.Slider} slider
  * @param {X.volume} volume
  * @private
@@ -1038,21 +1057,37 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     // Hide progress bar
     //
     this.hideProgressBarPanel_(800, function(){
+	//
+	// Set progress bar to 0
+	//
 	this.ProgressBarPanel_.setValue(0);
+
+	//
+	// Sync interactors
+	//
+	this.syncLayoutInteractorsToRenderer_();
+	this.Renderer_.updateControllers();
+
+	//
+	// Fade in the load components
+	//
 	this.fadeInLoadComponents_(
 	    nrg.ui.Component.animationLengths.FAST, null, null, function(){
-		//
-		// Sync interactors
-		//
-		this.syncLayoutInteractorsToRenderer_();
-		
 		//
 		// Update styles
 		//
 		this.updateStyle();
+
+		//
+		// Resize callback
+		//
 		this.onLayoutResize_();
-		this.Renderer_.updateControllers();
-	    });
+
+		//
+		// Set sliders halfway
+		//
+		this.setSlidersHalfway_();
+	    }.bind(this));
     }.bind(this));
 }
 

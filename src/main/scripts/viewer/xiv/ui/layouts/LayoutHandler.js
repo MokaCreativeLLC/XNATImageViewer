@@ -413,14 +413,10 @@ function() {
  * @private
  */ 
 xiv.ui.layouts.LayoutHandler.prototype.onLayoutResize_ = function(e) {
-    window.console.log("RESIZE", e, typeof e)
-
+    //window.console.log("RESIZE", e, typeof e)
     this.dispatchEvent({
 	type: xiv.ui.layouts.LayoutHandler.EventType.RESIZE
     })
-    //this.updateStyle();
-
-
 }
 
 
@@ -542,8 +538,8 @@ function(opt_duration) {
     this.toBeDims_ = {};
 
     
-    window.console.log((newLayoutFrames['X'].getElement()))
-    window.console.log(goog.style.getSize(newLayoutFrames['X'].getElement()))
+    //window.console.log((newLayoutFrames['X'].getElement()))
+    //window.console.log(goog.style.getSize(newLayoutFrames['X'].getElement()))
 
     //
     // Loop the previous layout frames
@@ -589,19 +585,12 @@ function(opt_duration) {
 	    // then we construct some animations.
 	    //
 	    if (goog.object.containsKey(newLayoutFrames, key)) {
-		window.console.log("\n\n\nnew elt"); 
-		window.console.log(
-		    goog.style.getSize(newLayoutFrames[key].getElement()));
 		var transitionDims = 
 		    nrg.fx.generateTransitionDims(
 			plane.getElement(), newLayoutFrames[key].getElement());
 		this.asIsDims_[key] = transitionDims.asIs;
 		this.toBeDims_[key] = transitionDims.toBe;
-
-		window.console.log("\n\n\nnew elt2"); 
-		window.console.log(
-		    goog.style.getSize(newLayoutFrames[key].getElement()));
-		window.console.log("TRANS", key, this.toBeDims_[key]);
+		//window.console.log("TRANS", key, this.toBeDims_[key]);
 
 
 	    //
@@ -697,7 +686,7 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
     }.bind(this));
 
 
-    window.console.log("\n\nTO BE", this.toBeDims_['X']);
+    //window.console.log("\n\nTO BE", this.toBeDims_['X']);
 
 
     //-------------------------------
@@ -873,8 +862,6 @@ function(callback){
  */
 xiv.ui.layouts.LayoutHandler.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
-    window.console.log(this.Layouts_[this.currLayoutTitle_]);
-    window.console.log(this.Layouts_[this.currLayoutTitle_].getLayoutFrames()['X'].getElement().style.height)
     this.Layouts_[this.currLayoutTitle_].updateStyle();    
 }
 
