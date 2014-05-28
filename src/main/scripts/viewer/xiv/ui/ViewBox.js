@@ -300,7 +300,7 @@ xiv.ui.ViewBox.prototype.Controllers2D_ = null;
 
 
 /**
- * @type {?Array.<goog.ui.Button>}
+ * @type {?Object.<string, goog.ui.Button>}
  * @private
  */
 xiv.ui.ViewBox.prototype.toggleButtons_ = null;
@@ -1278,7 +1278,12 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     //
     // Remember the time in which the thumbnail was loaded
     //
-    this.thumbLoadTime_ = (new Date()).getTime();    
+    this.thumbLoadTime_ = (new Date()).getTime();  
+
+    //
+    // hide the crosshairs
+    //
+    goog.testing.events.fireClickEvent(this.toggleButtons_['Crosshairs']);
 }
  
 
@@ -1869,9 +1874,9 @@ xiv.ui.ViewBox.prototype.createToggleButton_ =
 	this.addToMenu('LEFT', iconbutton);
 
 	if (!goog.isDefAndNotNull(this.toggleButtons_)){
-	    this.toggleButtons_= [];
+	    this.toggleButtons_= {};
 	}
-	this.toggleButtons_.push(iconbutton);
+	this.toggleButtons_[opt_tooltip] = iconbutton;
 
 	return iconbutton;
     }
