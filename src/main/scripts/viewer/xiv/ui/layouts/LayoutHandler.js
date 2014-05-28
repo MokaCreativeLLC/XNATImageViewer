@@ -414,11 +414,13 @@ function() {
  */ 
 xiv.ui.layouts.LayoutHandler.prototype.onLayoutResize_ = function(e) {
     window.console.log("RESIZE", e, typeof e)
-    //window.console.log('grabbing resize event from layout in handler');
+
     this.dispatchEvent({
 	type: xiv.ui.layouts.LayoutHandler.EventType.RESIZE
     })
-    
+    //this.updateStyle();
+
+
 }
 
 
@@ -525,7 +527,7 @@ function(opt_duration) {
     // of the dimensions to generate accurate transition animations.
     //
     this.setLayoutVisible_(this.currLayoutTitle_);
-    this.setLayoutOpacity_(this.currLayoutTitle_, 0);
+    this.setLayoutOpacity_(this.currLayoutTitle_, 1);
     
     //
     // Clear stored dims
@@ -539,6 +541,9 @@ function(opt_duration) {
     this.asIsDims_ = {};
     this.toBeDims_ = {};
 
+    
+    window.console.log((newLayoutFrames['X'].getElement()))
+    window.console.log(goog.style.getSize(newLayoutFrames['X'].getElement()))
 
     //
     // Loop the previous layout frames
@@ -584,15 +589,19 @@ function(opt_duration) {
 	    // then we construct some animations.
 	    //
 	    if (goog.object.containsKey(newLayoutFrames, key)) {
+		window.console.log("\n\n\nnew elt"); 
+		window.console.log(
+		    goog.style.getSize(newLayoutFrames[key].getElement()));
 		var transitionDims = 
 		    nrg.fx.generateTransitionDims(
 			plane.getElement(), newLayoutFrames[key].getElement());
 		this.asIsDims_[key] = transitionDims.asIs;
 		this.toBeDims_[key] = transitionDims.toBe;
 
-		//window.console.log("new elt", 
-		//	newLayoutFrames[key].getElement().style.height);
-		//window.console.log("TRANS", key, this.toBeDims_[key]);
+		window.console.log("\n\n\nnew elt2"); 
+		window.console.log(
+		    goog.style.getSize(newLayoutFrames[key].getElement()));
+		window.console.log("TRANS", key, this.toBeDims_[key]);
 
 
 	    //
@@ -686,6 +695,9 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
 	    goog.dom.appendChild(newLayoutFrame.getElement(), child);
 	})
     }.bind(this));
+
+
+    window.console.log("\n\nTO BE", this.toBeDims_['X']);
 
 
     //-------------------------------

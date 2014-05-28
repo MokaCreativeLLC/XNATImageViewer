@@ -1026,6 +1026,10 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 			   bar.visibility = 'hidden';
 		       });
 
+
+    //
+    // Set the layout based the orientation of the ViewableTree
+    //
     if (goog.isDefAndNotNull(this.ViewableTrees_[0].getOrientation())){
 	this.setLayout(this.ViewableTrees_[0].getOrientation());
     }
@@ -1035,25 +1039,21 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     this.hideProgressBarPanel_(800, function(){
 	this.ProgressBarPanel_.setValue(0);
-	//
-	// Fade in load components
-	//
-	this.fadeInLoadComponents_(500);
+	this.fadeInLoadComponents_(
+	    nrg.ui.Component.animationLengths.FAST, null, null, function(){
+		//
+		// Sync interactors
+		//
+		this.syncLayoutInteractorsToRenderer_();
+		
+		//
+		// Update styles
+		//
+		this.updateStyle();
+		this.onLayoutResize_();
+		this.Renderer_.updateControllers();
+	    });
     }.bind(this));
-
-
-
-    //
-    // Sync interactors
-    //
-    this.syncLayoutInteractorsToRenderer_();
-    
-    //
-    // Update styles
-    //
-    this.updateStyle();
-    this.onLayoutResize_();
-    this.Renderer_.updateControllers();
 }
 
 
@@ -1205,6 +1205,15 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 
         
     //
+    // Show the progress bar, first
+    //
+    this.showSubComponent_(this.ProgressBarPanel_, 0);
+    //this.ProgressBarPanel_.setLabel('Gathering File Info...', false);
+    //this.ProgressBarPanel_.showValue(false);
+
+
+
+    //
     // Init the load components
     //
     if (opt_initLoadComponents) {
@@ -1212,6 +1221,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 	this.initLoadComponents_();
 	this.setLoadComponentsEvents_();
     }
+
 
     //
     // ViewableTree handling
@@ -1256,12 +1266,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 		       xiv.vis.RenderEngine.EventType.RENDERING, 
 		       this.onRendering_.bind(this));
 
-    //
-    // Show the progress bar, first
-    //
-    this.showSubComponent_(this.ProgressBarPanel_, 0);
-    //this.ProgressBarPanel_.setLabel('Gathering File Info...', false);
-    //this.ProgressBarPanel_.showValue(false);
+
 
 
     //
@@ -1456,9 +1461,13 @@ xiv.ui.ViewBox.prototype.initLoadComponents_ = function() {
 
 /**
  * @param {number=} opt_fadeTime
+ * @param {Function=} opt_onBegin Callback when animation starts.
+ * @param {Function=} opt_onAnimate Callback when animation is running.
+ * @param {Function=} opt_onEnd Callback when animation ends.
  * @private
  */
-xiv.ui.ViewBox.prototype.fadeInLoadComponents_ = function(opt_fadeTime) {
+xiv.ui.ViewBox.prototype.fadeInLoadComponents_ = 
+function(opt_fadeTime, opt_onBegin, opt_onAnimate, opt_onEnd) {
     opt_fadeTime = goog.isNumber(opt_fadeTime) ? opt_fadeTime : 500;
     var anims = [];
     var fadeables = [this.ZipTabs_.getElement(), 
@@ -1468,8 +1477,8 @@ xiv.ui.ViewBox.prototype.fadeInLoadComponents_ = function(opt_fadeTime) {
     goog.array.forEach(fadeables, function(fadeable){
 	anims.push(nrg.fx.generateAnim_Fade(fadeable, {'opacity':0}, 
 					    {'opacity':1}, opt_fadeTime)); 
-    })    
-    nrg.fx.parallelAnimate(anims);
+    })   
+    nrg.fx.parallelAnimate(anims, opt_onBegin, opt_onAnimate, opt_onEnd);
 }
 
 
