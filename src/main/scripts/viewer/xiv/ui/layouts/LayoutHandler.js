@@ -187,6 +187,14 @@ xiv.ui.layouts.LayoutHandler.prototype.toBeDims_ = null;
 
 
 /**
+ * @type {!boolean}
+ * @private
+ */  
+xiv.ui.layouts.LayoutHandler.prototype.animateLayoutChange_ = true;
+
+
+
+/**
 * @public
 * @return {boolean}
 */ 
@@ -198,7 +206,7 @@ xiv.ui.layouts.LayoutHandler.prototype.layoutChanging = function(){
 
 /**
 * @public
-* @param {boolean}
+* @param {boolean} bool
 */ 
 xiv.ui.layouts.LayoutHandler.prototype.animateLayoutChange = function(bool){
     this.animateLayoutChange_ = bool;
@@ -380,7 +388,7 @@ function(title, opt_animateSwitch) {
     // Switch the layout
     //
     this.switchLayout((opt_animateSwitch === false) ? 
-			   0 : xiv.ui.layouts.LayoutHandler.ANIM_TIME);
+		      0 : xiv.ui.layouts.LayoutHandler.ANIM_TIME);
 }
 
 
@@ -429,23 +437,37 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutResize_ = function(e) {
  */ 
 xiv.ui.layouts.LayoutHandler.prototype.switchLayout = function(opt_time) {
     //window.console.log("SWITCH LAYOUT", opt_time, this.prevLayoutTitle_);
-
+    //
     // Set opt_time
+    //
     opt_time = (goog.isNumber(opt_time) && (opt_time >= 0)) ? opt_time : 
 	xiv.ui.layouts.LayoutHandler.ANIM_TIME;
 
+    //
     // Do nothing if we're the previous layout is the same as the current one.
+    //
     if (this.prevLayoutTitle_ == this.currLayoutTitle_){
 	return;
     }
 
+    //
     // If no previous layout or opt_time is zero, simply cut to the chase.
-    if (opt_time == 0 || !this.prevLayoutTitle_) { 
+    //
+    if (!this.prevLayoutTitle_){ 
 	this.setLayoutVisible_(this.currLayoutTitle_);
 	this.setLayoutOpacity_(this.currLayoutTitle_, 1);
 	return;
     }
 
+
+    if (!this.animateLayoutChange_){
+	this.runLayoutChangeAnim_(0);
+	return
+    }
+
+    //
+    // Otherwise run the animation
+    //
     this.runLayoutChangeAnim_(opt_time);
 }
 

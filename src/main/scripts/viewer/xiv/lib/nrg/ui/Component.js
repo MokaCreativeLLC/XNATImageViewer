@@ -324,6 +324,24 @@ nrg.ui.Component.prototype.render = function(opt_parentElement) {
 
 
 /**
+ * @type {!boolean}
+ */
+nrg.ui.Component.prototype.disposeInternalCalled_ = false;
+
+
+
+/**
+ * @public
+ * @return {!boolean}
+ */
+nrg.ui.Component.prototype.disposeInternalCalled = function(){
+    return this.disposeInternalCalled_;
+}
+
+
+
+
+/**
  * @inheritDoc
  */
 nrg.ui.Component.prototype.disposeInternal = function() {
@@ -358,4 +376,5 @@ nrg.ui.Component.prototype.disposeInternal = function() {
     this.prevSize = null;
     this.prevPos = null;
 
+    this.disposeInternalCalled_ = true;
 }

@@ -269,25 +269,9 @@ xiv.ui.ViewBoxHandler.prototype.removeColumn = function(opt_animate) {
     if (this.ViewBoxes_[0] && this.ViewBoxes_[0].length > 1) {
 	goog.array.forEach(this.ViewBoxes_, function(ViewBoxCol, i) {
 	    var rowLen =  ViewBoxCol.length - 1;
-	    if (goog.isDefAndNotNull(ViewBoxCol[rowLen].
-				     getThumbnailLoadTime())){
-
-		//
-		// Check if ViewBox is in use.
-		//
-		ViewBoxCol[rowLen].showInUseDialog();
-		ViewBoxCol[rowLen].setInUseSelect(function(ViewBox) {
-		    ViewBox.clearThumbnailLoadTime();
-		    this.removeColumn(opt_animate);
-		}.bind(this));
-		return;
-	    }
 
 	    nrg.fx.fadeTo(ViewBoxCol[rowLen].getElement(), 
 			    nrg.ui.Component.animationLengths.FAST, 0);
-
-
-
 
 	    goog.dom.removeNode(this.dragDropHandles_[
 		ViewBoxCol[rowLen].getElement().id]);
@@ -356,14 +340,7 @@ xiv.ui.ViewBoxHandler.prototype.removeRow = function(opt_animate) {
     if (this.ViewBoxes_.length > 1) {
 	var delRow = this.ViewBoxes_[this.ViewBoxes_.length - 1];
 	goog.array.forEach(delRow, function(currDelViewBox) { 
-	    //
-	    // Check if ViewBox is in use.
-	    //
-	    currDelViewBox.showInUseDialog();
-	    currDelViewBox.setInUseSelect(function(ViewBox) {
-		ViewBox.clearThumbnailLoadTime();
-		this.removeRow(opt_animate);
-	    }.bind(this));
+
 
 	    nrg.fx.fadeTo(currDelViewBox.getElement(), 
 			    nrg.ui.Component.animationLengths.FAST, 0);
@@ -493,9 +470,6 @@ xiv.ui.ViewBoxHandler.prototype.createViewBox_ = function() {
     goog.dom.append(this.ViewBoxesParent_, ViewBox.getElement());
     this.addDragDropHandle_(ViewBox);
     this.setViewBoxEvents_(ViewBox);
-
-
-
     return ViewBox;    
 }
 
@@ -516,7 +490,7 @@ xiv.ui.ViewBoxHandler.prototype.addDragDropHandle_ = function(ViewBox) {
 	serverRoot + '/images/viewer/xiv/ui/ViewBoxManager/handle.png';
     dragDropHandle.setAttribute(xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR, 
 				ViewBox.getElement().id); 
-    ViewBox.addToMenu('TOP_LEFT', dragDropHandle, 0);
+    ViewBox.addToMenu('TOP_LEFT', dragDropHandle, 1);
 
     // Add to class property.
     if (!this.dragDropHandles_){ this.dragDropHandles_ = {}};
@@ -578,8 +552,110 @@ xiv.ui.ViewBoxHandler.prototype.setViewBoxEvents_ = function(ViewBox) {
     // Error
     goog.events.listen(ViewBox, xiv.ui.ViewBox.EventType.THUMBNAIL_LOADERROR, 
 	this.onThumbnailLoadError_.bind(this))
+
+    // Closed
+    goog.events.listen(ViewBox, xiv.ui.ViewBox.EventType.CLOSED,
+	this.onViewBoxClosed_.bind(this))
 }
 
+
+
+/**
+ * @param {xiv.ui.ViewBox} ViewBox
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.removeViewBox_ = function(ViewBox){
+    //
+    // fade out
+    //
+    nrg.fx.fadeTo(ViewBox.getElement(), 
+		  nrg.ui.Component.animationLengths.FAST, 0);
+
+    //
+    // Remove the handle
+    //
+    goog.dom.removeNode(this.dragDropHandles_[ViewBox.getElement().id]);
+
+    //
+    // Remove the xiv.ui.ViewBox
+    //
+    ViewBox.disposeInternal();
+}
+
+
+/**
+ * @param {xiv.ui.ViewBox} ViewBox
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.adjustToClose_ = function(ViewBox){
+
+    var newViewBoxes = [];
+    var currActiveRow = 0;
+    var currActiveCol = 0;
+
+    this.removeViewBox_(ViewBox);
+
+    var newViewBoxRow, colCount, newColCount;
+    var colsEven = true;
+
+    goog.array.forEach(this.ViewBoxes_, function(ViewBoxCol, i) {
+	//
+	// Create the new row
+	//
+	newViewBoxRow = [];
+
+	//
+	// Store only non-disposed objects
+	//
+	goog.array.forEach(ViewBoxCol, function(_ViewBox, j) {
+	    if (!_ViewBox.disposeInternalCalled()){
+		window.console.log(_ViewBox.getElement());
+		newViewBoxRow.push(_ViewBox);	
+	    }
+	}.bind(this))
+
+	//
+	// Add new row
+	//
+	if (newViewBoxRow.length != 0){
+	    newViewBoxes.push(newViewBoxRow);
+	    newColCount = newViewBoxes[newViewBoxes.length - 1].length;
+
+	    //
+	    // Determine if the columns are uneven
+	    //
+	    if (newViewBoxes.length == 1){
+		colCount = newColCount;
+	    }
+	    else if (newColCount != colCount){
+		colsEven = false;
+	    }
+	}
+    }.bind(this))
+
+    this.ViewBoxes_ = newViewBoxes;
+
+    if (colsEven){
+	this.onViewBoxesChanged_(null, true);
+    }
+    this.resetDragDropGroup_();
+
+}
+
+
+/**
+ * @param {Event} e
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.onViewBoxClosed_ = function(e){
+    var ViewBox = e.target;
+    var inUse = ViewBox.checkInUseAndShowDialog(function(){
+	this.adjustToClose_(ViewBox);
+    }.bind(this))
+    if (!inUse){
+	this.adjustToClose_(ViewBox);
+    }
+}
 
 
 
@@ -821,9 +897,11 @@ xiv.ui.ViewBoxHandler.prototype.clearDragDropGroups_ = function(){
  */
 xiv.ui.ViewBoxHandler.prototype.addElementsToDragDropGroups_ = function() {
     this.loop(function(ViewBox) {
-	this.dragDropGroup_.addItem(
-	    this.dragDropHandles_[ViewBox.getElement().id]);
-	this.dragDropTargets_.addItem(ViewBox.getElement());
+	if (goog.isDefAndNotNull(ViewBox.getElement())){
+	    this.dragDropGroup_.addItem(
+		this.dragDropHandles_[ViewBox.getElement().id]);
+	    this.dragDropTargets_.addItem(ViewBox.getElement());
+	}
     }.bind(this))
 }
 

@@ -1,5 +1,5 @@
 /**
- * @preserve Copyright 2014 Washington University
+ * @preserve Copyright 2014 Washington Universityf
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
@@ -95,9 +95,9 @@ xiv.ui.Modal.ButtonTypes = {
     FULLSCREEN: 'Enter full-screen mode.',
     POPUP: 'Popup to new window.',
     WINDOWED: 'Exit full-screen mode.',
-    REMOVEROW: 'Remove ViewBox row',
+    //REMOVEROW: 'Remove ViewBox row',
     INSERTROW : 'Insert ViewBox row',
-    REMOVECOLUMN: 'Remove ViewBox column',
+    //REMOVECOLUMN: 'Remove ViewBox column',
     INSERTCOLUMN: 'Insert ViewBox column',
 }
 
@@ -482,6 +482,7 @@ xiv.ui.Modal.prototype.fadeInHiddenViewers_ = function() {
 xiv.ui.Modal.prototype.createViewBoxSlideAnimations_ = function () {
     var elt = null; 
     this.ViewBoxHandler_.loop( function(ViewBox, i, j) { 
+	window.console.log(i, j, ViewBox.getElement());
 	elt = ViewBox.getElement();
 	this.anims_.push(new goog.fx.dom.Slide(
 	    elt, [elt.offsetLeft, elt.offsetTop], 
@@ -581,10 +582,10 @@ xiv.ui.Modal.prototype.computeButtonPositions_ = function () {
 
     this.dims_.BUTTONS = {
 	INSERTROW : {},
-	REMOVEROW : {}
+	//REMOVEROW : {}
     };
     this.dims_.BUTTONS.INSERTROW.X = tWidth -2;
-    this.dims_.BUTTONS.REMOVEROW.X = tWidth + 2;
+    //this.dims_.BUTTONS.REMOVEROW.X = tWidth + 2;
 }
 
 
@@ -687,9 +688,9 @@ xiv.ui.Modal.prototype.updateStyle_buttons_ = function(){
     nrg.style.setStyle(this.buttons_.INSERTROW, {
 	'left': this.dims_.BUTTONS.INSERTROW.X
     })
-    nrg.style.setStyle(this.buttons_.REMOVEROW, { 
-	'left': this.dims_.BUTTONS.REMOVEROW.X
-    })
+    //nrg.style.setStyle(this.buttons_.REMOVEROW, { 
+    //'left': this.dims_.BUTTONS.REMOVEROW.X
+    //})
 }
 
 
@@ -758,7 +759,7 @@ xiv.ui.Modal.prototype.initButtons_ = function() {
 	this.imagePrefix + '/images/viewer/xiv/ui/Modal/insertcolumn.png' + 
 	' width="100%">';
 
-
+    /**
     this.buttons_.REMOVEROW.innerHTML = '<img src=' + 
 	this.imagePrefix + '/images/viewer/xiv/ui/Modal/removerow.png' + 
 	' width="100%">';
@@ -766,6 +767,7 @@ xiv.ui.Modal.prototype.initButtons_ = function() {
     this.buttons_.REMOVECOLUMN.innerHTML = '<img src=' + 
 	this.imagePrefix + '/images/viewer/xiv/ui/Modal/removecolumn.png' + 
 	' width="100%">';
+    */
 	
 }
 
@@ -940,15 +942,16 @@ function(opt_listenMethod){
 
     opt_listenMethod(this.buttons_.INSERTROW, goog.events.EventType.CLICK, 
 	this.ViewBoxHandler_.insertRow.bind(this.ViewBoxHandler_));
-
-    opt_listenMethod(this.buttons_.REMOVEROW, goog.events.EventType.CLICK,
-	this.ViewBoxHandler_.removeRow.bind(this.ViewBoxHandler_));
-
     opt_listenMethod(this.buttons_.INSERTCOLUMN, goog.events.EventType.CLICK, 
 	this.ViewBoxHandler_.insertColumn.bind(this.ViewBoxHandler_));
 
+
+    /**
+    opt_listenMethod(this.buttons_.REMOVEROW, goog.events.EventType.CLICK,
+	this.ViewBoxHandler_.removeRow.bind(this.ViewBoxHandler_));
     opt_listenMethod(this.buttons_.REMOVECOLUMN, goog.events.EventType.CLICK, 
 	this.ViewBoxHandler_.removeColumn.bind(this.ViewBoxHandler_));
+    */
 
     opt_listenMethod(this.buttons_.CLOSE, goog.events.EventType.CLICK, 
 	this.onCloseButtonClicked_.bind(this));

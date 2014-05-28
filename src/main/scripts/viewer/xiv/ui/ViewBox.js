@@ -91,7 +91,34 @@ xiv.ui.ViewBox = function () {
     });
     goog.dom.append(this.getElement(), this.viewFrameElt_);
 
-    
+
+    /**
+     * @type {!closeButton}
+     * @private
+     */	
+    this.closeButton_ = goog.dom.createDom('img', {
+	'id': xiv.ui.ViewBox.ID_PREFIX + '_CloseButton_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.ViewBox.CSS.CLOSEBUTTON,
+	'src': serverRoot + 
+	'/images/viewer/xiv/ui/Modal/close.png'
+    });
+    goog.dom.append(this.getElement(), this.closeButton_);
+
+    nrg.style.setHoverClass(this.closeButton_, xiv.ui.ViewBox.CSS.CLOSEBUTTON + 
+			    '-hovered');
+
+    goog.events.listen(this.closeButton_, 
+		       goog.events.EventType.CLICK, function(){
+			   this.dispatchEvent({
+			       type: xiv.ui.ViewBox.EventType.CLOSED,
+			   })
+		       }.bind(this))
+   
+
+    this.addToMenu('TOP_LEFT', this.closeButton_);
+
+
     this.initProgressBarPanel_();
     this.updateStyle();
 }
@@ -109,6 +136,7 @@ xiv.ui.ViewBox.EventType = {
   THUMBNAIL_PRELOAD: goog.events.getUniqueId('thumbnail_preload'),
   THUMBNAIL_LOADED: goog.events.getUniqueId('thumbnail_load'),
   THUMBNAIL_LOADERROR: goog.events.getUniqueId('thumbnail_loaderror'),
+  CLOSED: goog.events.getUniqueId('closed'),
 }
 
 
@@ -151,6 +179,7 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     HELPOVERLAY_OVERLAY: 'helpoverlay-overlay',
     HELPOVERLAY_TEXT: 'helpoverlay-text',
     INUSEDIALOG: 'inusedialog',
+    CLOSEBUTTON: 'closebutton',
 }
 
 
@@ -1069,6 +1098,11 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 	this.Renderer_.updateControllers();
 
 	//
+	// Set sliders halfway
+	//
+	this.setSlidersHalfway_();
+
+	//
 	// Fade in the load components
 	//
 	this.fadeInLoadComponents_(
@@ -1086,7 +1120,7 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 		//
 		// Set sliders halfway
 		//
-		this.setSlidersHalfway_();
+		//this.setSlidersHalfway_();
 	    }.bind(this));
     }.bind(this));
 }
@@ -1199,6 +1233,23 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 
 
 
+/**
+ * @param {Function=} opt_onYes
+ * @return {!boolean} Whether dialog was shown 
+ * @public
+ */
+xiv.ui.ViewBox.prototype.checkInUseAndShowDialog = function(opt_onYes){
+    //
+    // Prompt user to load if something is already loaded
+    //
+    if (goog.isDefAndNotNull(this.thumbLoadTime_)){
+	this.showInUseDialog();
+	this.setInUseSelect(opt_onYes);
+	return true;
+    } 
+    return false;
+}
+
 
 /**
  * Loads a gxnat.vis.ViewableTree object into the appropriate renderers.
@@ -1212,14 +1263,12 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     //
     // Prompt user to load if something is already loaded
     //
-    if (goog.isDefAndNotNull(this.thumbLoadTime_)){
-	this.showInUseDialog();
-	this.setInUseSelect(function(){
+    if (this.checkInUseAndShowDialog(function(){
 	    this.thumbLoadTime_ = undefined;
 	    this.load(ViewableSet, opt_initLoadComponents);
-	}.bind(this));
+	}.bind(this))){
 	return;
-    }  
+    }
 
 
     //
@@ -1463,18 +1512,6 @@ xiv.ui.ViewBox.prototype.onLayoutChangeEnd_ = function(e){
     //this.showInteractors_();
 }
 
-
-
-/**
- * As stated.
- * @private
- */
-xiv.ui.ViewBox.prototype.adjustLayoutHandler_ = function(){
-    this.LayoutHandler_.setViewPlanes(this.Displayer_.ViewPlanes, 
-				      this.Displayer_.Interactors);
-    this.LayoutHandler_.animateLayoutChange(false);
-    this.LayoutHandler_.setLayout('none');
-}
 
 
 
@@ -2167,7 +2204,9 @@ xiv.ui.ViewBox.prototype.initToggleMenu_ = function(){
 */
 xiv.ui.ViewBox.prototype.initLayoutHandler_ = function(){
     this.LayoutHandler_ = new xiv.ui.layouts.LayoutHandler();
+    //this.LayoutHandler_.animateLayoutChange(false);
     this.LayoutHandler_.getElement().style.opacity = 0;
+    
     goog.dom.append(this.viewFrameElt_, this.LayoutHandler_.getElement());
     goog.dom.classes.add(this.LayoutHandler_.getElement(), 
 			 xiv.ui.ViewBox.CSS.VIEWLAYOUTHANDLER);

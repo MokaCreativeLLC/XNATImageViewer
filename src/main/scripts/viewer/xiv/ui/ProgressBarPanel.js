@@ -173,14 +173,20 @@ xiv.ui.ProgressBarPanel.prototype.getValue = function(val) {
 xiv.ui.ProgressBarPanel.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
     
-    this.ProgressBar_.disposeInternal();
-    delete this.ProgressBar_;
+    if (goog.isDefAndNotNull(this.ProgressBar_)){
+	this.ProgressBar_.disposeInternal();
+	delete this.ProgressBar_;
+    }
 
-    goog.dom.removeNode(this.progBarHolder_);
-    delete this.progBarHolder_;
+    if (goog.isDefAndNotNull(this.progBarHolder_)){
+	goog.dom.removeNode(this.progBarHolder_);
+	delete this.progBarHolder_;
+    }
 
-    goog.dom.removeNode(this.labelHolder_);
-    delete this.labelHolder_;
+    if (goog.isDefAndNotNull(this.labelHolder_)){
+	goog.dom.removeNode(this.labelHolder_);
+	delete this.labelHolder_;
+    }
 
     this.showValue_ = null;
     this.labelText_ = null;
