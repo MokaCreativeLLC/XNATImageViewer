@@ -1281,7 +1281,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     this.thumbLoadTime_ = (new Date()).getTime();  
 
     //
-    // hide the crosshairs
+    // toggle off crosshairs
     //
     goog.testing.events.fireClickEvent(this.toggleButtons_['Crosshairs']);
 }
@@ -2501,7 +2501,7 @@ xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
 	goog.dom.removeNode(this.menus_.LEFT);
 	delete this.menus_.LEFT;
 	
-	goog.array.forEach(this.toggleButtons_, function(button){
+	goog.object.forEach(this.toggleButtons_, function(button){
 	    goog.events.removeAll(button);
 	    goog.dom.removeNode(button);
 	    button = null;

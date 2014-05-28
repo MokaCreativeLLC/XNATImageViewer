@@ -174,6 +174,9 @@ xiv.ui.layouts.FourUp.prototype.updateStyle = function(){
     this.updateStyle_X();
     this.updateStyle_Y();
 
+
+    window.console.log("GOOG", this.LayoutFrames['X']);
+
 }
 
 
@@ -228,6 +231,8 @@ xiv.ui.layouts.FourUp.prototype.updateStyle_X = function() {
 	this.LayoutFrames['X'].getResizable().getBoundaryElement(), 
 	this.currSize.width - this.minLayoutFrameWidth_ * 2,
 	this.currSize.height - this.minLayoutFrameHeight_ * 2);
+
+    
 
     //
     // Make the X TOP handle 100% of the width

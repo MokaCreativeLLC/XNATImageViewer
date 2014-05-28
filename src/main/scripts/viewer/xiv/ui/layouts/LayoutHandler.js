@@ -413,7 +413,7 @@ function() {
  * @private
  */ 
 xiv.ui.layouts.LayoutHandler.prototype.onLayoutResize_ = function(e) {
-    //window.console.log("RESIZE", e, typeof e)
+    window.console.log("RESIZE", e, typeof e)
     //window.console.log('grabbing resize event from layout in handler');
     this.dispatchEvent({
 	type: xiv.ui.layouts.LayoutHandler.EventType.RESIZE
@@ -861,6 +861,8 @@ function(callback){
  */
 xiv.ui.layouts.LayoutHandler.prototype.updateStyle = function(){
     goog.base(this, 'updateStyle');
+    window.console.log(this.Layouts_[this.currLayoutTitle_]);
+    window.console.log(this.Layouts_[this.currLayoutTitle_].getLayoutFrames()['X'].getElement().style.height)
     this.Layouts_[this.currLayoutTitle_].updateStyle();    
 }
 

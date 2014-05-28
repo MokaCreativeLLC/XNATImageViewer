@@ -237,11 +237,15 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
     //------------------
     if (widgetHeight < scrollAreaHeight) {
 
+	//
+	// Show the slider
+	//
+	this.Slider.getElement().style.opacity = 1;
+
 	// The slider thumbnail's height is a function of
 	// how much scroll area is hidden.  Want to make sure the height
 	// is proportional to the contents.
 	nrg.style.setStyle(this.Slider.getThumb(), {
-	    'opacity': 1,
 	    'height': widgetHeight * (widgetHeight / scrollAreaHeight)
 	});
 
@@ -256,11 +260,9 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 
 	// Move the scroll area to the top (as the slider's thumbnail
 	// is at the top).
-	var sendVal = /**@type {!number}*/ this.Slider.getMaximum() - 
-	    this.Slider.getValue();
-	var remap = /**@type {!number}*/
-	    nrg.convert.remap1D(sendVal, beforeRange, afterRange);
-	var t = /**@type {!number}*/ remap['remappedVal'];
+	var sendVal = this.Slider.getMaximum() - this.Slider.getValue();
+	var remap = nrg.convert.remap1D(sendVal, beforeRange, afterRange);
+	var t = remap['remappedVal'];
 
 	nrg.style.setStyle( this.scrollArea_, {'top': -t});	
 
@@ -271,7 +273,10 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
     //------------------	
     }
     else {
-	this.Slider.getThumb().style.opacity = 0;
+	//
+	// Hide the slider
+	//
+	this.Slider.getElement().style.opacity = 0;
 	this.Slider.setEnabled(false);
 	this.Slider.setValue(100);
     }	
