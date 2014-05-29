@@ -308,7 +308,7 @@ gxnat.ProjectTree.prototype.getBranchTitles = function(treeNode) {
     function(treeNode, key){
 	//window.console.log(treeNode[gxnat.ProjectTree.METADATA_KEY]);
 	if (key == 'projects') {
-	    nodeTitles.push(treeNode[gxnat.ProjectTree.METADATA_KEY]['name']);
+	    nodeTitles.push(treeNode[gxnat.ProjectTree.METADATA_KEY]['ID']);
 	} else {
 	    nodeTitles.push(treeNode[gxnat.ProjectTree.METADATA_KEY]['label']);
 	}

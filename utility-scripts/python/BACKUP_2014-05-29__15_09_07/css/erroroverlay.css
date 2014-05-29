@@ -1,0 +1,39 @@
+/**
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+.nrg-ui-erroroverlay {
+}
+
+
+
+.nrg-ui-erroroverlay-overlay {
+    background-color: black;
+    border: solid 1px rgb(120,120,120);
+    border-radius: 25px;
+    top: calc(50% - 110px);
+    left: calc(50% - 250px);
+    width: 500px;
+    height: 220px;
+}
+
+
+.nrg-ui-erroroverlay-background {
+
+}
+
+
+.nrg-ui-erroroverlay-no-webgl-image {
+    position: absolute; 
+    top: 35px;
+    left: calc(50% - 40px);
+    width: 80px;
+    height: 80px;
+}
+
+
+
+.nrg-ui-erroroverlay-text {
+    top: 145px;
+}

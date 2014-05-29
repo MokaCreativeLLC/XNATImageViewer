@@ -1,0 +1,23 @@
+/**
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.nrg-ui-ziptabs {
+    position: absolute;
+}
+
+
+.nrg-ui-ziptabs-top, .nrg-ui-ziptabs-bottom {
+    height: 18px;
+}
+
+
+.nrg-ui-ziptabs-left, .nrg-ui-ziptabs-right {
+    width: 18px;
+}
+
+
+
+
