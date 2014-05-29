@@ -392,6 +392,6 @@ nrg.ui.ZipTabs.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
     goog.events.removeAll(this.Resizable_);
-    this.Resizable_.disposeInternal(); 
+    this.Resizable_.dispose(); 
     delete this.Resizable_;
 }

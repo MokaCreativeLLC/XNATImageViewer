@@ -197,17 +197,17 @@ xiv.ui.layouts.Layout.prototype.removeAllInteractors = function() {
 	function(interactorSet, planeOr){
 	    
 	    if (goog.isDefAndNotNull(interactorSet.SLIDER)){
-		interactorSet.SLIDER.disposeInternal();
+		interactorSet.SLIDER.dispose();
 		delete interactorSet.SLIDER;
 	    }
 
 	    if (goog.isDefAndNotNull(interactorSet.CROSSHAIRS)){
-		interactorSet.CROSSHAIRS.disposeInternal();
+		interactorSet.CROSSHAIRS.dispose();
 		delete interactorSet.CROSSHAIRS;
 	    }
 
 	    if (goog.isDefAndNotNull(interactorSet.FRAME_DISPLAY)){
-		interactorSet.FRAME_DISPLAY.disposeInternal();
+		interactorSet.FRAME_DISPLAY.dispose();
 		delete interactorSet.FRAME_DISPLAY;
 	    }
 	})

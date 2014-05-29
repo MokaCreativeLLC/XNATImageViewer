@@ -904,7 +904,7 @@ nrg.ui.SlideInMenu.prototype.disposeInternal = function() {
     // Menu
     //
     goog.events.removeAll(this.menu_);
-    this.menu_.disposeInternal();
+    this.menu_.dispose();
     delete this.menu_;
 
     //

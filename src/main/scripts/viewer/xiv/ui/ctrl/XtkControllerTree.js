@@ -219,23 +219,23 @@ xiv.ui.ctrl.XtkControllerTree.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
     if (goog.isDefAndNotNull(this.VolumeController3D_)){
-	this.VolumeController3D_.disposeInternal();
+	this.VolumeController3D_.dispose();
 	delete this.VolumeController3D_;
     }
 
 
     if (goog.isDefAndNotNull(this.MeshController3D_)){
-	this.MeshController3D_.disposeInternal();
+	this.MeshController3D_.dispose();
 	delete this.MeshController3D_;
     }
 
     if (goog.isDefAndNotNull(this.AnnotationsController3D_)){
-	this.AnnotationsController3D_.disposeInternal();
+	this.AnnotationsController3D_.dispose();
 	delete this.AnnotationsController3D_;
     }
 
     if (goog.isDefAndNotNull(this.FiberController3D_)){
-	this.FiberController3D_.disposeInternal();
+	this.FiberController3D_.dispose();
 	delete this.FiberController3D_;
     }
 }

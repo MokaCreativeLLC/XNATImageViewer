@@ -829,7 +829,7 @@ nrg.ui.ZippyTree.prototype.arrangeNodes_ = function(contentHolder) {
  * @private
  */
 nrg.ui.ZippyTree.prototype.continueAnim_ = function() {
-    this.AnimQueue_.disposeInternal();
+    this.AnimQueue_.dispose();
 
     // Add animations in the secondary queue to the AnimQueue
     while(this.secondaryAnimQueue_.length){

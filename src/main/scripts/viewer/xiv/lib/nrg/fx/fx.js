@@ -525,7 +525,7 @@ function (anims, opt_onBegin, opt_onAnimate, opt_onEnd) {
     goog.events.listen(animQueue, goog.fx.Animation.EventType.END, 
 	function() { 
 	    if (opt_onEnd) { opt_onEnd() };
-	    animQueue.disposeInternal();
+	    animQueue.dispose();
 	    animQueue = null;
 	    delete animQueue;
 	})
@@ -566,7 +566,7 @@ function (anims, opt_onBegin, opt_onAnimate, opt_onEnd) {
     goog.events.listen(animQueue, goog.fx.Animation.EventType.END, 
 	function() { 
 	    if (opt_onEnd) { opt_onEnd() };
-	    animQueue.disposeInternal();
+	    animQueue.dispose();
 	    animQueue = null;
 	    delete animQueue;
 	})

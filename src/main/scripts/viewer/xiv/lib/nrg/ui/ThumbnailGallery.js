@@ -585,7 +585,7 @@ nrg.ui.ThumbnailGallery.prototype.disposeInternal = function() {
     // Zippy Tree
     if (goog.isDefAndNotNull(this.ZippyTree)){
 	goog.events.removeAll(this.ZippyTree);
-	this.ZippyTree.disposeInternal();
+	this.ZippyTree.dispose();
 	delete this.ZippyTree;
     }
     

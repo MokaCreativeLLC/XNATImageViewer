@@ -547,7 +547,7 @@ function(startPos, endPos, opt_callback, opt_dur) {
     function(e){
 	this.isAnimating = false;
 
-	this.slideAnim_.disposeInternal();
+	this.slideAnim_.dispose();
 	goog.events.removeAll(this.slideAnim_);
 	this.slideAnim_.destroy();
 	this.slideAnim_ = null;

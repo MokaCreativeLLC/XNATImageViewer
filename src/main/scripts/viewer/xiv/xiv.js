@@ -1118,7 +1118,7 @@ xiv.prototype.dispose_ = function() {
 
     // Modal
     goog.events.removeAll(this.Modal_);
-    this.Modal_.disposeInternal();
+    this.Modal_.dispose();
     goog.dom.removeNode(this.Modal_.getElement());
     delete this.Modal_;
 }

@@ -52,7 +52,10 @@ goog.exportSymbol('xiv.ui.ViewBoxHandler', xiv.ui.ViewBoxHandler);
  */
 xiv.ui.ViewBoxHandler.CSS_SUFFIX = {
     HANDLE: 'handle',
-    VIEWBOXDRAGCLONE: 'viewboxdragclone'
+    VIEWBOXDRAGCLONE: 'viewboxdragclone',
+    CLOSEBUTTON: 'closebutton',
+    ADDROWBUTTON: 'addrowbutton',
+    ADDCOLUMNBUTTON: 'addcolumnbutton',
 }
 
 
@@ -97,10 +100,26 @@ xiv.ui.ViewBoxHandler.prototype.ViewBoxes_;
 
 
 /**
+ * @type {Object}
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.HandlerButtons_;
+
+
+
+/**
  * @type {Object.<string, Element>}
  * @private
  */
 xiv.ui.ViewBoxHandler.prototype.dragDropHandles_;
+
+
+
+/**
+ * @type {Object.<string, Element>}
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.closeButtons_;
 
 
 
@@ -154,51 +173,6 @@ function(opt_newSet, opt_animate) {
 }
 
 
-
-/**
- * Utility method that loops through the multi-dimensional 'viewers' array 
- * performing the user-specified 'callback' operation on every viewer.  
- * @param {function} callback The callback function to apply.
- *
- * @return {Object | Array.<Object>}
- * @public
- */
-xiv.ui.ViewBoxHandler.prototype.loop = function(callback) {
-
-    if (!this.ViewBoxes_){ return;}
-
-    var returnVals = [];
-    var i = 0; 
-    var j = 0;
-    var retVal = null;
-
-    // Conduct the mult-dimensional loop...
-    for (i=0, len = this.ViewBoxes_.length; i < len; i++) {
-	for (j=0, len2 = this.ViewBoxes_[i].length; j < len2; j++) {
-	    retVal = callback(this.ViewBoxes_[i][j], i, j);
-	    // Accumulate return values if necessary.
-	    if (retVal) { returnVals.push(retVal); }
-	}
-    }
-    return (returnVals.length === 1) ? returnVals[0] : returnVals;
-}
-
-
-
-
-/**
- * Returns the number of xiv.ui.ViewBox columns.
- *
- * @return {number}
- * @public
- */
-xiv.ui.ViewBoxHandler.prototype.columnCount = function() {
-    return this.ViewBoxes_[0].length;
-}
-
-
-
-
 /**
  * Returns the number of xiv.ui.ViewBox rows.
  *
@@ -209,6 +183,42 @@ xiv.ui.ViewBoxHandler.prototype.rowCount = function() {
     return this.ViewBoxes_.length;
 }
 
+
+
+/**
+ * Returns an empty matrix sized to the ViewBoxes_ property.
+ * @return {Array} 
+ * @public
+ */
+xiv.ui.ViewBoxHandler.prototype.getEmptyMatrix = function(callback) {
+    var arr = [];
+    goog.array.forEach(this.ViewBoxes_, function(ViewBoxRow, i){
+	arr.push([]);
+	goog.array.forEach(ViewBoxRow, function(ViewBox){
+	    arr[i].push(null);
+	})	
+    })
+    return arr;
+}
+
+
+
+
+/**
+ * Utility method that loops through the multi-dimensional 'viewers' array 
+ * performing the user-specified 'callback' operation on every viewer.  
+ * 
+ * @param {!Function} callback
+ * @public
+ */
+xiv.ui.ViewBoxHandler.prototype.loop = function(callback) {
+    if (!this.ViewBoxes_){ return;}
+    goog.array.forEach(this.ViewBoxes_, function(ViewBoxRow, i){
+	goog.array.forEach(ViewBoxRow, function(ViewBox, j){
+	    callback(ViewBox, i, j, this.ViewBoxes_.length, ViewBoxRow.length);
+	}.bind(this))	
+    }.bind(this))
+}
 
 
 
@@ -226,10 +236,10 @@ xiv.ui.ViewBoxHandler.prototype.insertColumn = function(opt_animate) {
 
     if (!this.ViewBoxes_){ this.ViewBoxes_ = [[]] };
 
-    var newColumn = /**@type {!Array.ViewBox}*/ [];
-    var columnLen = /**@type {!number}*/
+    var newColumn = [];
+    var columnLen = 
     (this.ViewBoxes_.length) ? this.ViewBoxes_.length : 1;
-    var i = /**@type {!number}*/ 0;
+    var i = 0;
     opt_animate =  (opt_animate === undefined) ? true : opt_animate;
 
     for (i = 0; i < columnLen; i++) {newColumn.push(this.createViewBox_())};
@@ -254,6 +264,7 @@ xiv.ui.ViewBoxHandler.prototype.insertColumn = function(opt_animate) {
 /**
  * Removes a column of xiv.ui.ViewBoxes from the xiv.ui.Modal.
  * @param {boolean=} opt_animate Allows the user to animate the column removal.
+ * @deprecated
  * @public
  */
 xiv.ui.ViewBoxHandler.prototype.removeColumn = function(opt_animate) {
@@ -269,15 +280,7 @@ xiv.ui.ViewBoxHandler.prototype.removeColumn = function(opt_animate) {
     if (this.ViewBoxes_[0] && this.ViewBoxes_[0].length > 1) {
 	goog.array.forEach(this.ViewBoxes_, function(ViewBoxCol, i) {
 	    var rowLen =  ViewBoxCol.length - 1;
-
-	    nrg.fx.fadeTo(ViewBoxCol[rowLen].getElement(), 
-			    nrg.ui.Component.animationLengths.FAST, 0);
-
-	    goog.dom.removeNode(this.dragDropHandles_[
-		ViewBoxCol[rowLen].getElement().id]);
-
-	    // Remove the xiv.ui.ViewBox
-	    ViewBoxCol[rowLen].disposeInternal();
+	    this.removeViewBox_(ViewBoxCol[rowLen])
 	    ViewBoxCol.splice(rowLen, 1);		
 	}.bind(this))
     }
@@ -327,6 +330,7 @@ xiv.ui.ViewBoxHandler.prototype.insertRow = function(opt_animate) {
  * Removes a row of xiv.ui.ViewBoxes from the xiv.ui.Modal.
  *
  * @param {boolean=} opt_animate Allows the user to animate the row removal.
+ * @deprecated
  * @public
  */
 xiv.ui.ViewBoxHandler.prototype.removeRow = function(opt_animate) {
@@ -340,16 +344,7 @@ xiv.ui.ViewBoxHandler.prototype.removeRow = function(opt_animate) {
     if (this.ViewBoxes_.length > 1) {
 	var delRow = this.ViewBoxes_[this.ViewBoxes_.length - 1];
 	goog.array.forEach(delRow, function(currDelViewBox) { 
-
-
-	    nrg.fx.fadeTo(currDelViewBox.getElement(), 
-			    nrg.ui.Component.animationLengths.FAST, 0);
-	    // Remove the drag drop handles
-	    goog.dom.removeNode(this.dragDropHandles_[
-		currDelViewBox.getElement().id]);
-
-	    currDelViewBox.disposeInternal();
-
+	    this.removeViewBox_(currDelViewBox)
 	}.bind(this))
 	this.ViewBoxes_.splice(this.ViewBoxes_.length -1, 1);
     }
@@ -420,15 +415,17 @@ xiv.ui.ViewBoxHandler.prototype.getViewBox = function(row, col) {
 
 /**
  * Returns the xiv.ui.ViewBox objects as a single array.
- *
  * instead of an md-array.
+ *
  * @return {Array.<xiv.ui.ViewBox>}
  * @public
  */
 xiv.ui.ViewBoxHandler.prototype.getViewBoxes = function() {
-    return this.loop (function(ViewBox) { 
-	return ViewBox;	
+    var arr = [];
+    this.loop(function(ViewBox) { 
+	arr.push(ViewBox);	
     })
+    return arr;
 }
 
 
@@ -442,10 +439,11 @@ xiv.ui.ViewBoxHandler.prototype.getViewBoxes = function() {
  * @public
  */
 xiv.ui.ViewBoxHandler.prototype.getViewBoxElements = function() {
-    var ws = this.loop (function(ViewBox) { 
-	return ViewBox.getElement();	
+    var arr = [];
+    this.loop(function(ViewBox) { 
+	arr.push(ViewBox.getElement());	
     })
-    return goog.isArray(ws) ? ws : [ws];
+    return arr;
 }
 
 
@@ -468,9 +466,168 @@ xiv.ui.ViewBoxHandler.prototype.setViewBoxesParent = function(elt) {
 xiv.ui.ViewBoxHandler.prototype.createViewBox_ = function() {
     var ViewBox = new xiv.ui.ViewBox();
     goog.dom.append(this.ViewBoxesParent_, ViewBox.getElement());
+
+    this.addCloseButton_(ViewBox);
     this.addDragDropHandle_(ViewBox);
+    this.addAddRowButton_(ViewBox);
+    this.addAddColumnButton_(ViewBox);
+
     this.setViewBoxEvents_(ViewBox);
     return ViewBox;    
+}
+
+
+/**
+ * @param {xiv.ui.ViewBox} ViewBox
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.addAddColumnButton_ = function(ViewBox){
+    //
+    // Create the element
+    //
+    var addColumnButton = goog.dom.createDom('img', {
+	'id': xiv.ui.ViewBoxHandler.ID_PREFIX + '_CloseButton_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.ViewBoxHandler.CSS.ADDCOLUMNBUTTON,
+	'src': serverRoot + '/images/viewer/xiv/ui/ViewBoxManager/addcolumn.png'
+    });
+
+    //
+    // Set the hover class
+    //
+    nrg.style.setHoverClass(addColumnButton, 
+			    xiv.ui.ViewBoxHandler.CSS.ADDCOLUMNBUTTON 
+			    + '-hovered');
+
+    //
+    // Dispatch event on click
+    //
+    goog.events.listen(addColumnButton, 
+		       goog.events.EventType.CLICK,
+		       function(){
+			   this.insertColumn();
+		       }.bind(this))
+    
+    //
+    // Set an attribute
+    //
+    addColumnButton.setAttribute(xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR, 
+			     ViewBox.getElement().id); 
+
+    //
+    // Add to the menu
+    //
+    ViewBox.addToMenu('TOP_LEFT', addColumnButton, 1);
+    // Add to class property.
+    if (!this.addColumnButtons_){ this.addColumnButtons_ = {}};
+    this.addColumnButtons_[ViewBox.getElement().id] = addColumnButton;
+
+
+    // Tool tip
+    addColumnButton.title = "Add ViewBox Column.";
+}
+
+
+
+/**
+ * @param {xiv.ui.ViewBox} ViewBox
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.addAddRowButton_ = function(ViewBox){
+    //
+    // Create the element
+    //
+    var addRowButton = goog.dom.createDom('img', {
+	'id': xiv.ui.ViewBoxHandler.ID_PREFIX + '_CloseButton_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.ViewBoxHandler.CSS.ADDROWBUTTON,
+	'src': serverRoot + '/images/viewer/xiv/ui/ViewBoxManager/addrow.png'
+    });
+
+    //
+    // Set the hover class
+    //
+    nrg.style.setHoverClass(addRowButton, 
+			    xiv.ui.ViewBoxHandler.CSS.ADDROWBUTTON 
+			    + '-hovered');
+
+    //
+    // Dispatch event on click
+    //
+    goog.events.listen(addRowButton, 
+		       goog.events.EventType.CLICK,
+		       function(){
+			   this.insertRow();
+		       }.bind(this))
+    
+    //
+    // Set an attribute
+    //
+    addRowButton.setAttribute(xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR, 
+			     ViewBox.getElement().id); 
+
+    //
+    // Add to the menu
+    //
+    ViewBox.addToMenu('TOP_LEFT', addRowButton, 1);
+    // Add to class property.
+    if (!this.addRowButtons_){ this.addRowButtons_ = {}};
+    this.addRowButtons_[ViewBox.getElement().id] = addRowButton;
+
+
+    // Tool tip
+    addRowButton.title = "Close ViewBox.";
+}
+
+
+
+/**
+ * @param {xiv.ui.ViewBox} ViewBox
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.addCloseButton_ = function(ViewBox){
+    //
+    // Create the element
+    //
+    var closeButton = goog.dom.createDom('img', {
+	'id': xiv.ui.ViewBoxHandler.ID_PREFIX + '_CloseButton_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.ViewBoxHandler.CSS.CLOSEBUTTON,
+	'src': serverRoot + '/images/viewer/xiv/ui/Modal/close.png'
+    });
+
+    //
+    // Set the hover class
+    //
+    nrg.style.setHoverClass(closeButton, xiv.ui.ViewBoxHandler.CSS.CLOSEBUTTON 
+			    + '-hovered');
+
+    //
+    // Dispatch event on click
+    //
+    goog.events.listen(closeButton, 
+		       goog.events.EventType.CLICK,
+		       function(){
+			   this.onViewBoxClosed_(ViewBox);
+		       }.bind(this))
+    
+    //
+    // Set an attribute
+    //
+    closeButton.setAttribute(xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR, 
+			     ViewBox.getElement().id); 
+
+    //
+    // Add to the menu
+    //
+    ViewBox.addToMenu('TOP_LEFT', closeButton, 1);
+    // Add to class property.
+    if (!this.closeButtons_){ this.closeButtons_ = {}};
+    this.closeButtons_[ViewBox.getElement().id] = closeButton;
+
+
+    // Tool tip
+    closeButton.title = "Close ViewBox.";
 }
 
 
@@ -552,10 +709,6 @@ xiv.ui.ViewBoxHandler.prototype.setViewBoxEvents_ = function(ViewBox) {
     // Error
     goog.events.listen(ViewBox, xiv.ui.ViewBox.EventType.THUMBNAIL_LOADERROR, 
 	this.onThumbnailLoadError_.bind(this))
-
-    // Closed
-    goog.events.listen(ViewBox, xiv.ui.ViewBox.EventType.CLOSED,
-	this.onViewBoxClosed_.bind(this))
 }
 
 
@@ -577,9 +730,14 @@ xiv.ui.ViewBoxHandler.prototype.removeViewBox_ = function(ViewBox){
     goog.dom.removeNode(this.dragDropHandles_[ViewBox.getElement().id]);
 
     //
+    // Remove the handle
+    //
+    goog.dom.removeNode(this.closeButtons_[ViewBox.getElement().id]);
+
+    //
     // Remove the xiv.ui.ViewBox
     //
-    ViewBox.disposeInternal();
+    ViewBox.dispose();
 }
 
 
@@ -588,16 +746,20 @@ xiv.ui.ViewBoxHandler.prototype.removeViewBox_ = function(ViewBox){
  * @private
  */
 xiv.ui.ViewBoxHandler.prototype.adjustToClose_ = function(ViewBox){
-
     var newViewBoxes = [];
     var currActiveRow = 0;
     var currActiveCol = 0;
-
-    this.removeViewBox_(ViewBox);
-
     var newViewBoxRow, colCount, newColCount;
     var colsEven = true;
 
+    //
+    // First remove the view box
+    //
+    this.removeViewBox_(ViewBox);
+
+    //
+    // Then we have to clean up the View Boxes matrix
+    //
     goog.array.forEach(this.ViewBoxes_, function(ViewBoxCol, i) {
 	//
 	// Create the new row
@@ -608,7 +770,7 @@ xiv.ui.ViewBoxHandler.prototype.adjustToClose_ = function(ViewBox){
 	// Store only non-disposed objects
 	//
 	goog.array.forEach(ViewBoxCol, function(_ViewBox, j) {
-	    if (!_ViewBox.disposeInternalCalled()){
+	    if (!_ViewBox.isDisposed()){
 		window.console.log(_ViewBox.getElement());
 		newViewBoxRow.push(_ViewBox);	
 	    }
@@ -635,20 +797,17 @@ xiv.ui.ViewBoxHandler.prototype.adjustToClose_ = function(ViewBox){
 
     this.ViewBoxes_ = newViewBoxes;
 
-    if (colsEven){
-	this.onViewBoxesChanged_(null, true);
-    }
+    this.onViewBoxesChanged_(null, true);
     this.resetDragDropGroup_();
 
 }
 
 
 /**
- * @param {Event} e
+ * @param {xiv.ui.ViewBox} ViewBox
  * @private
  */
-xiv.ui.ViewBoxHandler.prototype.onViewBoxClosed_ = function(e){
-    var ViewBox = e.target;
+xiv.ui.ViewBoxHandler.prototype.onViewBoxClosed_ = function(ViewBox){
     var inUse = ViewBox.checkInUseAndShowDialog(function(){
 	this.adjustToClose_(ViewBox);
     }.bind(this))
@@ -660,54 +819,89 @@ xiv.ui.ViewBoxHandler.prototype.onViewBoxClosed_ = function(e){
 
 
 /**
+ * Determines whether a match is found between a given ViewBox object and
+ * a related object that's either the element, id or the same ViewBox object.
+ * 
+ * @param {xiv.ui.ViewBox} ViewBox The ViewBox object to base the match against.
+ * @param {xiv.ui.ViewBox|Element|string, matrchObj xiv.ui.ViewBox Class, 
+ *     xiv.ui.ViewBox.getElement(), or xiv.ui.ViewBox ID
+ * @return {boolan}  Whether there was a match;
+ * @public
+ */
+xiv.ui.ViewBoxHandler.prototype.isMatch = function(ViewBox, matchObj) {
+    var byObj = (ViewBox === matchObj);
+    var byElement = (ViewBox.getElement() === matchObj);
+    var byId = (ViewBox.getElement().id === matchObj);
+    return (byObj || byElement || byId);
+}
+
+
+
+
+/**
  * Swaps one xiv.ui.ViewBox with another based on the class, 
  * the element of the ID.
- * @param {xiv.ui.ViewBox|Element|string} v1 xiv.ui.ViewBox Class, 
+ * 
+ * @param {xiv.ui.ViewBox|Element|string} swapper xiv.ui.ViewBox Class, 
  *     xiv.ui.ViewBox.getElement(), or xiv.ui.ViewBox ID
- * @param {xiv.ui.ViewBox|Element|string, v2 xiv.ui.ViewBox Class, 
+ * @param {xiv.ui.ViewBox|Element|string, swapee xiv.ui.ViewBox Class, 
  *     xiv.ui.ViewBox.getElement(), or xiv.ui.ViewBox ID
  * @public
  */
-xiv.ui.ViewBoxHandler.prototype.swap = function(v1, v2) {
+xiv.ui.ViewBoxHandler.prototype.swap = function(swapper, swapee) {
 
-    //------------------
-    // Loop through all view boxes to determine
-    // the locations of the two xiv.ui.ViewBoxes to swap.
-    //------------------
-    var arrLoc = /**@type {!Object.<string, number>}*/ 
-    this.loop ( function (v, i, j) { 
-	var byObj = /**@type {!boolean}*/ (v === v1) || (v === v2);
-	var byElement = /**@type {!boolean}*/
-	(v.getElement() === v1) || (v.getElement() === v2);
-	var byId = /**@type {!boolean}*/
-	(v.getElement().id === v1) || (v.getElement().id === v2);
-	
-	if (byObj || byElement || byId) {
-	    return {
-		"i" : i,
-		"j" : j
-	    }				
+    window.console.log('\n\nSWAP', swapper, swapee);
+    var swapper_i, swapper_j, swapee_i, swapee_j;
+    var i = 0, j = 0;
+    var len = this.ViewBoxes_.length;
+
+    for (i=0; i < len; i++){
+	var ViewBoxRow = this.ViewBoxes_[i];
+	var len2 = ViewBoxRow.length;
+	for (j=0; j < len2; j++){
+	    var ViewBox = this.ViewBoxes_[i][j];
+	    if (this.isMatch(ViewBox, swapper)){
+		swapper_i = i;
+		swapper_j = j;	
+		break;
+	    }
+
+	    if (this.isMatch(ViewBox, swapee)){
+		swapee_i = i;
+		swapee_j = j;
+		break;
+	    }
 	}
-    })
+    }
 
-
-    //------------------
+    //
     // If both viewBoxes are found, swap them...
-    //------------------
-    if (arrLoc.length === 2) {
-	var tempViewBox = /**@type {!ViewBox}*/
-	this.ViewBoxes_[arrLoc[0].i][arrLoc[0].j];
-	this.ViewBoxes_[arrLoc[0].i][arrLoc[0].j] = 
-	    this.ViewBoxes_[arrLoc[1].i][arrLoc[1].j];
-	this.ViewBoxes_[arrLoc[1].i][arrLoc[1].j] = tempViewBox;
-	
+    //
+    if (goog.isNumber(swapper_i) && goog.isNumber(swapee_i)){
+	//
+	// Swap them within the matrix
+	//
+	var tempViewBox = this.ViewBoxes_[swapper_i][swapper_j];
+	this.ViewBoxes_[swapper_i][swapper_j] = 
+	    this.ViewBoxes_[swapee_i][swapee_j];
+	this.ViewBoxes_[swapee_i][swapee_j] = tempViewBox;
 
+	//
+	// Swap the sizes
+	//
+	var swapperSize = goog.style.getSize(
+		this.ViewBoxes_[swapper_i][swapper_j].getElement());
+	var swapeeSize = goog.style.getSize(
+		this.ViewBoxes_[swapee_i][swapee_j].getElement());
+	goog.style.setSize(this.ViewBoxes_[swapee_i][swapee_j].getElement(), 
+			   swapperSize);
+	goog.style.setSize(this.ViewBoxes_[swapper_i][swapper_j].getElement(), 
+			   swapeeSize);
 
-    //------------------
-    // Otherwise, throw an error.
-    //------------------
-    } else {
-	throw "SWAP ERROR: "
+	//
+	// then dispatch change event.
+	//
+	this.onViewBoxesChanged_();
     }
 }	
 
@@ -1187,8 +1381,8 @@ xiv.ui.ViewBoxHandler.prototype.disposeInternal = function() {
     // The individual ViewBoxes
     this.loop(function(ViewBox){
 	goog.events.removeAll(ViewBox);
-	ViewBox.disposeInternal();
 	goog.dom.removeNode(ViewBox.getElement());
+	ViewBox.dispose();
     }.bind(this));
 
 
@@ -1203,6 +1397,11 @@ xiv.ui.ViewBoxHandler.prototype.disposeInternal = function() {
     // Drag Drop handles
     nrg.ui.disposeElementMap(this.dragDropHandles_);
     delete this.dragDropHandles_;
+
+
+    // Drag Drop handles
+    nrg.ui.disposeElementMap(this.closeButtons_);
+    delete this.closeButtons_;
 
 
     // View Box Positions
@@ -1242,21 +1441,15 @@ goog.exportSymbol('xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR',
 		  xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR);
 goog.exportSymbol('xiv.ui.ViewBoxHandler.ID_PREFIX', 
 		  xiv.ui.ViewBoxHandler.ID_PREFIX);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.CSS_CLASS_PREFIX', 
-		  xiv.ui.ViewBoxHandler.CSS_CLASS_PREFIX);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.ELEMENT_CLASS', 
-		  xiv.ui.ViewBoxHandler.ELEMENT_CLASS);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.CSS', 
-		  xiv.ui.ViewBoxHandler.CSS);
 
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getEmptyMatrix', 
+		  xiv.ui.ViewBoxHandler.prototype.getEmptyMatrix);
 goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.loop', 
 		  xiv.ui.ViewBoxHandler.prototype.loop);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.columnCount', 
-		  xiv.ui.ViewBoxHandler.prototype.columnCount);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.rowCount', 
-		  xiv.ui.ViewBoxHandler.prototype.rowCount);
 goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.insertColumn', 
 		  xiv.ui.ViewBoxHandler.prototype.insertColumn);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.rowCount', 
+		  xiv.ui.ViewBoxHandler.prototype.rowCount);
 goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.removeColumn', 
 		  xiv.ui.ViewBoxHandler.prototype.removeColumn);
 goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.insertRow', 
@@ -1277,6 +1470,8 @@ goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.setViewBoxesParent',
 		  xiv.ui.ViewBoxHandler.prototype.setViewBoxesParent);
 goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.swap', 
 		  xiv.ui.ViewBoxHandler.prototype.swap);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.isMatch', 
+		  xiv.ui.ViewBoxHandler.prototype.isMatch);
 goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.numViewBoxes', 
 		  xiv.ui.ViewBoxHandler.prototype.numViewBoxes);
 goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBoxAfter', 

@@ -275,7 +275,7 @@ xiv.ui.HelpOverlay.prototype.disposeInternal = function(){
     // Scrollable zippy tree
     //
     if (goog.isDefAndNotNull(this.ScrollableZippyTree_)){
-	this.ScrollableZippyTree_.disposeInternal();
+	this.ScrollableZippyTree_.dispose();
     }
 }
 

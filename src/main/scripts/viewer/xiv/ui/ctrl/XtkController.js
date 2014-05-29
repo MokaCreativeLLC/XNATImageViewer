@@ -464,7 +464,7 @@ xiv.ui.ctrl.XtkController.prototype.disposeInternal = function() {
     //
     goog.array.forEach(this.subControllers, function(subController){
 	goog.events.removeAll(subController);
-	subController.disposeInternal();
+	subController.dispose();
 	subController = null;
     })
     goog.array.clear(this.subControllers);
@@ -475,7 +475,7 @@ xiv.ui.ctrl.XtkController.prototype.disposeInternal = function() {
     //
     goog.array.forEach(this.masterControllers, function(ctrl){
 	goog.events.removeAll(ctrl);
-	ctrl.disposeInternal();
+	ctrl.dispose();
 	controller = null;
     })
     goog.array.clear(this.masterControllers);
@@ -487,7 +487,7 @@ xiv.ui.ctrl.XtkController.prototype.disposeInternal = function() {
     if (goog.isDefAndNotNull(this.component_)){
 	goog.events.removeAll(this.component_);
 	if (this.component_ instanceof goog.ui.Component){
-	    this.component_.disposeInternal();
+	    this.component_.dispose();
 	} else {
 	    goog.dom.removeNode(this.component_);
 	}

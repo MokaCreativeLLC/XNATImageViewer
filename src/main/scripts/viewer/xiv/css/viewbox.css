@@ -245,21 +245,3 @@
 
 
 
-.xiv-ui-viewbox-closebutton {
-    position: absolute;
-    height: 9px;
-    width: 9px;
-    color: white;
-    font-size: 9px;		
-    font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
-    outline: 0;
-    cursor: pointer;
-    opacity: .6;
-    z-index: 5000;
-}
-
-
-
-.xiv-ui-viewbox-closebutton-hovered {
-    opacity: 1;
-}

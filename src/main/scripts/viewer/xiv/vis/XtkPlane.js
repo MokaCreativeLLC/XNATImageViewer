@@ -528,7 +528,7 @@ xiv.vis.XtkPlane.prototype.dispose = function() {
     // Overlay
     //
     if (goog.isDefAndNotNull(this.DisabledOverlay_)){
-	this.DisabledOverlay_.disposeInternal();
+	this.DisabledOverlay_.dispose();
 	delete this.DisabledOverlay_;
     }
 

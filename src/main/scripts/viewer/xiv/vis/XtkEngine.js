@@ -288,7 +288,7 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
     // Clear existing controller tree
     //
     if (goog.isDefAndNotNull(this.ControllerTree_)){
-	this.ControllerTree_.disposeInternal();
+	this.ControllerTree_.dispose();
 	this.ControllerTree_ = null;
     }
     this.ControllerTree_ = new xiv.ui.ctrl.XtkControllerTree();
@@ -743,7 +743,7 @@ xiv.vis.XtkEngine.prototype.dispose = function () {
     goog.base(this, 'dispose');
     
     if (goog.isDefAndNotNull(this.ControllerTree_)){
- 	this.ControllerTree_.disposeInternal();
+ 	this.ControllerTree_.dispose();
 	delete this.ControllerTree_;
     }
 

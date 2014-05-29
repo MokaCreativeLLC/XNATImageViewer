@@ -677,7 +677,7 @@ nrg.ui.Resizable.prototype.disposeDraggers_ = function() {
     goog.object.forEach(this.ResizeDraggers_, function(d, pos){
 	if (d) {
 	    goog.events.removeAll(d);
-	    d.disposeInternal();
+	    d.dispose();
 	}
     })
     goog.object.clear(this.ResizeDraggers_);

@@ -856,7 +856,7 @@ nrg.ui.Tabs.prototype.disposeTabs_ = function() {
 	    // Run dispose, if the item has the methods
 	    //
 	    if (tabItem.disposeInternal){
-		tabItem.disposeInternal();
+		tabItem.dispose();
 
 	    } else if (tabItem.dispose){
 		tabItem.dispose();
@@ -897,7 +897,7 @@ nrg.ui.Tabs.prototype.disposeInternal = function() {
 
     // tabPane
     goog.events.removeAll(this.googTabPane_);
-    this.googTabPane_.disposeInternal();
+    this.googTabPane_.dispose();
     delete this.googTabPane_;
 
     // others

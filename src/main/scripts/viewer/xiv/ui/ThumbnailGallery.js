@@ -238,12 +238,12 @@ xiv.ui.ThumbnailGallery.prototype.getThumbnailByElement = function(element) {
 xiv.ui.ThumbnailGallery.prototype.clearDragDropGroups_ = function(){
     if (goog.isDefAndNotNull(this.thumbnailDragDropGroup_)){
 	this.thumbnailDragDropGroup_.removeItems();
-	this.thumbnailDragDropGroup_.disposeInternal();
+	this.thumbnailDragDropGroup_.dispose();
 	this.thumbnailDragDropGroup = null;
     }
     if (goog.isDefAndNotNull(this.thumbnailTargetGroup_)){
 	this.thumbnailTargetGroup_.removeItems();
-	this.thumbnailTargetGroup_.disposeInternal();
+	this.thumbnailTargetGroup_.dispose();
 	this.thumbnailTargetGroup = null;
     }
 }

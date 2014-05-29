@@ -429,7 +429,7 @@ nrg.ui.ZippyNode.prototype.disposeInternal = function(){
     
     // Zippy
     if (goog.isDefAndNotNull(this.Zippy_)){
-	this.Zippy_.disposeInternal();
+	this.Zippy_.dispose();
 	goog.events.removeAll(this.Zippy_);
 	delete this.Zippy_;
     }

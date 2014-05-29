@@ -239,6 +239,11 @@ function getMethods(obj) {
 
 var printMethods = function (obj, objName) {
 
+    var skippables = [
+     'CSS_CLASS_PREFIX',
+     'CSS',
+     'ELEMENT_CLASS'
+    ]
 
     var methodExporter = function(obj, objName) {
 
@@ -246,6 +251,18 @@ var printMethods = function (obj, objName) {
        var publicMethods = getMethods(obj);
        goog.array.forEach(publicMethods, function(pMethod){
           pMethod = objName + '.' + pMethod;
+
+          //
+          // Check for skippables here
+          //
+          var skip = false;
+          goog.array.forEach(skippables, function(skippable){
+              if (goog.string.endsWith(pMethod, skippable)){
+                  skip = true;
+              }
+          })
+          if (skip) { return }
+
           exportString = 'goog.exportSymbol(\'' + 
           pMethod + '\', ' +  pMethod + ');'
 

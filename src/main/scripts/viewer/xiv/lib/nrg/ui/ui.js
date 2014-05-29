@@ -23,7 +23,7 @@ nrg.ui.disposeAnimations = function(anims) {
     anims = !goog.isArray(anims) ? [anims] : anims;
     goog.array.forEach(anims, function(anim){
 	goog.events.removeAll(anim);
-	anim.disposeInternal();
+	anim.dispose();
     })
     goog.array.clear(anims);
 }
@@ -37,7 +37,7 @@ nrg.ui.disposeAnimations = function(anims) {
 nrg.ui.disposeAnimationQueue = function(animQueue) {
     if (!goog.isDefAndNotNull(animQueue)) { return } ;
     goog.events.removeAll(animQueue);
-    animQueue.disposeInternal();
+    animQueue.dispose();
 }
 
 
@@ -69,7 +69,7 @@ nrg.ui.disposeElementMap = function(obj) {
 nrg.ui.disposeComponentMap = function(obj) {
     goog.object.forEach(obj, function(node, key){
 	goog.events.removeAll(node);
-	node.disposeInternal();
+	node.dispose();
 	delete obj[key];
     })
     goog.object.clear(obj);

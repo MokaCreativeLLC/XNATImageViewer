@@ -351,7 +351,7 @@ nrg.ui.Component.prototype.disposeInternal = function() {
     if (goog.isDefAndNotNull(this.subComponents)){
 	goog.array.forEach(this.subComponents, function(subC){
 	    goog.events.removeAll(subC);
-	    subC.disposeInternal();
+	    subC.dispose();
 	    subC = null;
 	})
 	goog.array.clear(this.subComponents);

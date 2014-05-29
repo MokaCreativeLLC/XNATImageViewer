@@ -179,7 +179,7 @@ xiv.ui.ViewableGroupMenu.prototype.hide = function() {
 xiv.ui.ViewableGroupMenu.prototype.reset = function () {
 
     if (goog.isDefAndNotNull(this.ThumbnailGallery_)){
-	this.ThumbnailGallery_.disposeInternal();
+	this.ThumbnailGallery_.dispose();
 	delete this.ThumbnailGallery_;
     }
 
@@ -249,7 +249,7 @@ xiv.ui.ViewableGroupMenu.prototype.disposeInternal = function() {
     // Thumbnail Gallery
     //
     if (goog.isDefAndNotNull(this.ThumbnailGallery_)){
-	this.ThumbnailGallery_.disposeInternal();
+	this.ThumbnailGallery_.dispose();
 	delete this.ThumbnailGallery_;
     }
 }

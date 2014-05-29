@@ -209,7 +209,7 @@ xiv.ui.ctrl.ColorPaletteController.prototype.disposeInternal = function() {
 
     // Color Palettte
     goog.events.removeAll(this.colorPalette_);
-    this.colorPalette_.disposeInternal();
+    this.colorPalette_.dispose();
     delete this.colorPalette_;
 
 

@@ -290,7 +290,7 @@ nrg.ui.Overlay.prototype.close = function(opt_fadeTime) {
 	    type: nrg.ui.Overlay.EventType.CLOSED,
 	})
 	if (this.destroyOnClose_){
-	    this.disposeInternal();
+	    this.dispose();
 	}
     }.bind(this));
 }
