@@ -313,14 +313,6 @@ xiv.ui.ViewBox.prototype.toggleButtons_ = null;
 
 
 
-/**
- * @type {!Element}
- * @private
- */	
-xiv.ui.ViewBox.prototype.closeButton_ = null;
-
-
-
 
 /**
  * @type {goog.ui.Dialog}
@@ -2679,13 +2671,6 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     if (goog.isDefAndNotNull(this.inUseDialog_)){
 	this.inUseDialog_.dispose();
 	delete this.inUseDialog_;
-    }
-
-    // close button
-    if (goog.isDefAndNotNull(this.closeButton_)){
-	goog.events.removeAll(this.closeButton_);
-	goog.dom.removeNode(this.closeButton_);
-	delete this.closeButton_;
     }
 
     // Primitive types
