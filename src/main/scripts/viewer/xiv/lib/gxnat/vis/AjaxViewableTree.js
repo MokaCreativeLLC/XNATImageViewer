@@ -85,7 +85,17 @@ gxnat.vis.AjaxViewableTree.SUBJECT_KEY_MAP = {
     'yob': 'Year of Birth',
     'acquisition_site': 'Acq. Site',
     'date': 'Date',
-    'scanner': 'Scanner'
+    'scanner': 'Scanner',
+    'label': 'Subject'
+}
+
+
+/**
+ * @const
+ * @private
+ */
+gxnat.vis.AjaxViewableTree.EXPERIMENT_KEY_MAP = {
+    'label': 'Session'
 }
 
 
@@ -238,6 +248,13 @@ gxnat.vis.AjaxViewableTree.prototype.setExperimentMetadata = function(meta) {
 
     //window.console.log('Expt METADATA', this.experimentMetadata, 
     //this.sessionInfo);
+
+     goog.object.forEach(gxnat.vis.AjaxViewableTree.EXPERIMENT_KEY_MAP, 
+     function(val, key){
+	if (goog.isDefAndNotNull(this.experimentMetadata[key])){
+	    this.sessionInfo[val] = this.subjectMetadata[key]
+	}
+    }.bind(this))
 }
 
 
