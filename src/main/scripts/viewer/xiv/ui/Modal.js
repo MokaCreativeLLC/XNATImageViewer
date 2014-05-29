@@ -326,7 +326,7 @@ xiv.ui.Modal.prototype.getFullScreenButton = function() {
 xiv.ui.Modal.prototype.render = function(opt_parentElement) {
     goog.base(this, 'render', opt_parentElement);
     this.initSubComponents();
-    this.ViewBoxHandler_.insertColumn(false);
+    this.ViewBoxHandler_.insertColumn(null, false);
     this.setState(this.currState_);
 }
 

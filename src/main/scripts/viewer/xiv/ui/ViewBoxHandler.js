@@ -228,31 +228,42 @@ xiv.ui.ViewBoxHandler.prototype.loop = function(callback) {
  * rows of xiv.ui.ViewBoxes, this will insert a two xiv.ui.ViewBox length
  * column to the right.
  *
- * @param {boolean=} opt_animate Allows the user to animate the column 
- *     insertion.
+ * @param {xiv.ui.ViewBox} opt_ViewBox
+ * @param {boolean=} opt_animate Allows the user to animate the row insertion.
  * @public
  */
-xiv.ui.ViewBoxHandler.prototype.insertColumn = function(opt_animate) {
-
+xiv.ui.ViewBoxHandler.prototype.insertColumn = 
+function(opt_ViewBox, opt_animate) {
     if (!this.ViewBoxes_){ this.ViewBoxes_ = [[]] };
 
-    var newColumn = [];
-    var columnLen = 
-    (this.ViewBoxes_.length) ? this.ViewBoxes_.length : 1;
-    var i = 0;
+    var i = 0, newColumn = [];
+    var columnLen;
+
+    if (goog.isDefAndNotNull(opt_ViewBox)){
+	var inds = this.getViewBoxIndices_(opt_ViewBox);
+	newColumn.push(this.createViewBox_());
+	goog.array.insertAt(this.ViewBoxes_[inds.i], newColumn[0], inds.j+1);
+    }
+    else {
+	newColumn = [];
+	columnLen = this.ViewBoxes_.length ? this.ViewBoxes_.length : 1;
+	for (i = 0; i < columnLen; i++) {newColumn.push(this.createViewBox_())};
+
+	//
+	// If there are no Viewers in the modal, add one. Otherwise, insert 
+	// the new column.
+	//
+	if (this.ViewBoxes_.length === 0) {
+	    this.ViewBoxes_.push([newColumn[0]]);
+	} else {
+	    goog.array.forEach(this.ViewBoxes_, function(ViewBoxRow, i) {
+		ViewBoxRow.push(newColumn[i]);
+	    })			
+	}
+    }
+
     opt_animate =  (opt_animate === undefined) ? true : opt_animate;
 
-    for (i = 0; i < columnLen; i++) {newColumn.push(this.createViewBox_())};
-
-    // If there are no Viewers in the modal, add one. Otherwise, insert 
-    // the new column.
-    if (this.ViewBoxes_.length === 0) {
-	this.ViewBoxes_.push([newColumn[0]]);
-    } else {
-	goog.array.forEach(this.ViewBoxes_, function(ViewBoxRow, i) {
-	    ViewBoxRow.push(newColumn[i]);
-	})			
-    }
 
     // Events.
     this.onViewBoxesChanged_(newColumn, opt_animate);
@@ -292,34 +303,69 @@ xiv.ui.ViewBoxHandler.prototype.removeColumn = function(opt_animate) {
 
 
 
+/**
+ * @param {xiv.ui.ViewBox} ViewBox
+ * @return {Object.<string, number>}
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.getViewBoxIndices_ = function(ViewBox){
+    var i = 0;
+    var j = 0;
+    var len = this.ViewBoxes_.length;
+    var len2 = 0;
+    for (i=0; i < len; i++) {
+	for (j=0, len2 = this.ViewBoxes_[i].length; j < len2; j++) {
+	    if (ViewBox === this.ViewBoxes_[i][j]) {
+		return {
+		    i: i,
+		    j: j
+		}
+	    }
+	}
+    }
+}
+
+
+
 
 /**
  * Inserts a xiv.ui.ViewBox row into the xiv.ui.Modal, matching
  * the column count.  For instance, if a given modal has two 
  * columns of xiv.ui.ViewBoxes, this will insert a two xiv.ui.ViewBox length
  * row at the bottom.
+ *
+ * @param {xiv.ui.ViewBox} opt_ViewBox
  * @param {boolean=} opt_animate Allows the user to animate the row insertion.
  * @public
  */
-xiv.ui.ViewBoxHandler.prototype.insertRow = function(opt_animate) {
+xiv.ui.ViewBoxHandler.prototype.insertRow = function(opt_ViewBox, opt_animate) {
 
     if (!this.ViewBoxes_){
 	this.ViewBoxes_ = [[]]; 
     }
 
-    var newRow = /**@type {!Array.ViewBox}*/ [];
-    var rowLen = /**@type {!number}*/ 
-    (this.ViewBoxes_[0] && this.ViewBoxes_[0].length) ? 
-	this.ViewBoxes_[0].length : 1;
-    var i = /**@type {!number}*/ 0;
-    opt_animate =  (opt_animate === undefined) ? true : opt_animate;
+    var newRow = [];
+    var i, rowLen;
 
-    for (i=0; i < rowLen; i++) {newRow.push(this.createViewBox_())};
-    this.ViewBoxes_.push(newRow);
-    newSet = newRow;
+    if (goog.isDefAndNotNull(opt_ViewBox)){
+	var inds = this.getViewBoxIndices_(opt_ViewBox);
+	newRow = [];
+	rowLen = this.ViewBoxes_[inds.i].length;
+	for (i=0; i < rowLen; i++) {newRow.push(this.createViewBox_())};
+	goog.array.insertAt(this.ViewBoxes_, newRow, inds.i + 1);
+    }
+    else {
+	rowLen = (this.ViewBoxes_[0] && this.ViewBoxes_[0].length) ? 
+	    this.ViewBoxes_[0].length : 1;
+	for (i=0; i < rowLen; i++) {newRow.push(this.createViewBox_())};
+	this.ViewBoxes_.push(newRow);
+    }
 
+    //
     // Events
-    this.onViewBoxesChanged_(newSet, opt_animate);
+    //
+    opt_animate =  (opt_animate === undefined) ? true : opt_animate;
+    this.onViewBoxesChanged_(newRow, opt_animate);
     this.resetDragDropGroup_();
 }
 
@@ -505,7 +551,7 @@ xiv.ui.ViewBoxHandler.prototype.addAddColumnButton_ = function(ViewBox){
     goog.events.listen(addColumnButton, 
 		       goog.events.EventType.CLICK,
 		       function(){
-			   this.insertColumn();
+			   this.insertColumn(ViewBox);
 		       }.bind(this))
     
     //
@@ -557,7 +603,7 @@ xiv.ui.ViewBoxHandler.prototype.addAddRowButton_ = function(ViewBox){
     goog.events.listen(addRowButton, 
 		       goog.events.EventType.CLICK,
 		       function(){
-			   this.insertRow();
+			   this.insertRow(ViewBox);
 		       }.bind(this))
     
     //
@@ -808,6 +854,12 @@ xiv.ui.ViewBoxHandler.prototype.adjustToClose_ = function(ViewBox){
  * @private
  */
 xiv.ui.ViewBoxHandler.prototype.onViewBoxClosed_ = function(ViewBox){
+
+    //
+    // Exit out if there's only one ViewBox
+    //
+    if (this.numViewBoxes() == 1) { return };
+
     var inUse = ViewBox.checkInUseAndShowDialog(function(){
 	this.adjustToClose_(ViewBox);
     }.bind(this))
@@ -914,7 +966,11 @@ xiv.ui.ViewBoxHandler.prototype.swap = function(swapper, swapee) {
  * @public
  */
 xiv.ui.ViewBoxHandler.prototype.numViewBoxes = function() {
-    return this.ViewBoxes_.length * this.ViewBoxes_[0].length;	 
+    var count = 0;
+    this.loop(function(ViewBox){
+	count++;
+    })
+    return count;
 }
 
 
