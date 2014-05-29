@@ -152,6 +152,8 @@ function(_Viewable, folders) {
  */
 xiv.ui.ThumbnailGallery.prototype.createThumbnail = function(_Viewable) {
 
+    //serverRoot + '/images/viewer/xiv/ui/Thumbnail/silhouette.png';
+    
     //window.console.log(_Viewable['thumbnailUrl']);
     var thumbnail = new xiv.ui.Thumbnail(_Viewable);
     goog.events.listen(thumbnail, nrg.ui.Thumbnail.EventType.CLICK, function(){

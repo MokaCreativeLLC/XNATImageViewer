@@ -23,6 +23,12 @@ goog.provide('xiv.ui.Thumbnail');
 xiv.ui.Thumbnail = function (Viewable_) {
     goog.base(this);
 
+    //
+    // Default silhouette
+    //
+    this.setBrokenThumbnailUrl(serverRoot +
+	'/images/viewer/xiv/ui/Thumbnail/silhouette.png')
+
 
     /**
      * @type {gxnat.vis.ViewableTree}
@@ -64,7 +70,7 @@ xiv.ui.Thumbnail.prototype.updateHoverable = function(){
 						    nrg.ui.Thumbnail.CSS.IMAGE, 
 						    this.getHoverable());
     img = img[0];
-    img.src = this.getImage().src;
+    //img.src = this.getImage().src;
 }
 
 

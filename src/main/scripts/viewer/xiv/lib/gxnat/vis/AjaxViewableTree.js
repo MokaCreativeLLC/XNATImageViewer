@@ -246,8 +246,8 @@ gxnat.vis.AjaxViewableTree.prototype.setSubjectMetadata = function(meta) {
 gxnat.vis.AjaxViewableTree.prototype.setExperimentMetadata = function(meta) {
     goog.base(this, 'setExperimentMetadata', meta);
 
-    window.console.log('Expt METADATA', this.experimentMetadata, 
-    this.sessionInfo);
+    //window.console.log('Expt METADATA', this.experimentMetadata, 
+    //this.sessionInfo);
 
      goog.object.forEach(gxnat.vis.AjaxViewableTree.EXPERIMENT_KEY_MAP, 
      function(val, key){

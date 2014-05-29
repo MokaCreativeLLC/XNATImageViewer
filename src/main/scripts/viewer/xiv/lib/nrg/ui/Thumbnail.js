@@ -112,6 +112,14 @@ nrg.ui.Thumbnail.HOVERABLE_PREFIX = 'HOVERABLE_';
 
 
 /**
+ * @type {?string}
+ * @private
+ */	
+nrg.ui.Thumbnail.prototype.brokenThumbnailUrl_ = null;
+
+
+
+/**
  * @type {?Element}
  * @private
  */	
@@ -137,6 +145,19 @@ nrg.ui.Thumbnail.prototype.getImage = function() {
     return this.image_;	
 }
 
+
+
+/**
+ * @return {!string} url The thumbnail image url.
+ * @public
+ */
+nrg.ui.Thumbnail.prototype.setBrokenThumbnailUrl = function(url) {
+    this.brokenThumbnailUrl_ = url;
+    this.image_.onerror = function(){
+	this.image_.onerror = '';
+	this.image_.src = this.brokenThumbnailUrl_;
+    }.bind(this);
+}
 
 
 
@@ -499,6 +520,10 @@ nrg.ui.Thumbnail.prototype.disposeInternal = function() {
     // text
     goog.dom.removeNode(this.text_);
     delete this.text_;
+
+
+    // broken thumbnail
+    delete this.brokenThumbnalUrl_
 
     // is active
     delete this.isActive_;
