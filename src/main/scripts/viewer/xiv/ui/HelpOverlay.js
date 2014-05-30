@@ -80,8 +80,7 @@ xiv.ui.HelpOverlay.prototype.render = function(opt_parentElement){
 
     this.addCloseButton();
     this.addBackground();
-    this.getBackground().style.backgroundColor = 
-	'rgba(80,80,80,.8)';
+    this.getBackground().style.backgroundColor = 'rgba(80,80,80,.8)';
 
 
     goog.base(this, 'render', opt_parentElement);
@@ -210,7 +209,8 @@ xiv.ui.HelpOverlay.prototype.addContents_ = function(){
     var allLines = [imageManipLines, viewboxToggles, modalToggles];
     goog.array.forEach(allLines, function(lineArr, i){
 
-	var currTable = '<table style="width:100%" RULES=ROWS FRAME=HSIDES ' + 
+	var currTable = '<table style="width:100%;' + 
+	    'color:white;" RULES=ROWS FRAME=HSIDES ' + 
 	    ' BORDERCOLOR="gray">';
 
 	goog.array.forEach(lineArr, function(line){
@@ -219,11 +219,13 @@ xiv.ui.HelpOverlay.prototype.addContents_ = function(){
 
 		switch (i) {
 		case 0:
-		    cell = '<b><font size="4">' + cell + '</font></b>';
+		    cell = '<b><font size="3">' + cell + '</font></b>';
 		    break;
 		case 1:
-		    cell = '<i>' + cell + '</i>';
+		    cell = '<i><font size="2">' + cell + '</font></i>';
 		    break;
+		default:
+		    cell = '<font size="2">' + cell + '</font>';
 		}
 		currTable += '<td height=25>' + cell + '</td>';
 	    })

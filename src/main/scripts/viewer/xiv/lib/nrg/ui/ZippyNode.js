@@ -159,12 +159,14 @@ nrg.ui.ZippyNode.CSS_SUFFIX = {
  * @private
  */
 nrg.ui.ZippyNode.createZippyHeaderLabel_ = function(title){
-    return goog.dom.createDom('div', {
+    var label = goog.dom.createDom('div', {
 	'id': "ZippyHeaderLabel_" + title + '_' + 
 	    goog.string.createUniqueString(),
 	'class': nrg.ui.ZippyNode.CSS.HEADER_LABEL
-    }, nrg.string.truncateString(title, 
-       nrg.ui.ZippyNode.MAX_LABEL_LENGTH))
+    })
+
+    label.innerHTML = title;
+    return label;
 }
 
 

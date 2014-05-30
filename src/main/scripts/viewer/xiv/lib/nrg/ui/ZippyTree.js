@@ -47,6 +47,13 @@ nrg.ui.ZippyTree = function () {
     // Hide the header because it inherits from ZippyNode -- we don't need it.
     goog.dom.classes.add(this.getHeader(), nrg.ui.ZippyTree.CSS.ROOT_NODE);
     //---------------------------------------------
+
+
+    //
+    // No margins for the top
+    //
+    this.getHeader().style.marginTop = '0px';
+    
 }
 goog.inherits(nrg.ui.ZippyTree, nrg.ui.ZippyNode);
 goog.exportSymbol('nrg.ui.ZippyTree', nrg.ui.ZippyTree);
@@ -254,7 +261,7 @@ nrg.ui.ZippyTree.prototype.getElement = function() {
 
 
 /**
- * @param {!string} folder The zippy folder to expand (id'ed by title)
+ * @param {!string} folder The zippy folder to expand (id'd by title)
  * @param {nrg.ui.ZippyNode=} The opitional zippy node, defaults to 'this'.
  * @return {nrg.ui.ZippyNode} The expanded zippy node.
  */
@@ -521,8 +528,7 @@ function(elt, depth, opt_applyWidth, opt_applyLeft){
  * @private
  */
 nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
-    //window.console.log('\n\nPARENT', parent);
-
+    
     //
     // Create parameters
     //
@@ -531,6 +537,15 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     //var node = new nrg.ui.ZippyNode(title, parent, false, 
     //				    nrg.ui.ZippyTree.folderSorter);
     //node.setExpanded(false);
+
+
+    //
+    // For the very first nodes, we have to set the margin top to 0
+    //
+    if (pNode.getHeader().parentNode == this.rootElt_ &&
+	this.rootElt_.childNodes.length == 2){
+	node.getHeader().style.marginTop = '0px';
+    }
 
     //
     // Inherit width and depth CSS from parent

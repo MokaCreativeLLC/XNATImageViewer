@@ -47,6 +47,17 @@ goog.exportSymbol('xiv.ui.Modal', xiv.ui.Modal);
 
 
 /**
+ * Event types.
+ * @enum {string}
+ * @public
+ */
+xiv.ui.Modal.EventType = {
+  ADD_SUBJECTS: goog.events.getUniqueId('add_subjects')
+}
+
+
+
+/**
  * @type {!string} 
  * @const
  * @expose
@@ -68,6 +79,7 @@ xiv.ui.Modal.CSS_SUFFIX = {
     PROJECTTAB_BOUNDS: 'projecttab-bounds',
     PROJECTTAB_DRAGGER : 'projecttab-dragger',
     PROJECTTAB_DRAGGER_HANDLE : 'projecttab-dragger-handle',
+    ADDSUBJECTS : 'addsubjects',
 }
 
 
@@ -257,6 +269,14 @@ xiv.ui.Modal.prototype.anims_;
  * @type {Object}
  */
 xiv.ui.Modal.prototype.dims_;
+
+
+
+/**
+ * @type {!Element}
+ */
+xiv.ui.Modal.prototype.addSubjectsButton_;
+
 
 
 
@@ -619,6 +639,10 @@ xiv.ui.Modal.prototype.updateStyle = function () {
     this.updateStyle_ProjectTab_();
     this.updateStyle_ViewBoxes_();
     this.highlightInUseThumbnails();
+    //
+    // This updates the slider size
+    //
+    this.ThumbnailGallery_.mapSliderToContents();
 }
 
 
@@ -738,6 +762,102 @@ xiv.ui.Modal.prototype.initButtons_ = function() {
 /**
  * @private
  */
+xiv.ui.Modal.prototype.addAddSubjectsToProjectTab_ = function() {
+
+    //
+    // Create button
+    //
+    this.addSubjects_ = goog.dom.createDom('div', {
+	'id': xiv.ui.Modal.ID_PREFIX + '_addSubjects_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.Modal.CSS.ADDSUBJECTS
+    }, '+ Load Remaining Subjects');
+
+    //
+    // Add the add subjects button to the tab tab pages
+    //
+    goog.dom.appendChild(this.getProjectTab().getTabPages()[0], 
+			 this.addSubjects_);
+
+    //
+    // Add the add subjects button to the tab tab pages
+    //
+    nrg.style.setHoverClass(this.addSubjects_,
+			    xiv.ui.Modal.CSS.ADDSUBJECTS + '-hovered');
+    
+    //
+    // Resize the page contents to make up for the button
+    //
+    var tabPage = this.getProjectTab().getTabPages()[0];
+    var tabPageContents = goog.dom.getChildren(tabPage)[0];
+    var pageSize = goog.style.getSize(tabPage);
+    var childSize = goog.style.getSize(tabPageContents);
+    var buttonSize = goog.style.getSize(this.addSubjects_);
+    tabPageContents.style.height = 'calc(100% - 70px)';
+    //
+    // Listen for click
+    //
+    goog.events.listen(this.addSubjects_, goog.events.EventType.CLICK,
+		       this.onAddSubjectsClicked_.bind(this))
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.Modal.prototype.onAddSubjectsClicked_ = function() {
+    
+    //
+    // dispatch the event
+    //
+    this.dispatchEvent({
+	type: xiv.ui.Modal.EventType.ADD_SUBJECTS
+    })
+
+    //
+    // Fade out the button
+    //
+    nrg.fx.fadeOut(this.addSubjects_, 150, 
+	function(){
+	    //
+	    // Dispose the button
+	    //
+	    this.disposeAddSubjects_();
+
+	    //
+	    // Resize the page contents back to the original height
+	    //
+	    var tabPage = this.ProjectTab_.getTabPages()[0];
+	    var tabPageContents = goog.dom.getChildren(tabPage)[0];
+	    tabPageContents.setAttribute('style', ''); 
+
+	    //
+	    // This updates the slider size
+	    //
+	    this.ThumbnailGallery_.mapSliderToContents();
+	}.bind(this));
+}
+
+
+
+
+/**
+ * @private
+ */
+xiv.ui.Modal.prototype.disposeAddSubjects_ = function() {
+    if (goog.isDefAndNotNull(this.addSubjects_)){
+	goog.dom.removeNode(this.addSubjects_);
+	goog.events.removeAll(this.addSubjects_);
+	delete this.addSubjects_;
+    }
+}
+
+
+
+/**
+ * @private
+ */
 xiv.ui.Modal.prototype.initProjectTab_ = function() {
     //
     // TabBounds
@@ -802,6 +922,11 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
 		       this.updateStyle.bind(this));
     goog.events.listen(this.ProjectTab_, nrg.ui.Resizable.EventType.RESIZE_END,
 		       this.updateStyle.bind(this));
+
+    //
+    // Add the 'Add Subjects' button to the gab
+    //
+    this.addAddSubjectsToProjectTab_();
  
 }
 
@@ -1211,12 +1336,16 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
     this.ThumbnailGallery_.dispose();
     delete this.ThumbnailGallery_;
 
+    // Add subjects button
+    this.disposeAddSubjects_();
+
     // others
     delete this.currState_
     delete this.prevState_;
 }
 
 
+goog.exportSymbol('xiv.ui.Modal.EventType', xiv.ui.Modal.EventType);
 goog.exportSymbol('xiv.ui.Modal.States', xiv.ui.Modal.States);
 goog.exportSymbol('xiv.ui.Modal.ID_PREFIX', xiv.ui.Modal.ID_PREFIX);
 goog.exportSymbol('xiv.ui.Modal.CSS_SUFFIX', xiv.ui.Modal.CSS_SUFFIX);

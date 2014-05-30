@@ -148,14 +148,18 @@ nrg.ui.Thumbnail.prototype.getImage = function() {
 
 
 /**
- * @return {!string} url The thumbnail image url.
+ * @param {!string} url The thumbnail image url.
+ * @param {Function=} opt_callback
  * @public
  */
-nrg.ui.Thumbnail.prototype.setBrokenThumbnailUrl = function(url) {
+nrg.ui.Thumbnail.prototype.setBrokenThumbnailUrl = function(url, opt_callback) {
     this.brokenThumbnailUrl_ = url;
     this.image_.onerror = function(){
 	this.image_.onerror = '';
 	this.image_.src = this.brokenThumbnailUrl_;
+	if (goog.isDefAndNotNull(opt_callback)){
+	    opt_callback();
+	}
     }.bind(this);
 }
 

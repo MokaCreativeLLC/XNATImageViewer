@@ -19,8 +19,8 @@
 .nrg-ui-scrollablecontainer-scrollarea {
     display: block;
     position: relative;
-    width: calc(100% - 14px);
-    left: 14px;
+    width: calc(100% - 19px);
+    left: 19px;
 }
 
 

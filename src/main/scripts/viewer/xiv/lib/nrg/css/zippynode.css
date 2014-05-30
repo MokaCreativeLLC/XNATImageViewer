@@ -11,12 +11,13 @@
     width: 100%;
     font-size: 12px;
     height: 1.5em;
-    color: rgb(190, 190, 190);
+    color: rgb(210, 210, 210);
     font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
     cursor: pointer;
     z-index: 1000;
     line-height: 1.5em;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 
 
@@ -55,7 +56,12 @@
     top: 20px;
     left: 12px;
     z-index: 1000;
-    margin-bottom: 4px;
+
+}
+
+
+.nrg-ui-zippynode-content-sub {
+
 }
 
 

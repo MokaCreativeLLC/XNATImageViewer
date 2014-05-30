@@ -386,6 +386,12 @@ xiv.prototype.createModal_ = function(){
     this.Modal_.setImagePrefix(serverRoot);
 
     //
+    // Listen for the addSubjects event
+    //
+    goog.events.listen(this.Modal_, xiv.ui.Modal.EventType.ADD_SUBJECTS,
+		       this.onModalAddSubjectsClicked_.bind(this));
+
+    //
     // Link window's onresize to Modal's updateStyle
     //
     window.onresize = function () {
@@ -393,6 +399,29 @@ xiv.prototype.createModal_ = function(){
 	    this.Modal_.updateStyle();
 	} 
     }.bind(this);
+}
+
+
+
+
+/**
+ * @private
+ */
+xiv.prototype.onModalAddSubjectsClicked_ = function() {
+    this.ProjectTree_.loadSubjects(null, function(subjNodes){
+	//
+	// Expand the init Subject's zippy and store that zippy 
+	// to expand the experiment after
+	//
+	//window.console.log("SUBN JH", subjNode);
+	goog.array.forEach(subjNodes, function(subjNode){
+	    this.createFoldersFromTreeNode_(subjNode);
+	    //
+	    // This updates the slider size
+	    //
+	    this.Modal_.getThumbnailGallery().mapSliderToContents();
+	}.bind(this))
+    }.bind(this))
 }
 
 
@@ -411,6 +440,7 @@ xiv.prototype.show = function(opt_callback){
     this.Modal_.getElement().style.opacity = 0;
     this.Modal_.render();
 
+   
     //----------------------------------------------
     // IMPORTANT!!!!    DO NOT ERASE!!!!!!!
     //
@@ -551,7 +581,11 @@ xiv.prototype.getFolderTitlesFromTreeNode_ = function(treeNode){
     var branchTitles = this.ProjectTree_.getBranchTitles(treeNode);
     var i = 0;
     goog.object.forEach(branch, function(treeNode, key){
-	branchTitles[i] = gxnat.folderAbbrev[key] + ': ' + branchTitles[i];
+	branchTitles[i] = 
+	    '<font color="black"><b>' + key.toUpperCase() 
+	    + ':</b></font>&nbsp&nbsp&nbsp&nbsp&nbsp' + branchTitles[i];
+
+	window.console.log(branchTitles[i]);
 	i++;
     })
     return branchTitles;
@@ -771,24 +805,6 @@ xiv.prototype.loadExperiment_ = function(exptUrl, opt_callback) {
 				function(node){
 				    
 				}.bind(this))
-	    
-	    this.ProjectTree_.loadSubjects(null, function(subjNodes){
-		//
-		// Expand the init Subject's zippy and store that zippy 
-		// to expand the experiment after
-		//
-		//window.console.log("SUBN JH", subjNode);
-		goog.array.forEach(subjNodes, function(subjNode){
-		    this.createFoldersFromTreeNode_(subjNode);
-		}.bind(this))
-
-
-
-		//
-		// This updates the slider size
-		//
-		this.Modal_.getThumbnailGallery().mapSliderToContents();
-	    }.bind(this))
 	}
     }.bind(this), metadata);
   

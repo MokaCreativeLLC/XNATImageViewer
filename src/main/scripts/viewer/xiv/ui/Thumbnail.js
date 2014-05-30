@@ -27,7 +27,8 @@ xiv.ui.Thumbnail = function (Viewable_) {
     // Default silhouette
     //
     this.setBrokenThumbnailUrl(serverRoot +
-	'/images/viewer/xiv/ui/Thumbnail/silhouette.png')
+	'/images/viewer/xiv/ui/Thumbnail/silhouette.png', 
+			       this.updateHoverable.bind(this))
 
 
     /**
@@ -61,6 +62,7 @@ xiv.ui.Thumbnail.CSS_SUFFIX = {};
 
 
 
+
 /**
  * @inheritDoc
  */
@@ -70,7 +72,7 @@ xiv.ui.Thumbnail.prototype.updateHoverable = function(){
 						    nrg.ui.Thumbnail.CSS.IMAGE, 
 						    this.getHoverable());
     img = img[0];
-    //img.src = this.getImage().src;
+    img.src = this.getImage().src;
 }
 
 
