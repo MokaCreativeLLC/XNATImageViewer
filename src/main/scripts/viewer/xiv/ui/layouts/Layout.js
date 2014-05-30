@@ -62,9 +62,10 @@ xiv.ui.layouts.Layout.EventType = {
  * @public
  */
 xiv.ui.layouts.Layout.INTERACTORS = {
-    SLIDER: goog.string.createUniqueString(),
-    DISPLAY: goog.string.createUniqueString(),
-    CROSSHAIRS: goog.string.createUniqueString() 
+    SLIDER: 'Slider_' +goog.string.createUniqueString(),
+    FRAME_DISPLAY: 'FrameDisplay_' + goog.string.createUniqueString(),
+    ZOOM_DISPLAY: 'ZoomDisplay_' + goog.string.createUniqueString(),
+    CROSSHAIRS: 'Crosshairs_' + goog.string.createUniqueString() 
 }
 
 
@@ -210,6 +211,11 @@ xiv.ui.layouts.Layout.prototype.removeAllInteractors = function() {
 		interactorSet.FRAME_DISPLAY.dispose();
 		delete interactorSet.FRAME_DISPLAY;
 	    }
+
+	    if (goog.isDefAndNotNull(interactorSet.ZOOM_DISPLAY)){
+		interactorSet.ZOOM_DISPLAY.dispose();
+		delete interactorSet.ZOOM_DISPLAY;
+	    }
 	})
 };
 
@@ -231,7 +237,11 @@ xiv.ui.layouts.Layout.prototype.updateInteractors = function() {
 	    }
 
 	    if (goog.isDefAndNotNull(interactorSet.FRAME_DISPLAY)){
-		interactorSet.CROSSHAIRS.updateStyle();
+		interactorSet.FRAME_DISPLAY.updateStyle();
+	    }
+
+	    if (goog.isDefAndNotNull(interactorSet.ZOOM_DISPLAY)){
+		interactorSet.ZOOM_DISPLAY.updateStyle();
 	    }
 	})
 }

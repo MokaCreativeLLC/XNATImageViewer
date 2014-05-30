@@ -1,0 +1,19 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+.xiv-ui-layouts-interactors-zoomdisplay {
+    position: absolute;
+    top: 20px;
+    width: 90px;
+    height: 17px;
+    left: calc(100% - 95px);
+    color: rgb(255,255,255);
+    font-size: 10px;
+    outline: 0;
+    text-align: right;
+    line-height: 17px;
+    /**background-color: red;*/
+    font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
+}

@@ -51,10 +51,21 @@ xiv.vis.XtkRenderer2D.prototype.onResize = function() {
 
 
 /**
+ * @return {X.volume}
  * @public
  */
 xiv.vis.XtkRenderer2D.prototype.getVolume = function() {
     return this._topLevelObjects[0];
+}
+
+
+
+/**
+ * @return {number}
+ * @public
+ */
+xiv.vis.XtkRenderer2D.prototype.getNumberSlices = function() {
+    return this._slices.length;
 }
 
 
@@ -137,6 +148,17 @@ xiv.vis.XtkRenderer2D.prototype.init = function() {
 	else {
 	    this.onShiftUp_(e);
 	}
+
+	if (this._interactor.rightButtonDown){
+	    //
+	    // Dispatch the zoom event on any zpp,
+	    //
+	    this.dispatchEvent({
+		type: xiv.vis.XtkEngine.EventType.ZOOM,
+		zoom: this.getZoom(),
+		orientation: this._orientation
+	    })
+	}
     }.bind(this)
 
 
@@ -201,11 +223,22 @@ xiv.vis.XtkRenderer2D.prototype.render = function() {
  * @inheritDoc
  */
 xiv.vis.XtkRenderer2D.prototype.destroy = function() {
-    window.console.log('\n\n\nDESTROY 2D ', this._orienation);
+    //window.console.log('\n\n\nDESTROY 2D ', this._orienation);
     goog.base(this, 'destroy');
 }
 
 
+
+/**
+ * Get's the zoom percentage.
+ * 
+ * @return {!number}
+ * @public
+ */
+xiv.vis.XtkRenderer2D.prototype.getZoom = function(){
+    //window.console.log('ZOOM', this._camera._view[14]);
+    return this._camera._view[14];
+}
 
 
 /**

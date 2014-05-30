@@ -15,6 +15,7 @@ goog.require('xiv.ui.layouts.Layout');
 goog.require('xiv.ui.layouts.LayoutFrame');
 goog.require('xiv.ui.layouts.interactors.Crosshairs');
 goog.require('xiv.ui.layouts.interactors.FrameDisplay');
+goog.require('xiv.ui.layouts.interactors.ZoomDisplay');
 goog.require('xiv.ui.layouts.interactors.Slider');
 
 
@@ -113,10 +114,11 @@ xiv.ui.layouts.XyzvLayout.CSS_SUFFIX = {
  * @struct
  */
 xiv.ui.layouts.XyzvLayout.InteractorSet = 
-function(slider, display, crosshairs) {
+function(slider, display, crosshairs, zoom) {
     this.SLIDER = slider;
     this.FRAME_DISPLAY = display;
     this.CROSSHAIRS = crosshairs;   
+    this.ZOOM_DISPLAY = zoom;   
 }
 goog.exportSymbol('xiv.ui.layouts.XyzvLayout.InteractorSet', 
 		  xiv.ui.layouts.XyzvLayout.InteractorSet);
@@ -288,6 +290,7 @@ xiv.ui.layouts.XyzvLayout.prototype.addInteractors = function() {
     this.removeAllInteractors();
     this.addLayoutFrameSliders_();
     this.addFrameDisplays_();
+    this.addZoomDisplays_();
     this.addCrosshairs_();
 };
 
@@ -304,7 +307,8 @@ xiv.ui.layouts.XyzvLayout.prototype.getInteractors = function() {
 	interactors[key] = new xiv.ui.layouts.XyzvLayout.InteractorSet(
 	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.SLIDER], 
 	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.FRAME_DISPLAY],
-	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS],
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.ZOOM_DISPLAY])
     }) 
     return interactors
 };
@@ -401,6 +405,23 @@ xiv.ui.layouts.XyzvLayout.prototype.addFrameDisplays_ = function(){
 
 	LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.FRAME_DISPLAY] = 
 	    frameDisplay; 
+    }.bind(this));
+};
+
+
+
+/**
+ * @private
+ */
+xiv.ui.layouts.XyzvLayout.prototype.addZoomDisplays_ = function(){
+    var zoomDisplay;
+    this.loopXyz(function(LayoutFrame, key) {	
+	zoomDisplay = new xiv.ui.layouts.interactors.ZoomDisplay();
+
+	zoomDisplay.render(LayoutFrame.getElement());
+
+	LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.ZOOM_DISPLAY] = 
+	    zoomDisplay; 
     }.bind(this));
 };
 

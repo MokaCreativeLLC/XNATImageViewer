@@ -216,18 +216,17 @@ nrg.ui.ScrollableContainer.prototype.setSliderStyles_ = function(){
  * @protected
  */
 nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
-    
-    var widgetHeight = /**@type {!number}*/ 
-    goog.style.getSize(this.element_).height;
+    window.console.log("MAP SLIDER TO CONTENTS!");
 
-    var scrollAreaHeight = /**@type {!number}*/
-    goog.style.getSize(this.scrollArea_).height
-	
-    var beforeRange = /**@type {!Array.number}*/
-    [this.Slider.getMinimum(), this.Slider.getMaximum()];
+    var widgetHeight = goog.style.getSize(this.element_).height;
+    var scrollAreaHeight = goog.style.getSize(this.scrollArea_).height
+    var beforeRange = [this.Slider.getMinimum(), this.Slider.getMaximum()];
+    var afterRange = [0, scrollAreaHeight - widgetHeight];
 
-    var afterRange = /**@type {!Array.number}*/
-    [0, scrollAreaHeight - widgetHeight];
+
+    window.console.log("MAP SLIDER TO CONTENTS!", widgetHeight, 
+		       scrollAreaHeight);
+
 
     //------------------
     // If there's the scrollArea (contents) is greater

@@ -127,12 +127,18 @@ nrg.fx.fadeOutAndRemove = function (element, opt_time, opt_callback) {
 nrg.fx.fadeTo = function (element, opt_time, opt_opacity, callback, 
 			    opt_startOp) {
 
+
     if (!opt_startOp){
-	opt_startOp = /**@type {!number}*/ element.style.opacity ? 
-	    parseInt(element.style.opacity, 10) : 1;
+	if (goog.isDefAndNotNull(element.style)){
+	    opt_startOp = element.style.opacity ? 
+		parseInt(element.style.opacity, 10) : 1;
+	} else {
+	    window.console.log(element);
+	    element.style.opacity = 1;
+	}
     }
 
-    var f = /**@type {!goog.fx.dom.Fade}*/  
+    var f =   
     new goog.fx.dom.Fade(element, opt_startOp, opt_opacity, opt_time);
     if (callback) {
 	f.addEventListener(goog.fx.Transition.EventType.END, function(e){ 

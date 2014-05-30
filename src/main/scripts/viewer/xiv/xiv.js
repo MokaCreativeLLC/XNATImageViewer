@@ -585,7 +585,7 @@ xiv.prototype.getFolderTitlesFromTreeNode_ = function(treeNode){
 	    '<font color="black"><b>' + key.toUpperCase() 
 	    + ':</b></font>&nbsp&nbsp&nbsp&nbsp&nbsp' + branchTitles[i];
 
-	window.console.log(branchTitles[i]);
+	//window.console.log(branchTitles[i]);
 	i++;
     })
     return branchTitles;

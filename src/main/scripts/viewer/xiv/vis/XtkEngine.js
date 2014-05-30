@@ -103,7 +103,8 @@ xiv.vis.XtkEngine.EventType = {
     SLICE_NAVIGATED: goog.events.getUniqueId('slice-navigated'),
     SHIFT_DOWN: goog.events.getUniqueId('shift-down'),
     SHIFT_UP: goog.events.getUniqueId('shift-up'),
-    ERROR: goog.events.getUniqueId('error')
+    ERROR: goog.events.getUniqueId('error'),
+    ZOOM: goog.events.getUniqueId('zoom')
 }
 
 

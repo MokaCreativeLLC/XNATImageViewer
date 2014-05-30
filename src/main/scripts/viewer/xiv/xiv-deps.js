@@ -196,6 +196,12 @@ goog.addDependency('../../../../ui/layouts/interactors/FrameDisplay.js',
 ]);
 
 
+goog.addDependency('../../../../ui/layouts/interactors/ZoomDisplay.js', 
+['xiv.ui.layouts.interactors.ZoomDisplay'], [
+    'nrg.ui.Component'
+]);
+
+
 goog.addDependency('../../../../ui/layouts/interactors/Crosshairs.js', 
 ['xiv.ui.layouts.interactors.Crosshairs'], [
     'nrg.ui.Component'
