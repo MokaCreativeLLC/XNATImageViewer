@@ -642,6 +642,7 @@ xiv.ui.Modal.prototype.updateStyle = function () {
     //
     // This updates the slider size
     //
+    this.ThumbnailGallery_.updateStyle();
     this.ThumbnailGallery_.mapSliderToContents();
 }
 

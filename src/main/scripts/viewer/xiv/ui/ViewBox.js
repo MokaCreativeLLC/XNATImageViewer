@@ -762,11 +762,12 @@ xiv.ui.ViewBox.prototype.loopInteractorsWithRenderer_ = function(callback){
 xiv.ui.ViewBox.prototype.syncZoomDisplayToRenderer_ = function() {
     this.loopInteractorsWithRenderer_(
     function(renderPlane, renderPlaneOr, planeInteractors){
-	if (!planeInteractors.ZOOM_DISPLAY) { 
+	if (!planeInteractors.ZOOM_DISPLAY || !renderPlane.getRenderer()) { 
 	    return 
 	};
 	planeInteractors.ZOOM_DISPLAY.setValue(
 	    renderPlane.getRenderer().getZoom());
+	
     })
 }
 
@@ -817,6 +818,7 @@ xiv.ui.ViewBox.prototype.syncSlidersToVolume_ = function(opt_resetMaximum) {
     var orientation;
     var currVol;
     var slider;
+
 
 
     this.loopInteractorsWithRenderer_(
@@ -873,6 +875,28 @@ xiv.ui.ViewBox.prototype.onRenderPlaneShiftDown_ = function(e){
  * @private
  */
 xiv.ui.ViewBox.prototype.initInteractorSync_ = function() { 
+
+
+    var brightness = new nrg.ui.Slider();
+    //goog.dom.appendChild(this.getElement(), brightness.getElement());
+    brightness.render(this.getElement());
+    brightness.getElement().style.zIndex = 50000;
+    brightness.setMaximum(5000);
+
+
+
+    var contrast = new nrg.ui.Slider();
+    //goog.dom.appendChild(this.getElement(), contrast.getElement());
+    contrast.render(this.getElement());
+    contrast.getElement().style.zIndex = 50000;
+    contrast.getElement().style.top = 'calc(100% - 30px)';
+    contrast.setMinimum(-500);
+    contrast.setMaximum(500);
+
+
+
+
+
     //
     // Do nothing if no renderer
     //
@@ -884,6 +908,21 @@ xiv.ui.ViewBox.prototype.initInteractorSync_ = function() {
 	var frameDisplay = planeInteractors.FRAME_DISPLAY;
 	var crosshairs = planeInteractors.CROSSHAIRS;
 	var arrPos = 0;
+
+	if (renderPlaneOr == 'X'){
+	    goog.events.listen(brightness, nrg.ui.Slider.EventType.SLIDE, 
+	    function(e){
+		renderPlane.getRenderer().getVolume().windowHigh = 
+		    e.target.getMaximum() - e.target.getValue();
+	    })
+	    goog.events.listen(contrast, nrg.ui.Slider.EventType.SLIDE, 
+	    function(e){
+		renderPlane.getRenderer().getVolume().windowLow = 
+		    e.target.getValue();
+	    })
+	}
+
+
 
 	//
 	// Set custom params
@@ -914,13 +953,11 @@ xiv.ui.ViewBox.prototype.initInteractorSync_ = function() {
 
 
 	//
-	// SHIFT_DOWN interaction
+	// ZOOM interaction
 	//
 	goog.events.listen(renderPlane.getRenderer(), 
 			   xiv.vis.XtkEngine.EventType.ZOOM,
 			   function(e){
-			       //window.console.log(e.zoom, e.orientation);
-			       //this.onLayoutResize_();
 			       this.syncZoomDisplayToRenderer_();
 			   }.bind(this))
 
@@ -941,15 +978,36 @@ xiv.ui.ViewBox.prototype.initInteractorSync_ = function() {
 	    goog.events.unlistenByKey(moveListen);
 	}.bind(this))
 
+
 	//
 	// Change Slice when slider moves
 	//
 	goog.events.listen(slider, nrg.ui.Slider.EventType.SLIDE, 
         function(e){
+
+	    /*
+	    var num = e.target.getValue()/e.target.getMaximum()
+	    //renderPlane.getRenderer().getVolume().zColor = 
+	    //[1,1,1];
+	    window.console.log("\n\nHERE:");
+	    window.console.log(renderPlane.getRenderer().getVolume()._max)
+	    window.console.log(renderPlane.getRenderer().
+			       getVolume()._windowLow); 
+	    window.console.log(renderPlane.getRenderer().getVolume().
+			       _windowHigh);
+
+	    
+	    renderPlane.getRenderer().getVolume().
+		windowLow = e.target.getValue() - 100;
+	    window.console.log("TEST ADJUST BRIGHTNESS");
+	    */
+	    
 	    this.syncVolumeToSlider_(e.target, volume);
 	    this.syncCrosshairsToSlider_(e.target, volume);
 	    this.syncFrameDisplayToSlider_(e.target, volume);
 	}.bind(this))
+
+
 
 	//
 	// Change Slice on Frame Display input
@@ -1154,33 +1212,18 @@ xiv.ui.ViewBox.prototype.onLayoutResize_ = function(e){
     this.updateStyle_Renderer_();
     this.LayoutHandler_.updateInteractors();
 
-    var interactors = this.LayoutHandler_.getMasterInteractors();
-    var interactorSet, slider, currVol;
-
     if (!goog.isDefAndNotNull(this.Renderer_)) { return };
 
-    goog.object.forEach(this.Renderer_.getPlanes(), function(Plane, planeOr) {
 
-	//
-	// Exit out there's no slider or plane interactors.
-	//
-	if (!goog.isDefAndNotNull(interactors[planeOr]) ||
-	    !goog.isDefAndNotNull(interactors[planeOr].SLIDER)) { 
+    this.loopInteractorsWithRenderer_(
+    function(renderPlane, renderPlaneOr, planeInteractors, volume){
+	if (!goog.isDefAndNotNull(planeInteractors.SLIDER)) { 
 	    return 
 	};
 
-
-	//
-	// NOTE: Keep these here.  We need to declare them within the 
-	// loop.
-	//
-	interactorSet = interactors[planeOr];
-	slider = interactorSet.SLIDER;
-	currVol = Plane.getVolume();
-	//window.console.log(slider, currVol);
-
-	this.syncVolumeToSlider_(slider, currVol);
-	this.syncCrosshairsToSlider_(slider, currVol);
+	slider = planeInteractors.SLIDER;
+	this.syncVolumeToSlider_(slider, volume);
+	this.syncCrosshairsToSlider_(slider, volume);
 	this.syncZoomDisplayToRenderer_();
 	
     }.bind(this));
@@ -2474,47 +2517,39 @@ xiv.ui.ViewBox.prototype.updateStyle_interactors_ = function () {
     if (!goog.isDefAndNotNull(this.LayoutHandler_)) { return };
     if (!goog.isDefAndNotNull(this.Renderer_)) { return };
 
-    var interactors = this.LayoutHandler_.getMasterInteractors();
 
-    goog.object.forEach(this.Renderer_.getPlanes(), function(Plane, planeOr) {
 
-	//
-	// Exit out there's no slider or plane interactors.
-	//
-	if (!goog.isDefAndNotNull(interactors[planeOr]) ||
-	    !goog.isDefAndNotNull(interactors[planeOr].SLIDER)) { 
+    this.loopInteractorsWithRenderer_(
+    function(renderPlane, renderPlaneOr, planeInteractors, volume){
+	if (!goog.isDefAndNotNull(planeInteractors)) { 
 	    return 
 	};
-
 
 	//
 	// NOTE: Keep these here.  We need to declare them within the 
 	// loop.
 	//
-	var interactorSet = interactors[planeOr];
-	var slider = interactorSet.SLIDER;
-	var currVol = Plane.getVolume();
-	var frameDisplay = interactorSet.FRAME_DISPLAY;
-	var zoom = interactorSet.ZOOM;
+	var slider = planeInteractors.SLIDER;
+	var frameDisplay = planeInteractors.FRAME_DISPLAY;
 
 	//
 	// Set custom params
 	//
-	slider[xiv.ui.ViewBox.ORIENTATION_TAG] = planeOr;
-	frameDisplay[xiv.ui.ViewBox.ORIENTATION_TAG] = planeOr;
+	slider[xiv.ui.ViewBox.ORIENTATION_TAG] = renderPlaneOr;
+	frameDisplay[xiv.ui.ViewBox.ORIENTATION_TAG] = renderPlaneOr;
 
 	//
 	// Exit if no volume
 	//
-	if (!goog.isDefAndNotNull(Plane.getRenderer())) { return };
+	if (!goog.isDefAndNotNull(renderPlane.getRenderer())) { return };
 
 	//
 	// The slider's thumb shifts during size changes, so we sync it up.
 	//
-	this.syncSliderToFrameDisplay_(frameDisplay, currVol);
+	this.syncSliderToFrameDisplay_(frameDisplay, volume);
 	slider.updateStyle();
+    }.bind(this)) 
 
-    }.bind(this));
 }
 
 

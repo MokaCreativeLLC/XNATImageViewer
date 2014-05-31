@@ -174,8 +174,20 @@ xiv.vis.XtkRenderer2D.prototype.init = function() {
  * @private
  */
 xiv.vis.XtkRenderer2D.prototype.disableMousewheel_ = function() {
+    //
+    // Disables unwanted scrolling
+    //
     this.interactor.config.MOUSEWHEEL_ENABLED = false;
+
+    //
+    // Disables unwated brightness / contrast color correction
+    //
+    //this.interactor.config.MOUSECLICKS_ENABLED = false;
     this.interactor.init();
+
+    this.interactor.onMouseDown = function(a, b, c){
+	window.console.log(a, b, c);
+    }
 }
 
 

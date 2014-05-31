@@ -216,7 +216,7 @@ nrg.ui.ScrollableContainer.prototype.setSliderStyles_ = function(){
  * @protected
  */
 nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
-    window.console.log("MAP SLIDER TO CONTENTS!");
+    //window.console.log("MAP SLIDER TO CONTENTS!");
 
     var widgetHeight = goog.style.getSize(this.element_).height;
     var scrollAreaHeight = goog.style.getSize(this.scrollArea_).height
@@ -224,8 +224,8 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
     var afterRange = [0, scrollAreaHeight - widgetHeight];
 
 
-    window.console.log("MAP SLIDER TO CONTENTS!", widgetHeight, 
-		       scrollAreaHeight);
+    //window.console.log("MAP SLIDER TO CONTENTS!", widgetHeight, 
+    //scrollAreaHeight);
 
 
     //------------------
