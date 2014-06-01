@@ -164,3 +164,16 @@ xiv.ui.Thumbnail.prototype.disposeInternal = function(){
     this.ViewableTree_.dispose();
     delete this.ViewableTree_;
 }
+
+
+goog.exportSymbol('xiv.ui.Thumbnail.ID_PREFIX', xiv.ui.Thumbnail.ID_PREFIX);
+goog.exportSymbol('xiv.ui.Thumbnail.CSS_SUFFIX', xiv.ui.Thumbnail.CSS_SUFFIX);
+
+goog.exportSymbol('xiv.ui.Thumbnail.prototype.updateHoverable',
+	xiv.ui.Thumbnail.prototype.updateHoverable);
+goog.exportSymbol('xiv.ui.Thumbnail.prototype.createHoverable',
+	xiv.ui.Thumbnail.prototype.createHoverable);
+goog.exportSymbol('xiv.ui.Thumbnail.prototype.getViewable',
+	xiv.ui.Thumbnail.prototype.getViewable);
+goog.exportSymbol('xiv.ui.Thumbnail.prototype.disposeInternal',
+	xiv.ui.Thumbnail.prototype.disposeInternal);

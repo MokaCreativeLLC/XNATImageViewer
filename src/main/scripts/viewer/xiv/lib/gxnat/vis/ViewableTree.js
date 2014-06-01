@@ -172,3 +172,28 @@ gxnat.vis.ViewableTree.prototype.dispose = function() {
 
     delete this.orientation;
 }
+
+
+
+goog.exportSymbol('gxnat.vis.ViewableTree.metadataCollection',
+	gxnat.vis.ViewableTree.metadataCollection);
+goog.exportSymbol('gxnat.vis.ViewableTree.prototype.projectMetadata',
+	gxnat.vis.ViewableTree.prototype.projectMetadata);
+goog.exportSymbol('gxnat.vis.ViewableTree.prototype.subjectMetadata',
+	gxnat.vis.ViewableTree.prototype.subjectMetadata);
+goog.exportSymbol('gxnat.vis.ViewableTree.prototype.experimentMetadata',
+	gxnat.vis.ViewableTree.prototype.experimentMetadata);
+goog.exportSymbol('gxnat.vis.ViewableTree.prototype.orientation',
+	gxnat.vis.ViewableTree.prototype.orientation);
+goog.exportSymbol('gxnat.vis.ViewableTree.prototype.getOrientation',
+	gxnat.vis.ViewableTree.prototype.getOrientation);
+goog.exportSymbol('gxnat.vis.ViewableTree.prototype.setProjectMetadata',
+	gxnat.vis.ViewableTree.prototype.setProjectMetadata);
+goog.exportSymbol('gxnat.vis.ViewableTree.prototype.setSubjectMetadata',
+	gxnat.vis.ViewableTree.prototype.setSubjectMetadata);
+goog.exportSymbol('gxnat.vis.ViewableTree.prototype.setExperimentMetadata',
+	gxnat.vis.ViewableTree.prototype.setExperimentMetadata);
+goog.exportSymbol('gxnat.vis.ViewableTree.prototype.getViewableGroups',
+	gxnat.vis.ViewableTree.prototype.getViewableGroups);
+goog.exportSymbol('gxnat.vis.ViewableTree.prototype.dispose',
+	gxnat.vis.ViewableTree.prototype.dispose);

@@ -126,3 +126,19 @@ gxnat.vis.VisNode.prototype.dispose = function() {
 	delete this.title_;
     }
 }
+
+
+goog.exportSymbol('gxnat.vis.VisNode.prototype.setCategory',
+	gxnat.vis.VisNode.prototype.setCategory);
+goog.exportSymbol('gxnat.vis.VisNode.prototype.getCategory',
+	gxnat.vis.VisNode.prototype.getCategory);
+goog.exportSymbol('gxnat.vis.VisNode.prototype.setThumbnailUrl',
+	gxnat.vis.VisNode.prototype.setThumbnailUrl);
+goog.exportSymbol('gxnat.vis.VisNode.prototype.getThumbnailUrl',
+	gxnat.vis.VisNode.prototype.getThumbnailUrl);
+goog.exportSymbol('gxnat.vis.VisNode.prototype.setTitle',
+	gxnat.vis.VisNode.prototype.setTitle);
+goog.exportSymbol('gxnat.vis.VisNode.prototype.getTitle',
+	gxnat.vis.VisNode.prototype.getTitle);
+goog.exportSymbol('gxnat.vis.VisNode.prototype.dispose',
+	gxnat.vis.VisNode.prototype.dispose);

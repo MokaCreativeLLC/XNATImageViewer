@@ -41,3 +41,10 @@ xiv.vis.RenderEngine.EventType = {
     RENDER_END: goog.events.getUniqueId('render-end'),
 }
 
+
+
+
+goog.exportSymbol('xiv.vis.RenderEngine.EventType',
+	xiv.vis.RenderEngine.EventType);
+goog.exportSymbol('xiv.vis.RenderEngine.prototype.ID_PREFIX',
+	xiv.vis.RenderEngine.prototype.ID_PREFIX);

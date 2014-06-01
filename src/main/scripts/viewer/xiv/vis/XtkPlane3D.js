@@ -29,7 +29,5 @@ xiv.vis.XtkPlane3D.DEFAULT_CAMERA_POSITION = [-300, 300, 300];
 
 
 
-
-
-
-
+goog.exportSymbol('xiv.vis.XtkPlane3D.DEFAULT_CAMERA_POSITION',
+	xiv.vis.XtkPlane3D.DEFAULT_CAMERA_POSITION);

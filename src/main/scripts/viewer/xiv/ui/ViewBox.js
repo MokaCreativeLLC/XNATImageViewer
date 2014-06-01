@@ -870,30 +870,50 @@ xiv.ui.ViewBox.prototype.onRenderPlaneShiftDown_ = function(e){
 
 
 /**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.onRenderPlaneLeftMouseDown_ = function(e){
+    
+    var vol = e.target.getVolume();
+    
+    //this.BrightnessSlider_.suspendSlideEvent(true);
+    //this.ContrastSlider_.suspendSlideEvent(true);
+
+    vol.windowHigh =  this.BrightnessSlider_.getMaximum() - 
+	this.BrightnessSlider_.getValue();
+
+    vol.windowLow = this.ContrastSlider_.getValue();
+
+    vol.modified();
+    //window.console.log('LM3', vol.windowHigh, vol.windowLow);
+    //vol.modified();
+    //this.BrightnessSlider_.suspendSlideEvent(false);
+    //this.ContrastSlider_.suspendSlideEvent(false);
+}
+
+
+
+
+/**
  * @param {!nrg.ui.Slider} slider
  * @param {X.volume} volume
  * @private
  */
 xiv.ui.ViewBox.prototype.initInteractorSync_ = function() { 
 
-
-    var brightness = new nrg.ui.Slider();
-    //goog.dom.appendChild(this.getElement(), brightness.getElement());
-    brightness.render(this.getElement());
-    brightness.getElement().style.zIndex = 50000;
-    brightness.setMaximum(5000);
-
+    this.BrightnessSlider_ = new nrg.ui.Slider();
+    this.BrightnessSlider_.render(this.getElement());
+    this.BrightnessSlider_.getElement().style.zIndex = 50000;
+    this.BrightnessSlider_.setMaximum(5000);
+    this.BrightnessSlider_.setMinimum(2500);
 
 
-    var contrast = new nrg.ui.Slider();
-    //goog.dom.appendChild(this.getElement(), contrast.getElement());
-    contrast.render(this.getElement());
-    contrast.getElement().style.zIndex = 50000;
-    contrast.getElement().style.top = 'calc(100% - 30px)';
-    contrast.setMinimum(-500);
-    contrast.setMaximum(500);
-
-
+    this.ContrastSlider_ = new nrg.ui.Slider();
+    this.ContrastSlider_.render(this.getElement());
+    this.ContrastSlider_.getElement().style.zIndex = 50000;
+    this.ContrastSlider_.getElement().style.top = 'calc(100% - 30px)';
+    this.ContrastSlider_.setMinimum(-500);
+    this.ContrastSlider_.setMaximum(500);
 
 
 
@@ -909,18 +929,39 @@ xiv.ui.ViewBox.prototype.initInteractorSync_ = function() {
 	var crosshairs = planeInteractors.CROSSHAIRS;
 	var arrPos = 0;
 
+
+	//
+	// Brightness and contrast sliders
+	//
 	if (renderPlaneOr == 'X'){
-	    goog.events.listen(brightness, nrg.ui.Slider.EventType.SLIDE, 
-	    function(e){
-		renderPlane.getRenderer().getVolume().windowHigh = 
-		    e.target.getMaximum() - e.target.getValue();
-	    })
-	    goog.events.listen(contrast, nrg.ui.Slider.EventType.SLIDE, 
-	    function(e){
-		renderPlane.getRenderer().getVolume().windowLow = 
-		    e.target.getValue();
-	    })
+
+
+	    this.BrightnessSlider_.setMaximum(volume.windowHigh * 2);
+	    this.BrightnessSlider_.setMinimum(0);
+	    this.BrightnessSlider_.setValue(
+		this.BrightnessSlider_.getMaximum() -
+		volume.windowHigh);
+
+	    this.ContrastSlider_.setValue(volume.windowLow);
 	}
+
+	goog.events.listen(this.BrightnessSlider_, 
+        nrg.ui.Slider.EventType.SLIDE, 
+	function(e){
+	    var vol = renderPlane.getRenderer().getVolume();
+	    window.console.log('bright', vol.windowLow, vol.windowHigh);
+	    vol.windowHigh = e.target.getMaximum() - e.target.getValue();
+	})
+
+
+	goog.events.listen(this.ContrastSlider_, 
+        nrg.ui.Slider.EventType.SLIDE, 
+	function(e){
+	    var vol = renderPlane.getRenderer().getVolume();
+	    window.console.log('ctrst', vol.windowLow, vol.windowHigh);
+	    vol.windowLow = e.target.getValue();
+	})
+
 
 
 
@@ -950,6 +991,19 @@ xiv.ui.ViewBox.prototype.initInteractorSync_ = function() {
 	goog.events.listen(renderPlane.getRenderer(), 
 			   xiv.vis.XtkEngine.EventType.SHIFT_DOWN,
 			   this.onRenderPlaneShiftDown_.bind(this));
+
+
+	//
+	// LEFTMOUSE_DOWN interaction
+	//
+	/**
+	goog.events.listen(renderPlane.getRenderer(), 
+			   xiv.vis.XtkEngine.EventType.LEFTMOUSE_DOWN,
+			   this.onRenderPlaneLeftMouseDown_.bind(this));
+	goog.events.listen(renderPlane.getRenderer(), 
+			   xiv.vis.XtkEngine.EventType.LEFTMOUSE_UP,
+			   this.onRenderPlaneLeftMouseDown_.bind(this));
+	*/
 
 
 	//
@@ -999,7 +1053,7 @@ xiv.ui.ViewBox.prototype.initInteractorSync_ = function() {
 	    
 	    renderPlane.getRenderer().getVolume().
 		windowLow = e.target.getValue() - 100;
-	    window.console.log("TEST ADJUST BRIGHTNESS");
+	    window.console.log("TEST ADJUST THIS.BRIGHTNESSSLIDER_");
 	    */
 	    
 	    this.syncVolumeToSlider_(e.target, volume);

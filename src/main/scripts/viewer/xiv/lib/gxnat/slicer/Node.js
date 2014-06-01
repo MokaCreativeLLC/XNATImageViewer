@@ -303,3 +303,23 @@ function(sceneViewElt, sceneViewDisplayableElt) {
 }
 goog.inherits(gxnat.slicer.MeshDisplayNode, gxnat.slicer.DisplayNode)
 goog.exportSymbol('gxnat.slicer.MeshDisplayNode', gxnat.slicer.MeshDisplayNode);
+
+
+
+goog.exportSymbol('gxnat.slicer.Node', gxnat.slicer.Node);
+goog.exportSymbol('gxnat.slicer.MrmlNode', gxnat.slicer.MrmlNode);
+goog.exportSymbol('gxnat.slicer.DisplayableNode',
+	gxnat.slicer.DisplayableNode);
+goog.exportSymbol('gxnat.slicer.SceneViewNode', gxnat.slicer.SceneViewNode);
+goog.exportSymbol('gxnat.slicer.CameraNode', gxnat.slicer.CameraNode);
+goog.exportSymbol('gxnat.slicer.LayoutNode', gxnat.slicer.LayoutNode);
+goog.exportSymbol('gxnat.slicer.AnnotationsNode',
+	gxnat.slicer.AnnotationsNode);
+goog.exportSymbol('gxnat.slicer.BackgroundColorNode',
+	gxnat.slicer.BackgroundColorNode);
+goog.exportSymbol('gxnat.slicer.DisplayNode', gxnat.slicer.DisplayNode);
+goog.exportSymbol('gxnat.slicer.VolumeDisplayNode',
+	gxnat.slicer.VolumeDisplayNode);
+goog.exportSymbol('gxnat.slicer.MeshDisplayNode',
+	gxnat.slicer.MeshDisplayNode);
+ 

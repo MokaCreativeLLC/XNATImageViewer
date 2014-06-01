@@ -31,7 +31,7 @@ goog.exportSymbol('gxnat.vis.Renderable', gxnat.vis.Renderable);
 /**
  * @param {!gxnat.vis.RenderProperties | !gxnat.slicer.Node} props
  */
-gxnat.vis.VisNode.prototype.setRenderProperties = function(props) {
+gxnat.vis.Renderable.prototype.setRenderProperties = function(props) {
     this.RenderProperties_ = props instanceof gxnat.vis.RenderProperties ? 
 	props : new gxnat.vis.RenderProperties(props);
 }
@@ -41,7 +41,7 @@ gxnat.vis.VisNode.prototype.setRenderProperties = function(props) {
 /**
  * @return {?gxnat.vis.RenderProperties}
  */
-gxnat.vis.VisNode.prototype.getRenderProperties = function() {
+gxnat.vis.Renderable.prototype.getRenderProperties = function() {
     return this.RenderProperties_;
 }
 
@@ -58,3 +58,13 @@ gxnat.vis.Renderable.prototype.dispose = function() {
 	delete this.RenderProperties_;
     }
 }
+
+
+
+goog.exportSymbol('gxnat.vis.Renderable.prototype.setRenderProperties',
+	gxnat.vis.Renderable.prototype.setRenderProperties);
+goog.exportSymbol('gxnat.vis.Renderable.prototype.getRenderProperties',
+	gxnat.vis.Renderable.prototype.getRenderProperties);
+goog.exportSymbol('gxnat.vis.Renderable.prototype.dispose',
+	gxnat.vis.Renderable.prototype.dispose);
+

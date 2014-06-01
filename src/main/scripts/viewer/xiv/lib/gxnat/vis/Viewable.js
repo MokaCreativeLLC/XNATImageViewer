@@ -14,7 +14,7 @@ goog.require('gxnat.vis.Renderable');
  * @param {string= | Array.string=} opt_files
  * @param {gxnat.slicer.Node=} opt_renderProperties A subclass of 
  *    gxnat.slicer.Node that will be converted to render properties.
- * @extends {gxnat.vis.Renderables}
+ * @extends {gxnat.vis.Renderable}
  */
 goog.provide('gxnat.vis.Viewable');
 gxnat.vis.Viewable = function(opt_files, opt_renderProperties) {
@@ -91,3 +91,14 @@ gxnat.vis.Viewable.prototype.dispose = function() {
 	delete this.files_;
     }
 }
+
+
+
+goog.exportSymbol('gxnat.vis.Viewable.prototype.getFiles',
+	gxnat.vis.Viewable.prototype.getFiles);
+goog.exportSymbol('gxnat.vis.Viewable.prototype.removeFile',
+	gxnat.vis.Viewable.prototype.removeFile);
+goog.exportSymbol('gxnat.vis.Viewable.prototype.addFiles',
+	gxnat.vis.Viewable.prototype.addFiles);
+goog.exportSymbol('gxnat.vis.Viewable.prototype.dispose',
+	gxnat.vis.Viewable.prototype.dispose);

@@ -452,3 +452,51 @@ gxnat.vis.AjaxViewableTree.prototype.dispose = function() {
     // queryurl
     delete this.queryUrl;
 }
+
+
+
+
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.VIEWABLE_KEY_MAP',
+	gxnat.vis.AjaxViewableTree.VIEWABLE_KEY_MAP);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.SUBJECT_KEY_MAP',
+	gxnat.vis.AjaxViewableTree.SUBJECT_KEY_MAP);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.EXPERIMENT_KEY_MAP',
+	gxnat.vis.AjaxViewableTree.EXPERIMENT_KEY_MAP);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.loopFolderContents',
+	gxnat.vis.AjaxViewableTree.loopFolderContents);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.getViewableTrees',
+	gxnat.vis.AjaxViewableTree.getViewableTrees);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.filesGotten',
+	gxnat.vis.AjaxViewableTree.prototype.filesGotten);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.getFilesGotten',
+	gxnat.vis.AjaxViewableTree.prototype.getFilesGotten);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.setFilesGotten',
+	gxnat.vis.AjaxViewableTree.prototype.setFilesGotten);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.getExperimentUrl',
+	gxnat.vis.AjaxViewableTree.prototype.getExperimentUrl);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.getQueryUrl',
+	gxnat.vis.AjaxViewableTree.prototype.getQueryUrl);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.getSessionInfo',
+	gxnat.vis.AjaxViewableTree.prototype.getSessionInfo);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.setSessionInfo',
+	gxnat.vis.AjaxViewableTree.prototype.setSessionInfo);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.setViewableMetadata',
+	gxnat.vis.AjaxViewableTree.prototype.setViewableMetadata);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.setProjectMetadata',
+	gxnat.vis.AjaxViewableTree.prototype.setProjectMetadata);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.setSubjectMetadata',
+	gxnat.vis.AjaxViewableTree.prototype.setSubjectMetadata);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.setExperimentMetadata',
+	gxnat.vis.AjaxViewableTree.prototype.setExperimentMetadata);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.getFolderQuerySuffix',
+	gxnat.vis.AjaxViewableTree.prototype.getFolderQuerySuffix);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.makeFileUrl',
+	gxnat.vis.AjaxViewableTree.prototype.makeFileUrl);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.getFileList',
+	gxnat.vis.AjaxViewableTree.prototype.getFileList);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.fileFilter',
+	gxnat.vis.AjaxViewableTree.prototype.fileFilter);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.getThumbnailImage',
+	gxnat.vis.AjaxViewableTree.prototype.getThumbnailImage);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.dispose',
+	gxnat.vis.AjaxViewableTree.prototype.dispose);

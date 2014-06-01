@@ -76,3 +76,8 @@ gxnat.vis.RenderProperties.prototype.dispose = function() {
     goog.base(this, 'dispose');
     goog.object.clear(this);
 }
+
+
+
+goog.exportSymbol('gxnat.vis.RenderProperties.prototype.dispose',
+	gxnat.vis.RenderProperties.prototype.dispose);

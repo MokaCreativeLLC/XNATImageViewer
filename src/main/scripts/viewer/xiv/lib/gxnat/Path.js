@@ -32,6 +32,89 @@ goog.exportSymbol('gxnat.Path', gxnat.Path);
 
 
 /**
+ * Returns a query prefix for a given server root (i.e. 'REST' or 'XNAT').
+ * @param {!string} xnatServerRoot The server root to derive the query prefix
+ *    from.
+ * @return {!string} The query prefix.
+ * @public
+ */
+gxnat.Path.getQueryPrefix = function(xnatServerRoot) {
+    var xnatQueryPrefix = xnatServerRoot + '/REST';
+    if (xnatQueryPrefix.length > 0 && 
+        xnatQueryPrefix[xnatQueryPrefix.length - 1] === '/') {
+	xnatQueryPrefix = xnatQueryPrefix.substring(0, 
+            xnatQueryPrefix.length - 1);
+    }
+    return xnatQueryPrefix;
+}
+
+
+/**
+ * Loops through gxnat.Path.xnatLevelOrder and runs a callback.
+ * @param {!function} callback The callback to run on each level.
+ * @public
+ */
+gxnat.Path.forEachXnatLevel = function(callback){
+    var i = 0;
+    var len = gxnat.Path.xnatLevelOrder.length;
+    for (i=0; i < len; i++){
+	callback(gxnat.Path.xnatLevelOrder[i], i);
+    }
+}
+
+
+
+/**
+ * Returns the shared xnat level between two uris.
+ * @param {!string} uri1 The first uri to compare.
+ * @param {!string} uri2 The second uri to compare.
+ * @return {string} The deepest shared xnat level
+ * @public
+ */
+gxnat.Path.getDeepestSharedXnatLevel = function(uri1, uri2){
+    var path1 = new gxnat.Path(uri1);
+    var path2 = new gxnat.Path(uri2);
+    var sharedLevel = undefined;
+
+    //window.console.log(path1, path2);
+    gxnat.Path.forEachXnatLevel(function(level){
+	//window.console.log(path1[level], path2[level], 
+	//		   path1[level] === path2[level])
+	if (path1[level] && (path1[level] === path2[level])){
+	    sharedLevel = level;
+	}
+	//window.console.log(sharedLevel);
+    })
+
+    return sharedLevel;
+}
+
+
+
+/**
+ * Grafts two urls together at the 'graftSubString' argument.
+ * @param {!string} prefixUrl The prefix url.
+ * @param {!string} suffixUrl The suffix url.
+ * @param {!string} graftSubString The string to graft at.
+ * @return {!string} The grafted URL.
+ * @public
+ */
+gxnat.Path.graftUrl = function(prefixUrl, suffixUrl, graftSubString){
+    if (prefixUrl.indexOf(graftSubString) == -1){
+	throw new Error('Graft folder', graftSubString, 'not in prefix:', 
+			prefixUrl)
+    }
+    if (prefixUrl.indexOf(graftSubString) == -1){
+	throw new Error('Graft folder', graftSubString, 'not in suffix:', 
+			suffixUrl)
+    }
+    return prefixUrl.split(graftSubString + '/')[0] + graftSubString + 
+	suffixUrl.split(graftSubString)[1];
+}
+
+
+
+/**
  * XNAT folder abbreviations.
  * @type {!Array.string}
  * @const
@@ -44,16 +127,6 @@ gxnat.Path.xnatLevelOrder = [
     ['scans', 'resources'],
     'files'
 ]
-
-
-
-/**
- * @inheritDoc
- */
-gxnat.Path.prototype.dispose = function(url) {
-    goog.base(this, 'dispose');
-    goog.object.clear(this);
-}
 
 
 
@@ -190,82 +263,25 @@ gxnat.Path.prototype.pathByLevel = function(level){
 
 
 /**
- * Grafts two urls together at the 'graftSubString' argument.
- * @param {!string} prefixUrl The prefix url.
- * @param {!string} suffixUrl The suffix url.
- * @param {!string} graftSubString The string to graft at.
- * @return {!string} The grafted URL.
- * @public
+ * @inheritDoc
  */
-gxnat.Path.graftUrl = function(prefixUrl, suffixUrl, graftSubString){
-    if (prefixUrl.indexOf(graftSubString) == -1){
-	throw new Error('Graft folder', graftSubString, 'not in prefix:', 
-			prefixUrl)
-    }
-    if (prefixUrl.indexOf(graftSubString) == -1){
-	throw new Error('Graft folder', graftSubString, 'not in suffix:', 
-			suffixUrl)
-    }
-    return prefixUrl.split(graftSubString + '/')[0] + graftSubString + 
-	suffixUrl.split(graftSubString)[1];
+gxnat.Path.prototype.dispose = function(url) {
+    goog.base(this, 'dispose');
+    goog.object.clear(this);
 }
 
 
-
-/**
- * Returns a query prefix for a given server root (i.e. 'REST' or 'XNAT').
- * @param {!string} xnatServerRoot The server root to derive the query prefix
- *    from.
- * @return {!string} The query prefix.
- * @public
- */
-gxnat.Path.getQueryPrefix = function(xnatServerRoot) {
-    var xnatQueryPrefix = xnatServerRoot + '/REST';
-    if (xnatQueryPrefix.length > 0 && 
-        xnatQueryPrefix[xnatQueryPrefix.length - 1] === '/') {
-	xnatQueryPrefix = xnatQueryPrefix.substring(0, 
-            xnatQueryPrefix.length - 1);
-    }
-    return xnatQueryPrefix;
-}
+goog.exportSymbol('gxnat.Path.getQueryPrefix', gxnat.Path.getQueryPrefix);
+goog.exportSymbol('gxnat.Path.forEachXnatLevel', gxnat.Path.forEachXnatLevel);
+goog.exportSymbol('gxnat.Path.getDeepestSharedXnatLevel',
+	gxnat.Path.getDeepestSharedXnatLevel);
+goog.exportSymbol('gxnat.Path.graftUrl', gxnat.Path.graftUrl);
+goog.exportSymbol('gxnat.Path.xnatLevelOrder', gxnat.Path.xnatLevelOrder);
 
 
-/**
- * Loops through gxnat.Path.xnatLevelOrder and runs a callback.
- * @param {!function} callback The callback to run on each level.
- * @public
- */
-gxnat.Path.forEachXnatLevel = function(callback){
-    var i = 0;
-    var len = gxnat.Path.xnatLevelOrder.length;
-    for (i=0; i < len; i++){
-	callback(gxnat.Path.xnatLevelOrder[i], i);
-    }
-}
-
-
-
-/**
- * Returns the shared xnat level between two uris.
- * @param {!string} uri1 The first uri to compare.
- * @param {!string} uri2 The second uri to compare.
- * @return {string} The deepest shared xnat level
- * @public
- */
-gxnat.Path.getDeepestSharedXnatLevel = function(uri1, uri2){
-    var path1 = new gxnat.Path(uri1);
-    var path2 = new gxnat.Path(uri2);
-    var sharedLevel = undefined;
-
-    //window.console.log(path1, path2);
-    gxnat.Path.forEachXnatLevel(function(level){
-	//window.console.log(path1[level], path2[level], 
-	//		   path1[level] === path2[level])
-	if (path1[level] && (path1[level] === path2[level])){
-	    sharedLevel = level;
-	}
-	//window.console.log(sharedLevel);
-    })
-
-    return sharedLevel;
-}
+goog.exportSymbol('gxnat.Path.prototype.getDeepestLevel',
+	gxnat.Path.prototype.getDeepestLevel);
+goog.exportSymbol('gxnat.Path.prototype.pathByLevel',
+	gxnat.Path.prototype.pathByLevel);
+goog.exportSymbol('gxnat.Path.prototype.dispose',
+	gxnat.Path.prototype.dispose);

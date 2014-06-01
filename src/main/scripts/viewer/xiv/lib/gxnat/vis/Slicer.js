@@ -342,3 +342,23 @@ gxnat.vis.Slicer.prototype.addFiles = function(fileNames) {
 	this.mrbFiles_.push(fileName);
     }.bind(this))
 }
+
+
+
+
+goog.exportSymbol('gxnat.vis.Slicer.thumbnailExtensions',
+	gxnat.vis.Slicer.thumbnailExtensions);
+goog.exportSymbol('gxnat.vis.Slicer.prototype.folderQuerySuffix',
+	gxnat.vis.Slicer.prototype.folderQuerySuffix);
+goog.exportSymbol('gxnat.vis.Slicer.prototype.fileQuerySuffix',
+	gxnat.vis.Slicer.prototype.fileQuerySuffix);
+goog.exportSymbol('gxnat.vis.Slicer.prototype.fileContentsKey',
+	gxnat.vis.Slicer.prototype.fileContentsKey);
+goog.exportSymbol('gxnat.vis.Slicer.prototype.getFileList',
+	gxnat.vis.Slicer.prototype.getFileList);
+goog.exportSymbol('gxnat.vis.Slicer.prototype.convertToViewableGroups',
+	gxnat.vis.Slicer.prototype.convertToViewableGroups);
+goog.exportSymbol('gxnat.vis.Slicer.prototype.getThumbnailImage',
+	gxnat.vis.Slicer.prototype.getThumbnailImage);
+goog.exportSymbol('gxnat.vis.Slicer.prototype.addFiles',
+	gxnat.vis.Slicer.prototype.addFiles);

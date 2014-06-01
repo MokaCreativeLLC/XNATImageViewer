@@ -954,3 +954,71 @@ gxnat.ProjectTree.prototype.dispose = function(url) {
     goog.object.clear(this);
     //window.console.log('CLEARED TREE', this);
 }
+
+
+
+
+goog.exportSymbol('gxnat.ProjectTree.TreeNode', gxnat.ProjectTree.TreeNode);
+goog.exportSymbol('gxnat.ProjectTree.LEVEL_KEY', gxnat.ProjectTree.LEVEL_KEY);
+goog.exportSymbol('gxnat.ProjectTree.NEXTLEVELQUERY_KEY',
+	gxnat.ProjectTree.NEXTLEVELQUERY_KEY);
+goog.exportSymbol('gxnat.ProjectTree.NEXTLEVELJSON_KEY',
+	gxnat.ProjectTree.NEXTLEVELJSON_KEY);
+goog.exportSymbol('gxnat.ProjectTree.PATH_KEY', gxnat.ProjectTree.PATH_KEY);
+goog.exportSymbol('gxnat.ProjectTree.NEXTLEVEL_KEY',
+	gxnat.ProjectTree.NEXTLEVEL_KEY);
+goog.exportSymbol('gxnat.ProjectTree.NEXTLEVELLOADED_KEY',
+	gxnat.ProjectTree.NEXTLEVELLOADED_KEY);
+goog.exportSymbol('gxnat.ProjectTree.ISLOADING_KEY',
+	gxnat.ProjectTree.ISLOADING_KEY);
+goog.exportSymbol('gxnat.ProjectTree.METADATA_KEY',
+	gxnat.ProjectTree.METADATA_KEY);
+goog.exportSymbol('gxnat.ProjectTree.PROJ_DIRECT',
+	gxnat.ProjectTree.PROJ_DIRECT);
+goog.exportSymbol('gxnat.ProjectTree.SUBJ_DIRECT',
+	gxnat.ProjectTree.SUBJ_DIRECT);
+goog.exportSymbol('gxnat.ProjectTree.EXPT_DIRECT',
+	gxnat.ProjectTree.EXPT_DIRECT);
+goog.exportSymbol('gxnat.ProjectTree.PROJECT_METADATA',
+	gxnat.ProjectTree.PROJECT_METADATA);
+goog.exportSymbol('gxnat.ProjectTree.SUBJECT_METADATA',
+	gxnat.ProjectTree.SUBJECT_METADATA);
+goog.exportSymbol('gxnat.ProjectTree.EXPERIMENT_METADATA',
+	gxnat.ProjectTree.EXPERIMENT_METADATA);
+goog.exportSymbol('gxnat.ProjectTree.compareNodeTitles',
+	gxnat.ProjectTree.compareNodeTitles);
+goog.exportSymbol('gxnat.ProjectTree.getColumnQuery',
+	gxnat.ProjectTree.getColumnQuery);
+
+
+
+goog.exportSymbol('gxnat.ProjectTree.prototype.getBranchTitles',
+	gxnat.ProjectTree.prototype.getBranchTitles);
+goog.exportSymbol('gxnat.ProjectTree.prototype.getBranchUris',
+	gxnat.ProjectTree.prototype.getBranchUris);
+goog.exportSymbol('gxnat.ProjectTree.prototype.getBranchFromEndNode',
+	gxnat.ProjectTree.prototype.getBranchFromEndNode);
+goog.exportSymbol('gxnat.ProjectTree.prototype.loadInitBranch',
+	gxnat.ProjectTree.prototype.loadInitBranch);
+goog.exportSymbol('gxnat.ProjectTree.prototype.loadBranch',
+	gxnat.ProjectTree.prototype.loadBranch);
+goog.exportSymbol('gxnat.ProjectTree.prototype.loadProject',
+	gxnat.ProjectTree.prototype.loadProject);
+goog.exportSymbol('gxnat.ProjectTree.prototype.getSubjectNodeByUri',
+	gxnat.ProjectTree.prototype.getSubjectNodeByUri);
+goog.exportSymbol('gxnat.ProjectTree.prototype.getExperimentNodeByUri',
+	gxnat.ProjectTree.prototype.getExperimentNodeByUri);
+goog.exportSymbol('gxnat.ProjectTree.prototype.loadSubjectMetadata',
+	gxnat.ProjectTree.prototype.loadSubjectMetadata);
+goog.exportSymbol('gxnat.ProjectTree.prototype.loadSubjects',
+	gxnat.ProjectTree.prototype.loadSubjects);
+goog.exportSymbol('gxnat.ProjectTree.prototype.loadSubject',
+	gxnat.ProjectTree.prototype.loadSubject);
+goog.exportSymbol('gxnat.ProjectTree.prototype.loadExperimentMetadata',
+	gxnat.ProjectTree.prototype.loadExperimentMetadata);
+goog.exportSymbol('gxnat.ProjectTree.prototype.loadExperiments',
+	gxnat.ProjectTree.prototype.loadExperiments);
+goog.exportSymbol('gxnat.ProjectTree.prototype.loadExperiment',
+	gxnat.ProjectTree.prototype.loadExperiment);
+goog.exportSymbol('gxnat.ProjectTree.prototype.dispose',
+	gxnat.ProjectTree.prototype.dispose);

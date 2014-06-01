@@ -441,7 +441,7 @@ xiv.ui.ThumbnailGallery.prototype.onDrop_ = function(event) {
  * @private
  */
 xiv.ui.ThumbnailGallery.prototype.addDragDropSource_ = function(thumbnail){
-    var thumbElt = /**@type {!Element}*/ thumbnail.getHoverable();
+    var thumbElt = thumbnail.getHoverable();
     if (thumbElt) {
 	this.thumbnailDragDropGroup_.addItem(thumbElt);
     }
@@ -458,3 +458,35 @@ xiv.ui.ThumbnailGallery.prototype.disposeInternal = function(){
 
     this.clearDragDropGroups_();
 }
+
+
+goog.exportSymbol('xiv.ui.ThumbnailGallery.EventType',
+	xiv.ui.ThumbnailGallery.EventType);
+goog.exportSymbol('xiv.ui.ThumbnailGallery.ID_PREFIX',
+	xiv.ui.ThumbnailGallery.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ThumbnailGallery.CSS_SUFFIX',
+	xiv.ui.ThumbnailGallery.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ThumbnailGallery.ANIM_MED',
+	xiv.ui.ThumbnailGallery.ANIM_MED);
+goog.exportSymbol('xiv.ui.ThumbnailGallery.DRAGGER_ID',
+	xiv.ui.ThumbnailGallery.DRAGGER_ID);
+goog.exportSymbol('xiv.ui.ThumbnailGallery.DRAGGER_FADER_ID',
+	xiv.ui.ThumbnailGallery.DRAGGER_FADER_ID);
+
+
+goog.exportSymbol('xiv.ui.ThumbnailGallery.prototype.createAndAddThumbnail',
+	xiv.ui.ThumbnailGallery.prototype.createAndAddThumbnail);
+goog.exportSymbol('xiv.ui.ThumbnailGallery.prototype.createThumbnail',
+	xiv.ui.ThumbnailGallery.prototype.createThumbnail);
+goog.exportSymbol('xiv.ui.ThumbnailGallery.prototype.addThumbnail',
+	xiv.ui.ThumbnailGallery.prototype.addThumbnail);
+goog.exportSymbol('xiv.ui.ThumbnailGallery.prototype.clearThumbnailDropTargets',
+	xiv.ui.ThumbnailGallery.prototype.clearThumbnailDropTargets);
+goog.exportSymbol('xiv.ui.ThumbnailGallery.prototype.addThumbnailDropTarget',
+	xiv.ui.ThumbnailGallery.prototype.addThumbnailDropTarget);
+goog.exportSymbol('xiv.ui.ThumbnailGallery.prototype.addThumbnailDropTargets',
+	xiv.ui.ThumbnailGallery.prototype.addThumbnailDropTargets);
+goog.exportSymbol('xiv.ui.ThumbnailGallery.prototype.getThumbnailByElement',
+	xiv.ui.ThumbnailGallery.prototype.getThumbnailByElement);
+goog.exportSymbol('xiv.ui.ThumbnailGallery.prototype.disposeInternal',
+	xiv.ui.ThumbnailGallery.prototype.disposeInternal);

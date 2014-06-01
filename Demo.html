@@ -213,7 +213,7 @@ if (XIV_STATE == 'demo') {
 
 function getMethods(obj) {
 
-  window.console.log(obj.toString());
+//window.console.log(obj.toString());
   var result = [];
   for (var id in obj) {
     try {
@@ -245,7 +245,9 @@ var printMethods = function (obj, objName) {
     var skippables = [
      'CSS_CLASS_PREFIX',
      'CSS',
-     'ELEMENT_CLASS'
+     'ELEMENT_CLASS',
+     'constructor',
+     'base'
     ]
 
     var methodExporter = function(obj, objName) {
@@ -297,8 +299,26 @@ var printMethods = function (obj, objName) {
     return allPublicMethods;
 }
 
-window.console.log(printMethods(xiv.ui.HelpOverlay, 
-                                'xiv.ui.HelpOverlay'));
+
+var objs = {
+'xiv.vis.RenderEngine': xiv.vis.RenderEngine,
+'xiv.vis.XtkEngine': xiv.vis.XtkEngine,
+'xiv.vis.XtkPlane': xiv.vis.XtkPlane,
+'xiv.vis.XtkPlane2D': xiv.vis.XtkPlane2D,
+'xiv.vis.XtkPlane3D': xiv.vis.XtkPlane3D,
+'xiv.vis.XtkRenderer2D': xiv.vis.XtkRenderer2D,
+'xiv.vis.XtkRenderer3D': xiv.vis.XtkRenderer3D,
+}
+
+
+goog.object.forEach(objs, function(val, key){
+    window.console.log(key.toUpperCase());
+    window.console.log(printMethods(val, key));
+    window.console.log('\n\n\n\n');
+})
+
+
+window.console.log
 
 //alert(getMethods(xiv.prototype).join("\n"));
 

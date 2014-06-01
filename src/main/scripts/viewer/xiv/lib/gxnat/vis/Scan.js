@@ -268,47 +268,7 @@ gxnat.vis.Scan.prototype.makeFileUrl = function(xnatFileJson) {
 }
 
 
-/**
-* source: https://github.com/overset/javascript-natural-sort/blob/master/naturalSort.js
-*/
-gxnat.vis.Scan.naturalSort = function(a, b) {
-    var re = /(^-?[0-9]+(\.?[0-9]*)[df]?e?[0-9]?$|^0x[0-9a-f]+$|[0-9]+)/gi,
-        sre = /(^[ ]*|[ ]*$)/g,
-        dre = /(^([\w ]+,?[\w ]+)?[\w ]+,?[\w ]+\d+:\d+(:\d+)?[\w ]?|^\d{1,4}[\/\-]\d{1,4}[\/\-]\d{1,4}|^\w+, \w+ \d+, \d{4})/,
-        hre = /^0x[0-9a-f]+$/i,
-        ore = /^0/,
-        i = function(s) { return gxnat.vis.Scan.naturalSort.insensitive && (''+s).toLowerCase() || ''+s },
-        // convert all to strings strip whitespace
-        x = i(a).replace(sre, '') || '',
-        y = i(b).replace(sre, '') || '',
-        // chunk/tokenize
-        xN = x.replace(re, '\0$1\0').replace(/\0$/,'').replace(/^\0/,'').split('\0'),
-        yN = y.replace(re, '\0$1\0').replace(/\0$/,'').replace(/^\0/,'').split('\0'),
-        // numeric, hex or date detection
-        xD = parseInt(x.match(hre)) || (xN.length != 1 && x.match(dre) && Date.parse(x)),
-        yD = parseInt(y.match(hre)) || xD && y.match(dre) && Date.parse(y) || null,
-        oFxNcL, oFyNcL;
-    // first try and sort Hex codes or Dates
-    if (yD)
-        if ( xD < yD ) return -1;
-        else if ( xD > yD ) return 1;
-    // natural sorting through split numeric strings and default strings
-    for(var cLoc=0, numS=Math.max(xN.length, yN.length); cLoc < numS; cLoc++) {
-        // find floats not starting with '0', string or 0 if not defined (Clint Priest)
-        oFxNcL = !(xN[cLoc] || '').match(ore) && parseFloat(xN[cLoc]) || xN[cLoc] || 0;
-        oFyNcL = !(yN[cLoc] || '').match(ore) && parseFloat(yN[cLoc]) || yN[cLoc] || 0;
-        // handle numeric vs string comparison - number < string - (Kyle Adams)
-        if (isNaN(oFxNcL) !== isNaN(oFyNcL)) { return (isNaN(oFxNcL)) ? 1 : -1; }
-        // rely on string comparison if different types - i.e. '02' < 2 != '02' < '2'
-        else if (typeof oFxNcL !== typeof oFyNcL) {
-            oFxNcL += '';
-            oFyNcL += '';
-        }
-        if (oFxNcL < oFyNcL) return -1;
-        if (oFxNcL > oFyNcL) return 1;
-    }
-    return 0;
-}
+
 
 
 
@@ -332,7 +292,7 @@ gxnat.vis.Scan.prototype.getThumbnailImage = function(opt_callback){
 	// using natural sort.
 	//
 	var sortedFiles = this.ViewableGroups[0].getViewables()[0].getFiles().
-	    sort(gxnat.vis.Scan.naturalSort);
+	    sort(gxnat.naturalSort);
 	var imgInd = Math.floor((sortedFiles.length) / 2);
 	
 	//window.console.log("UNSORTED", 
@@ -382,3 +342,31 @@ gxnat.vis.Scan.prototype.dispose = function(){
     }
     delete this.scanMetadata_;
 }
+
+
+
+
+goog.exportSymbol('gxnat.vis.Scan.acceptableFileTypes',
+	gxnat.vis.Scan.acceptableFileTypes);
+goog.exportSymbol('gxnat.vis.Scan.getOrientationFromAbbreviation',
+	gxnat.vis.Scan.getOrientationFromAbbreviation);
+goog.exportSymbol('gxnat.vis.Scan.prototype.folderQuerySuffix',
+	gxnat.vis.Scan.prototype.folderQuerySuffix);
+goog.exportSymbol('gxnat.vis.Scan.prototype.fileQuerySuffix',
+	gxnat.vis.Scan.prototype.fileQuerySuffix);
+goog.exportSymbol('gxnat.vis.Scan.prototype.fileContentsKey',
+	gxnat.vis.Scan.prototype.fileContentsKey);
+goog.exportSymbol('gxnat.vis.Scan.prototype.setViewableMetadata',
+	gxnat.vis.Scan.prototype.setViewableMetadata);
+goog.exportSymbol('gxnat.vis.Scan.prototype.getFileList',
+	gxnat.vis.Scan.prototype.getFileList);
+goog.exportSymbol('gxnat.vis.Scan.prototype.fileFilter',
+	gxnat.vis.Scan.prototype.fileFilter);
+goog.exportSymbol('gxnat.vis.Scan.prototype.addFiles',
+	gxnat.vis.Scan.prototype.addFiles);
+goog.exportSymbol('gxnat.vis.Scan.prototype.makeFileUrl',
+	gxnat.vis.Scan.prototype.makeFileUrl);
+goog.exportSymbol('gxnat.vis.Scan.prototype.getThumbnailImage',
+	gxnat.vis.Scan.prototype.getThumbnailImage);
+goog.exportSymbol('gxnat.vis.Scan.prototype.dispose',
+	gxnat.vis.Scan.prototype.dispose);

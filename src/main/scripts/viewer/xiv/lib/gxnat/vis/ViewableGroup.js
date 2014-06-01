@@ -89,3 +89,15 @@ gxnat.vis.ViewableGroup.prototype.dispose = function() {
     })
     delete this.Viewables;
 }
+
+
+
+
+goog.exportSymbol('gxnat.vis.ViewableGroup.prototype.addViewable',
+	gxnat.vis.ViewableGroup.prototype.addViewable);
+goog.exportSymbol('gxnat.vis.ViewableGroup.prototype.getAllViewableFiles',
+	gxnat.vis.ViewableGroup.prototype.getAllViewableFiles);
+goog.exportSymbol('gxnat.vis.ViewableGroup.prototype.getViewables',
+	gxnat.vis.ViewableGroup.prototype.getViewables);
+goog.exportSymbol('gxnat.vis.ViewableGroup.prototype.dispose',
+	gxnat.vis.ViewableGroup.prototype.dispose);

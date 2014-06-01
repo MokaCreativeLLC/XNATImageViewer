@@ -16,7 +16,14 @@ goog.provide('xiv.vis.XtkPlane2D');
 xiv.vis.XtkPlane2D = function (orientation) {
     goog.base(this);
 
+    //
+    // Set the orientation
+    //
     this.orientation = orientation;
+
+    //
+    // Set the renderer
+    //
     this.XRenderer = xiv.vis.XtkRenderer2D;
 
     /**
@@ -92,3 +99,13 @@ xiv.vis.XtkPlane2D.prototype.dispose = function() {
 }
 
 
+
+
+goog.exportSymbol('xiv.vis.XtkPlane2D.prototype.getSliceRelativeToContainerX',
+	xiv.vis.XtkPlane2D.prototype.getSliceRelativeToContainerX);
+goog.exportSymbol('xiv.vis.XtkPlane2D.prototype.getSliceRelativeToContainerY',
+	xiv.vis.XtkPlane2D.prototype.getSliceRelativeToContainerY);
+goog.exportSymbol('xiv.vis.XtkPlane2D.prototype.getVolume',
+	xiv.vis.XtkPlane2D.prototype.getVolume);
+goog.exportSymbol('xiv.vis.XtkPlane2D.prototype.dispose',
+	xiv.vis.XtkPlane2D.prototype.dispose);

@@ -256,4 +256,24 @@ xiv.ui.ViewableGroupMenu.prototype.disposeInternal = function() {
 
 
 
+goog.exportSymbol('xiv.ui.ViewableGroupMenu.ID_PREFIX',
+	xiv.ui.ViewableGroupMenu.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ViewableGroupMenu.EventType',
+	xiv.ui.ViewableGroupMenu.EventType);
+goog.exportSymbol('xiv.ui.ViewableGroupMenu.CSS_SUFFIX',
+	xiv.ui.ViewableGroupMenu.CSS_SUFFIX);
 
+goog.exportSymbol('xiv.ui.ViewableGroupMenu.prototype.render',
+	xiv.ui.ViewableGroupMenu.prototype.render);
+goog.exportSymbol('xiv.ui.ViewableGroupMenu.prototype.getBackground',
+	xiv.ui.ViewableGroupMenu.prototype.getBackground);
+goog.exportSymbol('xiv.ui.ViewableGroupMenu.prototype.show',
+	xiv.ui.ViewableGroupMenu.prototype.show);
+goog.exportSymbol('xiv.ui.ViewableGroupMenu.prototype.createAndAddThumbnail',
+	xiv.ui.ViewableGroupMenu.prototype.createAndAddThumbnail);
+goog.exportSymbol('xiv.ui.ViewableGroupMenu.prototype.hide',
+	xiv.ui.ViewableGroupMenu.prototype.hide);
+goog.exportSymbol('xiv.ui.ViewableGroupMenu.prototype.reset',
+	xiv.ui.ViewableGroupMenu.prototype.reset);
+goog.exportSymbol('xiv.ui.ViewableGroupMenu.prototype.disposeInternal',
+	xiv.ui.ViewableGroupMenu.prototype.disposeInternal);

@@ -569,3 +569,49 @@ xiv.vis.XtkPlane.prototype.dispose = function() {
     delete this.currVolume_;
     delete this.renderProgress_;
 };
+
+
+goog.exportSymbol('xiv.vis.XtkPlane.DEFAULT_CAMERA_POSITION',
+	xiv.vis.XtkPlane.DEFAULT_CAMERA_POSITION);
+goog.exportSymbol('xiv.vis.XtkPlane.DEFAULT_BACKGROUND',
+	xiv.vis.XtkPlane.DEFAULT_BACKGROUND);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.XRenderer',
+	xiv.vis.XtkPlane.prototype.XRenderer);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.orientation',
+	xiv.vis.XtkPlane.prototype.orientation);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.Renderer',
+	xiv.vis.XtkPlane.prototype.Renderer);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.container',
+	xiv.vis.XtkPlane.prototype.container);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.getRenderer',
+	xiv.vis.XtkPlane.prototype.getRenderer);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.getOrientation',
+	xiv.vis.XtkPlane.prototype.getOrientation);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.setCamera',
+	xiv.vis.XtkPlane.prototype.setCamera);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.setBackground',
+	xiv.vis.XtkPlane.prototype.setBackground);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.getCurrentVolume',
+	xiv.vis.XtkPlane.prototype.getCurrentVolume);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.getContainer',
+	xiv.vis.XtkPlane.prototype.getContainer);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.setContainer',
+	xiv.vis.XtkPlane.prototype.setContainer);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.init',
+	xiv.vis.XtkPlane.prototype.init);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.add',
+	xiv.vis.XtkPlane.prototype.add);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.isOn',
+	xiv.vis.XtkPlane.prototype.isOn);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.setOn',
+	xiv.vis.XtkPlane.prototype.setOn);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.restore',
+	xiv.vis.XtkPlane.prototype.restore);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.removeXObjectsFromRenderer',
+	xiv.vis.XtkPlane.prototype.removeXObjectsFromRenderer);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.render',
+	xiv.vis.XtkPlane.prototype.render);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.updateStyle',
+	xiv.vis.XtkPlane.prototype.updateStyle);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.dispose',
+	xiv.vis.XtkPlane.prototype.dispose);

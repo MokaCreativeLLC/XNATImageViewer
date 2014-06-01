@@ -7,7 +7,7 @@ goog.require('X.renderer3D');
 
 
 /**
- * Exists for the purpose of making the protexted
+ * Exists for the purpose of making the protected
  * X.renderer.onResize_ function public.
  *
  * @constructor
@@ -29,15 +29,6 @@ xiv.vis.XtkRenderer3D.prototype.onResize = function() {
     this.onResize_();
 }
 
-
-
-/**
- * @inheritDoc
- */
-xiv.vis.XtkRenderer2D.prototype.destroy = function() {
-    //window.console.log('\n\n\nDESTROY 3D ', this._orienation);
-    goog.base(this, 'destroy');
-}
 
 
 
@@ -82,5 +73,11 @@ xiv.vis.XtkRenderer3D.prototype.remove = function(xObj) {
 
 
 
-
-
+goog.exportSymbol('xiv.vis.XtkRenderer3D.prototype.render',
+	xiv.vis.XtkRenderer3D.prototype.render);
+goog.exportSymbol('xiv.vis.XtkRenderer3D.prototype.remove',
+	xiv.vis.XtkRenderer3D.prototype.remove);
+goog.exportSymbol('xiv.vis.XtkRenderer3D.prototype.onResize',
+	xiv.vis.XtkRenderer3D.prototype.onResize);
+goog.exportSymbol('xiv.vis.XtkRenderer3D.prototype.onProgress',
+	xiv.vis.XtkRenderer3D.prototype.onProgress);
