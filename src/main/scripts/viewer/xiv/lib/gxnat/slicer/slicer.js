@@ -24,8 +24,8 @@ goog.exportSymbol('gxnat.slicer', gxnat.slicer);
 /**
  * @public
  */
-gxnat.slicer.GENERIC_COLORTABLE_FILE = 
-    '../../../../scripts/viewer/xiv/vis/GenericColorTable.txt';
+gxnat.slicer.GENERIC_COLORTABLE_FILE = serverRoot + 
+    '/scripts/viewer/xiv/vis/GenericColorTable.txt';
 
 
 
