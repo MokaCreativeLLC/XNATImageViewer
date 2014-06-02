@@ -16,10 +16,8 @@ goog.require('nrg.ui.Overlay');
  * @extends {nrg.ui.Overlay}
  */
 goog.provide('xiv.ui.HelpOverlay');
-
 xiv.ui.HelpOverlay = function () {
     goog.base(this);
-    this.setDestroyOnClose(false);
 }
 goog.inherits(xiv.ui.HelpOverlay, nrg.ui.Overlay);
 goog.exportSymbol('xiv.ui.HelpOverlay', xiv.ui.HelpOverlay);

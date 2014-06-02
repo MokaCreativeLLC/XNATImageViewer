@@ -149,23 +149,51 @@ nrg.ui.Overlay.prototype.setCloseOnHover = function(closeOnHover) {
 
 
 
-/**
- * @param {!boolean} doc
+/** 
+ * @param {string=} opt_eltMouseover
+ * @param {string=} opt_titleMouseover
+ * @param {string=} opt_contentsMouseover
+ * @param {string=} opt_buttonsMouseover
+ * @param {string=} opt_closeButtonMouseover
  * @public
  */
-nrg.ui.Overlay.prototype.setDestroyOnClose = function(doc) {
-    this.destroyOnClose_ = doc;
+nrg.ui.Overlay.prototype.setMouseoverClasses = 
+function(opt_eltMouseover, opt_titleMouseover) {
+    if (goog.isDefAndNotNull(opt_eltMouseover)){
+	nrg.style.setHoverClass(this.getElement(), opt_eltMouseover);
+    }
+
+    if (goog.isDefAndNotNull(opt_titleMouseover)){
+	nrg.style.setHoverClass(this.title_, opt_titleMouseover);
+    }
+
 }
 
+
+/** 
+ * @param {!string} eltClass
+ * @public
+ */
+nrg.ui.Overlay.prototype.setTitleClass = function(eltClass) {
+    goog.dom.classes.add(this.title_, eltClass);
+}
+
+
+
+/** 
+ * @param {!string} eltClass
+ * @public
+ */
+nrg.ui.Overlay.prototype.setButtonsClass = function(eltClass) {
+    goog.dom.classes.add(this.buttons_, eltClass);
+}
 
 
 /** 
  * @private
  */
 nrg.ui.Overlay.prototype.modifyButtons_ = function() {
-    var title = goog.dom.getElementsByClass('modal-dialog-buttons', 
-					    this.getElement())[0];
-    goog.dom.classes.add(title, nrg.ui.Overlay.CSS.BUTTONS);
+    goog.dom.classes.add(this.buttons_, nrg.ui.Overlay.CSS.BUTTONS);
 }
 
 
@@ -174,9 +202,7 @@ nrg.ui.Overlay.prototype.modifyButtons_ = function() {
  * @private
  */
 nrg.ui.Overlay.prototype.modifyContent_ = function() {
-    var title = goog.dom.getElementsByClass('modal-dialog-content', 
-					    this.getElement())[0];
-    goog.dom.classes.add(title, nrg.ui.Overlay.CSS.CONTENT);
+    goog.dom.classes.add(this.content_, nrg.ui.Overlay.CSS.CONTENT);
 }
 
 
@@ -185,9 +211,7 @@ nrg.ui.Overlay.prototype.modifyContent_ = function() {
  * @private
  */
 nrg.ui.Overlay.prototype.modifyTitle_ = function() {
-    var title = goog.dom.getElementsByClass('modal-dialog-title', 
-					    this.getElement())[0];
-    goog.dom.classes.add(title, nrg.ui.Overlay.CSS.TITLE);
+    goog.dom.classes.add(this.title_, nrg.ui.Overlay.CSS.TITLE);
 }
 
 
@@ -364,6 +388,37 @@ nrg.ui.Overlay.prototype.render = function(opt_parentElement) {
     //
     goog.dom.classes.add(this.getElement(), 'nrg-ui-overlay');
 
+
+    /**
+     * @private
+     * @type {Element}
+     */
+    this.title_ = goog.dom.getElementsByClass('modal-dialog-title', 
+					    this.getElement())[0];
+
+    /**
+     * @private
+     * @type {Element}
+     */
+    this.contents_ = goog.dom.getElementsByClass('modal-dialog-content', 
+					    this.getElement())[0];
+
+
+    /**
+     * @private
+     * @type {Element}
+     */
+    this.buttons_ = goog.dom.getElementsByClass('modal-dialog-buttons', 
+					    this.getElement())[0];
+
+
+    /**
+     * @private
+     * @type {Element}
+     */
+    this.closeButton_ = null;  // gets created in 'modifyCloseButton'
+
+
     //
     // Modify children
     //
@@ -394,61 +449,6 @@ nrg.ui.Overlay.prototype.getTextElements = function() {
 }
 
 
-/**
- * @public
- */
-nrg.ui.Overlay.prototype.addBackground = function() {
-    this.background_ = goog.dom.createDom('div', {
-	'id': this.constructor.ID_PREFIX + '_Background_' + 
-	    goog.string.createUniqueString(),
-	'class': nrg.ui.Overlay.CSS.BACKGROUND
-    })
-}
-
-
-
-/**
- * @return {?Element}
- * @public
- */
-nrg.ui.Overlay.prototype.getBackground = function() {
-    return this.background_;
-}
-
-
-
-
-/**
- * @param {number=} opt_fadeTime The optional fade time.  Defaults to 500.
- * @public
- */
-nrg.ui.Overlay.prototype.close = function(opt_fadeTime) {
-    opt_fadeTime = goog.isDefAndNotNull(opt_fadeTime) &&
-	goog.isNumber(opt_fadeTime) ? opt_fadeTime : 500;
-
-    //
-    // background fade, if needed.
-    //
-    if (goog.isDefAndNotNull(this.background_) && 
-	(this.background_.parentNode == this.getElement().parentNode)){
-	nrg.fx.fadeOut(this.background_, opt_fadeTime);	
-    }
-
-    window.console.log(opt_fadeTime);
-
-    //
-    // element fade
-    //
-    nrg.fx.fadeOut(this.getElement(), opt_fadeTime, function(){
-	this.dispatchEvent({
-	    type: nrg.ui.Overlay.EventType.CLOSED,
-	})
-	if (this.destroyOnClose_){
-	    this.dispose();
-	}
-    }.bind(this));
-}
-
 
 
 /**
@@ -456,6 +456,12 @@ nrg.ui.Overlay.prototype.close = function(opt_fadeTime) {
  */
 nrg.ui.Overlay.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
+
+    delete this.buttons_;
+    delete this.title_;
+    delete this.content_;
+    delete this.closeButton_;
+
 
      if (goog.isDefAndNotNull(this.overlay_)){
 	 goog.dom.removeNode(this.overlay_);
@@ -479,18 +485,7 @@ nrg.ui.Overlay.prototype.disposeInternal = function() {
 	delete this.images_;
     }
 
-    if (goog.isDefAndNotNull(this.closeButton_)){
-	goog.events.removeAll(this.closeButton_);
-	goog.dom.removeNode(this.closeButton_);
-	delete this.background_;
-    }
+    
 
-    if (goog.isDefAndNotNull(this.background_)){
-	goog.dom.removeNode(this.background_);
-	delete this.background_;
-    }
 
-    delete this.destroyOnClose_;
-    delete this.closeOnHover_;
-    delete this.mouseOverKey_;
 }

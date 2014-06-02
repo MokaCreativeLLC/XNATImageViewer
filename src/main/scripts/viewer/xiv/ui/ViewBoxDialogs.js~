@@ -75,11 +75,11 @@ xiv.ui.ViewBoxDialogs.CSS_SUFFIX = {
     BUTTON_HELPTOGGLE: 'button-helptoggle',
     BUTTON_CROSSHAIRTOGGLE: 'button-crosshairtoggle',
     BUTTON_BRIGHTNESSCONSTRASTTOGGLE: 'button-brightnesscontrasttoggle',
-    INFODIALOG: 'infodialog',
-    INFODIALOG_TEXT: 'infodialog-text',
-    HELPDIALOG: 'helpdialog',
-    HELPDIALOG_DIALOG: 'helpdialog-dialog',
-    HELPDIALOG_TEXT: 'helpdialog-text',
+    INFODIALOG: 'infooverlay',
+    INFODIALOG_TEXT: 'infooverlay-text',
+    HELPDIALOG: 'helpoverlay',
+    HELPDIALOG_DIALOG: 'helpoverlay-overlay',
+    HELPDIALOG_TEXT: 'helpoverlay-text',
     INUSEDIALOG: 'inusedialog',
 }
 
@@ -274,9 +274,6 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog = function(){
     this.Dialogs_[this.constructor.DIALOGS.INFO].setVisible(true);
     this.Dialogs_[this.constructor.DIALOGS.INFO].moveToCorner('left', 'top');
 
-
-    this.Dialogs_[this.constructor.DIALOGS.INFO].setMouseoverClasses(
-	'xiv-ui-viewboxdialogs-infodialog-hovered')
 
     //
     // Classes

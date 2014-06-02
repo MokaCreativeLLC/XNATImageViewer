@@ -31,7 +31,7 @@
 
 
 
-.xiv-ui-viewboxdialogs-infooverlay {
+.xiv-ui-viewboxdialogs-infodialog {
     position: absolute;
     background-color: rgba(0,0,0,0);
     font-size: 12px;
@@ -40,23 +40,27 @@
     left: 0px;
     width: 200px;
     z-index: 20;
+    border: none;
 }
 
 
-.xiv-ui-viewboxdialogs-infooverlay-hovered {
-    position: absolute;
-    background-color: rgba(0,0,0,0);
-    font-size: 12px;
-    color: white;
-    top: 0px;
-    left: 0px;
-    width: 200px;
-    height: 300px;
-    z-index: 20;
+.xiv-ui-viewboxdialogs-infodialog-hovered {    
+    border: solid 1px;
+    border-radius: 5px;
+    border-color: white;
+    background-color: rgba(60,60,60,.5);
 }
 
 
-.xiv-ui-viewboxdialogs-infooverlay-text {
+.xiv-ui-viewboxdialogs-infodialog-title-hovered {    
+    opacity: 1
+}
+
+.xiv-ui-viewboxdialogs-infodialog-closebutton-hovered {    
+    opacity: 1
+}
+
+.xiv-ui-viewboxdialogs-infodialog-text {
     position: absolute;
     font-size: 12px;		
     font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
