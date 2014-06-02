@@ -76,14 +76,11 @@ xiv.ui.HelpOverlay.prototype.ScrollableZippyTree_;
  */
 xiv.ui.HelpOverlay.prototype.render = function(opt_parentElement){
 
-    //this.addCloseButton();
-    this.addBackground();
-    this.getBackground().style.backgroundColor = 'rgba(80,80,80,.8)';
 
 
     goog.base(this, 'render', opt_parentElement);
 
-    goog.dom.classes.add(this.getOverlay(), 
+    goog.dom.classes.add(this.getElement(), 
 			 this.constructor.CSS.OVERLAY);
 
 

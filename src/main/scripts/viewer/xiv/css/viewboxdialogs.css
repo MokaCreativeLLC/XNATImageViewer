@@ -52,13 +52,24 @@
 }
 
 
+.xiv-ui-viewboxdialogs-infodialog-title { 
+    height: 5px;
+    opacity: 0
+}
+
+
 .xiv-ui-viewboxdialogs-infodialog-title-hovered {    
     opacity: 1
+}
+
+.xiv-ui-viewboxdialogs-infodialog-closebutton {    
+    opacity: 0
 }
 
 .xiv-ui-viewboxdialogs-infodialog-closebutton-hovered {    
     opacity: 1
 }
+
 
 .xiv-ui-viewboxdialogs-infodialog-text {
     position: absolute;

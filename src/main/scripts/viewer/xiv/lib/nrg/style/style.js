@@ -424,6 +424,12 @@ nrg.style.setStyle = function (elt, styleObj) {
 
 
 
+/**
+ * @const
+ */
+nrg.style.IS_HOVERED = 'is_hovered_' + goog.string.createUniqueString()
+
+
 
 /**
  * Applies a css class to an element if it is being hovered on. 
@@ -439,10 +445,12 @@ nrg.style.setHoverClass = function(elt, className, opt_eventFindTuneMethod,
 				     opt_eventFindTuneMethodBinder) {
 
     // Mouseover / mouseout
-    var applyHover = /**@type {!function}*/ function(){ 
+    var applyHover = function(){ 
+	elt[nrg.style.IS_HOVERED] = true;
 	goog.dom.classes.add(elt, className);
     }
-    var removeHover = /**@type {!function}*/ function(){ 
+    var removeHover = function() {
+	elt[nrg.style.IS_HOVERED] = false;
 	goog.dom.classes.remove(elt, className);
     }
     goog.events.listen(elt, goog.events.EventType.MOUSEOVER, applyHover);

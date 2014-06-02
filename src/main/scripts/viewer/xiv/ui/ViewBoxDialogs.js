@@ -275,7 +275,12 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog = function(){
     this.Dialogs_[this.constructor.DIALOGS.INFO].moveToCorner('left', 'top');
 
 
-    this.Dialogs_[this.constructor.DIALOGS.INFO].setMouseoverClasses(
+    this.Dialogs_[this.constructor.DIALOGS.INFO].addTitleClass(
+	'xiv-ui-viewboxdialogs-infodialog-title')
+    this.Dialogs_[this.constructor.DIALOGS.INFO].addCloseButtonClass(
+	'xiv-ui-viewboxdialogs-infodialog-closebutton')
+
+    this.Dialogs_[this.constructor.DIALOGS.INFO].setMouseoverClass(
 	'xiv-ui-viewboxdialogs-infodialog-hovered')
 
     //

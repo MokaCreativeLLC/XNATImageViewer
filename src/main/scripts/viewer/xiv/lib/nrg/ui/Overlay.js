@@ -14,7 +14,6 @@ goog.require('goog.ui.Dialog');
 goog.provide('nrg.ui.Overlay');
 nrg.ui.Overlay = function () {
     goog.base(this);
-    this.createOverlay_();
 }
 goog.inherits(nrg.ui.Overlay, goog.ui.Dialog);
 goog.exportSymbol('nrg.ui.Overlay', nrg.ui.Overlay);
@@ -56,13 +55,6 @@ nrg.ui.Overlay.CSS = {
 
 
 
-/**
- * @type {Element}
- * @private
- */
-nrg.ui.Overlay.prototype.overlay_;
-
-
 
 /**
  * @type {Element}
@@ -95,78 +87,23 @@ nrg.ui.Overlay.prototype.images_;
 nrg.ui.Overlay.prototype.texts_;
 
 
-/**
- * @type {!boolean}
- * @private
- */
-nrg.ui.Overlay.prototype.destroyOnClose_ = false;
-
-
-
-/**
- * @type {!boolean}
- * @private
- */
-nrg.ui.Overlay.prototype.closeOnHover_ = false;
-
-
-/**
- * @type {string}
- * @private
- */
-nrg.ui.Overlay.prototype.mouseOverKey_;
-
-
-
-
-/**
- * @private
- */
-nrg.ui.Overlay.prototype.createOverlay_ = function() {
-    this.overlay_ = goog.dom.createDom('div', {
-	'id': this.constructor.ID_PREFIX + '_Overlay_' + 
-	    goog.string.createUniqueString(),
-	'class': nrg.ui.Overlay.CSS.OVERLAY
-    })
-}
-
-
-
-/**
- * @param {!boolean} closeOnHover
- * @public
- */
-nrg.ui.Overlay.prototype.setCloseOnHover = function(closeOnHover) {
-    this.closeOnHover_ = closeOnHover;
-    if (this.closeOnHover_){
-	this.mouseOverKey_  = 
-	goog.events.listen(this.getElement(), goog.events.EventType.MOUSEOVER, 
-			   this.close.bind(this));
-    } else {
-	goog.events.unlisten(this.mouseOverKey_);
-    }
-}
 
 
 
 /** 
  * @param {string=} opt_eltMouseover
  * @param {string=} opt_titleMouseover
- * @param {string=} opt_contentsMouseover
- * @param {string=} opt_buttonsMouseover
- * @param {string=} opt_closeButtonMouseover
  * @public
  */
-nrg.ui.Overlay.prototype.setMouseoverClasses = 
-function(opt_eltMouseover, opt_titleMouseover) {
+nrg.ui.Overlay.prototype.setMouseoverClass = 
+function(opt_eltMouseover) {
     if (goog.isDefAndNotNull(opt_eltMouseover)){
-	nrg.style.setHoverClass(this.getElement(), opt_eltMouseover);
+	nrg.style.setHoverClass(this.getElement(), opt_eltMouseover, 
+        function(){
+	    window.console.log(this.getElement());
+	    window.console.log(this.getElement()[nrg.style.IS_HOVERED]);
+        }.bind(this));
     }
-
-    if (goog.isDefAndNotNull(opt_titleMouseover)){
-	nrg.style.setHoverClass(this.title_, opt_titleMouseover);
-    }
-
 }
 
 
@@ -174,7 +111,7 @@ function(opt_eltMouseover, opt_titleMouseover) {
  * @param {!string} eltClass
  * @public
  */
-nrg.ui.Overlay.prototype.setTitleClass = function(eltClass) {
+nrg.ui.Overlay.prototype.addTitleClass = function(eltClass) {
     goog.dom.classes.add(this.title_, eltClass);
 }
 
@@ -184,7 +121,27 @@ nrg.ui.Overlay.prototype.setTitleClass = function(eltClass) {
  * @param {!string} eltClass
  * @public
  */
-nrg.ui.Overlay.prototype.setButtonsClass = function(eltClass) {
+nrg.ui.Overlay.prototype.addContentsClass = function(eltClass) {
+    goog.dom.classes.add(this.buttons_, eltClass);
+}
+
+
+
+/** 
+ * @param {!string} eltClass
+ * @public
+ */
+nrg.ui.Overlay.prototype.addCloseButtonClass = function(eltClass) {
+    goog.dom.classes.add(this.closeButton_, eltClass);
+}
+
+
+
+/** 
+ * @param {!string} eltClass
+ * @public
+ */
+nrg.ui.Overlay.prototype.addButtonsClass = function(eltClass) {
     goog.dom.classes.add(this.buttons_, eltClass);
 }
 
@@ -400,7 +357,7 @@ nrg.ui.Overlay.prototype.render = function(opt_parentElement) {
      * @private
      * @type {Element}
      */
-    this.contents_ = goog.dom.getElementsByClass('modal-dialog-content', 
+    this.content_ = goog.dom.getElementsByClass('modal-dialog-content', 
 					    this.getElement())[0];
 
 
