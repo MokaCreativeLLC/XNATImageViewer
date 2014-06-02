@@ -340,6 +340,13 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 	    this.constructor.setRenderProperties_Volume_(
 		currXObj, renderProps);
 	    this.currXObjects_['volumes'].push(currXObj);
+
+	    //
+	    // IMPORTANT!!! 
+	    //
+	    //currXObj.reslicing = false;
+	    //window.console.log("RESLICING", currXObj.reslicing);
+
 	}
 
 	// Meshes
@@ -889,6 +896,7 @@ xiv.vis.XtkEngine.generateXtkObjectFromExtension = function(ext) {
 	obj = new X.mesh();
     } else if (this.isVolume(ext) || this.isDicom(ext) || this.isImage(ext)){
 	obj = new X.volume();
+	obj.reslicing = false;
     } else if (this.isFiber(ext)){
 	obj = new X.fibers();
     } else {

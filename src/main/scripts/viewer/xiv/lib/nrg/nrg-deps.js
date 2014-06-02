@@ -1,6 +1,7 @@
 goog.addDependency('../../../nrg/nrg.js', ['nrg'], []); 
 
 
+
 goog.addDependency('../../../nrg/array/array.js', ['nrg.array'], []); 
 
 
@@ -53,7 +54,11 @@ goog.addDependency('../../../nrg/string/string.js', ['nrg.string'], [
 goog.addDependency('../../../nrg/ui/ui.js', ['nrg.ui'], [
 ]);
 
-
+goog.addDependency('../../../nrg/ui/Overlay.js', 
+['nrg.ui.Overlay'], [
+    'nrg.ui.Component',
+    'goog.ui.Dialog'
+]);
 
 goog.addDependency('../../../nrg/ui/Component.js', ['nrg.ui.Component'], [
     'goog.ui.Component',
@@ -64,11 +69,6 @@ goog.addDependency('../../../nrg/ui/Component.js', ['nrg.ui.Component'], [
     'nrg.dom'
 ]);
 
-
-goog.addDependency('../../../nrg/ui/Overlay.js', 
-['nrg.ui.Overlay'], [
-    'nrg.ui.Component'
-]);
 
 goog.addDependency('../../../nrg/ui/Resizable.js', 
 ['nrg.ui.Resizable'], [
@@ -199,6 +199,8 @@ goog.addDependency('../../../nrg/ui/ZippyTree.js',
 'nrg.style',
 'nrg.ui.ZippyNode'
 ]);
+
+
 
 
 

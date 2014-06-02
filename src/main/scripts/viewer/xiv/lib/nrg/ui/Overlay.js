@@ -3,20 +3,20 @@
  */
 
 // nrg
-goog.require('nrg.ui.Component');
+goog.require('goog.ui.Dialog');
 
 
 /**
  *
  * @constructor
- * @extends {nrg.ui.Component}
+ * @extends {goog.ui.Dialog}
  */
 goog.provide('nrg.ui.Overlay');
 nrg.ui.Overlay = function () {
     goog.base(this);
     this.createOverlay_();
 }
-goog.inherits(nrg.ui.Overlay, nrg.ui.Component);
+goog.inherits(nrg.ui.Overlay, goog.ui.Dialog);
 goog.exportSymbol('nrg.ui.Overlay', nrg.ui.Overlay);
 
 
@@ -43,11 +43,15 @@ nrg.ui.Overlay.EventType = {
 /**
  * @enum {string}
  */
-nrg.ui.Overlay.CSS_SUFFIX = {
-    OVERLAY: 'overlay',
-    BACKGROUND: 'background',
-    CLOSEBUTTON: 'closebutton',
-    TEXT: 'text'
+nrg.ui.Overlay.CSS = {
+    OVERLAY: 'nrg-ui-overlay-overlay',
+    BACKGROUND: 'nrg-ui-overlay-background',
+    CLOSEBUTTON: 'nrg-ui-overlay-closebutton',
+    CLOSEBUTTON_IMAGE: 'nrg-ui-overlay-closebutton-image',
+    TEXT: 'nrg-ui-overlay-text',
+    TITLE: 'nrg-ui-overlay-title',
+    CONTENT: 'nrg-ui-overlay-content',
+    BUTTONS: 'nrg-ui-overlay-buttons',
 };
 
 
@@ -114,6 +118,7 @@ nrg.ui.Overlay.prototype.mouseOverKey_;
 
 
 
+
 /**
  * @private
  */
@@ -154,21 +159,134 @@ nrg.ui.Overlay.prototype.setDestroyOnClose = function(doc) {
 
 
 
-/**
- * @public
+/** 
+ * @private
  */
-nrg.ui.Overlay.prototype.addCloseButton = function() {
+nrg.ui.Overlay.prototype.modifyButtons_ = function() {
+    var title = goog.dom.getElementsByClass('modal-dialog-buttons', 
+					    this.getElement())[0];
+    goog.dom.classes.add(title, nrg.ui.Overlay.CSS.BUTTONS);
+}
+
+
+
+/** 
+ * @private
+ */
+nrg.ui.Overlay.prototype.modifyContent_ = function() {
+    var title = goog.dom.getElementsByClass('modal-dialog-content', 
+					    this.getElement())[0];
+    goog.dom.classes.add(title, nrg.ui.Overlay.CSS.CONTENT);
+}
+
+
+
+/** 
+ * @private
+ */
+nrg.ui.Overlay.prototype.modifyTitle_ = function() {
+    var title = goog.dom.getElementsByClass('modal-dialog-title', 
+					    this.getElement())[0];
+    goog.dom.classes.add(title, nrg.ui.Overlay.CSS.TITLE);
+}
+
+
+
+/** 
+ * @private
+ */
+nrg.ui.Overlay.prototype.modifyCloseButton_ = function() {
+
+    //
+    // Get the span holder of the close button
+    //
+    var closeSpan = 
+	goog.dom.getElementsByClass('modal-dialog-title-close', 
+				    this.getElement())[0];
+    goog.dom.classes.add(closeSpan, nrg.ui.Overlay.CSS.CLOSEBUTTON);
+
+
+    //
+    // Create the close button image
+    //
     this.closeButton_ = goog.dom.createDom('img', {
 	'id': this.constructor.ID_PREFIX + '_CloseButton_' + 
 	    goog.string.createUniqueString(),
-	'class': nrg.ui.Overlay.CSS.CLOSEBUTTON
+	'class': nrg.ui.Overlay.CSS.CLOSEBUTTON_IMAGE
     })
     this.closeButton_.src = serverRoot + 
 	'/images/viewer/xiv/ui/Modal/close.png';
-    goog.dom.appendChild(this.overlay_, this.closeButton_);
-    goog.events.listen(this.closeButton_, goog.events.EventType.CLICK,
-		       this.close.bind(this));
+
+    goog.dom.appendChild(closeSpan, this.closeButton_);
 }
+
+
+
+/**
+ * @public
+ */
+nrg.ui.Overlay.prototype.applyFadeTransitions = function() {
+    var dialogElt = this.getElement();
+    var popupShowTransition = goog.fx.dom.FadeIn(dialogElt,
+	nrg.ui.Component.animationLengths.SLOW);
+    var popupHideTransition = goog.fx.dom.FadeOut(dialogElt,
+	nrg.ui.Component.animationLengths.SLOW);
+    var bgShowTransition = goog.fx.dom.FadeIn(dialogElt,
+	nrg.ui.Component.animationLengths.SLOW);
+    var bgHideTransition = goog.fx.dom.FadeOut(dialogElt,
+	nrg.ui.Component.animationLengths.SLOW);
+    this.setTransition(popupShowTransition, popupHideTransition,
+				  bgShowTransition, bgHideTransition);
+
+}
+
+
+
+
+/**
+ * @param {!string} cornerX
+ * @param {1string} cornerY
+ * @public
+ */
+nrg.ui.Overlay.prototype.moveToCorner = function(cornerX, cornerY) {
+    var dialogElt = this.getElement();
+    
+    if (cornerX == 'left'){
+	dialogElt.style.left = '0px';
+    }
+
+    if (cornerY == 'top'){
+	dialogElt.style.top = '0px';
+    }
+}
+
+
+
+
+/**
+ * @public
+ */
+nrg.ui.Overlay.prototype.center = function() {
+    var dialogElt = this.getElement();
+    var parentSize = goog.style.getSize(this.getElement().parentNode);
+
+    if (goog.isDefAndNotNull(this.getBackgroundElement())){
+	var inUseBg = this.getBackgroundElement();
+	nrg.style.setStyle(inUseBg, {
+	    'width': parentSize.width,
+	    'height': parentSize.height,
+	    'z-index': 199 
+	})
+    }
+    
+    //
+    // Reposition
+    // 
+    var dialogSize = goog.style.getSize(dialogElt);
+    dialogElt.style.left = 'calc(50% - ' + dialogSize.width/2 + 'px)';
+    dialogElt.style.top = 'calc(50% - ' + dialogSize.height/2 + 'px)';
+}
+
 
 
 
@@ -204,17 +322,22 @@ nrg.ui.Overlay.prototype.addImage = function(opt_src) {
  * @public
  */
 nrg.ui.Overlay.prototype.addText = function(opt_text) {
+
+    
+
+    //return;
     var text = goog.dom.createDom('div', {
 	'id': this.constructor.ID_PREFIX + '_Text_' + 
 	    goog.string.createUniqueString(),
 	'class': nrg.ui.Overlay.CSS.TEXT
-    })
+    }, opt_text)
     if (!goog.isDefAndNotNull(this.texts_)){
 	this.texts_ = [];
     }
     this.texts_.push(text);
     text.innerHTML = opt_text || '';
-    goog.dom.appendChild(this.overlay_, text);
+    //goog.dom.appendChild(this.overlay_, text);
+    this.setContent(opt_text);
     return text;
 }
 
@@ -225,9 +348,40 @@ nrg.ui.Overlay.prototype.addText = function(opt_text) {
  * @inheritDoc
  */
 nrg.ui.Overlay.prototype.getOverlay = function() {
-    return this.overlay_;
+    return this.getElement();
 }
 
+
+
+/**
+ * @inheritDoc
+ */
+nrg.ui.Overlay.prototype.render = function(opt_parentElement) {
+    goog.base(this, 'render', opt_parentElement);
+
+    //
+    // Add overlay class
+    //
+    goog.dom.classes.add(this.getElement(), 'nrg-ui-overlay');
+
+    //
+    // Modify children
+    //
+    this.modifyCloseButton_();
+    this.modifyButtons_();
+    this.modifyTitle_();
+    this.modifyContent_();
+}
+
+
+
+
+/**
+ * @inheritDoc
+ */
+nrg.ui.Overlay.prototype.setVisible = function(visible) {
+    goog.base(this, 'setVisible', visible);
+}
 
 
 
@@ -293,38 +447,6 @@ nrg.ui.Overlay.prototype.close = function(opt_fadeTime) {
 	    this.dispose();
 	}
     }.bind(this));
-}
-
-
-
-/**
- * @inheritDoc
- */
-nrg.ui.Overlay.prototype.render = function(opt_parentElement) {
-    goog.base(this, 'render', opt_parentElement);
-
-    goog.dom.appendChild(this.getElement(), this.overlay_);
-
-    if (goog.isDefAndNotNull(this.background_)){
-	
-	//
-	// Non-document parents
-	//
-	if (goog.isDefAndNotNull(opt_parentElement) &&
-	    (opt_parentElement != document.body)) {
-	    goog.dom.appendChild(this.getElement(), this.background_);
-	}
-
-	//
-	// Document parents
-	//
-	else {
-	    goog.dom.appendChild(document.body, this.background_);
-	    this.background_.style.position = 'fixed';
-	    this.getElement().style.zIndex = 500;
-	}
-    }
-
 }
 
 

@@ -38,6 +38,7 @@
 
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/helpoverlay.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/viewbox.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/viewboxdialogs.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/modal.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/thumbnail.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/thumbnailgallery.css">
@@ -208,7 +209,7 @@ if (document.URL.indexOf('popup.html') > -1) {
 //
 if (XIV_STATE == 'demo') {
     launchXImgView('', '', 'src/main');
-}
+
 
 
 function getMethods(obj) {
@@ -301,13 +302,7 @@ var printMethods = function (obj, objName) {
 
 
 var objs = {
-'xiv.vis.RenderEngine': xiv.vis.RenderEngine,
-'xiv.vis.XtkEngine': xiv.vis.XtkEngine,
-'xiv.vis.XtkPlane': xiv.vis.XtkPlane,
-'xiv.vis.XtkPlane2D': xiv.vis.XtkPlane2D,
-'xiv.vis.XtkPlane3D': xiv.vis.XtkPlane3D,
-'xiv.vis.XtkRenderer2D': xiv.vis.XtkRenderer2D,
-'xiv.vis.XtkRenderer3D': xiv.vis.XtkRenderer3D,
+//'xiv.vis.RenderEngine': xiv.vis.RenderEngine,
 }
 
 
@@ -318,10 +313,9 @@ goog.object.forEach(objs, function(val, key){
 })
 
 
-window.console.log
 
 //alert(getMethods(xiv.prototype).join("\n"));
-
+}
 
 </script>
 </body>

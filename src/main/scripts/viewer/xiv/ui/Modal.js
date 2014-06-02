@@ -772,7 +772,7 @@ xiv.ui.Modal.prototype.addAddSubjectsToProjectTab_ = function() {
 	'id': xiv.ui.Modal.ID_PREFIX + '_addSubjects_' + 
 	    goog.string.createUniqueString(),
 	'class': xiv.ui.Modal.CSS.ADDSUBJECTS
-    }, '+ Load Remaining Subjects');
+    }, '+ Load all subjects in project');
 
     //
     // Add the add subjects button to the tab tab pages

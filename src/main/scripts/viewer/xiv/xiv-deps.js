@@ -292,6 +292,13 @@ goog.addDependency('../../../../ui/HelpOverlay.js',
 ]);
 
 
+goog.addDependency('../../../../ui/ViewBoxDialogs.js', 
+['xiv.ui.ViewBoxDialogs'], [
+    'nrg.ui.Component',
+]);
+
+
+
 goog.addDependency('../../../../ui/ViewBox.js', 
 ['xiv.ui.ViewBox'], [
     'goog.string',
@@ -307,6 +314,7 @@ goog.addDependency('../../../../ui/ViewBox.js',
     'xiv.ui.layouts.LayoutHandler',
     'xiv.vis.XtkEngine',
     'xiv.ui.ProgressBarPanel',
+    'xiv.ui.ViewBoxDialogs',
     'nrg.ui.Overlay'
 ]);
 

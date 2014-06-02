@@ -36,10 +36,9 @@ nrg.ui.ErrorOverlay.ID_PREFIX =  'nrg.ui.ErrorOverlay';
 /**
  * @enum {string}
  */
-nrg.ui.ErrorOverlay.CSS_SUFFIX = {
-    OVERLAY: 'overlay',
-    NO_WEBGL_IMAGE: 'no-webgl-image',
-    TEXT: 'text'
+nrg.ui.ErrorOverlay.CSS = {
+    OVERLAY: 'nrg-ui-infooverlay-overlay',
+    TEXT: 'nrg-ui-infooverlay-text'
 };
 
 

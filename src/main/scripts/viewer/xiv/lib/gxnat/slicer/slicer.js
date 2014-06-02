@@ -24,7 +24,7 @@ goog.exportSymbol('gxnat.slicer', gxnat.slicer);
 /**
  * @public
  */
-gxnat.slicer.GENERIC_COLORTABLE_FILE = serverRoot + 
+gxnat.slicer.GENERIC_COLORTABLE_FILE = 
     '/scripts/viewer/xiv/vis/GenericColorTable.txt';
 
 
@@ -79,7 +79,7 @@ gxnat.slicer.getMrmlNodes = function(fileList, mrbUrl, callback) {
     var mrmlNodes = [];
     var counter = 0;
 
-    window.console.log("MRML URLS", mrmlUrls);
+    //window.console.log("MRML URLS", mrmlUrls);
 
     goog.array.forEach(mrmlUrls, function(mrmlUrl){
 	gxnat.slicer.getMrmlAsXml(mrmlUrl, function(mDoc) {

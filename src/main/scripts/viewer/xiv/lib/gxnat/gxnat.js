@@ -138,7 +138,7 @@ gxnat.naturalSort = function(a, b) {
         dre = /(^([\w ]+,?[\w ]+)?[\w ]+,?[\w ]+\d+:\d+(:\d+)?[\w ]?|^\d{1,4}[\/\-]\d{1,4}[\/\-]\d{1,4}|^\w+, \w+ \d+, \d{4})/,
         hre = /^0x[0-9a-f]+$/i,
         ore = /^0/,
-        i = function(s) { return gxnat.vis.Scan.naturalSort.insensitive && (''+s).toLowerCase() || ''+s },
+        i = function(s) { return gxnat.naturalSort.insensitive && (''+s).toLowerCase() || ''+s },
         // convert all to strings strip whitespace
         x = i(a).replace(sre, '') || '',
         y = i(b).replace(sre, '') || '',

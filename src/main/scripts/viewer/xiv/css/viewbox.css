@@ -215,6 +215,18 @@
 }
 
 
+
+.xiv-ui-viewbox-button-brightnesscontrasttoggle {
+    width: 15px;
+    height: 15px;
+    opacity: .5;
+}
+.xiv-ui-viewbox-button-brightnesscontrasttoggle-on {
+    opacity: 1;
+    background-color: black;
+}
+
+
 .xiv-ui-viewbox-component-highlight {
   box-sizing:border-box;
   -moz-box-sizing:border-box;

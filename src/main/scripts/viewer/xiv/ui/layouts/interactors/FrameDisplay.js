@@ -102,7 +102,7 @@ function(num){
 xiv.ui.layouts.interactors.FrameDisplay.prototype.setTotalFrames = 
 function(num){
     if (!goog.isDefAndNotNull(this.inputBox_)){return};
-    this.inputBox_.max = Math.max(0, Math.round(num));
+    this.inputBox_.max = Math.max(1, num);
     this.updateAll_();
 }
 

@@ -48,10 +48,10 @@ xiv.ui.HelpOverlay.ID_PREFIX =  'xiv.ui.HelpOverlay';
  * @enum {string}
  * @public
  */
-xiv.ui.HelpOverlay.CSS_SUFFIX = {
-    OVERLAY: 'overlay',
-    TEXT: 'text',
-    SCROLLABLEZIPPYTREE: 'scrollablezippytree'
+xiv.ui.HelpOverlay.CSS= {
+    OVERLAY: 'nrg-ui-helpoverlay-overlay',
+    TEXT: 'nrg-ui-helpoverlay-text',
+    SCROLLABLEZIPPYTREE: 'nrg-ui-helpoverlay-scrollablezippytree'
 }
 
 
@@ -78,7 +78,7 @@ xiv.ui.HelpOverlay.prototype.ScrollableZippyTree_;
  */
 xiv.ui.HelpOverlay.prototype.render = function(opt_parentElement){
 
-    this.addCloseButton();
+    //this.addCloseButton();
     this.addBackground();
     this.getBackground().style.backgroundColor = 'rgba(80,80,80,.8)';
 
@@ -110,8 +110,12 @@ xiv.ui.HelpOverlay.prototype.render = function(opt_parentElement){
  * @param {!string} buttonSrc
  */
 xiv.ui.HelpOverlay.prototype.setLayoutButton = function(buttonSrc){
-    document.getElementById(xiv.ui.HelpOverlay.LAYOUT_IMAGE_ID).src = 
-	buttonSrc;
+    var icon = document.getElementById(xiv.ui.HelpOverlay.LAYOUT_IMAGE_ID);
+    
+    if (goog.isDefAndNotNull(icon)){
+	document.getElementById(xiv.ui.HelpOverlay.LAYOUT_IMAGE_ID).src = 
+	    buttonSrc;
+    }
 }
 
 

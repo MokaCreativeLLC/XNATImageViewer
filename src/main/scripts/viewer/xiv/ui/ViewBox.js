@@ -10,7 +10,6 @@ goog.require('goog.events');
 goog.require('goog.array');
 goog.require('goog.object');
 goog.require('goog.style');
-goog.require('goog.ui.ToggleButton');
 goog.require('goog.ui.ImagelessButtonRenderer');
 goog.require('goog.testing.events');
 goog.require('goog.ui.Dialog');
@@ -127,6 +126,29 @@ xiv.ui.ViewBox.EventType = {
 xiv.ui.ViewBox.ID_PREFIX =  'xiv.ui.ViewBox';
 
 
+/**
+ * @type {?nrg.ui.ZippyTree}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.Controllers3D_ = null;
+
+
+
+/**
+ * @type {?nrg.ui.ZippyTree}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.Controllers2D_ = null;
+
+
+
+/**
+ * @type {?Object.<string, goog.ui.Button>}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.toggleButtons_ = null;
+
+
 
 /**
  * @enum {string}
@@ -134,7 +156,6 @@ xiv.ui.ViewBox.ID_PREFIX =  'xiv.ui.ViewBox';
  */
 xiv.ui.ViewBox.CSS_SUFFIX = {
     HIDDEN: 'hidden',
-    DRAGANDDROPHANDLE: 'draganddrophandle',
     TABDRAGGER: 'tabdragger',
     TABDRAGGER_HANDLE: 'tabdragger-handle',
     VIEWLAYOUTMENU: 'viewlayoutmenu',
@@ -146,10 +167,13 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     VIEWFRAME: 'viewframe',
     COMPONENT_HIGHLIGHT: 'component-highlight',
     VIEWABLEGROUPMENU: 'viewablegroupmenu',
+
+    /*
     BUTTON_THREEDTOGGLE: 'button-threedtoggle',
     BUTTON_INFOTOGGLE: 'button-infotoggle',
     BUTTON_HELPTOGGLE: 'button-helptoggle',
     BUTTON_CROSSHAIRTOGGLE: 'button-crosshairtoggle',
+    BUTTON_BRIGHTNESSCONSTRASTTOGGLE: 'button-brightnesscontrasttoggle',
     INFOOVERLAY: 'infooverlay',
     INFOOVERLAY_OVERLAY: 'infooverlay-overlay',
     INFOOVERLAY_TEXT: 'infooverlay-text',
@@ -157,6 +181,7 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     HELPOVERLAY_OVERLAY: 'helpoverlay-overlay',
     HELPOVERLAY_TEXT: 'helpoverlay-text',
     INUSEDIALOG: 'inusedialog',
+    */
 }
 
 
@@ -291,34 +316,10 @@ xiv.ui.ViewBox.prototype.ViewableGroupMenu_ = null;
 
 
 /**
- * @type {?nrg.ui.ZippyTree}
+ * @type {?nrg.ui.ViewBoxDialogs}
  * @private
  */
-xiv.ui.ViewBox.prototype.Controllers3D_ = null;
-
-
-/**
- * @type {?nrg.ui.ZippyTree}
- * @private
- */
-xiv.ui.ViewBox.prototype.Controllers2D_ = null;
-
-
-
-/**
- * @type {?Object.<string, goog.ui.Button>}
- * @private
- */
-xiv.ui.ViewBox.prototype.toggleButtons_ = null;
-
-
-
-
-/**
- * @type {goog.ui.Dialog}
- * @private
- */
-xiv.ui.ViewBox.prototype.inUseDialog_;
+xiv.ui.ViewBox.prototype.ViewBoxDialogs_ = null;
 
 
 
@@ -355,6 +356,17 @@ xiv.ui.ViewBox.prototype.getLoadState = function() {
 xiv.ui.ViewBox.prototype.getViewableTrees =  function() {
     return this.ViewableTrees_;
 }
+
+
+
+/**
+ * @return {!Element} 
+ * @public
+ */
+xiv.ui.ViewBox.prototype.getViewFrame =  function() {
+    return this.viewFrameElt_;
+}
+
 
 
 
@@ -653,16 +665,6 @@ function(slider, volume) {
 
 
 
-/**
- * @param {boolean=} opt_visible
- * @private
- */
-xiv.ui.ViewBox.prototype.toggleInfoVisible_ = function(opt_visible) {
-    var opacity = (opt_visible === false) ? 0 : 1;
-    nrg.fx.fadeTo(this.infoOverlay_.getElement(), 200, opacity);
-}
-
-
 
 /**
  * @param {boolean=} opt_visible
@@ -693,7 +695,8 @@ xiv.ui.ViewBox.prototype.toggleInteractorsVisible_ = function(opt_visible) {
  */
 xiv.ui.ViewBox.prototype.hideInteractors_ = function() {
     this.toggleInteractorsVisible_(false);
-    this.toggleInfoVisible_(false); 
+    this.ViewBoxDialogs_.toggleVisible(xiv.ui.ViewBoxDialogs.INFO,
+	false); 
 }
 
 
@@ -702,7 +705,8 @@ xiv.ui.ViewBox.prototype.hideInteractors_ = function() {
  */
  xiv.ui.ViewBox.prototype.showInteractors_ = function() {
     this.toggleInteractorsVisible_(true); 
-    this.toggleInfoVisible_(true); 
+    this.ViewBoxDialogs_.toggleVisible(xiv.ui.ViewBoxDialogs.INFO,
+	true); 
 }
 
 
@@ -713,7 +717,7 @@ xiv.ui.ViewBox.prototype.hideInteractors_ = function() {
  * @private
  */
 xiv.ui.ViewBox.prototype.syncFrameDisplayToSlider_ = function(slider, volume) {
-
+    //window.console.log('syncFrameDisplay');
     var layoutFrame = this.LayoutHandler_.getCurrentLayout().
 	getLayoutFrameByTitle(slider[xiv.ui.ViewBox.ORIENTATION_TAG]);
 
@@ -726,6 +730,7 @@ xiv.ui.ViewBox.prototype.syncFrameDisplayToSlider_ = function(slider, volume) {
     [xiv.ui.layouts.Layout.INTERACTORS.FRAME_DISPLAY]
 
     if (goog.isDefAndNotNull(frameDisplay)){
+	//window.console.log("SLIDER", slider.getMaximum(), volume);
 	frameDisplay.setTotalFrames(slider.getMaximum());
 	frameDisplay.setCurrentFrame(slider.getValue());   
     }
@@ -836,11 +841,14 @@ xiv.ui.ViewBox.prototype.syncSlidersToVolume_ = function(opt_resetMaximum) {
 	if (!goog.isDefAndNotNull(volume)) { return };
 
 	//window.console.log('VOLUME', volume.dimensions, volume.dimensionsRAS);
-	//window.console.log(renderPlane.getRenderer()._slices.length);
+	//window.console.log(renderPlane.getRenderer()._slices.length); + 
 
 	if (opt_resetMaximum === true) {
-	    slider.setMaximum(renderPlane.getRenderer().getNumberSlices())
-	    slider.setMinimum(1)
+	    //window.console.log(renderPlane.getRenderer().getNumberSlices());
+	    //window.console.log(renderPlane.getRenderer().getVolume());
+	    //window.console.log(renderPlane.getRenderer());
+	    slider.setMaximum(renderPlane.getRenderer().getNumberSlices());
+	    slider.setMinimum(1);
 	}
 	slider.setValue(volume['index' + orientation] + 1);
     })
@@ -869,30 +877,6 @@ xiv.ui.ViewBox.prototype.onRenderPlaneShiftDown_ = function(e){
 
 
 
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.onRenderPlaneLeftMouseDown_ = function(e){
-    
-    var vol = e.target.getVolume();
-    
-    //this.BrightnessSlider_.suspendSlideEvent(true);
-    //this.ContrastSlider_.suspendSlideEvent(true);
-
-    vol.windowHigh =  this.BrightnessSlider_.getMaximum() - 
-	this.BrightnessSlider_.getValue();
-
-    vol.windowLow = this.ContrastSlider_.getValue();
-
-    vol.modified();
-    //window.console.log('LM3', vol.windowHigh, vol.windowLow);
-    //vol.modified();
-    //this.BrightnessSlider_.suspendSlideEvent(false);
-    //this.ContrastSlider_.suspendSlideEvent(false);
-}
-
-
-
 
 /**
  * @param {!nrg.ui.Slider} slider
@@ -901,6 +885,8 @@ xiv.ui.ViewBox.prototype.onRenderPlaneLeftMouseDown_ = function(e){
  */
 xiv.ui.ViewBox.prototype.initInteractorSync_ = function() { 
 
+
+    /**
     this.BrightnessSlider_ = new nrg.ui.Slider();
     this.BrightnessSlider_.render(this.getElement());
     this.BrightnessSlider_.getElement().style.zIndex = 50000;
@@ -914,7 +900,7 @@ xiv.ui.ViewBox.prototype.initInteractorSync_ = function() {
     this.ContrastSlider_.getElement().style.top = 'calc(100% - 30px)';
     this.ContrastSlider_.setMinimum(-500);
     this.ContrastSlider_.setMaximum(500);
-
+    */
 
 
     //
@@ -933,6 +919,7 @@ xiv.ui.ViewBox.prototype.initInteractorSync_ = function() {
 	//
 	// Brightness and contrast sliders
 	//
+	/**
 	if (renderPlaneOr == 'X'){
 
 
@@ -961,7 +948,7 @@ xiv.ui.ViewBox.prototype.initInteractorSync_ = function() {
 	    window.console.log('ctrst', vol.windowLow, vol.windowHigh);
 	    vol.windowLow = e.target.getValue();
 	})
-
+	*/
 
 
 
@@ -1350,6 +1337,15 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 
 
 /**
+ * @public
+ */
+xiv.ui.ViewBox.prototype.showInUseDialog = function(){
+    this.ViewBoxDialogs_.showInUseDialog();
+}
+
+
+
+/**
  * @param {Function=} opt_onYes
  * @return {!boolean} Whether dialog was shown 
  * @public
@@ -1360,7 +1356,7 @@ xiv.ui.ViewBox.prototype.checkInUseAndShowDialog = function(opt_onYes){
     //
     if (goog.isDefAndNotNull(this.thumbLoadTime_)){
 	this.showInUseDialog();
-	this.setInUseSelect(opt_onYes);
+	this.ViewBoxDialogs_.setInUseSelect(opt_onYes);
 	return true;
     } 
     return false;
@@ -1434,7 +1430,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     //
     // We have to initialize certain toggle components here
     //
-    this.createInfoToggle_();    
+    this.ViewBoxDialogs_.createInfoDialog();    
 
     //
     // Set plane containers
@@ -1635,7 +1631,7 @@ xiv.ui.ViewBox.prototype.onLayoutChangeEnd_ = function(e){
  * @private
  */
 xiv.ui.ViewBox.prototype.initLoadComponents_ = function() {
-    this.initInUseDialog_();
+    this.initViewBoxDialogs_();
     this.initZipTabs_();
     this.initToggleMenu_();
     this.initLayoutHandler_();
@@ -1746,98 +1742,11 @@ xiv.ui.ViewBox.prototype.initProgressBarPanel_ = function(){
 
 
 /**
- * @param {Function=} opt_onYes
- * @param {Function=} opt_onNo
- * @public
- */
-xiv.ui.ViewBox.prototype.setInUseSelect = function(opt_onYes, opt_onNo){
-    goog.events.listenOnce(this.inUseDialog_, goog.ui.Dialog.EventType.SELECT, 
-    function(e) {
-	if (e.key === 'yes' && goog.isDefAndNotNull(opt_onYes)){
-	    opt_onYes(this);
-	}
-	if (e.key === 'no' && goog.isDefAndNotNull(opt_onNo)){
-	    opt_onNo(this);
-	}
-    }.bind(this));
-}
-
-
-
-/**
-* @public
-*/
-xiv.ui.ViewBox.prototype.showInUseDialog = function(){
-    this.inUseDialog_.setVisible(true);
-    var dialogElt = this.inUseDialog_.getElement();
-    this.inUseDialog_.setContent('ViewBox in use.  Proceed anyway?');
-    //
-    // Set the appriopriate elements to not have a background.
-    //
-    var blackablesArr = [
-	goog.dom.getElementsByClass('modal-dialog-title', dialogElt),
-	goog.dom.getElementsByClass('modal-dialog-content', dialogElt),
-	goog.dom.getElementsByClass('modal-dialog-buttons', dialogElt),
-    ];
-    goog.array.forEach(blackablesArr, function(blackableArr){
-	goog.array.forEach(blackableArr, function(elt){
-	    elt.style.backgroundColor = 'none';
-	    elt.style.background = 'none';	    
-	}.bind(this))
-    }.bind(this))
-    
-    //
-    // Add the class.
-    //
-    goog.dom.classes.add(dialogElt, this.constructor.CSS.INUSEDIALOG);
-
-    this.inUseDialog_.reposition();
-    this.inUseDialog_.setModal(true);
-
-    var viewFrameEltSize = goog.style.getSize(this.viewFrameElt_);
-    var inUseBg = this.inUseDialog_.getBackgroundElement();
-    nrg.style.setStyle(inUseBg, {
-	'width': viewFrameEltSize.width,
-	'height': viewFrameEltSize.height,
-	'z-index': 199 
-    })
-    
-    //
-    // Reposition
-    // 
-    var dialogSize = goog.style.getSize(dialogElt);
-    dialogElt.style.left = 'calc(50% - ' + dialogSize.width/2 + 'px)';
-    dialogElt.style.top = 'calc(50% - ' + dialogSize.height/2 + 'px)';
-
-
-    //
-    // transition
-    //
-    var dialogElt = this.inUseDialog_.getElement();
-    
-    var popupShowTransition = goog.fx.dom.FadeIn(dialogElt,
-	nrg.ui.Component.animationLengths.FAST);
-    var popupHideTransition = goog.fx.dom.FadeOut(dialogElt,
-	nrg.ui.Component.animationLengths.FAST);
-    var bgShowTransition = goog.fx.dom.FadeIn(dialogElt,
-	nrg.ui.Component.animationLengths.FAST);
-    var bgHideTransition = goog.fx.dom.FadeOut(dialogElt,
-	nrg.ui.Component.animationLengths.FAST);
-
-  this.inUseDialog_.setTransition(popupShowTransition, popupHideTransition,
-				  bgShowTransition, bgHideTransition);
-}
-
-
-
-/**
 * @private
 */
-xiv.ui.ViewBox.prototype.initInUseDialog_ = function(){
-    this.inUseDialog_ = new goog.ui.Dialog();
-    this.inUseDialog_.setHasTitleCloseButton(false);
-    this.inUseDialog_.setButtonSet(goog.ui.Dialog.ButtonSet.YES_NO);
-    this.inUseDialog_.render(this.viewFrameElt_);
+xiv.ui.ViewBox.prototype.initViewBoxDialogs_ = function(){
+    this.ViewBoxDialogs_ = new xiv.ui.ViewBoxDialogs(this);
+    this.ViewBoxDialogs_.render();
 }
 
 
@@ -2093,11 +2002,13 @@ xiv.ui.ViewBox.prototype.create3DRenderToggle_ = function(){
 }
 
 
+
 /**
  * @private
  */
-xiv.ui.ViewBox.prototype.createInfoToggle_ = function(){
+xiv.ui.ViewBox.prototype.createBrightnessContrastToggle_ = function(){
     
+    /**
     //
     // Clear existing
     //
@@ -2107,39 +2018,6 @@ xiv.ui.ViewBox.prototype.createInfoToggle_ = function(){
     this.infoOverlay_ = new nrg.ui.Overlay();
     goog.dom.classes.add(this.infoOverlay_.getElement(), 
 			 xiv.ui.ViewBox.CSS.INFOOVERLAY);
-
-
-    //
-    // Generate widget text
-    //
-    var infoText = '';
-
-    //
-    // For viewables with a 'sessionInfo' property (i.e. Scans)
-    //
-    if (this.ViewableTrees_.length > 0) {
-	//window.console.log(this.ViewableTrees_[0].sessionInfo)
-	//window.console.log(this.ViewableTrees_[0].getSessionInfo())
-	goog.object.forEach(this.ViewableTrees_[0].getSessionInfo(), 
-	    function(value, key){
-
-		if (goog.isDefAndNotNull(value)){
-
-		    if (value.length > 0){
-			//window.console.log(key, value);
-			infoText += key + ': ' + value + '<br>';
-		    }
-		}
-	    })
-    }
-
-    //
-    // Slicer thumbnails -- the filename is sufficient for now.
-    //
-    else {
-	infoText = goog.string.path.basename(
-	    this.ViewableTrees_[0].getQueryUrl());
-    }
     
     //
     // Add text and render
@@ -2152,21 +2030,30 @@ xiv.ui.ViewBox.prototype.createInfoToggle_ = function(){
     //
     goog.dom.classes.add(this.infoOverlay_.getOverlay(), 
 			 this.constructor.CSS.INFOOVERLAY_OVERLAY);
-
     goog.dom.classes.add(this.infoOverlay_.getTextElements()[0], 
 			 this.constructor.CSS.INFOOVERLAY_TEXT);
+    */
     
     //
     // Toggle fades
     // 
-    this.createToggleButton_(true, xiv.ui.ViewBox.CSS.BUTTON_INFOTOGGLE,
-			    'Info. Display', 
+    this.createToggleButton_(false, 
+		xiv.ui.ViewBox.CSS.BUTTON_BRIGHTNESSCONSTRASTTOGGLE,
+			     'Brightness and Contrast', 
        function(e){
+	   /**
 	   nrg.fx.fadeTo(this.infoOverlay_.getElement(), 
 			 200,  (e.target.getAttribute('checked') == 'true') ? 
 			 1: 0);
-       }.bind(this), serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Info.png');
+			 */
+       }.bind(this), serverRoot + 
+		'/images/viewer/xiv/ui/ViewBox/Toggle-BrightnessContrast.png');
 }
+
+
+
+
+
 
 
 /**
@@ -2180,17 +2067,16 @@ xiv.ui.ViewBox.prototype.createHelpToggle_ = function(){
 	this.HelpOverlay_.dispose();
     }
     this.HelpOverlay_ = new xiv.ui.HelpOverlay();
+    //
+    //  Render the overlay
+    //
+    this.HelpOverlay_.render(this.viewFrameElt_);
 
     //
     // Classes
     //
     goog.dom.classes.add(this.HelpOverlay_.getOverlay(), 
 			 this.constructor.CSS.HELPOVERLAY_OVERLAY);
-
-    //
-    //  Render the overlay
-    //
-    this.HelpOverlay_.render(this.viewFrameElt_);
 
     //
     // Toggle fades
@@ -2308,9 +2194,11 @@ xiv.ui.ViewBox.prototype.clearToggleMenu_ = function(){
 xiv.ui.ViewBox.prototype.initToggleMenu_ = function(){
     this.addMenu_left_();
     this.createLayoutMenu_();
+    this.createBrightnessContrastToggle_();
     this.create3DRenderToggle_();
     this.createCrosshairToggle_();
     this.createHelpToggle_();
+
 }
 
 
@@ -2670,12 +2558,7 @@ xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
 	this.HelpOverlay_.dispose();
     }
 
-    //
-    // Info Overlay
-    //
-    if (goog.isDefAndNotNull(this.infoOverlay_)){
-	this.infoOverlay_.dispose();
-    }
+
 
     // 2D Controllers
     if (goog.isDefAndNotNull(this.Controllers2D_)){
@@ -2743,9 +2626,13 @@ xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
 	delete this.ViewableGroupMenu_;
     }
 
+   
+    // ViewBox controlles
+    if (goog.isDefAndNotNull(this.ViewBoxDialogs_)){
+	this.ViewBoxDialogs_.disposeInternal();
+    } 
+
     
-    
-    // toggle buttons MenuLeft
     if (goog.isDefAndNotNull(this.toggleButtons_)){
 	goog.dom.removeNode(this.menus_.LEFT);
 	delete this.menus_.LEFT;
@@ -2797,13 +2684,6 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     }.bind(this))
     delete this.menus_;
 
-
-    // in use dialog
-    if (goog.isDefAndNotNull(this.inUseDialog_)){
-	this.inUseDialog_.dispose();
-	delete this.inUseDialog_;
-    }
-
     // Primitive types
     delete this.Viewables_;
     delete this.hasLoadComponents_;
@@ -2837,6 +2717,8 @@ goog.exportSymbol('xiv.ui.ViewBox.prototype.getLayoutHandler',
 		  xiv.ui.ViewBox.prototype.getLayoutHandler);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.getViewableGroupMenu', 
 		  xiv.ui.ViewBox.prototype.getViewableGroupMenu);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.getViewFrame', 
+		  xiv.ui.ViewBox.prototype.getViewFrame);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.highlight', 
 		  xiv.ui.ViewBox.prototype.highlight);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.unhighlight', 
@@ -2851,12 +2733,10 @@ goog.exportSymbol('xiv.ui.ViewBox.prototype.doNotHide',
 		  xiv.ui.ViewBox.prototype.doNotHide);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.setLayout', 
 		  xiv.ui.ViewBox.prototype.setLayout);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.checkInUseAndShowDialog', 
-		  xiv.ui.ViewBox.prototype.checkInUseAndShowDialog);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.load', 
 		  xiv.ui.ViewBox.prototype.load);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.setInUseSelect', 
-		  xiv.ui.ViewBox.prototype.setInUseSelect);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.checkInUseAndShowDialog', 
+		  xiv.ui.ViewBox.prototype.checkInUseAndShowDialog);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.showInUseDialog', 
 		  xiv.ui.ViewBox.prototype.showInUseDialog);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.addToMenu', 

@@ -52,7 +52,7 @@ def main():
         dst = targets[key]
 
         print "\n\nSRC: %s\nDST: %s"%(src, dst)
-            
+        
         #
         # For directories
         #
