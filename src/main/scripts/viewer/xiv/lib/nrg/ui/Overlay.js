@@ -90,7 +90,6 @@ nrg.ui.Overlay.prototype.texts_;
 
 
 
-
 /** 
  * @param {string=} opt_eltMouseover
  * @param {string=} opt_titleMouseover

@@ -3,19 +3,12 @@
  */
 
 
-.xiv-ui-viewboxdialogs-button-threedtoggle {
-    width: 15px;
-    height: 15px;
-    opacity: .5;
-}
 
-
-.xiv-ui-viewboxdialogs-button-threedtoggle-on {
-    opacity: 1;
-    background-color: black;
-}
-
-.xiv-ui-viewboxdialogs-button-infotoggle {
+.xiv-ui-viewboxdialogs-info-toggle,
+.xiv-ui-viewboxdialogs-help-toggle,
+.xiv-ui-viewboxdialogs-levels-toggle,
+.xiv-ui-viewboxdialogs-rendercontrol-toggle
+{
     width: 15px;
     height: 15px;
     opacity: .5;
@@ -23,7 +16,11 @@
 }
 
 
-.xiv-ui-viewboxdialogs-button-infotoggle-on {
+.xiv-ui-viewboxdialogs-info-toggle-on,
+.xiv-ui-viewboxdialogs-help-toggle-on,
+.xiv-ui-viewboxdialogs-levels-toggle-on,
+.xiv-ui-viewboxdialogs-rendercontrol-toggle-on
+ {
     opacity: 1;
     background-color: black;
 }
@@ -84,50 +81,6 @@
 }
 
 
-.xiv-ui-viewboxdialogs-button-helptoggle {
-    width: 15px;
-    height: 15px;
-    opacity: .5;
-}
-
-.xiv-ui-viewboxdialogs-button-helptoggle-on {
-    opacity: 1;
-    background-color: black;
-}
-
-.xiv-ui-viewboxdialogs-button-crosshairtoggle {
-    width: 15px;
-    height: 15px;
-    opacity: .5;
-}
-.xiv-ui-viewboxdialogs-button-crosshairtoggle-on {
-    opacity: 1;
-    background-color: black;
-}
-
-
-
-.xiv-ui-viewboxdialogs-button-brightnesscontrasttoggle {
-    width: 15px;
-    height: 15px;
-    opacity: .5;
-}
-.xiv-ui-viewboxdialogs-button-brightnesscontrasttoggle-on {
-    opacity: 1;
-    background-color: black;
-}
-
-
-.xiv-ui-viewboxdialogs-component-highlight {
-  box-sizing:border-box;
-  -moz-box-sizing:border-box;
-  -webkit-box-sizing:border-box;
-    border: solid rgba(250,250,250,1) 1px;
-    background-color: black;
-}
-
-
-
 .xiv-ui-viewboxdialogs-inusedialog {
     position: absolute;
     top: calc(50% - 60px);
@@ -146,5 +99,13 @@
     z-index: 200;
 }
 
+
+
+
+.xiv-ui-viewboxdialogs-rendercontroldialog {
+    width: 500px;
+    height: 300px;
+    background-color: black;
+}
 
 

@@ -27,7 +27,7 @@ goog.require('nrg.ui.Component');
  * @param {boolean=} opt_expanded Defaults to false.
  * @param {Function=} opt_insertMethod The optional insert method.
  *
- * @constructor
+ * @construtctor
  * @extends {nrg.ui.Component}
  */
 goog.provide('nrg.ui.ZippyNode');
@@ -165,7 +165,7 @@ nrg.ui.ZippyNode.createZippyHeaderLabel_ = function(title){
 	'class': nrg.ui.ZippyNode.CSS.HEADER_LABEL
     })
 
-    label.innerHTML = title;
+    label.innerHTML = goog.string.truncateMiddle(title, 45);
     return label;
 }
 

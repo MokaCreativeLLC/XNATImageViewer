@@ -10,14 +10,11 @@ goog.require('goog.events');
 goog.require('goog.array');
 goog.require('goog.object');
 goog.require('goog.style');
-goog.require('goog.ui.ImagelessButtonRenderer');
-goog.require('goog.testing.events');
-goog.require('goog.ui.Dialog');
+
 
 // nrg
 goog.require('nrg.ui.Component');
 goog.require('nrg.style');
-goog.require('nrg.ui.ZipTabs');
 goog.require('nrg.ui.SlideInMenu');
 goog.require('nrg.ui.ErrorOverlay');
 
@@ -27,7 +24,6 @@ goog.require('xiv.vis.XtkEngine');
 goog.require('xiv.ui.ProgressBarPanel');
 goog.require('xiv.ui.layouts.LayoutHandler');
 goog.require('xiv.ui.ViewableGroupMenu');
-goog.require('xiv.ui.HelpDialog');
 
 
 
@@ -143,7 +139,7 @@ xiv.ui.ViewBox.prototype.Controllers2D_ = null;
 
 
 /**
- * @type {?Object.<string, goog.ui.Button>}
+ * @type {?Object.<string, Element>}
  * @private
  */
 xiv.ui.ViewBox.prototype.toggleButtons_ = null;
@@ -169,9 +165,6 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     VIEWABLEGROUPMENU: 'viewablegroupmenu',
 
     /*
-    BUTTON_THREEDTOGGLE: 'button-threedtoggle',
-    BUTTON_INFOTOGGLE: 'button-infotoggle',
-    BUTTON_HELPTOGGLE: 'button-helptoggle',
     BUTTON_CROSSHAIRTOGGLE: 'button-crosshairtoggle',
     BUTTON_BRIGHTNESSCONSTRASTTOGGLE: 'button-brightnesscontrasttoggle',
     INFOOVERLAY: 'infooverlay',
@@ -268,20 +261,6 @@ xiv.ui.ViewBox.prototype.loadState_ = 'empty';
 xiv.ui.ViewBox.prototype.LayoutHandler_ = null;
 
 
-/**
- * @type {?Element}
- * @private
- */	
-xiv.ui.ViewBox.prototype.ZipTabBounds_ = null; 
-
-
-/**
- * @type {?nrg.ui.ZipTabs}
- * @private
- */	
-xiv.ui.ViewBox.prototype.ZipTabs_ = null; 
-
-
 
 /**
  * @type {?nrg.ui.SlideInMenu}
@@ -316,10 +295,18 @@ xiv.ui.ViewBox.prototype.ViewableGroupMenu_ = null;
 
 
 /**
- * @type {?nrg.ui.ViewBoxDialogs}
+ * @type {?xiv.ui.ViewBoxDialogs}
  * @private
  */
-xiv.ui.ViewBox.prototype.ViewBoxDialogs_ = null;
+xiv.ui.ViewBox.prototype.Dialogs_ = null;
+
+
+
+/**
+ * @type {?xiv.ui.ViewBoxInteractorHandler}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.InteractorHandler_ = null;
 
 
 
@@ -439,17 +426,6 @@ xiv.ui.ViewBox.prototype.clearThumbnailLoadTime =  function() {
 
 
 /**
- * @inheritDoc
- */
-xiv.ui.ViewBox.prototype.updateIconSrcFolder = function() {
-    if (this.ZipTabs_){
-	this.ZipTabs_.setIconBaseUrl(this.iconBaseUrl);
-    }
-}
-
-
-
-/**
  * Adds an element to the doNotHide list.
  * @param {!Element} element The element to prevent from hiding when no 
  *    Thumbnail is loaded.
@@ -503,29 +479,11 @@ xiv.ui.ViewBox.prototype.onRendering_ = function(e){
 
 
 /**
- * @private
+ * @struct
  */
-xiv.ui.ViewBox.prototype.syncVolumeToSlider_ = 
-function(slider, volume) {
-    if (!goog.isDefAndNotNull(volume)) return;
-    volume['index' + slider[xiv.ui.ViewBox.ORIENTATION_TAG]] = 
-	slider.getValue() - 1;
-    //volume.modified(true);
-}
-
-
-
-/**
- * @param {!string} planeOr
- * @param {!boolean} visible
- * @private
- */
-xiv.ui.ViewBox.prototype.toggleCrosshairsVisible_ =  
-function(planeOr, visible) {
-    //window.console.log("TOGGLE CROSSHAIRS", planeOr, visible);
-    this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle(planeOr)
-    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].toggleVisible(visible);
-    
+xiv.ui.ViewBox.ControllersSet = function(controller, folders){
+    this.CONTROLLER = controller;
+    this.FOLDERS = folders;
 }
 
 
@@ -534,607 +492,52 @@ function(planeOr, visible) {
 /**
  * @private
  */
-xiv.ui.ViewBox.prototype.syncCrosshairsToSliderX_ =  
-function(slider, volume) {
-    var ind = 'indexX'
-    var yFrame = this.LayoutHandler_.getCurrentLayout().
-	getLayoutFrameByTitle('Y');
-    var zFrame = this.LayoutHandler_.getCurrentLayout().
-	getLayoutFrameByTitle('Z');
-
-    // Y Vertical crosshair
-    if (goog.isDefAndNotNull(yFrame) &&
-	goog.isDefAndNotNull(yFrame
-			    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])) {
-	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Y')
-	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].vertical.style.left =
-	    this.Renderer_.getPlaneY().getRenderer().getVerticalSliceX(
-		volume[ind], true).toString() + 'px';
-    }
-    
-
-    // Z Vertical crosshair
-   if (goog.isDefAndNotNull(zFrame) &&
-	goog.isDefAndNotNull(zFrame
-			    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])) {
-	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Z')
-	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].vertical.style.left =
-	    this.Renderer_.getPlaneZ().getRenderer().getVerticalSliceX(
-		volume[ind], false).toString() + 'px';
-    }
-    
-}
+xiv.ui.ViewBox.prototype.createRenderControllers_ = function() {
+    //
+    // Create the dialogs
+    //
+    this.Dialogs_.createLevelsDialog(false);
+    this.Dialogs_.createRenderControlDialog(false);
 
 
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.syncCrosshairsToSliderY_ =  
-function(slider, volume) {
-    var ind = 'indexY';
-    var xFrame = this.LayoutHandler_.getCurrentLayout().
-	getLayoutFrameByTitle('X');
-    var zFrame = this.LayoutHandler_.getCurrentLayout().
-	getLayoutFrameByTitle('Z');
-
-
-    // X Vertical crosshair
-    if (goog.isDefAndNotNull(xFrame) &&
-	goog.isDefAndNotNull(xFrame
-			    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])) {
-	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('X')
-	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].
-	    vertical.style.left =
-	    this.Renderer_.getPlaneX().getRenderer().getVerticalSliceX(
-		volume[ind], false).toString() + 'px';
-    }
-
-    // Z Horizontal crosshair
-   if (goog.isDefAndNotNull(zFrame) &&
-	goog.isDefAndNotNull(zFrame
-			    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])) {
-	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Z')
-	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].
-	    horizontal.style.top =
-	    this.Renderer_.getPlaneZ().getRenderer().getHorizontalSliceY(
-		volume[ind], false).toString() + 'px';
-    }
-}
-
-
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.syncCrosshairsToSliderZ_ =  
-function(slider, volume) {
-    var ind = 'indexZ';
-    var xFrame = this.LayoutHandler_.getCurrentLayout().
-	getLayoutFrameByTitle('X');
-    var yFrame = this.LayoutHandler_.getCurrentLayout().
-	getLayoutFrameByTitle('Y');
-    //window.console.log("SLIDER Z");
-    // X Horizontal crosshair
-    if (goog.isDefAndNotNull(xFrame) &&
-	goog.isDefAndNotNull(xFrame
-			    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])) {
-	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('X')
-	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].horizontal.style.top =
-	    this.Renderer_.getPlaneX().getRenderer().getHorizontalSliceY(
-		volume[ind], false).toString() + 'px';
-	//window.console.log("SLIDER Z x");
-    }
-
-    // Y HORIZONTAL crosshair
-    if (goog.isDefAndNotNull(yFrame) &&
-	goog.isDefAndNotNull(yFrame
-			    [xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])) {
-	this.LayoutHandler_.getCurrentLayout().getLayoutFrameByTitle('Y')
-	[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS].horizontal.style.top =
-	    this.Renderer_.getPlaneY().getRenderer().getHorizontalSliceY(
-		volume[ind], false).toString() + 'px';
-	//window.console.log("SLIDER Z y");
-    }
-
-}
-
-
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.syncCrosshairsToSlider_ = 
-function(slider, volume) {
-
-    if (!goog.isDefAndNotNull(volume)){
-	return;
-    }
-    switch (slider[xiv.ui.ViewBox.ORIENTATION_TAG]){
-    case 'X': 
-	this.syncCrosshairsToSliderX_(slider, volume);
-	break;
-    case 'Y': 
-	this.syncCrosshairsToSliderY_(slider, volume);
-	break;
-    case 'Z': 
-	this.syncCrosshairsToSliderZ_(slider, volume);
-	break;
-    }
-}
-
-
-
-
-/**
- * @param {boolean=} opt_visible
- * @private
- */
-xiv.ui.ViewBox.prototype.toggleInteractorsVisible_ = function(opt_visible) {
-    var opacity = (opt_visible === false) ? 0 : 1;
-    this.loopInteractorsWithRenderer_(
-    function(renderPlane, renderPlaneOr, planeInteractors){
-
-	nrg.fx.fadeTo(planeInteractors.SLIDER.getElement(), 
-		      200, opacity);
-	nrg.fx.fadeTo(planeInteractors.FRAME_DISPLAY.getElement(), 
-		      200, opacity);
-	nrg.fx.fadeTo(planeInteractors.CROSSHAIRS.vertical, 
-		      200, opacity);
-	nrg.fx.fadeTo(planeInteractors.CROSSHAIRS.horizontal, 
-		      200, opacity);
-	nrg.fx.fadeTo(planeInteractors.ZOOM_DISPLAY.getElement(), 200, opacity);
-
-    }.bind(this)) 
-}
-
-
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.hideInteractors_ = function() {
-    this.toggleInteractorsVisible_(false);
-    this.ViewBoxDialogs_.toggleVisible(xiv.ui.ViewBoxDialogs.INFO,
-	false); 
-}
-
-
-/**
- * @private
- */
- xiv.ui.ViewBox.prototype.showInteractors_ = function() {
-    this.toggleInteractorsVisible_(true); 
-    this.ViewBoxDialogs_.toggleVisible(xiv.ui.ViewBoxDialogs.INFO,
-	true); 
-}
-
-
-
-/**
- * @param {!nrg.ui.Slider} slider
- * @param {X.volume} volume
- * @private
- */
-xiv.ui.ViewBox.prototype.syncFrameDisplayToSlider_ = function(slider, volume) {
-    //window.console.log('syncFrameDisplay');
-    var layoutFrame = this.LayoutHandler_.getCurrentLayout().
-	getLayoutFrameByTitle(slider[xiv.ui.ViewBox.ORIENTATION_TAG]);
-
-    if (!goog.isDefAndNotNull(volume) ||
-	!goog.isDefAndNotNull(layoutFrame)) { 
-	return;
-    }
-
-    var frameDisplay = layoutFrame
-    [xiv.ui.layouts.Layout.INTERACTORS.FRAME_DISPLAY]
-
-    if (goog.isDefAndNotNull(frameDisplay)){
-	//window.console.log("SLIDER", slider.getMaximum(), volume);
-	frameDisplay.setTotalFrames(slider.getMaximum());
-	frameDisplay.setCurrentFrame(slider.getValue());   
-    }
-}
-
-
-
-/**
- * @param {!Function} callback
- * @private
- */
-xiv.ui.ViewBox.prototype.loopInteractorsWithRenderer_ = function(callback){
-    var interactors = this.LayoutHandler_.getMasterInteractors();
-    if (!goog.isDefAndNotNull(this.Renderer_)) { return };
-    goog.object.forEach(this.Renderer_.getPlanes(), 
-    function(renderPlane, renderPlaneOr) {
-	//
-	// Exit out there are no interactors.
-	//
-	if (!goog.isDefAndNotNull(interactors[renderPlaneOr])) { 
-	    return 
-	};
 	
-	callback(renderPlane, renderPlaneOr, 
-		 interactors[renderPlaneOr], renderPlane.getVolume());
-    }.bind(this))
-} 
+    // reset the tree
+    var zTree = new nrg.ui.ScrollableZippyTree();
+    zTree.render();
 
 
+    var controllers2D = this.Renderer_.getControllers2D();
+    var controllers3D = this.Renderer_.getControllers3D();
 
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.syncZoomDisplayToRenderer_ = function() {
-    this.loopInteractorsWithRenderer_(
-    function(renderPlane, renderPlaneOr, planeInteractors){
-	if (!planeInteractors.ZOOM_DISPLAY || !renderPlane.getRenderer()) { 
-	    return 
-	};
-	planeInteractors.ZOOM_DISPLAY.setValue(
-	    renderPlane.getRenderer().getZoom());
-	
-    })
-}
-
-
-
-/**
- * @param {!nrg.ui.Slider} slider
- * @param {X.volume} volume
- * @private
- */
-xiv.ui.ViewBox.prototype.syncSliderToFrameDisplay_ = 
-function(frameDisplay, volume) {
-    if (!goog.isDefAndNotNull(volume)) return;
-    var layoutFrame = this.LayoutHandler_.getCurrentLayout().
-	getLayoutFrameByTitle(frameDisplay[xiv.ui.ViewBox.ORIENTATION_TAG])
-    if (!goog.isDefAndNotNull(layoutFrame)){
-	return;
-    }
-    var slider = layoutFrame[xiv.ui.layouts.Layout.INTERACTORS.SLIDER]
-    slider.setValue(frameDisplay.getCurrentFrame());   
-}
-
-
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.setSlidersHalfway_ = function() {
-    this.loopInteractorsWithRenderer_(
-    function(renderPlane, renderPlaneOr, planeInteractors, volume){
-	if (!goog.isDefAndNotNull(planeInteractors.SLIDER)) { 
-	    return; 
-	}
-	planeInteractors.SLIDER.setValue(
-		planeInteractors.SLIDER.getMaximum()/2);
-    }.bind(this))
-}
-
-
-
-
-/**
- * @param {!boolean} opt_resetMaximum
- * @private
- */
-xiv.ui.ViewBox.prototype.syncSlidersToVolume_ = function(opt_resetMaximum) {
-
-    var orientation;
-    var currVol;
-    var slider;
-
-
-
-    this.loopInteractorsWithRenderer_(
-    function(renderPlane, renderPlaneOr, planeInteractors, volume){
-	if (!goog.isDefAndNotNull(planeInteractors.SLIDER)) { 
-	    return; 
-	};
-
-	slider = planeInteractors.SLIDER;
-	orientation = slider[xiv.ui.ViewBox.ORIENTATION_TAG];
-
-	//
-	// Exit if no volume
-	//
-	if (!goog.isDefAndNotNull(volume)) { return };
-
-	//window.console.log('VOLUME', volume.dimensions, volume.dimensionsRAS);
-	//window.console.log(renderPlane.getRenderer()._slices.length); + 
-
-	if (opt_resetMaximum === true) {
-	    //window.console.log(renderPlane.getRenderer().getNumberSlices());
-	    //window.console.log(renderPlane.getRenderer().getVolume());
-	    //window.console.log(renderPlane.getRenderer());
-	    slider.setMaximum(renderPlane.getRenderer().getNumberSlices());
-	    slider.setMinimum(1);
-	}
-	slider.setValue(volume['index' + orientation] + 1);
-    })
-}
-
-
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.onRenderPlaneShiftDown_ = function(e){
-
-    //window.console.log("SHIFT DOWN");
-    //this.toggleCrosshairsVisible_(e.orientation, false);
-    this.hideInteractors_();
-    this.syncSlidersToVolume_();
     
-    //
-    // Listen to mousemove when shift is held
-    //
-    moveListen = goog.events.listen(document.body, 
-				    goog.events.EventType.MOUSEMOVE,
-				    this.syncSlidersToVolume_.bind(this));
-
-}
-
-
-
-
-/**
- * @param {!nrg.ui.Slider} slider
- * @param {X.volume} volume
- * @private
- */
-xiv.ui.ViewBox.prototype.initInteractorSync_ = function() { 
-
-
-    /**
-    this.BrightnessSlider_ = new nrg.ui.Slider();
-    this.BrightnessSlider_.render(this.getElement());
-    this.BrightnessSlider_.getElement().style.zIndex = 50000;
-    this.BrightnessSlider_.setMaximum(5000);
-    this.BrightnessSlider_.setMinimum(2500);
-
-
-    this.ContrastSlider_ = new nrg.ui.Slider();
-    this.ContrastSlider_.render(this.getElement());
-    this.ContrastSlider_.getElement().style.zIndex = 50000;
-    this.ContrastSlider_.getElement().style.top = 'calc(100% - 30px)';
-    this.ContrastSlider_.setMinimum(-500);
-    this.ContrastSlider_.setMaximum(500);
-    */
-
-
-    //
-    // Do nothing if no renderer
-    //
-    if (!goog.isDefAndNotNull(this.Renderer_)) { return };
-
-    this.loopInteractorsWithRenderer_(
-    function(renderPlane, renderPlaneOr, planeInteractors, volume){
-	var slider = planeInteractors.SLIDER;
-	var frameDisplay = planeInteractors.FRAME_DISPLAY;
-	var crosshairs = planeInteractors.CROSSHAIRS;
-	var arrPos = 0;
-
-
-	//
-	// Brightness and contrast sliders
-	//
-	/**
-	if (renderPlaneOr == 'X'){
-
-
-	    this.BrightnessSlider_.setMaximum(volume.windowHigh * 2);
-	    this.BrightnessSlider_.setMinimum(0);
-	    this.BrightnessSlider_.setValue(
-		this.BrightnessSlider_.getMaximum() -
-		volume.windowHigh);
-
-	    this.ContrastSlider_.setValue(volume.windowLow);
-	}
-
-	goog.events.listen(this.BrightnessSlider_, 
-        nrg.ui.Slider.EventType.SLIDE, 
-	function(e){
-	    var vol = renderPlane.getRenderer().getVolume();
-	    window.console.log('bright', vol.windowLow, vol.windowHigh);
-	    vol.windowHigh = e.target.getMaximum() - e.target.getValue();
-	})
-
-
-	goog.events.listen(this.ContrastSlider_, 
-        nrg.ui.Slider.EventType.SLIDE, 
-	function(e){
-	    var vol = renderPlane.getRenderer().getVolume();
-	    window.console.log('ctrst', vol.windowLow, vol.windowHigh);
-	    vol.windowLow = e.target.getValue();
-	})
-	*/
-
-
-
-	//
-	// Set custom params
-	//
-	slider[xiv.ui.ViewBox.ORIENTATION_TAG] = renderPlaneOr;
-	frameDisplay[xiv.ui.ViewBox.ORIENTATION_TAG] = renderPlaneOr;
-
-	//
-	// Preliminary syunc
-	//
-	this.syncSlidersToVolume_(true);
-	this.syncVolumeToSlider_(slider, volume);
-	this.syncCrosshairsToSlider_(slider, volume);
-	this.syncFrameDisplayToSlider_(slider, volume);
-	
-	var moveListen;
-	//
-	// Exit if no volume
-	//
-	if (!goog.isDefAndNotNull(renderPlane.getRenderer())) { return };
-
-	//
-	// SHIFT_DOWN interaction
-	//
-	goog.events.listen(renderPlane.getRenderer(), 
-			   xiv.vis.XtkEngine.EventType.SHIFT_DOWN,
-			   this.onRenderPlaneShiftDown_.bind(this));
-
-
-	//
-	// LEFTMOUSE_DOWN interaction
-	//
-	/**
-	goog.events.listen(renderPlane.getRenderer(), 
-			   xiv.vis.XtkEngine.EventType.LEFTMOUSE_DOWN,
-			   this.onRenderPlaneLeftMouseDown_.bind(this));
-	goog.events.listen(renderPlane.getRenderer(), 
-			   xiv.vis.XtkEngine.EventType.LEFTMOUSE_UP,
-			   this.onRenderPlaneLeftMouseDown_.bind(this));
-	*/
-
-
-	//
-	// ZOOM interaction
-	//
-	goog.events.listen(renderPlane.getRenderer(), 
-			   xiv.vis.XtkEngine.EventType.ZOOM,
-			   function(e){
-			       this.syncZoomDisplayToRenderer_();
-			   }.bind(this))
-
-
-	//
-	// Shift events
-	//
-	goog.events.listen(renderPlane.getRenderer(), 
-			   xiv.vis.XtkEngine.EventType.SHIFT_UP,
-	function(e){
-	    //window.console.log("SHIFT UP");
-	    this.showInteractors_();
-	    this.syncSlidersToVolume_();
-
-	    //
-	    // Listen to mousemove when shift is held
-	    //
-	    goog.events.unlistenByKey(moveListen);
-	}.bind(this))
-
-
-	//
-	// Change Slice when slider moves
-	//
-	goog.events.listen(slider, nrg.ui.Slider.EventType.SLIDE, 
-        function(e){
-
-	    /*
-	    var num = e.target.getValue()/e.target.getMaximum()
-	    //renderPlane.getRenderer().getVolume().zColor = 
-	    //[1,1,1];
-	    window.console.log("\n\nHERE:");
-	    window.console.log(renderPlane.getRenderer().getVolume()._max)
-	    window.console.log(renderPlane.getRenderer().
-			       getVolume()._windowLow); 
-	    window.console.log(renderPlane.getRenderer().getVolume().
-			       _windowHigh);
-
-	    
-	    renderPlane.getRenderer().getVolume().
-		windowLow = e.target.getValue() - 100;
-	    window.console.log("TEST ADJUST THIS.BRIGHTNESSSLIDER_");
-	    */
-	    
-	    this.syncVolumeToSlider_(e.target, volume);
-	    this.syncCrosshairsToSlider_(e.target, volume);
-	    this.syncFrameDisplayToSlider_(e.target, volume);
-	}.bind(this))
-
-
-
-	//
-	// Change Slice on Frame Display input
-	//
-	goog.events.listen(frameDisplay, 
-		xiv.ui.layouts.interactors.FrameDisplay.EventType.INPUT,
-		function(e){
-		    this.syncSliderToFrameDisplay_(e.target,volume);
-		}.bind(this))
-
-
-    }.bind(this))
-}
-
-
-
-/**
- * @param {!nrg.ui.ZippyTree} ctrlProperty Either this.Controllers3D_ or 
- *     this.Controllers2D_ 
- * @param {Function=} ctrlGetter The function used to retrieve the controllers.
- * @private
- */
-xiv.ui.ViewBox.prototype.generateControllers_ = 
-function(ctrlProperty, ctrlGetter) {
-    //
-    // Check null
-    //
-    if (goog.isDefAndNotNull(ctrlProperty)){
-	ctrlProperty.dispose();
-	ctrlProperty = null;
-    }
-
-    //
-    // Get the controls
-    //
-    var controllers = ctrlGetter();
-    if (goog.isDefAndNotNull(controllers) && (controllers.length > 0)) {
-	
-	// reset the tree
-	ctrlProperty = new nrg.ui.ZippyTree();
-
-	// add the contents
-	goog.array.forEach(controllers, function(ctrl){
-	    ctrlProperty.addContents(ctrl.getElement(), 
-					    ctrl.getFolders());
+    if (goog.isDefAndNotNull(controllers2D) && 
+	(controllers2D.length > 0)) {
+	goog.array.forEach(controllers2D, function(ctrl){
+	    var folders = ctrl.getFolders();
+	    folders.push('2D');
+	    zTree.addContents(ctrl.getElement(), folders)
 	}.bind(this));
-
-	// contract all
-	ctrlProperty.contractAll();
     }
 
-    //
-    // Return the adjusted property
-    //
-    return ctrlProperty;
-}
 
-
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.createControllerTabs_ = function() {
-    //
-    // 2D
-    //
-    this.Controllers2D_ = this.generateControllers_(this.Controllers2D_, 
-	this.Renderer_.getControllers2D.bind(this.Renderer_));
-    if (goog.isDefAndNotNull(this.Controllers2D_)){
-	// Add to tab
-	this.ZipTabs_.setTabPageContents('2D', 
-					 this.Controllers2D_.getElement()); 
+    if (goog.isDefAndNotNull(controllers3D) && 
+	(controllers3D.length > 0)) {
+	goog.array.forEach(controllers3D, function(ctrl){
+	    var folders = ctrl.getFolders();
+	    if (folders.length > 1){
+		folders.push('3D');
+	    }
+	    zTree.addContents(ctrl.getElement(), folders)
+	}.bind(this));
     }
 
-    //
-    // 3D
-    //
-    this.Controllers3D_ = this.generateControllers_(this.Controllers3D_, 
-	this.Renderer_.getControllers3D.bind(this.Renderer_));
+    zTree = zTree.getElement();
+    zTree.style.top = '30px';
+    zTree.style.width = 'calc(100% - 20px)';
+    zTree.style.height = 'calc(100% - 50px)';
+    this.Dialogs_.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
+	getElement().appendChild(zTree);
 
-    //window.console.log(this.Renderer_.getControllers3D());
-    if (goog.isDefAndNotNull(this.Controllers3D_)){
-	// Add to tab
-	this.ZipTabs_.setTabPageContents('3D', 
-					 this.Controllers3D_.getElement());
-    }
 }
 
 
@@ -1181,7 +584,7 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     // Controllers
     //
-    this.createControllerTabs_();
+    this.createRenderControllers_();
 
 
     //window.console.log("HIDE PROG!");
@@ -1204,24 +607,36 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     // Hide progress bar
     //
     this.hideProgressBarPanel_(800, function(){
+
 	//
 	// Set progress bar to 0
 	//
 	this.ProgressBarPanel_.setValue(0);
 
 	//
-	// Sync interactors
+	// Sync controllers
 	//
-	this.initInteractorSync_();
+	this.InteractorHandler_.initControllerSync();
+
+	//
+	// Update the controllers in the renderer
+	//
 	this.Renderer_.updateControllers();
 
 	//
 	// Set sliders halfway
 	//
-	this.setSlidersHalfway_();
+	this.InteractorHandler_.setSlidersHalfway();
 
 	//
-	// Fade in the load components
+	// Create remaining toggles
+	//
+	this.InteractorHandler_.createThreeDRenderToggle();
+	this.InteractorHandler_.createCrosshairToggle(false);
+
+
+	//
+	// Fade in the load components, and when done...
 	//
 	this.fadeInLoadComponents_(
 	    nrg.ui.Component.animationLengths.FAST, null, null, function(){
@@ -1231,14 +646,10 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 		this.updateStyle();
 
 		//
-		// Resize callback
+		// Run resize callback to be safe...
 		//
 		this.onLayoutResize_();
 
-		//
-		// Set sliders halfway
-		//
-		//this.setSlidersHalfway_();
 	    }.bind(this));
     }.bind(this));
 }
@@ -1249,25 +660,27 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
  * @private
  */
 xiv.ui.ViewBox.prototype.onLayoutResize_ = function(e){
-
+    //
+    // Update the renderer style
+    //
     this.updateStyle_Renderer_();
-    this.LayoutHandler_.updateInteractors();
 
+    //
+    // Update the interactors
+    //
+    if (goog.isDefAndNotNull(this.InteractorHandler_)){
+	this.InteractorHandler_.update();
+    }
+
+    //
+    // Exit out if no renderer
+    //
     if (!goog.isDefAndNotNull(this.Renderer_)) { return };
 
-
-    this.loopInteractorsWithRenderer_(
-    function(renderPlane, renderPlaneOr, planeInteractors, volume){
-	if (!goog.isDefAndNotNull(planeInteractors.SLIDER)) { 
-	    return 
-	};
-
-	slider = planeInteractors.SLIDER;
-	this.syncVolumeToSlider_(slider, volume);
-	this.syncCrosshairsToSlider_(slider, volume);
-	this.syncZoomDisplayToRenderer_();
-	
-    }.bind(this));
+    //
+    // Update the controller handler
+    //
+    this.InteractorHandler_.onLayoutResize();
 }
 
 
@@ -1279,9 +692,14 @@ xiv.ui.ViewBox.prototype.onLayoutResize_ = function(e){
  * @private
  */
 xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
-
-    
+    //
+    // Reset the group menu
+    //
     this.ViewableGroupMenu_.reset();
+
+    //
+    // Clear the viewable groups
+    //
     goog.object.clear(this.ViewableGroups_);
     
     //
@@ -1296,40 +714,45 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
     // Get the default layout
     //
     if (this.ViewableTrees_.length == 1) {
-
-	//
-	// Set the layout if there's an orientation property
-	// associated with the viewable tree.
-	//
-	if (goog.isDefAndNotNull(ViewableTree.getOrientation())){
-	    //this.setLayout(ViewableTree.getOrientation());
-	}
-	//else  {
-	    this.setLayout(
-		xiv.ui.ViewBox.defaultLayout[ViewableTree.getCategory()]);
-	//}
+	this.setLayout(
+	    xiv.ui.ViewBox.defaultLayout[ViewableTree.getCategory()]);
     }
 
+
     //
-    // Load menu
+    // Break apart the tree into the ViewGroups, then create a menu from
+    // it if there are more than one ViewGroups
     //
+
     //window.console.log(ViewableTree);
     var viewGroups = ViewableTree.getViewableGroups();
-
     var thumb = null;
     if (viewGroups.length > 1){
 	//window.console.log("TOTAL VIEW GROUPS", viewGroups.length);
+	
+	//
+	// Add a thumbnail to the ViewableGroup Menu based on the ViewGroup
+	//
 	goog.array.forEach(viewGroups, function(viewGroup, i){
 	    thumb = this.ViewableGroupMenu_.createAndAddThumbnail(
 		viewGroup.getThumbnailUrl(), viewGroup.getTitle() || i);
 
+	    //
 	    // Apply the UID to the thumb
-	    this.ViewableGroups_[goog.getUid(thumb)] = viewGroup;
-		
+	    //
+	    this.ViewableGroups_[goog.getUid(thumb)] = viewGroup;	
 	}.bind(this))
+
+	//
+	// Show the Viewable group menu
+	//
 	this.showSubComponent_(this.ViewableGroupMenu_, 400);
     }
     else {
+
+	//
+	// Otherwise just load the individual group
+	//
 	this.load(viewGroups[0], false);
     }
 }
@@ -1340,7 +763,7 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
  * @public
  */
 xiv.ui.ViewBox.prototype.showInUseDialog = function(){
-    this.ViewBoxDialogs_.showInUseDialog();
+    this.Dialogs_.showInUseDialog();
 }
 
 
@@ -1356,7 +779,7 @@ xiv.ui.ViewBox.prototype.checkInUseAndShowDialog = function(opt_onYes){
     //
     if (goog.isDefAndNotNull(this.thumbLoadTime_)){
 	this.showInUseDialog();
-	this.ViewBoxDialogs_.setInUseSelect(opt_onYes);
+	this.Dialogs_.setInUseSelect(opt_onYes);
 	return true;
     } 
     return false;
@@ -1373,7 +796,7 @@ xiv.ui.ViewBox.prototype.checkInUseAndShowDialog = function(opt_onYes){
 xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 
     //
-    // Prompt user to load if something is already loaded
+    // Prompt user if something is already loaded
     //
     if (this.checkInUseAndShowDialog(function(){
 	    this.thumbLoadTime_ = undefined;
@@ -1407,17 +830,13 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     //this.ProgressBarPanel_.setLabel('Gathering File Info...', false);
     //this.ProgressBarPanel_.showValue(false);
 
-
-
     //
-    // Init the load components
+    // Reset and Init the load components, if specified
     //
     if (opt_initLoadComponents) {
 	this.disposeLoadComponents_();
 	this.initLoadComponents_();
-	this.setLoadComponentsEvents_();
     }
-
 
     //
     // ViewableTree handling
@@ -1428,12 +847,12 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     }
 
     //
-    // We have to initialize certain toggle components here
+    // We want to intialize the Info dialog here
     //
-    this.ViewBoxDialogs_.createInfoDialog();    
+    this.Dialogs_.createInfoDialog();    
 
     //
-    // Set plane containers
+    // Sync the render plane containers with the layou thandler
     //
     var layoutPlane;
     goog.object.forEach(this.Renderer_.getPlanes(), function(plane, key) { 
@@ -1445,7 +864,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     }.bind(this))
 
     //
-    // Events -listen once
+    // Events -listen once, RENDER_START, RENDER_END
     //
     goog.events.listenOnce(this.Renderer_, 
 		       xiv.vis.RenderEngine.EventType.RENDER_START, 
@@ -1456,14 +875,12 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 		       this.onRenderEnd_.bind(this));
 
     //
-    // We want to keep listeing for the RENDERING
+    // We want to keep listeing for the RENDERING (we'll unlisten on 
+    // RENDER_END)
     //
     goog.events.listen(this.Renderer_, 
 		       xiv.vis.RenderEngine.EventType.RENDERING, 
 		       this.onRendering_.bind(this));
-
-
-
 
     //
     // toggle wait for render errors
@@ -1471,20 +888,14 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     this.toggleWaitForRenderErrors_(true);
 
     //
-    // Render
+    // OK!! Render!!!
     //
     this.Renderer_.render(ViewableSet);
-
 
     //
     // Remember the time in which the thumbnail was loaded
     //
     this.thumbLoadTime_ = (new Date()).getTime();  
-
-    //
-    // toggle off crosshairs
-    //
-    goog.testing.events.fireClickEvent(this.toggleButtons_['Crosshairs']);
 }
  
 
@@ -1510,25 +921,44 @@ xiv.ui.ViewBox.prototype.toggleWaitForRenderErrors_ = function(toggle) {
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_errorMsg){
-
+    //
+    // unhighlight the ViewBox
+    //
     this.unhighlight();
 
+    //
+    // Hide the progress bar panels
+    //
     this.hideProgressBarPanel_();
 
+    //
+    // Dispable render error wating
+    //
     this.toggleWaitForRenderErrors_(false);
 
+    //
+    // Dispose the load components
+    //
     this.disposeLoadComponents_();
 
+    //
+    // Create the error message
+    //
     opt_errorMsg = opt_errorMsg.replace('Uncaught Error: ', '') 
 	|| 'A render error occured :(<br>'; 
     //opt_errorMsg += '. Canceling render.';
 
+    //
+    // Dispatch the error
+    //
     this.dispatchEvent({
 	type: xiv.ui.ViewBox.EventType.THUMBNAIL_LOADERROR,
 	message: opt_errorMsg
     })
 
-
+    //
+    // Construct an error overlay
+    //
     var ErrorOverlay = new nrg.ui.ErrorOverlay();
 
     //
@@ -1575,9 +1005,6 @@ xiv.ui.ViewBox.prototype.onLayoutChangeStart_ = function(e){
 	    renderPlane.updateStyle();
 	}
     })
-
-
-    //this.hideInteractors_();
 }
 
 
@@ -1586,6 +1013,9 @@ xiv.ui.ViewBox.prototype.onLayoutChangeStart_ = function(e){
  * @private
  */
 xiv.ui.ViewBox.prototype.onLayoutChanging_ = function(e){
+    //
+    // Update the render planes
+    //
     goog.object.forEach(this.Renderer_.getPlanes(), 
     function(renderPlane, planeOr) {
 	renderPlane.updateStyle();
@@ -1594,7 +1024,7 @@ xiv.ui.ViewBox.prototype.onLayoutChanging_ = function(e){
     //
     // Update the interactors
     //
-    this.LayoutHandler_.updateInteractors();
+    this.InteractorHandler_.update()
 }
 
 
@@ -1620,8 +1050,7 @@ xiv.ui.ViewBox.prototype.onLayoutChangeEnd_ = function(e){
     //
     // Update the interactors
     //
-    this.LayoutHandler_.updateInteractors();
-    //this.showInteractors_();
+    this.InteractorHandler_.update()
 }
 
 
@@ -1631,13 +1060,44 @@ xiv.ui.ViewBox.prototype.onLayoutChangeEnd_ = function(e){
  * @private
  */
 xiv.ui.ViewBox.prototype.initLoadComponents_ = function() {
+    //
+    // Toggle menu
+    //
     this.initToggleMenu_();
-    this.initViewBoxDialogs_();
-    this.initZipTabs_();
+
+    //
+    // Dialogs
+    //
+    this.initDialogs_();
+    
+    //
+    // Layout Handler
+    //
     this.initLayoutHandler_();
-    this.syncLayoutMenuToLayoutHandler_();
+
+    //
+    // Renderer
+    //
     this.initRenderer_();
+
+    //
+    // Group menu
+    //
     this.initViewableGroupMenu_();
+
+    //
+    // interactor handler
+    //
+    this.initInteractorHandler_();
+
+    //
+    // Sync layout menu to layout handler
+    //
+    this.InteractorHandler_.syncLayoutMenuToLayoutHandler(this.LayoutMenu_);
+
+    //
+    // Register that components have been loaded
+    //
     this.hasLoadComponents_ = true;
 }
 
@@ -1654,8 +1114,7 @@ xiv.ui.ViewBox.prototype.fadeInLoadComponents_ =
 function(opt_fadeTime, opt_onBegin, opt_onAnimate, opt_onEnd) {
     opt_fadeTime = goog.isNumber(opt_fadeTime) ? opt_fadeTime : 500;
     var anims = [];
-    var fadeables = [this.ZipTabs_.getElement(), 
-		     this.menus_.LEFT,
+    var fadeables = [this.menus_.LEFT,
 		     this.LayoutMenu_.getElement(), 
 		     this.LayoutHandler_.getElement()];
     goog.array.forEach(fadeables, function(fadeable){
@@ -1744,9 +1203,9 @@ xiv.ui.ViewBox.prototype.initProgressBarPanel_ = function(){
 /**
 * @private
 */
-xiv.ui.ViewBox.prototype.initViewBoxDialogs_ = function(){
-    this.ViewBoxDialogs_ = new xiv.ui.ViewBoxDialogs(this);
-    this.ViewBoxDialogs_.render();
+xiv.ui.ViewBox.prototype.initDialogs_ = function(){
+    this.Dialogs_ = new xiv.ui.ViewBoxDialogs(this);
+    this.Dialogs_.render();
 }
 
 
@@ -1754,42 +1213,14 @@ xiv.ui.ViewBox.prototype.initViewBoxDialogs_ = function(){
 /**
 * @private
 */
-xiv.ui.ViewBox.prototype.initZipTabs_ = function(){
-    //
-    // TabBounds
-    //
-    this.ZipTabBounds_ = goog.dom.createDom('div');
-    goog.dom.appendChild(this.viewFrameElt_, this.ZipTabBounds_);
-    goog.dom.classes.add(this.ZipTabBounds_, 
-			 xiv.ui.ViewBox.CSS.TAB_BOUNDS);
-
-    //
-    // Create the tabs
-    //
-    this.ZipTabs_ = new nrg.ui.ZipTabs('TOP'); 
-    this.ZipTabs_.getElement().style.opacity = 0;
-    this.ZipTabs_.render(this.viewFrameElt_);
-    goog.dom.classes.add(this.ZipTabs_.getElement(), xiv.ui.ViewBox.CSS.TABS);
-
-    //
-    // Add dragger CSS and handle.
-    //
-    var resizeDragger = this.ZipTabs_.getResizable().getResizeDragger('TOP');
-    var dragHandle = resizeDragger.getHandle();
-    goog.dom.classes.add(dragHandle, xiv.ui.ViewBox.CSS.TABDRAGGER);
-    goog.dom.append(dragHandle, goog.dom.createDom('div', {
-	'id': xiv.ui.ViewBox.ID_PREFIX + '_DraggerHandle_' + 
-	    goog.string.createUniqueString(),
-	'class': xiv.ui.ViewBox.CSS.TABDRAGGER_HANDLE
-    }));
-    resizeDragger.setOffsetY(-5);
-
-
-    //
-    // Set the boundary of the tabs
-    //
-    this.ZipTabs_.setBoundaryElement(this.ZipTabBounds_);
+xiv.ui.ViewBox.prototype.initInteractorHandler_ = function(){
+    this.InteractorHandler_ = 
+	new xiv.ui.ViewBoxInteractorHandler(this,
+					    this.Renderer_, 
+					    this.LayoutHandler_, 
+					    this.Dialogs_);
 }
+
 
 
 
@@ -1864,7 +1295,7 @@ xiv.ui.ViewBox.prototype.addToMenu = function(menuLoc, element, opt_insertInd){
 	break;
     }
 
-    window.console.log(this.menus_.LEFT);
+    //window.console.log(this.menus_.LEFT);
     if (goog.isNumber(opt_insertInd)){
 	currMenu.insertBefore(element, 
 		currMenu.childNodes[opt_insertInd])
@@ -1913,22 +1344,56 @@ xiv.ui.ViewBox.prototype.createLayoutMenu_ = function(){
 
 
 /**
- * @param {!boolean} defaultState
- * @param {!string} defaultClass
- * @param {string=} opt_tooltip
- * @param {Function=} opt_toolCheck
+ * @param {!Element}
+ * @param {Function=}
+ * @public
+ */
+xiv.ui.ViewBox.prototype.onToggleButtonClicked = 
+function(button, opt_onCheck){
+
+
+    button.setAttribute('checked', 
+	(button.getAttribute('checked') == 'true') ? 'false': 'true');
+
+    window.console.log("\n\nCLICK", button);
+
+    if (button.getAttribute('checked') == 'true') {
+	goog.dom.classes.add(button, button.getAttribute(
+	    xiv.ui.ViewBoxDialogs.TOGGLED_CLASS));
+    } else {
+	goog.dom.classes.remove(button, button.getAttribute(
+	    xiv.ui.ViewBoxDialogs.TOGGLED_CLASS));
+    }
+
+    if (goog.isDefAndNotNull(opt_onCheck)){
+	opt_onCheck(button);
+    }
+}
+
+
+
+/**
+ * @param {!string} menuLocation
+ * @param {!string} defaultClass,
+ * @param {!string} identifier
+ * @param {!string} opt_title
+ * @param {Function=} opt_onCheck
  * @param {src=} opt_src
  * @return {Element}
- * @private
+ * @throws {Error} If the identifier is already in use.
+ * @public
  */
-xiv.ui.ViewBox.prototype.createToggleButton_ = 
-    function(defaultState, defaultClass, opt_tooltip, opt_onCheck, opt_src) {
+xiv.ui.ViewBox.prototype.createToggleButton = 
+    function(menuLocation, defaultClass, identifier,
+	     opt_title, opt_onCheck, opt_src) {
 	//
 	// Create the toggle button
 	//
 	var onClass = goog.getCssName(defaultClass, 'on')
 	var iconbutton = goog.dom.createDom('img', defaultClass);
-	iconbutton.title = opt_tooltip;
+
+
+	iconbutton.title = opt_title;
 
 
 	if (goog.isDefAndNotNull(opt_src)){
@@ -1938,15 +1403,14 @@ xiv.ui.ViewBox.prototype.createToggleButton_ =
 	//
 	// Set the default check stated
 	//
-	iconbutton.setAttribute('checked', defaultState.toString());
-	
+	iconbutton.setAttribute('checked', 'true');
+	iconbutton.setAttribute(xiv.ui.ViewBoxDialogs.TOGGLED_CLASS, 
+				defaultClass + '-on')
 	
 	//
 	// Add the 'on' class if it's default class is on
 	//
-	if (defaultState){
-	    goog.dom.classes.add(iconbutton, onClass);
-	}
+	goog.dom.classes.add(iconbutton, onClass);
 
 	//
 	// Clean up the CSS
@@ -1959,137 +1423,31 @@ xiv.ui.ViewBox.prototype.createToggleButton_ =
 	//
 	goog.events.listen(iconbutton, goog.events.EventType.CLICK, 
 	function(e){
-
-	    e.target.setAttribute('checked', 
-		(e.target.getAttribute('checked') == 'true') ? 'false': 'true');
-
-	    if (goog.isDefAndNotNull(opt_onCheck)){
-		opt_onCheck(e);
-	    }
-	    if (e.target.getAttribute('checked') == 'true') {
-		goog.dom.classes.add(iconbutton, onClass);
-	    } else {
-		goog.dom.classes.remove(iconbutton, onClass);
-	    }
-
-
+	    window.console.log("CLICK", e.target);
+	    this.onToggleButtonClicked(iconbutton, opt_onCheck);
 	}.bind(this));
 
 	//
 	// Adds to menu
 	//
-	this.addToMenu('LEFT', iconbutton);
+	this.addToMenu(menuLocation, iconbutton);
 
+	//
+	// Store button
+	//
+	
 	if (!goog.isDefAndNotNull(this.toggleButtons_)){
-	    this.toggleButtons_= {};
+	    this.toggleButtons_ = {};
 	}
-	this.toggleButtons_[opt_tooltip] = iconbutton;
-
+	else if (goog.isDefAndNotNull(this.toggleButtons_[identifier])){
+	    throw new Error('Invalid identifier for toggle button.  In use.');
+	} 
+	this.toggleButtons_[identifier] = iconbutton;
+	window.console.log(iconbutton, identifier);
 	return iconbutton;
     }
 
 
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.create3DRenderToggle_ = function(){    
-    this.createToggleButton_(true, xiv.ui.ViewBox.CSS.BUTTON_THREEDTOGGLE,
-	'3D Rendering', function(e){
-	    this.Renderer_.setVPlaneOn((e.target.getAttribute('checked') == 
-					'true'));
-	}.bind(this), serverRoot + 
-			     '/images/viewer/xiv/ui/ViewBox/Toggle-3D.png');
-}
-
-
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.createBrightnessContrastToggle_ = function(){
-    
-    /**
-    //
-    // Clear existing
-    //
-    if (goog.isDefAndNotNull(this.infoOverlay_)){
-	this.infoOverlay_.dispose();
-    }
-    this.infoOverlay_ = new nrg.ui.Overlay();
-    goog.dom.classes.add(this.infoOverlay_.getElement(), 
-			 xiv.ui.ViewBox.CSS.INFOOVERLAY);
-    
-    //
-    // Add text and render
-    //
-    this.infoOverlay_.addText(infoText);
-    this.infoOverlay_.render(this.viewFrameElt_);
-
-    //
-    // Classes
-    //
-    goog.dom.classes.add(this.infoOverlay_.getOverlay(), 
-			 this.constructor.CSS.INFOOVERLAY_OVERLAY);
-    goog.dom.classes.add(this.infoOverlay_.getTextElements()[0], 
-			 this.constructor.CSS.INFOOVERLAY_TEXT);
-    */
-    
-    //
-    // Toggle fades
-    // 
-    this.createToggleButton_(false, 
-		xiv.ui.ViewBox.CSS.BUTTON_BRIGHTNESSCONSTRASTTOGGLE,
-			     'Brightness and Contrast', 
-       function(e){
-	   /**
-	   nrg.fx.fadeTo(this.infoOverlay_.getElement(), 
-			 200,  (e.target.getAttribute('checked') == 'true') ? 
-			 1: 0);
-			 */
-       }.bind(this), serverRoot + 
-		'/images/viewer/xiv/ui/ViewBox/Toggle-BrightnessContrast.png');
-}
-
-
-
-
-
-
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.createCrosshairToggle_ = function(){
-    this.createToggleButton_(true, xiv.ui.ViewBox.CSS.BUTTON_CROSSHAIRTOGGLE,
-	'Crosshairs', function(e){
-	    var interactors = this.LayoutHandler_.getMasterInteractors();
-	    var visibility = (e.target.getAttribute('checked') == 'true') ? 
-		'visible': 'hidden';
-	    goog.object.forEach(this.Renderer_.getPlanes(), 
-            function(Plane, planeOr) {
-		if (goog.isDefAndNotNull(interactors[planeOr]) &&
-		    goog.isDefAndNotNull(interactors[planeOr].CROSSHAIRS)){
-		    interactors[planeOr].CROSSHAIRS.vertical.style.visibility = 
-			visibility;
-		    interactors[planeOr].CROSSHAIRS.horizontal.
-			style.visibility = visibility;
-		}
-	    }.bind(this))  
-	}.bind(this), 
-		serverRoot + 
-		'/images/viewer/xiv/ui/ViewBox/Toggle-Crosshairs.png');
-}
-
-
-
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.clearToggleMenu_ = function(){
-
-}
 
 
 
@@ -2099,10 +1457,9 @@ xiv.ui.ViewBox.prototype.clearToggleMenu_ = function(){
 xiv.ui.ViewBox.prototype.initToggleMenu_ = function(){
     this.addMenu_left_();
     this.createLayoutMenu_();
-    this.createBrightnessContrastToggle_();
-    this.create3DRenderToggle_();
-    this.createCrosshairToggle_();
 }
+
+
 
 
 /**
@@ -2141,91 +1498,6 @@ xiv.ui.ViewBox.prototype.initLayoutHandler_ = function(){
 
 
 /**
- * @private
- */
-xiv.ui.ViewBox.prototype.syncLayoutMenuToLayoutHandler_ = function() {
-
-    this.LayoutMenu_.setMenuIconSrc(
-	serverRoot + '/images/viewer/xiv/ui/LayoutMenu/menu.png');
-
-    // Add icons and title to LayoutMenu
-    // Add object and title to LayoutHandler
-    goog.object.forEach({
-	'Sagittal': {
-	    OBJ: xiv.ui.layouts.Sagittal,
-	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/sagittal.png'
-	},
-	'Coronal': {
-	    OBJ: xiv.ui.layouts.Coronal,
-	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/coronal.png'
-	},
-	'Transverse': {
-	    OBJ: xiv.ui.layouts.Transverse,
-	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/transverse.png'
-	},
-	'3D': {
-	    OBJ: xiv.ui.layouts.ThreeD,
-	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/3d.png'
-	},
-	'Conventional': {
-	    OBJ: xiv.ui.layouts.Conventional,
-	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/conventional.png'
-	},
-	'Four-Up': {
-	    OBJ: xiv.ui.layouts.FourUp,
-	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/four-up.png'
-	},
-	'2D Row': {
-	    OBJ: xiv.ui.layouts.TwoDRow,
-	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/2drow.png'
-	},
-	'2D Widescreen': {
-	    OBJ: xiv.ui.layouts.TwoDWidescreen,
-	    ICON: serverRoot + '/images/viewer/xiv/ui/Layouts/2dwidescreen.png'
-	},
-    }, function(val, key){
-	this.LayoutMenu_.addMenuItem(key, val.ICON);
-	this.LayoutHandler_.addLayout(key, val.OBJ);
-
-	//
-	// Set the master layout
-	//
-	if (key == 'Four-Up') {
-	    this.LayoutHandler_.setMasterLayout(key);
-	}
-
-    }.bind(this))
-
-    // Set the layout when a menu item is clicked.
-
-    //window.console.log(nrg.ui.SlideInMenu.EventType.ITEM_SELECTED);
-    goog.events.listen(this.LayoutMenu_, 
-	nrg.ui.SlideInMenu.EventType.ITEM_SELECTED, 
-		       this.onMenuItemSelected_.bind(this));
-}
-
-
-
-/**
-* As stated.
-* @private
-*/
-xiv.ui.ViewBox.prototype.onMenuItemSelected_ = function(e) {
-    //window.console.log("ITEM SELECTED!", e.title, e.index);
-    //window.console.log('trigger LayoutHandler_ here!');
-    //window.console.log("SET LAYOUT HERE?");
-    this.LayoutHandler_.setLayout(e.title);
-    //window.console.log(this.LayoutHandler_.getElement());
-    //
-    // Update the help overlay
-    //
-    this.ViewBoxDialogs_.getHelpDialog().
-	setLayoutButton(this.LayoutMenu_.getMenuIcon().src);
-}
-
-
-
-/**
  * As stated.
  *
  * @private
@@ -2255,6 +1527,17 @@ xiv.ui.ViewBox.prototype.initViewableGroupMenu_ = function(){
 
 
 
+
+/**
+ * @return {xiv.vis.RenderEngine}
+ * @public
+ */
+xiv.ui.ViewBox.prototype.getToggleButtons = function(){
+    return this.toggleButtons_;
+}
+
+
+
 /**
  * Initializes the 'xiv.ui.Displayer' object which allows
  * various viewable content to be displayed, based on 
@@ -2265,72 +1548,12 @@ xiv.ui.ViewBox.prototype.initRenderer_ = function(){
     this.Renderer_ = new xiv.vis.XtkEngine();
 
     //
-    // Errors!
+    // Listen for Errors!
     //
     goog.events.listen(this.Renderer_, xiv.vis.XtkEngine.EventType.ERROR,
 	function(e){
 	    this.onRenderError_(e.message);
 	}.bind(this))
-}
-
-
-
-/**
- * Show child elements of the xiv.ui.ViewBox. 
- * @private
- */
-xiv.ui.ViewBox.prototype.showChildElements_ = function() {
-    goog.array.forEach(this.getElement().childNodes, function(childElt){
-	goog.dom.classes.remove(childElt, xiv.ui.ViewBox.CSS.HIDDEN);
-    })
-}
-
-
-
-/**
- * Hide child elements of the xiv.ui.ViewBox.  
- * @private
- */
-xiv.ui.ViewBox.prototype.hideChildElements_ = function() {
-    goog.array.forEach(this.getElement().childNodes, function(childElt){
-	if (this.doNotHide_ && (this.doNotHide_.length > 0) && 
-	    (this.doNotHide_.indexOf(childElt) === -1)) {
-	    goog.dom.classes.add(childElt, xiv.ui.ViewBox.CSS.HIDDEN);
-	}
-    }.bind(this))
-}
-
-
-
-/**
-* As stated.
-* @private
-*/
-xiv.ui.ViewBox.prototype.setLoadComponentsEvents_ = function() {
-    this.setTabsEvents_();
-}
-
-
-
-/**
- * As stated.
- * @private
- */
-xiv.ui.ViewBox.prototype.setTabsEvents_ = function () {
-    goog.events.listen(this.ZipTabs_, nrg.ui.Resizable.EventType.RESIZE,
-		       this.onTabsResize_.bind(this));
-}
-
-
-
-
-/**
- * Callback for when the xiv.ui.ViewBoxBorder is dragged.
- * @private
- */
-xiv.ui.ViewBox.prototype.onTabsResize_ = function() {
-    //window.console.log('\n\non tabs resize!');
-    this.updateStyle();
 }
 
 
@@ -2342,60 +1565,13 @@ xiv.ui.ViewBox.prototype.onTabsResize_ = function() {
 xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
     goog.base(this, 'updateStyle', opt_args);
 
-    this.updateStyle_ZipTabs_();
     this.updateStyle_LayoutHandler_();
     this.updateStyle_Renderer_();
     this.updateStyle_LayoutMenu_();
-    this.updateStyle_interactors_();
-}
-
-
-
-/**
- * NOTE: The reason this exists because when sliders get resized, the thumb
- * does NOT update with the resizing.  Consequently, we have to make sure
- * that the thumb of the slider updates to the appropriate position.
- *
- * @private
- */
-xiv.ui.ViewBox.prototype.updateStyle_interactors_ = function () {
-
-    if (!goog.isDefAndNotNull(this.LayoutHandler_)) { return };
-    if (!goog.isDefAndNotNull(this.Renderer_)) { return };
-
-
-
-    this.loopInteractorsWithRenderer_(
-    function(renderPlane, renderPlaneOr, planeInteractors, volume){
-	if (!goog.isDefAndNotNull(planeInteractors)) { 
-	    return 
-	};
-
-	//
-	// NOTE: Keep these here.  We need to declare them within the 
-	// loop.
-	//
-	var slider = planeInteractors.SLIDER;
-	var frameDisplay = planeInteractors.FRAME_DISPLAY;
-
-	//
-	// Set custom params
-	//
-	slider[xiv.ui.ViewBox.ORIENTATION_TAG] = renderPlaneOr;
-	frameDisplay[xiv.ui.ViewBox.ORIENTATION_TAG] = renderPlaneOr;
-
-	//
-	// Exit if no volume
-	//
-	if (!goog.isDefAndNotNull(renderPlane.getRenderer())) { return };
-
-	//
-	// The slider's thumb shifts during size changes, so we sync it up.
-	//
-	this.syncSliderToFrameDisplay_(frameDisplay, volume);
-	slider.updateStyle();
-    }.bind(this)) 
-
+  
+    if (goog.isDefAndNotNull(this.InteractorHandler_)){
+	this.InteractorHandler_.updateInteractorStyles();
+    }
 }
 
 
@@ -2413,27 +1589,11 @@ xiv.ui.ViewBox.prototype.updateStyle_LayoutMenu_ = function () {
 
 
 /**
- * @private
- */
-xiv.ui.ViewBox.prototype.updateStyle_ZipTabs_ = function () {
-    if (!goog.isDefAndNotNull(this.ZipTabs_)) { return };
-    //window.console.log("\n%\n%\n%\n\n\n&&&&ZIP TABS");
-    this.ZipTabs_.updateStyle();
-}
-
-
-
-
-/**
  * As stated.
  * @private
  */
 xiv.ui.ViewBox.prototype.updateStyle_LayoutHandler_ = function () {
     if (!goog.isDefAndNotNull(this.LayoutHandler_)) { return };
-     //window.console.log("\n%\n%\n%\n\n\n&&&&LAYOUT HANDLER");
-    //this.LayoutHandler_.getElement().style.height = 'calc(100% - 30px)';
-    this.LayoutHandler_.getElement().style.height = 
-	this.ZipTabs_.getResizable().getHandle('TOP').style.top;
     this.LayoutHandler_.updateStyle();
 }
 
@@ -2454,15 +1614,6 @@ xiv.ui.ViewBox.prototype.updateStyle_Renderer_ = function () {
  * @private
  */
 xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
-    
-    //
-    // Help Overlay
-    //
-    if (goog.isDefAndNotNull(this.HelpOverlay_)){
-	this.HelpOverlay_.dispose();
-    }
-
-
 
     // 2D Controllers
     if (goog.isDefAndNotNull(this.Controllers2D_)){
@@ -2499,23 +1650,6 @@ xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
 	this.LayoutMenu_.dispose();
 	delete this.LayoutMenu_;
     }
-	
-    // ZipTab Bounds
-    if (goog.isDefAndNotNull(this.ZipTabBounds_)){
-	goog.dom.removeNode(this.ZipTabBounds_);
-	delete this.ZipTabBounds_;
-    }    
-
-    // ZipTabs
-    if (goog.isDefAndNotNull(this.ZipTabs_)){
-	// Unlisten - Tabs
-	goog.events.unlisten(this.ZipTabs_.getResizable(), 
-			     nrg.ui.Resizable.EventType.RESIZE,
-			     this.onTabsResize_.bind(this));
-	
-	goog.dispose(this.ZipTabs_.dispose());
-	delete this.ZipTabs_;
-    }
 
     // Renderer
     if (goog.isDefAndNotNull(this.Renderer_)){
@@ -2531,11 +1665,15 @@ xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
     }
 
    
-    // ViewBox controlles
-    if (goog.isDefAndNotNull(this.ViewBoxDialogs_)){
-	this.ViewBoxDialogs_.disposeInternal();
+    // Dialogs
+    if (goog.isDefAndNotNull(this.Dialogs_)){
+	this.Dialogs_.disposeInternal();
     } 
 
+    // Controller handler
+    if (goog.isDefAndNotNull(this.InteractorHandler_)){
+	this.InteractorHandler_.disposeInternal();
+    } 
     
     if (goog.isDefAndNotNull(this.toggleButtons_)){
 	goog.dom.removeNode(this.menus_.LEFT);
@@ -2610,6 +1748,8 @@ goog.exportSymbol('xiv.ui.ViewBox.SCAN_TAB_LABEL_WIDTH',
 goog.exportSymbol('xiv.ui.ViewBox.MIN_TAB_H_PCT', 
 		  xiv.ui.ViewBox.MIN_TAB_H_PCT);
 
+goog.exportSymbol('xiv.ui.ViewBox.prototype.getToggleButtons', 
+		  xiv.ui.ViewBox.prototype.getToggleButtons);
 
 goog.exportSymbol('xiv.ui.ViewBox.prototype.getMenus', 
 		  xiv.ui.ViewBox.prototype.getMenus);

@@ -38,13 +38,6 @@ xiv.ui.ViewBoxDialogs = function (ViewBox) {
      * @type {xiv.ui.ViewBox}
      */
     this.ViewBox_ = ViewBox;
-
-
-    /**
-     * @type {Object.<string, Element}
-     * @private
-     */
-    this.toggleButtons_ = {};
 }
 goog.inherits(xiv.ui.ViewBoxDialogs, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.ViewBoxDialogs', xiv.ui.ViewBoxDialogs);
@@ -77,28 +70,27 @@ xiv.ui.ViewBoxDialogs.ID_PREFIX =  'xiv.ui.ViewBoxDialogs';
  * @public
  */
 xiv.ui.ViewBoxDialogs.CSS_SUFFIX = {
-    BUTTON_THREEDTOGGLE: 'button-threedtoggle',
-    BUTTON_INFOTOGGLE: 'button-infotoggle',
-    BUTTON_HELPTOGGLE: 'button-helptoggle',
-    BUTTON_CROSSHAIRTOGGLE: 'button-crosshairtoggle',
-    BUTTON_BRIGHTNESSCONSTRASTTOGGLE: 'button-brightnesscontrasttoggle',
+    HELP_TOGGLE: 'help-toggle',
+    LEVELS_TOGGLE: 'levels-toggle',
+    INFO_TOGGLE: 'info-toggle',
+
+    RENDERCONTROLMENU_TOGGLE: 'rendercontrol-toggle',
+
     INFODIALOG: 'infodialog',
     INFODIALOG_TEXT: 'infodialog-text',
-    HELPDIALOG: 'helpdialog',
-    HELPDIALOG_DIALOG: 'helpdialog-dialog',
-    HELPDIALOG_TEXT: 'helpdialog-text',
     INUSEDIALOG: 'inusedialog',
 }
-
 
 
 /**
  * @enum {string}
  */
-xiv.ui.ViewBoxDialogs.DIALOGS = {
-    INFO: 'info',
-    HELP: 'help',
-    INUSE: 'inuse'
+xiv.ui.ViewBoxDialogs.DIALOG_KEYS = {
+    INFO: 'Info_' + goog.string.createUniqueString(),
+    HELP: 'Help_' + goog.string.createUniqueString(),
+    INUSE: 'InUse_' + goog.string.createUniqueString(),
+    LEVELS: 'Levels_' + goog.string.createUniqueString(),
+    RENDERCONTROLMENU: 'RenderControlMenu_' + goog.string.createUniqueString(),
 }
 
 
@@ -109,6 +101,173 @@ xiv.ui.ViewBoxDialogs.DIALOGS = {
 xiv.ui.ViewBoxDialogs.TOGGLED_CLASS = 'ToggleClass_' + 
     goog.string.createUniqueString();
 
+
+
+
+/**
+ * @return {Objects.<string, nrg.ui.Overlay>}
+ * @private
+ */
+xiv.ui.ViewBoxDialogs.prototype.getDialogs = function(){
+    return this.Dialogs_
+};
+
+
+
+/**
+ * @param {!string} dialogKey
+ * @return {nrg.ui.Overlay}
+ * @private
+ */
+xiv.ui.ViewBoxDialogs.prototype.getDialog = function(dialogKey){
+    return this.Dialogs_[dialogKey]
+};
+
+
+
+
+
+
+/**
+ * @param {boolean=} opt_isOn
+ * @public
+ */
+xiv.ui.ViewBoxDialogs.prototype.createRenderControlDialog = 
+function(opt_isOn){
+
+    //
+    // Create the toggle button
+    //
+    var toggle = this.ViewBox_.createToggleButton(
+	'LEFT', 
+	xiv.ui.ViewBoxDialogs.CSS.RENDERCONTROLMENU_TOGGLE, 
+	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU,
+	'2D Render Options', 
+	function(button){
+	    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
+		setVisible(
+	        (button.getAttribute('checked') == 'true'));
+	    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
+		center();
+	}.bind(this), 
+	serverRoot + 
+	    '/images/viewer/xiv/ui/ViewBox/Toggle-RenderControlMenu.png');
+
+
+
+    //
+    // Clear existing
+    //
+    if (goog.isDefAndNotNull(this.Dialogs_[
+	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU])){
+	this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
+	    dispose();
+    }
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU] = 
+	new nrg.ui.Overlay();
+
+    
+    //
+    // Add text and render
+    //
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
+	setModal(false);
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
+	setButtonSet(null);
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
+	render(this.ViewBox_.getViewFrame());
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].center();
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
+	setTitle('Render Controls');
+
+    //
+    // Add classes
+    //
+    goog.dom.classes.add(
+	this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
+	    getElement(), 'xiv-ui-viewboxdialogs-rendercontroldialog');
+
+
+    //
+    // Grey out button on close
+    //
+    goog.events.listen(this.Dialogs_[
+	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU], 
+		      nrg.ui.Overlay.EventType.CLOSE_BUTTON_CLICKED, function(){
+
+			  window.console.log("CLIOSED", toggle);
+			 this.ViewBox_.onToggleButtonClicked(toggle);
+		      }.bind(this))
+
+    //
+    // Set off
+    //
+    if (opt_isOn === false){
+	goog.testing.events.fireClickEvent(
+	    this.ViewBox_.getToggleButtons()[
+		xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU]);
+    }
+}
+
+
+
+/**
+ * @public
+ */
+xiv.ui.ViewBoxDialogs.prototype.createLevelsDialog = 
+function(opt_isOn){
+    
+    /**
+    //
+    // Clear existing
+    //
+    if (goog.isDefAndNotNull(this.infoOverlay_)){
+	this.infoOverlay_.dispose();
+    }
+    this.infoOverlay_ = new nrg.ui.Overlay();
+    goog.dom.classes.add(this.infoOverlay_.getElement(), 
+			 xiv.ui.ViewBox.CSS.INFOOVERLAY);
+    
+    //
+    // Add text and render
+    //
+    this.infoOverlay_.addText(infoText);
+    this.infoOverlay_.render(this.viewFrameElt_);
+
+    //
+    // Classes
+    //
+    goog.dom.classes.add(this.infoOverlay_.getOverlay(), 
+			 xiv.ui.ViewBoxDialogs.CSS.INFOOVERLAY_OVERLAY);
+    goog.dom.classes.add(this.infoOverlay_.getTextElements()[0], 
+			 xiv.ui.ViewBoxDialogs.CSS.INFOOVERLAY_TEXT);
+    */
+    
+    //
+    // Toggle fades
+    // 
+    this.ViewBox_.createToggleButton(
+	'LEFT', 
+	xiv.ui.ViewBoxDialogs.CSS.LEVELS_TOGGLE,
+	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.LEVELS,
+	'Brightness and Contrast', 
+	function(e){
+	   /**
+	   nrg.fx.fadeTo(this.infoOverlay_.getElement(), 
+			 200,  (e.target.getAttribute('checked') == 'true') ? 
+			 1: 0);
+			 */
+	}.bind(this), 
+	serverRoot + 
+	    '/images/viewer/xiv/ui/ViewBox/Toggle-BrightnessContrast.png');
+
+
+    if (opt_isOn === false){
+	goog.testing.events.fireClickEvent(
+	    this.ViewBox_.getToggleButtons()[
+		xiv.ui.ViewBoxDialogs.DIALOG_KEYS.LEVELS]);
+    }
+}
 
 
 
@@ -132,7 +291,8 @@ xiv.ui.ViewBoxDialogs.prototype.render = function(){
  */
 xiv.ui.ViewBoxDialogs.prototype.setInUseSelect =
  function(opt_onYes, opt_onNo){
-    goog.events.listenOnce(this.Dialogs_[this.constructor.DIALOGS.INUSE], 
+    goog.events.listenOnce(this.Dialogs_
+			   [xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE], 
     goog.ui.Dialog.EventType.SELECT, 
     function(e) {
 	if (e.key === 'yes' && goog.isDefAndNotNull(opt_onYes)){
@@ -150,12 +310,13 @@ xiv.ui.ViewBoxDialogs.prototype.setInUseSelect =
  * @private
  */
 xiv.ui.ViewBoxDialogs.prototype.createInUseDialog_ = function(){
-    this.Dialogs_[this.constructor.DIALOGS.INUSE] = new nrg.ui.Overlay();
-    this.Dialogs_[this.constructor.DIALOGS.INUSE].setButtonSet(
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE] = 
+	new nrg.ui.Overlay();
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].setButtonSet(
 	goog.ui.Dialog.ButtonSet.YES_NO);
-    this.Dialogs_[this.constructor.DIALOGS.INUSE].render(
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].render(
 	this.ViewBox_.getViewFrame());
-    this.Dialogs_[this.constructor.DIALOGS.INUSE].setContent(
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].setContent(
 	'ViewBox in use.&nbspProceed anyway?');
 }
 
@@ -168,15 +329,15 @@ xiv.ui.ViewBoxDialogs.prototype.showInUseDialog = function(){
     //
     // Add the class.
     //
-    goog.dom.classes.add(this.Dialogs_[this.constructor.DIALOGS.INUSE].
+    goog.dom.classes.add(this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].
 			 getElement(), 
-			 this.constructor.CSS.INUSEDIALOG);
+			 xiv.ui.ViewBoxDialogs.CSS.INUSEDIALOG);
     //
     // Config
     //
-    this.Dialogs_[this.constructor.DIALOGS.INUSE].setModal(true);
-    this.Dialogs_[this.constructor.DIALOGS.INUSE].setVisible(true);
-    this.Dialogs_[this.constructor.DIALOGS.INUSE].center()
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].setModal(true);
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].setVisible(true);
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].center()
 }
 
 
@@ -202,7 +363,7 @@ xiv.ui.ViewBoxDialogs.prototype.toggleVisible = function(tag, opt_visible){
  * @return {nrg.ui.Dialog}
  */
 xiv.ui.ViewBoxDialogs.prototype.getHelpDialog = function(){
-    return this.Dialogs_[this.constructor.DIALOGS.HELP];
+    return this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP];
 }
 
 
@@ -213,71 +374,56 @@ xiv.ui.ViewBoxDialogs.prototype.createHelpDialog_ = function(){
     //
     // Clear existing
     //
-    if (goog.isDefAndNotNull(this.Dialogs_[this.constructor.DIALOGS.HELP])){
-	this.Dialogs_[this.constructor.DIALOGS.HELP].dispose();
+    if (goog.isDefAndNotNull(this.Dialogs_[
+	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP])){
+	this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].dispose();
     }
-    this.Dialogs_[this.constructor.DIALOGS.HELP] = new xiv.ui.HelpDialog();
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP] = 
+	new xiv.ui.HelpDialog();
 
     
     //
     // Add text and render
     //
-    this.Dialogs_[this.constructor.DIALOGS.HELP].setModal(false);
-    this.Dialogs_[this.constructor.DIALOGS.HELP].setButtonSet(null);
-    this.Dialogs_[this.constructor.DIALOGS.HELP].render(
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].setModal(false);
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].setButtonSet(null);
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].render(
 	this.ViewBox_.getViewFrame());
-    this.Dialogs_[this.constructor.DIALOGS.HELP].setVisible(false);
-    this.Dialogs_[this.constructor.DIALOGS.HELP].center();
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].setVisible(false);
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].center();
 
 
-    //
-    // Classes
-    //
-    /*
-    goog.dom.classes.add(this.Dialogs_[this.constructor.DIALOGS.HELP].
-			 getElement(), 
-			 this.constructor.CSS.HELPDIALOG);
-    goog.dom.classes.add(this.Dialogs_[this.constructor.DIALOGS.HELP].
-			 getTextElements()[0], 
-			 this.constructor.CSS.HELPDIALOG_TEXT);
-    */
     //
     // Toggle button
     // 
     var helpToggle = 
-	this.createToggleButton_(
-	    this.constructor.CSS.BUTTON_HELPTOGGLE,
+	this.ViewBox_.createToggleButton(
+	    'LEFT', 
+	    xiv.ui.ViewBoxDialogs.CSS.HELP_TOGGLE,
+	    xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP,
 	   'Help', 
             function(button){
-	      this.Dialogs_[this.constructor.DIALOGS.HELP].setVisible(
+	      this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].setVisible(
 	         (button.getAttribute('checked') == 'true'));
-	      this.Dialogs_[this.constructor.DIALOGS.HELP].center();
+	      this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].center();
             }.bind(this), 
-
             serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Help.png'
        );
-
-
-    //
-    // Store button
-    //
-    this.toggleButtons_[this.constructor.DIALOGS.HELP] = helpToggle;
 
     //
     // Grey out button on close
     //
-    goog.events.listen(this.Dialogs_[this.constructor.DIALOGS.HELP], 
+    goog.events.listen(this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP], 
 		      nrg.ui.Overlay.EventType.CLOSE_BUTTON_CLICKED, function(){
-			  this.onToggleButtonClicked_(helpToggle);
+			 this.ViewBox_.onToggleButtonClicked(helpToggle);
 		      }.bind(this))
 
 
     //
     // toggle off help
     //
-    this.onToggleButtonClicked_(this.toggleButtons_
-				[this.constructor.DIALOGS.HELP]);
-    //this.Dialogs_[this.constructor.DIALOGS.HELP].setVisible(false);
+   this.ViewBox_.onToggleButtonClicked(helpToggle);
+    //this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].setVisible(false);
 }
 
 
@@ -290,10 +436,10 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog = function(){
     //
     // Clear existing
     //
-    if (goog.isDefAndNotNull(this.Dialogs_[this.constructor.DIALOGS.INFO])){
-	this.Dialogs_[this.constructor.DIALOGS.INFO].dispose();
+    if (goog.isDefAndNotNull(this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO])){
+	this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].dispose();
     }
-    this.Dialogs_[this.constructor.DIALOGS.INFO] = new nrg.ui.Overlay();
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO] = new nrg.ui.Overlay();
 
     //
     // Generate widget text
@@ -326,152 +472,62 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog = function(){
     //
     // Add text and render
     //
-    this.Dialogs_[this.constructor.DIALOGS.INFO].setModal(false);
-    this.Dialogs_[this.constructor.DIALOGS.INFO].addText(infoText);
-    this.Dialogs_[this.constructor.DIALOGS.INFO].setButtonSet(null);
-    this.Dialogs_[this.constructor.DIALOGS.INFO].render(
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].setModal(false);
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].addText(infoText);
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].setButtonSet(null);
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].render(
 	this.ViewBox_.getViewFrame());
-    this.Dialogs_[this.constructor.DIALOGS.INFO].setVisible(true);
-    this.Dialogs_[this.constructor.DIALOGS.INFO].moveToCorner('left', 'top');
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].setVisible(true);
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].moveToCorner('left', 'top');
 
     //
     // Set the mouseover
     //
-    this.Dialogs_[this.constructor.DIALOGS.INFO].addContentClass(
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].addContentClass(
 	'xiv-ui-viewboxdialogs-infodialog-content')
-    this.Dialogs_[this.constructor.DIALOGS.INFO].setMouseoverClass(
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].setMouseoverClass(
 	'xiv-ui-viewboxdialogs-infodialog-hovered')
 
 
     //
     // Classes
     //
-    goog.dom.classes.add(this.Dialogs_[this.constructor.DIALOGS.INFO].
+    goog.dom.classes.add(this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].
 			 getElement(), 
-			 this.constructor.CSS.INFODIALOG);
-    goog.dom.classes.add(this.Dialogs_[this.constructor.DIALOGS.INFO].
+			 xiv.ui.ViewBoxDialogs.CSS.INFODIALOG);
+    goog.dom.classes.add(this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].
 			 getTextElements()[0], 
-			 this.constructor.CSS.INFODIALOG_TEXT);
+			 xiv.ui.ViewBoxDialogs.CSS.INFODIALOG_TEXT);
     
     //
     // Toggle button
     // 
     var infoToggle = 
-	this.createToggleButton_(this.constructor.CSS.BUTTON_INFOTOGGLE,
-			    'Info. Display', 
-       function(button){
+	this.ViewBox_.createToggleButton(
+	    'LEFT', 
+	    xiv.ui.ViewBoxDialogs.CSS.INFO_TOGGLE,
+	    xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO,
+	    'Info. Display', 
+	    function(button){
+		this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].
+		    setVisible(
+		    (button.getAttribute('checked') == 'true'));
+		this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO]
+		    .moveToCorner
+		('left', 'top');
+		window.console.log(
+		    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].
+			getElement());
+		
+	    }.bind(this), serverRoot + 
+		'/images/viewer/xiv/ui/ViewBox/Toggle-Info.png');
+  
 
-	   this.Dialogs_[this.constructor.DIALOGS.INFO].setVisible(
-	       (button.getAttribute('checked') == 'true'));
-	   this.Dialogs_[this.constructor.DIALOGS.INFO].moveToCorner
-	   ('left', 'top');
-
-
-	   window.console.log(
-	       this.Dialogs_[this.constructor.DIALOGS.INFO].getElement());
-
-       }.bind(this), serverRoot + 
-			     '/images/viewer/xiv/ui/ViewBox/Toggle-Info.png');
-
-    //
-    // Store button
-    //
-    this.toggleButtons_[this.constructor.DIALOGS.INFO] = infoToggle;
-
-
-
-    goog.events.listen(this.Dialogs_[this.constructor.DIALOGS.INFO], 
+    goog.events.listen(this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO], 
 		      nrg.ui.Overlay.EventType.CLOSE_BUTTON_CLICKED, function(){
-			  this.onToggleButtonClicked_(infoToggle);
+			 this.ViewBox_.onToggleButtonClicked(infoToggle);
 		      }.bind(this))
 }
-
-
-
-
-/**
- * @param {!Element}
- * @param {Function=}
- */
-xiv.ui.ViewBoxDialogs.prototype.onToggleButtonClicked_ = 
-function(button, opt_onCheck){
-
-    button.setAttribute('checked', 
-	(button.getAttribute('checked') == 'true') ? 'false': 'true');
-
-    if (button.getAttribute('checked') == 'true') {
-	goog.dom.classes.add(button, button.getAttribute(
-	    xiv.ui.ViewBoxDialogs.TOGGLED_CLASS));
-    } else {
-	goog.dom.classes.remove(button, button.getAttribute(
-	    xiv.ui.ViewBoxDialogs.TOGGLED_CLASS));
-    }
-
-    if (goog.isDefAndNotNull(opt_onCheck)){
-	opt_onCheck(button);
-    }
-}
-
-
-
-/**
- * @param {!string} defaultClass,
- * @param {string=} opt_tooltip
- * @param {Function=} opt_onCheck
- * @param {src=} opt_src
- * @return {Element}
- * @private
- */
-xiv.ui.ViewBoxDialogs.prototype.createToggleButton_ = 
-    function(defaultClass, opt_tooltip, opt_onCheck, opt_src) {
-	//
-	// Create the toggle button
-	//
-	var onClass = goog.getCssName(defaultClass, 'on')
-	var iconbutton = goog.dom.createDom('img', defaultClass);
-
-
-	iconbutton.title = opt_tooltip;
-
-
-	if (goog.isDefAndNotNull(opt_src)){
-	    iconbutton.src = opt_src;
-	}
-
-	//
-	// Set the default check stated
-	//
-	iconbutton.setAttribute('checked', 'true');
-	iconbutton.setAttribute(xiv.ui.ViewBoxDialogs.TOGGLED_CLASS, 
-				defaultClass + '-on')
-	
-	//
-	// Add the 'on' class if it's default class is on
-	//
-	goog.dom.classes.add(iconbutton, onClass);
-
-	//
-	// Clean up the CSS
-	//
-	nrg.style.setStyle(iconbutton, {'cursor': 'pointer'})
-
-
-	//
-	// Toggle event
-	//
-	goog.events.listen(iconbutton, goog.events.EventType.CLICK, 
-	function(e){
-	    window.console.log("CLICK", e.target);
-	    this.onToggleButtonClicked_(iconbutton, opt_onCheck);
-	}.bind(this));
-
-	//
-	// Adds to menu
-	//
-	this.ViewBox_.addToMenu('LEFT', iconbutton);
-	return iconbutton;
-    }
-
 
 
 
@@ -491,34 +547,5 @@ xiv.ui.ViewBoxDialogs.prototype.disposeInternal = function(){
 	    Dialog.dispose();
 	}.bind(this))
 	goog.object.clear(this.Dialogs_);
-    }
-
-
-    //
-    // Dialogs
-    //
-    if (goog.isDefAndNotNull(this.toggleButtons_)){
-	goog.object.forEach(this.toggleButtons_, function(tb){
-	    goog.events.removeAll(tb);
-	    goog.dom.removeNode(tb);
-	    delete tb;
-	}.bind(this))
-	goog.object.clear(this.toggleButtons_);
-    }
-
-
-
-    // toggle buttons MenuLeft
-    if (goog.isDefAndNotNull(this.toggleButtons_)){
-	goog.dom.removeNode(this.menus_.LEFT);
-	delete this.menus_.LEFT;
-	
-	goog.object.forEach(this.toggleButtons_, function(button){
-	    goog.events.removeAll(button);
-	    goog.dom.removeNode(button);
-	    button = null;
-	})
-	goog.array.clear(this.toggleButtons_);
-	delete this.toggleButtons_;
     }
 }

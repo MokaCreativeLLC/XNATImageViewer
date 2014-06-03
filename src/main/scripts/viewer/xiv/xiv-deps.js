@@ -295,6 +295,13 @@ goog.addDependency('../../../../ui/HelpDialog.js',
 goog.addDependency('../../../../ui/ViewBoxDialogs.js', 
 ['xiv.ui.ViewBoxDialogs'], [
     'nrg.ui.Component',
+    'xiv.ui.HelpDialog'
+]);
+
+
+goog.addDependency('../../../../ui/ViewBoxInteractorHandler.js', 
+['xiv.ui.ViewBoxInteractorHandler'], [
+    'goog.events.EventTarget',
 ]);
 
 
@@ -307,6 +314,7 @@ goog.addDependency('../../../../ui/ViewBox.js',
     'goog.array',
     'goog.object',
     'goog.style',
+    'goog.testing.events',
     'nrg.ui.Component',
     'nrg.style',
     'nrg.ui.SlideInMenu',
@@ -315,7 +323,8 @@ goog.addDependency('../../../../ui/ViewBox.js',
     'xiv.vis.XtkEngine',
     'xiv.ui.ProgressBarPanel',
     'xiv.ui.ViewBoxDialogs',
-    'nrg.ui.Overlay'
+    'xiv.ui.ViewBoxInteractorHandler',
+
 ]);
 
 

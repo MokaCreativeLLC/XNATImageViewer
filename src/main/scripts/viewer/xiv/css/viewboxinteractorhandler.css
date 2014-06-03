@@ -1,0 +1,25 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+.xiv-ui-viewboxinteractorhandler-crosshair,
+.xiv-ui-viewboxinteractorhandler-threed,
+.xiv-ui-viewboxinteractorhandler-brightnesscontrast,
+.xiv-ui-viewboxinteractorhandler-twodmenu,
+.xiv-ui-viewboxinteractorhandler-threedmenu
+ {
+    width: 15px;
+    height: 15px;
+    opacity: .5;
+}
+
+.xiv-ui-viewboxinteractorhandler-crosshair-on,
+.xiv-ui-viewboxinteractorhandler-threed-on,
+.xiv-ui-viewboxinteractorhandler-brightnesscontrast-on,
+.xiv-ui-viewboxinteractorhandler-twodmenu-on,
+.xiv-ui-viewboxinteractorhandler-threedmenu-on
+{
+    opacity: 1;
+    background-color: black;
+}
+

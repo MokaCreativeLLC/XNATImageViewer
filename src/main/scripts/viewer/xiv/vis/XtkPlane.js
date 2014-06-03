@@ -3,8 +3,9 @@
  * @author amh1646@rih.edu (Amanda Hartung)
  */
 
-// nrg
-goog.require('nrg.ui.InfoOverlay');
+
+
+
 
 /**
  * @constructor
@@ -64,7 +65,7 @@ xiv.vis.XtkPlane.prototype.isOn_ = true;
 
 
 /**
-* @param {?nrg.ui.InfoOverlay}
+* @param {Element}
 */
 xiv.vis.XtkPlane.prototype.DisabledOverlay_;
 
@@ -368,15 +369,20 @@ xiv.vis.XtkPlane.prototype.isOn = function() {
  * @private
  */
 xiv.vis.XtkPlane.prototype.createDisabledOverlay_ = function() {
-    this.DisabledOverlay_ = new nrg.ui.InfoOverlay();
+    this.DisabledOverlay_ = goog.dom.createDom('div', {
+	'id': 'DisabledOverlay_' + goog.string.createUniqueString(),
+    });
+
+    goog.dom.classes.set(this.DisabledOverlay_, 
+			 'xiv-vis-xtkplane-disabledoverlay')
+
     var renderPlane = this.orientation;
     if (this.orientation == 'V'){
 	renderPlane = '3D';
     }
-    this.DisabledOverlay_.getElement().style.opacity = 0;
-    this.DisabledOverlay_.getElement().style.zIndex = 100;
-    this.DisabledOverlay_.addText(renderPlane + ' rendering disabled.');
-    this.DisabledOverlay_.render(this.container);
+
+    this.DisabledOverlay_.innerHTML = renderPlane + ' rendering disabled.';
+    goog.dom.appendChild(this.container, this.DisabledOverlay_);
 }
 
 
@@ -386,7 +392,6 @@ xiv.vis.XtkPlane.prototype.createDisabledOverlay_ = function() {
  * @public
  */
 xiv.vis.XtkPlane.prototype.setOn = function(on) {
-
     //
     // Store the on value.
     //
@@ -397,12 +402,20 @@ xiv.vis.XtkPlane.prototype.setOn = function(on) {
     //
     if (!this.isOn_){
 
+	//
+	// Apply the disabled overlay if needed
+	//
 	if (!goog.isDefAndNotNull(this.DisabledOverlay_)) {
 	    this.createDisabledOverlay_();
-	} else {
-	    this.DisabledOverlay_.getElement().style.visibility = 'visible';
-	}
-	nrg.fx.fadeIn(this.DisabledOverlay_.getElement(), 200, 
+	} 
+
+	this.DisabledOverlay_.style.visibility = 'visible';
+
+
+	//
+	// Fade in the overlay
+	//
+	nrg.fx.fadeIn(this.DisabledOverlay_, 200, 
 		      function(){
 			  this.storeCamera_();
 			  this.storeBackground_();
@@ -411,9 +424,17 @@ xiv.vis.XtkPlane.prototype.setOn = function(on) {
 
 
     } else {
+
+	//
+	// Otherwise, restore...
+	//
 	this.restore();
-	nrg.fx.fadeOut(this.DisabledOverlay_.getElement(), 200, function(){
-	    this.DisabledOverlay_.getElement().style.visibility = 'hidden';
+
+	//
+	// ...and fade out display
+	//
+	nrg.fx.fadeOut(this.DisabledOverlay_, 200, function(){
+	    this.DisabledOverlay_.style.visibility = 'hidden';
 	}.bind(this));
     }
 }
@@ -528,7 +549,7 @@ xiv.vis.XtkPlane.prototype.dispose = function() {
     // Overlay
     //
     if (goog.isDefAndNotNull(this.DisabledOverlay_)){
-	this.DisabledOverlay_.dispose();
+	goog.dom.removeNode(this.DisabledOverlay_);
 	delete this.DisabledOverlay_;
     }
 
