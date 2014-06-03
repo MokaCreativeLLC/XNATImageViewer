@@ -61,8 +61,8 @@
 .nrg-ui-overlay-closebutton {
     position: absolute; 
     cursor: pointer;
-    top: 3px;
-    left: calc(100% - 13px);
+    top: 2px;
+    left: calc(100% - 8px);
     width: 10px;
     height: 10px;
     z-index: 103;
@@ -72,15 +72,15 @@
 
 
 .nrg-ui-overlay-closebutton-image {
-    width: 9px;
-    height: 9px;
+    width: 6px;
+    height: 6px;
 }
 
 
 
 .nrg-ui-overlay-title {
     background-color: rgb(60,60,60);
-    height: 15px;
+    height: 10px;
     padding: 0px;
     margin-top: -3px;
     width: 100%;

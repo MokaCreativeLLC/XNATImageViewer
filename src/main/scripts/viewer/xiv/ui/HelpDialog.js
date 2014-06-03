@@ -15,12 +15,12 @@ goog.require('nrg.ui.Overlay');
  * @constructor
  * @extends {nrg.ui.Overlay}
  */
-goog.provide('xiv.ui.HelpOverlay');
-xiv.ui.HelpOverlay = function () {
+goog.provide('xiv.ui.HelpDialog');
+xiv.ui.HelpDialog = function () {
     goog.base(this);
 }
-goog.inherits(xiv.ui.HelpOverlay, nrg.ui.Overlay);
-goog.exportSymbol('xiv.ui.HelpOverlay', xiv.ui.HelpOverlay);
+goog.inherits(xiv.ui.HelpDialog, nrg.ui.Overlay);
+goog.exportSymbol('xiv.ui.HelpDialog', xiv.ui.HelpDialog);
 
 
 
@@ -29,7 +29,7 @@ goog.exportSymbol('xiv.ui.HelpOverlay', xiv.ui.HelpOverlay);
  * @enum {string}
  * @public
  */
-xiv.ui.HelpOverlay.EventType = {}
+xiv.ui.HelpDialog.EventType = {}
 
 
 
@@ -38,7 +38,7 @@ xiv.ui.HelpOverlay.EventType = {}
  * @const
  * @expose
  */
-xiv.ui.HelpOverlay.ID_PREFIX =  'xiv.ui.HelpOverlay';
+xiv.ui.HelpDialog.ID_PREFIX =  'xiv.ui.HelpDialog';
 
 
 
@@ -46,10 +46,12 @@ xiv.ui.HelpOverlay.ID_PREFIX =  'xiv.ui.HelpOverlay';
  * @enum {string}
  * @public
  */
-xiv.ui.HelpOverlay.CSS= {
-    OVERLAY: 'nrg-ui-helpoverlay-overlay',
-    TEXT: 'nrg-ui-helpoverlay-text',
-    SCROLLABLEZIPPYTREE: 'nrg-ui-helpoverlay-scrollablezippytree'
+xiv.ui.HelpDialog.CSS= {
+    DIALOG: 'nrg-ui-helpdialog-dialog',
+    TEXT: 'nrg-ui-helpdialog-text',
+    SCROLLABLEZIPPYTREE: 'xiv-ui-helpdialog-scrollablezippytree',
+    TITLE: 'xiv-ui-helpdialog-title',
+    CLOSEBUTTON: 'xiv-ui-helpdialog-closebutton',
 }
 
 
@@ -59,7 +61,7 @@ xiv.ui.HelpOverlay.CSS= {
  * @const
  * @expose
  */
-xiv.ui.HelpOverlay.LAYOUT_IMAGE_ID =  xiv.ui.HelpOverlay.ID_PREFIX + 
+xiv.ui.HelpDialog.LAYOUT_IMAGE_ID =  xiv.ui.HelpDialog.ID_PREFIX + 
     '.LayoutImage';
 
 
@@ -67,35 +69,35 @@ xiv.ui.HelpOverlay.LAYOUT_IMAGE_ID =  xiv.ui.HelpOverlay.ID_PREFIX +
  * @private
  * @type {?nrg.ui.ScrollableZippyTree}
  */
-xiv.ui.HelpOverlay.prototype.ScrollableZippyTree_;
+xiv.ui.HelpDialog.prototype.ScrollableZippyTree_;
 
 
 
 /**
  * @inheritDoc
  */
-xiv.ui.HelpOverlay.prototype.render = function(opt_parentElement){
-
-
-
+xiv.ui.HelpDialog.prototype.render = function(opt_parentElement){
     goog.base(this, 'render', opt_parentElement);
 
-    goog.dom.classes.add(this.getElement(), 
-			 this.constructor.CSS.OVERLAY);
+    goog.dom.classes.add(this.getElement(), 'xiv-ui-helpdialog');
 
 
     this.ScrollableZippyTree_ = new nrg.ui.ScrollableZippyTree();
 
-
     goog.dom.classes.add(this.ScrollableZippyTree_.getElement(), 
 			 this.constructor.CSS.SCROLLABLEZIPPYTREE);
 
+    this.ScrollableZippyTree_.render(this.getElement());
 
+    this.populateZippy_();
 
-    this.ScrollableZippyTree_.render(this.getOverlay());
+    window.console.log("HERE", this.constructor.CSS.TITLE);
+    this.addTitleClass(this.constructor.CSS.TITLE);
+    this.addCloseSpanClass(this.constructor.CSS.CLOSEBUTTON);
 
-
-    this.addContents_();
+    //goog.dom.removeNode(this.ScrollableZippyTree_.getElement());
+    //this.setContent(this.ScrollableZippyTree_.getElement());
+    //window.console.log("HERE", this.ScrollableZippyTree_.getElement());
 }
 
 
@@ -104,11 +106,11 @@ xiv.ui.HelpOverlay.prototype.render = function(opt_parentElement){
  * @public
  * @param {!string} buttonSrc
  */
-xiv.ui.HelpOverlay.prototype.setLayoutButton = function(buttonSrc){
-    var icon = document.getElementById(xiv.ui.HelpOverlay.LAYOUT_IMAGE_ID);
+xiv.ui.HelpDialog.prototype.setLayoutButton = function(buttonSrc){
+    var icon = document.getElementById(xiv.ui.HelpDialog.LAYOUT_IMAGE_ID);
     
     if (goog.isDefAndNotNull(icon)){
-	document.getElementById(xiv.ui.HelpOverlay.LAYOUT_IMAGE_ID).src = 
+	document.getElementById(xiv.ui.HelpDialog.LAYOUT_IMAGE_ID).src = 
 	    buttonSrc;
     }
 }
@@ -118,7 +120,7 @@ xiv.ui.HelpOverlay.prototype.setLayoutButton = function(buttonSrc){
 /**
  * @private
  */
-xiv.ui.HelpOverlay.prototype.addContents_ = function(){
+xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
    //
     // Generate widget text
     //    
@@ -133,7 +135,7 @@ xiv.ui.HelpOverlay.prototype.addContents_ = function(){
     
     var viewboxToggles = [
 	['Change Layouts', '<img height=15 width=15 ' + 
-	 'id=' + xiv.ui.HelpOverlay.LAYOUT_IMAGE_ID + 
+	 'id=' + xiv.ui.HelpDialog.LAYOUT_IMAGE_ID + 
 	 '></img>'],
 	['3D Rendering', 
 	 '<img style="height:15px;width:15px" src="' +
@@ -193,17 +195,8 @@ xiv.ui.HelpOverlay.prototype.addContents_ = function(){
     //
     // Help Text
     //
-    var helpText = "<b>HELP</b><br><br>";
-    this.addText(helpText);
-    goog.dom.classes.add(this.getTextElements()[0], 
-			 this.constructor.CSS.TEXT);
+    this.setTitle('Help');
 
-    //
-    //
-    //
-    this.getTextElements()[0].style.height = '15px';
-    this.ScrollableZippyTree_.getSlider().bindToMouseWheel(
-	this.getTextElements()[0]);
 
     var allLines = [imageManipLines, viewboxToggles, modalToggles];
     goog.array.forEach(allLines, function(lineArr, i){
@@ -235,12 +228,12 @@ xiv.ui.HelpOverlay.prototype.addContents_ = function(){
 	//
 	// Add text and render
 	//
-	this.addText(currTable);
+	//this.addText(currTable);
 
-	var lastAddedText = this.getTextElements()[i+1];
+	//var lastAddedText = this.getTextElements()[i+1];
 	//window.console.log(lastAddedText)
-	goog.dom.classes.add(lastAddedText, 
-			     this.constructor.CSS.TEXT);
+	//goog.dom.classes.add(lastAddedText, 
+	//this.constructor.CSS.TEXT);
 
 	var folderName;
 	currText = i+1;
@@ -255,11 +248,14 @@ xiv.ui.HelpOverlay.prototype.addContents_ = function(){
 	    folderName = 'Modal Toggles';
 	    break;
 	}
-	lastAddedText.style.top = '0px';
+	//lastAddedText.style.top = '0px';
 
-	goog.dom.removeNode(lastAddedText);
-	this.ScrollableZippyTree_.getSlider().bindToMouseWheel(lastAddedText);
-	this.ScrollableZippyTree_.addContents(lastAddedText, [folderName]);
+	goog.dom.removeNode(currTable);
+	//this.ScrollableZippyTree_.getSlider().bindToMouseWheel(currTable);
+
+	var contents = goog.dom.createDom('div');
+	contents.innerHTML = currTable;
+	this.ScrollableZippyTree_.addContents(contents, [folderName]);
     }.bind(this))
 }
 
@@ -269,7 +265,7 @@ xiv.ui.HelpOverlay.prototype.addContents_ = function(){
 /**
  * @inheritDoc
  */
-xiv.ui.HelpOverlay.prototype.disposeInternal = function(){
+xiv.ui.HelpDialog.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
 
     //
@@ -281,19 +277,17 @@ xiv.ui.HelpOverlay.prototype.disposeInternal = function(){
 }
 
 
-goog.exportSymbol('xiv.ui.HelpOverlay.EventType',
-	xiv.ui.HelpOverlay.EventType);
-goog.exportSymbol('xiv.ui.HelpOverlay.ID_PREFIX',
-	xiv.ui.HelpOverlay.ID_PREFIX);
-goog.exportSymbol('xiv.ui.HelpOverlay.CSS_SUFFIX',
-	xiv.ui.HelpOverlay.CSS_SUFFIX);
-goog.exportSymbol('xiv.ui.HelpOverlay.LAYOUT_IMAGE_ID',
-	xiv.ui.HelpOverlay.LAYOUT_IMAGE_ID);
-goog.exportSymbol('xiv.ui.HelpOverlay.prototype.constructor',
-	xiv.ui.HelpOverlay.prototype.constructor);
-goog.exportSymbol('xiv.ui.HelpOverlay.prototype.render',
-	xiv.ui.HelpOverlay.prototype.render);
-goog.exportSymbol('xiv.ui.HelpOverlay.prototype.setLayoutButton',
-	xiv.ui.HelpOverlay.prototype.setLayoutButton);
-goog.exportSymbol('xiv.ui.HelpOverlay.prototype.disposeInternal',
-	xiv.ui.HelpOverlay.prototype.disposeInternal);
+goog.exportSymbol('xiv.ui.HelpDialog.EventType',
+	xiv.ui.HelpDialog.EventType);
+goog.exportSymbol('xiv.ui.HelpDialog.ID_PREFIX',
+	xiv.ui.HelpDialog.ID_PREFIX);
+goog.exportSymbol('xiv.ui.HelpDialog.CSS_SUFFIX',
+	xiv.ui.HelpDialog.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.HelpDialog.LAYOUT_IMAGE_ID',
+	xiv.ui.HelpDialog.LAYOUT_IMAGE_ID);
+goog.exportSymbol('xiv.ui.HelpDialog.prototype.render',
+	xiv.ui.HelpDialog.prototype.render);
+goog.exportSymbol('xiv.ui.HelpDialog.prototype.setLayoutButton',
+	xiv.ui.HelpDialog.prototype.setLayoutButton);
+goog.exportSymbol('xiv.ui.HelpDialog.prototype.disposeInternal',
+	xiv.ui.HelpDialog.prototype.disposeInternal);

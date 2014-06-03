@@ -140,69 +140,8 @@
     background-color: black;
 }
 
-.xiv-ui-viewbox-button-infotoggle {
-    width: 15px;
-    height: 15px;
-    opacity: .5;
-    background-color: black;
-}
 
 
-.xiv-ui-viewbox-button-infotoggle-on {
-    opacity: 1;
-    background-color: black;
-}
-
-
-.xiv-ui-viewbox-infooverlay {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 0px;
-    left: 0px;
-    z-index: 20;
-}
-
-
-.xiv-ui-viewbox-infooverlay-overlay {
-    position: absolute;
-    background-color: rgba(0,0,0,0);
-    font-size: 8px;
-    color: white;
-    text-align: right;
-    top: 0px;
-    left: 0px;
-    height: 0px;
-    padding: 5px;
-    width: 0px;
-    z-index: 20;
-}
-
-
-.xiv-ui-viewbox-infooverlay-text {
-    position: absolute;
-    text-align: right;
-    font-size: 12px;		
-    font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
-    white-space: nowrap;
-    padding: 8px;
-    top: 0px;
-    left: 0px;
-    height: 0px;
-    width: 0px;
-}
-
-
-.xiv-ui-viewbox-button-helptoggle {
-    width: 15px;
-    height: 15px;
-    opacity: .5;
-}
-
-.xiv-ui-viewbox-button-helptoggle-on {
-    opacity: 1;
-    background-color: black;
-}
 
 .xiv-ui-viewbox-button-crosshairtoggle {
     width: 15px;

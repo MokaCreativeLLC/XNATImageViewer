@@ -439,19 +439,29 @@ nrg.style.IS_HOVERED = 'is_hovered_' + goog.string.createUniqueString()
  *    the occurence of the hover states.
  * @param {Object=} opt_eventFindTuneMethodBinder The binding object to apply 
  *    to the opt_eventFindTuneMethod argument.
+ * @param {Function=} opt_onMouseover
+ * @param {Object=} opt_onMouseout
  * @public
  */	
-nrg.style.setHoverClass = function(elt, className, opt_eventFindTuneMethod, 
-				     opt_eventFindTuneMethodBinder) {
+nrg.style.setHoverClass = function(elt, className, 
+				   opt_eventFindTuneMethod, 
+				   opt_eventFindTuneMethodBinder, 
+				   opt_onMouseover, opt_onMouseout) {
 
     // Mouseover / mouseout
     var applyHover = function(){ 
 	elt[nrg.style.IS_HOVERED] = true;
 	goog.dom.classes.add(elt, className);
+	if (goog.isDefAndNotNull(opt_onMouseover)){
+	    opt_onMouseover();
+	}
     }
     var removeHover = function() {
 	elt[nrg.style.IS_HOVERED] = false;
 	goog.dom.classes.remove(elt, className);
+	if (goog.isDefAndNotNull(opt_onMouseout)){
+	    opt_onMouseout();
+	}
     }
     goog.events.listen(elt, goog.events.EventType.MOUSEOVER, applyHover);
     goog.events.listen(elt, goog.events.EventType.MOUSEOUT, removeHover);

@@ -285,8 +285,8 @@ goog.addDependency('../../../../ui/ViewableGroupMenu.js',
 ]);
 
 
-goog.addDependency('../../../../ui/HelpOverlay.js', 
-['xiv.ui.HelpOverlay'], [
+goog.addDependency('../../../../ui/HelpDialog.js', 
+['xiv.ui.HelpDialog'], [
     'nrg.ui.Overlay',
     'nrg.ui.ScrollableZippyTree'
 ]);

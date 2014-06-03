@@ -3,17 +3,10 @@
  */
 
 
-
-.xiv-ui-helpoverlay {
-    position: absolute;
-    visibility: hidden;
-}
-
-
-.xiv-ui-helpoverlay-overlay {
+.xiv-ui-helpdialog {
     position: absolute;
     background-color: rgba(0,0,0,.9);
-    border-radius: 20px;
+    border-radius: 5px;
     border: solid 1px white;
     font-size: 8px;
     color: white;
@@ -27,7 +20,7 @@
 
 
 
-.xiv-ui-helpoverlay-scrollablezippytree {
+.xiv-ui-helpdialog-scrollablezippytree {
     position : absolute;
     top : 50px;
     left : 15px;
@@ -37,7 +30,7 @@
 
 
 
-.xiv-ui-helpoverlay-text {
+.xiv-ui-helpdialog-text {
     position: absolute;
     text-align: left;
     font-size: 12px;		

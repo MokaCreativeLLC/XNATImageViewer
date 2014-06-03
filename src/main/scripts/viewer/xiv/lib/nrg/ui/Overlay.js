@@ -35,7 +35,8 @@ nrg.ui.Overlay.ID_PREFIX =  'nrg.ui.Overlay';
  */
 nrg.ui.Overlay.EventType = {
   OPENED: goog.events.getUniqueId('open'),
-  CLOSED: goog.events.getUniqueId('close')
+  CLOSED: goog.events.getUniqueId('close'),
+  CLOSE_BUTTON_CLICKED: goog.events.getUniqueId('close-button-clicked'),
 }
 
 
@@ -97,11 +98,21 @@ nrg.ui.Overlay.prototype.texts_;
  */
 nrg.ui.Overlay.prototype.setMouseoverClass = 
 function(opt_eltMouseover) {
+
+    this.titleElt_.style.visibility = 'hidden';
+    this.closeButton_.style.visibility = 'hidden';
+
     if (goog.isDefAndNotNull(opt_eltMouseover)){
-	nrg.style.setHoverClass(this.getElement(), opt_eltMouseover, 
+	nrg.style.setHoverClass(this.getElement(), opt_eltMouseover,
+				null, null,
         function(){
-	    window.console.log(this.getElement());
-	    window.console.log(this.getElement()[nrg.style.IS_HOVERED]);
+	    this.titleElt_.style.visibility = 'visible';
+	    this.closeButton_.style.visibility = 'visible';
+        }.bind(this),
+ 
+        function(){
+	    this.titleElt_.style.visibility = 'hidden';
+	    this.closeButton_.style.visibility = 'hidden';
         }.bind(this));
     }
 }
@@ -112,7 +123,8 @@ function(opt_eltMouseover) {
  * @public
  */
 nrg.ui.Overlay.prototype.addTitleClass = function(eltClass) {
-    goog.dom.classes.add(this.title_, eltClass);
+    window.console.log('TITLE', this.titleElt_);
+    goog.dom.classes.add(this.titleElt_, eltClass);
 }
 
 
@@ -121,8 +133,8 @@ nrg.ui.Overlay.prototype.addTitleClass = function(eltClass) {
  * @param {!string} eltClass
  * @public
  */
-nrg.ui.Overlay.prototype.addContentsClass = function(eltClass) {
-    goog.dom.classes.add(this.buttons_, eltClass);
+nrg.ui.Overlay.prototype.addContentClass = function(eltClass) {
+    goog.dom.classes.add(this.content_, eltClass);
 }
 
 
@@ -136,21 +148,29 @@ nrg.ui.Overlay.prototype.addCloseButtonClass = function(eltClass) {
 }
 
 
+/** 
+ * @param {!string} eltClass
+ * @public
+ */
+nrg.ui.Overlay.prototype.addCloseSpanClass = function(eltClass) {
+    goog.dom.classes.add(this.closeSpan_, eltClass);
+}
+
 
 /** 
  * @param {!string} eltClass
  * @public
  */
 nrg.ui.Overlay.prototype.addButtonsClass = function(eltClass) {
-    goog.dom.classes.add(this.buttons_, eltClass);
+    goog.dom.classes.add(this.buttonCollection_, eltClass);
 }
 
 
 /** 
  * @private
  */
-nrg.ui.Overlay.prototype.modifyButtons_ = function() {
-    goog.dom.classes.add(this.buttons_, nrg.ui.Overlay.CSS.BUTTONS);
+nrg.ui.Overlay.prototype.modifyButtonCollection_ = function() {
+    goog.dom.classes.add(this.buttonCollection_, nrg.ui.Overlay.CSS.BUTTONS);
 }
 
 
@@ -168,7 +188,7 @@ nrg.ui.Overlay.prototype.modifyContent_ = function() {
  * @private
  */
 nrg.ui.Overlay.prototype.modifyTitle_ = function() {
-    goog.dom.classes.add(this.title_, nrg.ui.Overlay.CSS.TITLE);
+    goog.dom.classes.add(this.titleElt_, nrg.ui.Overlay.CSS.TITLE);
 }
 
 
@@ -181,10 +201,10 @@ nrg.ui.Overlay.prototype.modifyCloseButton_ = function() {
     //
     // Get the span holder of the close button
     //
-    var closeSpan = 
+    this.closeSpan_ = 
 	goog.dom.getElementsByClass('modal-dialog-title-close', 
 				    this.getElement())[0];
-    goog.dom.classes.add(closeSpan, nrg.ui.Overlay.CSS.CLOSEBUTTON);
+    goog.dom.classes.add(this.closeSpan_, nrg.ui.Overlay.CSS.CLOSEBUTTON);
 
 
     //
@@ -198,7 +218,23 @@ nrg.ui.Overlay.prototype.modifyCloseButton_ = function() {
     this.closeButton_.src = serverRoot + 
 	'/images/viewer/xiv/ui/Modal/close.png';
 
-    goog.dom.appendChild(closeSpan, this.closeButton_);
+    //
+    // Add button to span
+    //
+    goog.dom.appendChild(this.closeSpan_, this.closeButton_);
+
+    goog.events.listen(this.closeButton_, goog.events.EventType.CLICK, 
+		       function(e)
+		       {
+			   this.setVisible(!this.isVisible());
+			   
+			   this.dispatchEvent({
+			       type: nrg.ui.Overlay.EventType.
+				   CLOSE_BUTTON_CLICKED
+			   })
+			   e.stopPropagation();
+		       }.bind(this))
+		       
 }
 
 
@@ -350,7 +386,7 @@ nrg.ui.Overlay.prototype.render = function(opt_parentElement) {
      * @private
      * @type {Element}
      */
-    this.title_ = goog.dom.getElementsByClass('modal-dialog-title', 
+    this.titleElt_ = goog.dom.getElementsByClass('modal-dialog-title', 
 					    this.getElement())[0];
 
     /**
@@ -365,7 +401,7 @@ nrg.ui.Overlay.prototype.render = function(opt_parentElement) {
      * @private
      * @type {Element}
      */
-    this.buttons_ = goog.dom.getElementsByClass('modal-dialog-buttons', 
+    this.buttonCollection_ = goog.dom.getElementsByClass('modal-dialog-buttons', 
 					    this.getElement())[0];
 
 
@@ -380,7 +416,7 @@ nrg.ui.Overlay.prototype.render = function(opt_parentElement) {
     // Modify children
     //
     this.modifyCloseButton_();
-    this.modifyButtons_();
+    this.modifyButtonCollection_();
     this.modifyTitle_();
     this.modifyContent_();
 }
@@ -414,10 +450,11 @@ nrg.ui.Overlay.prototype.getTextElements = function() {
 nrg.ui.Overlay.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
-    delete this.buttons_;
-    delete this.title_;
+    delete this.buttonCollection_;
+    delete this.titleElt_;
     delete this.content_;
     delete this.closeButton_;
+    delete this.closeSpan_;
 
 
      if (goog.isDefAndNotNull(this.overlay_)){

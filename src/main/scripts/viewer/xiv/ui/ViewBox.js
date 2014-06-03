@@ -27,7 +27,7 @@ goog.require('xiv.vis.XtkEngine');
 goog.require('xiv.ui.ProgressBarPanel');
 goog.require('xiv.ui.layouts.LayoutHandler');
 goog.require('xiv.ui.ViewableGroupMenu');
-goog.require('xiv.ui.HelpOverlay');
+goog.require('xiv.ui.HelpDialog');
 
 
 
@@ -1631,9 +1631,9 @@ xiv.ui.ViewBox.prototype.onLayoutChangeEnd_ = function(e){
  * @private
  */
 xiv.ui.ViewBox.prototype.initLoadComponents_ = function() {
+    this.initToggleMenu_();
     this.initViewBoxDialogs_();
     this.initZipTabs_();
-    this.initToggleMenu_();
     this.initLayoutHandler_();
     this.syncLayoutMenuToLayoutHandler_();
     this.initRenderer_();
@@ -1864,6 +1864,7 @@ xiv.ui.ViewBox.prototype.addToMenu = function(menuLoc, element, opt_insertInd){
 	break;
     }
 
+    window.console.log(this.menus_.LEFT);
     if (goog.isNumber(opt_insertInd)){
 	currMenu.insertBefore(element, 
 		currMenu.childNodes[opt_insertInd])
@@ -2059,102 +2060,6 @@ xiv.ui.ViewBox.prototype.createBrightnessContrastToggle_ = function(){
 /**
  * @private
  */
-xiv.ui.ViewBox.prototype.createHelpToggle_ = function(){
-    //
-    // Clear existing
-    //
-    if (goog.isDefAndNotNull(this.HelpOverlay_)){
-	this.HelpOverlay_.dispose();
-    }
-    this.HelpOverlay_ = new xiv.ui.HelpOverlay();
-    //
-    //  Render the overlay
-    //
-    this.HelpOverlay_.render(this.viewFrameElt_);
-
-    //
-    // Classes
-    //
-    goog.dom.classes.add(this.HelpOverlay_.getOverlay(), 
-			 this.constructor.CSS.HELPOVERLAY_OVERLAY);
-
-    //
-    // Toggle fades
-    // 
-    var tb = 
-	this.createToggleButton_(false, xiv.ui.ViewBox.CSS.BUTTON_HELPTOGGLE,
-	'Help Overlay', this.onHelpOverlayToggled_.bind(this), 
-	 serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Help.png');
-
-    //
-    // Listen for the close event
-    //
-    goog.events.listen(this.HelpOverlay_, nrg.ui.Overlay.EventType.CLOSED,
-		       function() {
-			 goog.testing.events.fireClickEvent(tb);
-		       }.bind(this))
-}
-
-
-/**
- * @param {Event | boolean} e
- * @private
- */
-xiv.ui.ViewBox.prototype.onHelpOverlayToggled_ = function(e){
-    var checked = false;
-    if (goog.isObject(e)){
-	checked = (e.target.getAttribute('checked') == 'true') ? true : false;
-    } else {
-	checked = e;
-    }
-    if (checked) {
-	this.openHelpOverlay_();
-    } else {
-	this.closeHelpOverlay_();
-    }
-
-}
-
-
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.openHelpOverlay_ = function(){
-    this.HelpOverlay_.getElement().style.visibility = 'visible';
-    this.HelpOverlay_.getElement().style.opacity = 0;
-    nrg.fx.fadeIn(this.HelpOverlay_.getElement(), 500,  function(){
-	//this.HelpOverlay_.getElement().style.visibility = 'visible';
-    }.bind(this));
-}
-
-
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.closeHelpOverlay_ = function(){
-    //
-    // If already closed, just set the visibility to hidden
-    //
-    if (this.HelpOverlay_.getElement().style.opacity == 0) {
-	this.HelpOverlay_.getElement().style.visibility = 'hidden';
-    };
-
-    //
-    // Otherwise close
-    //
-    nrg.fx.fadeOut(this.HelpOverlay_.getElement(), 500,  function(){
-	this.HelpOverlay_.getElement().
-	    style.visibility = 'hidden';
-    }.bind(this));
-}
-
-
-
-/**
- * @private
- */
 xiv.ui.ViewBox.prototype.createCrosshairToggle_ = function(){
     this.createToggleButton_(true, xiv.ui.ViewBox.CSS.BUTTON_CROSSHAIRTOGGLE,
 	'Crosshairs', function(e){
@@ -2197,8 +2102,6 @@ xiv.ui.ViewBox.prototype.initToggleMenu_ = function(){
     this.createBrightnessContrastToggle_();
     this.create3DRenderToggle_();
     this.createCrosshairToggle_();
-    this.createHelpToggle_();
-
 }
 
 
@@ -2316,7 +2219,8 @@ xiv.ui.ViewBox.prototype.onMenuItemSelected_ = function(e) {
     //
     // Update the help overlay
     //
-    this.HelpOverlay_.setLayoutButton(this.LayoutMenu_.getMenuIcon().src);
+    this.ViewBoxDialogs_.getHelpDialog().
+	setLayoutButton(this.LayoutMenu_.getMenuIcon().src);
 }
 
 
