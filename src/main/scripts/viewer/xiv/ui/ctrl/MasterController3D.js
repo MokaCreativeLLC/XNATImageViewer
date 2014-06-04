@@ -62,7 +62,8 @@ xiv.ui.ctrl.MasterController3D.prototype.add = function(xObj) {
     this.xObjs_.push(xObj);
     this.add_visible(xObj);
     this.add_opacity(xObj);
-
+    this.add_windowHigh(xObj);
+    this.add_windowLow(xObj);
 
     // Generic master controls -- all objects
     if (this.xObjs_.length == 1){
@@ -72,6 +73,62 @@ xiv.ui.ctrl.MasterController3D.prototype.add = function(xObj) {
 	this.add_masterOpacity(xObj);
     }
 }
+
+
+
+/**
+ * @param {!X.Object} xObj
+ * @protected
+ */
+xiv.ui.ctrl.MasterController3D.prototype.add_windowLow = function(xObj) {
+    // create
+    var windowLow = this.createController( 
+	xiv.ui.ctrl.SliderController, 'Window Low', 
+	function(e){
+	    xObj.windowLow = e.value;
+	});
+    
+    // set folder
+    windowLow.setFolders([
+	xiv.ui.ctrl.XtkController.getObjectCategory(xObj)]);
+
+    // store
+    //window.console.log("***********", windowLow);
+    this.masterControllers.push(windowLow);
+
+    // set defaults
+    windowLow.getComponent().setMaximum(5000);
+    windowLow.getComponent().setValue(xObj.windowLow);
+}
+
+
+
+/**
+ * @param {!X.Object} xObj
+ * @protected
+ */
+xiv.ui.ctrl.MasterController3D.prototype.add_windowHigh = function(xObj) {
+    // create
+    var windowHigh = this.createController( 
+	xiv.ui.ctrl.SliderController, 'Window High', 
+	function(e){
+	    xObj.windowHigh = e.value;
+	});
+    
+    // set folder
+    windowHigh.setFolders([
+	xiv.ui.ctrl.XtkController.getObjectCategory(xObj)]);
+
+    // store
+    //window.console.log("***********", windowHigh);
+    this.masterControllers.push(windowHigh);
+
+    // set defaults
+    windowHigh.getComponent().setMaximum(5000);
+    windowHigh.getComponent().setValue(xObj.windowHigh);
+}
+
+
 
 
 
