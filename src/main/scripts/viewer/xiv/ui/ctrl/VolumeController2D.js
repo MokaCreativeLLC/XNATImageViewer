@@ -51,48 +51,9 @@ xiv.ui.ctrl.VolumeController2D.prototype.add = function(xObj) {
 
     this.add_visibleRadio(xObj);
     this.add_labelMapToggle(xObj);
-    this.add_windowMax(xObj);
 }
 
 
-/**
- * @param {!X.Object} xObj
- * @protected
- */
-xiv.ui.ctrl.VolumeController2D.prototype.add_windowMax = function(xObj) {
-    // create
-    var windowMax = this.createController( 
-	xiv.ui.ctrl.SliderController, 'Max', 
-	function(e){
-	    xObj.windowMax = e.value;
-	});
-    
-    // set folder
-    windowMax.setFolders([
-	xiv.ui.ctrl.XtkController.getObjectCategory(xObj)]);
-
-    // store
-    //window.console.log("***********", windowMax);
-    this.masterControllers.push(windowMax);
-
-    // set defaults
-    windowMax.getComponent().setMaximum(8000);
-    windowMax.getComponent().setValue(xObj.windowMax);
-}
-
-
-
-/**
- * @private
- */
-xiv.ui.ctrl.VolumeController2D.prototype.onMaxChange_ = 
-function(e) {
-    goog.array.forEach(this.subControllers, function(subC){
-	if (subC.getLabel().innerHTML == 'Opacity') {
-	    subC.getComponent().setValue(parseFloat(e.value));
-	}
-    })		   
-}
 
 
 
