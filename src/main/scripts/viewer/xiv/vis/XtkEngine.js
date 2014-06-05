@@ -344,8 +344,8 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 	    //
 	    // IMPORTANT!!! 
 	    //
-	    //currXObj.reslicing = false;
-	    //window.console.log("RESLICING", currXObj.reslicing);
+	    currXObj.reslicing = false;
+	    window.console.log("RESLICING", currXObj.transform);
 
 	}
 

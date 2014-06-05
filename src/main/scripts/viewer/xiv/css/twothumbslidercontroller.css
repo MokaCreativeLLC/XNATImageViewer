@@ -8,7 +8,7 @@
 .xiv-ui-ctrl-twothumbslidercontroller-slider {
     position: absolute;
     top: calc(50% - 3px);
-    left: 30%;
+    left: 25%;
     width: calc(70% - 160px);
 }
 

@@ -186,6 +186,8 @@ xiv.vis.XtkRenderer2D.prototype.init = function() {
 
     this.interactor.onMouseMove = function(e){
 
+	//window.console.log("TRANSFORM", this.getVolume().transform.matrix);
+	//window.console.log("TRANSFORM", this.getVolume().reslicing);
 	/**
 	var i = 0;
 	var xSlice, ySlize, zSlice;
