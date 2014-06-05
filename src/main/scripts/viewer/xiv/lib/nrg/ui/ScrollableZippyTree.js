@@ -120,6 +120,15 @@ function(elements, opt_folders) {
 }
 
 
+/**
+ * @public
+ */
+nrg.ui.ScrollableZippyTree.prototype.expandAll = 
+function(folder, opt_startNode) {
+    this.ZippyTree.expandAll();
+}
+
+
 
 /**
  * @param {!string} folder The zippy folder to expand (id'ed by title)

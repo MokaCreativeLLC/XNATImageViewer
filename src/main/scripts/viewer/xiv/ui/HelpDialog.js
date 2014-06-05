@@ -91,7 +91,7 @@ xiv.ui.HelpDialog.prototype.render = function(opt_parentElement){
 
     this.populateZippy_();
 
-    window.console.log("HERE", this.constructor.CSS.TITLE);
+    //window.console.log("HERE", this.constructor.CSS.TITLE);
     this.addTitleClass(this.constructor.CSS.TITLE);
     this.addCloseSpanClass(this.constructor.CSS.CLOSEBUTTON);
 

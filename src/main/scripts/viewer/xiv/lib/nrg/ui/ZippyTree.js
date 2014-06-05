@@ -326,7 +326,7 @@ nrg.ui.ZippyTree.prototype.getFolderNodes = function(folders) {
  */
 nrg.ui.ZippyTree.prototype.addContents = function(elements, opt_folders) {
     if (!goog.isArray(elements) || goog.dom.isElement(elements)){
-	//window.console.log('add contents 2', elements);
+	//window.console.log('\n\nadd contents 2', elements, opt_folders);
 	this.addContent_(elements, opt_folders);
 	return;
     }
@@ -538,6 +538,9 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     //				    nrg.ui.ZippyTree.folderSorter);
     //node.setExpanded(false);
 
+    //window.console.log("CREATE NODE", title, parent);
+    //this.putFoldersAtEnd_(parent);
+
 
     //
     // For the very first nodes, we have to set the margin top to 0
@@ -698,6 +701,7 @@ nrg.ui.ZippyTree.folderSorter = function(holderElt, insertElt){
     //
     if (!goog.isDefAndNotNull(holderElt.childNodes) || 
 	holderElt.childNodes.length == 0) {
+	window.console.log("FOLDER SORTER", holderElt, insertElt);
 	goog.dom.appendChild(holderElt, insertElt);
 	return;
     }
@@ -780,7 +784,13 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
 	// Make sure folders are always at the end of the 
 	// of the contHold
 	//
-	this.arrangeNodes_(contHold)
+	/**
+	window.console.log("\n\nEND OF BRANCH", 
+			   contHold, 
+			   contHold.parentNode, 
+			   opt_elt);
+			   */
+	this.putFoldersAtEnd_(contHold)
 
 	//
 	// Fade in the end node
@@ -810,29 +820,53 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
  * @param {!Element} contentHolder
  * @private
  */
-nrg.ui.ZippyTree.prototype.arrangeNodes_ = function(contentHolder) {
+nrg.ui.ZippyTree.prototype.putFoldersAtEnd_ = function(contentHolder) {
+    
+    //
+    // NOTE: We have to find both the headers and holder elements.  
+    // Unfortunately, a zippy's contents is a sibling element of the 
+    // zippy, which is why we have to parse for 'holders'
+    //
     var headers = [];
+    var holders = [];
     var holderChildren = goog.dom.getChildren(contentHolder);
     var holderContentsLen = holderChildren.length;
 
+
     //
-    // Get all the holder elements
+    // Get all the holder elements and the conent element
     //
     goog.array.forEach(holderChildren, function(holderChild){
 	if (goog.dom.classlist.contains(
 	    holderChild, nrg.ui.ZippyNode.CSS.HEADER)){
 	    headers.push(holderChild);
+	} 
+
+	//
+	// IMPORTANT!!
+	//
+	// The content element associated with the zippy header is stored
+	// in an unidentified 'div' which is a siblign of the header.  We have
+	// to keep track of this as well.  We identify this element because it
+	// should only have one child node, and that child node has the CONTENT
+	// element associated with the zippy (and zippy header above).
+	//
+	else if (holderChild.childNodes.length == 1){
+	    if (goog.dom.classlist.contains(
+		holderChild.childNodes[0], nrg.ui.ZippyNode.CSS.CONTENT)){
+		holders.push(holderChild);
+	    }
 	}
     })
-
-
-    if (headers.length == holderContentsLen) { return };
    
     //
     // Add all of the holder elements to the bottom
     //
-    goog.array.forEach(headers, function(headerElt){
+    goog.array.forEach(headers, function(headerElt, i){
+	//window.console.log(contentHolder, headerElt, holderContentsLen);
 	goog.dom.insertChildAt(contentHolder, headerElt, holderContentsLen);
+	goog.dom.insertChildAt(contentHolder, holders[i], 
+			       holderContentsLen + 1);
     })
 }
 

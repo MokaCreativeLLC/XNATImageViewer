@@ -255,8 +255,8 @@ gxnat.vis.Scan.prototype.addFiles = function(fileNames) {
 	this.ViewableGroups[0].getViewables()[0].getFiles().length;
 
     //window.console.log(this.ViewableGroups[0].getViewables()[0].getFiles());
-    window.console.log('SCAN FILE LENGTH', 
-      this.ViewableGroups[0].getViewables()[0].getFiles().length);
+    //window.console.log('SCAN FILE LENGTH', 
+      //this.ViewableGroups[0].getViewables()[0].getFiles().length);
 }
 
 

@@ -5,6 +5,9 @@
 // goog
 goog.require('goog.events.EventTarget');
 
+// xiv
+goog.require('xiv.ui.Histogram');
+
 
 
 /**
@@ -49,7 +52,7 @@ function (ViewBox, Renderer, LayoutHandler, Dialogs) {
     this.Dialogs_ = Dialogs;
 
 
-    window.console.log('layout handler', this.LayoutHandler_, LayoutHandler);
+    //window.console.log('layout handler', this.LayoutHandler_, LayoutHandler);
 }
 goog.inherits(xiv.ui.ViewBoxInteractorHandler, goog.events.EventTarget);
 goog.exportSymbol('xiv.ui.ViewBoxInteractorHandler', 
@@ -197,25 +200,6 @@ function(){
  * @public
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.initControllerSync = function() { 
-
-
-    /**
-    this.BrightnessSlider_ = new nrg.ui.Slider();
-    this.BrightnessSlider_.render(this.getElement());
-    this.BrightnessSlider_.getElement().style.zIndex = 50000;
-    this.BrightnessSlider_.setMaximum(5000);
-    this.BrightnessSlider_.setMinimum(2500);
-
-
-    this.ContrastSlider_ = new nrg.ui.Slider();
-    this.ContrastSlider_.render(this.getElement());
-    this.ContrastSlider_.getElement().style.zIndex = 50000;
-    this.ContrastSlider_.getElement().style.top = 'calc(100% - 30px)';
-    this.ContrastSlider_.setMinimum(-500);
-    this.ContrastSlider_.setMaximum(500);
-    */
-
-
     //
     // Do nothing if no renderer
     //
@@ -229,43 +213,6 @@ xiv.ui.ViewBoxInteractorHandler.prototype.initControllerSync = function() {
 	var frameDisplay = planeInteractors.FRAME_DISPLAY;
 	var crosshairs = planeInteractors.CROSSHAIRS;
 	var arrPos = 0;
-
-
-	//
-	// Brightness and contrast sliders
-	//
-	/**
-	if (renderPlaneOr == 'X'){
-
-
-	    this.BrightnessSlider_.setMaximum(volume.windowHigh * 2);
-	    this.BrightnessSlider_.setMinimum(0);
-	    this.BrightnessSlider_.setValue(
-		this.BrightnessSlider_.getMaximum() -
-		volume.windowHigh);
-
-	    this.ContrastSlider_.setValue(volume.windowLow);
-	}
-
-	goog.events.listen(this.BrightnessSlider_, 
-        nrg.ui.Slider.EventType.SLIDE, 
-	function(e){
-	    var vol = renderPlane.getRenderer().getVolume();
-	    window.console.log('bright', vol.windowLow, vol.windowHigh);
-	    vol.windowHigh = e.target.getMaximum() - e.target.getValue();
-	})
-
-
-	goog.events.listen(this.ContrastSlider_, 
-        nrg.ui.Slider.EventType.SLIDE, 
-	function(e){
-	    var vol = renderPlane.getRenderer().getVolume();
-	    window.console.log('ctrst', vol.windowLow, vol.windowHigh);
-	    vol.windowLow = e.target.getValue();
-	})
-	*/
-
-
 
 	//
 	// Set custom params
@@ -293,20 +240,6 @@ xiv.ui.ViewBoxInteractorHandler.prototype.initControllerSync = function() {
 	goog.events.listen(renderPlane.getRenderer(), 
 			   xiv.vis.XtkEngine.EventType.SHIFT_DOWN,
 			   this.onRenderPlaneShiftDown.bind(this));
-
-
-	//
-	// LEFTMOUSE_DOWN interaction
-	//
-	/**
-	goog.events.listen(renderPlane.getRenderer(), 
-			   xiv.vis.XtkEngine.EventType.LEFTMOUSE_DOWN,
-			   this.onRenderPlaneLeftMouseDown_.bind(this));
-	goog.events.listen(renderPlane.getRenderer(), 
-			   xiv.vis.XtkEngine.EventType.LEFTMOUSE_UP,
-			   this.onRenderPlaneLeftMouseDown_.bind(this));
-	*/
-
 
 	//
 	// ZOOM interaction
@@ -340,30 +273,10 @@ xiv.ui.ViewBoxInteractorHandler.prototype.initControllerSync = function() {
 	//
 	goog.events.listen(slider, nrg.ui.Slider.EventType.SLIDE, 
         function(e){
-
-	    /*
-	    var num = e.target.getValue()/e.target.getMaximum()
-	    //renderPlane.getRenderer().getVolume().zColor = 
-	    //[1,1,1];
-	    window.console.log("\n\nHERE:");
-	    window.console.log(renderPlane.getRenderer().getVolume()._max)
-	    window.console.log(renderPlane.getRenderer().
-			       getVolume()._windowLow); 
-	    window.console.log(renderPlane.getRenderer().getVolume().
-			       _windowHigh);
-
-	    
-	    renderPlane.getRenderer().getVolume().
-		windowLow = e.target.getValue() - 100;
-	    window.console.log("TEST ADJUST THIS.BRIGHTNESSSLIDER_");
-	    */
-	    
 	    this.syncVolumeToSlider(e.target, volume);
 	    this.syncCrosshairsToSlider(e.target, volume);
 	    this.syncFrameDisplayToSlider(e.target, volume);
 	}.bind(this))
-
-
 
 	//
 	// Change Slice on Frame Display input
@@ -373,9 +286,24 @@ xiv.ui.ViewBoxInteractorHandler.prototype.initControllerSync = function() {
 		function(e){
 		    this.syncSliderToFrameDisplay(e.target,volume);
 		}.bind(this))
-
-
     }.bind(this))
+}
+
+
+
+/**
+ * @return {xiv.ui.Histogram}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.createHistogram = function(){
+    var histogram = new xiv.ui.Histogram();
+    var count = 0;
+    this.loopInteractorsWithRenderer(
+    function(renderPlane, renderPlaneOr, planeInteractors, volume){
+	if (count == 0) { histogram.setVolume(volume) }
+	count++;
+    })
+    histogram.render(document.body);
+    return histogram;
 }
 
 
@@ -392,6 +320,8 @@ function(slider, volume) {
 	slider.getValue() - 1;
     //volume.modified(true);
 }
+
+
 
 
 /**
@@ -911,12 +841,213 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMenuItemSelected_ = function(e) {
 
 
 
+/**
+ * @type {?Array.<xiv.ui.ctrl.XtkController>}
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.renderControllers_ = null;
+
+
+
+/**
+ * @public
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.updateRenderControllers = function(){
+    if (!goog.isDefAndNotNull(this.renderControllers_)) { return };
+    goog.array.forEach(this.renderControllers_, function(controller){
+	controller.update();
+    })
+}
+
+
+
+/**
+ * @public
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.createRenderControllers = 
+function() {
+    //
+    // Track the controllers
+    //
+    this.renderControllers_ = [];
+
+    //
+    // Create the dialogs
+    //
+    this.Dialogs_.createLevelsDialog();
+    this.Dialogs_.createRenderControlDialog();
+	
+    //-------------------------
+    // NOTE: We now need to separate level controllers (brightness,
+    // contrast, etc.) from the other controllers
+    //-------------------------
+
+    
+    //
+    // Create a new ZippyTree for render controllers
+    //
+    var renderControllerTree = new nrg.ui.ScrollableZippyTree();
+    renderControllerTree.render();
+
+    //
+    // Create a new ZippyTree for level controllers
+    //
+    var levelControllerTree = new nrg.ui.ScrollableZippyTree();
+    levelControllerTree.render();
+
+    //
+    // Identify the controllers we need to separate from the rest.
+    //
+    var levelControllerLabels = [
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MIN, 
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MAX, 
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS.CONTRAST, 
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS.BRIGHTNESS
+    ]
+    var updatableLevelControllerLabels = [
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MIN, 
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MAX 
+    ]
+    var updatableLevelControllers = [];
+
+    //
+    // Add the 2D controllers (no need to separate any of these).
+    //
+    var controllers2D = this.Renderer_.getControllers2D();
+    if (goog.isDefAndNotNull(controllers2D) && (controllers2D.length > 0)) {
+	goog.array.forEach(controllers2D, function(ctrl){
+	    //
+	    // store controller
+	    //
+	    this.renderControllers_.push(ctrl);
+
+	    //
+	    // Add the '2D' descriptor to any sub-folders.
+	    //
+	    var folders = ctrl.getFolders();
+	    folders.push('2D');
+
+	    //
+	    // Add other controllers to render Controller zippy
+	    //
+	    renderControllerTree.addContents(ctrl.getElement(), folders);
+	}.bind(this));
+    }
+
+    //
+    // Add the 3D controllers, separating the level controlers from the others.
+    //
+    var controllers3D = this.Renderer_.getControllers3D();
+    if (goog.isDefAndNotNull(controllers3D) && (controllers3D.length > 0)) {
+	goog.array.forEach(controllers3D, function(ctrl){
+	    //
+	    // store controller
+	    //
+	    this.renderControllers_.push(ctrl);
+
+	    //
+	    // Separate the level controllers, add to that zippy
+	    //
+	    if (goog.array.contains(levelControllerLabels,
+		ctrl.getLabel().innerHTML)){
+		levelControllerTree.addContents(ctrl.getElement());
+
+		if (goog.array.contains(updatableLevelControllerLabels,
+					ctrl.getLabel().innerHTML)){
+		    updatableLevelControllers.push(ctrl);
+		}
+		return;
+	    } 
+
+	    //
+	    // Otherwise add the '3D' descriptor to any sub-folders.
+	    //
+	    var folders = ctrl.getFolders();
+	    if (folders.length > 1){
+		folders.push('3D');
+	    }
+
+	    //
+	    // Add other controllers to render Controller zippy
+	    //
+	    renderControllerTree.addContents(ctrl.getElement(), folders);
+	}.bind(this));
+    }
+
+    //
+    // Set the tree style and add to dialog
+    //
+    renderControllerTreeElt = renderControllerTree.getElement();
+    renderControllerTreeElt.style.top = '30px';
+    renderControllerTreeElt.style.width = 'calc(100% - 20px)';
+    renderControllerTreeElt.style.height = 'calc(100% - 50px)';
+    this.Dialogs_.getDialogs()
+    [xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
+	getElement().appendChild(renderControllerTreeElt);
+    renderControllerTree.expandAll();
+
+    //
+    // Set the tree style and add to dialog
+    //
+    levelControllerTreeElt = levelControllerTree.getElement();
+    levelControllerTreeElt.style.top = '255px';
+    levelControllerTreeElt.style.width = 'calc(100% - 20px)';
+    levelControllerTreeElt.style.height = 'calc(100% - 50px)';
+    this.Dialogs_.getDialogs()[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.LEVELS].
+	getElement().appendChild(levelControllerTreeElt);
+
+
+
+    //
+    // We have to re-sync the level controllers to the volume properties, 
+    // since the volume is now rendered....
+    //
+    goog.array.forEach(updatableLevelControllers, function(levelController){
+	levelController.getComponent().setMaximum(
+	    levelController.getXObj().windowHigh);
+	levelController.getComponent().setMinimum(
+	    levelController.getXObj().windowLow);
+	levelController.update();
+    })
+
+
+
+    //
+    // Create histogram
+    //
+    var hist = this.createHistogram();
+   
+    //
+    // Update the histogram when the sliders move
+    //
+    goog.array.forEach(updatableLevelControllers, function(levelController){
+	goog.events.listen(levelController.getComponent(), 
+			   nrg.ui.Slider.EventType.SLIDE, function(e){
+			       hist.drawLine();
+			       hist.updateMaxMin();
+			   })
+    })
+
+    //
+    // add the histogram to the LEVELS dialog
+    //
+    this.Dialogs_.getDialogs()[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.LEVELS].
+	getElement().appendChild(hist.getElement());
+}
+
+
+
+
 
 /**
  * @inheritDoc
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
     goog.base(this, 'dispose');
+
+    if (goog.isDefAndNotNull(this.renderControllers_)){
+	goog.array.clear(this.renderControllers_);
+    }
     delete this.ViewBox_;
     delete this.Renderer_;
     delete this.LayoutHandler_;

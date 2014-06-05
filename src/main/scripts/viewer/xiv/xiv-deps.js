@@ -179,7 +179,7 @@ goog.addDependency('../../../../ui/layouts/LayoutHandler.js',
     'nrg.array',
     'nrg.style',
     'xiv.ui.layouts.Layout',
-    'xiv.ui.layouts.Conventional'
+    'xiv.ui.layouts.Conventional',
 ]);
 
 
@@ -302,6 +302,7 @@ goog.addDependency('../../../../ui/ViewBoxDialogs.js',
 goog.addDependency('../../../../ui/ViewBoxInteractorHandler.js', 
 ['xiv.ui.ViewBoxInteractorHandler'], [
     'goog.events.EventTarget',
+    'xiv.ui.Histogram'
 ]);
 
 
@@ -348,6 +349,11 @@ goog.addDependency('../../../../ui/ViewBoxHandler.js',
 
 goog.addDependency('../../../../ui/ProgressBarPanel.js', 
 ['xiv.ui.ProgressBarPanel'], [
+]);
+
+
+goog.addDependency('../../../../ui/Histogram.js', 
+['xiv.ui.Histogram'], [
 ]);
 
 

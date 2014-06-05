@@ -72,7 +72,6 @@ xiv.ui.ctrl.MasterController3D.CONTROLLERS = {
  */
 xiv.ui.ctrl.MasterController3D.prototype.add = function(xObj) {
 
-
     this.initMin_ = 0;
     this.initMax_ = 1000;
 
@@ -102,12 +101,6 @@ xiv.ui.ctrl.MasterController3D.prototype.add = function(xObj) {
      * @private
      */
     this.brightness_ = this.add_brightness(xObj);
-
-
-
-
-
-
 
 
     /**
@@ -144,7 +137,8 @@ xiv.ui.ctrl.MasterController3D.prototype.add_levelMin = function(xObj) {
 	function(e){
 	    xObj.windowLow = e.value;
 	}.bind(this));
-    
+    ctrl.setXObj(xObj);
+
     // set folder
     ctrl.setFolders([
 	xiv.ui.ctrl.XtkController.getObjectCategory(xObj)]);
@@ -182,7 +176,7 @@ xiv.ui.ctrl.MasterController3D.prototype.add_levelMax = function(xObj) {
     //
     var ctrl = this.createController( xiv.ui.ctrl.SliderController, 
 	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MAX);
-    
+    ctrl.setXObj(xObj);
     //
     // Listen for changes
     //
@@ -225,7 +219,7 @@ xiv.ui.ctrl.MasterController3D.prototype.add_brightness = function(xObj) {
     //
     var ctrl = this.createController( xiv.ui.ctrl.SliderController, 
 	xiv.ui.ctrl.MasterController3D.CONTROLLERS.BRIGHTNESS);
-    
+    ctrl.setXObj(xObj);
     //
     // Listen for changes
     //
@@ -234,15 +228,6 @@ xiv.ui.ctrl.MasterController3D.prototype.add_brightness = function(xObj) {
 	function(e){	    
 	    var rate = (e.value - e.previous) / (e.maximum - e.minimum);
 	    var currDifference = xObj.windowHigh - xObj.windowLow;
-
-	    /*
-	    window.console.log("\n\nBRIGHTNESS!");
-	    window.console.log('rate:', rate);
-	    window.console.log('low:', xObj.windowLow, 
-			       'high:', xObj.windowHigh, 
-			       'diff:', xObj.windowHigh - xObj.windowLow);
-	    window.console.log('Subtractor:', currDifference * rate)
-	    */
 
 	    xObj.windowLow  = 
 		Math.round(parseInt(xObj.windowLow) - (currDifference * rate));
@@ -253,12 +238,6 @@ xiv.ui.ctrl.MasterController3D.prototype.add_brightness = function(xObj) {
 	    this.levelMin_.getComponent().setValue(xObj.windowLow);
 	    this.levelMax_.getComponent().setValue(xObj.windowHigh);
 
-	    /**
-	    window.console.log('low:', xObj.windowLow, 
-			       'high:', xObj.windowHigh, 
-			       'diff:', xObj.windowHigh - xObj.windowLow);
-	    */
-	    
 
 	}.bind(this))
 
@@ -296,7 +275,8 @@ xiv.ui.ctrl.MasterController3D.prototype.add_contrast = function(xObj) {
     //
     var ctrl = this.createController( xiv.ui.ctrl.SliderController, 
 	xiv.ui.ctrl.MasterController3D.CONTROLLERS.CONTRAST);
-    
+    ctrl.setXObj(xObj);
+
     //
     // Listen for changes
     //
@@ -306,31 +286,13 @@ xiv.ui.ctrl.MasterController3D.prototype.add_contrast = function(xObj) {
 	    var rate = (e.value - e.previous) / (e.maximum - e.minimum);
 	    var currDifference = parseInt(xObj.windowHigh) - 
 		parseInt(xObj.windowLow);
-
-	    /**
-	    window.console.log("\n\nCONTRAST!");
-	    window.console.log('rate:', rate, xObj.max, xObj.min);
-	    window.console.log('low:', xObj.windowLow, 
-			       'high:', xObj.windowHigh, 
-			       'diff:', currDifference);
-	    window.console.log('Subtractor:', currDifference * rate)
-	    */
-
 	    var newLow = parseInt(xObj.windowLow) + (currDifference * rate);
 	    var newHigh = parseInt(xObj.windowHigh) - (currDifference * rate);
 	    xObj.windowLow = Math.round(newLow);
 	    xObj.windowHigh = Math.round(newHigh);
-;
 	    
 	    this.levelMin_.getComponent().setValue(xObj.windowLow);
 	    this.levelMax_.getComponent().setValue(xObj.windowHigh);
-
-	    /**
-	    window.console.log("newLow:", newLow, "newHigh:", newHigh);
-	    window.console.log('low:', xObj.windowLow, 
-			       'high:', xObj.windowHigh, 
-			       'diff:', currDifference);
-	     */
 
 	}.bind(this))
 

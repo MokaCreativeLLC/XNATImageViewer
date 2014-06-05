@@ -122,7 +122,7 @@ function(opt_eltMouseover) {
  * @public
  */
 nrg.ui.Overlay.prototype.addTitleClass = function(eltClass) {
-    window.console.log('TITLE', this.titleElt_);
+    //window.console.log('TITLE', this.titleElt_);
     goog.dom.classes.add(this.titleElt_, eltClass);
 }
 

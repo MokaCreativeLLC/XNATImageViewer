@@ -122,15 +122,6 @@ xiv.ui.ViewBox.ID_PREFIX =  'xiv.ui.ViewBox';
 
 
 
-
-/**
- * @type {?Object.<string, Element>}
- * @private
- */
-xiv.ui.ViewBox.prototype.toggleButtons_ = null;
-
-
-
 /**
  * @enum {string}
  * @public
@@ -236,6 +227,13 @@ xiv.ui.ViewBox.prototype.doNotHide_;
  */
 xiv.ui.ViewBox.prototype.loadState_ = 'empty';
 
+
+
+/**
+ * @type {?Object.<string, Element>}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.toggleButtons_ = null;
 
 
 
@@ -473,113 +471,6 @@ xiv.ui.ViewBox.ControllersSet = function(controller, folders){
 
 
 
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.createRenderControllers_ = function() {
-    //
-    // Create the dialogs
-    //
-    this.Dialogs_.createLevelsDialog();
-    this.Dialogs_.createRenderControlDialog();
-	
-    //-------------------------
-    // NOTE: We now need to separate level controllers (brightness,
-    // contrast, etc.) from the other controllers
-    //-------------------------
-
-    //
-    // Create a new ZippyTree for render controllers
-    //
-    var renderControllers = new nrg.ui.ScrollableZippyTree();
-    renderControllers.render();
-
-    //
-    // Create a new ZippyTree for level controllers
-    //
-    var levelControllers = new nrg.ui.ScrollableZippyTree();
-    levelControllers.render();
-
-    //
-    // Identify the controllers we need to separate from the rest.
-    //
-    var levelControllerLabels = [
-	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MIN, 
-	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MAX, 
-	xiv.ui.ctrl.MasterController3D.CONTROLLERS.CONTRAST, 
-	xiv.ui.ctrl.MasterController3D.CONTROLLERS.BRIGHTNESS
-    ]
-
-    //
-    // Add the 2D controllers (no need to separate any of these).
-    //
-    var controllers2D = this.Renderer_.getControllers2D();
-    if (goog.isDefAndNotNull(controllers2D) && (controllers2D.length > 0)) {
-	goog.array.forEach(controllers2D, function(ctrl){
-	    //
-	    // Add the '2D' descriptor to any sub-folders.
-	    //
-	    var folders = ctrl.getFolders();
-	    folders.push('2D');
-
-	    //
-	    // Add other controllers to render Controller zippy
-	    //
-	    renderControllers.addContents(ctrl.getElement(), folders);
-	}.bind(this));
-    }
-
-    //
-    // Add the 3D controllers, separating the level controlers from the others.
-    //
-    var controllers3D = this.Renderer_.getControllers3D();
-    if (goog.isDefAndNotNull(controllers3D) && (controllers3D.length > 0)) {
-	goog.array.forEach(controllers3D, function(ctrl){
-
-	    //
-	    // Separate the level controllers, add to that zippy
-	    //
-	    if (goog.array.contains(levelControllerLabels,
-		ctrl.getLabel().innerHTML)){
-		levelControllers.addContents(ctrl.getElement());
-		return
-	    } 
-
-	    //
-	    // Otherwise add the '3D' descriptor to any sub-folders.
-	    //
-	    var folders = ctrl.getFolders();
-	    if (folders.length > 1){
-		folders.push('3D');
-	    }
-
-	    //
-	    // Add other controllers to render Controller zippy
-	    //
-	    renderControllers.addContents(ctrl.getElement(), folders);
-	}.bind(this));
-    }
-
-    renderControllersElt = renderControllers.getElement();
-    renderControllersElt.style.top = '30px';
-    renderControllersElt.style.width = 'calc(100% - 20px)';
-    renderControllersElt.style.height = 'calc(100% - 50px)';
-    this.Dialogs_.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
-	getElement().appendChild(renderControllersElt);
-
-
-    levelControllersElt = levelControllers.getElement();
-    levelControllersElt.style.top = '30px';
-    levelControllersElt.style.width = 'calc(100% - 20px)';
-    levelControllersElt.style.height = 'calc(100% - 50px)';
-    this.Dialogs_.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.LEVELS].
-	getElement().appendChild(levelControllersElt);
-
-}
-
-
-
 /**
  * Introduces a delay mechanism so we're not presented 
  * with awkward progress bar issues.
@@ -619,12 +510,6 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     this.toggleWaitForRenderErrors_(false);
 
-    //
-    // Controllers
-    //
-    this.createRenderControllers_();
-
-
     //window.console.log("HIDE PROG!");
 
     
@@ -640,6 +525,12 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     if (goog.isDefAndNotNull(this.ViewableTrees_[0].getOrientation())){
 	this.setLayout(this.ViewableTrees_[0].getOrientation());
     }
+
+    //
+    // Controllers
+    //
+    this.InteractorHandler_.createRenderControllers();
+
 
     //
     // Hide progress bar
@@ -687,7 +578,6 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 		// Run resize callback to be safe...
 		//
 		this.onLayoutResize_();
-
 	    }.bind(this));
     }.bind(this));
 }
@@ -1244,6 +1134,14 @@ xiv.ui.ViewBox.prototype.initProgressBarPanel_ = function(){
 xiv.ui.ViewBox.prototype.initDialogs_ = function(){
     this.Dialogs_ = new xiv.ui.ViewBoxDialogs(this);
     this.Dialogs_.render();
+
+    //
+    // Update controllers when we open a dialog
+    //
+    goog.events.listen(this.Dialogs_, 
+	xiv.ui.ViewBoxDialogs.EventType.DIALOG_OPENED, function(e){
+	    this.InteractorHandler_.updateRenderControllers();
+	}.bind(this))
 }
 
 

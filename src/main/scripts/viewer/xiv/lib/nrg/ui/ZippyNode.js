@@ -58,7 +58,8 @@ function (title, parentElement, opt_expanded, opt_insertMethod) {
 	opt_insertMethod(parentElement, this.header_);
     }
     else {
-	parentElement.appendChild(this.header_); // IMPORTANT!!!!
+	goog.dom.appendChild(parentElement, this.header_);
+	//rentElement.appendChild(this.header_); // IMPORTANT!!!!
     }
 
     /**

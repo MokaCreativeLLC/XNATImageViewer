@@ -51,7 +51,8 @@ goog.exportSymbol('xiv.ui.ViewBoxDialogs', xiv.ui.ViewBoxDialogs);
  */
 xiv.ui.ViewBoxDialogs.EventType = {
     //THUMBNAIL_PRELOAD: goog.events.getUniqueId('thumbnail_preload'),
-
+    DIALOG_OPENED: goog.events.getUniqueId('dialog-opened'),
+    DIALOG_CLOSED: goog.events.getUniqueId('dialog-closed'),
 }
 
 
@@ -156,9 +157,20 @@ function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
 	dialogKey,
 	title, 
 	function(button){
-	    this.Dialogs_[dialogKey].setVisible(
-	        (button.getAttribute('checked') == 'true'));
+
+	    var opened = button.getAttribute('checked') == 'true';
+	    this.Dialogs_[dialogKey].setVisible(opened);
 	    this.Dialogs_[dialogKey].center();
+	    
+	    var eventKey = opened ? 
+		xiv.ui.ViewBoxDialogs.EventType.DIALOG_OPENED :
+		xiv.ui.ViewBoxDialogs.EventType.DIALOG_CLOSED
+
+	    this.dispatchEvent({
+		type: eventKey,
+		dialog: this.Dialogs_[dialogKey]
+	    })
+
 	}.bind(this), 
 	toggleButtonSrc);
 
@@ -342,7 +354,9 @@ xiv.ui.ViewBoxDialogs.prototype.showInUseDialog = function(){
  */
 xiv.ui.ViewBoxDialogs.prototype.toggleVisible = function(tag, opt_visible){
     var opacity = (opt_visible === false) ? 0 : 1;
-    nrg.fx.fadeTo(this.Dialogs_[tag].getElement(), 200, opacity);
+    if (goog.isDefAndNotNull(this.Dialogs_[tag].getElement())){
+	nrg.fx.fadeTo(this.Dialogs_[tag].getElement(), 200, opacity);
+    }
 }
 
 
@@ -393,9 +407,20 @@ xiv.ui.ViewBoxDialogs.prototype.createHelpDialog_ = function(){
 	    xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP,
 	   'Help', 
             function(button){
-	      this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].setVisible(
-	         (button.getAttribute('checked') == 'true'));
-	      this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].center();
+		var opened = button.getAttribute('checked') == 'true';
+		this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].
+		    setVisible(opened);
+		this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].center();
+
+
+		var eventKey = opened ? 
+		    xiv.ui.ViewBoxDialogs.EventType.DIALOG_OPENED :
+		    xiv.ui.ViewBoxDialogs.EventType.DIALOG_CLOSED
+
+		this.dispatchEvent({
+		    type: eventKey,
+		    dialog: this.Dialogs_[dialogKey]
+		})
             }.bind(this), 
             serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Help.png'
        );
@@ -499,15 +524,22 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog = function(){
 	    xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO,
 	    'Info. Display', 
 	    function(button){
+
+		var opened = button.getAttribute('checked') == 'true';
 		this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].
-		    setVisible(
-		    (button.getAttribute('checked') == 'true'));
+		    setVisible(opened);
 		this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO]
 		    .moveToCorner
 		('left', 'top');
-		window.console.log(
-		    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].
-			getElement());
+
+		var eventKey = opened ? 
+		    xiv.ui.ViewBoxDialogs.EventType.DIALOG_OPENED :
+		    xiv.ui.ViewBoxDialogs.EventType.DIALOG_CLOSED
+
+		this.dispatchEvent({
+		    type: eventKey,
+		    dialog: this.Dialogs_[dialogKey]
+		})
 		
 	    }.bind(this), serverRoot + 
 		'/images/viewer/xiv/ui/ViewBox/Toggle-Info.png');

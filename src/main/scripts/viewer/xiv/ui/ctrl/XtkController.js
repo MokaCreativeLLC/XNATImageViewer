@@ -197,6 +197,14 @@ xiv.ui.ctrl.XtkController.prototype.initialized_ = false;
 
 
 /**
+ * @private
+ * @type {X.object}
+ */
+xiv.ui.ctrl.XtkController.prototype.xObj_;
+
+
+
+/**
  * @inheritDoc
  */
 xiv.ui.ctrl.XtkController.prototype.render = function(opt_parentElement) {
@@ -251,6 +259,27 @@ xiv.ui.ctrl.XtkController.prototype.setFolders = function(folders) {
 xiv.ui.ctrl.XtkController.prototype.getFolders = function() {
     return this.folders_;
 }
+
+
+
+/**
+ * @param {!X.object} obj
+ * @protected
+ */
+xiv.ui.ctrl.XtkController.prototype.setXObj = function(xObj) {
+    this.xObj_ = xObj;
+}
+
+
+
+/**
+ * @return {X.object}
+ * @public
+ */
+xiv.ui.ctrl.XtkController.prototype.getXObj = function() {
+    return this.xObj_;
+}
+
 
 
 /**
@@ -504,8 +533,10 @@ xiv.ui.ctrl.XtkController.prototype.add_visible = function(xObj) {
 xiv.ui.ctrl.XtkController.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
+    
     this[xiv.ui.ctrl.XtkController.OBJ_KEY] = null;
     delete this.initialized_;
+    delete this.xObj_;
 
     //
     //  subControllers
