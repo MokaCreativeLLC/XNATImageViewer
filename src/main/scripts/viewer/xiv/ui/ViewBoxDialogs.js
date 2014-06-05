@@ -126,87 +126,119 @@ xiv.ui.ViewBoxDialogs.prototype.getDialog = function(dialogKey){
 
 
 
-
-
 /**
+ * @param {!string} dialogKey
+ * @param {!string} dialogClass
+ * @param {!string} toggleButtonClass
+ * @param {!string} toggleButtonSrc
+ * @param {string=} opt_title
  * @param {boolean=} opt_isOn
+ * @param {boolean=} opt_setModal
+ * @param {string=} opt_buttonSet
  * @public
  */
-xiv.ui.ViewBoxDialogs.prototype.createRenderControlDialog = 
-function(opt_isOn){
+xiv.ui.ViewBoxDialogs.prototype.createGenericDialog = 
+function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
+	 opt_title, opt_isOn, opt_setModal, opt_buttonSet){
+
+    //
+    // Set the title
+    //
+    var title = goog.isDefAndNotNull(opt_title) ? opt_title : '';
+
 
     //
     // Create the toggle button
     //
     var toggle = this.ViewBox_.createToggleButton(
 	'LEFT', 
-	xiv.ui.ViewBoxDialogs.CSS.RENDERCONTROLMENU_TOGGLE, 
-	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU,
-	'2D Render Options', 
+	toggleButtonClass, 
+	dialogKey,
+	title, 
 	function(button){
-	    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
-		setVisible(
+	    this.Dialogs_[dialogKey].setVisible(
 	        (button.getAttribute('checked') == 'true'));
-	    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
-		center();
+	    this.Dialogs_[dialogKey].center();
 	}.bind(this), 
-	serverRoot + 
-	    '/images/viewer/xiv/ui/ViewBox/Toggle-RenderControlMenu.png');
+	toggleButtonSrc);
 
 
 
     //
     // Clear existing
     //
-    if (goog.isDefAndNotNull(this.Dialogs_[
-	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU])){
-	this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
-	    dispose();
+    if (goog.isDefAndNotNull(this.Dialogs_[dialogKey])){
+	this.Dialogs_[dialogKey].dispose();
     }
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU] = 
-	new nrg.ui.Overlay();
+    this.Dialogs_[dialogKey] = new nrg.ui.Overlay();
 
-    
     //
-    // Add text and render
+    // Set the dialog modal
     //
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
-	setModal(false);
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
-	setButtonSet(null);
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
-	render(this.ViewBox_.getViewFrame());
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].center();
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
-	setTitle('Render Controls');
+    this.Dialogs_[dialogKey].setModal(
+	goog.isDefAndNotNull(opt_setModal) ? opt_setModal : false);
+
+    //
+    // Set the button set
+    //
+    this.Dialogs_[dialogKey].setButtonSet(
+	goog.isDefAndNotNull(opt_buttonSet) ? opt_buttonSet : null);
+
+    //
+    // Render the dialog
+    //
+    this.Dialogs_[dialogKey].render(this.ViewBox_.getViewFrame());
+
+    //
+    // Center the dialog
+    //
+    this.Dialogs_[dialogKey].center();
+
+    //
+    // Set the dialog title
+    //
+    this.Dialogs_[dialogKey].setTitle(title);
 
     //
     // Add classes
     //
-    goog.dom.classes.add(
-	this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
-	    getElement(), 'xiv-ui-viewboxdialogs-rendercontroldialog');
-
+    goog.dom.classes.add(this.Dialogs_[dialogKey].getElement(), dialogClass);
 
     //
     // Grey out button on close
     //
-    goog.events.listen(this.Dialogs_[
-	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU], 
-		      nrg.ui.Overlay.EventType.CLOSE_BUTTON_CLICKED, function(){
-
-			  window.console.log("CLIOSED", toggle);
-			 this.ViewBox_.onToggleButtonClicked(toggle);
-		      }.bind(this))
-
+    goog.events.listen(this.Dialogs_[dialogKey], 
+	nrg.ui.Overlay.EventType.CLOSE_BUTTON_CLICKED, 
+	function(){
+	    this.ViewBox_.onToggleButtonClicked(toggle);
+	}.bind(this))
+    
     //
     // Set off
     //
     if (opt_isOn === false){
 	goog.testing.events.fireClickEvent(
-	    this.ViewBox_.getToggleButtons()[
-		xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU]);
+	    this.ViewBox_.getToggleButtons()[dialogKey]);
     }
+}
+
+
+
+
+/**
+ * @public
+ */
+xiv.ui.ViewBoxDialogs.prototype.createRenderControlDialog = function(){
+    this.createGenericDialog(
+	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU,
+	'xiv-ui-viewboxdialogs-rendercontrol-dialog',
+	xiv.ui.ViewBoxDialogs.CSS.RENDERCONTROLMENU_TOGGLE,
+	serverRoot + 
+	    '/images/viewer/xiv/ui/ViewBox/Toggle-RenderControlMenu.png',
+	'Misc. Render Controls',
+	false,
+	false
+    );
 }
 
 
@@ -214,59 +246,17 @@ function(opt_isOn){
 /**
  * @public
  */
-xiv.ui.ViewBoxDialogs.prototype.createLevelsDialog = 
-function(opt_isOn){
-    
-    /**
-    //
-    // Clear existing
-    //
-    if (goog.isDefAndNotNull(this.infoOverlay_)){
-	this.infoOverlay_.dispose();
-    }
-    this.infoOverlay_ = new nrg.ui.Overlay();
-    goog.dom.classes.add(this.infoOverlay_.getElement(), 
-			 xiv.ui.ViewBox.CSS.INFOOVERLAY);
-    
-    //
-    // Add text and render
-    //
-    this.infoOverlay_.addText(infoText);
-    this.infoOverlay_.render(this.viewFrameElt_);
-
-    //
-    // Classes
-    //
-    goog.dom.classes.add(this.infoOverlay_.getOverlay(), 
-			 xiv.ui.ViewBoxDialogs.CSS.INFOOVERLAY_OVERLAY);
-    goog.dom.classes.add(this.infoOverlay_.getTextElements()[0], 
-			 xiv.ui.ViewBoxDialogs.CSS.INFOOVERLAY_TEXT);
-    */
-    
-    //
-    // Toggle fades
-    // 
-    this.ViewBox_.createToggleButton(
-	'LEFT', 
-	xiv.ui.ViewBoxDialogs.CSS.LEVELS_TOGGLE,
+xiv.ui.ViewBoxDialogs.prototype.createLevelsDialog = function(){
+    this.createGenericDialog(
 	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.LEVELS,
-	'Brightness and Contrast', 
-	function(e){
-	   /**
-	   nrg.fx.fadeTo(this.infoOverlay_.getElement(), 
-			 200,  (e.target.getAttribute('checked') == 'true') ? 
-			 1: 0);
-			 */
-	}.bind(this), 
+	'xiv-ui-viewboxdialogs-levels-dialog',
+	xiv.ui.ViewBoxDialogs.CSS.LEVELS_TOGGLE,
 	serverRoot + 
-	    '/images/viewer/xiv/ui/ViewBox/Toggle-BrightnessContrast.png');
-
-
-    if (opt_isOn === false){
-	goog.testing.events.fireClickEvent(
-	    this.ViewBox_.getToggleButtons()[
-		xiv.ui.ViewBoxDialogs.DIALOG_KEYS.LEVELS]);
-    }
+	    '/images/viewer/xiv/ui/ViewBox/Toggle-BrightnessContrast.png',
+	'Brightness / Contrast',
+	false,
+	false
+    );
 }
 
 

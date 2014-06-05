@@ -189,6 +189,14 @@ xiv.ui.ctrl.XtkController.prototype.folders_;
 
 
 /**
+ * @private
+ * @type {!boolean}
+ */
+xiv.ui.ctrl.XtkController.prototype.initialized_ = false;
+
+
+
+/**
  * @inheritDoc
  */
 xiv.ui.ctrl.XtkController.prototype.render = function(opt_parentElement) {
@@ -300,6 +308,26 @@ xiv.ui.ctrl.XtkController.prototype.getMasterControllers = function() {
 
 
 /**
+ * @return {!boolean}
+ * @public
+ */
+xiv.ui.ctrl.XtkController.prototype.isInitialized = function() {
+    return this.initialized_;
+}
+
+
+
+/**
+ * @param {!boolean} init
+ * @public
+ */
+xiv.ui.ctrl.XtkController.prototype.setInitialized = function(init) {
+    this.initialized_ = init;
+}
+
+
+
+/**
  * @return {!Array.<xiv.ui.ctrl.XtkController>}
  * @public
  */
@@ -328,27 +356,31 @@ xiv.ui.ctrl.XtkController.prototype.dispatchComponentEvent = goog.nullFunction;
 /**
  * @param {!Object} _XtkControllerSubClass The subclass of the XtkController.
  * @param {!string} label The controller label.
- * @param {!Function} changeCallback The event callback applied to the 
+ * @param {Function=} opt_changeCallback The event callback applied to the 
  *   controller.
  * @return {!xiv.ui.ctrl.XtkController}
  * @protected
  */
 xiv.ui.ctrl.XtkController.prototype.createController = 
-function(_XtkControllerSubClass, label, changeCallback) {
+function(_XtkControllerSubClass, label, opt_changeCallback) {
 
     // create
     var controller = new _XtkControllerSubClass();
     controller.render();
 
-    // set events
-    goog.events.listen(controller, 
-		       xiv.ui.ctrl.XtkController.EventType.CHANGE, 
-		       changeCallback)
     // set label
     controller.setLabel(label);
 
     // add to DOM - TEMPORARY
     goog.dom.append(this.getElement(), controller.getElement());
+
+    // set events
+    if (goog.isDefAndNotNull(opt_changeCallback)){
+	goog.events.listen(controller, 
+			   xiv.ui.ctrl.XtkController.EventType.CHANGE, 
+			   opt_changeCallback)
+    }
+
 
     return controller;
 }
@@ -361,7 +393,22 @@ function(_XtkControllerSubClass, label, changeCallback) {
  * @public
  */
 xiv.ui.ctrl.XtkController.prototype.update = function() {
-    // does nothing unless inherited.
+    if (this.component_.updateStyle){
+	window.console.log("UPDATE STYLE", this.component_);
+	this.component_.updateStyle();
+    }
+}
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.ui.ctrl.XtkController.prototype.updateStyle = function() {
+    if (this.component_.updateStyle){
+	window.console.log("UPDATE STYLE", this.component_);
+	this.component_.updateStyle();
+    }
 }
 
 
@@ -458,6 +505,7 @@ xiv.ui.ctrl.XtkController.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
     this[xiv.ui.ctrl.XtkController.OBJ_KEY] = null;
+    delete this.initialized_;
 
     //
     //  subControllers

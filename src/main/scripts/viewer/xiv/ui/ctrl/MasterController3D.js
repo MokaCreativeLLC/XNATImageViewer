@@ -51,6 +51,20 @@ xiv.ui.ctrl.MasterController3D.ID_PREFIX =  'xiv.ui.ctrl.MasterController3D';
 xiv.ui.ctrl.MasterController3D.CSS_SUFFIX = {};
 
 
+/**
+ * @enum {string}
+ * @dict
+ */
+xiv.ui.ctrl.MasterController3D.CONTROLLERS = {
+    BRIGHTNESS: 'Brightness',
+    CONTRAST: 'Contrast',
+    LEVEL_MIN: 'Level Min.',
+    LEVEL_MAX: 'Level Max.',
+    VISIBLE: 'Visible',
+    OPACITY: 'Opacity',
+};
+
+
 
 /**
  * @param {!X.Object} xObj
@@ -58,12 +72,50 @@ xiv.ui.ctrl.MasterController3D.CSS_SUFFIX = {};
  */
 xiv.ui.ctrl.MasterController3D.prototype.add = function(xObj) {
 
+
+    this.initMin_ = 0;
+    this.initMax_ = 1000;
+
+
     // Generic controls -- per object
     this.xObjs_.push(xObj);
     this.add_visible(xObj);
     this.add_opacity(xObj);
-    this.add_windowHigh(xObj);
-    this.add_windowLow(xObj);
+
+
+    /**
+     * @type {xiv.ui.ctrl.XtkController}
+     * @private
+     */
+    this.levelMin_ = this.add_levelMin(xObj);
+
+
+    /**
+     * @type {xiv.ui.ctrl.XtkController}
+     * @private
+     */
+    this.levelMax_ = this.add_levelMax(xObj);
+
+
+    /**
+     * @type {xiv.ui.ctrl.XtkController}
+     * @private
+     */
+    this.brightness_ = this.add_brightness(xObj);
+
+
+
+
+
+
+
+
+    /**
+     * @type {xiv.ui.ctrl.XtkController}
+     * @private
+     */
+    this.contrast_ = this.add_contrast(xObj);
+
 
     // Generic master controls -- all objects
     if (this.xObjs_.length == 1){
@@ -76,59 +128,231 @@ xiv.ui.ctrl.MasterController3D.prototype.add = function(xObj) {
 
 
 
+
+
+
 /**
  * @param {!X.Object} xObj
+ * @return {xiv.ui.ctrl.XtkController}
  * @protected
  */
-xiv.ui.ctrl.MasterController3D.prototype.add_windowLow = function(xObj) {
+xiv.ui.ctrl.MasterController3D.prototype.add_levelMin = function(xObj) {
     // create
-    var windowLow = this.createController( 
-	xiv.ui.ctrl.SliderController, 'Window Low', 
+    var ctrl = this.createController( 
+	xiv.ui.ctrl.SliderController, 
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MIN, 
 	function(e){
 	    xObj.windowLow = e.value;
-	});
+	}.bind(this));
     
     // set folder
-    windowLow.setFolders([
+    ctrl.setFolders([
 	xiv.ui.ctrl.XtkController.getObjectCategory(xObj)]);
 
     // store
-    //window.console.log("***********", windowLow);
-    this.masterControllers.push(windowLow);
+    //window.console.log("***********", controller);
+    this.masterControllers.push(ctrl);
 
     // set defaults
-    windowLow.getComponent().setMaximum(5000);
-    windowLow.getComponent().setValue(xObj.windowLow);
+    ctrl.getComponent().setMaximum(1000);
+    ctrl.getComponent().setMinimum(0);
+
+
+    ctrl.getComponent().setValue(0);
+    ctrl.getComponent().setStep(1);
+    ctrl.setValueDecimals(0);
+    ctrl.update();
+
+
+    return ctrl;
 }
+
 
 
 
 /**
  * @param {!X.Object} xObj
+ * @return {xiv.ui.ctrl.XtkController}
  * @protected
  */
-xiv.ui.ctrl.MasterController3D.prototype.add_windowHigh = function(xObj) {
-    // create
-    var windowHigh = this.createController( 
-	xiv.ui.ctrl.SliderController, 'Window High', 
+xiv.ui.ctrl.MasterController3D.prototype.add_levelMax = function(xObj) {
+
+    //
+    // Create
+    //
+    var ctrl = this.createController( xiv.ui.ctrl.SliderController, 
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MAX);
+    
+    //
+    // Listen for changes
+    //
+    goog.events.listen(ctrl, 
+	xiv.ui.ctrl.XtkController.EventType.CHANGE, 
 	function(e){
 	    xObj.windowHigh = e.value;
-	});
-    
+	}.bind(this))
+
+
     // set folder
-    windowHigh.setFolders([
+    ctrl.setFolders([
 	xiv.ui.ctrl.XtkController.getObjectCategory(xObj)]);
 
     // store
-    //window.console.log("***********", windowHigh);
-    this.masterControllers.push(windowHigh);
+    this.masterControllers.push(ctrl);
 
-    // set defaults
-    windowHigh.getComponent().setMaximum(5000);
-    windowHigh.getComponent().setValue(xObj.windowHigh);
+
+    ctrl.getComponent().setMaximum(1000);
+    ctrl.getComponent().setMinimum(0);
+    ctrl.getComponent().setValue(1000);
+    ctrl.getComponent().setStep(1);
+    ctrl.setValueDecimals(0);
+    ctrl.update();
+
+    return ctrl;
 }
 
 
+
+
+/**
+ * @param {!X.Object} xObj
+ * @return {xiv.ui.ctrl.XtkController}
+ * @protected
+ */
+xiv.ui.ctrl.MasterController3D.prototype.add_brightness = function(xObj) {
+    //
+    // Create
+    //
+    var ctrl = this.createController( xiv.ui.ctrl.SliderController, 
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS.BRIGHTNESS);
+    
+    //
+    // Listen for changes
+    //
+    goog.events.listen(ctrl, 
+	xiv.ui.ctrl.XtkController.EventType.CHANGE, 
+	function(e){	    
+	    var rate = (e.value - e.previous) / (e.maximum - e.minimum);
+	    var currDifference = xObj.windowHigh - xObj.windowLow;
+
+	    /*
+	    window.console.log("\n\nBRIGHTNESS!");
+	    window.console.log('rate:', rate);
+	    window.console.log('low:', xObj.windowLow, 
+			       'high:', xObj.windowHigh, 
+			       'diff:', xObj.windowHigh - xObj.windowLow);
+	    window.console.log('Subtractor:', currDifference * rate)
+	    */
+
+	    xObj.windowLow  = 
+		Math.round(parseInt(xObj.windowLow) - (currDifference * rate));
+	    xObj.windowHigh = 
+		Math.round(parseInt(xObj.windowHigh) - (currDifference * rate));
+
+
+	    this.levelMin_.getComponent().setValue(xObj.windowLow);
+	    this.levelMax_.getComponent().setValue(xObj.windowHigh);
+
+	    /**
+	    window.console.log('low:', xObj.windowLow, 
+			       'high:', xObj.windowHigh, 
+			       'diff:', xObj.windowHigh - xObj.windowLow);
+	    */
+	    
+
+	}.bind(this))
+
+
+    // set folder
+    ctrl.setFolders([
+	xiv.ui.ctrl.XtkController.getObjectCategory(xObj)]);
+
+    // store
+    this.masterControllers.push(ctrl);
+
+
+    ctrl.getComponent().setMaximum(150);
+    ctrl.getComponent().setMinimum(-150);
+    ctrl.getComponent().setValue(0);
+    ctrl.getComponent().setStep(1);
+    ctrl.setValueDecimals(0);
+    ctrl.update();
+
+
+    return ctrl;
+}
+
+
+
+
+/**
+ * @param {!X.Object} xObj
+ * @return {xiv.ui.ctrl.XtkController}
+ * @protected
+ */
+xiv.ui.ctrl.MasterController3D.prototype.add_contrast = function(xObj) {
+    //
+    // Create
+    //
+    var ctrl = this.createController( xiv.ui.ctrl.SliderController, 
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS.CONTRAST);
+    
+    //
+    // Listen for changes
+    //
+    goog.events.listen(ctrl, 
+	xiv.ui.ctrl.XtkController.EventType.CHANGE, 
+	function(e){	 
+	    var rate = (e.value - e.previous) / (e.maximum - e.minimum);
+	    var currDifference = parseInt(xObj.windowHigh) - 
+		parseInt(xObj.windowLow);
+
+	    /**
+	    window.console.log("\n\nCONTRAST!");
+	    window.console.log('rate:', rate, xObj.max, xObj.min);
+	    window.console.log('low:', xObj.windowLow, 
+			       'high:', xObj.windowHigh, 
+			       'diff:', currDifference);
+	    window.console.log('Subtractor:', currDifference * rate)
+	    */
+
+	    var newLow = parseInt(xObj.windowLow) + (currDifference * rate);
+	    var newHigh = parseInt(xObj.windowHigh) - (currDifference * rate);
+	    xObj.windowLow = Math.round(newLow);
+	    xObj.windowHigh = Math.round(newHigh);
+;
+	    
+	    this.levelMin_.getComponent().setValue(xObj.windowLow);
+	    this.levelMax_.getComponent().setValue(xObj.windowHigh);
+
+	    /**
+	    window.console.log("newLow:", newLow, "newHigh:", newHigh);
+	    window.console.log('low:', xObj.windowLow, 
+			       'high:', xObj.windowHigh, 
+			       'diff:', currDifference);
+	     */
+
+	}.bind(this))
+
+
+    // set folder
+    ctrl.setFolders([
+	xiv.ui.ctrl.XtkController.getObjectCategory(xObj)]);
+
+    // store
+    this.masterControllers.push(ctrl);
+
+
+    ctrl.getComponent().setMaximum(150);
+    ctrl.getComponent().setMinimum(-150);
+    ctrl.getComponent().setValue(0);
+    ctrl.getComponent().setStep(1);
+    ctrl.setValueDecimals(0);
+    ctrl.update();
+
+
+    return ctrl;
+}
 
 
 
@@ -213,6 +437,11 @@ function(e) {
  */
 xiv.ui.ctrl.MasterController3D.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
+
+    delete this.levelMax_;
+    delete this.levelMin_;
+    delete this.brightness_;
+    delete this.contrast_;
 
 
     // XObjs

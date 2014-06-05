@@ -44,6 +44,23 @@ xiv.ui.ctrl.SliderController.CSS_SUFFIX = {
 };
 
 
+/**
+ * @type {number}
+ * @private
+ */
+xiv.ui.ctrl.SliderController.prototype.valueDecimals_ = 2;
+
+
+
+/**
+ * @param {!number} num
+ * @public
+ */
+xiv.ui.ctrl.SliderController.prototype.setValueDecimals = function(num){
+    this.valueDecimals_ = num;
+}
+
+
 
 /**
  * @inheritDoc
@@ -101,10 +118,7 @@ xiv.ui.ctrl.SliderController.prototype.createValueInput_ = function() {
      */
     this.valueInput_ = goog.dom.createDom('input');
     this.valueInput_.type = 'number';
-    this.valueInput_.step = slider.getStep();
-    this.valueInput_.min = slider.getMinimum();
-    this.valueInput_.max = slider.getMaximum();
-    this.valueInput_.value = slider.getValue().toFixed(2);
+
 
     // Classes
     goog.dom.classes.add(this.valueInput_, 
@@ -114,6 +128,8 @@ xiv.ui.ctrl.SliderController.prototype.createValueInput_ = function() {
     // Events
     goog.events.listen(this.valueInput_, goog.events.EventType.INPUT, 
 		       this.onValueInput_.bind(this));
+
+    this.update();
 }
 
 
@@ -126,6 +142,8 @@ xiv.ui.ctrl.SliderController.prototype.createValueInput_ = function() {
  * @private
  */
 xiv.ui.ctrl.SliderController.prototype.onValueInput_ = function(e){
+
+    window.console.log("on value input");
     var slider = this.getComponent();
     var val = parseFloat(this.valueInput_.value);
     val = goog.math.clamp(val, slider.getMinimum(),
@@ -136,18 +154,33 @@ xiv.ui.ctrl.SliderController.prototype.onValueInput_ = function(e){
 
 
 
+/**
+ * @return {Element}
+ * @private
+ */
+xiv.ui.ctrl.SliderController.prototype.getValueInput = function(e){
+    return this.valueInput_;
+}
+
+
 
 /**
  * @inheritDoc
  */
 xiv.ui.ctrl.SliderController.prototype.dispatchComponentEvent = function(){
-    var val = this.getComponent().getValue().toFixed(2);
+
+    var component = this.getComponent();
+    var val = component.getValue().toFixed(this.valueDecimals_);
+    var previousValue = parseInt(this.valueInput_.value);
     this.valueInput_.value = val;
 
     //window.console.log("SLIDER", val);
     this.dispatchEvent({
 	type: xiv.ui.ctrl.XtkController.EventType.CHANGE,
-	value: val
+	value: val,
+	minimum: component.getMinimum(),
+	maximum: component.getMaximum(),
+	previous: previousValue
     })
 }
 
@@ -167,6 +200,11 @@ xiv.ui.ctrl.SliderController.prototype.update = function() {
     component.setValue(0);
     component.setValue(oldValue);
 
+    this.valueInput_.step = component.getStep();
+    this.valueInput_.min = component.getMinimum();
+    this.valueInput_.max = component.getMaximum();
+    this.valueInput_.value = component.getValue();
+
 }
 
 
@@ -176,6 +214,8 @@ xiv.ui.ctrl.SliderController.prototype.update = function() {
  */
 xiv.ui.ctrl.SliderController.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
+
+    delete this.valueDecimals_;
 
     // ValueInput
     if (goog.isDefAndNotNull(this.valueInput_)){

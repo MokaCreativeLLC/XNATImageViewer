@@ -185,3 +185,14 @@ xiv.ui.ctrl.VolumeController3D.prototype.add = function(xObj) {
 }
 
 
+
+/**
+ * @inheritDoc
+ */
+xiv.ui.ctrl.VolumeController3D.prototype.updateStyle = function(xObj) {
+    // Call superclass add
+    goog.base(this, 'updateStyle');
+
+}
+
+

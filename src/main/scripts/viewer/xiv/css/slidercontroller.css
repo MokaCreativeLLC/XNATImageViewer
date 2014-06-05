@@ -7,8 +7,8 @@
 
 .xiv-ui-ctrl-slidercontroller-slider {
     position: absolute;
-    left: calc(30%);
-    width: calc(70% - 55px);
+    left: 25%;
+    width: calc(70% - 85px);
 }
 
 
@@ -47,8 +47,8 @@
     position: absolute;
     top: 0px;
     border: solid 1px rgb(100,100,100);
-    width: 35px;
-    left: calc(100% - 44px);
+    width: 65px;
+    left: calc(100% - 66px);
     font-size: 10px;
     background-color: rgba(0,0,0,0);
     color: white;

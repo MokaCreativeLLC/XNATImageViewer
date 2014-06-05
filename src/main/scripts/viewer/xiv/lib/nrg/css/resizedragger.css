@@ -7,7 +7,7 @@ See the COPYING file for details.
 .nrg-ui-resizedragger {
   position: absolute;
   font-size: 0.1px;
-  z-index: 100;
+  z-index: 1;
   /*background-color: rgba(255,20,20, 0);*/
 }
 

@@ -11,7 +11,6 @@ goog.require('goog.array');
 goog.require('goog.object');
 goog.require('goog.style');
 
-
 // nrg
 goog.require('nrg.ui.Component');
 goog.require('nrg.style');
@@ -121,20 +120,6 @@ xiv.ui.ViewBox.EventType = {
  */
 xiv.ui.ViewBox.ID_PREFIX =  'xiv.ui.ViewBox';
 
-
-/**
- * @type {?nrg.ui.ZippyTree}
- * @private
- */
-xiv.ui.ViewBox.prototype.Controllers3D_ = null;
-
-
-
-/**
- * @type {?nrg.ui.ZippyTree}
- * @private
- */
-xiv.ui.ViewBox.prototype.Controllers2D_ = null;
 
 
 
@@ -496,47 +481,100 @@ xiv.ui.ViewBox.prototype.createRenderControllers_ = function() {
     //
     // Create the dialogs
     //
-    this.Dialogs_.createLevelsDialog(false);
-    this.Dialogs_.createRenderControlDialog(false);
-
-
+    this.Dialogs_.createLevelsDialog();
+    this.Dialogs_.createRenderControlDialog();
 	
-    // reset the tree
-    var zTree = new nrg.ui.ScrollableZippyTree();
-    zTree.render();
+    //-------------------------
+    // NOTE: We now need to separate level controllers (brightness,
+    // contrast, etc.) from the other controllers
+    //-------------------------
 
+    //
+    // Create a new ZippyTree for render controllers
+    //
+    var renderControllers = new nrg.ui.ScrollableZippyTree();
+    renderControllers.render();
 
+    //
+    // Create a new ZippyTree for level controllers
+    //
+    var levelControllers = new nrg.ui.ScrollableZippyTree();
+    levelControllers.render();
+
+    //
+    // Identify the controllers we need to separate from the rest.
+    //
+    var levelControllerLabels = [
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MIN, 
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MAX, 
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS.CONTRAST, 
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS.BRIGHTNESS
+    ]
+
+    //
+    // Add the 2D controllers (no need to separate any of these).
+    //
     var controllers2D = this.Renderer_.getControllers2D();
-    var controllers3D = this.Renderer_.getControllers3D();
-
-    
-    if (goog.isDefAndNotNull(controllers2D) && 
-	(controllers2D.length > 0)) {
+    if (goog.isDefAndNotNull(controllers2D) && (controllers2D.length > 0)) {
 	goog.array.forEach(controllers2D, function(ctrl){
+	    //
+	    // Add the '2D' descriptor to any sub-folders.
+	    //
 	    var folders = ctrl.getFolders();
 	    folders.push('2D');
-	    zTree.addContents(ctrl.getElement(), folders)
+
+	    //
+	    // Add other controllers to render Controller zippy
+	    //
+	    renderControllers.addContents(ctrl.getElement(), folders);
 	}.bind(this));
     }
 
-
-    if (goog.isDefAndNotNull(controllers3D) && 
-	(controllers3D.length > 0)) {
+    //
+    // Add the 3D controllers, separating the level controlers from the others.
+    //
+    var controllers3D = this.Renderer_.getControllers3D();
+    if (goog.isDefAndNotNull(controllers3D) && (controllers3D.length > 0)) {
 	goog.array.forEach(controllers3D, function(ctrl){
+
+	    //
+	    // Separate the level controllers, add to that zippy
+	    //
+	    if (goog.array.contains(levelControllerLabels,
+		ctrl.getLabel().innerHTML)){
+		levelControllers.addContents(ctrl.getElement());
+		return
+	    } 
+
+	    //
+	    // Otherwise add the '3D' descriptor to any sub-folders.
+	    //
 	    var folders = ctrl.getFolders();
 	    if (folders.length > 1){
 		folders.push('3D');
 	    }
-	    zTree.addContents(ctrl.getElement(), folders)
+
+	    //
+	    // Add other controllers to render Controller zippy
+	    //
+	    renderControllers.addContents(ctrl.getElement(), folders);
 	}.bind(this));
     }
 
-    zTree = zTree.getElement();
-    zTree.style.top = '30px';
-    zTree.style.width = 'calc(100% - 20px)';
-    zTree.style.height = 'calc(100% - 50px)';
+    renderControllersElt = renderControllers.getElement();
+    renderControllersElt.style.top = '30px';
+    renderControllersElt.style.width = 'calc(100% - 20px)';
+    renderControllersElt.style.height = 'calc(100% - 50px)';
     this.Dialogs_.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
-	getElement().appendChild(zTree);
+	getElement().appendChild(renderControllersElt);
+
+
+    levelControllersElt = levelControllers.getElement();
+    levelControllersElt.style.top = '30px';
+    levelControllersElt.style.width = 'calc(100% - 20px)';
+    levelControllersElt.style.height = 'calc(100% - 50px)';
+    this.Dialogs_.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.LEVELS].
+	getElement().appendChild(levelControllersElt);
 
 }
 
@@ -1350,12 +1388,10 @@ xiv.ui.ViewBox.prototype.createLayoutMenu_ = function(){
  */
 xiv.ui.ViewBox.prototype.onToggleButtonClicked = 
 function(button, opt_onCheck){
-
-
     button.setAttribute('checked', 
 	(button.getAttribute('checked') == 'true') ? 'false': 'true');
 
-    window.console.log("\n\nCLICK", button);
+    //window.console.log("\n\nCLICK", button);
 
     if (button.getAttribute('checked') == 'true') {
 	goog.dom.classes.add(button, button.getAttribute(
@@ -1423,7 +1459,7 @@ xiv.ui.ViewBox.prototype.createToggleButton =
 	//
 	goog.events.listen(iconbutton, goog.events.EventType.CLICK, 
 	function(e){
-	    window.console.log("CLICK", e.target);
+	    //window.console.log("CLICK", e.target);
 	    this.onToggleButtonClicked(iconbutton, opt_onCheck);
 	}.bind(this));
 
@@ -1443,7 +1479,7 @@ xiv.ui.ViewBox.prototype.createToggleButton =
 	    throw new Error('Invalid identifier for toggle button.  In use.');
 	} 
 	this.toggleButtons_[identifier] = iconbutton;
-	window.console.log(iconbutton, identifier);
+	//window.console.log(iconbutton, identifier);
 	return iconbutton;
     }
 
@@ -1614,20 +1650,6 @@ xiv.ui.ViewBox.prototype.updateStyle_Renderer_ = function () {
  * @private
  */
 xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
-
-    // 2D Controllers
-    if (goog.isDefAndNotNull(this.Controllers2D_)){
-	this.Controllers2D_.dispose();
-	this.Controllers2D_ = null;
-    }
-
-
-    // 3D Controllers
-    if (goog.isDefAndNotNull(this.Controllers3D_)){
-	this.Controllers3D_.dispose();
-	this.Controllers3D_ = null;
-    }
-    
     
     // Clear the reference to the groups
     goog.object.clear(this.ViewableGroups_);

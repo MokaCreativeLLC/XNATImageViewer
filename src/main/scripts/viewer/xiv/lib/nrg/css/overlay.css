@@ -62,7 +62,7 @@
 .nrg-ui-overlay-closebutton {
     position: absolute; 
     cursor: pointer;
-    top: 2px;
+    top: 4px;
     left: calc(100% - 8px);
     width: 10px;
     height: 10px;

@@ -162,6 +162,15 @@ nrg.ui.Slider.prototype.suspendSlideEvent =  function (bool) {
 }
 
 
+/**
+ * @param {!boolean} bool
+ * @public
+ */
+nrg.ui.Slider.prototype.suspendChangeEvent =  function (bool) {
+    this.suspendSlideEvent_ = bool;
+}
+
+
 
 /**
  * @inheritDoc
