@@ -239,10 +239,13 @@ gxnat.vis.Scan.prototype.fileFilter = function(fileName){
  */
 gxnat.vis.Scan.prototype.addFiles = function(fileNames) {
 
+    this.setCategory('Scans');
+    
     //window.console.log("ADD FILES!");
     if (this.ViewableGroups.length == 0){
 	var scanGroup = new gxnat.vis.ViewableGroup();
 	scanGroup.setTitle('scan');
+	scanGroup.setCategory('scans');
 	this.ViewableGroups.push(scanGroup);
     }
     if (this.ViewableGroups[0].getViewables().length == 0){

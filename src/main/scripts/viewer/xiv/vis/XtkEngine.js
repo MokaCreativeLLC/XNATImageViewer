@@ -1,4 +1,4 @@
-/**
+ /**
  * @author amh1646@rih.edu (Amanda Hartung)
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
@@ -326,7 +326,8 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 	if (!goog.isDefAndNotNull(fileList)) { return };
 
 	//window.console.log(ViewableGroup, Viewable, Viewable.getFiles());
-	currXObj = xiv.vis.XtkEngine.createXObject(fileList);
+	currXObj = xiv.vis.XtkEngine.createXObject(fileList, 
+						   Viewable.fileToData);
 	renderProps = Viewable.getRenderProperties();
 
 	if (!currXObj) { return }
@@ -1139,15 +1140,17 @@ xiv.vis.XtkEngine.getViewables = function(fileCollection) {
  * the type of X object by the extension provided in
  * the fileCollection.
  *
- * @param {!string | !Array.<string>}
+ * @param {!string | !Array.<string>} fileCollection
+ * @param {!string | !Array} opt_fileData
  * @return {X.Object}
  */
-xiv.vis.XtkEngine.createXObject = function(fileCollection) {
+xiv.vis.XtkEngine.createXObject = function(fileCollection, opt_fileData) {
 
     //window.console.log("FILE COLLECT", fileCollection);fileCollection[0]
     var ext = (goog.isArray(fileCollection)) ? 
 	nrg.string.getFileExtension(fileCollection[0]) : 
 	nrg.string.getFileExtension(fileCollection);
+
     var obj = this.generateXtkObjectFromExtension(ext);  
     
     if (!goog.isDefAndNotNull(obj)){
@@ -1189,8 +1192,14 @@ xiv.vis.XtkEngine.createXObject = function(fileCollection) {
 
 
     
-    obj.file = fileCollection;
-
+    window.console.log("HERE!". opt_fileData);
+    if (goog.isDefAndNotNull(opt_fileData)){
+	window.console.log("HERE!");
+	obj.file = goog.object.getKeys(opt_fileData);
+	obj.filedata = goog.object.getValues(opt_fileData);
+    } else {
+	obj.file = fileCollection;
+    }
 
 
     //console.log(obj);

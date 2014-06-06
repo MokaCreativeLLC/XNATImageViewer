@@ -815,15 +815,73 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     // 
     this.toggleWaitForRenderErrors_(true);
 
-    //
-    // OK!! Render!!!
-    //
-    this.Renderer_.render(ViewableSet);
+    window.console.log(ViewableSet);
+    if (ViewableSet.getCategory().toLowerCase() == 'scans') {
 
-    //
-    // Remember the time in which the thumbnail was loaded
-    //
-    this.thumbLoadTime_ = (new Date()).getTime();  
+	var allFiles = ViewableSet.getViewables()[0].getFiles();
+	var firstFile = ViewableSet.getViewables()[0].getFiles()[0];
+
+	var zipDir = firstFile.split('/files/')[0] + '/files?format=zip';
+	window.console.log(zipDir);
+
+
+	JSZipUtils.getBinaryContent(zipDir, function(err, data) {
+
+	    if(err) {
+		throw err; // or handle err
+	    }
+
+	    var zip = new JSZip(data);
+	    //window.console.log(zip.files);
+
+	    var fileToData = {};
+
+	    //
+	    // match file to stored files
+	    //
+	    goog.object.forEach(zip.files, function(file, fileKey){
+
+		var i = 0, len = allFiles.length;
+		var currFile, zipFileFragment;
+		for (; i<len; i++){
+		    currFile = allFiles[i];
+		    zipFileFragment = '/files/' + file.name.split('/files/')[1];
+		    if (goog.string.caseInsensitiveEndsWith(currFile, 
+							    zipFileFragment)){
+			fileToData[currFile] = file.asArrayBuffer();
+			break;
+		    }
+		}
+
+	    })
+	    ViewableSet.getViewables()[0].fileToData = fileToData;
+	    //window.console.log(fileToData);
+
+	    //
+	    // OK!! Render!!!
+	    //
+	    this.Renderer_.render(ViewableSet);
+
+	    //
+	    // Remember the time in which the thumbnail was loaded
+	    //
+	    this.thumbLoadTime_ = (new Date()).getTime(); 
+
+	}.bind(this));
+    } else {
+
+ 
+
+	//
+	// OK!! Render!!!
+	//
+	this.Renderer_.render(ViewableSet);
+
+	//
+	// Remember the time in which the thumbnail was loaded
+	//
+	this.thumbLoadTime_ = (new Date()).getTime();  
+    }
 }
  
 
