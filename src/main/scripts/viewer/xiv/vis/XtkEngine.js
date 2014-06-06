@@ -327,7 +327,7 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 
 	//window.console.log(ViewableGroup, Viewable, Viewable.getFiles());
 	currXObj = xiv.vis.XtkEngine.createXObject(fileList, 
-						   Viewable.fileToData);
+						   Viewable.getFileData());
 	renderProps = Viewable.getRenderProperties();
 
 	if (!currXObj) { return }

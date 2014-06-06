@@ -834,7 +834,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 	    var zip = new JSZip(data);
 	    //window.console.log(zip.files);
 
-	    var fileToData = {};
+	    var fileData = {};
 
 	    //
 	    // match file to stored files
@@ -848,14 +848,15 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 		    zipFileFragment = '/files/' + file.name.split('/files/')[1];
 		    if (goog.string.caseInsensitiveEndsWith(currFile, 
 							    zipFileFragment)){
-			fileToData[currFile] = file.asArrayBuffer();
+			fileData[currFile] = file.asArrayBuffer();
 			break;
 		    }
 		}
 
 	    })
-	    ViewableSet.getViewables()[0].fileToData = fileToData;
-	    //window.console.log(fileToData);
+	    window.console.log( ViewableSet.getViewables()[0]);
+	    ViewableSet.getViewables()[0].setFileData(fileData);
+	    //window.console.log(fileData);
 
 	    //
 	    // OK!! Render!!!

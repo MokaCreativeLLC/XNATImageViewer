@@ -13,6 +13,7 @@
     height: 15px;
     opacity: .5;
     background-color: black;
+    z-index: 11;
 }
 
 
@@ -36,7 +37,7 @@
     top: 0px;
     left: 0px;
     width: 200px;
-    z-index: 20;
+    z-index: 10;
     border: none;
 }
 

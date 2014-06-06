@@ -37,6 +37,35 @@ goog.exportSymbol('gxnat.vis.Viewable', gxnat.vis.Viewable);
 
 
 /**
+ * @retirm {?Object.<string, data>}
+ * @public
+ */
+gxnat.vis.Viewable.prototype.fileData_ = null;
+
+
+
+
+/**
+ * @retirm {!Object.<string, data>}
+ * @public
+ */
+gxnat.vis.Viewable.prototype.getFileData = function() {
+    return this.fileData_;
+}
+
+
+
+/**
+ * @param {!Object.<string, data>}
+ * @public
+ */
+gxnat.vis.Viewable.prototype.setFileData = function(fileData) {
+    return this.fileData_ = fileData;
+}
+
+
+
+/**
  * @return {!Array.<string>}
  * @public
  */
