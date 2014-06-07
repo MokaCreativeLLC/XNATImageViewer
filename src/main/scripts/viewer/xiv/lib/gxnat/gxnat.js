@@ -9,6 +9,7 @@ goog.require('goog.net.XhrIo');
 goog.require('goog.object');
 
 // gxnat
+goog.require('gxnat.Zip');
 goog.require('gxnat.Path');
 goog.require('gxnat.vis');
 goog.require('gxnat.vis.AjaxViewableTree');
@@ -56,6 +57,82 @@ gxnat.folderAbbrev = {
     'experiments': 'expt',
     'scans': 'scans'
 };
+
+
+
+/**
+ * @const
+ */
+gxnat.ZIP_SUFFIX = '?format=zip'
+
+
+
+/**
+ * @param {!string} filesUrl
+ * @param {!Function} onLoad
+ * @param {Function=} opt_onProgress
+ * @param {Function=} opt_onError
+ *
+ * @throws {Error} If filesUrl doesn't end in '/files'
+ * @public
+ */
+gxnat.getFilesAsZip = 
+function(filesUrl, onLoad, opt_onProgress, opt_onError){
+    //
+    // Check if filesURl ends in '/files'
+    //
+    if (!goog.string.caseInsensitiveEndsWith(filesUrl, '/files')){
+	throw new Error("filesUrl must end in '/files'!");
+    }
+									      
+    //
+    // Append the zipSuffix
+    //
+    filesUrl += gxnat.ZIP_SUFFIX;
+    
+    //
+    // Construct the xhr request
+    //
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', filesUrl);
+    //xhr.timeout = 5000; 
+
+    //
+    // IMPORTANT: Set the type as an arraybuffer
+    //
+    xhr.responseType = "arraybuffer";
+
+    //
+    // onLoad
+    //
+    xhr.addEventListener('load', function(){
+	var arraybuffer = xhr.response;
+	//onLoad(new JSZip(arraybuffer));
+	onLoad(new gxnat.Zip(arraybuffer));
+    });
+
+    //
+    // Progress
+    //
+    if (goog.isDefAndNotNull(opt_onProgress)){
+	xhr.addEventListener('progress', opt_onProgress);
+    }
+
+    //
+    // Error
+    //
+    if (goog.isDefAndNotNull(opt_onError)){
+	xhr.addEventListener('error', function(event) {
+	    window.console.log("DOWNLOAD ERROR: ", event);
+	    opt_onError(xhr, event);
+	});
+    }
+
+    //
+    // Get the zip!!
+    //
+    xhr.send();
+}
 
 
 
@@ -187,11 +264,10 @@ gxnat.naturalSort = function(a, b) {
  */
 gxnat.sortXnatPropertiesArray = function (viewables, keyDepthArr){
 
-    var sorterKeys = /**@type {!Array.<string>} */ [];
-    var sorterObj = /**@type {!Object.<string, gxnat.vis.AjaxViewableTree>} */ {};
-    var sortedViewableCollection = 
-	/**@type {!Array.Object} */ [];
-    var sorterKey = /**@type {!Object} */ {};
+    var sorterKeys = [];
+    var sorterObj =  {};
+    var sortedViewableCollection = [];
+    var sorterKey = {};
 
     //
     // Update sorting data types.

@@ -121,6 +121,7 @@ xiv.ui.ProgressBarPanel.prototype.showValue_ = false;
  */
 xiv.ui.ProgressBarPanel.prototype.setLabel = function(opt_label) {
     this.labelText_ = opt_label;
+    this.labelHolder_.innerHTML = this.labelText_;
 }
 
 
@@ -141,7 +142,6 @@ xiv.ui.ProgressBarPanel.prototype.showValue = function(opt_showValue) {
 xiv.ui.ProgressBarPanel.prototype.setValue = function(val) {
     this.ProgressBar_.setValue(val);
     this.labelHolder_.innerHTML = this.labelText_;
-
     if (this.showValue_){
 	if (this.labelText_.length > 0){
 	    this.labelHolder_.innerHTML += ' ';
@@ -149,20 +149,16 @@ xiv.ui.ProgressBarPanel.prototype.setValue = function(val) {
 	this.labelHolder_.innerHTML += 
 	this.ProgressBar_.getValue().toString() + '%';
     }
-
     goog.dom.classes.remove(this.progBarHolder_, 'progress-bar-horizontal');
 }
 
 
 
 /**
- * @param {!number} val
+ * @return {!number}
  */
-xiv.ui.ProgressBarPanel.prototype.getValue = function(val) {
-
-    this.ProgressBar_.setValue(val);
-    this.labelHolder_.innerHtml = this.labelText_ + ' ' 
-	+ this.ProgressBar_.getValue().toString() + '%';
+xiv.ui.ProgressBarPanel.prototype.getValue = function() {
+    return this.ProgressBar_.getValue();
 }
 
 

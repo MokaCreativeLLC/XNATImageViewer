@@ -37,6 +37,11 @@ goog.addDependency('../../../gxnat/Path.js',
 []);
 
 
+goog.addDependency('../../../gxnat/Zip.js', 
+['gxnat.Zip'], 
+[]);
+
+
 goog.addDependency('../../../gxnat/ProjectTree.js', 
 ['gxnat.ProjectTree'], [
 'goog.array',

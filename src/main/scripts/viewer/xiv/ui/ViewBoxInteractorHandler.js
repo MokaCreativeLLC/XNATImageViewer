@@ -99,6 +99,58 @@ xiv.ui.ViewBoxInteractorHandler.CSS = {
 }
 
 
+
+/**
+ * @public
+ * @type {?nrg.ui.ScrollableZippyTree}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.renderControllerTree_ = null;
+
+
+
+/**
+ * @private
+ * @type {?nrg.ui.ScrollableZippyTree}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.levelControllerTree_ = null;
+
+
+
+/**
+ * @type {?Array.<xiv.ui.ctrl.XtkController>}
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.renderControllers_ = null;
+
+
+
+/**
+ * @public
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors = function() {
+    //
+    // Create the render controllers
+    //
+    this.createRenderControllers();
+
+    //
+    // Set volume sliders halfway
+    //
+    this.setVolumeSlidersHalfway_();
+
+    //
+    // Create 3D rendering toggle
+    //
+    this.createThreeDRenderToggle();
+
+    //
+    // Create the crosshair toggle rendering toggle
+    //
+    this.createCrosshairToggle(false);
+}
+
+
+
 /**
  * @param {!Function} callback
  * @public
@@ -114,7 +166,7 @@ function(callback){
     // Get the master interactors
     //
     var interactors = this.LayoutHandler_.getMasterInteractors();
-
+    //window.console.log(interactors);
     //
     // Loop the render planes
     //
@@ -133,7 +185,9 @@ function(callback){
 	    //
 	    // Otherwise run the callback
 	    //
-	    callback(renderPlane, renderPlaneOr, interactors[renderPlaneOr], 
+	    callback(renderPlane, 
+		     renderPlaneOr, 
+		     interactors[renderPlaneOr], 
 		     renderPlane.getVolume());
     }.bind(this))
 } 
@@ -197,9 +251,10 @@ function(){
 
 
 /**
- * @public
+ * @private
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.initControllerSync = function() { 
+xiv.ui.ViewBoxInteractorHandler.prototype.syncRenderControllersToRenderer_ = 
+function() { 
     //
     // Do nothing if no renderer
     //
@@ -207,8 +262,10 @@ xiv.ui.ViewBoxInteractorHandler.prototype.initControllerSync = function() {
 
 
 
+    //window.console.log("GET", ));
     this.loopInteractorsWithRenderer(
     function(renderPlane, renderPlaneOr, planeInteractors, volume){
+	//window.console.log('\n\n', renderPlaneOr, volume);
 	var slider = planeInteractors.SLIDER;
 	var frameDisplay = planeInteractors.FRAME_DISPLAY;
 	var crosshairs = planeInteractors.CROSSHAIRS;
@@ -273,6 +330,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.initControllerSync = function() {
 	//
 	goog.events.listen(slider, nrg.ui.Slider.EventType.SLIDE, 
         function(e){
+	    //window.console.log(volume);
 	    this.syncVolumeToSlider(e.target, volume);
 	    this.syncCrosshairsToSlider(e.target, volume);
 	    this.syncFrameDisplayToSlider(e.target, volume);
@@ -287,6 +345,13 @@ xiv.ui.ViewBoxInteractorHandler.prototype.initControllerSync = function() {
 		    this.syncSliderToFrameDisplay(e.target,volume);
 		}.bind(this))
     }.bind(this))
+
+
+
+    //
+    // Update the controllers in the renderer
+    //
+    this.Renderer_.updateControllers();
 }
 
 
@@ -540,9 +605,10 @@ function(frameDisplay, volume) {
 
 
 /**
- * @public
+ * @private
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.setSlidersHalfway = function() {
+xiv.ui.ViewBoxInteractorHandler.prototype.setVolumeSlidersHalfway_ = 
+function() {
     this.loopInteractorsWithRenderer(
     function(renderPlane, renderPlaneOr, planeInteractors, volume){
 	if (!goog.isDefAndNotNull(planeInteractors.SLIDER)) { 
@@ -836,16 +902,12 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMenuItemSelected_ = function(e) {
     //
     // Change the button in the help dialog
     //
-    this.Dialogs_.getHelpDialog().setLayoutButton(e.target.getMenuIcon().src);
+    if (goog.isDefAndNotNull(this.Dialogs_) &&
+	goog.isDefAndNotNull(this.Dialogs_.getHelpDialog())){
+	this.Dialogs_.getHelpDialog().setLayoutButton(e.target.
+						      getMenuIcon().src);
+    }
 }
-
-
-
-/**
- * @type {?Array.<xiv.ui.ctrl.XtkController>}
- * @private
- */
-xiv.ui.ViewBoxInteractorHandler.prototype.renderControllers_ = null;
 
 
 
@@ -886,14 +948,20 @@ function() {
     //
     // Create a new ZippyTree for render controllers
     //
-    var renderControllerTree = new nrg.ui.ScrollableZippyTree();
-    renderControllerTree.render();
+    if (goog.isDefAndNotNull(this.renderControllerTree_)){
+	this.renderControllerTree_.disposeInternal();
+    }
+    this.renderControllerTree_ = new nrg.ui.ScrollableZippyTree();
+    this.renderControllerTree_.render();
 
     //
     // Create a new ZippyTree for level controllers
     //
-    var levelControllerTree = new nrg.ui.ScrollableZippyTree();
-    levelControllerTree.render();
+    if (goog.isDefAndNotNull(this.levelControllerTree_)){
+	this.levelControllerTree_.disposeInternal();
+    }
+    this.levelControllerTree_ = new nrg.ui.ScrollableZippyTree();
+    this.levelControllerTree_.render();
 
     //
     // Identify the controllers we need to separate from the rest.
@@ -930,7 +998,7 @@ function() {
 	    //
 	    // Add other controllers to render Controller zippy
 	    //
-	    renderControllerTree.addContents(ctrl.getElement(), folders);
+	    this.renderControllerTree_.addContents(ctrl.getElement(), folders);
 	}.bind(this));
     }
 
@@ -950,7 +1018,7 @@ function() {
 	    //
 	    if (goog.array.contains(levelControllerLabels,
 		ctrl.getLabel().innerHTML)){
-		levelControllerTree.addContents(ctrl.getElement());
+		this.levelControllerTree_.addContents(ctrl.getElement());
 
 		if (goog.array.contains(updatableLevelControllerLabels,
 					ctrl.getLabel().innerHTML)){
@@ -970,26 +1038,26 @@ function() {
 	    //
 	    // Add other controllers to render Controller zippy
 	    //
-	    renderControllerTree.addContents(ctrl.getElement(), folders);
+	    this.renderControllerTree_.addContents(ctrl.getElement(), folders);
 	}.bind(this));
     }
 
     //
     // Set the tree style and add to dialog
     //
-    renderControllerTreeElt = renderControllerTree.getElement();
+    renderControllerTreeElt = this.renderControllerTree_.getElement();
     renderControllerTreeElt.style.top = '30px';
     renderControllerTreeElt.style.width = 'calc(100% - 20px)';
     renderControllerTreeElt.style.height = 'calc(100% - 50px)';
     this.Dialogs_.getDialogs()
     [xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
 	getElement().appendChild(renderControllerTreeElt);
-    renderControllerTree.expandAll();
+    this.renderControllerTree_.expandAll();
 
     //
     // Set the tree style and add to dialog
     //
-    levelControllerTreeElt = levelControllerTree.getElement();
+    levelControllerTreeElt = this.levelControllerTree_.getElement();
     levelControllerTreeElt.style.top = '255px';
     levelControllerTreeElt.style.width = 'calc(100% - 20px)';
     levelControllerTreeElt.style.height = 'calc(100% - 50px)';
@@ -1009,7 +1077,6 @@ function() {
 	    levelController.getXObj().windowLow);
 	levelController.update();
     })
-
 
 
     //
@@ -1033,6 +1100,12 @@ function() {
     //
     this.Dialogs_.getDialogs()[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.LEVELS].
 	getElement().appendChild(hist.getElement());
+
+
+    //
+    // Sync the render controllers with the renderer
+    //
+    this.syncRenderControllersToRenderer_();
 }
 
 
@@ -1048,6 +1121,12 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
     if (goog.isDefAndNotNull(this.renderControllers_)){
 	goog.array.clear(this.renderControllers_);
     }
+
+ 
+    this.renderControllerTree_.disposeInternal();
+    this.levelControllerTree_.disposeInternal();
+
+
     delete this.ViewBox_;
     delete this.Renderer_;
     delete this.LayoutHandler_;

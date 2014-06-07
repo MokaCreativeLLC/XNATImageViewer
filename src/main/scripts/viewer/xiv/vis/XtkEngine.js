@@ -185,6 +185,17 @@ xiv.vis.XtkEngine.prototype.setPrimaryRenderPlane = function(Plane) {
 
 
 /**
+ * @return {xiv.vis.XtkPlane}
+ * @public
+ */
+xiv.vis.XtkEngine.prototype.getPrimaryRenderPlane = function() {
+    return this.primaryRenderPlane_;
+}
+
+
+
+
+/**
  * @param {Event}
  * @private
  */
@@ -220,28 +231,12 @@ xiv.vis.XtkEngine.prototype.setRenderPlaneEvents_ = function() {
  * @private
  */
 xiv.vis.XtkEngine.prototype.setPrimaryRenderPlaneEvents_ = function() {
-
-    // Unlisten on the given planes
-    goog.object.forEach(this.getPlanes(), function(Plane, planeOr){
-	goog.events.listen(Plane, 
-			   xiv.vis.RenderEngine.EventType.RENDERING, 
-			   this.onRendering_.bind(this))
-	goog.events.listen(Plane, 
-			     xiv.vis.RenderEngine.EventType.RENDER_END, 
-			     this.onRenderEnd_.bind(this))
-    }.bind(this))
-
-
-
     // Re-listen on the primary
     this.primaryRenderPlane_.init();
-    goog.events.listen(this.primaryRenderPlane_, 
-		       xiv.vis.RenderEngine.EventType.RENDERING, 
-		       this.onRendering_.bind(this))
-
-    goog.events.listen(this.primaryRenderPlane_, 
-		       xiv.vis.RenderEngine.EventType.RENDER_END, 
-		       this.onRenderEnd_.bind(this))
+    this.renderKey_ = goog.events.listen(
+	this.primaryRenderPlane_, 
+	xiv.vis.RenderEngine.EventType.RENDERING, 
+	this.onRendering_.bind(this))
 }
 
 
@@ -341,13 +336,6 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 	    this.constructor.setRenderProperties_Volume_(
 		currXObj, renderProps);
 	    this.currXObjects_['volumes'].push(currXObj);
-
-	    //
-	    // IMPORTANT!!! 
-	    //
-	    currXObj.reslicing = false;
-	    //window.console.log("RESLICING", currXObj.transform);
-
 	}
 
 	// Meshes
@@ -410,7 +398,7 @@ xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
     // Add the selected volume
     //
     otherXObjects.push(selVol);
-    //window.console.log("SELECTED VOLUME", selVol, this.primaryRenderPlane_);
+    //window.console.log("PRIMARY REDER", this.primaryRenderPlane_);
     //window.console.log("OTHER X OBJECTS", otherXObjects);
 
     //
@@ -423,7 +411,7 @@ xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
     //
     // Once rendered, add to secoundary planes
     //
-    this.primaryRenderPlane_.Renderer.onShowtime = function(){
+    this.primaryRenderPlane_.getRenderer().onShowtime = function(){
 	this.renderNonPrimary_(otherXObjects)
     }.bind(this);
 
@@ -498,7 +486,7 @@ xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
 		break;
 	    }
 	}
-	
+	//window.console.log("PRIM", this.primaryRenderPlane_);
 	// Then render
 	this.renderAllPlanes();
 
@@ -515,8 +503,10 @@ xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
  * @public
  */
 xiv.vis.XtkEngine.prototype.renderNonPrimary_ = function(xObjects){
-    goog.object.forEach(this.getPlanes(), function(Plane, planeOr){
 
+    var unrenderedNonPrimary = goog.object.getCount(this.getPlanes()) - 1;
+
+    goog.object.forEach(this.getPlanes(), function(Plane, planeOr){
 	// We already rendered the primary plane
 	if ((Plane == this.primaryRenderPlane_) ||
 	   !Plane.isOn()) { return };
@@ -526,9 +516,41 @@ xiv.vis.XtkEngine.prototype.renderNonPrimary_ = function(xObjects){
 	    Plane.add(xObj);
 	})
 
+	
+	goog.events.listenOnce(
+	    Plane.getRenderer(), 
+	    xiv.vis.RenderEngine.EventType.RENDER_END, 
+	    function(e){
+		unrenderedNonPrimary--;
+		if (unrenderedNonPrimary == 0){
+		    this.onRenderEnd_();
+		    return;
+
+		    //
+		    // DANGEROUS!  Hacky way of calling RenderEnd but XTK 
+		    // kicks back
+		    // errors if we call RENDER_END this early.
+		    //
+		    /*
+		    if (!this.renderEndCalled_) {
+
+			this.dispatchEvent({
+			    type: xiv.vis.RenderEngine.EventType.RENDERING,
+			    value: 1
+			})
+			
+			var timer = goog.Timer.callOnce(function(){
+			    this.onRenderEnd_();
+			    this.renderEndCalled_ = true;
+			}.bind(this), 500)
+		    }
+		    */
+		}
+	    }.bind(this))
+
 	// Then render them.
 	Plane.render();
-    })
+    }.bind(this))
 }
 
 
@@ -650,30 +672,7 @@ function(xObj, renderProperties){
  */
 xiv.vis.XtkEngine.prototype.onRendering_ = function(e){
     //window.console.log("ON RENDERING - ENGINE! ", e.value);
-
-    if (e.value == 1){
-
-	//
-	// DANGEROUS!  Hacky way of calling RenderEnd but XTK kicks back
-	// errors if we call RENDER_END this early.
-	//
-	if (!this.renderEndCalled_) {
-
-	    this.dispatchEvent({
-		type: xiv.vis.RenderEngine.EventType.RENDERING,
-		value: e.value
-	    })
-	    
-	   var timer = goog.Timer.callOnce(function(){
-
-
-		this.onRenderEnd_(e);
-		this.renderEndCalled_ = true;
-	   }.bind(this), 500)
-	}
-    }
-    
-    else {
+    if (!this.renderEndCalled_) {
 	this.dispatchEvent({
 	    type: xiv.vis.RenderEngine.EventType.RENDERING,
 	    value: e.value
@@ -689,9 +688,15 @@ xiv.vis.XtkEngine.prototype.onRendering_ = function(e){
  */
 xiv.vis.XtkEngine.prototype.onRenderEnd_ = function(e){
     //window.console.log("\n\nON RENDER END EGINE!");
+
+    //
+    // Unlisten for the rendering
+    //
+    goog.events.unlistenByKey(this.renderKey_);
+    this.renderEndCalled_ = true;
     this.dispatchEvent({
 	type: xiv.vis.RenderEngine.EventType.RENDER_END,
-	value: e.value
+	value: goog.isDefAndNotNull(e) ? e.value : 1
     })
 }
 
@@ -897,7 +902,6 @@ xiv.vis.XtkEngine.generateXtkObjectFromExtension = function(ext) {
 	obj = new X.mesh();
     } else if (this.isVolume(ext) || this.isDicom(ext) || this.isImage(ext)){
 	obj = new X.volume();
-	obj.reslicing = false;
     } else if (this.isFiber(ext)){
 	obj = new X.fibers();
     } else {
@@ -1187,14 +1191,8 @@ xiv.vis.XtkEngine.createXObject = function(fileCollection, opt_fileData) {
 	fileCollection = urlEncode(fileCollection)
     }
 
-
-    //console.log("FIRST", fileCollection, obj);  
-
-
-    
-    window.console.log("HERE!". opt_fileData);
+    //window.console.log("Fildedata", opt_fileData);
     if (goog.isDefAndNotNull(opt_fileData)){
-	window.console.log("HERE!");
 	obj.file = goog.object.getKeys(opt_fileData);
 	obj.filedata = goog.object.getValues(opt_fileData);
     } else {

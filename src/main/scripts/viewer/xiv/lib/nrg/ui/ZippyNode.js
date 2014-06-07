@@ -166,7 +166,20 @@ nrg.ui.ZippyNode.createZippyHeaderLabel_ = function(title){
 	'class': nrg.ui.ZippyNode.CSS.HEADER_LABEL
     })
 
-    label.innerHTML = goog.string.truncateMiddle(title, 45);
+
+    // 
+    // Truncate accordingly
+    //
+    var htmlStrippedTitle = title.replace(/<(?:.|\n)*?>/gm, '').
+	replace('&nbsp', ' ');
+
+    if (htmlStrippedTitle.length < title){
+	label.innerHTML = goog.string.truncateMiddle(title, 105);
+    } else if (htmlStrippedTitle.length == title.length) {
+	label.innerHTML = goog.string.truncateMiddle(title, 45);
+    } else {
+	label.innerHTML = title;
+    }
     return label;
 }
 

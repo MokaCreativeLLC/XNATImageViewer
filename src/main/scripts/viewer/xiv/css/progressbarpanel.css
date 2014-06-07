@@ -33,9 +33,9 @@
     width: 100%;
     top: calc(50% - 25px);
     text-align: center;
-    color: rgba(255,255,255, .8);
+    color: rgba(255,255,255, 1);
     font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
-    font-size: 10px;
+    font-size: 12px;
 }
 
 

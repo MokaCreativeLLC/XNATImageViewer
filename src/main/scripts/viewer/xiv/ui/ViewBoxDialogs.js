@@ -274,14 +274,12 @@ xiv.ui.ViewBoxDialogs.prototype.createLevelsDialog = function(){
 
 
 /**
- * @private
+ * @public
  */
-xiv.ui.ViewBoxDialogs.prototype.render = function(){
-    //
-    // Inits
-    //
+xiv.ui.ViewBoxDialogs.prototype.createDialogs = function(){
     this.createInUseDialog_();
     this.createHelpDialog_();
+    this.createInfoDialog_();
 }
 
 
@@ -419,7 +417,8 @@ xiv.ui.ViewBoxDialogs.prototype.createHelpDialog_ = function(){
 
 		this.dispatchEvent({
 		    type: eventKey,
-		    dialog: this.Dialogs_[dialogKey]
+		    dialog: this.Dialogs_[
+			xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP]
 		})
             }.bind(this), 
             serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Help.png'
@@ -445,16 +444,18 @@ xiv.ui.ViewBoxDialogs.prototype.createHelpDialog_ = function(){
 
 
 /**
- * @public
+ * @private
  */
-xiv.ui.ViewBoxDialogs.prototype.createInfoDialog = function(){
+xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
     //
     // Clear existing
     //
-    if (goog.isDefAndNotNull(this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO])){
+    if (goog.isDefAndNotNull(this.Dialogs_[
+	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO])){
 	this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].dispose();
     }
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO] = new nrg.ui.Overlay();
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO] = 
+	new nrg.ui.Overlay();
 
     //
     // Generate widget text

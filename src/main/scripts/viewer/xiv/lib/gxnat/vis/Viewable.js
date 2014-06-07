@@ -4,6 +4,7 @@
 
 // goog 
 goog.require('gxnat.vis.Renderable');
+goog.require('gxnat.Zip');
 
 
 
@@ -63,6 +64,50 @@ gxnat.vis.Viewable.prototype.setFileData = function(fileData) {
     return this.fileData_ = fileData;
 }
 
+
+
+/**
+ * @param {!gxnat.Zip} gxnatZip
+ * @public
+ */
+gxnat.vis.Viewable.prototype.setFileDataFromZip = function(gxnatZip) {
+    //
+    // Clear the fileData_ property
+    //
+    if (goog.isDefAndNotNull(this.fileData_)){
+	goog.object.clear(this.fileData_);
+    }
+    this.fileData_ = {};
+
+    //
+    // Set the fileData_ keys to be that of the file names
+    //
+    var allFiles = this.getFiles();
+    goog.array.forEach(allFiles, function(fileName){
+	this.fileData_[fileName] = null;
+    }.bind(this))
+
+    //
+    // Match the fileData to the stored files, popuplating the fileData_
+    // object as needed.
+    //
+    var i, len, currFile, fragment;
+    
+    gxnatZip.loopFiles(function(fileName, fileDataArrayBuffer){
+	i = 0;
+	len = allFiles.length;
+	for (; i<len; i++){
+	    currFile = allFiles[i];
+	    fragment = '/files/' + fileName.split('/files/')[1];
+	    if (goog.string.caseInsensitiveEndsWith(currFile, fragment)){
+		this.fileData_[currFile] = fileDataArrayBuffer;
+		break;
+	    }
+	}
+    }.bind(this))
+
+    gxnatZip.dispose();
+}
 
 
 /**

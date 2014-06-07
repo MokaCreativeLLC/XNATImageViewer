@@ -55,6 +55,10 @@ xiv.vis.XtkRenderer3D.prototype.render = function() {
 	return;
     } else {
 	goog.base(this, 'render');
+
+	this.dispatchEvent({
+	    type: xiv.vis.RenderEngine.EventType.RENDER_END,
+	})
     }
 }
 

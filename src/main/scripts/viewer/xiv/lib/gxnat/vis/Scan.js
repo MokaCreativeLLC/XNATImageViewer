@@ -275,9 +275,6 @@ gxnat.vis.Scan.prototype.makeFileUrl = function(xnatFileJson) {
 
 
 
-
-
-
 /**
  * @inheritDoc
  */

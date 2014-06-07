@@ -10,6 +10,7 @@ goog.require('goog.events');
 goog.require('goog.array');
 goog.require('goog.object');
 goog.require('goog.style');
+goog.require('goog.format');
 
 // nrg
 goog.require('nrg.ui.Component');
@@ -139,18 +140,6 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     VIEWFRAME: 'viewframe',
     COMPONENT_HIGHLIGHT: 'component-highlight',
     VIEWABLEGROUPMENU: 'viewablegroupmenu',
-
-    /*
-    BUTTON_CROSSHAIRTOGGLE: 'button-crosshairtoggle',
-    BUTTON_BRIGHTNESSCONSTRASTTOGGLE: 'button-brightnesscontrasttoggle',
-    INFOOVERLAY: 'infooverlay',
-    INFOOVERLAY_OVERLAY: 'infooverlay-overlay',
-    INFOOVERLAY_TEXT: 'infooverlay-text',
-    HELPOVERLAY: 'helpoverlay',
-    HELPOVERLAY_OVERLAY: 'helpoverlay-overlay',
-    HELPOVERLAY_TEXT: 'helpoverlay-text',
-    INUSEDIALOG: 'inusedialog',
-    */
 }
 
 
@@ -439,6 +428,7 @@ xiv.ui.ViewBox.prototype.setLayout = function(layout) {
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
+    this.ProgressBarPanel_.setLabel('Parsing: ');
     this.ProgressBarPanel_.setValue(0);
     this.ProgressBarPanel_.showValue(true);
 }
@@ -504,20 +494,18 @@ function(opt_delay, opt_callback){
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){    
-    //window.console.log("ON RENDER END!");
     //
     // Untoggle wait for render errors
     //
     this.toggleWaitForRenderErrors_(false);
 
-    //window.console.log("HIDE PROG!");
-
-    
+    //
+    // HACK: We want to get rid of xtk's progress bar.
+    //
     goog.array.forEach(goog.dom.getElementsByClass('xtk-progress-bar'), 
 		       function(bar){
 			   bar.visibility = 'hidden';
 		       });
-
 
     //
     // Set the layout based the orientation of the ViewableTree
@@ -527,10 +515,19 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     }
 
     //
-    // Controllers
+    // Create dialogs
     //
-    this.InteractorHandler_.createRenderControllers();
+    this.Dialogs_.createDialogs(); 
 
+    //
+    // Show load components (menu)
+    //
+    this.fadeInLoadComponents_(0, null, null);
+
+    //
+    // Create interactors
+    //
+    this.InteractorHandler_.createInteractors();
 
     //
     // Hide progress bar
@@ -538,47 +535,19 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     this.hideProgressBarPanel_(800, function(){
 
 	//
-	// Set progress bar to 0
+	// Set progress bar value to 0
 	//
 	this.ProgressBarPanel_.setValue(0);
 
 	//
-	// Sync controllers
+	// Update style
 	//
-	this.InteractorHandler_.initControllerSync();
+	this.updateStyle();
 
 	//
-	// Update the controllers in the renderer
+	// Run resize callback to be safe.
 	//
-	this.Renderer_.updateControllers();
-
-	//
-	// Set sliders halfway
-	//
-	this.InteractorHandler_.setSlidersHalfway();
-
-	//
-	// Create remaining toggles
-	//
-	this.InteractorHandler_.createThreeDRenderToggle();
-	this.InteractorHandler_.createCrosshairToggle(false);
-
-
-	//
-	// Fade in the load components, and when done...
-	//
-	this.fadeInLoadComponents_(
-	    nrg.ui.Component.animationLengths.FAST, null, null, function(){
-		//
-		// Update styles
-		//
-		this.updateStyle();
-
-		//
-		// Run resize callback to be safe...
-		//
-		this.onLayoutResize_();
-	    }.bind(this));
+	this.onLayoutResize_();
     }.bind(this));
 }
 
@@ -735,31 +704,21 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 
 
     //
-    // Output error if there's no data in the set.
+    // Output an error dialog if there's no data in the set.
     //
     if (!goog.isDefAndNotNull(ViewableSet)){
 	this.onRenderError_('The data set is empty!');
 	return;
     }
 
-
     //
-    // Show / hide load components
+    // Do we re-initialize the load components?
     //
     opt_initLoadComponents = goog.isDefAndNotNull(opt_initLoadComponents) ?
 	opt_initLoadComponents : true;
-    this.hideSubComponent_(this.ViewableGroupMenu_, 400);
-
-        
-    //
-    // Show the progress bar, first
-    //
-    this.showSubComponent_(this.ProgressBarPanel_, 0);
-    //this.ProgressBarPanel_.setLabel('Gathering File Info...', false);
-    //this.ProgressBarPanel_.showValue(false);
 
     //
-    // Reset and Init the load components, if specified
+    // If so, then we dispose them and re-initialize
     //
     if (opt_initLoadComponents) {
 	this.disposeLoadComponents_();
@@ -767,7 +726,21 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     }
 
     //
-    // ViewableTree handling
+    // Hide the menus
+    //
+    this.hideSubComponent_(this.ViewableGroupMenu_, 400);
+        
+    //
+    // Show the progress bar
+    //
+    this.showSubComponent_(this.ProgressBarPanel_, 0);
+
+    //
+    // Load the Viewable tree and exit out if we have to present
+    // the user with loading various ViewGroups (mostly for Slicer files)
+    //
+    // The loadViewableTree_ method will return to this once a ViewableSet
+    // has been selected by the user.
     //
     if (ViewableSet instanceof gxnat.vis.ViewableTree){
 	this.loadViewableTree_(ViewableSet);
@@ -775,24 +748,18 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     }
 
     //
-    // We want to intialize the Info dialog here
-    //
-    this.Dialogs_.createInfoDialog();    
-
-    //
-    // Sync the render plane containers with the layou thandler
+    // Sync the render plane w/ the Layout
     //
     var layoutPlane;
     goog.object.forEach(this.Renderer_.getPlanes(), function(plane, key) { 
 	layoutPlane = this.LayoutHandler_.getCurrentLayoutFrame(key);
-	//window.console.log("LAYOUT PLANE", layoutPlane, key);
 	if (layoutPlane) {
 	    plane.init(layoutPlane.getElement());
 	}
     }.bind(this))
 
     //
-    // Events -listen once, RENDER_START, RENDER_END
+    // Listen once for RENDER_START, RENDER_END
     //
     goog.events.listenOnce(this.Renderer_, 
 		       xiv.vis.RenderEngine.EventType.RENDER_START, 
@@ -803,88 +770,90 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 		       this.onRenderEnd_.bind(this));
 
     //
-    // We want to keep listeing for the RENDERING (we'll unlisten on 
-    // RENDER_END)
+    // Listen for RENDERING event (we'll unlisten on 
+    // for it in the RENDER_END callback)
     //
     goog.events.listen(this.Renderer_, 
 		       xiv.vis.RenderEngine.EventType.RENDERING, 
 		       this.onRendering_.bind(this));
 
     //
-    // toggle wait for render errors
+    // Wait for render errors
     // 
     this.toggleWaitForRenderErrors_(true);
 
-    window.console.log(ViewableSet);
+    //
+    // Do a zip download+render for scans (Viewer handles downloading)
+    //
     if (ViewableSet.getCategory().toLowerCase() == 'scans') {
+	this.renderScanViaZipDownload_(ViewableSet);
+	return;
+    } 
 
-	var allFiles = ViewableSet.getViewables()[0].getFiles();
-	var firstFile = ViewableSet.getViewables()[0].getFiles()[0];
-
-	var zipDir = firstFile.split('/files/')[0] + '/files?format=zip';
-	window.console.log(zipDir);
-
-
-	JSZipUtils.getBinaryContent(zipDir, function(err, data) {
-
-	    if(err) {
-		throw err; // or handle err
-	    }
-
-	    var zip = new JSZip(data);
-	    //window.console.log(zip.files);
-
-	    var fileData = {};
-
-	    //
-	    // match file to stored files
-	    //
-	    goog.object.forEach(zip.files, function(file, fileKey){
-
-		var i = 0, len = allFiles.length;
-		var currFile, zipFileFragment;
-		for (; i<len; i++){
-		    currFile = allFiles[i];
-		    zipFileFragment = '/files/' + file.name.split('/files/')[1];
-		    if (goog.string.caseInsensitiveEndsWith(currFile, 
-							    zipFileFragment)){
-			fileData[currFile] = file.asArrayBuffer();
-			break;
-		    }
-		}
-
-	    })
-	    window.console.log( ViewableSet.getViewables()[0]);
-	    ViewableSet.getViewables()[0].setFileData(fileData);
-	    //window.console.log(fileData);
-
-	    //
-	    // OK!! Render!!!
-	    //
-	    this.Renderer_.render(ViewableSet);
-
-	    //
-	    // Remember the time in which the thumbnail was loaded
-	    //
-	    this.thumbLoadTime_ = (new Date()).getTime(); 
-
-	}.bind(this));
-    } else {
-
- 
-
-	//
-	// OK!! Render!!!
-	//
-	this.Renderer_.render(ViewableSet);
-
-	//
-	// Remember the time in which the thumbnail was loaded
-	//
-	this.thumbLoadTime_ = (new Date()).getTime();  
-    }
+    //
+    // Otherwise, do a standard render (XTK handles downloading).
+    //
+    this.renderViewableSet_(ViewableSet);
 }
  
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
+    //
+    // Show a downloading state in the progress bar...
+    //
+    this.showSubComponent_(this.ProgressBarPanel_, 0);
+    this.ProgressBarPanel_.setLabel('Downloading compressed archive...');
+
+    //
+    // Construct the zip url
+    //
+    var firstFile = ViewableSet.getViewables()[0].getFiles()[0];
+    var filesUrl = firstFile.split('/files/')[0] + '/files';
+    window.console.log("XImgView Zip Downloading (XHR): " +  filesUrl);
+
+    //
+    // Get files as zip
+    //
+    gxnat.getFilesAsZip(
+	filesUrl, 
+	function(zip) { 
+	    window.console.log('Downloaded: ' + filesUrl + '!');
+	    ViewableSet.getViewables()[0].setFileDataFromZip(zip);
+	    this.renderViewableSet_(ViewableSet);
+	}.bind(this), 
+
+	function(event) {
+	    this.ProgressBarPanel_.setLabel(
+		'Downloading compressed archive:<br>' + 
+		    goog.format.numBytesToString(event.loaded, 1, 'MB'));
+	}.bind(this)
+    );
+}
+
+
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
+    //
+    // Render!!!
+    //
+    this.Renderer_.render(ViewableSet);
+
+    //
+    // Remember the time in which the thumbnail was loaded
+    //
+    this.thumbLoadTime_ = (new Date()).getTime(); 
+}
+
 
 
 
@@ -1192,7 +1161,6 @@ xiv.ui.ViewBox.prototype.initProgressBarPanel_ = function(){
 */
 xiv.ui.ViewBox.prototype.initDialogs_ = function(){
     this.Dialogs_ = new xiv.ui.ViewBoxDialogs(this);
-    this.Dialogs_.render();
 
     //
     // Update controllers when we open a dialog

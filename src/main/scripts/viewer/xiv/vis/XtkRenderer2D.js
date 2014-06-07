@@ -300,6 +300,10 @@ xiv.vis.XtkRenderer2D.prototype.render = function() {
 
     } else {
 	goog.base(this, 'render');
+
+	this.dispatchEvent({
+	    type: xiv.vis.RenderEngine.EventType.RENDER_END,
+	})
     }
 
     //window.console.log("RENDER!");

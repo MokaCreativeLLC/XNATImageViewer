@@ -23,6 +23,7 @@ goog.require('nrg.ui.ZippyNode');
 /**
  * A tree-based collection of ZippyNodes for representing a Zippy-based folder
  * hierarchy in a tree structure.
+ *
  * @constructor
  * @extends {nrg.ui.ZippyNode}
  */
