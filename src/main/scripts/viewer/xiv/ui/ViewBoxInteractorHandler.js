@@ -73,6 +73,22 @@ xiv.ui.ViewBoxInteractorHandler.EventType = {
 
 
 /**
+ * Event types.
+ * @enum {string}
+ * @public
+ */
+xiv.ui.ViewBoxInteractorHandler.EventType = {
+    RIGHT_ARROW: goog.events.getUniqueId('right_arrow'),
+    LEFT_ARROW: goog.events.getUniqueId('left_arrow'),
+    UP_ARROW: goog.events.getUniqueId('up_arrow'),
+    DOWN_ARROW: goog.events.getUniqueId('up_arrow'),
+}
+
+
+
+
+
+/**
  * @enum {string}
  */
 xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS = {
@@ -125,6 +141,42 @@ xiv.ui.ViewBoxInteractorHandler.prototype.renderControllers_ = null;
 
 
 /**
+ * The previous mouse position.
+ *
+ * @type {?goog.events.KeyHandler}
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.keyHandler_ = null;
+
+
+
+/**
+ * The previous mouse position.
+ *
+ * @type {?Array.<number>}
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.prevMousePos_ = null;
+
+
+
+/**
+ * @private
+ * @type {boolean}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.shiftDown_ = false;
+
+
+
+/**
+ * @private
+ * @type {boolean}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.ctrlDown_ = false;
+
+
+
+/**
  * @public
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors = function() {
@@ -147,7 +199,190 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors = function() {
     // Create the crosshair toggle rendering toggle
     //
     this.createCrosshairToggle(false);
+
+    //
+    // Listen for key events
+    //
+    this.listenForKeyEvents_();
+
+    //
+    // Listen for mouseover
+    //
+    this.listenForRenderMouseovers_();
+} 
+
+
+
+/**
+ * @private
+ * @type {?goog.events.Key}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.keyDownKey_ = null;
+
+
+
+/**
+ * @private
+ * @type {?goog.events.Key}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.keyUpKey_ = null;
+
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.listenForKeyEvents_ = function(e) {
+    this.keyHandler_ = new goog.events.KeyHandler();
+    this.keyHandler_.attach(document.body);
+    goog.events.listen(this.keyHandler_, 
+		       goog.events.KeyHandler.EventType.KEY, 
+		       this.onKey_.bind(this));
+
+    this.keyDownKey_ = goog.events.listen(document.body, 
+					  goog.events.EventType.KEYDOWN, 
+					  this.onKeyDown_.bind(this));
+
+    this.keyUpKey_ = goog.events.listen(document.body, 
+					goog.events.EventType.KEYUP, 
+					this.onKeyUp_.bind(this));
 }
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.listenForRenderMouseovers_ = 
+function(e) {
+    this.loopInteractorsWithRenderer(
+    function(renderPlane, renderPlaneOr, planeInteractors, volume){
+	goog.events.listen(renderPlane.getRenderer(), 
+			   goog.events.EventType.MOUSEOVER, 
+			   function(e){
+			       this.currMousePlane_ = renderPlaneOr;
+			   }.bind(this))
+
+
+	goog.events.listen(this.ViewBox_.getElement(), 
+			   goog.events.EventType.MOUSEDOWN, 
+			   function(e){
+			       if (e.button == 0) {
+				   this.leftMouseDown_ = true;
+			       } else if (e.button == 1){
+				   this.rightMouseDown_ = true;
+			       }
+			       
+			   }.bind(this))
+
+
+
+	goog.events.listen(this.ViewBox_.getElement(), 
+			   goog.events.EventType.MOUSEUP, 
+			   function(e){
+			       if (e.button == 0) {
+				   this.leftMouseDown_ = false;
+			       } else if (e.button == 1){
+				   this.rightMouseDown_ = false;
+			       }
+			       
+			   }.bind(this))
+
+
+	goog.events.listen(this.ViewBox_.getElement(), 
+			   goog.events.EventType.MOUSEOUT, 
+			   function(e){
+			       this.currMousePlane_ = null; //renderPlaneOr;
+			   }.bind(this))
+    }.bind(this))
+}
+
+
+
+
+/**
+ * @param {!string} plane
+ * @param {!number} increment
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.incrementSlider_ = 
+function(plane, increment) {
+    //window.console.log("GET", ));
+    this.loopInteractorsWithRenderer(
+	function(renderPlane, renderPlaneOr, planeInteractors, volume){
+	    if (plane == renderPlaneOr){
+		planeInteractors.SLIDER.setValue(
+		    planeInteractors.SLIDER.getValue() + increment)
+	    }
+	}.bind(this))
+}
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
+    //window.console.log(e, e.keyCode);
+    // Arrow keys
+    if ((e.keyCode - 40 >= -3) && (e.keyCode - 40 <= 0)){
+	this.onArrowKey_(e.keyCode);
+    }
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.onKeyDown_ = function(e) {
+    window.console.log('DOWN', e, e.keyCode);
+
+    // CTRL
+    if (e.keyCode == 17){
+	window.console.log("CTRL DOWN!");
+	this.ctrlDown_ = true;
+    }
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.onKeyUp_ = function(e) {
+    window.console.log('UP', e, e.keyCode);
+
+    // CTRL
+    if (e.keyCode == 17){
+	window.console.log("CTRL UP!");
+	this.ctrlDown_ = false;
+    }
+
+}
+
+
+
+/**
+ * @param {!number}
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.onArrowKey_ = function(key) {
+    switch (key){
+    case 38: // UP ARROW
+	this.incrementSlider_(this.currMousePlane_, 1);
+	break;
+    case 40: // DOWN ARROW
+	this.incrementSlider_(this.currMousePlane_, -1);
+	break;
+    case 37: // LEFT ARROW
+	this.incrementSlider_(this.currMousePlane_, -1);
+	break;
+    case 39: // RIGHT ARROW
+	this.incrementSlider_(this.currMousePlane_, 1);
+	break;
+    }
+}
+
 
 
 
@@ -1122,10 +1357,28 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
 	goog.array.clear(this.renderControllers_);
     }
 
+    if (goog.isDefAndNotNull(this.keyHandler_)){
+	this.keyHandler_.dispose();
+	delete this.keyHandler_;
+    }
  
     this.renderControllerTree_.disposeInternal();
     this.levelControllerTree_.disposeInternal();
 
+
+    if (goog.isDefAndNotNull(this.prevMousePos_)){
+	goog.array.clear(this.prevMousePos_);
+	delete this.prevMousePos_;
+    }
+
+
+
+    if (goog.isDefAndNotNull(this.keyDownKey_)){
+	goog.events.unlisten(this.keyDownKey_);
+	goog.events.unlisten(this.keyUpKey_);
+	delete this.keyDownKey_;
+	delete this.keyUpKey_;
+    }
 
     delete this.ViewBox_;
     delete this.Renderer_;

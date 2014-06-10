@@ -997,10 +997,12 @@ xiv.ui.ViewBox.prototype.onLayoutChangeEnd_ = function(e){
 	// Put the renderers in the new layout frames
 	//
 	if (goog.isDefAndNotNull(frames[planeOr])){
+	    //window.console.log("CHANGE END", this.LayoutHandler_.
+	    //currLayoutTitle_, frames[planeOr].getElement());
 	    renderPlane.setContainer(frames[planeOr].getElement());
 	    renderPlane.updateStyle();
 	}
-    })
+    }.bind(this))
 
 
     //

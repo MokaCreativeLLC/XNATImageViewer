@@ -378,12 +378,6 @@ function(title, opt_animateSwitch) {
     this.prevLayoutTitle_ = this.currLayoutTitle_;
     this.currLayoutTitle_ = title;
 
-
-    //
-    // IMPORTANT!!
-    //
-    this.bindLayoutToSliderMousewheels_();
-
     //
     // Switch the layout
     //
@@ -403,12 +397,25 @@ function() {
     var slider;
     var currFrames = this.Layouts_[this.currLayoutTitle_].getLayoutFrames();
     goog.object.forEach(currFrames, function(frame, key){
+	//
+	// Get the slider associated with the frame
+	//
 	slider = this.getMasterInteractorByPlane(key, 
 		xiv.ui.layouts.Layout.INTERACTORS.SLIDER);
+
 	if (goog.isDefAndNotNull(slider) && !goog.isDefAndNotNull(
 	    frame[xiv.ui.layouts.LayoutHandler.SLIDER_BOUND])) {
-		slider.bindToMouseWheel(frame.getElement());
-		frame[xiv.ui.layouts.LayoutHandler.SLIDER_BOUND] = true;
+
+	    //
+	    // Make sure the slider changes on the mousewheel
+	    // whenever it is moved over the frame
+	    //
+	    slider.bindToMouseWheel(frame.getElement());
+
+	    //
+	    // Register that the frame has the slider attached to it 
+	    //
+	    frame[xiv.ui.layouts.LayoutHandler.SLIDER_BOUND] = true;
 	}
     }.bind(this))
 }
@@ -762,6 +769,13 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
 	type: xiv.ui.layouts.LayoutHandler.EventType.LAYOUT_CHANGE_END,
 	frames: newLayoutFrames
     })
+
+
+    //
+    // IMPORTANT!!
+    //
+    this.bindLayoutToSliderMousewheels_();
+
 
     //
     // For safety

@@ -99,6 +99,14 @@ nrg.ui.Slider.prototype.MouseWheelHandlers_;
 
 
 /**
+ * @param {Object.<string, goog.events.KeyHandler>}
+ * @private
+ */ 
+nrg.ui.Slider.prototype.KeyHandlers_;
+
+
+
+/**
  * @param {!boolean}
  * @private
  */
@@ -269,6 +277,39 @@ nrg.ui.Slider.prototype.bindToMouseWheel = function (element) {
 	    this.onMouseWheelScroll_, false, this);
 	this.MouseWheelHandlers_[element.id] = mouseWheelHandler;
     }
+}
+
+
+
+/**
+ * Binds the keyboard events appropriated for the slider through
+ * the provided element.
+ *
+ * @param {!Element} element The element to listen for the mousewheel event 
+ *    that triggers the slider to move.
+ * @public
+ */
+nrg.ui.Slider.prototype.bindToArrowKeys = function (element) {
+    if (!goog.isDefAndNotNull(this.KeyHandlers_)) {
+	this.KeyHandlers_ = {};
+    }
+
+    if (!goog.isDefAndNotNull(this.KeyHandlers_[element.id])) {
+	var keyHandler = new goog.events.KeyHandler(element);
+	goog.events.listen(keyHandler, goog.events.KeyHandler.EventType.KEY,
+	    this.onKey_.bind(this));
+	this.KeyHandlers_[element.id] = keyHandler;
+    }
+}
+
+
+
+/**
+ * @param {!Event}
+ * @private
+ */
+nrg.ui.Slider.prototype.onKey_ = function (e) {
+    window.console.log("KEY", e);
 }
 
 
@@ -648,6 +689,16 @@ nrg.ui.Slider.prototype.disposeInternal = function() {
 	goog.dom.removeNode(this.track_);
 	delete this.track_;
     }
+
+    if (goog.isDefAndNotNull(this.KeyHandlers_)){
+	goog.object.forEach(this.KeyHandlers_, function(handler){
+	    goog.events.removeAll(handler);
+	    handler.dispose();
+	})
+	goog.object.clear(this.KeyHandlers_);
+	delete this.KeyHandlers_;
+    }
+
 
     if (goog.isDefAndNotNull(this.MouseWheelHandlers_)){
 	goog.object.forEach(this.MouseWheelHandlers_, function(handler){

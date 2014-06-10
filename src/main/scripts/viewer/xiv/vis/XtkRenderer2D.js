@@ -20,10 +20,15 @@ goog.require('X.renderer2D');
 goog.provide('xiv.vis.XtkRenderer2D');
 xiv.vis.XtkRenderer2D = function () {
     goog.base(this);
-
 }
 goog.inherits(xiv.vis.XtkRenderer2D, X.renderer2D);
 goog.exportSymbol('xiv.vis.XtkRenderer2D', xiv.vis.XtkRenderer2D);
+
+
+
+
+
+
 
 
 
@@ -62,12 +67,6 @@ xiv.vis.XtkRenderer2D.prototype.onScroll = function() {
 }
 
 
-/**
- * @private
- * @type {boolean}
- */
-xiv.vis.XtkRenderer2D.prototype.shiftDown_ = false;
-
 
 /**
  * @param {!Event} e
@@ -100,6 +99,15 @@ xiv.vis.XtkRenderer2D.prototype.onShiftUp_ = function(e) {
 
 
 
+
+/**
+ * @private
+ * @type {boolean}
+ */
+xiv.vis.XtkRenderer2D.prototype.ctrlKeyDown_ = true;
+
+
+
 /**
  * @private
  * @type {boolean}
@@ -107,37 +115,13 @@ xiv.vis.XtkRenderer2D.prototype.onShiftUp_ = function(e) {
 xiv.vis.XtkRenderer2D.prototype.leftMouseDown_ = false;
 
 
+
 /**
- * @param {!Event} e
- * @public
+ * @private
+ * @type {boolean}
  */
-xiv.vis.XtkRenderer2D.prototype.onLeftMouseDown_ = function(e) {
-    //window.console.log('LEFT MOUSE DOWN', this.leftMouseDown_,
-    //this.currVolWindowHigh_, this.currVolWindowLow_);
+xiv.vis.XtkRenderer2D.prototype.rightMouseDown_ = false;
 
-    if (!this.leftMouseDown_){
-	this.currVolWindowHigh_ = this.getVolume().windowHigh;
-	this.currVolWindowLow_ = this.getVolume().windowLow;
-    }
-
-    //window.console.log('LM', this.currVolWindowHigh_, this.currVolWindowLow_);
-    this.leftMouseDown_ = true;
-    this.getVolume().windowHigh = this.currVolWindowHigh_;
-    this.getVolume().windowLow = this.currVolWindowLow_;
-    //window.console.log(this.getVolume().scalars)
-
-    //this.getVolume().modified()
-    this.render();
-    //this.update();
-
-    //window.console.log('LM2', this.getVolume().windowHigh, 
-    //this.getVolume().windowLow);
-
-    this.dispatchEvent({
-	type: xiv.vis.XtkEngine.EventType.LEFTMOUSE_DOWN,
-	orientation: this.orientation
-    })
-}
 
 
 /**
@@ -145,16 +129,23 @@ xiv.vis.XtkRenderer2D.prototype.onLeftMouseDown_ = function(e) {
  * @public
  */
 xiv.vis.XtkRenderer2D.prototype.onLeftMouseUp_ = function(e) {
-    //window.console.log('LEFT MOUSE UP', this.leftMouseDown_);
-    this.leftMouseDown_ = false;
-    this.getVolume().windowHigh = this.currVolWindowHigh_;
-    this.getVolume().windowLow = this.currVolWindowLow_;
-    this.render();
+
+}
+
+
+/**
+ * @param {!Event} e
+ * @public
+ */
+xiv.vis.XtkRenderer2D.prototype.onLeftMouseDown_ = function(e) {
     this.dispatchEvent({
-	type: xiv.vis.XtkEngine.EventType.LEFTMOUSE_UP,
+	type: xiv.vis.XtkEngine.EventType.LEFTMOUSE_DOWN,
 	orientation: this.orientation
     })
 }
+
+
+
 
 
 
@@ -188,61 +179,25 @@ xiv.vis.XtkRenderer2D.prototype.init = function() {
     goog.base(this, 'init');
 
     //
-    // track mousemove
+    // track mousemove and keys
     //
-    this.interactor.onMouseMove = function(e){
-
-	//
-	// track SHIFT + mousemove
-	//
-	if (this.interactor._shiftDown) {
-	    this.onShiftDown_(e);
-	}
-	else {
-	    this.onShiftUp_(e);
-	}
-
-	//
-	// track RIGHT CLICK + mousemove
-	//
-	if (this.interactor.rightButtonDown){
-	    //
-	    // Dispatch the zoom event on any zpp,
-	    //
-	    this.dispatchEvent({
-		type: xiv.vis.XtkEngine.EventType.ZOOM,
-		zoom: this.getZoom(),
-		orientation: this._orientation
-	    })
-	    return;
-	}
-
-	//
-	// track LEFT CLICK + mousemove, attempt to disable level controls
-	//
-	if (this.interactor.leftButtonDown){
-	    //window.console.log(this.interactor.leftButtonDown);
-	    if (this.interactor.config.MOUSECLICKS_ENABLED){
-		this.interactor.config.MOUSECLICKS_ENABLED = false;
-		this.interactor.init();
-	    }
-	    this.onLeftMouseDown_(e);
-	    return;
-
-	} else {
-	    if (this.leftMouseDown_){
-		this.interactor.config.MOUSECLICKS_ENABLED = true;
-		this.interactor.init();
-		this.onLeftMouseUp_(e);
-	    }
-	}
-    }.bind(this)
+    this.interactor.onMouseMove = this.onInteractorMouseMove_.bind(this);
 
 
     //
     // IMPORTANT!!
     //
-    this.disableMousewheel_();
+    this.disableMouseInteractions_();
+}
+
+
+
+
+/**
+ * @public
+ */
+xiv.vis.XtkRenderer2D.prototype.isMouseOver = function() {
+    this.mouseOver_ = true;
 }
 
 
@@ -250,20 +205,63 @@ xiv.vis.XtkRenderer2D.prototype.init = function() {
 /**
  * @private
  */
-xiv.vis.XtkRenderer2D.prototype.disableMousewheel_ = function() {
+xiv.vis.XtkRenderer2D.prototype.onInteractorMouseMove_ = function(e){
+
+
+    this.mouseOver_ = true;
+
+    this.dispatchEvent({
+	type: goog.events.EventType.MOUSEOVER
+    })
+
+    //window.console.log("mouseMove", this.prevMousePos_, 
+    //mPos, event.controlKey);
+
+    //
+    // track SHIFT + mousemove
+    //
+    if (event.shiftKey) {
+	window.console.log("SHIFT DOWN");
+
+    }
+
+    //
+    // track RIGHT CLICK + mousemove
+    //
+    if (this.interactor.rightButtonDown){
+	window.console.log("Right DOWN");
+    }
+
+    //
+    // track LEFT CLICK + mousemove, attempt to disable level controls
+    //
+    if (this.interactor.leftButtonDown){
+	window.console.log("LEFT DOWN");
+
+    } 
+
+
+
+}
+
+
+
+
+/**
+ * @private
+ */
+xiv.vis.XtkRenderer2D.prototype.disableMouseInteractions_ = function() {
     //
     // Disables unwanted scrolling
     //
     this.interactor.config.MOUSEWHEEL_ENABLED = false;
+    this.interactor.config.MOUSECLICKS_ENABLED = false;
+    this.interactor.config.KEYBOARD_ENABLED = false;
 
     //
     // Disables unwated brightness / contrast color correction
     //
-    //this.interactor.config.MOUSECLICKS_ENABLED = false;
     this.interactor.init();
-
-    //this.interactor.onMouseDown = function(left, middle, right){
-    //}.bind(this)
 }
 
 
@@ -271,13 +269,9 @@ xiv.vis.XtkRenderer2D.prototype.disableMousewheel_ = function() {
  * @inheritDoc
  */
 xiv.vis.XtkRenderer2D.prototype.onSliceNavigation = function() {
-    //window.console.log("SLICE NAV!");
-
-    //
-    // DO nothing as we're disabling the mousewheel
-    //
-
-    /**
+    window.console.log("SLICE NAV!", this._topLevelObjects[0]
+	    ['index' + this._orientation]);
+    
     this.dispatchEvent({
 	type: xiv.vis.XtkEngine.EventType.SLICE_NAVIGATED,
 	volume: this._topLevelObjects[0],
@@ -286,7 +280,6 @@ xiv.vis.XtkRenderer2D.prototype.onSliceNavigation = function() {
 	changeOrientation: this._orientation,
 	shiftDown: this.interactor._shiftDown
     })
-    */
 }
 
 
@@ -300,7 +293,6 @@ xiv.vis.XtkRenderer2D.prototype.render = function() {
 
     } else {
 	goog.base(this, 'render');
-
 	this.dispatchEvent({
 	    type: xiv.vis.RenderEngine.EventType.RENDER_END,
 	})
@@ -510,7 +502,7 @@ function(sliceNumber, opt_reverse) {
  * @inheritDoc
  */
 xiv.vis.XtkRenderer2D.prototype.destroy = function() {
-    //window.console.log('\n\n\nDESTROY 2D ', this._orienation);
+    //window.console.log('\n\n\nDESTROY 2D ');
     goog.base(this, 'destroy');
 }
 

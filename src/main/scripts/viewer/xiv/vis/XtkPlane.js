@@ -251,7 +251,7 @@ xiv.vis.XtkPlane.prototype.getContainer = function() {
  * @public
  */
 xiv.vis.XtkPlane.prototype.setContainer = function(containerElt) {
-
+    
     this.container = containerElt;
 
     if (!goog.isDefAndNotNull(this.Renderer)) { 
@@ -262,6 +262,8 @@ xiv.vis.XtkPlane.prototype.setContainer = function(containerElt) {
     // Set the container
     //
     this.Renderer.container = containerElt;
+
+    //window.console.log("SET CONTAINER BASE", this.container);
 }
 
 
@@ -299,6 +301,7 @@ xiv.vis.XtkPlane.prototype.init = function(containerElt) {
     //
     // Destroy the existing renderer if it exists
     //
+    //window.console.log("DESTROU REDNERER");
     this.destroyRenderer_(); 
  
     if (!goog.isDefAndNotNull(this.XRenderer)){
