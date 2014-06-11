@@ -101,6 +101,55 @@ gxnat.vis.AjaxViewableTree.EXPERIMENT_KEY_MAP = {
 
 
 /**
+ * @const
+ * @private
+ */
+gxnat.vis.AjaxViewableTree.FILE_SIZE_KEY = 'Size'
+
+
+
+
+/**
+ * Loops through the contents of a given XNAT folder url and acquires the 
+ * viewables contained within it, applying 'callback' whenever a viewable is
+ * acquired.
+ *
+ * @param {!string} viewableFolderUrl The url of the viewable folders.
+ * @param {!Function} runCallback The callback to apply.
+ * @param {Function=} opt_doneCallback The optional callback applied to each 
+ *     when retrieval is complete.
+ * @public
+ */
+gxnat.vis.AjaxViewableTree.loopFolderContents = 
+function(viewableFolderUrl, runCallback, opt_doneCallback) {
+    gxnat.jsonGet(viewableFolderUrl, function(viewablesJson){
+	
+	if (!goog.isArray(viewablesJson)) {
+	    //runCallback(viewablesJson);
+	    //return;
+	}
+	goog.array.forEach(viewablesJson, function(viewable){
+	    //window.console.log("VIEWABLE:", viewable);
+	    runCallback(viewable)
+	})
+	if (opt_doneCallback){
+	    //window.console.log("done callback", opt_doneCallback);
+	    opt_doneCallback();
+	}
+    })
+}
+
+
+
+/**
+ * @type {?Object}
+ * @private
+ */
+gxnat.vis.AjaxViewableTree.prototype.fileMetadata_ = null;
+
+
+
+/**
  * @type {string=}
  * @protected
  */
@@ -126,6 +175,59 @@ gxnat.vis.AjaxViewableTree.prototype.Path;
  * @protected
  */
 gxnat.vis.AjaxViewableTree.prototype.filesGotten = false;
+
+
+
+/**
+ * @param {!string} fileUrl
+ * @param {!Object} obj
+ * @public
+ */
+gxnat.vis.AjaxViewableTree.prototype.setFileMetadata = function(fileUrl, obj) {
+    if (this.fileMetadata_ == null){
+	this.fileMetadata_ = {};
+    }
+    this.fileMetadata_[fileUrl] = obj;
+}
+
+
+
+
+/**
+ * @return {!number}
+ * @public
+ */
+gxnat.vis.AjaxViewableTree.prototype.getTotalSize = function() {
+    var size = 0;
+    goog.object.forEach(this.fileMetadata_, function(metadata, key){
+	size += this.getFileSize(key);
+    }.bind(this))
+    return size;
+}
+
+
+
+/**
+ * @param {!string} fileUrl
+ * @return {!number}
+ * @public
+ */
+gxnat.vis.AjaxViewableTree.prototype.getFileSize = function(fileUrl) {
+    return  parseInt(
+	this.fileMetadata_[fileUrl][gxnat.vis.AjaxViewableTree.FILE_SIZE_KEY], 
+	10);
+}
+
+
+
+
+/**
+ * @return {!Object}
+ * @public
+ */
+gxnat.vis.AjaxViewableTree.prototype.getFileMetadata = function() {
+    return this.fileMetadata_;
+}
 
 
 
@@ -286,39 +388,6 @@ gxnat.vis.AjaxViewableTree.prototype.makeFileUrl = function(xnatFileJson) {
 
  
 
-
-/**
- * Loops through the contents of a given XNAT folder url and acquires the 
- * viewables contained within it, applying 'callback' whenever a viewable is
- * acquired.
- *
- * @param {!string} viewableFolderUrl The url of the viewable folders.
- * @param {!Function} runCallback The callback to apply.
- * @param {Function=} opt_doneCallback The optional callback applied to each 
- *     when retrieval is complete.
- * @public
- */
-gxnat.vis.AjaxViewableTree.loopFolderContents = 
-function(viewableFolderUrl, runCallback, opt_doneCallback) {
-    gxnat.jsonGet(viewableFolderUrl, function(viewablesJson){
-	
-	if (!goog.isArray(viewablesJson)) {
-	    //runCallback(viewablesJson);
-	    //return;
-	}
-	goog.array.forEach(viewablesJson, function(viewable){
-	    //window.console.log("VIEWABLE:", viewable);
-	    runCallback(viewable)
-	})
-	if (opt_doneCallback){
-	    //window.console.log("done callback", opt_doneCallback);
-	    opt_doneCallback();
-	}
-    })
-}
-
-
-
 /** 
  * Queries for the files associated with the ViewableTree.
  *
@@ -345,15 +414,19 @@ gxnat.vis.AjaxViewableTree.prototype.getFileList = function(callback){
     var i =  0;
     var len = 0;
     var fileUrl = '';
+    var fileMetadata;
 
     //window.console.log(this, fileQueryUrl);
-    gxnat.jsonGet(fileQueryUrl, function(fileUrls){
-	//window.console.log(fileUrls);
-	len = fileUrls.length;
+    gxnat.jsonGet(fileQueryUrl, function(fileMetadataArray){
+	//window.console.log(fileMetadataArray);
+	len = fileMetadataArray.length;
 	for (; i < len; i++) {
-	    fileUrl = this.makeFileUrl(fileUrls[i]);
-	    //window.console.log("ABSOLUTE URL:", fileUrls[i], fileUrl); 
+	    fileMetadata = fileMetadataArray[i]
+	    fileUrl = this.makeFileUrl(fileMetadata);
+	    //window.console.log("ABSOLUTE URL:", 
+	    //fileMetadataArray[i], fileUrl); 
 	    if (fileUrl) { 
+		this.setFileMetadata(fileUrl, fileMetadata)
 		this.addFiles(fileUrl, this.fileFilter);
 	    }
 	}
@@ -425,8 +498,13 @@ function(url, AjaxViewableTreeSubClass, opt_runCallback, opt_doneCallback) {
  */
 gxnat.vis.AjaxViewableTree.prototype.dispose = function() {
     goog.base(this, 'dispose');
-
     
+    // file metadata
+    if (this.fileMetadata_ != null){
+	goog.object.clear(this.fileMetadata_);
+	delete this.fileMetadata_;
+    }
+
     delete this.filesGotten;
 
     // Session info.

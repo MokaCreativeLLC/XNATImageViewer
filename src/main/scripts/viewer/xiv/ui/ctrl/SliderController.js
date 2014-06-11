@@ -192,19 +192,29 @@ xiv.ui.ctrl.SliderController.prototype.dispatchComponentEvent = function(){
  */
 xiv.ui.ctrl.SliderController.prototype.update = function() {
     //
-    // Compensates for a bug
+    // Updates the component (to be safe)
     //
     var component = this.getComponent();
-    component.updateStyle();
     var oldValue = component.getValue();
+    component.updateStyle();
     component.setValue(0);
     component.setValue(oldValue);
 
-    this.valueInput_.step = component.getStep();
-    this.valueInput_.min = component.getMinimum();
-    this.valueInput_.max = component.getMaximum();
-    this.valueInput_.value = component.getValue();
-
+    //
+    // Sync the input box with the slider
+    //
+    if (component.getStep() !== this.valueInput_.step){
+	this.valueInput_.step = component.getStep();
+    }
+    if (component.getMinimum() !== this.valueInput_.min) {
+	this.valueInput_.min = component.getMinimum();
+    }
+    if (component.getMaximum() !== this.valueInput_.max) {
+	this.valueInput_.max = component.getMaximum();
+    }
+    if (component.getValue() !== this.valueInput_.value) {
+	this.valueInput_.value = oldValue;
+    }
 }
 
 

@@ -79,6 +79,17 @@ xiv.vis.XtkEngine = function () {
     this.PlaneV_ = new xiv.vis.XtkPlane3D();
 
     
+    
+    /**
+     * @type {Object.<string, xiv.vis.XtkPlane>}
+     * @private
+     */
+    this.Planes_ = {}
+    this.Planes_[this.PlaneX_.getOrientation()] = this.PlaneX_;
+    this.Planes_[this.PlaneY_.getOrientation()] = this.PlaneY_;
+    this.Planes_[this.PlaneZ_.getOrientation()] = this.PlaneZ_;
+    this.Planes_[this.PlaneV_.getOrientation()] = this.PlaneV_;
+
 
     /**
      * @type {!xiv.vis.XtkPlane2D}
@@ -735,6 +746,13 @@ xiv.vis.XtkEngine.prototype.getPlaneV = function () {
 
 
 
+/**
+ * @param {!string}
+ * @return {xiv.vis.XtkPlane}
+ */
+xiv.vis.XtkEngine.prototype.getPlaneByOrientation = function (or) {
+    return this.Planes_[or];
+}
 
 
 
@@ -742,12 +760,7 @@ xiv.vis.XtkEngine.prototype.getPlaneV = function () {
  * @return {Array.<xiv.vis.XtkPlane>}
  */
 xiv.vis.XtkEngine.prototype.getPlanes = function () {
-    var obj  = {};
-    obj[this.PlaneX_.getOrientation()] = this.PlaneX_;
-    obj[this.PlaneY_.getOrientation()] = this.PlaneY_;
-    obj[this.PlaneZ_.getOrientation()] = this.PlaneZ_;
-    obj[this.PlaneV_.getOrientation()] = this.PlaneV_;
-    return obj;
+    return this.Planes_;
 }
 
 
@@ -771,6 +784,10 @@ xiv.vis.XtkEngine.prototype.dispose = function () {
 
 
     delete this.primaryRenderPlane_;
+
+    goog.object.clear(this.Planes_);
+    delete this.Planes_;
+
 
     this.PlaneX_.dispose();
     delete this.PlaneX_;
@@ -1257,6 +1274,8 @@ goog.exportSymbol('xiv.vis.XtkEngine.prototype.getPlaneZ',
 	xiv.vis.XtkEngine.prototype.getPlaneZ);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.getPlaneV',
 	xiv.vis.XtkEngine.prototype.getPlaneV);
+goog.exportSymbol('xiv.vis.XtkEngine.prototype.getPlaneByOrientation',
+	xiv.vis.XtkEngine.prototype.getPlaneByOrientation);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.getPlanes',
 	xiv.vis.XtkEngine.prototype.getPlanes);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.dispose',

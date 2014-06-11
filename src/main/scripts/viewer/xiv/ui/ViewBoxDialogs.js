@@ -74,9 +74,7 @@ xiv.ui.ViewBoxDialogs.CSS_SUFFIX = {
     HELP_TOGGLE: 'help-toggle',
     LEVELS_TOGGLE: 'levels-toggle',
     INFO_TOGGLE: 'info-toggle',
-
     RENDERCONTROLMENU_TOGGLE: 'rendercontrol-toggle',
-
     INFODIALOG: 'infodialog',
     INFODIALOG_TEXT: 'infodialog-text',
     INUSEDIALOG: 'inusedialog',

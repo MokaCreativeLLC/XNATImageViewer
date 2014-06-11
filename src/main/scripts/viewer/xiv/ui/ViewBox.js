@@ -145,13 +145,6 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
 
 
 /**
- * @const
- */
-xiv.ui.ViewBox.ORIENTATION_TAG = goog.string.createUniqueString();
-
-
-
-/**
  * @dict
  * @const
  */
@@ -287,6 +280,7 @@ xiv.ui.ViewBox.prototype.InteractorHandler_ = null;
  * @private
  */
 xiv.ui.ViewBox.prototype.hasLoadComponents_ = false;
+
 
 
 /**
@@ -428,24 +422,31 @@ xiv.ui.ViewBox.prototype.setLayout = function(layout) {
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
-    this.ProgressBarPanel_.setLabel('Parsing: ');
     this.ProgressBarPanel_.setValue(0);
     this.ProgressBarPanel_.showValue(true);
+    this.showSubComponent_(this.ProgressBarPanel_, 0);
 }
 
 
 
 /**
- * As stated.
+ * @param {!number} value
+ * @private
+ */
+xiv.ui.ViewBox.prototype.setProgressBarPct_ = function(value){
+    this.ProgressBarPanel_.setLabel('');
+    this.ProgressBarPanel_.showValue(true);
+    this.ProgressBarPanel_.setValue(value * 100);
+}
+
+
+
+/**
  * @param {Event} e
  * @private
  */
 xiv.ui.ViewBox.prototype.onRendering_ = function(e){
-    //window.console.log("\n\nON RENDERING", e.value);
-    this.ProgressBarPanel_.setLabel('');
-    this.showSubComponent_(this.ProgressBarPanel_, 0);
-    this.ProgressBarPanel_.showValue(true);
-    this.ProgressBarPanel_.setValue(e.value * 100);
+    this.setProgressBarPct_(e.value);
 }
 
 
@@ -691,7 +692,6 @@ xiv.ui.ViewBox.prototype.checkInUseAndShowDialog = function(opt_onYes){
  * @public
  */
 xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
-
     //
     // Prompt user if something is already loaded
     //
@@ -807,8 +807,15 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
     // Show a downloading state in the progress bar...
     //
     this.showSubComponent_(this.ProgressBarPanel_, 0);
-    this.ProgressBarPanel_.setLabel('Downloading compressed archive...');
+    this.setProgressBarPct_(0);
 
+    //
+    // NOTE: this is in uncompressed format, so the download will be less
+    // than this.  Nevertheless, we use this information for the progress bar.
+    //
+    var totalFileSize = this.ViewableTrees_[this.ViewableTrees_.length - 1]
+	.getTotalSize();
+    
     //
     // Construct the zip url
     //
@@ -822,15 +829,13 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
     gxnat.getFilesAsZip(
 	filesUrl, 
 	function(zip) { 
-	    window.console.log('Downloaded: ' + filesUrl + '!');
+	    //window.console.log('Downloaded: ' + filesUrl + '!');
 	    ViewableSet.getViewables()[0].setFileDataFromZip(zip);
 	    this.renderViewableSet_(ViewableSet);
 	}.bind(this), 
 
 	function(event) {
-	    this.ProgressBarPanel_.setLabel(
-		'Downloading compressed archive:<br>' + 
-		    goog.format.numBytesToString(event.loaded, 1, 'MB'));
+	    this.setProgressBarPct_(event.loaded/totalFileSize);
 	}.bind(this)
     );
 }
@@ -1685,8 +1690,6 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
 goog.exportSymbol('xiv.ui.ViewBox.EventType', xiv.ui.ViewBox.EventType);
 goog.exportSymbol('xiv.ui.ViewBox.ID_PREFIX', xiv.ui.ViewBox.ID_PREFIX);
 goog.exportSymbol('xiv.ui.ViewBox.CSS_SUFFIX', xiv.ui.ViewBox.CSS_SUFFIX);
-goog.exportSymbol('xiv.ui.ViewBox.ORIENTATION_TAG', 
-		  xiv.ui.ViewBox.ORIENTATION_TAG);
 goog.exportSymbol('xiv.ui.ViewBox.defaultLayout', 
 		  xiv.ui.ViewBox.defaultLayout);
 goog.exportSymbol('xiv.ui.ViewBox.MIN_HOLDER_HEIGHT', 

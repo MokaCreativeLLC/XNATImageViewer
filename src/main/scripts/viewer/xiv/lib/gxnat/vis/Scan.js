@@ -177,11 +177,18 @@ gxnat.vis.Scan.prototype.getFileList = function(callback){
 	return;
     }
 
+
+    //--------------------------
     //
-    // A sample query looks like this:
-    //http://localhost:8080/xnat/REST/projects/2/subjects/
-    //localhost_S00004/experiments/localhost_E00017/scans/7?format=json
+    // IMPORTANT!! PLEASE READ!!
     //
+    // The basic idea here is that before we get the actual file list, we
+    // must get the metadata associated with the scan.  So, we do exactly that.
+    // We first query for the scan's metadata, and then we call the superclass
+    // 'getFileList' to query for the actual file list.
+    //
+    //--------------------------
+
 
     //
     // Get the scan metadata first

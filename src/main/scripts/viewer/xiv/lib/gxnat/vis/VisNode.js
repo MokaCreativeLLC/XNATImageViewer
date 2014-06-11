@@ -26,6 +26,7 @@ gxnat.vis.VisNode.prototype.category_ = 'Generic';
 
 
 
+
 /**
  * Allows setting of the category. 
  *

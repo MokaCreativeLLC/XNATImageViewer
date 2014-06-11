@@ -139,12 +139,31 @@ xiv.vis.XtkRenderer2D.prototype.init = function() {
 
 /**
  * @public
+ * @return {!string}
+ */
+xiv.vis.XtkRenderer2D.prototype.getOrientation = function() {
+    return this._orientation;
+}
+
+
+
+/**
+ * @public
  * @return {X.camera2D}
  */
 xiv.vis.XtkRenderer2D.prototype.getCamera = function() {
     return this._camera;
 }
 
+
+
+/**
+ * @public
+ * @return {!Array}
+ */
+xiv.vis.XtkRenderer2D.prototype.getMousePosition = function() {
+    return this.interactor.mousePosition;
+}
 
 
 /**
@@ -344,6 +363,13 @@ function(sliceNumber, sliceType, opt_reverse) {
     var _sliceHeight = this._sliceHeight;
     var _sliceWSpacing = null;
     var _sliceHSpacing = null;
+
+
+    //
+    // Exit out of no volume
+    //
+    if (!goog.isDefAndNotNull(_volume)) { return }
+
 
     // get current slice
     // which color?

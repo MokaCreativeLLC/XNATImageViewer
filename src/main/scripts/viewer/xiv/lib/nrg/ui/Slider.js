@@ -322,10 +322,16 @@ nrg.ui.Slider.prototype.onKey_ = function (e) {
  * @public
  */
 nrg.ui.Slider.prototype.updateStyle = function () {
-    var pos = this.getValue();
-    this.setValue(Math.max(this.getMinimum(), 
-			   Math.min(pos + 1, this.getMaximum())))
-    this.setValue(pos);   
+    var val = this.getValue();
+    var proposedCoord = this.getThumbCoordinateForValue(val);
+
+    if (this.getOrientation().toLowerCase() == 'horizontal'){
+	this.thumb_.style.left = proposedCoord.x.toString() + 'px';
+    }
+
+    else if (this.getOrientation().toLowerCase() == 'vertical'){
+	this.thumb_.style.left = proposedCoord.y.toString() + 'px';
+    }    
 }
 
 
@@ -492,7 +498,8 @@ nrg.ui.Slider.prototype.initEvents_ = function() {
  * Initializes the change event to the custom 'SLIDE' event.
  */
 nrg.ui.Slider.prototype.onChange_ =  function (e) {
-    nrg.dom.stopPropagation(e);
+    // stop propataion
+    e.stopPropagation();
 
     //
     // Add the hover classes
@@ -598,6 +605,7 @@ nrg.ui.Slider.prototype.removeTrackHoverClasses_ =  function(e){
  */
 nrg.ui.Slider.prototype.onThumbMouseOver_ =  function(e){
     //window.console.log("THUMB MOUSE OVER!!");
+    e.stopPropagation();
     this.addThumbHoverClasses_();
     this.addTrackHoverClasses_();
 }
