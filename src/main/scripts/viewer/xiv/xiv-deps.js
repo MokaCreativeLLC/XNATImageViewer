@@ -189,16 +189,21 @@ goog.addDependency('../../../../ui/layouts/interactors/Slider.js',
 ]);
 
 
+goog.addDependency('../../../../ui/layouts/interactors/InputController.js', 
+['xiv.ui.layouts.interactors.InputController'], [
+    'nrg.ui.Component'
+]);
+
 
 goog.addDependency('../../../../ui/layouts/interactors/FrameDisplay.js', 
 ['xiv.ui.layouts.interactors.FrameDisplay'], [
-    'nrg.ui.Component'
+    'xiv.ui.layouts.interactors.InputController'
 ]);
 
 
 goog.addDependency('../../../../ui/layouts/interactors/ZoomDisplay.js', 
 ['xiv.ui.layouts.interactors.ZoomDisplay'], [
-    'nrg.ui.Component'
+    'xiv.ui.layouts.interactors.InputController'
 ]);
 
 

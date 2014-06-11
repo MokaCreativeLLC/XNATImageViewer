@@ -22,19 +22,10 @@ goog.provide('xiv.ui.layouts.interactors.ZoomDisplay');
 xiv.ui.layouts.interactors.ZoomDisplay = function() { 
     goog.base(this);
 }
-goog.inherits(xiv.ui.layouts.interactors.ZoomDisplay, nrg.ui.Component);
+goog.inherits(xiv.ui.layouts.interactors.ZoomDisplay, 
+	      xiv.ui.layouts.interactors.InputController);
 goog.exportSymbol('xiv.ui.layouts.interactors.ZoomDisplay', 
 		  xiv.ui.layouts.interactors.ZoomDisplay);
-
-
-
-/**
- * Event types.
- * @enum {string}
- * @public
- */
-xiv.ui.layouts.interactors.ZoomDisplay.EventType = {}
-
 
 
 /**
@@ -48,45 +39,13 @@ xiv.ui.layouts.interactors.ZoomDisplay.ID_PREFIX =
 
 
 /**
- * @enum {string}
- * @public
- */
-xiv.ui.layouts.interactors.ZoomDisplay.CSS_SUFFIX = {}
-
-
-
-/**
- * @param {!number} num
- * @public
- */
-xiv.ui.layouts.interactors.ZoomDisplay.prototype.setValue = function(num){
-    this.getElement().innerHTML = 'Zoom Level: ' +
-	Math.round(num * 100).toString() + '%';
-}
-
-
-
-
-
-/**
  * @inheritDoc
  */
-xiv.ui.layouts.interactors.ZoomDisplay.prototype.render = 
-function(parentElement) {
-
-    //
-    // superclass
-    //
-    goog.base(this, 'render', parentElement);
-}
-
-
-
-/**
-* @inheritDoc
-*/
-xiv.ui.layouts.interactors.ZoomDisplay.prototype.disposeInternal = function(){
-    goog.base(this, 'disposeInternal');
+xiv.ui.layouts.interactors.ZoomDisplay.prototype.updateValue = 
+function(){
+    //if (!goog.isDefAndNotNull(this.inputBox_)){return}
+    this.displayElt_.innerHTML = 'Zoom level:&nbsp' + 
+	this.inputBox_.value + '%';
 }
 
 

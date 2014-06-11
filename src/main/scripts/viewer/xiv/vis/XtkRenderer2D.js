@@ -27,11 +27,6 @@ goog.exportSymbol('xiv.vis.XtkRenderer2D', xiv.vis.XtkRenderer2D);
 
 
 
-
-
-
-
-
 /**
  * @param {!number} sliceNum
  * @public
@@ -101,56 +96,6 @@ xiv.vis.XtkRenderer2D.prototype.onShiftUp_ = function(e) {
 
 
 /**
- * @private
- * @type {boolean}
- */
-xiv.vis.XtkRenderer2D.prototype.ctrlKeyDown_ = true;
-
-
-
-/**
- * @private
- * @type {boolean}
- */
-xiv.vis.XtkRenderer2D.prototype.leftMouseDown_ = false;
-
-
-
-/**
- * @private
- * @type {boolean}
- */
-xiv.vis.XtkRenderer2D.prototype.rightMouseDown_ = false;
-
-
-
-/**
- * @param {!Event} e
- * @public
- */
-xiv.vis.XtkRenderer2D.prototype.onLeftMouseUp_ = function(e) {
-
-}
-
-
-/**
- * @param {!Event} e
- * @public
- */
-xiv.vis.XtkRenderer2D.prototype.onLeftMouseDown_ = function(e) {
-    this.dispatchEvent({
-	type: xiv.vis.XtkEngine.EventType.LEFTMOUSE_DOWN,
-	orientation: this.orientation
-    })
-}
-
-
-
-
-
-
-
-/**
  * @inheritDoc
  */
 xiv.vis.XtkRenderer2D.prototype.onProgress = function(e) {
@@ -192,6 +137,15 @@ xiv.vis.XtkRenderer2D.prototype.init = function() {
 
 
 
+/**
+ * @public
+ * @return {X.camera2D}
+ */
+xiv.vis.XtkRenderer2D.prototype.getCamera = function() {
+    return this._camera;
+}
+
+
 
 /**
  * @public
@@ -206,42 +160,11 @@ xiv.vis.XtkRenderer2D.prototype.isMouseOver = function() {
  * @private
  */
 xiv.vis.XtkRenderer2D.prototype.onInteractorMouseMove_ = function(e){
-
-
     this.mouseOver_ = true;
-
     this.dispatchEvent({
-	type: goog.events.EventType.MOUSEOVER
+	type: goog.events.EventType.MOUSEOVER,
+	mousePosition: this.interactor.mousePosition
     })
-
-    //window.console.log("mouseMove", this.prevMousePos_, 
-    //mPos, event.controlKey);
-
-    //
-    // track SHIFT + mousemove
-    //
-    if (event.shiftKey) {
-	window.console.log("SHIFT DOWN");
-
-    }
-
-    //
-    // track RIGHT CLICK + mousemove
-    //
-    if (this.interactor.rightButtonDown){
-	window.console.log("Right DOWN");
-    }
-
-    //
-    // track LEFT CLICK + mousemove, attempt to disable level controls
-    //
-    if (this.interactor.leftButtonDown){
-	window.console.log("LEFT DOWN");
-
-    } 
-
-
-
 }
 
 
@@ -269,8 +192,8 @@ xiv.vis.XtkRenderer2D.prototype.disableMouseInteractions_ = function() {
  * @inheritDoc
  */
 xiv.vis.XtkRenderer2D.prototype.onSliceNavigation = function() {
-    window.console.log("SLICE NAV!", this._topLevelObjects[0]
-	    ['index' + this._orientation]);
+    //window.console.log("SLICE NAV!", this._topLevelObjects[0]
+    //['index' + this._orientation]);
     
     this.dispatchEvent({
 	type: xiv.vis.XtkEngine.EventType.SLICE_NAVIGATED,
@@ -293,13 +216,17 @@ xiv.vis.XtkRenderer2D.prototype.render = function() {
 
     } else {
 	goog.base(this, 'render');
+
+	//
+	// Rendering actually happens AFTER loading so, we know that once
+	// we're "rendering" the rendering process is over.  
+	//
+	// Potential source of semantic confusion.
+	//
 	this.dispatchEvent({
 	    type: xiv.vis.RenderEngine.EventType.RENDER_END,
 	})
     }
-
-    //window.console.log("RENDER!");
-    //this.interactor.config.MOUSEWHEEL_ENABLED = false;
 }
 
 
@@ -334,15 +261,65 @@ xiv.vis.XtkRenderer2D.prototype.getNumberSlices = function() {
 
 
 /**
- * Get's the zoom percentage.
+ * Gets the zoom percentage.
  * 
  * @return {!number}
  * @public
  */
 xiv.vis.XtkRenderer2D.prototype.getZoom = function(){
-    //window.console.log('ZOOM', this._camera._view[14]);
     return this._camera._view[14];
 }
+
+
+
+/**
+ * Sets the zoom percentage.
+ * 
+ * @param {!number}
+ * @public
+ */
+xiv.vis.XtkRenderer2D.prototype.setZoom = function(num){
+    this._camera._view[14] = num;
+}
+
+
+
+
+/**
+ * @param {number=} opt_multiplier Negative numbers zoom out, positive numbers
+ *    zoom in.
+ * @private
+ */
+xiv.vis.XtkRenderer2D.prototype.zoom_ = function(opt_multiplier){
+    var multiplier = goog.isDefAndNotNull(opt_multiplier) ? opt_multiplier : 
+	1;
+    var zoomStep = .06;
+    //if (this._camera._view[14] > 3) {
+    //zoomStep = .06;
+    //}
+    //zoomStep = Math.min(Math.pow(this._camera._view[14] / 20, 2), 100);
+    //window.console.log(zoomStep);
+    this._camera._view[14] += zoomStep * opt_multiplier;
+}
+
+
+
+/**
+ * @public
+ */
+xiv.vis.XtkRenderer2D.prototype.zoomIn = function(){
+    this.zoom_(1);
+}
+
+
+
+/**
+ * @public
+ */
+xiv.vis.XtkRenderer2D.prototype.zoomOut = function(){
+    this.zoom_(-1);
+}
+
 
 
 /**

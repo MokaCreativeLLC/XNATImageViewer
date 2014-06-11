@@ -23,3 +23,40 @@
     background-color: black;
 }
 
+
+
+.xiv-ui-viewboxinteractorhandler-viewframe-grab {
+  cursor:hand;
+  cursor:grab;
+  cursor:-moz-grab;
+  cursor:-webkit-grab;
+}
+
+
+
+.xiv-ui-viewboxinteractorhandler-viewframe-grabbing {
+  cursor:grabbing;
+  cursor:-moz-grabbing;
+  cursor:-webkit-grabbing;
+}
+
+.xiv-ui-viewboxinteractorhandler-viewframe-grab-custom {
+  cursor: url(https://mail.google.com/mail/images/2/openhand.cur), default !important;
+}
+
+
+.xiv-ui-viewboxinteractorhandler-viewframe-grabbing-custom {
+  cursor: url(https://mail.google.com/mail/images/2/closedhand.cur), default !important;
+}
+
+
+.xiv-ui-viewboxinteractorhandler-viewframe-zoom-in {
+  cursor: zoom-in;
+  cursor: -webkit-zoom-in;
+}
+
+
+.xiv-ui-viewboxinteractorhandler-viewframe-zoom-out {
+  cursor: zoom-out;
+  cursor: -webkit-zoom-out;
+}

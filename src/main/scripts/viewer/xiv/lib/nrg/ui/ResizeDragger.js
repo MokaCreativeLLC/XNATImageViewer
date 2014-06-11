@@ -410,6 +410,7 @@ nrg.ui.ResizeDragger.prototype.setEvents_ = function(dragger) {
  * @protected
  */
 nrg.ui.ResizeDragger.prototype.onResizeStart = function(e) {
+    //goog.events.Event.stopPropagation(e);
     this.dispatchEvent({
 	type: nrg.ui.ResizeDragger.EventType.RESIZE_START
     })
@@ -422,6 +423,7 @@ nrg.ui.ResizeDragger.prototype.onResizeStart = function(e) {
  */
 nrg.ui.ResizeDragger.prototype.onResize = function(e) {
     this.updateTrackingValues();
+    //goog.events.Event.stopPropagation(e);
     this.dispatchEvent({
 	type: nrg.ui.ResizeDragger.EventType.RESIZE,
 	resizeePosition: this.resizeePos,
@@ -445,6 +447,7 @@ nrg.ui.ResizeDragger.prototype.onResize = function(e) {
  * @public
  */
 nrg.ui.ResizeDragger.prototype.onResizeEnd = function(e) {
+    //goog.events.Event.stopPropagation(e);
     this.dispatchEvent({
 	type: nrg.ui.ResizeDragger.EventType.RESIZE_END
     })

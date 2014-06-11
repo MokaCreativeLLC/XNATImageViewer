@@ -4,6 +4,7 @@
 
 // goog
 goog.require('goog.events.EventTarget');
+goog.require('goog.math.Vec2');
 
 // xiv
 goog.require('xiv.ui.Histogram');
@@ -117,6 +118,22 @@ xiv.ui.ViewBoxInteractorHandler.CSS = {
 
 
 /**
+ * @enum {string}
+ * @public
+ */
+xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS = {
+    GRAB: 'xiv-ui-viewboxinteractorhandler-viewframe-grab',
+    GRAB_CUSTOM: 'xiv-ui-viewboxinteractorhandler-viewframe-grab-custom',
+    GRABBING: 'xiv-ui-viewboxinteractorhandler-viewframe-grabbing',
+    GRABBING_CUSTOM: 
+    'xiv-ui-viewboxinteractorhandler-viewframe-grabbing-custom',
+    ZOOM_IN: 'xiv-ui-viewboxinteractorhandler-viewframe-zoom-in',
+    ZOOM_OUT: 'xiv-ui-viewboxinteractorhandler-viewframe-zoom-out'
+}
+
+
+
+/**
  * @public
  * @type {?nrg.ui.ScrollableZippyTree}
  */
@@ -161,6 +178,16 @@ xiv.ui.ViewBoxInteractorHandler.prototype.prevMousePos_ = null;
 
 
 /**
+ * The current mouse position.
+ *
+ * @type {?Array.<number>}
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.currMousePos_ = null;
+
+
+
+/**
  * @private
  * @type {boolean}
  */
@@ -173,6 +200,80 @@ xiv.ui.ViewBoxInteractorHandler.prototype.shiftDown_ = false;
  * @type {boolean}
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.ctrlDown_ = false;
+
+
+
+/**
+ * @private
+ * @type {?goog.events.Key}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.keyDownKey_ = null;
+
+
+
+/**
+ * @private
+ * @type {?goog.events.Key}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.keyUpKey_ = null;
+
+
+
+/**
+ * @private
+ * @type {?goog.events.Key}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.mouseDownKey_ = null;
+
+
+
+/**
+ * @private
+ * @type {?goog.events.Key}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.mouseUpKey_ = null;
+
+
+
+/**
+ * @private
+ * @type {?goog.events.Key}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.mouseOutKey_ = null;
+
+
+
+
+/**
+ * @private
+ * @type {!boolean}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.leftMouseDown_ = false;
+
+
+
+/**
+ * @private
+ * @type {!boolean}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.middleMouseDown_ = false;
+
+
+
+/**
+ * @private
+ * @type {!boolean}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.rightMouseDown_ = false;
+
+
+
+/**
+ * @private
+ * @type {?Array.<xiv.ui.ctrl.xiv.ui.ctrl.XtlController}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.LevelControllers_ = null
+
 
 
 
@@ -203,47 +304,41 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors = function() {
     //
     // Listen for key events
     //
-    this.listenForKeyEvents_();
+    this.listenForKeyboardEvents_();
 
     //
     // Listen for mouseover
     //
-    this.listenForRenderMouseovers_();
+    this.listenForMouseEvents_();
 } 
 
 
 
-/**
- * @private
- * @type {?goog.events.Key}
- */
-xiv.ui.ViewBoxInteractorHandler.prototype.keyDownKey_ = null;
-
-
-
-/**
- * @private
- * @type {?goog.events.Key}
- */
-xiv.ui.ViewBoxInteractorHandler.prototype.keyUpKey_ = null;
-
-
-
 
 /**
  * @private
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.listenForKeyEvents_ = function(e) {
+xiv.ui.ViewBoxInteractorHandler.prototype.listenForKeyboardEvents_ = 
+function(e) {
+
+    //
+    // Apply a general keyhandler (for keys where up/down events are not
+    // needed).
+    //
     this.keyHandler_ = new goog.events.KeyHandler();
     this.keyHandler_.attach(document.body);
     goog.events.listen(this.keyHandler_, 
 		       goog.events.KeyHandler.EventType.KEY, 
 		       this.onKey_.bind(this));
 
+
+    //
+    // Apply the event to document.body -- really the only safe way to 
+    // get the listener to function properly
+    //
     this.keyDownKey_ = goog.events.listen(document.body, 
 					  goog.events.EventType.KEYDOWN, 
 					  this.onKeyDown_.bind(this));
-
     this.keyUpKey_ = goog.events.listen(document.body, 
 					goog.events.EventType.KEYUP, 
 					this.onKeyUp_.bind(this));
@@ -251,72 +346,406 @@ xiv.ui.ViewBoxInteractorHandler.prototype.listenForKeyEvents_ = function(e) {
 
 
 
+
 /**
  * @private
+ * @param {goog.events.Event} e
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.listenForRenderMouseovers_ = 
-function(e) {
-    this.loopInteractorsWithRenderer(
-    function(renderPlane, renderPlaneOr, planeInteractors, volume){
-	goog.events.listen(renderPlane.getRenderer(), 
-			   goog.events.EventType.MOUSEOVER, 
-			   function(e){
-			       this.currMousePlane_ = renderPlaneOr;
-			   }.bind(this))
+xiv.ui.ViewBoxInteractorHandler.prototype.clearCursorStyle_ = function(e) {
+    var viewFrame = this.ViewBox_.getViewFrame();
+    goog.object.forEach(this.constructor.CURSOR_CSS, function(css, key){
+	goog.dom.classes.remove(viewFrame, css);
+    })
+}
 
 
-	goog.events.listen(this.ViewBox_.getElement(), 
-			   goog.events.EventType.MOUSEDOWN, 
-			   function(e){
-			       if (e.button == 0) {
-				   this.leftMouseDown_ = true;
-			       } else if (e.button == 1){
-				   this.rightMouseDown_ = true;
-			       }
-			       
-			   }.bind(this))
+/**
+ * @private
+ * @param {goog.events.Event} e
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.setCursorGrab_ = function(e) {
+    goog.dom.classes.add(this.ViewBox_.getViewFrame(), 
+			 this.constructor.CURSOR_CSS.GRAB);
+    if( navigator.userAgent.match(/MSIE/i) || 
+	navigator.userAgent.match(/Chrome/i) ) {  
+	goog.dom.classes.add(this.ViewBox_.getViewFrame(), 
+			     this.constructor.CURSOR_CSS.GRAB_CUSTOM);
+    }
+}
 
 
 
-	goog.events.listen(this.ViewBox_.getElement(), 
-			   goog.events.EventType.MOUSEUP, 
-			   function(e){
-			       if (e.button == 0) {
-				   this.leftMouseDown_ = false;
-			       } else if (e.button == 1){
-				   this.rightMouseDown_ = false;
-			       }
-			       
-			   }.bind(this))
-
-
-	goog.events.listen(this.ViewBox_.getElement(), 
-			   goog.events.EventType.MOUSEOUT, 
-			   function(e){
-			       this.currMousePlane_ = null; //renderPlaneOr;
-			   }.bind(this))
-    }.bind(this))
+/**
+ * @private
+ * @param {goog.events.Event} e
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.setCursorGrabbing_ = function(e) {
+    goog.dom.classes.add(this.ViewBox_.getViewFrame(), 
+			 this.constructor.CURSOR_CSS.GRABBING);
+    if( navigator.userAgent.match(/MSIE/i) || 
+	navigator.userAgent.match(/Chrome/i) ) {  
+	goog.dom.classes.add(this.ViewBox_.getViewFrame(), 
+			     this.constructor.CURSOR_CSS.GRABBING_CUSTOM);
+    }
 }
 
 
 
 
 /**
- * @param {!string} plane
+ * @private
+ * @param {goog.events.Event} e
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.setCursorZoomIn_ = function(e) {
+    goog.dom.classes.add(this.ViewBox_.getViewFrame(), 
+			 this.constructor.CURSOR_CSS.ZOOM_IN);
+}
+
+
+
+/**
+ * @private
+ * @param {goog.events.Event} e
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.setCursorZoomOut_ = function(e) {
+    goog.dom.classes.add(this.ViewBox_.getViewFrame(), 
+			 this.constructor.CURSOR_CSS.ZOOM_OUT);
+}
+
+
+
+/**
+ * @private
+ * @param {goog.events.Event} e
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
+
+    //
+    // Store the plane being hovered over
+    //
+    this.currMouseRenderer_ = e.target;
+
+    //
+    // Store the mouse positions
+    //
+    this.prevMousePos_ = this.currMousePos_;
+    this.currMousePos_ = e.mousePosition;
+
+    //
+    // Do nothing if no previous mouse position
+    //
+    if (this.prevMousePos_ == null) {return}
+
+    //
+    // run calculations
+    //
+    var mouseVec = 
+	(new goog.math.Vec2(this.currMousePos_[0], 
+			    this.currMousePos_[1])).add(
+				new goog.math.Vec2(this.prevMousePos_[0], 
+						   this.prevMousePos_[1]));
+    var mouseDist = Math.sqrt(
+	Math.pow(this.currMousePos_[0] - this.prevMousePos_[0], 2) + 
+	    Math.pow(this.currMousePos_[1] - this.prevMousePos_[1], 2)); 
+
+    var xDist = this.currMousePos_[0] - this.prevMousePos_[0];
+    var yDist = this.currMousePos_[1] - this.prevMousePos_[1];
+
+    //window.console.log("MOUSEMOVE", this.ctrlDown_, this.rightMouseDown_);
+
+
+    //
+    // Set the cursor grab icon if we're hovering over a renderer
+    //
+    if (goog.isDefAndNotNull(this.currMouseRenderer_) && this.ctrlDown_){
+	this.setCursorGrab_();
+    }
+
+    //
+    // ZOOM
+    //
+    if (!this.ctrlDown_ && this.rightMouseDown_) {
+	this.onRenderPlaneZoom_(xDist, yDist);
+    }
+
+    //
+    // PAN
+    //
+    if ((this.ctrlDown_ && this.rightMouseDown_) || this.middleMouseDown_) {
+	this.onRenderPlanePan_(xDist, yDist);
+    }
+
+    //
+    // BRIGHTNESS AND CONTRAST
+    //
+    if (!this.ctrlDown_ && this.leftMouseDown_) {
+	this.onRenderPlaneLevelAdjust_(xDist, yDist);
+    }
+
+    // Stop propagation
+    goog.events.Event.stopPropagation(e);
+} 
+
+
+
+/**
+ * @private
+ * @param {!number} xDist
+ * @param {!number} yDist
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.onRenderPlaneLevelAdjust_ = 
+function(xDist, yDist){
+
+    var incrementLevel = function(title, amount){
+	goog.array.forEach(
+	    this.LevelControllers_, 
+	    function(levelController){
+		if (levelController.getLabel().innerHTML == title){
+		    levelController.getComponent().setValue(
+			levelController.getComponent().getValue() + amount);
+		}
+	    })
+    }.bind(this)
+
+	
+    var largest = Math.max(Math.abs(xDist), Math.abs(yDist));
+    var xInc = Math.round(Math.abs(xDist) / 5);
+    var yInc = Math.round(Math.abs(yDist) / 5);
+    
+
+    if (xDist > 1){
+	incrementLevel(
+	    xiv.ui.ctrl.MasterController3D.CONTROLLERS.BRIGHTNESS, xInc);
+    } else {
+	incrementLevel(
+	    xiv.ui.ctrl.MasterController3D.CONTROLLERS.BRIGHTNESS, 
+	    xInc * -1);
+    }
+    
+
+    if (yDist < 0){
+	incrementLevel(
+	    xiv.ui.ctrl.MasterController3D.CONTROLLERS.CONTRAST, yInc);
+    } else {
+	incrementLevel(
+	    xiv.ui.ctrl.MasterController3D.CONTROLLERS.CONTRAST, 
+	    yInc * -1);
+    }
+    
+}
+
+
+
+
+/**
+ * @private
+ * @param {!number} xDist
+ * @param {!number} yDist
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.onRenderPlaneZoom_ = 
+function(xDist, yDist){
+    //
+    // Clear the cusor style
+    //
+    this.clearCursorStyle_();
+
+    //
+    // First, we determine which is bigger
+    //
+    var zoomIn = function(){
+	this.setCursorZoomIn_();
+	this.currMouseRenderer_.zoomIn();
+    }.bind(this)
+    var zoomOut = function(){
+	this.setCursorZoomOut_();
+	this.currMouseRenderer_.zoomOut();
+    }.bind(this)
+
+    //
+    // If xDist is larger
+    //
+    if (Math.abs(xDist) > Math.abs(yDist)) {
+	if (xDist > 1){
+	    zoomIn();
+	} else {
+	    zoomOut();
+	}
+    } 
+
+    //
+    // If yDist is larger
+    //
+    else {
+	if (yDist < 0){
+	    zoomIn();
+	} else {
+	    zoomOut();
+	}
+    } 
+
+    //
+    // Sync zoom display
+    //
+    this.syncZoomDisplayToRenderer();
+    this.syncAllCrosshairs_();
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.syncAllCrosshairs_ = function(){
+    //
+    // Update crosshairs
+    //
+    this.loopInteractorsWithRenderer(
+	function(renderPlane, renderPlaneOr, planeInteractors, volume){
+	    if (!goog.isDefAndNotNull(planeInteractors.SLIDER)) { 
+		return 
+	    };
+	    slider = planeInteractors.SLIDER;
+	    this.syncCrosshairsToSlider(slider, volume);
+	}.bind(this));
+}
+
+
+
+/**
+ * @private
+ * @param {!number} xDist
+ * @param {!number} yDist
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.onRenderPlanePan_ = 
+function(xDist, yDist){
+    //
+    // Grabbing cursor
+    //
+    this.setCursorGrabbing_();
+
+    //
+    // Pan
+    //
+    this.currMouseRenderer_.getCamera().pan([xDist * -1, yDist * -1]);
+
+    //
+    // Update crosshairs
+    //
+    this.syncAllCrosshairs_();
+}
+
+
+
+
+/**
+ * @private
+ * @param {goog.events.Event} e
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOut_ = function(e) {
+    this.currMouseRenderer_ = null;
+} 
+
+
+
+/**
+ * @private
+ * @param {goog.events.Event} e
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.onMouseDown_ = function(e) {
+    if (e.button == 0) {
+	this.leftMouseDown_ = true;
+    } 
+    else if (e.button == 1){
+	this.middleMouseDown_ = true;
+    }
+    else if (e.button == 2){
+	this.rightMouseDown_ = true;
+    }
+    window.console.log("DOWN", e, this.leftMouseDown_, this.rightMouseDown_);
+}
+
+
+
+/**
+ * @private
+ * @param {goog.events.Event} e
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.onMouseUp_ = function(e) {
+    if (e.button == 0) {
+	this.leftMouseDown_ = false;
+    } 
+    else if (e.button == 1){
+	this.middleMouseDown_ = false;
+    }
+    else if (e.button == 2){
+	this.rightMouseDown_ = false;
+    }
+
+    //
+    // Clear the cursor style
+    //
+    this.clearCursorStyle_();
+    //window.console.log("MOUSE UP", this.leftMouseDown_, this.rightMouseDown_);
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.listenForMouseEvents_ = 
+function() {
+    //
+    // Mouseover for every render plane
+    //
+    this.loopInteractorsWithRenderer(
+    function(renderPlane, renderPlaneOr, planeInteractors, volume){
+	goog.events.listen(renderPlane.getRenderer(), 
+			   goog.events.EventType.MOUSEOVER, 
+			   this.onMouseOver_.bind(this))
+    }.bind(this))
+
+    //
+    // mouseup and mousedown
+    //
+    this.mouseDownKey_ = goog.events.listen(this.ViewBox_.getViewFrame(), 
+					    goog.events.EventType.MOUSEDOWN, 
+					    this.onMouseDown_.bind(this))
+    this.mouseUpKey_ = goog.events.listen(this.ViewBox_.getViewFrame(), 
+					  goog.events.EventType.MOUSEUP, 
+					  this.onMouseUp_.bind(this))
+
+    //
+    // We apply the mouseout key to the ViewFrame because we have to work
+    // around the inability to get a mouseout signal from the Renderer
+    // object.
+    //
+    this.mouseOutKey_ = goog.events.listen(this.ViewBox_.getViewFrame(), 
+					  goog.events.EventType.MOUSEOUT, 
+					  this.onMouseOut_.bind(this))
+}
+
+
+
+
+/**
+ * @param {!xiv.vis.XtkRenderer2D} renderer
  * @param {!number} increment
  * @private
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.incrementSlider_ = 
-function(plane, increment) {
-    //window.console.log("GET", ));
+xiv.ui.ViewBoxInteractorHandler.prototype.incrementFrameSlider_ = 
+function(renderer, increment) {
     this.loopInteractorsWithRenderer(
 	function(renderPlane, renderPlaneOr, planeInteractors, volume){
-	    if (plane == renderPlaneOr){
+	    //window.console.log(renderPlane.getRenderer(), renderer);
+	    if (renderPlane.getRenderer() === renderer){
 		planeInteractors.SLIDER.setValue(
 		    planeInteractors.SLIDER.getValue() + increment)
 	    }
 	}.bind(this))
 }
+
+
 
 /**
  * @private
@@ -335,12 +764,21 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onKeyDown_ = function(e) {
-    window.console.log('DOWN', e, e.keyCode);
+    //window.console.log('DOWN', e, e.keyCode);
 
     // CTRL
     if (e.keyCode == 17){
-	window.console.log("CTRL DOWN!");
+	//
+	// Store property
+	//
 	this.ctrlDown_ = true;
+
+	//
+	// Set the cursor grab icon if we're hovering over a renderer
+	//
+	if (goog.isDefAndNotNull(this.currMouseRenderer_)){
+	    this.setCursorGrab_();
+	}
     }
 }
 
@@ -350,12 +788,17 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKeyDown_ = function(e) {
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onKeyUp_ = function(e) {
-    window.console.log('UP', e, e.keyCode);
+    //window.console.log('UP', e, e.keyCode);
 
     // CTRL
     if (e.keyCode == 17){
-	window.console.log("CTRL UP!");
+	//window.console.log("CTRL UP!");
 	this.ctrlDown_ = false;
+
+	//
+	// Clear the cursor style
+	//
+	this.clearCursorStyle_();
     }
 
 }
@@ -367,20 +810,25 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKeyUp_ = function(e) {
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onArrowKey_ = function(key) {
+    /*
     switch (key){
     case 38: // UP ARROW
-	this.incrementSlider_(this.currMousePlane_, 1);
-	break;
-    case 40: // DOWN ARROW
-	this.incrementSlider_(this.currMousePlane_, -1);
-	break;
-    case 37: // LEFT ARROW
-	this.incrementSlider_(this.currMousePlane_, -1);
+	this.incrementSlider_(this.currMouseRenderer_, 1);
 	break;
     case 39: // RIGHT ARROW
-	this.incrementSlider_(this.currMousePlane_, 1);
+	this.incrementSlider_(this.currMouseRenderer_, 1);
+	break;
+
+    case 40: // DOWN ARROW
+	this.incrementSlider_(this.currMouseRenderer_, -1);
+	break;
+    case 37: // LEFT ARROW
+	this.incrementSlider_(this.currMouseRenderer_, -1);
 	break;
     }
+    */
+    this.incrementFrameSlider_(this.currMouseRenderer_, 
+			  (key == 40 || key == 37) ? -1 : 1);
 }
 
 
@@ -503,6 +951,7 @@ function() {
 	//window.console.log('\n\n', renderPlaneOr, volume);
 	var slider = planeInteractors.SLIDER;
 	var frameDisplay = planeInteractors.FRAME_DISPLAY;
+	var zoomDisplay = planeInteractors.ZOOM_DISPLAY;
 	var crosshairs = planeInteractors.CROSSHAIRS;
 	var arrPos = 0;
 
@@ -511,6 +960,7 @@ function() {
 	//
 	slider[xiv.ui.ViewBox.ORIENTATION_TAG] = renderPlaneOr;
 	frameDisplay[xiv.ui.ViewBox.ORIENTATION_TAG] = renderPlaneOr;
+	zoomDisplay[xiv.ui.ViewBox.ORIENTATION_TAG] = renderPlaneOr;
 
 	//
 	// Preliminary syunc
@@ -519,8 +969,7 @@ function() {
 	this.syncVolumeToSlider(slider, volume);
 	this.syncCrosshairsToSlider(slider, volume);
 	this.syncFrameDisplayToSlider(slider, volume);
-	
-	var moveListen;
+
 	//
 	// Exit if no volume
 	//
@@ -552,11 +1001,6 @@ function() {
 	    //window.console.log("SHIFT UP");
 	    this.showInteractors();
 	    this.syncSlidersToVolume();
-
-	    //
-	    // Listen to mousemove when shift is held
-	    //
-	    goog.events.unlistenByKey(moveListen);
 	}.bind(this))
 
 
@@ -575,9 +1019,22 @@ function() {
 	// Change Slice on Frame Display input
 	//
 	goog.events.listen(frameDisplay, 
-		xiv.ui.layouts.interactors.FrameDisplay.EventType.INPUT,
+		xiv.ui.layouts.interactors.InputController.EventType.INPUT,
 		function(e){
 		    this.syncSliderToFrameDisplay(e.target,volume);
+		    this.syncAllCrosshairs_();
+		}.bind(this))
+
+
+	//
+	// Change Slice on Frame Display input
+	//
+	goog.events.listen(zoomDisplay, 
+		xiv.ui.layouts.interactors.InputController.EventType.INPUT,
+		function(e){
+		    this.syncRendererToZoomDisplay(zoomDisplay, 
+						   renderPlane);
+		    this.syncAllCrosshairs_();
 		}.bind(this))
     }.bind(this))
 
@@ -796,10 +1253,24 @@ function(slider, volume) {
 
     if (goog.isDefAndNotNull(frameDisplay)){
 	//window.console.log("SLIDER", slider.getMaximum(), volume);
-	frameDisplay.setTotalFrames(slider.getMaximum());
-	frameDisplay.setCurrentFrame(slider.getValue());   
+	frameDisplay.setMaximum(slider.getMaximum());
+	frameDisplay.setValue(slider.getValue());   
     }
 }
+
+
+
+/**
+ * @param {!xiv.ui.layouts.interactors.ZoomDisplay} zoomDisplay
+ * @param {X.volume} volume
+ * @public
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.syncRendererToZoomDisplay = 
+function(zoomDisplay, renderPlane) {
+    renderPlane.getRenderer().setZoom(zoomDisplay.getValue() / 100);
+}
+
+
 
 
 /**
@@ -813,7 +1284,7 @@ function() {
 	    return 
 	};
 	planeInteractors.ZOOM_DISPLAY.setValue(
-	    renderPlane.getRenderer().getZoom());
+	    Math.round(renderPlane.getRenderer().getZoom() * 100));
 	
     })
 }
@@ -821,7 +1292,7 @@ function() {
 
 
 /**
- * @param {!nrg.ui.Slider} slider
+ * @param {!xiv.ui.layouts.interactors.FrameDisplay} frameDisplay
  * @param {X.volume} volume
  * @public
  */
@@ -834,7 +1305,7 @@ function(frameDisplay, volume) {
 	return;
     }
     var slider = layoutFrame[xiv.ui.layouts.Layout.INTERACTORS.SLIDER]
-    slider.setValue(frameDisplay.getCurrentFrame());   
+    slider.setValue(frameDisplay.getValue());   
 }
 
 
@@ -904,18 +1375,8 @@ function(opt_resetMaximum) {
  * @public
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onRenderPlaneShiftDown = function(e){
-
-    //window.console.log("SHIFT DOWN");
     this.hideInteractors();
     this.syncSlidersToVolume();
-    
-    //
-    // Listen to mousemove when shift is held
-    //
-    moveListen = goog.events.listen(document.body, 
-				    goog.events.EventType.MOUSEMOVE,
-				    this.syncSlidersToVolume.bind(this));
-
 }
 
 
@@ -1211,7 +1672,9 @@ function() {
 	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MIN, 
 	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MAX 
     ]
+
     var updatableLevelControllers = [];
+    this.LevelControllers_ = [];
 
     //
     // Add the 2D controllers (no need to separate any of these).
@@ -1254,10 +1717,18 @@ function() {
 	    if (goog.array.contains(levelControllerLabels,
 		ctrl.getLabel().innerHTML)){
 		this.levelControllerTree_.addContents(ctrl.getElement());
-
+		//
+		// Min , max
+		//
 		if (goog.array.contains(updatableLevelControllerLabels,
 					ctrl.getLabel().innerHTML)){
 		    updatableLevelControllers.push(ctrl);
+		} 
+		//
+		// Brightness and contrast
+		//
+		else {
+		    this.LevelControllers_.push(ctrl);
 		}
 		return;
 	    } 
@@ -1300,7 +1771,6 @@ function() {
 	getElement().appendChild(levelControllerTreeElt);
 
 
-
     //
     // We have to re-sync the level controllers to the volume properties, 
     // since the volume is now rendered....
@@ -1322,7 +1792,8 @@ function() {
     //
     // Update the histogram when the sliders move
     //
-    goog.array.forEach(updatableLevelControllers, function(levelController){
+    goog.array.forEach(updatableLevelControllers, 
+		       function(levelController){
 	goog.events.listen(levelController.getComponent(), 
 			   nrg.ui.Slider.EventType.SLIDE, function(e){
 			       hist.drawLine();
@@ -1371,8 +1842,15 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
 	delete this.prevMousePos_;
     }
 
+    
+    if (goog.isDefAndNotNull(this.LevelControllers_)){
+	goog.array.clear(this.LevelControllers_);
+	delete this.LevelControllers_;
+    }
 
-
+    //
+    // Keyboard listener    
+    //
     if (goog.isDefAndNotNull(this.keyDownKey_)){
 	goog.events.unlisten(this.keyDownKey_);
 	goog.events.unlisten(this.keyUpKey_);
@@ -1380,6 +1858,21 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
 	delete this.keyUpKey_;
     }
 
+    //
+    // Mouse listener   
+    //    
+    if (goog.isDefAndNotNull(this.mouseDownKey_)){
+	goog.events.unlisten(this.mouseDownKey_);
+	goog.events.unlisten(this.mouseUpKey_);
+	goog.events.unlisten(this.mouseOutKey_);
+	delete this.mouseDownKey_;
+	delete this.mouseUpKey_;
+	delete this.mouseOutKey_;
+    }
+
+    delete this.rightMouseDown_;
+    delete this.leftMouseDown_;
+    delete this.middleMouseDown_;
     delete this.ViewBox_;
     delete this.Renderer_;
     delete this.LayoutHandler_;

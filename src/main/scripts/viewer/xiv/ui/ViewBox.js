@@ -1664,6 +1664,7 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     // Elements - viewFrame
     //
     goog.dom.removeNode(this.viewFrameElt_);
+    goog.events.removeAll(this.viewFrameElt_);
     delete this.viewFrameElt_;
 
     //

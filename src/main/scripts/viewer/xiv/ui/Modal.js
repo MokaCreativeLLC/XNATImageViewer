@@ -1199,6 +1199,7 @@ xiv.ui.Modal.prototype.onThumbnailDragOver_ = function(e){
  * @private
  */
 xiv.ui.Modal.prototype.onThumbnailClicked_ = function(e){
+    window.console.log("LOAD", e.Thumbnail);
     this.ViewBoxHandler_.getFirstEmpty().load(e.Thumbnail.getViewable());
 }
 
@@ -1213,6 +1214,8 @@ xiv.ui.Modal.prototype.onThumbnailClicked_ = function(e){
 xiv.ui.Modal.prototype.onThumbnailDroppedIntoViewBox_ = function(e) {
     var ViewBox =  
 	this.ViewBoxHandler_.getViewBoxByElement(e.targetElement);
+
+    window.console.log("LOAD", e.Thumbnail);
     ViewBox.load(e.Thumbnail.getViewable());
     ViewBox.unhighlight();
 }
