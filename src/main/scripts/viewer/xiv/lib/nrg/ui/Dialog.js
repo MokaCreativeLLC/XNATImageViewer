@@ -296,7 +296,7 @@ nrg.ui.Dialog.prototype.moveToCorner = function(cornerX, cornerY) {
  * @public
  */
 nrg.ui.Dialog.prototype.center = function() {
-    window.console.log("CENTER");
+    //window.console.log("CENTER");
 
     var dialogElt = this.getElement();
     var parentElt = this.getElement().parentNode;
