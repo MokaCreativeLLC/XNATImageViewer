@@ -6,20 +6,20 @@
 goog.require('goog.dom');
 
 // nrg
-goog.require('nrg.ui.Overlay');
+goog.require('nrg.ui.Dialog');
 
 
 
 /**
  * @constructor
- * @extends {nrg.ui.Overlay}
+ * @extends {nrg.ui.Dialog}
  */
 goog.provide('nrg.ui.ErrorOverlay');
 nrg.ui.ErrorOverlay = function () {
     goog.base(this);   
     goog.dom.classes.add(this.overlay_, nrg.ui.ErrorOverlay.CSS.OVERLAY);
 }
-goog.inherits(nrg.ui.ErrorOverlay, nrg.ui.Overlay);
+goog.inherits(nrg.ui.ErrorOverlay, nrg.ui.Dialog);
 goog.exportSymbol('nrg.ui.ErrorOverlay', nrg.ui.ErrorOverlay);
 
 

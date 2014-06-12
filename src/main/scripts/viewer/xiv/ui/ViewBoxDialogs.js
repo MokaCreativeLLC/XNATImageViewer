@@ -104,7 +104,7 @@ xiv.ui.ViewBoxDialogs.TOGGLED_CLASS = 'ToggleClass_' +
 
 
 /**
- * @return {Objects.<string, nrg.ui.Overlay>}
+ * @return {Objects.<string, nrg.ui.Dialog>}
  * @private
  */
 xiv.ui.ViewBoxDialogs.prototype.getDialogs = function(){
@@ -115,7 +115,7 @@ xiv.ui.ViewBoxDialogs.prototype.getDialogs = function(){
 
 /**
  * @param {!string} dialogKey
- * @return {nrg.ui.Overlay}
+ * @return {nrg.ui.Dialog}
  * @private
  */
 xiv.ui.ViewBoxDialogs.prototype.getDialog = function(dialogKey){
@@ -180,47 +180,64 @@ function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
     if (goog.isDefAndNotNull(this.Dialogs_[dialogKey])){
 	this.Dialogs_[dialogKey].dispose();
     }
-    this.Dialogs_[dialogKey] = new nrg.ui.Overlay();
+    var currDialog = new nrg.ui.Dialog();
+    this.Dialogs_[dialogKey] = currDialog;
 
     //
     // Set the dialog modal
     //
-    this.Dialogs_[dialogKey].setModal(
+    currDialog.setModal(
 	goog.isDefAndNotNull(opt_setModal) ? opt_setModal : false);
 
     //
     // Set the button set
     //
-    this.Dialogs_[dialogKey].setButtonSet(
+    currDialog.setButtonSet(
 	goog.isDefAndNotNull(opt_buttonSet) ? opt_buttonSet : null);
 
     //
     // Render the dialog
     //
-    this.Dialogs_[dialogKey].render(this.ViewBox_.getViewFrame());
+    currDialog.render(this.ViewBox_.getViewFrame());
+
+    //
+    // Set BG
+    //
+    currDialog.setBackgroundElementOpacity(0);
+    //goog.dom.removeNode(currDialog.getBackgroundElement());  
 
     //
     // Center the dialog
     //
-    this.Dialogs_[dialogKey].center();
+    currDialog.reposition();
 
     //
     // Set the dialog title
     //
-    this.Dialogs_[dialogKey].setTitle(title);
+    currDialog.setTitle(title);
 
     //
     // Add classes
     //
-    goog.dom.classes.add(this.Dialogs_[dialogKey].getElement(), dialogClass);
+    goog.dom.classes.add(currDialog.getElement(), dialogClass);
 
     //
     // Grey out button on close
     //
-    goog.events.listen(this.Dialogs_[dialogKey], 
-	nrg.ui.Overlay.EventType.CLOSE_BUTTON_CLICKED, 
+    goog.events.listen(currDialog, 
+	nrg.ui.Dialog.EventType.CLOSE_BUTTON_CLICKED, 
 	function(){
 	    this.ViewBox_.onToggleButtonClicked(toggle);
+	}.bind(this))
+
+    //
+    // AFTER_SHOW events
+    //
+    goog.events.listen(currDialog, 
+	goog.ui.Dialog.EventType.AFTER_SHOW, 
+	function(e){
+	    //window.console.log('AFTER_SHOW:', e.target.getElement());
+	    // Do nothing for now...
 	}.bind(this))
     
     //
@@ -309,7 +326,7 @@ xiv.ui.ViewBoxDialogs.prototype.setInUseSelect =
  */
 xiv.ui.ViewBoxDialogs.prototype.createInUseDialog_ = function(){
     this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE] = 
-	new nrg.ui.Overlay();
+	new nrg.ui.Dialog();
     this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].setButtonSet(
 	goog.ui.Dialog.ButtonSet.YES_NO);
     this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].render(
@@ -350,6 +367,7 @@ xiv.ui.ViewBoxDialogs.prototype.showInUseDialog = function(){
  */
 xiv.ui.ViewBoxDialogs.prototype.toggleVisible = function(tag, opt_visible){
     var opacity = (opt_visible === false) ? 0 : 1;
+    window.console.log(tag, this.Dialogs_[tag]);
     if (goog.isDefAndNotNull(this.Dialogs_[tag].getElement())){
 	nrg.fx.fadeTo(this.Dialogs_[tag].getElement(), 200, opacity);
     }
@@ -426,7 +444,7 @@ xiv.ui.ViewBoxDialogs.prototype.createHelpDialog_ = function(){
     // Grey out button on close
     //
     goog.events.listen(this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP], 
-		      nrg.ui.Overlay.EventType.CLOSE_BUTTON_CLICKED, function(){
+		      nrg.ui.Dialog.EventType.CLOSE_BUTTON_CLICKED, function(){
 			 this.ViewBox_.onToggleButtonClicked(helpToggle);
 		      }.bind(this))
 
@@ -453,7 +471,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
 	this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].dispose();
     }
     this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO] = 
-	new nrg.ui.Overlay();
+	new nrg.ui.Dialog();
 
     //
     // Generate widget text
@@ -512,6 +530,14 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
     goog.dom.classes.add(this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].
 			 getTextElements()[0], 
 			 xiv.ui.ViewBoxDialogs.CSS.INFODIALOG_TEXT);
+
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].addTitleClass(
+	'xiv-ui-viewboxdialogs-infodialog-title');
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].addCloseButtonClass(
+	'xiv-ui-viewboxdialogs-infodialog-closebutton');
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO].
+	addCloseButtonImageClass(
+	'xiv-ui-viewboxdialogs-infodialog-closebutton-image');
     
     //
     // Toggle button
@@ -545,7 +571,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
   
 
     goog.events.listen(this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO], 
-		      nrg.ui.Overlay.EventType.CLOSE_BUTTON_CLICKED, function(){
+		      nrg.ui.Dialog.EventType.CLOSE_BUTTON_CLICKED, function(){
 			 this.ViewBox_.onToggleButtonClicked(infoToggle);
 		      }.bind(this))
 }

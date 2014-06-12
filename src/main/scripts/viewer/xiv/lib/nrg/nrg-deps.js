@@ -54,8 +54,8 @@ goog.addDependency('../../../nrg/string/string.js', ['nrg.string'], [
 goog.addDependency('../../../nrg/ui/ui.js', ['nrg.ui'], [
 ]);
 
-goog.addDependency('../../../nrg/ui/Overlay.js', 
-['nrg.ui.Overlay'], [
+goog.addDependency('../../../nrg/ui/Dialog.js', 
+['nrg.ui.Dialog'], [
     'nrg.ui.Component',
     'goog.ui.Dialog'
 ]);
@@ -206,13 +206,13 @@ goog.addDependency('../../../nrg/ui/ZippyTree.js',
 
 goog.addDependency('../../../nrg/ui/ErrorOverlay.js', 
 ['nrg.ui.ErrorOverlay'], [
-    'nrg.ui.Overlay'
+    'nrg.ui.Dialog'
 ]);
 
 
 goog.addDependency('../../../nrg/ui/InfoOverlay.js', 
 ['nrg.ui.InfoOverlay'], [
-    'nrg.ui.Overlay'
+    'nrg.ui.Dialog'
 ]);
 
 goog.addDependency('../../../nrg/ui/Thumbnail.js', 

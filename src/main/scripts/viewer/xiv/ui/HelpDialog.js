@@ -7,19 +7,19 @@
 
 // nrg
 goog.require('nrg.ui.ScrollableZippyTree');
-goog.require('nrg.ui.Overlay');
+goog.require('nrg.ui.Dialog');
 
 
 
 /**
  * @constructor
- * @extends {nrg.ui.Overlay}
+ * @extends {nrg.ui.Dialog}
  */
 goog.provide('xiv.ui.HelpDialog');
 xiv.ui.HelpDialog = function () {
     goog.base(this);
 }
-goog.inherits(xiv.ui.HelpDialog, nrg.ui.Overlay);
+goog.inherits(xiv.ui.HelpDialog, nrg.ui.Dialog);
 goog.exportSymbol('xiv.ui.HelpDialog', xiv.ui.HelpDialog);
 
 

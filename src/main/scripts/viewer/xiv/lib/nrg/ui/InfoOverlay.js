@@ -6,19 +6,19 @@
 goog.require('goog.dom');
 
 // nrg
-goog.require('nrg.ui.Overlay');
+goog.require('nrg.ui.Dialog');
 
 
 
 /**
  * @constructor
- * @extends {nrg.ui.Overlay}
+ * @extends {nrg.ui.Dialog}
  */
 goog.provide('nrg.ui.InfoOverlay');
 nrg.ui.InfoOverlay = function () {
     goog.base(this);   
 }
-goog.inherits(nrg.ui.InfoOverlay, nrg.ui.Overlay);
+goog.inherits(nrg.ui.InfoOverlay, nrg.ui.Dialog);
 goog.exportSymbol('nrg.ui.InfoOverlay', nrg.ui.InfoOverlay);
 
 

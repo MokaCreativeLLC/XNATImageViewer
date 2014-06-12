@@ -1,0 +1,19 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+.xiv-vis-xtkplane-disabledoverlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    color: white;
+    font-size: 12px;
+    font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
+    text-align: center;
+    line-height: 100%;
+    z-index: 100;
+    opacity: 0;
+}
