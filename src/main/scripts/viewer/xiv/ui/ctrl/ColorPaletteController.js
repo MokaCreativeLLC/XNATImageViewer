@@ -142,7 +142,7 @@ xiv.ui.ctrl.ColorPaletteController.prototype.showColorPalette_ = function() {
     var screenH = parseInt(window.innerHeight);
     var screenW = parseInt(window.innerWidth);
     
-    window.console.log(screenH, prelimY, panelSize.height);
+    //window.console.log(screenH, prelimY, panelSize.height);
 
     if ((prelimY + panelSize.height) > screenH) {
 	prelimY -= (prelimY + panelSize.height) - screenH;
@@ -163,8 +163,12 @@ xiv.ui.ctrl.ColorPaletteController.prototype.update = function() {
 	this[xiv.ui.ctrl.XtkController.OBJ_KEY].color[0] * 255);
     var g = Math.floor(this[xiv.ui.ctrl.XtkController.OBJ_KEY].color[1] * 255);
     var b = Math.floor(this[xiv.ui.ctrl.XtkController.OBJ_KEY].color[2] * 255);
-    this.getComponent().setColor(goog.color.rgbArrayToHex(
-	[r,g,b]))
+
+    r = Math.min(255, Math.max(0, r));
+    g = Math.min(255, Math.max(0, g));
+    b = Math.min(255, Math.max(0, b));
+
+    this.getComponent().setColor(goog.color.rgbArrayToHex([r,g,b]))
 }
 
 

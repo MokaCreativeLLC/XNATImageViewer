@@ -205,7 +205,8 @@ xiv.ui.Histogram.prototype.draw = function() {
     //
     // We can't do anything if there's no volume
     //
-    if (!goog.isDefAndNotNull(this.volume_)) { return }
+    if (!goog.isDefAndNotNull(this.volume_) ||
+	!goog.isDefAndNotNull(this.volume_.images)) { return }
 
     //
     // params
@@ -286,6 +287,11 @@ xiv.ui.Histogram.prototype.draw = function() {
  * @public
  */
 xiv.ui.Histogram.prototype.drawLine = function() {
+    //
+    // Do nothing if no volume
+    //
+    if (!goog.isDefAndNotNull(this.volume_)) { return };
+
     var size = goog.style.getSize(this.lineCanvas_);
     var canvasWidth = size.width;
     var canvasHeight = size.height;
@@ -346,6 +352,10 @@ xiv.ui.Histogram.prototype.drawLine = function() {
  * @public
  */
 xiv.ui.Histogram.prototype.updateMaxMin = function(){
+    //
+    // Do nothing if no volume
+    //
+    if (!goog.isDefAndNotNull(this.volume_)) { return };
     this.minDiv_.innerHTML = this.volume_.windowLow;
     this.maxDiv_.innerHTML = this.volume_.windowHigh;
 }

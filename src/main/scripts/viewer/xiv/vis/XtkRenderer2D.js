@@ -244,6 +244,7 @@ xiv.vis.XtkRenderer2D.prototype.getVolume = function() {
  * @public
  */
 xiv.vis.XtkRenderer2D.prototype.getNumberSlices = function() {
+    if (!goog.isDefAndNotNull(this._slices)) { return }
     return this._slices.length;
 }
 

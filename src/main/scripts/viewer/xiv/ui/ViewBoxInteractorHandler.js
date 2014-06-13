@@ -51,7 +51,16 @@ function (ViewBox, Renderer, LayoutHandler, Dialogs) {
      * @private
      */
     this.Dialogs_ = Dialogs;
-
+    //
+    // Update controllers when we open a dialog
+    //
+    goog.events.listen(this.Dialogs_, 
+	xiv.ui.ViewBoxDialogs.EventType.DIALOG_OPENED, function(e){
+	    this.renderControllerTree_.mapSliderToContents();
+	    this.levelControllerTree_.mapSliderToContents();
+	    this.updateRenderControllers_();
+	    this.updateLevelControllers_();
+	}.bind(this))
 
     //window.console.log('layout handler', this.LayoutHandler_, LayoutHandler);
 }
@@ -168,6 +177,15 @@ xiv.ui.ViewBoxInteractorHandler.prototype.levelControllerTree_ = null;
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.renderControllers_ = null;
+
+
+
+/**
+ * @private
+ * @type {?Array.<xiv.ui.ctrl.xiv.ui.ctrl.XtlController}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.levelControllers_ = null
+
 
 
 
@@ -289,14 +307,6 @@ xiv.ui.ViewBoxInteractorHandler.prototype.rightMouseDown_ = false;
 
 
 
-/**
- * @private
- * @type {?Array.<xiv.ui.ctrl.xiv.ui.ctrl.XtlController}
- */
-xiv.ui.ViewBoxInteractorHandler.prototype.LevelControllers_ = null
-
-
-
 
 /**
  * @public
@@ -341,7 +351,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors = function() {
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.listenForKeyboardEvents_ = 
 function() {
-    var listenElt = this.ViewBox_.getViewFrame();
+    var listenElt = document.body;
 
     //
     // Apply a general keyhandler (for keys where up/down events are not
@@ -361,6 +371,7 @@ function() {
     this.keyDownKey_ = goog.events.listen(listenElt, 
 					  goog.events.EventType.KEYDOWN, 
 					  this.onKeyDown_.bind(this));
+
     this.keyUpKey_ = goog.events.listen(listenElt, 
 					goog.events.EventType.KEYUP, 
 					this.onKeyUp_.bind(this));
@@ -499,6 +510,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
     // Set the cursor grab icon if we're hovering over a renderer
     //
     if (goog.isDefAndNotNull(this.currMouseRenderer_) && this.ctrlDown_){
+	//window.console.log("CONTROL DOWN cursor grab");
 	this.setCursorGrab_();
     }
 
@@ -512,7 +524,9 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
     //
     // PAN
     //
-    if ((this.ctrlDown_ && this.rightMouseDown_) || this.middleMouseDown_) {
+    if ((this.ctrlDown_ && this.rightMouseDown_) ||
+	(this.ctrlDown_ && this.leftMouseDown_)
+	|| this.middleMouseDown_) {
 	this.onRenderPlanePan_(xDist, yDist);
     }
 
@@ -536,7 +550,7 @@ function(xDist, yDist){
 
     var incrementLevel = function(title, amount){
 	goog.array.forEach(
-	    this.LevelControllers_, 
+	    this.levelControllers_, 
 	    function(levelController){
 		if (levelController.getLabel().innerHTML == title){
 		    levelController.getComponent().setValue(
@@ -715,10 +729,16 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseUp_ = function(e) {
 	this.rightMouseDown_ = false;
     }
 
-    //
-    // Clear the cursor style
-    //
-    this.clearCursorStyle_();
+
+    if (!this.ctrlDown_){
+	//
+	// Clear the cursor style
+	//
+	this.clearCursorStyle_();
+    } else {
+	this.clearCursorStyle_();
+	this.setCursorGrab_();
+    }
     //window.console.log("MOUSE UP", this.leftMouseDown_, this.rightMouseDown_);
 }
 
@@ -1619,13 +1639,35 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMenuItemSelected_ = function(e) {
 
 
 /**
- * @public
+ * @private
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.updateRenderControllers = function(){
+xiv.ui.ViewBoxInteractorHandler.prototype.updateRenderControllers_ = function(){
     if (!goog.isDefAndNotNull(this.renderControllers_)) { return };
     goog.array.forEach(this.renderControllers_, function(controller){
 	//window.console.log('\nLabel', controller.getLabel().innerHTML);
 	controller.update();
+    })
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.updateLevelControllers_ = function(){
+    if (!goog.isDefAndNotNull(this.levelControllers_)) { return };
+    goog.array.forEach(this.levelControllers_, function(controller){
+	//window.console.log(controller.getLabel().innerHTML,
+	//controller.getComponent().getValue());
+	   
+	//
+	// IMPORTANT!! PLEASE READ!!
+	//
+	// We only need to update the style of the level sliders because
+	// LEVEL_MIN and LEVEL_MAX are often set to values that go beyond
+	// the slider values.
+	//
+	controller.getComponent().updateStyle();
     })
 }
 
@@ -1640,6 +1682,7 @@ function() {
     // Track the controllers
     //
     this.renderControllers_ = [];
+    this.levelControllers_ = [];
 
     //
     // Create the dialogs
@@ -1686,7 +1729,7 @@ function() {
     ]
 
     var updatableLevelControllers = [];
-    this.LevelControllers_ = [];
+
 
     //
     // Add the 2D controllers (no need to separate any of these).
@@ -1718,10 +1761,7 @@ function() {
     var controllers3D = this.Renderer_.getControllers3D();
     if (goog.isDefAndNotNull(controllers3D) && (controllers3D.length > 0)) {
 	goog.array.forEach(controllers3D, function(ctrl){
-	    //
-	    // store controller
-	    //
-	    this.renderControllers_.push(ctrl);
+
 
 	    //
 	    // Separate the level controllers, add to that zippy
@@ -1737,7 +1777,7 @@ function() {
 		    updatableLevelControllers.push(ctrl);
 		} 
 		
-		this.LevelControllers_.push(ctrl);
+		this.levelControllers_.push(ctrl);
 		
 		return;
 	    } 
@@ -1754,6 +1794,11 @@ function() {
 	    // Add other controllers to render Controller zippy
 	    //
 	    this.renderControllerTree_.addContents(ctrl.getElement(), folders);
+
+	    //
+	    // store controller
+	    //
+	    this.renderControllers_.push(ctrl);
 	}.bind(this));
     }
 
@@ -1850,9 +1895,9 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
     }
 
     
-    if (goog.isDefAndNotNull(this.LevelControllers_)){
-	goog.array.clear(this.LevelControllers_);
-	delete this.LevelControllers_;
+    if (goog.isDefAndNotNull(this.levelControllers_)){
+	goog.array.clear(this.levelControllers_);
+	delete this.levelControllers_;
     }
 
     //

@@ -10,7 +10,6 @@ goog.require('xiv.ui.ctrl.XtkController');
 goog.require('xiv.ui.ctrl.CheckboxController');
 goog.require('xiv.ui.ctrl.SliderController');
 goog.require('xiv.ui.ctrl.TwoThumbSliderController');
-goog.require('xiv.ui.ctrl.ColorPaletteController');
 
 
 
@@ -26,9 +25,9 @@ xiv.ui.ctrl.MasterController3D = function() {
 
     /**
      * @type {!Array.<X.Object>}
-     * @private
+     * @protected
      */
-    this.xObjs_ = [];
+    this.xObjs = [];
 }
 goog.inherits(xiv.ui.ctrl.MasterController3D, xiv.ui.ctrl.XtkController);
 goog.exportSymbol('xiv.ui.ctrl.MasterController3D', 
@@ -77,7 +76,7 @@ xiv.ui.ctrl.MasterController3D.prototype.add = function(xObj) {
 
 
     // Generic controls -- per object
-    this.xObjs_.push(xObj);
+    this.xObjs.push(xObj);
     this.add_visible(xObj);
     this.add_opacity(xObj);
 
@@ -111,7 +110,7 @@ xiv.ui.ctrl.MasterController3D.prototype.add = function(xObj) {
 
 
     // Generic master controls -- all objects
-    if (this.xObjs_.length == 1){
+    if (this.xObjs.length == 1){
 	goog.dom.append(document.body, this.getElement());
 
 	this.add_displayAll(xObj);
@@ -407,8 +406,8 @@ xiv.ui.ctrl.MasterController3D.prototype.disposeInternal = function() {
 
 
     // XObjs
-    goog.array.clear(this.xObjs_);
-    delete this.xObjs_;
+    goog.array.clear(this.xObjs);
+    delete this.xObjs;
 
 }
 

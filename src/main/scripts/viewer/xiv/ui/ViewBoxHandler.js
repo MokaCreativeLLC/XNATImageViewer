@@ -921,8 +921,7 @@ xiv.ui.ViewBoxHandler.prototype.isMatch = function(ViewBox, matchObj) {
  * @public
  */
 xiv.ui.ViewBoxHandler.prototype.swap = function(swapper, swapee) {
-
-    window.console.log('\n\nSWAP', swapper, swapee);
+    //window.console.log('\n\nSWAP', swapper, swapee);
     var swapper_i, swapper_j, swapee_i, swapee_j;
     var i = 0, j = 0;
     var len = this.ViewBoxes_.length;

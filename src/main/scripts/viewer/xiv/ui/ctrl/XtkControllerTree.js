@@ -183,7 +183,6 @@ function(xObj, renderProps) {
     }
 
     else if (xObj instanceof X.sphere) {
-	//window.console.log('\n\n\nANNOT!!!!!');
 	if (!goog.isDefAndNotNull(this.AnnotationsController3D_)){
 	    this.AnnotationsController3D_ = 
 		new xiv.ui.ctrl.AnnotationsController3D();

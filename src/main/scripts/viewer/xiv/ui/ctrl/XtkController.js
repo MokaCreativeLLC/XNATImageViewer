@@ -442,7 +442,7 @@ xiv.ui.ctrl.XtkController.prototype.updateStyle = function() {
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.Object | Array.<X.Object>} xObjs
  * @protected
  */
 xiv.ui.ctrl.XtkController.prototype.add_colorPalette = function(xObj) {
@@ -450,8 +450,8 @@ xiv.ui.ctrl.XtkController.prototype.add_colorPalette = function(xObj) {
     var color = this.createController(
 	xiv.ui.ctrl.ColorPaletteController, 'Color', 
 	function(e){
-	    xObj.color = e.color
-	});
+	    xObj.color = e.color;
+	}.bind(this));
 
     // set folder
     xiv.ui.ctrl.XtkController.setControllerFolders(xObj, color);
@@ -527,8 +527,7 @@ xiv.ui.ctrl.XtkController.prototype.add_visible = function(xObj) {
 
 
 /**
- * @param {!string} labelTitle;
- * @public
+ * @inheritDoc
  */
 xiv.ui.ctrl.XtkController.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');

@@ -1205,6 +1205,7 @@ xiv.ui.Modal.prototype.onThumbnailDragOver_ = function(e){
 xiv.ui.Modal.prototype.onThumbnailClicked_ = function(e){
     //window.console.log("LOAD", e.Thumbnail);
     this.ViewBoxHandler_.getFirstEmpty().load(e.Thumbnail.getViewable());
+    this.highlightInUseThumbnails();
 }
 
 
@@ -1220,7 +1221,7 @@ xiv.ui.Modal.prototype.onThumbnailDroppedIntoViewBox_ = function(e) {
 	this.ViewBoxHandler_.getViewBoxByElement(e.targetElement);
     //window.console.log("LOAD", e.Thumbnail);
     ViewBox.load(e.Thumbnail.getViewable());
-    ViewBox.unhighlight();
+    this.highlightInUseThumbnails();
 }
 
 
@@ -1258,7 +1259,6 @@ xiv.ui.Modal.prototype.setViewBoxHandlerEvents_ = function(opt_listenMethod){
  * @private
  */
 xiv.ui.Modal.prototype.onThumbnailPreload_ = function(e){ 
-    e.ViewBox.highlight();
     this.highlightInUseThumbnails();
 }
 
@@ -1271,7 +1271,6 @@ xiv.ui.Modal.prototype.onThumbnailPreload_ = function(e){
  * @private
  */
 xiv.ui.Modal.prototype.onThumbnailLoaded_ = function(e){
-    e.ViewBox.unhighlight();
     this.highlightInUseThumbnails();
 }
 
@@ -1294,7 +1293,7 @@ xiv.ui.Modal.prototype.onViewBoxesChanged_ = function(e) {
 	// Animate the modal
 	this.animateModal();	
     } else {
-	window.console.log('updateStyle');
+	//window.console.log('updateStyle');
 	this.updateStyle();
     }	
 

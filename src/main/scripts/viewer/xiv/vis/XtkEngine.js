@@ -371,17 +371,42 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
  * @private
  */
 xiv.vis.XtkEngine.prototype.render3dPlane = function(){
-    
-    //window.console.log("No volumes found! Only rendering in 3D!");
+    // 
+    // set the primary render plane to 3d
+    //
     this.setPrimaryRenderPlane(this.PlaneV_);
+
+    //
+    // Initialize
+    //
     this.PlaneV_.init();
+
+    //
+    // Add object
+    //
     goog.object.forEach(this.currXObjects_, function(xObjArr, key){
 	if (key !== 'volumes'){
 	    goog.array.forEach(xObjArr, function(xObj){
 		this.PlaneV_.add(xObj);
+		this.PlaneX_.add(xObj);
 	    }.bind(this))
 	}
     }.bind(this))
+
+    //
+    // Render end
+    //
+    goog.events.listenOnce(
+	this.PlaneV_.getRenderer(), 
+	xiv.vis.RenderEngine.EventType.RENDER_END, 
+	function(e){
+	    this.onRenderEnd_();
+	    this.PlaneX_.render();
+	}.bind(this))
+
+    //
+    // OK, render!
+    //
     this.PlaneV_.render();
 }
 
@@ -532,34 +557,15 @@ xiv.vis.XtkEngine.prototype.renderNonPrimary_ = function(xObjects){
 	    Plane.getRenderer(), 
 	    xiv.vis.RenderEngine.EventType.RENDER_END, 
 	    function(e){
+		window.console.log(e, unrenderedNonPrimary);
 		unrenderedNonPrimary--;
 		if (unrenderedNonPrimary == 0){
 		    this.onRenderEnd_();
-		    return;
-
-		    //
-		    // DANGEROUS!  Hacky way of calling RenderEnd but XTK 
-		    // kicks back
-		    // errors if we call RENDER_END this early.
-		    //
-		    /*
-		    if (!this.renderEndCalled_) {
-
-			this.dispatchEvent({
-			    type: xiv.vis.RenderEngine.EventType.RENDERING,
-			    value: 1
-			})
-			
-			var timer = goog.Timer.callOnce(function(){
-			    this.onRenderEnd_();
-			    this.renderEndCalled_ = true;
-			}.bind(this), 500)
-		    }
-		    */
 		}
 	    }.bind(this))
 
 	// Then render them.
+	window.console.log("RENDINER", Plane, planeOr);
 	Plane.render();
     }.bind(this))
 }
@@ -947,7 +953,7 @@ function(annotationsNode, opt_radius) {
     annotation.caption = annotationsNode.name;
     annotation.name = annotationsNode.name;
     annotation.radius = (opt_radius === undefined) ? 3 : opt_radius;
-    annotation.color = [10,0,0];
+    annotation.color = [.85,0,0];
 
     //window.console.log(annotationObj['opacity'], annotationObj['visible']);
     //annotation.opacity = annotationObj['opacity'];

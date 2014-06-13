@@ -425,6 +425,7 @@ xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
     this.ProgressBarPanel_.setValue(0);
     this.ProgressBarPanel_.showValue(true);
     this.showSubComponent_(this.ProgressBarPanel_, 0);
+    this.highlight();
 }
 
 
@@ -446,6 +447,7 @@ xiv.ui.ViewBox.prototype.setProgressBarPct_ = function(value){
  * @private
  */
 xiv.ui.ViewBox.prototype.onRendering_ = function(e){
+    this.highlight();
     this.setProgressBarPct_(e.value);
 }
 
@@ -514,6 +516,7 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     if (goog.isDefAndNotNull(this.ViewableTrees_[0].getOrientation())){
 	this.setLayout(this.ViewableTrees_[0].getOrientation());
     }
+    
 
     //
     // Create dialogs
@@ -550,12 +553,15 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 	//
 	this.onLayoutResize_();
 
-
 	//
-	// Dispatch preload
+	// Dispatch loaded
 	//
 	this.dispatchEvent(xiv.ui.ViewBox.EventType.VIEWABLE_LOADED);
 
+	//
+	// unhighlight
+	//
+	this.unhighlight();
 
     }.bind(this));
 }
@@ -850,6 +856,7 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
 	}.bind(this), 
 
 	function(event) {
+	    this.highlight();
 	    this.setProgressBarPct_(event.loaded/totalFileSize);
 	}.bind(this)
     );
@@ -1183,14 +1190,6 @@ xiv.ui.ViewBox.prototype.initProgressBarPanel_ = function(){
 */
 xiv.ui.ViewBox.prototype.initDialogs_ = function(){
     this.Dialogs_ = new xiv.ui.ViewBoxDialogs(this);
-
-    //
-    // Update controllers when we open a dialog
-    //
-    goog.events.listen(this.Dialogs_, 
-	xiv.ui.ViewBoxDialogs.EventType.DIALOG_OPENED, function(e){
-	    this.InteractorHandler_.updateRenderControllers();
-	}.bind(this))
 }
 
 

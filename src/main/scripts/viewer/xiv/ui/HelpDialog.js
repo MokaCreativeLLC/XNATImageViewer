@@ -126,10 +126,12 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
     //    
     var imageManipLines = [
 	['Zoom', 'right-click + drag', '2D and 3D panels'],
-	['Reposition', 'middle-click + drag', '2D and 3D panels'],
+	['Pan', 'middle-click + drag<br>ctrl + left-click + drag' +
+	  '<br>ctrl + right-click + drag', 
+	 '2D and 3D panels<br>2D panels<br>2D panels'],
 	['Slice-scroll', 'shift + mousemove', '2D panels'],
-	['Contrast', 'left-click + drag horizontally', '2D panels'],
-	['Brightness', 'left-click + drag vertically', '2D panels'],
+	['Contrast', 'left-click + drag vertically', '2D panels'],
+	['Brightness', 'left-click + drag horizontally', '2D panels'],
 	['Resize', 'left-click + drag', 'panel borders'],
     ]
     
@@ -155,6 +157,18 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
 	['Info. Metadata', 
 	 '<img style="height:15px;width:15px" src="' +
 	 serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Info.png'
+	 + '"></img>'	 
+	],
+	['Brightness / Contrast / Window Level', 
+	 '<img style="height:15px;width:15px" src="' +
+	 serverRoot + 
+	 '/images/viewer/xiv/ui/ViewBox/Toggle-BrightnessContrast.png'
+	 + '"></img>'	 
+	],
+	['Renderer Controls', 
+	 '<img style="height:15px;width:15px" src="' +
+	 serverRoot + 
+	 '/images/viewer/xiv/ui/ViewBox/Toggle-RenderControlMenu.png'
 	 + '"></img>'	 
 	],
     ]
@@ -211,13 +225,13 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
 
 		switch (i) {
 		case 0:
-		    cell = '<b><font size="3">' + cell + '</font></b>';
+		    cell = '<b><font size="2">' + cell + '</font></b>';
 		    break;
 		case 1:
-		    cell = '<i><font size="2">' + cell + '</font></i>';
+		    cell = '<i><font size="1">' + cell + '</font></i>';
 		    break;
 		default:
-		    cell = '<font size="2">' + cell + '</font>';
+		    cell = '<font size="1">' + cell + '</font>';
 		}
 		currTable += '<td height=25>' + cell + '</td>';
 	    })
