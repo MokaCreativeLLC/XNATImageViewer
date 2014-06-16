@@ -764,16 +764,27 @@ gxnat.slicer.getVolumes = function(sceneView) {
 		    if (node.getAttribute('colorNodeID').indexOf(
 			"vtkMRMLColorTableNodeFileGeneric")
 			!= -1) {
-			volumeNode.colorTableFile =
+			volumeNode.colorTableFile = serverRoot +
 			    gxnat.slicer.GENERIC_COLORTABLE_FILE;
+			//window.console.log('color table', volumeNode);
+			//window.console.log(volumeNode);
+			//window.console.log(serverRoot +
+			  //  gxnat.slicer.GENERIC_COLORTABLE_FILE);
 
 		    } else {
 			//
 			// TODO: Need to implement method for
 			// non-generic colortable file loading.
 			//
+			// Questions: 
+			// 1) How is a custom colorTable referred to
+			//    in Slicer scenes?
+			// 2) How do we query for the colorTable in slicer 
+			//    scenes.
+			//
 			//window.console.log(node);
-			//window.console.log(node.getAttribute('colorNodeID'));
+			window.console.log('Custom color table: ', 
+					   node.getAttribute('colorNodeID'));
 		    }
 		}
 	    })

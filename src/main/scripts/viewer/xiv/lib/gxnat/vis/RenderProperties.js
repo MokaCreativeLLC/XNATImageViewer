@@ -43,9 +43,11 @@ gxnat.vis.RenderProperties = function(slicerNode){
 	this.volumeRendering = slicerNode.volumeRendering || false;
 	this.isSelectedVolume = slicerNode.isSelectedVolume || false;
 
+	//window.console.log("SLICER VOL", this, slicerNode);
 	if (slicerNode.labelMap){
 	    this.labelMapFile = slicerNode['labelMapFile'];
 	    this.labelMapColorTableFile = slicerNode['colorTableFile'];
+	    //window.console.log('colortable', this, slicerNode);
 	}
     }
 

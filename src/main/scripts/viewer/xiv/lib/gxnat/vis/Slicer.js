@@ -251,16 +251,28 @@ function(displayable){
 		displayable.properties.labelMap.file, 
 		this.mrbFiles_);
 
-	// The colortable file
-	if (displayable.properties.labelMap.colorTableFile !==
-	   gxnat.slicer.GENERIC_COLORTABLE_FILE) {
-	    displayable.properties['colorTableFile'] =
-		gxnat.slicer.matchFileToSet(
-		    displayable.properties.labelMap.colorTableFile, 
-		    this.mrbFiles_);
-	} else {
-	    displayable.properties['colorTableFile'] =
-		displayable.properties.labelMap.colorTableFile;
+	//
+	// If the color table file is defined...
+	//
+	if (goog.isDefAndNotNull(
+	    displayable.properties.labelMap.colorTableFile)){
+
+	    //
+	    // First check if the color table matches a local instance
+	    // within the mrb itself...
+	    //
+	    var mrbColorTable = gxnat.slicer.matchFileToSet(
+		displayable.properties.labelMap.colorTableFile, 
+		this.mrbFiles_);
+	    
+	    //
+	    // If the color table is not found in the MRB, use the stored one
+	    // in the displayable
+	    //
+	    if (!goog.isDefAndNotNull(mrbColorTable)) {
+		displayable.properties['colorTableFile'] =
+		    displayable.properties.labelMap.colorTableFile;
+	    } 
 	}
 	//window.console.log(displayable);
     }

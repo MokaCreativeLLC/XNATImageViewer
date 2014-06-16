@@ -413,7 +413,7 @@ xiv.ui.ThumbnailGallery.prototype.onDrop_ = function(event) {
     dragThumbnail.style.opacity = 0;
     var dragClone = 
     dragThumbnail.cloneNode(true);
-    dragClone.style.opacity = 1;
+    dragclone.style.opacity = 1;
     document.body.appendChild(dragClone);
     goog.dom.removeNode(dragThumbnail);
 

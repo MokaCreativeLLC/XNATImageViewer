@@ -54,7 +54,7 @@ nrg.ui.Thumbnail = function () {
     this.setEvents_();
     this.setClasses_();
     this.setHoverListeners_(true);
-    this.onMouseOut_();    
+    this.onMouseOut();    
 }
 goog.inherits(nrg.ui.Thumbnail, nrg.ui.Component);
 goog.exportSymbol('nrg.ui.Thumbnail', nrg.ui.Thumbnail);
@@ -391,7 +391,7 @@ nrg.ui.Thumbnail.prototype.repositionHoverable = function(){
  * hovers over the nrg.ui.Thumbnail.
  * @private
  */
-nrg.ui.Thumbnail.prototype.onMouseOver_ = function() {
+nrg.ui.Thumbnail.prototype.onMouseOver = function() {
 
     var hoverNode = this.getHoverable();
     goog.dom.classes.add(hoverNode, 
@@ -411,14 +411,12 @@ nrg.ui.Thumbnail.prototype.onMouseOver_ = function() {
 }
 
 
-
-
 /**
  * Applies the classes to the various objects when the mouse hovers over the 
  * nrg.ui.Thumbnail.
- * @private
+ * @public
  */
-nrg.ui.Thumbnail.prototype.onMouseOut_ = function() {
+nrg.ui.Thumbnail.prototype.onMouseOut = function() {
     //window.console.log("MOUSEPUT");
     var hoverNode = /**@type {!Element}*/ this.getHoverable();
     if (hoverNode && hoverNode.childNodes.length > 1) { 
@@ -455,17 +453,17 @@ nrg.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
     if (set) {
 	goog.events.listen(hoverNode, 
 			   goog.events.EventType.MOUSEOVER, 
-			   this.onMouseOver_.bind(this));
+			   this.onMouseOver.bind(this));
 	goog.events.listen(hoverNode, 
 			   goog.events.EventType.MOUSEOUT, 
-			   this.onMouseOut_.bind(this));
+			   this.onMouseOut.bind(this));
     } else {
 	goog.events.unlisten(hoverNode, 
 			     goog.events.EventType.MOUSEOVER, 
-			     this.onMouseOver_.bind(this));
+			     this.onMouseOver.bind(this));
 	goog.events.unlisten(hoverNode, 
 			     goog.events.EventType.MOUSEOUT, 
-			     this.onMouseOut_.bind(this));
+			     this.onMouseOut.bind(this));
     }
 }
 

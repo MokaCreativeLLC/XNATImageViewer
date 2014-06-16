@@ -212,7 +212,7 @@ xiv.ui.ViewableGroupMenu.prototype.reset = function () {
 xiv.ui.ViewableGroupMenu.prototype.setThumbnailOnClick_ = function (thumbnail) {
     goog.events.listen(thumbnail, nrg.ui.Thumbnail.EventType.CLICK, 
     function(e){
-	window.console.log("CLICK!");
+	//window.console.log("CLICK!");
 	this.dispatchEvent({
 	    type: xiv.ui.ViewableGroupMenu.EventType.VIEWSELECTED,
 	    thumbnail: thumbnail

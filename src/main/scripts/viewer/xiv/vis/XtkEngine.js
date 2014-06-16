@@ -557,7 +557,7 @@ xiv.vis.XtkEngine.prototype.renderNonPrimary_ = function(xObjects){
 	    Plane.getRenderer(), 
 	    xiv.vis.RenderEngine.EventType.RENDER_END, 
 	    function(e){
-		window.console.log(e, unrenderedNonPrimary);
+		//window.console.log(e, unrenderedNonPrimary);
 		unrenderedNonPrimary--;
 		if (unrenderedNonPrimary == 0){
 		    this.onRenderEnd_();
@@ -565,7 +565,7 @@ xiv.vis.XtkEngine.prototype.renderNonPrimary_ = function(xObjects){
 	    }.bind(this))
 
 	// Then render them.
-	window.console.log("RENDINER", Plane, planeOr);
+	//window.console.log("RENDER", Plane, planeOr);
 	Plane.render();
     }.bind(this))
 }
@@ -679,6 +679,7 @@ function(xObj, renderProperties){
 	xObj.labelmap.file = renderProperties.labelMapFile;
 	xObj.labelmap.colortable.file = 
 	    renderProperties.labelMapColorTableFile;
+	//window.console.log(renderProperties.labelMapColorTableFile);
     }
 }
 
