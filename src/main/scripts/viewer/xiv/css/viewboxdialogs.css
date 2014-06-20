@@ -101,7 +101,9 @@
 
 
 
-.xiv-ui-viewboxdialogs-volumes-dialog {
+.xiv-ui-viewboxdialogs-volumes-dialog,
+.xiv-ui-viewboxdialogs-meshes-dialog,
+.xiv-ui-viewboxdialogs-annotations-dialog {
     width: 400px;
     height: 250px;
 }
