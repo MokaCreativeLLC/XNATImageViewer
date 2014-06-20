@@ -40,10 +40,10 @@ xiv.vis.XtkEngine = function () {
      * @private
      */
     this.currXObjects_ = {
-	'volumes' : [],
-	'meshes' : [],
-	'fibers': [],
-	'spheres' : [],
+	volumes : [],
+	meshes : [],
+	fibers : [],
+	spheres : [],
     };
 
 
@@ -164,7 +164,7 @@ xiv.vis.XtkEngine.prototype.getAnnotations_ = function(ViewableGroup) {
 
     goog.array.forEach(ViewableGroup.getRenderProperties().annotations,
 		       function(annotationsNode){
-			   this.currXObjects_['spheres'].push(
+			   this.currXObjects_.spheres.push(
 			       xiv.vis.XtkEngine.createAnnotation(
 				   annotationsNode))
 		       }.bind(this))
@@ -311,7 +311,7 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 	goog.isDefAndNotNull(ViewableGroup.getRenderProperties().annotations))){
 	this.getAnnotations_(ViewableGroup);
 	//window.console.log("\n\n\n\n\n************ANNOTATIONS!!!!");
-	goog.array.forEach(this.currXObjects_['spheres'], function(annot){
+	goog.array.forEach(this.currXObjects_.spheres, function(annot){
 
 	    //window.console.log("ANNOT", annot);
 	    this.ControllerTree_.createControllers(annot);
@@ -346,21 +346,22 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 	if (currXObj instanceof X.volume) {
 	    this.constructor.setRenderProperties_Volume_(
 		currXObj, renderProps);
-	    this.currXObjects_['volumes'].push(currXObj);
+	    this.currXObjects_.volumes.push(currXObj);
+	    window.console.log(currXObj, currXObj.dimensionsRAS);
 	}
 
 	// Meshes
 	else if (currXObj instanceof X.mesh){
 	    this.constructor.setRenderProperties_Mesh_(
 		currXObj, renderProps);
-	    this.currXObjects_['meshes'].push(currXObj);
+	    this.currXObjects_.meshes.push(currXObj);
 	}
 
 	// Fibers
 	else if (currXObj instanceof X.fibers){
 	    this.constructor.setRenderProperties_Fiber_(
 		currXObj, renderProps);
-	    this.currXObjects_['fibers'].push(currXObj);
+	    this.currXObjects_.fibers.push(currXObj);
 	}
     }.bind(this))
 }
@@ -388,7 +389,7 @@ xiv.vis.XtkEngine.prototype.render3dPlane = function(){
 	if (key !== 'volumes'){
 	    goog.array.forEach(xObjArr, function(xObj){
 		this.PlaneV_.add(xObj);
-		this.PlaneX_.add(xObj);
+		//this.PlaneX_.add(xObj);
 	    }.bind(this))
 	}
     }.bind(this))
@@ -416,44 +417,52 @@ xiv.vis.XtkEngine.prototype.render3dPlane = function(){
  * @private
  */
 xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
-    var selVol = this.getSelectedVolume();
-    var otherXObjects = [];
+    var selectedVolume = this.getSelectedVolume();
+    var nonVolumes = [];
+    var volumes = [];
+    var planeArr = ['x','y','z','v'];
 
     //
     // Store all non-volume objects.
     //
     goog.object.forEach(this.currXObjects_, function(xObjArr, key){
-	if (key !== 'volumes'){
-	    goog.array.forEach(xObjArr, function(xObj){
-		otherXObjects.push(xObj);
-	    })
+	currArr = (key == 'volumes') ? volumes : nonVolumes;
+	goog.array.forEach(xObjArr, function(xObj){
+	   currArr.push(xObj);
+	})
+    }.bind(this))
+    //window.console.log('VOLUMES', volumes);
+
+    //
+    // Add all non-volumes to PlaneV
+    //
+    goog.array.forEach(nonVolumes, function(xObj){
+	this.PlaneV_.add(xObj);
+    }.bind(this))
+
+
+    //
+    // Add all the other volumes to plane V if they're visible
+    //
+    goog.array.forEach(volumes, function(vol){
+	if (vol !== selectedVolume && vol.visible){
+	    this.PlaneV_.add(vol);
 	}
     }.bind(this))
 
     //
-    // Add the selected volume
-    //
-    otherXObjects.push(selVol);
-    //window.console.log("PRIMARY REDER", this.primaryRenderPlane_);
-    //window.console.log("OTHER X OBJECTS", otherXObjects);
-
-    //
-    // Add objects to primary render plane
-    //
-    goog.array.forEach(otherXObjects, function(xObj){
-	this.primaryRenderPlane_.add(xObj);
-    }.bind(this))
-
-    //
-    // Once rendered, add to secoundary planes
+    // Render only non-primary's selected volume once the primary is finished.
     //
     this.primaryRenderPlane_.getRenderer().onShowtime = function(){
-	this.renderNonPrimary_(otherXObjects)
-    }.bind(this);
-
+	var ors = goog.array.remove(planeArr, 
+		this.primaryRenderPlane_.getOrientation().toLowerCase());
+	this.renderNonPrimary_(selectedVolume, ors);
+    }.bind(this);		
+  
     //
     // Render!
     //
+    this.primaryRenderPlane_.add(selectedVolume);
     this.primaryRenderPlane_.render();
 }
 
@@ -511,7 +520,7 @@ xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
     //  IF THERE ARE NO VOLUMES, we feed everthing into the 3D renderer.
     //
     //------------------------------------------
-    if (this.currXObjects_['volumes'].length > 0) {
+    if (this.currXObjects_.volumes.length > 0) {
 	
 	// Get the first ON plane.
 	var Planes = this.getPlanes();
@@ -535,37 +544,46 @@ xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
 
 
 /**
- * @param {Array.<X.object>} xObjects
+ * @param {!X.volume} xVolume
+ * @param {!Array.string} planeOrientations
  * @public
  */
-xiv.vis.XtkEngine.prototype.renderNonPrimary_ = function(xObjects){
-
+xiv.vis.XtkEngine.prototype.renderNonPrimary_ = 
+function(xVolume, planeOrientations){
     var unrenderedNonPrimary = goog.object.getCount(this.getPlanes()) - 1;
 
     goog.object.forEach(this.getPlanes(), function(Plane, planeOr){
-	// We already rendered the primary plane
+	//
+	// We already rendered the primary plane, so we skip that
+	// or any plane that has been turned off
+	//
 	if ((Plane == this.primaryRenderPlane_) ||
 	   !Plane.isOn()) { return };
 
-	// Add objects to other planes.
-	goog.array.forEach(xObjects, function(xObj){
-	    Plane.add(xObj);
-	})
+	//
+	// Add the volume to the other planes.
+	//
+	Plane.add(xVolume);
 
-	
+	//
+	// Count down the amount of renderers that have finsished
+	//
 	goog.events.listenOnce(
-	    Plane.getRenderer(), 
-	    xiv.vis.RenderEngine.EventType.RENDER_END, 
+	    Plane.getRenderer(), xiv.vis.RenderEngine.EventType.RENDER_END, 
 	    function(e){
-		//window.console.log(e, unrenderedNonPrimary);
 		unrenderedNonPrimary--;
+
+		//
+		// When all renderers have finished, run onRenderEnd_
+		//
 		if (unrenderedNonPrimary == 0){
 		    this.onRenderEnd_();
 		}
 	    }.bind(this))
 
-	// Then render them.
-	//window.console.log("RENDER", Plane, planeOr);
+	//
+	// Then render each plane!
+	//
 	Plane.render();
     }.bind(this))
 }
@@ -580,15 +598,15 @@ xiv.vis.XtkEngine.prototype.getSelectedVolume = function(){
 
     //window.console.log("\n*\n*\n*\n*\n*\n*GET SELECTED VOLUME!");
 
-    if (this.currXObjects_['volumes'].length == 0) {return};
+    if (this.currXObjects_.volumes.length == 0) {return};
 
     //
     // First look for the selected volume
     //
     var i = 0;
-    var len = this.currXObjects_['volumes'].length;
+    var len = this.currXObjects_.volumes.length;
     for (; i<len; i++){
-	var vol = this.currXObjects_['volumes'][i];
+	var vol = this.currXObjects_.volumes[i];
 	if (vol['isSelectedVolume']){
 	    //window.console.log("\n*\n*\n*\n*\n*\n*SELECTED VOLUME FOUND!");
 	    return vol;
@@ -599,8 +617,8 @@ xiv.vis.XtkEngine.prototype.getSelectedVolume = function(){
     // Default to the first volume if no selected volume
     //
     //window.console.log("\n*\n*\n*\n*\n*\n*SELECTED VOLUME NOT FOUND!");
-    this.currXObjects_['volumes'][0]['isSelectedVolume'] = true;
-    return this.currXObjects_['volumes'][0];
+    this.currXObjects_.volumes[0]['isSelectedVolume'] = true;
+    return this.currXObjects_.volumes[0];
     
 }
 
@@ -705,8 +723,11 @@ xiv.vis.XtkEngine.prototype.onRendering_ = function(e){
  * @private
  */
 xiv.vis.XtkEngine.prototype.onRenderEnd_ = function(e){
-    //window.console.log("\n\nON RENDER END EGINE!");
+    window.console.log("\n\nON RENDER END ENGINE!", 
+		       this.PlaneX_.getVolume(), 'RAS', 
+		       this.PlaneX_.getVolume().dimensionsRAS);
 
+    
     //
     // Unlisten for the rendering
     //
@@ -1194,7 +1215,7 @@ xiv.vis.XtkEngine.createXObject = function(fileCollection, opt_fileData) {
 	// Four doubly encododed basenames
 	//
 	if ((basename.indexOf('%') > -1) || (basename.indexOf(' ') > -1)){
-	    basename = goog.string.urlEncode(basename);
+	    //basename = goog.string.urlEncode(basename);
 	}
 
 	//console.log("\n\n*********RETN", dirname ,   basename);

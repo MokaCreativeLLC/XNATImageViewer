@@ -184,12 +184,12 @@ function(sceneViewNodes, mrmlNodes, opt_initComplete) {
 	// Cycle through the meshes, volumes and vibers in the sceneView
 	goog.array.forEach(viewTypes, function(viewType){
 	    goog.array.forEach(viewType, function(displayable){
-		
+		//window.console.log('\n\n');
 		// Clean the file URLS so we can query them correctly.
 		fileName = gxnat.slicer.matchFileToSet(
 		    goog.string.path.basename(displayable.file), 
 		    this.mrbFiles_);
-
+		//window.console.log(displayable.file, this.mrbFiles_,fileName);
 		// Make some specialized adjustments for volumes
 		if (displayable.properties instanceof 
 		    gxnat.slicer.VolumeDisplayNode) {

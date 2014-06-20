@@ -2,22 +2,14 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-.xiv-ui-viewboxinteractorhandler-crosshair,
-.xiv-ui-viewboxinteractorhandler-threed,
-.xiv-ui-viewboxinteractorhandler-brightnesscontrast,
-.xiv-ui-viewboxinteractorhandler-twodmenu,
-.xiv-ui-viewboxinteractorhandler-threedmenu
+.xiv-ui-viewboxinteractorhandler-generic-toggle
  {
     width: 15px;
     height: 15px;
     opacity: .5;
 }
 
-.xiv-ui-viewboxinteractorhandler-crosshair-on,
-.xiv-ui-viewboxinteractorhandler-threed-on,
-.xiv-ui-viewboxinteractorhandler-brightnesscontrast-on,
-.xiv-ui-viewboxinteractorhandler-twodmenu-on,
-.xiv-ui-viewboxinteractorhandler-threedmenu-on
+.xiv-ui-viewboxinteractorhandler-generic-toggle-on
 {
     opacity: 1;
     background-color: black;
@@ -63,7 +55,10 @@
 
 
 
-.xiv-ui-viewboxinteractorhandler-rendercontroller-zippytree {
+.xiv-ui-viewboxinteractorhandler-volumecontroller-zippytree, 
+.xiv-ui-viewboxinteractorhandler-meshcontroller-zippytree,
+.xiv-ui-viewboxinteractorhandler-annotationscontroller-zippytree,
+{
     top: 30px;
     width: calc(100% - 20px);
     height: calc(100% - 50px);

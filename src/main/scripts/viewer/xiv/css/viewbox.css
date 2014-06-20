@@ -83,6 +83,7 @@
 
 .xiv-ui-viewbox-ziptab-bounds {
     position: absolute;
+    cursor: auto;
     left: 0px;
     top: 300px;
     height: calc(100% - 300px);

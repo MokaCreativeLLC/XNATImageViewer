@@ -79,7 +79,9 @@ xiv.ui.layouts.interactors.Crosshairs.prototype.horizontal = null;
  * @public
  */
 xiv.ui.layouts.interactors.Crosshairs.prototype.setX = function(num){
-    this.vertical.style.left = (num).toString() + 'px';
+    if (goog.isDefAndNotNull(num)){
+	this.vertical.style.left = (num).toString() + 'px';
+    }
 } 
 
 
@@ -88,7 +90,9 @@ xiv.ui.layouts.interactors.Crosshairs.prototype.setX = function(num){
  * @public
  */
 xiv.ui.layouts.interactors.Crosshairs.prototype.setY = function(num){
-    this.horizontal.style.top = (num).toString() + 'px';
+    if (goog.isDefAndNotNull(num)){
+	this.horizontal.style.top = (num).toString() + 'px';
+    }
 } 
 
 

@@ -251,7 +251,8 @@ gxnat.slicer.VolumeDisplayNode =
 function(sceneViewElt, sceneViewDisplayableElt, selectedVolumeID) {
 
     goog.base(this, sceneViewElt, sceneViewDisplayableElt);
-
+    window.console.log(sceneViewElt,
+		  sceneViewElt.getElementsByTagName('Slice')[0]);
     var isSelectedVol = 
 	(selectedVolumeID !== sceneViewDisplayableElt.getAttribute('id')) ? 
 	    false : true;

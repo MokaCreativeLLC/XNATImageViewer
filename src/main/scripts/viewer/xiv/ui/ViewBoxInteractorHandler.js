@@ -56,11 +56,19 @@ function (ViewBox, Renderer, LayoutHandler, Dialogs) {
     //
     goog.events.listen(this.Dialogs_, 
 	xiv.ui.ViewBoxDialogs.EventType.DIALOG_OPENED, function(e){
-	    this.renderControllerTree_.mapSliderToContents();
-	    this.levelControllerTree_.mapSliderToContents();
-	    this.updateRenderControllers_();
-	    this.updateLevelControllers_();
+	    this.volumeCtrlTree_.mapSliderToContents();
+	    this.levelCtrlTree_.mapSliderToContents();
+	    this.updateVolumeCtrls_();
+	    this.updateLevelCtrls_();
+	    this.updateHistogram_();
 	}.bind(this))
+
+
+    //
+    // Listen for key events
+    //
+    this.listenForKeyboardEvents_();
+
 
     //window.console.log('layout handler', this.LayoutHandler_, LayoutHandler);
 }
@@ -103,10 +111,10 @@ xiv.ui.ViewBoxInteractorHandler.EventType = {
  */
 xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS = {
     CROSSHAIRS: 'Crosshairs_' + goog.string.createUniqueString(),
-    THREEDRENDER: 'ThreeDRendering_' + goog.string.createUniqueString(),
+    SETTINGS: 'Settings_' + goog.string.createUniqueString(),
     LEVELS: 'BrightnessContrast_' + goog.string.createUniqueString(),
-    TWOD: 'TwoD_' + goog.string.createUniqueString(),
-    THREED: 'ThreeD_' + goog.string.createUniqueString(),
+    TWODPAN: 'TwoDPan_' + goog.string.createUniqueString(),
+    TWODZOOM: 'TwoDZoom_' + goog.string.createUniqueString(),
 }
 
 
@@ -116,17 +124,13 @@ xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS = {
  * @public
  */
 xiv.ui.ViewBoxInteractorHandler.CSS = {
-    CROSSHAIRS_TOGGLE: 'xiv-ui-viewboxinteractorhandler-crosshair',
-    THREEDRENDER_TOGGLE: 'xiv-ui-viewboxinteractorhandler-threed',
-    LEVELS_TOGGLE: 
-    'xiv-ui-viewboxinteractorhandler-brightnesscontrast',
-    TWOD_TOGGLE: 'xiv-ui-viewboxinteractorhandler-twodmenu',
-    THREED_TOGGLE: 'xiv-ui-viewboxinteractorhandler-threedmenu',
-    RENDERCONTROLLER_ZIPPYTREE: 
-    'xiv-ui-viewboxinteractorhandler-rendercontroller-zippytree',
+    GENERIC_TOGGLE: 'xiv-ui-viewboxinteractorhandler-generic-toggle',
+    VOLUMECONTROLLER_ZIPPYTREE: 
+    'xiv-ui-viewboxinteractorhandler-volumecontroller-zippytree',
+    MESHCONTROLLER_ZIPPYTREE: 
+    'xiv-ui-viewboxinteractorhandler-meshcontroller-zippytree',
     LEVELCONTROLLER_ZIPPYTREE: 
     'xiv-ui-viewboxinteractorhandler-levelcontroller-zippytree'
-    
 }
 
 
@@ -160,7 +164,15 @@ xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY =
  * @public
  * @type {?nrg.ui.ScrollableZippyTree}
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.renderControllerTree_ = null;
+xiv.ui.ViewBoxInteractorHandler.prototype.volumeCtrlTree_ = null;
+
+
+
+/**
+ * @public
+ * @type {?nrg.ui.ScrollableZippyTree}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.meshCtrlTree_ = null;
 
 
 
@@ -168,7 +180,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.renderControllerTree_ = null;
  * @private
  * @type {?nrg.ui.ScrollableZippyTree}
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.levelControllerTree_ = null;
+xiv.ui.ViewBoxInteractorHandler.prototype.levelCtrlTree_ = null;
 
 
 
@@ -176,7 +188,14 @@ xiv.ui.ViewBoxInteractorHandler.prototype.levelControllerTree_ = null;
  * @type {?Array.<xiv.ui.ctrl.XtkController>}
  * @private
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.renderControllers_ = null;
+xiv.ui.ViewBoxInteractorHandler.prototype.volumeCtrls_ = null;
+
+
+/**
+ * @type {?Array.<xiv.ui.ctrl.XtkController>}
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.meshCtrls_ = null;
 
 
 
@@ -184,7 +203,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.renderControllers_ = null;
  * @private
  * @type {?Array.<xiv.ui.ctrl.xiv.ui.ctrl.XtlController}
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.levelControllers_ = null
+xiv.ui.ViewBoxInteractorHandler.prototype.levelCtrls_ = null
 
 
 
@@ -307,6 +326,28 @@ xiv.ui.ViewBoxInteractorHandler.prototype.rightMouseDown_ = false;
 
 
 
+/**
+ * @private
+ * @type {!boolean}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.zooming_ = false;
+
+
+
+/**
+ * @private
+ * @type {!boolean}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.panning_ = false;
+
+
+
+/**
+ * @private
+ * @type {?xiv.ui.Histogram}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.Histogram_ = null;
+
 
 /**
  * @public
@@ -315,7 +356,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors = function() {
     //
     // Create the render controllers
     //
-    this.createRenderControllers();
+    this.createVolumeCtrls();
 
     //
     // Set volume sliders halfway
@@ -325,7 +366,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors = function() {
     //
     // Create 3D rendering toggle
     //
-    this.createThreeDRenderToggle();
+    this.createSettingsToggle();
 
     //
     // Create the crosshair toggle rendering toggle
@@ -333,9 +374,18 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors = function() {
     this.createCrosshairToggle(false);
 
     //
-    // Listen for key events
+    // Create the crosshair toggle rendering toggle
     //
-    this.listenForKeyboardEvents_();
+    this.createTwoDPanToggle();
+
+
+    //
+    // Create the crosshair toggle rendering toggle
+    //
+    this.createTwoDZoomToggle();
+
+
+
 
     //
     // Listen for mouseover
@@ -351,7 +401,9 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors = function() {
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.listenForKeyboardEvents_ = 
 function() {
+
     var listenElt = document.body;
+    //var listenElt = this.ViewBox_.getElement().parentNode;
 
     //
     // Apply a general keyhandler (for keys where up/down events are not
@@ -368,6 +420,7 @@ function() {
     // Apply the event to listenElt -- really the only safe way to 
     // get the listener to function properly
     //
+    /*
     this.keyDownKey_ = goog.events.listen(listenElt, 
 					  goog.events.EventType.KEYDOWN, 
 					  this.onKeyDown_.bind(this));
@@ -375,6 +428,7 @@ function() {
     this.keyUpKey_ = goog.events.listen(listenElt, 
 					goog.events.EventType.KEYUP, 
 					this.onKeyUp_.bind(this));
+    */
 }
 
 
@@ -404,6 +458,15 @@ xiv.ui.ViewBoxInteractorHandler.prototype.setCursorGrab_ = function(e) {
 	goog.dom.classes.add(this.ViewBox_.getViewFrame(), 
 			     this.constructor.CURSOR_CSS.GRAB_CUSTOM);
     }
+
+
+    goog.dom.classes.remove(this.ViewBox_.getViewFrame(), 
+			 this.constructor.CURSOR_CSS.GRABBING);
+    if( navigator.userAgent.match(/MSIE/i) || 
+	navigator.userAgent.match(/Chrome/i) ) {  
+	goog.dom.classes.remove(this.ViewBox_.getViewFrame(), 
+			     this.constructor.CURSOR_CSS.GRABBING_CUSTOM);
+    }
 }
 
 
@@ -413,6 +476,16 @@ xiv.ui.ViewBoxInteractorHandler.prototype.setCursorGrab_ = function(e) {
  * @param {goog.events.Event} e
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.setCursorGrabbing_ = function(e) {
+
+    goog.dom.classes.remove(this.ViewBox_.getViewFrame(), 
+			 this.constructor.CURSOR_CSS.GRAB);
+    if( navigator.userAgent.match(/MSIE/i) || 
+	navigator.userAgent.match(/Chrome/i) ) {  
+	goog.dom.classes.remove(this.ViewBox_.getViewFrame(), 
+			     this.constructor.CURSOR_CSS.GRAB_CUSTOM);
+    }
+
+
     goog.dom.classes.add(this.ViewBox_.getViewFrame(), 
 			 this.constructor.CURSOR_CSS.GRABBING);
     if( navigator.userAgent.match(/MSIE/i) || 
@@ -430,6 +503,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.setCursorGrabbing_ = function(e) {
  * @param {goog.events.Event} e
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.setCursorZoomIn_ = function(e) {
+    goog.dom.classes.remove(this.ViewBox_.getViewFrame(), 
+			 this.constructor.CURSOR_CSS.ZOOM_OUT);
     goog.dom.classes.add(this.ViewBox_.getViewFrame(), 
 			 this.constructor.CURSOR_CSS.ZOOM_IN);
 }
@@ -441,6 +516,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.setCursorZoomIn_ = function(e) {
  * @param {goog.events.Event} e
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.setCursorZoomOut_ = function(e) {
+    goog.dom.classes.remove(this.ViewBox_.getViewFrame(), 
+			 this.constructor.CURSOR_CSS.ZOOM_IN);
     goog.dom.classes.add(this.ViewBox_.getViewFrame(), 
 			 this.constructor.CURSOR_CSS.ZOOM_OUT);
 }
@@ -483,7 +560,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
 	if (this.shiftDown_){
 	    this.showInteractors();
 	    this.syncSlidersToVolume_();
-	    this.syncAllCrosshairs_();
+	    this.syncAllCrosshairs();
 	    this.shiftDown_ = false;
 	}
     }
@@ -507,34 +584,23 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
 
 
     //
-    // Set the cursor grab icon if we're hovering over a renderer
-    //
-    if (goog.isDefAndNotNull(this.currMouseRenderer_) && this.ctrlDown_){
-	//window.console.log("CONTROL DOWN cursor grab");
-	this.setCursorGrab_();
-    }
-
-    //
     // ZOOM
     //
-    if (!this.ctrlDown_ && this.rightMouseDown_) {
-	this.onRenderPlaneZoom_(xDist, yDist);
+    if (this.zooming_){
+	this.setCursorZoomIn_();	
+	if (this.leftMouseDown_){
+	    this.onRenderPlaneZoom_(xDist, yDist);
+	}
     }
 
     //
     // PAN
     //
-    if ((this.ctrlDown_ && this.rightMouseDown_) ||
-	(this.ctrlDown_ && this.leftMouseDown_)
-	|| this.middleMouseDown_) {
-	this.onRenderPlanePan_(xDist, yDist);
-    }
-
-    //
-    // BRIGHTNESS AND CONTRAST
-    //
-    if (!this.ctrlDown_ && this.leftMouseDown_) {
-	this.onRenderPlaneLevelAdjust_(xDist, yDist);
+    if (this.panning_) {
+	this.setCursorGrab_();
+	if (this.leftMouseDown_) {	
+	    this.onRenderPlanePan_(xDist, yDist);
+	}
     }
 } 
 
@@ -550,11 +616,11 @@ function(xDist, yDist){
 
     var incrementLevel = function(title, amount){
 	goog.array.forEach(
-	    this.levelControllers_, 
-	    function(levelController){
-		if (levelController.getLabel().innerHTML == title){
-		    levelController.getComponent().setValue(
-			levelController.getComponent().getValue() + amount);
+	    this.levelCtrls_, 
+	    function(levelCtrl){
+		if (levelCtrl.getLabel().innerHTML == title){
+		    levelCtrl.getComponent().setValue(
+			levelCtrl.getComponent().getValue() + amount);
 		}
 	    })
     }.bind(this)
@@ -599,7 +665,7 @@ function(xDist, yDist){
     //
     // Clear the cusor style
     //
-    this.clearCursorStyle_();
+    //this.clearCursorStyle_();
 
     //
     // First, we determine which is bigger
@@ -607,10 +673,12 @@ function(xDist, yDist){
     var zoomIn = function(){
 	this.setCursorZoomIn_();
 	this.currMouseRenderer_.zoomIn();
+	//this.syncAllCrosshairs();
     }.bind(this)
     var zoomOut = function(){
 	this.setCursorZoomOut_();
 	this.currMouseRenderer_.zoomOut();
+	//this.syncAllCrosshairs();
     }.bind(this)
 
     //
@@ -639,18 +707,15 @@ function(xDist, yDist){
     // Sync zoom display
     //
     this.syncZoomDisplayToRenderer_();
-    this.syncAllCrosshairs_();
+    this.syncAllCrosshairs();
 }
 
 
 
 /**
- * @private
+ * @public
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.syncAllCrosshairs_ = function(){
-    //
-    // Update crosshairs
-    //
+xiv.ui.ViewBoxInteractorHandler.prototype.syncAllCrosshairs = function(){
     this.interactorsAndRenderers_(
 	function(renderPlane, renderPlaneOr, planeInteractors, volume){
 	    this.syncCrosshairsToVolume_(renderPlaneOr, volume);
@@ -679,7 +744,7 @@ function(xDist, yDist){
     //
     // Update crosshairs
     //
-    this.syncAllCrosshairs_();
+    this.syncAllCrosshairs();
 }
 
 
@@ -728,18 +793,6 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseUp_ = function(e) {
     else if (e.button == 2){
 	this.rightMouseDown_ = false;
     }
-
-
-    if (!this.ctrlDown_){
-	//
-	// Clear the cursor style
-	//
-	this.clearCursorStyle_();
-    } else {
-	this.clearCursorStyle_();
-	this.setCursorGrab_();
-    }
-    //window.console.log("MOUSE UP", this.leftMouseDown_, this.rightMouseDown_);
 }
 
 
@@ -830,10 +883,54 @@ function(renderer, increment) {
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
-    //window.console.log(e, e.keyCode);
+    window.console.log('On key:', e.keyCode);
+
     // Arrow keys
     if ((e.keyCode - 40 >= -3) && (e.keyCode - 40 <= 0)){
 	this.onArrowKey_(e.keyCode);
+    }
+
+
+    // Z (Zoom)
+    if (e.keyCode == 90){
+	this.ViewBox_.fireToggleButton(
+	    xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.TWODZOOM);
+    }
+
+    // P (Pan) or M (Move)
+    else if (e.keyCode == 80 || e.keyCode == 77){
+	this.ViewBox_.fireToggleButton(
+	    xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.TWODPAN);
+    }
+
+    // L (Levels) or B(Brightness and Contrast)
+    else if (e.keyCode == 66 || e.keyCode == 76){
+	this.ViewBox_.fireToggleButton(
+	    xiv.ui.ViewBoxDialogs.DIALOG_KEYS.LEVELS);
+    }
+
+    // C (Crosshairs)
+    else if (e.keyCode == 67){
+	this.ViewBox_.fireToggleButton(
+	    xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.CROSSHAIRS);
+    }
+
+    // S (Settings)
+    else if (e.keyCode == 83){
+	this.ViewBox_.fireToggleButton(
+	    xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.SETTINGS);
+    }
+
+    // I (Info)
+    else if (e.keyCode == 73){
+	this.ViewBox_.fireToggleButton(
+	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO);
+    }
+
+    // H (Help)
+    else if (e.keyCode == 72){
+	this.ViewBox_.fireToggleButton(
+	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP);
     }
 }
 
@@ -844,20 +941,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onKeyDown_ = function(e) {
     //window.console.log('DOWN', e, e.keyCode);
-
     // CTRL
     if (e.keyCode == 17){
-	//
-	// Store property
-	//
-	this.ctrlDown_ = true;
-
-	//
-	// Set the cursor grab icon if we're hovering over a renderer
-	//
-	if (goog.isDefAndNotNull(this.currMouseRenderer_)){
-	    this.setCursorGrab_();
-	}
     }
 }
 
@@ -867,18 +952,6 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKeyDown_ = function(e) {
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onKeyUp_ = function(e) {
-    //window.console.log('UP', e, e.keyCode);
-
-    // CTRL
-    if (e.keyCode == 17){
-	//window.console.log("CTRL UP!");
-	this.ctrlDown_ = false;
-
-	//
-	// Clear the cursor style
-	//
-	this.clearCursorStyle_();
-    }
 
 }
 
@@ -989,6 +1062,67 @@ function(callback, opt_orientation){
 
 
 
+/**
+ * @public
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.createTwoDZoomToggle = 
+function(){    
+    this.ViewBox_.createToggleButton(
+	'LEFT', 
+	xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_TOGGLE, 
+	xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.TWODZOOM,
+	'2D Zoom', 
+	function(button, buttonChecked){
+	    this.clearCursorStyle_();
+	    var checked = button.getAttribute('checked').toString() == 'true';
+	    this.zooming_ = checked;
+
+	    //
+	    // Untoggle PAN
+	    //
+	    if (checked){
+		this.ViewBox_.untoggle(
+		    xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.TWODPAN);
+		this.setCursorZoomIn_();
+	    }
+
+	}.bind(this), 
+	serverRoot + 
+	    '/images/viewer/xiv/ui/ViewBox/Toggle-2DZoom.png');
+
+    this.ViewBox_.fireToggleButton(
+	xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.TWODZOOM);
+}
+
+
+
+/**
+ * @public
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.createTwoDPanToggle = 
+function(){    
+    this.ViewBox_.createToggleButton(
+	'LEFT', 
+	xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_TOGGLE, 
+	xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.TWODPAN,
+	'2D Pan', 
+	function(button){
+	    this.clearCursorStyle_();
+	    var checked = button.getAttribute('checked').toString() == 'true';
+	    this.panning_ = checked;
+	    if (checked){
+		this.setCursorGrab_();
+		this.ViewBox_.untoggle(
+		    xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.TWODZOOM);	
+	    }
+	}.bind(this), 
+	serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-2DPan.png');
+
+    //this.panning_ = true;
+    this.ViewBox_.fireToggleButton(
+	xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.TWODPAN);
+}
+
 
 
 /**
@@ -999,7 +1133,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createCrosshairToggle =
 function(opt_isOn){
     this.ViewBox_.createToggleButton(
 	'LEFT', 
-	xiv.ui.ViewBoxInteractorHandler.CSS.CROSSHAIRS_TOGGLE, 
+	xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_TOGGLE, 
 	xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.CROSSHAIRS,
 	'Toggle Crosshairs', 
 	function(button){
@@ -1010,9 +1144,8 @@ function(opt_isOn){
 	    '/images/viewer/xiv/ui/ViewBox/Toggle-Crosshairs.png');
 
     if (opt_isOn === false){
-	goog.testing.events.fireClickEvent(
-	    this.ViewBox_.getToggleButtons()[
-		xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.CROSSHAIRS]);
+	this.ViewBox_.fireToggleButton(
+	    xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.CROSSHAIRS);
     }
 }
 
@@ -1022,19 +1155,23 @@ function(opt_isOn){
 /**
  * @public
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.createThreeDRenderToggle = 
+xiv.ui.ViewBoxInteractorHandler.prototype.createSettingsToggle = 
 function(){    
     this.ViewBox_.createToggleButton(
 	'LEFT', 
-	xiv.ui.ViewBoxInteractorHandler.CSS.THREEDRENDER_TOGGLE, 
-	xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.THREEDRENDER,
-	'3D Rendering', 
+	xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_TOGGLE, 
+	xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.SETTINGS,
+	'Settings', 
 	function(button){
-	    this.Renderer_.setVPlaneOn(
-		(button.getAttribute('checked') == 'true'));
+	    window.console.log("Need to create dialog here");
+	    //this.Renderer_.setVPlaneOn(
+	    //(button.getAttribute('checked') == 'true'));
 	}.bind(this), 
 	serverRoot + 
-	    '/images/viewer/xiv/ui/ViewBox/Toggle-3D.png');
+	    '/images/viewer/xiv/ui/ViewBox/Toggle-Settings.png');
+
+    this.ViewBox_.fireToggleButton(
+	xiv.ui.ViewBoxInteractorHandler.TOGGLE_KEYS.SETTINGS);
 }
 
 
@@ -1043,7 +1180,7 @@ function(){
 /**
  * @private
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.syncRenderControllersToRenderer_ = 
+xiv.ui.ViewBoxInteractorHandler.prototype.syncVolumeCtrlsToRenderer_ = 
 function() { 
     //
     // Do nothing if no renderer
@@ -1094,9 +1231,6 @@ function() {
 			   }.bind(this))
 
 
-
-
-
 	//
 	// Change Slice when slider moves
 	//
@@ -1117,7 +1251,7 @@ function() {
 		xiv.ui.layouts.interactors.InputController.EventType.INPUT,
 		function(e){
 		    this.syncSliderToFrameDisplay_(e.target,volume);
-		    this.syncAllCrosshairs_();
+		    this.syncAllCrosshairs();
 		}.bind(this))
 
 
@@ -1129,7 +1263,7 @@ function() {
 		function(e){
 		    this.syncRendererToZoomDisplay_(zoomDisplay, 
 						   renderPlane);
-		    this.syncAllCrosshairs_();
+		    this.syncAllCrosshairs();
 		}.bind(this))
     }.bind(this))
 
@@ -1144,6 +1278,7 @@ function() {
 
 
 /**
+ * @public
  * @return {xiv.ui.Histogram}
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.createHistogram = function(){
@@ -1161,6 +1296,17 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createHistogram = function(){
 
 
 /**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.updateHistogram_ = function(){
+    this.Histogram_.drawLine();
+    this.Histogram_.updateMaxMin();
+}
+
+
+
+
+/**
  * @param {nrg.ui.Slider} slider
  * @param {X.volume} volume
  * @private
@@ -1168,9 +1314,18 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createHistogram = function(){
 xiv.ui.ViewBoxInteractorHandler.prototype.syncVolumeToSlider_ = 
 function(slider, volume) {
     if (!goog.isDefAndNotNull(volume)) return;
-    volume['index' + slider[this.constructor.ORIENTATION_KEY]] = 
-	slider.getValue() - 1;
-    //volume.modified(true);
+
+    //
+    // Invert the axial and coronal planes to match that of Slicer
+    //
+    var orientation = slider[this.constructor.ORIENTATION_KEY];
+    var adder = (orientation == 'Y' || orientation == 'Z') ? 
+	slider.getMaximum() - slider.getValue() - 1 : slider.getValue() - 1;
+
+    //
+    // Set the volume index
+    // 
+    volume['index' + slider[this.constructor.ORIENTATION_KEY]] = adder;
 }
 
 
@@ -1424,11 +1579,11 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onLayoutResize = function(){
     this.interactorsAndRenderers_(
     function(renderPlane, renderPlaneOr, planeInteractors, volume){
 	this.syncSliderToFrameDisplay_(planeInteractors.FRAME_DISPLAY, volume);
-	this.syncCrosshairsToVolume_(planeInteractors.SLIDER, volume);
-	//this.syncRendererToZoomDisplay_(planeInteractors.ZOOM_DISPLAY, 
-	//renderPlane);
+	//this.syncCrosshairsToVolume_(planeInteractors.SLIDER, volume);
 	this.syncZoomDisplayToRenderer_();
     }.bind(this));
+
+    this.syncAllCrosshairs();
 }
 
 
@@ -1641,9 +1796,21 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMenuItemSelected_ = function(e) {
 /**
  * @private
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.updateRenderControllers_ = function(){
-    if (!goog.isDefAndNotNull(this.renderControllers_)) { return };
-    goog.array.forEach(this.renderControllers_, function(controller){
+xiv.ui.ViewBoxInteractorHandler.prototype.updateVolumeCtrls_ = function(){
+    if (!goog.isDefAndNotNull(this.volumeCtrls_)) { return };
+    goog.array.forEach(this.volumeCtrls_, function(controller){
+	//window.console.log('\nLabel', controller.getLabel().innerHTML);
+	controller.update();
+    })
+}
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.updateMeshCtrls_ = function(){
+    if (!goog.isDefAndNotNull(this.meshCtrls_)) { return };
+    goog.array.forEach(this.meshCtrls_, function(controller){
 	//window.console.log('\nLabel', controller.getLabel().innerHTML);
 	controller.update();
     })
@@ -1654,9 +1821,9 @@ xiv.ui.ViewBoxInteractorHandler.prototype.updateRenderControllers_ = function(){
 /**
  * @private
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.updateLevelControllers_ = function(){
-    if (!goog.isDefAndNotNull(this.levelControllers_)) { return };
-    goog.array.forEach(this.levelControllers_, function(controller){
+xiv.ui.ViewBoxInteractorHandler.prototype.updateLevelCtrls_ = function(){
+    if (!goog.isDefAndNotNull(this.levelCtrls_)) { return };
+    goog.array.forEach(this.levelCtrls_, function(controller){
 	//window.console.log(controller.getLabel().innerHTML,
 	//controller.getComponent().getValue());
 	   
@@ -1676,19 +1843,22 @@ xiv.ui.ViewBoxInteractorHandler.prototype.updateLevelControllers_ = function(){
 /**
  * @public
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.createRenderControllers = 
+xiv.ui.ViewBoxInteractorHandler.prototype.createVolumeCtrls = 
 function() {
     //
     // Track the controllers
     //
-    this.renderControllers_ = [];
-    this.levelControllers_ = [];
+    this.volumeCtrls_ = [];
+    this.meshCtrls_ = [];
+    this.levelCtrls_ = [];
 
     //
     // Create the dialogs
     //
     this.Dialogs_.createLevelsDialog();
-    this.Dialogs_.createRenderControlDialog();
+    this.Dialogs_.createVolumesDialog();
+
+   
 	
     //-------------------------
     // NOTE: We now need to separate level controllers (brightness,
@@ -1697,38 +1867,48 @@ function() {
 
     
     //
-    // Create a new ZippyTree for render controllers
+    // Create a new ZippyTree for volume controllers
     //
-    if (goog.isDefAndNotNull(this.renderControllerTree_)){
-	this.renderControllerTree_.disposeInternal();
+    if (goog.isDefAndNotNull(this.volumeCtrlTree_)){
+	this.volumeCtrlTree_.disposeInternal();
     }
-    this.renderControllerTree_ = new nrg.ui.ScrollableZippyTree();
-    this.renderControllerTree_.render();
+    this.volumeCtrlTree_ = new nrg.ui.ScrollableZippyTree();
+    this.volumeCtrlTree_.render();
+
+
+    //
+    // Create a new ZippyTree for mesh controllers
+    //
+    if (goog.isDefAndNotNull(this.meshCtrlTree_)){
+	this.meshCtrlTree_.disposeInternal();
+    }
+    this.meshCtrlTree_ = new nrg.ui.ScrollableZippyTree();
+    this.meshCtrlTree_.render();
 
     //
     // Create a new ZippyTree for level controllers
     //
-    if (goog.isDefAndNotNull(this.levelControllerTree_)){
-	this.levelControllerTree_.disposeInternal();
+    if (goog.isDefAndNotNull(this.levelCtrlTree_)){
+	this.levelCtrlTree_.disposeInternal();
     }
-    this.levelControllerTree_ = new nrg.ui.ScrollableZippyTree();
-    this.levelControllerTree_.render();
+    this.levelCtrlTree_ = new nrg.ui.ScrollableZippyTree();
+    this.levelCtrlTree_.render();
 
     //
     // Identify the controllers we need to separate from the rest.
     //
-    var levelControllerLabels = [
+    var levelCtrlLabels = [
 	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MIN, 
 	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MAX, 
 	xiv.ui.ctrl.MasterController3D.CONTROLLERS.CONTRAST, 
 	xiv.ui.ctrl.MasterController3D.CONTROLLERS.BRIGHTNESS
     ]
-    var updatableLevelControllerLabels = [
+    var updatableLevelCtrlLabels = [
 	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MIN, 
 	xiv.ui.ctrl.MasterController3D.CONTROLLERS.LEVEL_MAX 
     ]
 
-    var updatableLevelControllers = [];
+    var updatableLevelCtrls = [];
 
 
     //
@@ -1738,20 +1918,32 @@ function() {
     if (goog.isDefAndNotNull(controllers2D) && (controllers2D.length > 0)) {
 	goog.array.forEach(controllers2D, function(ctrl){
 	    //
-	    // store controller
-	    //
-	    this.renderControllers_.push(ctrl);
-
-	    //
 	    // Add the '2D' descriptor to any sub-folders.
 	    //
 	    var folders = ctrl.getFolders();
 	    folders.push('2D');
 
+	    
+	    var currTree;
+	    var currCtrls;
+	    if (folders[0] == 'Volumes'){
+		currTree = this.volumeCtrlTree_;
+		currCtrls = this.volumeCtrls_;
+	    } 
+	    else if (folders[0] == 'Meshes'){
+		currTree = this.meshCtrlTree_;
+		currCtrls = this.meshCtrls_;		
+	    }
+
+	    //
+	    // store controller
+	    //
+	    currCtrls.push(ctrl);
+
 	    //
 	    // Add other controllers to render Controller zippy
 	    //
-	    this.renderControllerTree_.addContents(ctrl.getElement(), folders);
+	    currTree.addContents(ctrl.getElement(), folders);
 	}.bind(this));
     }
 
@@ -1766,18 +1958,18 @@ function() {
 	    //
 	    // Separate the level controllers, add to that zippy
 	    //
-	    if (goog.array.contains(levelControllerLabels,
+	    if (goog.array.contains(levelCtrlLabels,
 		ctrl.getLabel().innerHTML)){
-		this.levelControllerTree_.addContents(ctrl.getElement());
+		this.levelCtrlTree_.addContents(ctrl.getElement());
 		//
 		// Min , max
 		//
-		if (goog.array.contains(updatableLevelControllerLabels,
+		if (goog.array.contains(updatableLevelCtrlLabels,
 					ctrl.getLabel().innerHTML)){
-		    updatableLevelControllers.push(ctrl);
+		    updatableLevelCtrls.push(ctrl);
 		} 
 		
-		this.levelControllers_.push(ctrl);
+		this.levelCtrls_.push(ctrl);
 		
 		return;
 	    } 
@@ -1790,80 +1982,108 @@ function() {
 		folders.push('3D');
 	    }
 
-	    //
-	    // Add other controllers to render Controller zippy
-	    //
-	    this.renderControllerTree_.addContents(ctrl.getElement(), folders);
+
+	    var currTree;
+	    var currCtrls;
+	    if (folders[0] == 'Volumes'){
+		currTree = this.volumeCtrlTree_;
+		currCtrls = this.volumeCtrls_;
+	    } 
+	    else if (folders[0] == 'Meshes'){
+		currTree = this.meshCtrlTree_;
+		currCtrls = this.meshCtrls_;		
+	    }
 
 	    //
 	    // store controller
 	    //
-	    this.renderControllers_.push(ctrl);
+	    currCtrls.push(ctrl);
+
+	    //
+	    // Add other controllers to render Controller zippy
+	    //
+	    currTree.addContents(ctrl.getElement(), folders);
+
 	}.bind(this));
     }
 
     //
     // Set the tree style and add to dialog
     //
-    renderControllerTreeElt = this.renderControllerTree_.getElement();
-    goog.dom.classes.add(renderControllerTreeElt, 
-			 this.constructor.CSS.RENDERCONTROLLER_ZIPPYTREE);
+    var volumeCtrlTreeElt = this.volumeCtrlTree_.getElement();
+    goog.dom.classes.add(volumeCtrlTreeElt, 
+			 this.constructor.CSS.VOLUMECONTROLLER_ZIPPYTREE);
     this.Dialogs_.getDialogs()
-    [xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU].
-	getElement().appendChild(renderControllerTreeElt);
-    this.renderControllerTree_.expandAll();
+    [xiv.ui.ViewBoxDialogs.DIALOG_KEYS.VOLUMES].
+	getElement().appendChild(volumeCtrlTreeElt);
+    this.volumeCtrlTree_.expandAll();
+
 
     //
     // Set the tree style and add to dialog
     //
-    levelControllerTreeElt = this.levelControllerTree_.getElement();
-    goog.dom.classes.add(levelControllerTreeElt, 
+    if (this.meshCtrls_.length > 0){
+	this.Dialogs_.createMeshesDialog();
+	var meshCtrlTreeElt = this.meshCtrlTree_.getElement();
+	goog.dom.classes.add(meshCtrlTreeElt, 
+			     this.constructor.CSS.MESHCONTROLLER_ZIPPYTREE);
+	this.Dialogs_.getDialogs()
+	[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.MESHES].
+	    getElement().appendChild(meshCtrlTreeElt);
+	this.meshCtrlTree_.expandAll();
+    }
+
+
+
+    //
+    // Set the tree style and add to dialog
+    //
+    var levelCtrlTreeElt = this.levelCtrlTree_.getElement();
+    goog.dom.classes.add(levelCtrlTreeElt, 
 			 this.constructor.CSS.LEVELCONTROLLER_ZIPPYTREE);
     this.Dialogs_.getDialogs()[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.LEVELS].
-	getElement().appendChild(levelControllerTreeElt);
+	getElement().appendChild(levelCtrlTreeElt);
 
 
     //
     // We have to re-sync the level controllers to the volume properties, 
     // since the volume is now rendered....
     //
-    goog.array.forEach(updatableLevelControllers, function(levelController){
-	levelController.getComponent().setMaximum(
-	    levelController.getXObj().windowHigh);
-	levelController.getComponent().setMinimum(
-	    levelController.getXObj().windowLow);
-	levelController.update();
+    goog.array.forEach(updatableLevelCtrls, function(levelCtrl){
+	levelCtrl.getComponent().setMaximum(
+	    levelCtrl.getXObj().windowHigh);
+	levelCtrl.getComponent().setMinimum(
+	    levelCtrl.getXObj().windowLow);
+	levelCtrl.update();
     })
 
 
     //
     // Create histogram
     //
-    var hist = this.createHistogram();
+    this.Histogram_ = this.createHistogram();
    
     //
     // Update the histogram when the sliders move
     //
-    goog.array.forEach(updatableLevelControllers, 
-		       function(levelController){
-	goog.events.listen(levelController.getComponent(), 
-			   nrg.ui.Slider.EventType.SLIDE, function(e){
-			       hist.drawLine();
-			       hist.updateMaxMin();
-			   })
-    })
+    goog.array.forEach(updatableLevelCtrls, 
+		       function(levelCtrl){
+	goog.events.listen(levelCtrl.getComponent(), 
+			   nrg.ui.Slider.EventType.SLIDE,
+			       this.updateHistogram_.bind(this))
+    }.bind(this))
 
     //
     // add the histogram to the LEVELS dialog
     //
     this.Dialogs_.getDialogs()[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.LEVELS].
-	getElement().appendChild(hist.getElement());
+	getElement().appendChild(this.Histogram_.getElement());
 
 
     //
     // Sync the render controllers with the renderer
     //
-    this.syncRenderControllersToRenderer_();
+    this.syncVolumeCtrlsToRenderer_();
 }
 
 
@@ -1876,8 +2096,13 @@ function() {
 xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
     goog.base(this, 'dispose');
 
-    if (goog.isDefAndNotNull(this.renderControllers_)){
-	goog.array.clear(this.renderControllers_);
+    if (goog.isDefAndNotNull(this.Histogram_)){
+	this.Histogram_.disposeInternal();
+    }
+
+
+    if (goog.isDefAndNotNull(this.volumeCtrls_)){
+	goog.array.clear(this.volumeCtrls_);
     }
 
     if (goog.isDefAndNotNull(this.keyHandler_)){
@@ -1885,8 +2110,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
 	delete this.keyHandler_;
     }
  
-    this.renderControllerTree_.disposeInternal();
-    this.levelControllerTree_.disposeInternal();
+    this.volumeCtrlTree_.disposeInternal();
+    this.levelCtrlTree_.disposeInternal();
 
 
     if (goog.isDefAndNotNull(this.prevMousePos_)){
@@ -1895,9 +2120,9 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
     }
 
     
-    if (goog.isDefAndNotNull(this.levelControllers_)){
-	goog.array.clear(this.levelControllers_);
-	delete this.levelControllers_;
+    if (goog.isDefAndNotNull(this.levelCtrls_)){
+	goog.array.clear(this.levelCtrls_);
+	delete this.levelCtrls_;
     }
 
     //
@@ -1933,6 +2158,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
 	delete this.mouseOverKeys_;
     }
 
+    delete this.zooming_;
+    delete this.panning_;
     delete this.ctrlDown_;
     delete this.shiftDown_;
     delete this.rightMouseDown_;

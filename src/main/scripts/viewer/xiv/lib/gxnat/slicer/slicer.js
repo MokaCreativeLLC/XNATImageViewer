@@ -329,34 +329,39 @@ gxnat.slicer.matchFileToSet = function(fileUrl, fileSet) {
     //
     // It was decided to use regexp instead of decodeUrl because
     // it was impossible to determine the number of times a given string
-    // was urlencoded in the MRB and relative to XNAT.
+    // was URL encoded in the MRB and relative to XNAT.
     //
     function regexpReplace(str){
-	return str
-	    .replace(/%20/g, " ")
-	    .replace(/%2520/g, " ");
+	return str.toLowerCase()
+	    .replace(/%20/g, '')
+	    .replace(/%2520/g, '')
+	    .replace(/%2520/g, '')
+	    .replace(/%253a/g, ':')
+	    .replace(/%3a/g, ':')
     }
 
     for (; i < len; i++){
 
-	setName = regexpReplace(fileSet[i].toLowerCase());
-	urlName = regexpReplace(fileUrl.toLowerCase());
+	setName = decodeURIComponent(fileSet[i].toLowerCase());
+	urlName = decodeURIComponent(fileUrl.toLowerCase());
 
-	//window.console.log("SET NAME", setName);
-	//window.console.log("URL NAME", urlName);
+	if (urlName.indexOf('%') > -1){
+	    urlName = decodeURIComponent(urlName);
+	}
+
+	//window.console.log("\n\nSET NAME", setName, "URL NAME", urlName);
 	if (setName.indexOf(urlName) == (setName.length - urlName.length)){
-
-	    var replacer = fileSet[i].replace(/%20/g, '%2520');
-
+	    
+	    //
+	    // IMPORTANT!!! This is necessary!!!
+	    //
+	    var replacer = fileSet[i].replace(/%/g, '%25');
 
 	    if (replacer != fileSet[i]){
-		//
-		// Output warning
-		//
 		var replaceStr = "\nWARNING - Changing the encoding chars" + 
 		    " in the following url:\n\n" + fileSet[i] + 
 		    '\n\nis now\n\n' + replacer;
-		//window.console.log(replaceStr);
+		
 	    }
 
 	    return replacer;
@@ -830,6 +835,8 @@ gxnat.slicer.getVolumes = function(sceneView) {
     goog.array.forEach(culledVolumes, function(volume){
 	volume.properties = new gxnat.slicer.VolumeDisplayNode(
 	    sceneView, volume.node, selectedVolumeID);
+
+	window.console.log(volume.properties);
 	if (volume.labelMap) { 
 	    volume.properties.labelMap = volume.labelMap;
 	    delete volume.labelMap;

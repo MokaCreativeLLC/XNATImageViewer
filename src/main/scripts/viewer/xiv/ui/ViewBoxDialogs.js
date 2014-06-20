@@ -71,10 +71,7 @@ xiv.ui.ViewBoxDialogs.ID_PREFIX =  'xiv.ui.ViewBoxDialogs';
  * @public
  */
 xiv.ui.ViewBoxDialogs.CSS_SUFFIX = {
-    HELP_TOGGLE: 'help-toggle',
-    LEVELS_TOGGLE: 'levels-toggle',
-    INFO_TOGGLE: 'info-toggle',
-    RENDERCONTROLMENU_TOGGLE: 'rendercontrol-toggle',
+    GENERIC_TOGGLE: 'generic-toggle',
     INFODIALOG: 'infodialog',
     INFODIALOG_TEXT: 'infodialog-text',
     INUSEDIALOG: 'inusedialog',
@@ -89,7 +86,8 @@ xiv.ui.ViewBoxDialogs.DIALOG_KEYS = {
     HELP: 'Help_' + goog.string.createUniqueString(),
     INUSE: 'InUse_' + goog.string.createUniqueString(),
     LEVELS: 'Levels_' + goog.string.createUniqueString(),
-    RENDERCONTROLMENU: 'RenderControlMenu_' + goog.string.createUniqueString(),
+    VOLUMES: 'Volumes_' + goog.string.createUniqueString(),
+    MESHES: 'Meshes_' + goog.string.createUniqueString(),
 }
 
 
@@ -138,7 +136,7 @@ xiv.ui.ViewBoxDialogs.prototype.getDialog = function(dialogKey){
  */
 xiv.ui.ViewBoxDialogs.prototype.createGenericDialog = 
 function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
-	 opt_title, opt_isOn, opt_setModal, opt_buttonSet){
+	 opt_title, opt_isOn, opt_setModal, opt_buttonSet, opt_onToggle){
 
     //
     // Set the title
@@ -166,8 +164,9 @@ function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
 
 	    this.dispatchEvent({
 		type: eventKey,
-		dialog: this.Dialogs_[dialogKey]
-	    })
+		dialog: this.Dialogs_[dialogKey],
+		dialogKey: dialogKey
+	    }) 
 
 	}.bind(this), 
 	toggleButtonSrc);
@@ -251,18 +250,36 @@ function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
 
 
 
+/**
+ * @public
+ */
+xiv.ui.ViewBoxDialogs.prototype.createMeshesDialog = function(){
+    this.createGenericDialog(
+	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.MESHES,
+	'xiv-ui-viewboxdialogs-meshes-dialog',
+	xiv.ui.ViewBoxDialogs.CSS.GENERIC_TOGGLE,
+	serverRoot + 
+	    '/images/viewer/xiv/ui/ViewBox/Toggle-Mesh.png',
+	'Volume Controls',
+	false,
+	false
+    );
+}
+
+
+
 
 /**
  * @public
  */
-xiv.ui.ViewBoxDialogs.prototype.createRenderControlDialog = function(){
+xiv.ui.ViewBoxDialogs.prototype.createVolumesDialog = function(){
     this.createGenericDialog(
-	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.RENDERCONTROLMENU,
-	'xiv-ui-viewboxdialogs-rendercontrol-dialog',
-	xiv.ui.ViewBoxDialogs.CSS.RENDERCONTROLMENU_TOGGLE,
+	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.VOLUMES,
+	'xiv-ui-viewboxdialogs-volumes-dialog',
+	xiv.ui.ViewBoxDialogs.CSS.GENERIC_TOGGLE,
 	serverRoot + 
-	    '/images/viewer/xiv/ui/ViewBox/Toggle-RenderControlMenu.png',
-	'Misc. Render Controls',
+	    '/images/viewer/xiv/ui/ViewBox/Toggle-Volume.png',
+	'Volume Controls',
 	false,
 	false
     );
@@ -277,7 +294,7 @@ xiv.ui.ViewBoxDialogs.prototype.createLevelsDialog = function(){
     this.createGenericDialog(
 	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.LEVELS,
 	'xiv-ui-viewboxdialogs-levels-dialog',
-	xiv.ui.ViewBoxDialogs.CSS.LEVELS_TOGGLE,
+	xiv.ui.ViewBoxDialogs.CSS.GENERIC_TOGGLE,
 	serverRoot + 
 	    '/images/viewer/xiv/ui/ViewBox/Toggle-BrightnessContrast.png',
 	'Brightness / Contrast',
@@ -417,7 +434,7 @@ xiv.ui.ViewBoxDialogs.prototype.createHelpDialog_ = function(){
     var helpToggle = 
 	this.ViewBox_.createToggleButton(
 	    'LEFT', 
-	    xiv.ui.ViewBoxDialogs.CSS.HELP_TOGGLE,
+	    xiv.ui.ViewBoxDialogs.CSS.GENERIC_TOGGLE,
 	    xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP,
 	   'Help', 
             function(button){
@@ -546,7 +563,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
     var infoToggle = 
 	this.ViewBox_.createToggleButton(
 	    'LEFT', 
-	    xiv.ui.ViewBoxDialogs.CSS.INFO_TOGGLE,
+	    xiv.ui.ViewBoxDialogs.CSS.GENERIC_TOGGLE,
 	    dialogKey,
 	    'Info. Display', 
 	    function(button){

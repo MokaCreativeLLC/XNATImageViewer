@@ -1355,6 +1355,59 @@ function(button, opt_onCheck){
 
 
 /**
+ * @param {!string} buttonKey
+ * @return {Element} The toggle button
+ * @public
+ */
+xiv.ui.ViewBox.prototype.toggleButtonChecked = function(buttonKey){
+    return this.toggleButtons_[buttonKey].
+	getAttribute('checked').toString() == 'true';
+}
+
+
+
+/**
+ * @param {!string} buttonKey
+ * @return {Element} The toggle button
+ * @public
+ */
+xiv.ui.ViewBox.prototype.getToggleButton = function(buttonKey){
+    return this.toggleButtons_[buttonKey];
+}
+
+
+
+/**
+ * @param {!string} buttonKey
+ * @public
+ */
+xiv.ui.ViewBox.prototype.fireToggleButton = function(buttonKey){
+    goog.testing.events.fireClickEvent(this.toggleButtons_[buttonKey]);
+}
+
+
+
+/**
+ * @param {!string | !Array.<string>} buttonKeys
+ * @public
+ */
+xiv.ui.ViewBox.prototype.untoggle = function(buttonKeys){
+    if (!goog.isArray(buttonKeys)){
+	buttonKeys = [buttonKeys];
+    }
+
+    goog.array.forEach(buttonKeys, function(buttonKey){
+	if (goog.isDefAndNotNull(this.toggleButtons_[buttonKey]) &&
+	    this.toggleButtonChecked(buttonKey)){
+	    goog.testing.events.fireClickEvent(this.toggleButtons_[buttonKey]);
+	}
+    }.bind(this))
+}
+
+
+
+
+/**
  * @param {!string} menuLocation
  * @param {!string} defaultClass,
  * @param {!string} identifier
@@ -1406,6 +1459,8 @@ xiv.ui.ViewBox.prototype.createToggleButton =
 	function(e){
 	    //window.console.log("CLICK", e.target);
 	    this.onToggleButtonClicked(iconbutton, opt_onCheck);
+	    
+	    //iconbutton.getAttribute('checked').toString() == 'true');
 	}.bind(this));
 
 	//

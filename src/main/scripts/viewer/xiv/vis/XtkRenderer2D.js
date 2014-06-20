@@ -203,6 +203,7 @@ xiv.vis.XtkRenderer2D.prototype.render = function() {
 	this.init();
 
     } else {
+	//window.console.log(this.getVolume());
 	goog.base(this, 'render');
 
 	//
@@ -283,7 +284,7 @@ xiv.vis.XtkRenderer2D.prototype.setZoom = function(num){
 xiv.vis.XtkRenderer2D.prototype.zoom_ = function(opt_multiplier){
     var multiplier = goog.isDefAndNotNull(opt_multiplier) ? opt_multiplier : 
 	1;
-    var zoomStep = .06;
+    var zoomStep = .03;
     //if (this._camera._view[14] > 3) {
     //zoomStep = .06;
     //}

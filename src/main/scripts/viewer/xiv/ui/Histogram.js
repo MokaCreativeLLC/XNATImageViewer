@@ -157,6 +157,7 @@ xiv.ui.Histogram.prototype.startMax_;
  * @inheritDoc
  */
 xiv.ui.Histogram.prototype.render = function(opt_parent){
+    //window.console.log("HIST RENDER");
     goog.base(this, 'render', opt_parent);
 
     this.canvas_ = goog.dom.createDom('canvas', {
@@ -193,7 +194,26 @@ xiv.ui.Histogram.prototype.render = function(opt_parent){
     }, '-1000')
     goog.dom.appendChild(this.getElement(), this.minDiv_);
  
+    //window.console.log("HIST RENDER2");
     this.draw();
+}
+
+
+
+/*
+ * @private
+ * @type {!boolean}
+ */
+xiv.ui.Histogram.prototype.isDrawn_ = false;
+
+
+
+/*
+ * @public
+ * @return {!boolean}
+ */
+xiv.ui.Histogram.prototype.isDrawn = function() {
+    return this.isDrawn_;
 }
 
 
@@ -202,11 +222,13 @@ xiv.ui.Histogram.prototype.render = function(opt_parent){
  * @public
  */
 xiv.ui.Histogram.prototype.draw = function() {
+
+    //window.console.log('DRAW', this.volume_);
+
     //
     // We can't do anything if there's no volume
     //
-    if (!goog.isDefAndNotNull(this.volume_) ||
-	!goog.isDefAndNotNull(this.volume_.images)) { return }
+    if (!goog.isDefAndNotNull(this.volume_)) { return }
 
     //
     // params
@@ -262,6 +284,7 @@ xiv.ui.Histogram.prototype.draw = function() {
     goog.array.forEach(pcts, function(pct, i){
 	pct = pct * multiplyer * canvasHeight;
 	x = Math.round((i / this.volume_.max) * canvasWidth);
+	//window.console.log(x, pct);
 	this.context_.fillRect(x, canvasHeight, 1, -Math.round(pct));
     }.bind(this))
 
@@ -277,6 +300,8 @@ xiv.ui.Histogram.prototype.draw = function() {
     // Draw the line
     //
     this.drawLine();
+
+    this.isDrawn_ = true;
 }
 
 
@@ -287,6 +312,7 @@ xiv.ui.Histogram.prototype.draw = function() {
  * @public
  */
 xiv.ui.Histogram.prototype.drawLine = function() {
+    //window.console.log("DRAW LINE");
     //
     // Do nothing if no volume
     //
@@ -342,7 +368,6 @@ xiv.ui.Histogram.prototype.drawLine = function() {
     this.lineContext_.lineTo(midLineX, canvasHeight - 20);
     this.lineContext_.lineWidth = .5;
     this.lineContext_.stroke();
-
 }
 
 
@@ -381,6 +406,7 @@ xiv.ui.Histogram.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
     delete this.volume_;
+    delete this.isDrawn_;
 
     if (goog.isDefAndNotNull(this.maxDiv_)){
 	goog.dom.removeNode(this.maxDiv_);
