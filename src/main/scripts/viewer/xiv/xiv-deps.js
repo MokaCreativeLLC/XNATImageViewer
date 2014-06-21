@@ -126,6 +126,16 @@ goog.addDependency('../../../../ui/ctrl/MasterController3D.js',
 ]);
 
 
+goog.addDependency('../../../../ui/ctrl/MasterController.js', 
+['xiv.ui.ctrl.MasterController'], [
+]);
+
+
+goog.addDependency('../../../../ui/ctrl/LevelsController.js', 
+['xiv.ui.ctrl.LevelsController'], [
+    'xiv.ui.ctrl.MasterController'
+]);
+
 goog.addDependency('../../../../ui/ctrl/AnnotationsController3D.js', 
 ['xiv.ui.ctrl.AnnotationsController3D'], [
 ]);

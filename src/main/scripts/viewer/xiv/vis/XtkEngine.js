@@ -256,35 +256,19 @@ xiv.vis.XtkEngine.prototype.setPrimaryRenderPlaneEvents_ = function() {
  * @public
  */
 xiv.vis.XtkEngine.prototype.updateControllers = function(){
-    goog.array.forEach(this.getControllers3D(), function(ctrl){
-	ctrl.update();
-    }.bind(this));
-
-    goog.array.forEach(this.getControllers2D(), function(ctrl){
-	ctrl.update();
-    }.bind(this));
+    this.ControllerTree_.updateControllers();
 }
 
 
 
 /**
- * @return {Array.<xiv.ui.ctrl.XtkController>}
+ * @return {xiv.ui.ctrl.XtkControllerTree}
  * @public
  */
-xiv.vis.XtkEngine.prototype.getControllers3D = function(){
-    return this.ControllerTree_.getControllers3D();
+xiv.vis.XtkEngine.prototype.getControllerTree = function(){
+    return this.ControllerTree_;
 }
 
-
-
-/**
- * @return {Array.<xiv.ui.ctrl.XtkController>}
- * @public
- */
-xiv.vis.XtkEngine.prototype.getControllers2D = function(){
-    //window.console.log(this, this.ControllerTree_);
-    return this.ControllerTree_.getControllers2D();
-}
 
 
 
@@ -1280,10 +1264,6 @@ goog.exportSymbol('xiv.vis.XtkEngine.prototype.setPrimaryRenderPlane',
 	xiv.vis.XtkEngine.prototype.setPrimaryRenderPlane);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.updateControllers',
 	xiv.vis.XtkEngine.prototype.updateControllers);
-goog.exportSymbol('xiv.vis.XtkEngine.prototype.getControllers3D',
-	xiv.vis.XtkEngine.prototype.getControllers3D);
-goog.exportSymbol('xiv.vis.XtkEngine.prototype.getControllers2D',
-	xiv.vis.XtkEngine.prototype.getControllers2D);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.render3dPlane',
 	xiv.vis.XtkEngine.prototype.render3dPlane);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.renderAllPlanes',

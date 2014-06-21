@@ -85,9 +85,6 @@ xiv.ui.ViewBoxDialogs.DIALOG_KEYS = {
     INFO: 'Info_' + goog.string.createUniqueString(),
     HELP: 'Help_' + goog.string.createUniqueString(),
     INUSE: 'InUse_' + goog.string.createUniqueString(),
-    LEVELS: 'Levels_' + goog.string.createUniqueString(),
-    VOLUMES: 'Volumes_' + goog.string.createUniqueString(),
-    MESHES: 'Meshes_' + goog.string.createUniqueString(),
 }
 
 

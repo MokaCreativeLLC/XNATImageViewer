@@ -16,6 +16,20 @@
 }
 
 
+.xiv-ui-viewboxinteractorhandler-generic-zippytree {
+    top: 30px;
+    width: calc(100% - 20px);
+    height: calc(100% - 50px);
+}
+
+
+
+.xiv-ui-viewboxinteractorhandler-generic-dialog  {
+    width: 400px;
+    height: 250px;
+}
+
+
 
 .xiv-ui-viewboxinteractorhandler-viewframe-grab {
   cursor:hand;
@@ -55,19 +69,3 @@
 
 
 
-.xiv-ui-viewboxinteractorhandler-volumecontroller-zippytree, 
-.xiv-ui-viewboxinteractorhandler-meshcontroller-zippytree,
-.xiv-ui-viewboxinteractorhandler-annotationscontroller-zippytree,
-{
-    top: 30px;
-    width: calc(100% - 20px);
-    height: calc(100% - 50px);
-}
-
-
-
-.xiv-ui-viewboxinteractorhandler-levelcontroller-zippytree {
-    top: 155px;
-    width: calc(100% - 20px);
-    height: calc(100% - 50px);
-}
