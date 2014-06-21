@@ -8,7 +8,7 @@ goog.require('goog.object');
 // xiv
 goog.require('xiv.ui.ctrl.XtkController');
 goog.require('xiv.ui.ctrl.SliderController');
-goog.require('xiv.ui.Histogram');
+goog.require('xiv.ui.ctrl.Histogram');
 
 
 
@@ -20,9 +20,6 @@ goog.require('xiv.ui.Histogram');
 goog.provide('xiv.ui.ctrl.LevelsController');
 xiv.ui.ctrl.LevelsController = function() {
     goog.base(this);
-
-
-    this.histograms_ = [];
 }
 goog.inherits(xiv.ui.ctrl.LevelsController, xiv.ui.ctrl.MasterController);
 goog.exportSymbol('xiv.ui.ctrl.LevelsController', 
@@ -54,21 +51,19 @@ xiv.ui.ctrl.LevelsController.CONTROLLERS = {
     CONTRAST: 'Contrast',
     LEVEL_MIN: 'Level Min.',
     LEVEL_MAX: 'Level Max.',
-    VISIBLE: 'Visible',
-    OPACITY: 'Opacity',
+    HISTOGRAM: 'Histogram'
 };
 
 
 
 
 /**
+ * @param {!xiv.ui.ctrl.Histogram} hist
  * @private
  */
-xiv.ui.ctrl.LevelsController.prototype.updateHistogram_ = function(){
-    goog.array.forEach(this.histograms_, function(hist){
-	hist.drawLine();
-	hist.updateMaxMin();
-    })
+xiv.ui.ctrl.LevelsController.prototype.updateHistogram_ = function(hist){
+    hist.drawLine();
+    hist.updateMaxMin();
 }
 
 
@@ -80,35 +75,30 @@ xiv.ui.ctrl.LevelsController.prototype.updateHistogram_ = function(){
 xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
     goog.base(this, 'add', xObj);
 
+    var hist = this.add_histogram(xObj);
+
     var c1 = this.add_levelMin(xObj);
     var c2 = this.add_levelMax(xObj);
     var c3 = this.add_brightness(xObj, c1, c2);
     var c4 = this.add_contrast(xObj, c1, c2);
 
-    this.add_histogram(xObj);
 
 
     //
     // Update the histogram when the sliders move
     //
-    goog.array.forEach([c1, c2, c3, c4], 
-		       function(levelCtrl){
-			   goog.events.listen(levelCtrl.getComponent(), 
-					      nrg.ui.Slider.EventType.SLIDE,
-					      this.updateHistogram_.bind(this))
-    }.bind(this))
+    goog.array.forEach(
+	[c1, c2, c3, c4], 
+	function(levelCtrl){
+	    goog.events.listen(levelCtrl.getComponent(), 
+			       nrg.ui.Slider.EventType.SLIDE,
+			       function(e){
+				   
+				   this.updateHistogram_(hist);
+				   
+			       }.bind(this))
+	}.bind(this))
 }
-
-
-
-/**
- * @public
- * @return {Array.<xiv.ui.Histogram>}
- */
-xiv.ui.ctrl.LevelsController.prototype.getHistograms = function() {
-    return this.histograms_;
-}
-
 
 
 
@@ -118,12 +108,23 @@ xiv.ui.ctrl.LevelsController.prototype.getHistograms = function() {
  * @protected
  */
 xiv.ui.ctrl.LevelsController.prototype.add_histogram = function(xObj) {
-    //
-    // Create histogram
-    //
-    var hist = new xiv.ui.Histogram();
-    hist.setVolume(xObj);
-    this.histograms_.push(hist);
+    // create
+    var ctrl = this.createController( 
+	xiv.ui.ctrl.Histogram, 
+	xiv.ui.ctrl.LevelsController.CONTROLLERS.HISTOGRAM, 
+	function(e){
+
+	    //xObj.windowLow = e.value;
+
+	}.bind(this));
+    ctrl.setXObj(xObj);
+
+    // set folder
+    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, ctrl);
+    this.masterControllers.push(ctrl);
+
+    ctrl.update()
+    return ctrl;
 }
 
 

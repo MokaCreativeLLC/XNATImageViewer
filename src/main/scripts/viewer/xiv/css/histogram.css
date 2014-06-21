@@ -2,18 +2,16 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-.xiv-ui-histogram  {
+.xiv-ui-ctrl-histogram  {
     position: absolute;
-    top: 30px;
-    left: calc(50% - 125px);
     width: 250px;
     height: 100px;
     background-color: grey;
     z-index: 5000;
 }
 
-.xiv-ui-histogram-canvas,
-.xiv-ui-histogram-linecanvas {
+.xiv-ui-ctrl-histogram-canvas,
+.xiv-ui-ctrl-histogram-linecanvas {
     position: absolute;
     height: calc(100% - 25px);
     width: calc(100% - 10px);
@@ -22,13 +20,13 @@
 }
 
 
-.xiv-ui-histogram-canvas {
+.xiv-ui-ctrl-histogram-canvas {
     background-color: white;
 }
 
 
-.xiv-ui-histogram-max,
-.xiv-ui-histogram-min {
+.xiv-ui-ctrl-histogram-max,
+.xiv-ui-ctrl-histogram-min {
     position: absolute;
     height: 14px;
     width: 50px;
@@ -40,13 +38,13 @@
 
 
 
-.xiv-ui-histogram-max {
+.xiv-ui-ctrl-histogram-max {
     left: calc(100% - 60px);
     text-align: right;
 }
 
 
-.xiv-ui-histogram-min {
+.xiv-ui-ctrl-histogram-min {
     left: 10px;
     text-align: left;
 }

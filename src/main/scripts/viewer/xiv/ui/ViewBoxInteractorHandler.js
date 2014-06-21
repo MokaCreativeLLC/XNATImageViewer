@@ -1034,7 +1034,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.setDialogEvents_ = function() {
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.updateViewableControllers_ = 
 function(){
-
+    window.console.log('\n\n\nupdate viewable');
     goog.object.forEach(this.zippyTrees_, function(tree, key){
 
 	tree.mapSliderToContents();
@@ -1051,9 +1051,17 @@ function(){
 		    // because LEVEL_MIN and LEVEL_MAX are often set to values 
 		    // that go beyond the slider values.
 		    //
-		    if (key == 'levels'){
-			ctrl.getComponent().updateStyle();
-		    } else {
+		    if (key == 'levels' && 
+			!ctrl instanceof xiv.ui.ctrl.Histogram){
+			    ctrl.getComponent().updateStyle();
+			
+		    } 
+		    else if (key == 'levels' && 
+			     ctrl instanceof xiv.ui.ctrl.Histogram){
+			ctrl.update();
+			ctrl.draw();
+		    }
+		    else {
 			ctrl.update();
 		    }
 		}.bind(this))
@@ -1597,6 +1605,8 @@ function() {
 		//
 		//
 		//
+		//window.console.log('\n\n');
+		//window.console.log(ctrl, ctrl.getElement(), folders);
 		this.zippyTrees_[key].addContents(ctrl.getElement(), folders);
 
 	    }.bind(this))
@@ -1617,7 +1627,7 @@ function() {
 	//
 	var hasControls = false;
 	goog.object.forEach(this.viewableCtrls_[key], function(ctrls, sKey){
-	    window.console.log(key, sKey, ctrls);
+	    //window.console.log(key, sKey, ctrls);
 	    if (goog.isDefAndNotNull(ctrls) &&
 		goog.isArray(ctrls) &&
 		ctrls.length > 0) { hasControls = true };
@@ -1656,14 +1666,23 @@ function() {
     // We have to re-sync the level controllers to the volume properties, 
     // since the volume is now rendered....
     //
-    goog.array.forEach(this.viewableCtrls_['levels']['all'], 
-		       function(levelCtrl){
-			   levelCtrl.getComponent().setMaximum(
-			       levelCtrl.getXObj().windowHigh);
-			   levelCtrl.getComponent().setMinimum(
-			       levelCtrl.getXObj().windowLow);
-			   levelCtrl.update();
-		       })
+    goog.array.forEach(
+	this.viewableCtrls_['levels']['all'], 
+	function(levelCtrl){
+	    //window.console.log('\n\n', levelCtrl);
+	    if (levelCtrl instanceof xiv.ui.ctrl.Histogram){
+		window.console.log("REDRAWING");
+		//levelCtrl.draw();
+		//levelCtrl.update();
+	    }
+	    else {
+		levelCtrl.getComponent().setMaximum(
+		    levelCtrl.getXObj().windowHigh);
+		levelCtrl.getComponent().setMinimum(
+		    levelCtrl.getXObj().windowLow);
+		levelCtrl.update();
+	    }
+	})
 
     //
     // Sync the render controllers with the renderer

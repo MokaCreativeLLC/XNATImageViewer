@@ -299,8 +299,8 @@ xiv.ui.ctrl.XtkController.prototype.setComponent = function(component) {
 	if (!this.component_.isInDocument()){
 	    this.component_.render(this.getElement());
 	} else {
-	    if (this.component_.getElement().parentNode 
-		     !== this.getElement()) {
+	    if (this.component_.getElement().parentNode !== this.getElement() 
+		&& this.component_.getElement() !== this.getElement()) {
 		goog.dom.appendChild(this.getElement(), 
 				 this.component_.getElement());
 	    }
@@ -311,6 +311,7 @@ xiv.ui.ctrl.XtkController.prototype.setComponent = function(component) {
 
     if (goog.isDefAndNotNull(elt)){
 	goog.dom.classes.add(elt, xiv.ui.ctrl.XtkController.CSS.COMPONENT);
+	//window.console.log("\nELT", elt, elt.parentNode);
     }
 }
 
@@ -422,10 +423,13 @@ function(_XtkControllerSubClass, label, opt_changeCallback) {
  * @public
  */
 xiv.ui.ctrl.XtkController.prototype.update = function() {
-    if (this.component_.updateStyle){
-	window.console.log("UPDATE STYLE", this.component_);
-	this.component_.updateStyle();
+    if (this.component_ == this){
+	this.updateStyle();
+	return;
     }
+    else if (this.component_.updateStyle){
+	this.component_.updateStyle();
+    } 
 }
 
 
@@ -434,7 +438,7 @@ xiv.ui.ctrl.XtkController.prototype.update = function() {
  * @inheritDoc
  */
 xiv.ui.ctrl.XtkController.prototype.updateStyle = function() {
-    if (this.component_.updateStyle){
+    if (this.component_.updateStyle && this.component_ != this){
 	window.console.log("UPDATE STYLE", this.component_);
 	this.component_.updateStyle();
     }

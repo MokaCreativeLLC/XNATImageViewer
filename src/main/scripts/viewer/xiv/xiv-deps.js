@@ -317,7 +317,6 @@ goog.addDependency('../../../../ui/ViewBoxDialogs.js',
 goog.addDependency('../../../../ui/ViewBoxInteractorHandler.js', 
 ['xiv.ui.ViewBoxInteractorHandler'], [
     'goog.events.EventTarget',
-    'xiv.ui.Histogram'
 ]);
 
 
@@ -367,8 +366,8 @@ goog.addDependency('../../../../ui/ProgressBarPanel.js',
 ]);
 
 
-goog.addDependency('../../../../ui/Histogram.js', 
-['xiv.ui.Histogram'], [
+goog.addDependency('../../../../ui/ctrl/Histogram.js', 
+['xiv.ui.ctrl.Histogram'], [
 ]);
 
 

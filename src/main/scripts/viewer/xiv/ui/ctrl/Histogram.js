@@ -5,23 +5,24 @@
 // goog
 goog.require('goog.ui.ProgressBar');
 
-// nrg
+// xiv
+goog.require('xiv.ui.ctrl.XtkController');
 
 
 
 
 /**
- * xiv.ui.Histogram
+ * xiv.ui.ctrl.Histogram
  *
  * @constructor
- * @extends {nrg.ui.Component}
+ * @extends {xiv.ui.ctrl.XtkController}
  */
-goog.provide('xiv.ui.Histogram');
-xiv.ui.Histogram = function() {
+goog.provide('xiv.ui.ctrl.Histogram');
+xiv.ui.ctrl.Histogram = function() {
     goog.base(this);
 }
-goog.inherits(xiv.ui.Histogram, nrg.ui.Component);
-goog.exportSymbol('xiv.ui.Histogram', xiv.ui.Histogram);
+goog.inherits(xiv.ui.ctrl.Histogram, xiv.ui.ctrl.XtkController);
+goog.exportSymbol('xiv.ui.ctrl.Histogram', xiv.ui.ctrl.Histogram);
 
 
 
@@ -30,7 +31,7 @@ goog.exportSymbol('xiv.ui.Histogram', xiv.ui.Histogram);
  * @enum {string}
  * @public
  */
-xiv.ui.Histogram.EventType = {}
+xiv.ui.ctrl.Histogram.EventType = {}
 
 
 
@@ -39,7 +40,7 @@ xiv.ui.Histogram.EventType = {}
  * @const
  * @expose
  */
-xiv.ui.Histogram.ID_PREFIX =  'xiv.ui.Histogram';
+xiv.ui.ctrl.Histogram.ID_PREFIX =  'xiv.ui.ctrl.Histogram';
 
 
 
@@ -47,7 +48,7 @@ xiv.ui.Histogram.ID_PREFIX =  'xiv.ui.Histogram';
  * @enum {string}
  * @public
  */
-xiv.ui.Histogram.CSS_SUFFIX = {
+xiv.ui.ctrl.Histogram.CSS_SUFFIX = {
     CANVAS: 'canvas',
     LINECANVAS: 'linecanvas',
     MAX: 'max',
@@ -61,7 +62,7 @@ xiv.ui.Histogram.CSS_SUFFIX = {
  * @const
  * @private
  */
-xiv.ui.Histogram.prototype.heightLimit_ = .95;
+xiv.ui.ctrl.Histogram.prototype.heightLimit_ = .95;
 
 
 
@@ -69,7 +70,7 @@ xiv.ui.Histogram.prototype.heightLimit_ = .95;
  * @const
  * @private
  */
-xiv.ui.Histogram.prototype.contextFillStyle_ = 'rgb(40,40,40)';
+xiv.ui.ctrl.Histogram.prototype.contextFillStyle_ = 'rgb(40,40,40)';
 
 
 
@@ -77,15 +78,8 @@ xiv.ui.Histogram.prototype.contextFillStyle_ = 'rgb(40,40,40)';
  * @const
  * @private
  */
-xiv.ui.Histogram.prototype.lineContextFillStyle_ = 'rgb(0,0,0)';
+xiv.ui.ctrl.Histogram.prototype.lineContextFillStyle_ = 'rgb(0,0,0)';
 
-
-
-/**
- * @type {X.volume}
- * @private
- */
-xiv.ui.Histogram.prototype.volume_;
 
 
 
@@ -93,7 +87,7 @@ xiv.ui.Histogram.prototype.volume_;
  * @type {Element}
  * @private
  */
-xiv.ui.Histogram.prototype.canvas_;
+xiv.ui.ctrl.Histogram.prototype.canvas_;
 
 
 
@@ -101,7 +95,7 @@ xiv.ui.Histogram.prototype.canvas_;
  * @type {Object}
  * @private
  */
-xiv.ui.Histogram.prototype.context_;
+xiv.ui.ctrl.Histogram.prototype.context_;
 
 
 
@@ -109,7 +103,7 @@ xiv.ui.Histogram.prototype.context_;
  * @type {Element}
  * @private
  */
-xiv.ui.Histogram.prototype.lineCanvas_;
+xiv.ui.ctrl.Histogram.prototype.lineCanvas_;
 
 
 
@@ -117,7 +111,7 @@ xiv.ui.Histogram.prototype.lineCanvas_;
  * @type {Object}
  * @private
  */
-xiv.ui.Histogram.prototype.lineContext_;
+xiv.ui.ctrl.Histogram.prototype.lineContext_;
 
 
 
@@ -125,7 +119,7 @@ xiv.ui.Histogram.prototype.lineContext_;
  * @type {Element}
  * @private
  */
-xiv.ui.Histogram.prototype.maxDiv_;
+xiv.ui.ctrl.Histogram.prototype.maxDiv_;
 
 
 
@@ -133,7 +127,7 @@ xiv.ui.Histogram.prototype.maxDiv_;
  * @type {Element}
  * @private
  */
-xiv.ui.Histogram.prototype.minDiv_;
+xiv.ui.ctrl.Histogram.prototype.minDiv_;
 
 
 
@@ -141,7 +135,7 @@ xiv.ui.Histogram.prototype.minDiv_;
  * @type {number}
  * @private
  */
-xiv.ui.Histogram.prototype.startMin_;
+xiv.ui.ctrl.Histogram.prototype.startMin_;
 
 
 
@@ -149,16 +143,20 @@ xiv.ui.Histogram.prototype.startMin_;
  * @type {number}
  * @private
  */
-xiv.ui.Histogram.prototype.startMax_;
+xiv.ui.ctrl.Histogram.prototype.startMax_;
 
 
 
 /**
  * @inheritDoc
  */
-xiv.ui.Histogram.prototype.render = function(opt_parent){
+xiv.ui.ctrl.Histogram.prototype.render = function(opt_parent){
     //window.console.log("HIST RENDER");
     goog.base(this, 'render', opt_parent);
+
+    window.console.log(this.getElement().parentNode);
+
+    this.setComponent(this);
 
     this.canvas_ = goog.dom.createDom('canvas', {
 	'id': this.constructor.ID_PREFIX + '_Canvas_' + 
@@ -194,8 +192,8 @@ xiv.ui.Histogram.prototype.render = function(opt_parent){
     }, '-1000')
     goog.dom.appendChild(this.getElement(), this.minDiv_);
  
-    //window.console.log("HIST RENDER2");
-    this.draw();
+    window.console.log(this.getElement());
+    //this.draw();
 }
 
 
@@ -204,7 +202,7 @@ xiv.ui.Histogram.prototype.render = function(opt_parent){
  * @private
  * @type {!boolean}
  */
-xiv.ui.Histogram.prototype.isDrawn_ = false;
+xiv.ui.ctrl.Histogram.prototype.isDrawn_ = false;
 
 
 
@@ -212,7 +210,7 @@ xiv.ui.Histogram.prototype.isDrawn_ = false;
  * @public
  * @return {!boolean}
  */
-xiv.ui.Histogram.prototype.isDrawn = function() {
+xiv.ui.ctrl.Histogram.prototype.isDrawn = function() {
     return this.isDrawn_;
 }
 
@@ -221,14 +219,19 @@ xiv.ui.Histogram.prototype.isDrawn = function() {
 /*
  * @public
  */
-xiv.ui.Histogram.prototype.draw = function() {
+xiv.ui.ctrl.Histogram.prototype.draw = function() {
 
-    //window.console.log('DRAW', this.volume_);
+    window.console.log('DRAW', this.getXObj());
 
     //
     // We can't do anything if there's no volume
     //
-    if (!goog.isDefAndNotNull(this.volume_)) { return }
+    if (!goog.isDefAndNotNull(this.getXObj())) { return }
+
+    if (this.isDrawn_) { return }
+
+
+    window.console.log('DRAW2', this.getXObj());
 
     //
     // params
@@ -236,7 +239,7 @@ xiv.ui.Histogram.prototype.draw = function() {
     var size = goog.style.getSize(this.canvas_);
     var canvasWidth = size.width;
     var canvasHeight = size.height;
-    var i = 0, levels = [], len = this.volume_.max, totalPixels = 0;
+    var i = 0, levels = [], len = this.getXObj().max, totalPixels = 0;
 
     //
     // Creates bugs otherwise
@@ -255,7 +258,7 @@ xiv.ui.Histogram.prototype.draw = function() {
     //
     // Increment the value counts and the total pixels
     //
-    goog.array.forEach(this.volume_.image, function(sliceImg){
+    goog.array.forEach(this.getXObj().image, function(sliceImg){
 	goog.array.forEach(sliceImg, function(sliceData){
 	    goog.array.forEach(sliceData, function(pixelData){
 		levels[parseInt(pixelData)]++;
@@ -283,7 +286,7 @@ xiv.ui.Histogram.prototype.draw = function() {
     var multiplyer = this.heightLimit_ / maxPct;
     goog.array.forEach(pcts, function(pct, i){
 	pct = pct * multiplyer * canvasHeight;
-	x = Math.round((i / this.volume_.max) * canvasWidth);
+	x = Math.round((i / this.getXObj().max) * canvasWidth);
 	//window.console.log(x, pct);
 	this.context_.fillRect(x, canvasHeight, 1, -Math.round(pct));
     }.bind(this))
@@ -292,8 +295,8 @@ xiv.ui.Histogram.prototype.draw = function() {
     //
     // Update the max and min values
     //
-    this.startMin_ = this.volume_.windowLow;
-    this.startMax_ = this.volume_.windowHigh;
+    this.startMin_ = this.getXObj().windowLow;
+    this.startMax_ = this.getXObj().windowHigh;
     this.updateMaxMin();
 
     //
@@ -311,12 +314,12 @@ xiv.ui.Histogram.prototype.draw = function() {
 /**
  * @public
  */
-xiv.ui.Histogram.prototype.drawLine = function() {
+xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
     //window.console.log("DRAW LINE");
     //
     // Do nothing if no volume
     //
-    if (!goog.isDefAndNotNull(this.volume_)) { return };
+    if (!goog.isDefAndNotNull(this.getXObj())) { return };
 
     var size = goog.style.getSize(this.lineCanvas_);
     var canvasWidth = size.width;
@@ -333,10 +336,10 @@ xiv.ui.Histogram.prototype.drawLine = function() {
     var startX;
     if (this.startMin_ == 0 && this.startMax_ > 0) {
 	startX = Math.round(canvasWidth * (
-	    this.volume_.windowLow / this.startMax_));
+	    this.getXObj().windowLow / this.startMax_));
     } else {
 	startX = Math.round(canvasWidth * (
-	    this.volume_.windowLow / this.startMin_));
+	    this.getXObj().windowLow / this.startMin_));
     }
 
     //
@@ -346,7 +349,7 @@ xiv.ui.Histogram.prototype.drawLine = function() {
     if (this.startMax_ == 0) {
 	endX = 0;
     } else {
-	endX = Math.round(canvasWidth * (this.volume_.windowHigh / 
+	endX = Math.round(canvasWidth * (this.getXObj().windowHigh / 
 					 this.startMax_));
     }
 
@@ -372,28 +375,26 @@ xiv.ui.Histogram.prototype.drawLine = function() {
 
 
 
-
 /**
  * @public
  */
-xiv.ui.Histogram.prototype.updateMaxMin = function(){
-    //
-    // Do nothing if no volume
-    //
-    if (!goog.isDefAndNotNull(this.volume_)) { return };
-    this.minDiv_.innerHTML = this.volume_.windowLow;
-    this.maxDiv_.innerHTML = this.volume_.windowHigh;
+xiv.ui.ctrl.Histogram.prototype.update = function(){
+    this.updateMaxMin();
+    this.drawLine();
 }
 
 
 
-
 /**
- * @param {X.volume} vol
  * @public
  */
-xiv.ui.Histogram.prototype.setVolume = function(vol) {
-    this.volume_ = vol;
+xiv.ui.ctrl.Histogram.prototype.updateMaxMin = function(){
+    //
+    // Do nothing if no volume
+    //
+    if (!goog.isDefAndNotNull(this.getXObj())) { return };
+    this.minDiv_.innerHTML = this.getXObj().windowLow;
+    this.maxDiv_.innerHTML = this.getXObj().windowHigh;
 }
 
 
@@ -402,10 +403,9 @@ xiv.ui.Histogram.prototype.setVolume = function(vol) {
 /**
  * @inheritDoc
  */
-xiv.ui.Histogram.prototype.disposeInternal = function() {
+xiv.ui.ctrl.Histogram.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
-    delete this.volume_;
     delete this.isDrawn_;
 
     if (goog.isDefAndNotNull(this.maxDiv_)){
@@ -439,12 +439,12 @@ xiv.ui.Histogram.prototype.disposeInternal = function() {
 
 
 
-goog.exportSymbol('xiv.ui.Histogram.EventType', 
-		  xiv.ui.Histogram.EventType);
-goog.exportSymbol('xiv.ui.Histogram.ID_PREFIX', 
-		  xiv.ui.Histogram.ID_PREFIX);
-goog.exportSymbol('xiv.ui.Histogram.CSS_SUFFIX', 
-		  xiv.ui.Histogram.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.EventType', 
+		  xiv.ui.ctrl.Histogram.EventType);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.ID_PREFIX', 
+		  xiv.ui.ctrl.Histogram.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.CSS_SUFFIX', 
+		  xiv.ui.ctrl.Histogram.CSS_SUFFIX);
 
-goog.exportSymbol('xiv.ui.Histogram.prototype.setVolume', 
-		  xiv.ui.Histogram.prototype.setVolume);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.setVolume', 
+		  xiv.ui.ctrl.Histogram.prototype.setVolume);
