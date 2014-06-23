@@ -97,6 +97,18 @@ xiv.ui.ViewBoxHandler.ID_PREFIX =  'xiv.ui.ViewBoxHandler';
  */
 xiv.ui.ViewBoxHandler.prototype.ViewBoxes_;
 
+/**
+ * @type {!number}
+ * @const
+ */
+xiv.ui.ViewBoxHandler.prototype.MAX_ROWS = 5;
+
+
+/**
+ * @type {!number}
+ * @const
+ */
+xiv.ui.ViewBoxHandler.prototype.MAX_COLUMNS = 5;
 
 
 /**
@@ -240,26 +252,28 @@ function(opt_ViewBox, opt_animate) {
     var columnLen;
 
     if (goog.isDefAndNotNull(opt_ViewBox)){
-	var inds = this.getViewBoxIndices_(opt_ViewBox);
-	newColumn.push(this.createViewBox_());
-	goog.array.insertAt(this.ViewBoxes_[inds.i], newColumn[0], inds.j+1);
+        var inds = this.getViewBoxIndices_(opt_ViewBox);
+        if(this.ViewBoxes_[inds.i].length < this.MAX_COLUMNS) {
+            newColumn.push(this.createViewBox_());
+            goog.array.insertAt(this.ViewBoxes_[inds.i], newColumn[0], inds.j+1);
+        }
     }
     else {
-	newColumn = [];
-	columnLen = this.ViewBoxes_.length ? this.ViewBoxes_.length : 1;
-	for (i = 0; i < columnLen; i++) {newColumn.push(this.createViewBox_())};
+        newColumn = [];
+        columnLen = this.ViewBoxes_.length ? this.ViewBoxes_.length : 1;
+        for (i = 0; i < columnLen; i++) {newColumn.push(this.createViewBox_())};
 
-	//
-	// If there are no Viewers in the modal, add one. Otherwise, insert 
-	// the new column.
-	//
-	if (this.ViewBoxes_.length === 0) {
-	    this.ViewBoxes_.push([newColumn[0]]);
-	} else {
-	    goog.array.forEach(this.ViewBoxes_, function(ViewBoxRow, i) {
-		ViewBoxRow.push(newColumn[i]);
-	    })			
-	}
+        //
+        // If there are no Viewers in the modal, add one. Otherwise, insert
+        // the new column.
+        //
+        if (this.ViewBoxes_.length === 0) {
+            this.ViewBoxes_.push([newColumn[0]]);
+        } else {
+            goog.array.forEach(this.ViewBoxes_, function(ViewBoxRow, i) {
+            ViewBoxRow.push(newColumn[i]);
+            })
+        }
     }
 
     opt_animate =  (opt_animate === undefined) ? true : opt_animate;
@@ -348,17 +362,21 @@ xiv.ui.ViewBoxHandler.prototype.insertRow = function(opt_ViewBox, opt_animate) {
     var i, rowLen;
 
     if (goog.isDefAndNotNull(opt_ViewBox)){
-	var inds = this.getViewBoxIndices_(opt_ViewBox);
-	newRow = [];
-	rowLen = this.ViewBoxes_[inds.i].length;
-	for (i=0; i < rowLen; i++) {newRow.push(this.createViewBox_())};
-	goog.array.insertAt(this.ViewBoxes_, newRow, inds.i + 1);
+        var inds = this.getViewBoxIndices_(opt_ViewBox);
+        newRow = [];
+        rowLen = this.ViewBoxes_[inds.i].length;
+        if(this.ViewBoxes_.length < this.MAX_ROWS){
+            for (i=0; i < rowLen; i++) {newRow.push(this.createViewBox_())};
+            goog.array.insertAt(this.ViewBoxes_, newRow, inds.i + 1);
+        }
     }
     else {
-	rowLen = (this.ViewBoxes_[0] && this.ViewBoxes_[0].length) ? 
-	    this.ViewBoxes_[0].length : 1;
-	for (i=0; i < rowLen; i++) {newRow.push(this.createViewBox_())};
-	this.ViewBoxes_.push(newRow);
+        rowLen = (this.ViewBoxes_[0] && this.ViewBoxes_[0].length) ?
+            this.ViewBoxes_[0].length : 1;
+        if(this.ViewBoxes_.length < this.MAX_ROWS){
+            for (i=0; i < rowLen; i++) {newRow.push(this.createViewBox_())};
+            this.ViewBoxes_.push(newRow);
+        }
     }
 
     //
