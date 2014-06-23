@@ -26,7 +26,9 @@
 
 .xiv-ui-viewboxinteractorhandler-generic-dialog  {
     width: 400px;
-    height: 250px;
+    height: 330px;
+    cursor: default;
+    z-index: 999;
 }
 
 
@@ -69,3 +71,11 @@
 
 
 
+.xiv-ui-viewboxinteractorhandler-zoom-follower {
+    color: white;
+    font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+    font-size: 10px;
+    position: absolute;
+    z-index: 1000;
+    visibility: hidden;
+}

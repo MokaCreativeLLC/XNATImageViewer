@@ -1604,6 +1604,10 @@ xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
     this.updateStyle_LayoutHandler_();
     this.updateStyle_Renderer_();
     this.updateStyle_LayoutMenu_();
+
+    if (goog.isDefAndNotNull(this.Dialogs_)){
+	this.Dialogs_.update();
+    }
   
     if (goog.isDefAndNotNull(this.InteractorHandler_)){
 	this.InteractorHandler_.updateInteractorStyles();

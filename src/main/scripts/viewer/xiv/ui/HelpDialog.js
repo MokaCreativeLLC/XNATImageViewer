@@ -162,7 +162,7 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
 	['Brightness / Contrast / Window Level', 
 	 '<img style="height:15px;width:15px" src="' +
 	 serverRoot + 
-	 '/images/viewer/xiv/ui/ViewBox/Toggle-BrightnessContrast.png'
+	 '/images/viewer/xiv/ui/ViewBox/Toggle-Levels.png'
 	 + '"></img>'	 
 	],
 	['Renderer Controls', 
@@ -214,7 +214,7 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
 
     var allLines = [imageManipLines, viewboxToggles, modalToggles];
     goog.array.forEach(allLines, function(lineArr, i){
-
+	
 	var currTable = '<table style="width:100%;' + 
 	    'color:white;" RULES=ROWS FRAME=HSIDES ' + 
 	    ' BORDERCOLOR="gray">';

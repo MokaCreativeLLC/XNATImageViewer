@@ -158,8 +158,11 @@ function(xObj){
  */
 xiv.ui.ctrl.XtkController.setControllerFolders = 
 function(xObj, controller){
+    /**
     controller.setFolders([xiv.ui.ctrl.XtkController.getObjectCategory(xObj), 
 			   xiv.ui.ctrl.XtkController.getXObjLabel(xObj)]);
+    */
+    controller.setFolders([xiv.ui.ctrl.XtkController.getXObjLabel(xObj)]);
 }
 
 

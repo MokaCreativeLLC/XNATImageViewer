@@ -67,6 +67,56 @@ xiv.ui.ctrl.Histogram.prototype.heightLimit_ = .95;
 
 
 /**
+ * @type {?Array.<number>}
+ * @private
+ */
+xiv.ui.ctrl.Histogram.prototype.levels_ = null;
+
+
+
+
+/**
+ * @type {?Array.<number>}
+ * @private
+ */
+xiv.ui.ctrl.Histogram.prototype.percentages_ = null;
+
+
+
+/**
+ * @type {number}
+ * @private
+ */
+xiv.ui.ctrl.Histogram.prototype.totalPixels_ = null;
+
+
+
+
+/**
+ * @type {number}
+ * @private
+ */
+xiv.ui.ctrl.Histogram.prototype.maxPct_ = null;
+
+
+
+/**
+ * @type {number}
+ * @private
+ */
+xiv.ui.ctrl.Histogram.prototype.windowHigh_ = null;
+
+
+
+/**
+ * @type {number}
+ * @private
+ */
+xiv.ui.ctrl.Histogram.prototype.windowLow_ = null;
+
+
+
+/**
  * @const
  * @private
  */
@@ -154,7 +204,7 @@ xiv.ui.ctrl.Histogram.prototype.render = function(opt_parent){
     //window.console.log("HIST RENDER");
     goog.base(this, 'render', opt_parent);
 
-    window.console.log(this.getElement().parentNode);
+    //window.console.log(this.getElement().parentNode);
 
     this.setComponent(this);
 
@@ -192,27 +242,10 @@ xiv.ui.ctrl.Histogram.prototype.render = function(opt_parent){
     }, '-1000')
     goog.dom.appendChild(this.getElement(), this.minDiv_);
  
-    window.console.log(this.getElement());
+    //window.console.log(this.getElement());
     //this.draw();
 }
 
-
-
-/*
- * @private
- * @type {!boolean}
- */
-xiv.ui.ctrl.Histogram.prototype.isDrawn_ = false;
-
-
-
-/*
- * @public
- * @return {!boolean}
- */
-xiv.ui.ctrl.Histogram.prototype.isDrawn = function() {
-    return this.isDrawn_;
-}
 
 
 
@@ -220,18 +253,10 @@ xiv.ui.ctrl.Histogram.prototype.isDrawn = function() {
  * @public
  */
 xiv.ui.ctrl.Histogram.prototype.draw = function() {
-
-    window.console.log('DRAW', this.getXObj());
-
     //
     // We can't do anything if there's no volume
     //
     if (!goog.isDefAndNotNull(this.getXObj())) { return }
-
-    if (this.isDrawn_) { return }
-
-
-    window.console.log('DRAW2', this.getXObj());
 
     //
     // params
@@ -239,7 +264,7 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
     var size = goog.style.getSize(this.canvas_);
     var canvasWidth = size.width;
     var canvasHeight = size.height;
-    var i = 0, levels = [], len = this.getXObj().max, totalPixels = 0;
+    var i = 0, len = this.getXObj().max;
 
     //
     // Creates bugs otherwise
@@ -251,60 +276,67 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
 
 
     //
-    // Create an array to track the level counts
+    // Tally all of the levels
     //
-    for(; i <= len; i++) { levels.push(0) };
-
-    //
-    // Increment the value counts and the total pixels
-    //
-    goog.array.forEach(this.getXObj().image, function(sliceImg){
-	goog.array.forEach(sliceImg, function(sliceData){
-	    goog.array.forEach(sliceData, function(pixelData){
-		levels[parseInt(pixelData)]++;
-		totalPixels++;
-	    })
-	})
-    })
-
-    //
-    // First pass: calculate the percentage to draw each bar
-    //
-    var pct, x;
-    var maxPct = 0;
-    var pcts = [];
-    goog.array.forEach(levels, function(levelCount, i){
-	pct = (levelCount / totalPixels);
-	pcts.push(pct);
-	maxPct = Math.max(maxPct, pct);
-    })
+    if (!goog.isDefAndNotNull(this.levels_)){
 
 
+
+	//
+	// Increment the value counts and the total pixels
+	//
+	goog.array.forEach(this.getXObj().image, function(sliceImg){
+	    goog.array.forEach(sliceImg, function(sliceData){
+		//window.console.log(sliceData);
+		goog.array.forEach(sliceData, function(pixelData){
+
+		    if (!goog.isDefAndNotNull(this.levels_)){
+			this.levels_ = [];
+			for(; i <= len; i++) { this.levels_.push(0) };
+		    }
+
+
+		    this.levels_[parseInt(pixelData)]++;
+		    this.totalPixels_++;
+		}.bind(this))
+	    }.bind(this))
+	}.bind(this))
+    }
+
+
     //
-    // Second pass: If the percentages are too low, apply a multiplier
+    // Exit if no levels were retrieved
     //
-    var multiplyer = this.heightLimit_ / maxPct;
-    goog.array.forEach(pcts, function(pct, i){
+    if (!goog.isDefAndNotNull(this.levels_)){
+	return;
+    }
+
+
+    //
+    // Tally and store the percentage to draw each bar
+    //
+    var pct;
+    if (!goog.isDefAndNotNull(this.percentages_)){
+	this.percentages_ = [];
+	this.maxPct_ = 0;
+	goog.array.forEach(this.levels_, function(levelCount, i){
+	    pct = (levelCount / this.totalPixels_);
+	    this.percentages_.push(pct);
+	    this.maxPct_ = Math.max(this.maxPct_, pct);
+	}.bind(this))
+    }
+
+
+
+    //
+    // If the percentages are too low, apply a multiplier
+    //
+    var multiplyer = this.heightLimit_ / this.maxPct_;
+    goog.array.forEach(this.percentages_, function(pct, i){
 	pct = pct * multiplyer * canvasHeight;
 	x = Math.round((i / this.getXObj().max) * canvasWidth);
-	//window.console.log(x, pct);
 	this.context_.fillRect(x, canvasHeight, 1, -Math.round(pct));
     }.bind(this))
-
-
-    //
-    // Update the max and min values
-    //
-    this.startMin_ = this.getXObj().windowLow;
-    this.startMax_ = this.getXObj().windowHigh;
-    this.updateMaxMin();
-
-    //
-    // Draw the line
-    //
-    this.drawLine();
-
-    this.isDrawn_ = true;
 }
 
 
@@ -315,7 +347,7 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
  * @public
  */
 xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
-    //window.console.log("DRAW LINE");
+
     //
     // Do nothing if no volume
     //
@@ -336,22 +368,32 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
     var startX;
     if (this.startMin_ == 0 && this.startMax_ > 0) {
 	startX = Math.round(canvasWidth * (
-	    this.getXObj().windowLow / this.startMax_));
+	    this.windowLow_ / this.startMax_));
     } else {
 	startX = Math.round(canvasWidth * (
-	    this.getXObj().windowLow / this.startMin_));
+	    this.windowLow_ / this.startMin_));
     }
 
     //
     // Calculate endX
     //
-    var startX;
+    var endX;
     if (this.startMax_ == 0) {
 	endX = 0;
     } else {
-	endX = Math.round(canvasWidth * (this.getXObj().windowHigh / 
+	endX = Math.round(canvasWidth * (this.windowHigh_ / 
 					 this.startMax_));
     }
+    /**
+    window.console.log('start', startX, 
+		       'end', endX, 
+		       '\nstartMn', this.startMin_,
+		       '\startMx', this.startMax_, 
+		       '\ncanvasW', canvasWidth, 
+		       'canvasH', canvasHeight, 
+		       '\nwinL', this.windowLow_,
+		       'winH', this.windowHigh_); 
+    */
 
     //
     // Draw the sloped line
@@ -361,7 +403,6 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
     this.lineContext_.lineTo(endX, 0);
     this.lineContext_.lineWidth = .5;
     this.lineContext_.stroke();
-
 
     //
     // Draw the min line
@@ -379,6 +420,7 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
  * @public
  */
 xiv.ui.ctrl.Histogram.prototype.update = function(){
+    this.draw();
     this.updateMaxMin();
     this.drawLine();
 }
@@ -393,8 +435,35 @@ xiv.ui.ctrl.Histogram.prototype.updateMaxMin = function(){
     // Do nothing if no volume
     //
     if (!goog.isDefAndNotNull(this.getXObj())) { return };
-    this.minDiv_.innerHTML = this.getXObj().windowLow;
-    this.maxDiv_.innerHTML = this.getXObj().windowHigh;
+
+    if (!goog.isDefAndNotNull(this.startMin_)){
+	this.startMin_ = parseInt(this.getXObj().windowLow);
+	this.startMax_ = parseInt(this.getXObj().windowHigh);
+	this.startMin_ = isNaN(this.startMin_) ? null : this.startMin_;
+	this.startMax_ = isNaN(this.startMax_) ? null : this.startMax_;
+	this.windowLow_ = this.startMin_;
+	this.windowHigh_ = this.startMax_;
+    }
+    
+    /**
+    window.console.log('\nupdate max min', 
+		       this.getXObj().windowLow,
+		       this.getXObj().windowHigh);
+		       */
+
+
+    this.windowLow_ = parseInt(this.getXObj().windowLow);
+    this.windowHigh_ = parseInt(this.getXObj().windowHigh);
+
+
+    this.minDiv_.innerHTML = this.windowLow_;
+    this.maxDiv_.innerHTML = this.windowHigh_;
+
+    /**
+    window.console.log('UPDATE MAX MIN', 
+		       this.startMax_, this.startMin_,
+		       this.windowHigh_, this.windowLow_);
+    */
 }
 
 
@@ -405,8 +474,6 @@ xiv.ui.ctrl.Histogram.prototype.updateMaxMin = function(){
  */
 xiv.ui.ctrl.Histogram.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
-
-    delete this.isDrawn_;
 
     if (goog.isDefAndNotNull(this.maxDiv_)){
 	goog.dom.removeNode(this.maxDiv_);
@@ -430,6 +497,18 @@ xiv.ui.ctrl.Histogram.prototype.disposeInternal = function() {
 	delete this.lineCanvas_;
     }
 
+    if (goog.isDefAndNotNull(this.levels_)){
+	goog.array.clear(this.levels_);
+	delete this.levels_;
+    }
+
+    if (goog.isDefAndNotNull(this.percentages_)){
+	goog.array.clear(this.percentages_);
+	delete this.percentages_;
+    }
+
+    delete this.totalPixels_;
+    delete this.maxPct_;
     delete this.context_;
     delete this.lineContext_;
     delete this.startMin_;

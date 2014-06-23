@@ -24,7 +24,6 @@ xiv.ui.ViewBoxDialogs = function (ViewBox) {
     goog.base(this);
 
 
-
     /**
      * @type {Object.<string, goog.ui.Dialog>}
      * @private
@@ -283,25 +282,6 @@ xiv.ui.ViewBoxDialogs.prototype.createVolumesDialog = function(){
 }
 
 
-
-/**
- * @public
- */
-xiv.ui.ViewBoxDialogs.prototype.createLevelsDialog = function(){
-    this.createGenericDialog(
-	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.LEVELS,
-	'xiv-ui-viewboxdialogs-levels-dialog',
-	xiv.ui.ViewBoxDialogs.CSS.GENERIC_TOGGLE,
-	serverRoot + 
-	    '/images/viewer/xiv/ui/ViewBox/Toggle-BrightnessContrast.png',
-	'Brightness / Contrast',
-	false,
-	false
-    );
-}
-
-
-
 /**
  * @public
  */
@@ -370,7 +350,14 @@ xiv.ui.ViewBoxDialogs.prototype.showInUseDialog = function(){
 }
 
 
-
+/**
+ * @public
+ */
+xiv.ui.ViewBoxDialogs.prototype.update = function(){
+    goog.object.forEach(this.Dialogs_, function(Dialog){
+	Dialog.updateLimits();
+    })
+}
 
 
 

@@ -77,10 +77,10 @@ xiv.ui.ctrl.VolumeController2D.prototype.add_visibleRadio = function(xObj) {
 
     // strore
     this.subControllers.push(visible);
+    visible.setXObj(xObj);
 
     // set defaults
     visible.getComponent().checked = xObj['isSelectedVolume'] || false;
-    
 }
 
 
@@ -105,6 +105,7 @@ xiv.ui.ctrl.VolumeController2D.prototype.add_labelMapToggle = function(xObj) {
 
     // store
     this.subControllers.push(labelMapCheckBox);
+    labelMapCheckBox.setXObj(xObj);
 
     // set defaults
     labelMapCheckBox.getComponent().setChecked(false);

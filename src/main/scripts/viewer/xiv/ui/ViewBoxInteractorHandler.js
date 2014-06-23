@@ -91,6 +91,17 @@ function (ViewBox, Renderer, LayoutHandler, Dialogs) {
     // Listen for key events
     //
     this.listenForKeyboardEvents_();
+
+
+    this.zoomFollower_ = goog.dom.createDom('div', {
+	id: 'mousefollower'
+    })
+    goog.dom.classes.add(this.zoomFollower_, 
+			 this.constructor.CURSOR_CSS.ZOOM_FOLLOWER);
+    this.zoomFollower_.innerHTML  = 
+	'Zoom In (drag up)<br>' + 
+	'Zoom Out (drag down)<br>'
+    goog.dom.append(this.ViewBox_.getViewFrame(), this.zoomFollower_);
 }
 goog.inherits(xiv.ui.ViewBoxInteractorHandler, goog.events.EventTarget);
 goog.exportSymbol('xiv.ui.ViewBoxInteractorHandler', 
@@ -142,6 +153,7 @@ xiv.ui.ViewBoxInteractorHandler.CSS = {
  * @public
  */
 xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS = {
+    ZOOM_FOLLOWER: 'xiv-ui-viewboxinteractorhandler-zoom-follower',
     GRAB: 'xiv-ui-viewboxinteractorhandler-viewframe-grab',
     GRAB_CUSTOM: 'xiv-ui-viewboxinteractorhandler-viewframe-grab-custom',
     GRABBING: 'xiv-ui-viewboxinteractorhandler-viewframe-grabbing',
@@ -158,6 +170,13 @@ xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS = {
  */
 xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY = 
     'Orientation_' + goog.string.createUniqueString();
+
+
+
+/**
+ * @enum {string}
+ */
+xiv.ui.ViewBoxInteractorHandler.DIALOG_SPLIT = '_';
 
 
 
@@ -389,6 +408,10 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
     this.mouseXY_.prev = this.mouseXY_.curr;
     this.mouseXY_.curr = e.mousePosition;
 
+
+
+
+
     //
     // Do nothing if no previous mouse position
     //
@@ -430,11 +453,15 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
 
     //window.console.log("MOUSEMOVE", this.ctrlDown_, this.mouseDown_.right);
 
+    this.zoomFollower_.style.visibility = 'hidden';
 
     //
     // ZOOM
     //
     if (this.zooming_){
+	this.zoomFollower_.style.visibility = 'visible';
+	this.zoomFollower_.style.left = this.mouseXY_.curr[0] + 20 + 'px';
+	this.zoomFollower_.style.top = this.mouseXY_.curr[1] + 20 + 'px';
 	this.setCursorZoomIn_();	
 	if (this.mouseDown_.left){
 	    this.onRenderPlaneZoom_(xDist, yDist);
@@ -444,7 +471,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
     //
     // PAN
     //
-    if (this.panning_) {
+    else if (this.panning_) {
 	this.setCursorGrab_();
 	if (this.mouseDown_.left) {	
 	    this.onRenderPlanePan_(xDist, yDist);
@@ -460,6 +487,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOut_ = function(e) {
     this.currMouseRenderer_ = null;
+    this.zoomFollower_.style.visibility = 'hidden';
 } 
 
 
@@ -506,7 +534,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseUp_ = function(e) {
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
-    //window.console.log('On key:', e.keyCode);
+    window.console.log('On key:', e.keyCode, this.dialogKeys_);
 
     // Arrow keys
     if ((e.keyCode - 40 >= -3) && (e.keyCode - 40 <= 0)){
@@ -519,14 +547,19 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
 	this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE.TWODZOOM);	
 	break;
 
-    case 80: // M (move)
+    case 72: // H (hand)
     case 77: // P (pan)
 	this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE.TWODPAN);
 	break;
 
     case 66: // L (levels)
     case 76: // B (brightness)
-	this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE['levels']);
+	this.ViewBox_.fireToggleButton(this.dialogKeys_['levels']);
+	break;
+
+
+    case 86: // V (Volumes)
+	this.ViewBox_.fireToggleButton(this.dialogKeys_['volumes']);
 	break;
 
     case 67: // C (Crosshairs)
@@ -537,13 +570,16 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
 	this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE.SETTINGS);
 	break;
 
-    case 73: // H (help)
-	this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE.HELP);
+    case 191: // ? (help)
+	if (e.shiftKey){
+	    this.ViewBox_.fireToggleButton(
+		xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP);
+	}
 	break;
 
 
     case 73: // I (info)
-	this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE.INFO);
+	this.ViewBox_.fireToggleButton(xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO);
 	break;
 	
     }
@@ -1023,49 +1059,92 @@ function() {
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.setDialogEvents_ = function() {
-    goog.events.listen(this.Dialogs_,
-		       xiv.ui.ViewBoxDialogs.EventType.DIALOG_OPENED, 
-		       this.updateViewableControllers_.bind(this));
+    goog.events.listen(
+	this.Dialogs_,
+	xiv.ui.ViewBoxDialogs.EventType.DIALOG_OPENED, 
+	this.onControllerDialogOpened_.bind(this));
 }
 
 
 /**
+ * @param {xiv.ui.Dialogs.Event} e
  * @private
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.updateViewableControllers_ = 
-function(){
-    window.console.log('\n\n\nupdate viewable');
-    goog.object.forEach(this.zippyTrees_, function(tree, key){
+xiv.ui.ViewBoxInteractorHandler.prototype.onControllerDialogOpened_ = 
+function(e){
 
-	tree.mapSliderToContents();
+    if (!goog.isDefAndNotNull(e.dialogKey)){ return }
+    //
+    // Derive the key for referencing the various widgets
+    //
+    var typeKey = e.dialogKey.split(this.constructor.DIALOG_SPLIT)[0];
 
-	goog.object.forEach(this.viewableCtrls_[key], function(ctrls, setKey){
-	    if (setKey == '2D' || setKey == '3D' || setKey == 'all') {
+    //
+    // Access the controls associated with the key
+    //
+    goog.object.forEach(this.viewableCtrls_[typeKey], function(ctrls, setKey){
+	//
+	// exit out if no ctrls
+	//
+	if (!goog.isDefAndNotNull(ctrls)) { return }
 
-		if (!goog.isDefAndNotNull(ctrls)){ return }
-		goog.array.forEach(ctrls, function(ctrl){
-		    //
-		    // IMPORTANT!! PLEASE READ!!
-		    //
-		    // We only need to update the style of the level sliders 
-		    // because LEVEL_MIN and LEVEL_MAX are often set to values 
-		    // that go beyond the slider values.
-		    //
-		    if (key == 'levels' && 
-			!ctrl instanceof xiv.ui.ctrl.Histogram){
-			    ctrl.getComponent().updateStyle();
-			
-		    } 
-		    else if (key == 'levels' && 
-			     ctrl instanceof xiv.ui.ctrl.Histogram){
-			ctrl.update();
-			ctrl.draw();
-		    }
-		    else {
-			ctrl.update();
-		    }
-		}.bind(this))
+	//
+	// Make sure zippy tree's slider is matched to the contents size
+	//
+	this.zippyTrees_[typeKey].mapSliderToContents();
+
+	//
+	// loop through all of the controls
+	//
+	goog.array.forEach(ctrls, function(ctrl){
+
+
+	    //----------------------------------------
+	    // IMPORTANT EXCEPTION!! 
+	    //
+	    // We only need to update the style of the level sliders 
+	    // because LEVEL_MIN and LEVEL_MAX are often set to values 
+	    // that go beyond the slider values.
+	    //----------------------------------------
+	    if (typeKey == 'levels' && 
+		!(ctrl instanceof xiv.ui.ctrl.Histogram)){
+		ctrl.getComponent().updateStyle();
+		return;
+	    } 
+	    
+
+	    //
+	    // Selected volme radio button
+	    //
+	    else if (typeKey == 'volumes' && 
+		(ctrl instanceof xiv.ui.ctrl.RadioButtonController)){
+		ctrl.getComponent().checked =  
+		    ctrl.getXObj()[xiv.vis.XtkEngine.SELECTED_VOL_KEY] 
+		    || false;
+		return;
 	    }
+
+
+	    //
+	    // Hide the label map button
+	    //
+	    else if (typeKey == 'volumes' && 
+		(ctrl.getLabel().innerHTML == 'Show Label Map')){
+
+		window.console.log(ctrl.getElement(),
+				  xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY);
+
+		if (!ctrl.getXObj()[xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY]){
+		    ctrl.getComponent().setEnabled(false);
+		    ctrl.getLabel().style.opacity = .5;
+		}
+		this.zippyTrees_[typeKey].mapSliderToContents();
+	    }
+	    
+	    //
+	    // Update
+	    //
+	    ctrl.update();
 	}.bind(this))
     }.bind(this))
 }
@@ -1586,7 +1665,8 @@ function() {
 	//
 	//
 	//
-	this.dialogKeys_[key] = key + '_' + goog.string.createUniqueString();
+	this.dialogKeys_[key] = key + 
+	    this.constructor.DIALOG_SPLIT + goog.string.createUniqueString();
 	
 	goog.object.forEach(this.viewableCtrls_[key], function(ctrls, sKey){
 	    if (!goog.isArray(ctrls)) { return }
@@ -1595,18 +1675,21 @@ function() {
 		//
 		//
 		//
-		var folders = ctrl.getFolders();
+		var folders = ctrl.getFolders() || [];
 
 		//
 		//
 		//
-		if (sKey !== 'all') {folders.push(sKey)};
+		if (sKey !== 'all' && folders.length > 0) {
+		    folders.push(sKey)
+		};
 
 		//
 		//
 		//
-		//window.console.log('\n\n');
+		window.console.log('\n\n');
 		//window.console.log(ctrl, ctrl.getElement(), folders);
+		window.console.log(folders)
 		this.zippyTrees_[key].addContents(ctrl.getElement(), folders);
 
 	    }.bind(this))
@@ -1618,9 +1701,6 @@ function() {
     //
     // Create the dialogs
     //
-    //this.Dialogs_.createLevelsDialog();
-    //this.Dialogs_.createVolumesDialog();
-
     goog.object.forEach(this.zippyTrees_, function(ctrlSet, key){
 	//
 	// Only proceed if there are controls
@@ -1660,29 +1740,6 @@ function() {
 	    getElement().appendChild(ctrlTreeElt);
 	this.zippyTrees_[key].expandAll();
     }.bind(this))
-
-
-    //
-    // We have to re-sync the level controllers to the volume properties, 
-    // since the volume is now rendered....
-    //
-    goog.array.forEach(
-	this.viewableCtrls_['levels']['all'], 
-	function(levelCtrl){
-	    //window.console.log('\n\n', levelCtrl);
-	    if (levelCtrl instanceof xiv.ui.ctrl.Histogram){
-		window.console.log("REDRAWING");
-		//levelCtrl.draw();
-		//levelCtrl.update();
-	    }
-	    else {
-		levelCtrl.getComponent().setMaximum(
-		    levelCtrl.getXObj().windowHigh);
-		levelCtrl.getComponent().setMinimum(
-		    levelCtrl.getXObj().windowLow);
-		levelCtrl.update();
-	    }
-	})
 
     //
     // Sync the render controllers with the renderer
@@ -1743,6 +1800,9 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
     goog.object.clear(this.mouseEvents_);
     delete this.mouseEvents_();
 
+
+    goog.dom.removeNode(this.zoomFollower_);
+    delete this.zoomFollower_;
 
 
     delete this.viewableCtrls_;

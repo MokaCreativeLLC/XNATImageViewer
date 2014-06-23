@@ -56,7 +56,7 @@ xiv.ui.ctrl.VolumeController3D.prototype.add_volumeRendering = function(xObj) {
 
     // create
     var volumeRenderingCheckBox = this.createController( 
-	xiv.ui.ctrl.CheckboxController, 'Volume Rendering!', 
+	xiv.ui.ctrl.CheckboxController, 'Volume Rendering', 
 	function(e){
 	    xObj.volumeRendering = e.checked;
 	});

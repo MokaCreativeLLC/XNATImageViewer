@@ -62,8 +62,8 @@ xiv.ui.ctrl.LevelsController.CONTROLLERS = {
  * @private
  */
 xiv.ui.ctrl.LevelsController.prototype.updateHistogram_ = function(hist){
-    hist.drawLine();
-    hist.updateMaxMin();
+    //window.console.log('update histogram');
+    hist.update();
 }
 
 
@@ -93,9 +93,8 @@ xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
 	    goog.events.listen(levelCtrl.getComponent(), 
 			       nrg.ui.Slider.EventType.SLIDE,
 			       function(e){
-				   
+				   //window.console.log(e.target);
 				   this.updateHistogram_(hist);
-				   
 			       }.bind(this))
 	}.bind(this))
 }

@@ -147,6 +147,24 @@ xiv.vis.XtkEngine.ANATOMICAL_TO_CARTESIAN =  {
 
 
 /**
+ * @type {!string} 
+ * @const
+ * @expose
+ */
+xiv.vis.XtkEngine.SELECTED_VOL_KEY =  'isSelectedVolume';
+
+
+
+/**
+ * @type {!string} 
+ * @const
+ * @expose
+ */
+xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY =  'hasLabelMap';
+
+
+
+/**
  * @type {!boolean}
  * @private
  */
@@ -331,7 +349,7 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 	    this.constructor.setRenderProperties_Volume_(
 		currXObj, renderProps);
 	    this.currXObjects_.volumes.push(currXObj);
-	    window.console.log(currXObj, currXObj.dimensionsRAS);
+	    //window.console.log(currXObj, currXObj.dimensionsRAS);
 	}
 
 	// Meshes
@@ -591,7 +609,7 @@ xiv.vis.XtkEngine.prototype.getSelectedVolume = function(){
     var len = this.currXObjects_.volumes.length;
     for (; i<len; i++){
 	var vol = this.currXObjects_.volumes[i];
-	if (vol['isSelectedVolume']){
+	if (vol[xiv.vis.XtkEngine.SELECTED_VOL_KEY]){
 	    //window.console.log("\n*\n*\n*\n*\n*\n*SELECTED VOLUME FOUND!");
 	    return vol;
 	}
@@ -601,7 +619,7 @@ xiv.vis.XtkEngine.prototype.getSelectedVolume = function(){
     // Default to the first volume if no selected volume
     //
     //window.console.log("\n*\n*\n*\n*\n*\n*SELECTED VOLUME NOT FOUND!");
-    this.currXObjects_.volumes[0]['isSelectedVolume'] = true;
+    this.currXObjects_.volumes[0][xiv.vis.XtkEngine.SELECTED_VOL_KEY] = true;
     return this.currXObjects_.volumes[0];
     
 }
@@ -674,14 +692,18 @@ function(xObj, renderProperties){
     //
     // Selected Volume
     //
-    xObj['isSelectedVolume'] = renderProperties.isSelectedVolume;
+    xObj[xiv.vis.XtkEngine.SELECTED_VOL_KEY] = 
+	renderProperties.isSelectedVolume;
     
 
     if (goog.isDefAndNotNull(renderProperties.labelMapFile)){
 	xObj.labelmap.file = renderProperties.labelMapFile;
 	xObj.labelmap.colortable.file = 
 	    renderProperties.labelMapColorTableFile;
+	xObj[this.constructor.HAS_LABEL_MAP_KEY] = true;
 	//window.console.log(renderProperties.labelMapColorTableFile);
+    } else {
+	xObj[this.constructor.HAS_LABEL_MAP_KEY] = false;
     }
 }
 
@@ -707,10 +729,11 @@ xiv.vis.XtkEngine.prototype.onRendering_ = function(e){
  * @private
  */
 xiv.vis.XtkEngine.prototype.onRenderEnd_ = function(e){
+    /**
     window.console.log("\n\nON RENDER END ENGINE!", 
 		       this.PlaneX_.getVolume(), 'RAS', 
 		       this.PlaneX_.getVolume().dimensionsRAS);
-
+    */
     
     //
     // Unlisten for the rendering

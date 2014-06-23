@@ -5,18 +5,20 @@
 .xiv-ui-ctrl-histogram  {
     position: absolute;
     width: 250px;
-    height: 100px;
-    background-color: grey;
+    height: 120px;
     z-index: 5000;
 }
 
 .xiv-ui-ctrl-histogram-canvas,
 .xiv-ui-ctrl-histogram-linecanvas {
     position: absolute;
-    height: calc(100% - 25px);
-    width: calc(100% - 10px);
-    top: 5px;
-    left: 5px;
+    height: calc(100% - 47px);
+    width: calc(100% - 20px);
+    border-top: solid 10px rgb(120,120,120);
+    border-left: solid 10px rgb(120,120,120);
+    border-right: solid 10px rgb(120,120,120);
+    border-bottom: solid 15px rgb(120,120,120);
+    top: 20px;
 }
 
 

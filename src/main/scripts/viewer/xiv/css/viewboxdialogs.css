@@ -31,6 +31,7 @@
     width: 200px;
     z-index: 10;
     border: none;
+    cursor: default;
 }
 
 
@@ -95,7 +96,8 @@
     font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
     border-radius: 10px;
     outline: 0;
-    z-index: 200;
+    z-index: 1000;
+    cursor: default;
 }
 
 

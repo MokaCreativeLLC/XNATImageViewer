@@ -412,6 +412,17 @@ nrg.ui.Dialog.prototype.setDraggingEnabled_ = function(enabled) {
 
 
 
+
+/**
+ * @public
+ */
+nrg.ui.Dialog.prototype.updateLimits = function() {
+    this.setDraggerLimits_();
+}
+
+
+
+
 /**
  * Sets dragger limits when dragging is started.
  * NOTE: Taken/Modified from the original closure code.
@@ -425,6 +436,7 @@ nrg.ui.Dialog.prototype.setDraggerLimits_ = function(e) {
     var parentElt = this.getElement().parentNode;
     var parentSize = goog.style.getSize(parentElt);
 
+    //window.console.log("PARENT", parentSize);
     // Take the max of scroll height and view height for cases in which document
     // does not fill screen.
     var viewSize = goog.dom.getViewportSize(win);
@@ -434,9 +446,11 @@ nrg.ui.Dialog.prototype.setDraggerLimits_ = function(e) {
 	//
 	// Ensure position:fixed dialogs can't be dragged beyond the viewport.
 	//
-	this.dragger_.setLimits(new goog.math.Rect(0, 0,
-		Math.max(0, viewSize.width - dialogSize.width),
-		Math.max(0, viewSize.height - dialogSize.height)));
+	this.dragger_.setLimits(new goog.math.Rect(
+	    0, 
+	    0,
+	    Math.max(0, viewSize.width - dialogSize.width),
+	    Math.max(0, viewSize.height - dialogSize.height)));
     } else {
 	//
 	// Set limits to parent only if the dialog size less than that of 
@@ -447,7 +461,12 @@ nrg.ui.Dialog.prototype.setDraggerLimits_ = function(e) {
 	var h = (dialogSize.height <= parentSize.height) ?  
 	    parentSize.height - dialogSize.height : 0;
 
-	this.dragger_.setLimits(new goog.math.Rect(0, 0, w, h));
+	this.dragger_.setLimits(
+	    new goog.math.Rect(
+		    -1 * dialogSize.width, 
+		    -1 * dialogSize.height, 
+		parentSize.width + dialogSize.width, 
+		parentSize.height + dialogSize.height));
     }
 };
 
