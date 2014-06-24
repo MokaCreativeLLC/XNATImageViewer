@@ -92,7 +92,9 @@ function (ViewBox, Renderer, LayoutHandler, Dialogs) {
     //
     this.listenForKeyboardEvents_();
 
-
+    //
+    // Zoom follower
+    //
     this.zoomFollower_ = goog.dom.createDom('div', {
 	id: 'mousefollower'
     })
@@ -100,7 +102,7 @@ function (ViewBox, Renderer, LayoutHandler, Dialogs) {
 			 this.constructor.CURSOR_CSS.ZOOM_FOLLOWER);
     this.zoomFollower_.innerHTML  = 
 	'Zoom In (drag up)<br>' + 
-	'Zoom Out (drag down)<br>'
+	'Zoom Out (drag down)<br>';
     goog.dom.append(this.ViewBox_.getViewFrame(), this.zoomFollower_);
 }
 goog.inherits(xiv.ui.ViewBoxInteractorHandler, goog.events.EventTarget);
@@ -248,7 +250,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors = function() {
     //
     // Create 3D rendering toggle
     //
-    this.createSettingsToggle();
+    this.createSettingsDialog();
 
     //
     // Create the crosshair toggle rendering toggle
@@ -401,6 +403,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
     // Store the plane being hovered over
     //
     this.currMouseRenderer_ = e.target;
+    //window.console.log(this.currMouseRenderer_.getOrientation());
 
     //
     // Store the mouse positions
@@ -459,9 +462,15 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
     // ZOOM
     //
     if (this.zooming_){
+	//window.console.log(e);
+	goog.dom.removeNode(this.zoomFollower_);
+	goog.dom.append(this.currMouseRenderer_.container,
+			this.zoomFollower_);
 	this.zoomFollower_.style.visibility = 'visible';
 	this.zoomFollower_.style.left = this.mouseXY_.curr[0] + 20 + 'px';
-	this.zoomFollower_.style.top = this.mouseXY_.curr[1] + 20 + 'px';
+	this.zoomFollower_.style.top = this.mouseXY_.curr[1]  + 'px';
+	//this.zoomFollower_.style.left = this.MouseX_ + 20 + 'px';
+	//this.zoomFollower_.style.top = this.MouseY_ + 20 + 'px';
 	this.setCursorZoomIn_();	
 	if (this.mouseDown_.left){
 	    this.onRenderPlaneZoom_(xDist, yDist);
@@ -486,6 +495,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
  * @param {goog.events.Event} e
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOut_ = function(e) {
+    this.clearCursorStyle_();
     this.currMouseRenderer_ = null;
     this.zoomFollower_.style.visibility = 'hidden';
 } 
@@ -543,12 +553,40 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
     }
 
     switch(e.keyCode){
+
+    case 27:  // Esc
+	//
+	// Toggle off hand
+	//
+	var pan = 
+	    this.ViewBox_.getToggleButton(this.constructor.TOGGLEABLE.TWODPAN);
+	if (pan.getAttribute('checked') == 'true'){
+	    this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE.TWODPAN);
+	}
+
+	//
+	// Toggle off zoom
+	//
+	var twoDZoom = 
+	    this.ViewBox_.getToggleButton(this.constructor.TOGGLEABLE.TWODZOOM);
+	if (twoDZoom.getAttribute('checked') == 'true'){
+	    this.ViewBox_.fireToggleButton(
+		this.constructor.TOGGLEABLE.TWODZOOM);
+	}
+
+	window.console.log(pan.getAttribute('checked'), 
+			   twoDZoom.getAttribute('checked'), 
+			   pan.checked == 'true',
+			   twoDZoom.checked == 'true');
+	break;
+
+
     case 90:  // Z (Zoom)
 	this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE.TWODZOOM);	
 	break;
 
     case 72: // H (hand)
-    case 77: // P (pan)
+    case 80: // P (pan)
 	this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE.TWODPAN);
 	break;
 
@@ -567,7 +605,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
 	break;
 
     case 83: // S (Settings)
-	this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE.SETTINGS);
+	this.ViewBox_.fireToggleButton(
+	    this.dialogKeys_[this.constructor.TOGGLEABLE.SETTINGS]);
 	break;
 
     case 191: // ? (help)
@@ -680,6 +719,33 @@ function(xDist, yDist){
 
 
 /**
+ * @type {!number}
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.MouseX_ = 0;
+
+
+
+/**
+ * @type {!number}
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.MouseY_ = 0;
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.storeMouseCoords_ = function(e){
+    this.MouseX_ = e.clientX;
+    this.MouseY_ = e.clientY;
+    window.console.log("store mouse coords", this.MouseX_, this.MouseY_);
+}
+
+
+
+/**
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.listenForMouseEvents_ = 
@@ -699,6 +765,16 @@ function() {
 		renderPlane.getRenderer(), 
 		goog.events.EventType.MOUSEOVER, 
 		this.onMouseOver_.bind(this))
+
+	//
+	// MOUSEOVER2 -- (this one is a little different: we attach it to the 
+	//               renderer instead of the canvas)
+	//
+	/**
+	goog.events.listen(document.body, 
+			   goog.events.EventType.MOUSEOVER,
+			   this.storeMouseCoords_.bind(this));
+			   */
 
 
 	//
@@ -924,23 +1000,72 @@ function(opt_isOn){
 /**
  * @public
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.createSettingsToggle = 
+xiv.ui.ViewBoxInteractorHandler.prototype.createSettingsDialog = 
 function(){    
-    this.ViewBox_.createToggleButton(
-	'LEFT', 
-	this.constructor.CSS.GENERIC_TOGGLE, 
-	this.constructor.TOGGLEABLE.SETTINGS,
-	'Settings', 
-	function(button){
-	    window.console.log("Need to create dialog here");
-	    //this.Renderer_.setVPlaneOn(
-	    //(button.getAttribute('checked') == 'true'));
-	}.bind(this), 
-	serverRoot + 
-	    '/images/viewer/xiv/ui/ViewBox/Toggle-Settings.png');
 
-    this.ViewBox_.fireToggleButton(
-	this.constructor.TOGGLEABLE.SETTINGS);
+    var key = this.constructor.TOGGLEABLE.SETTINGS;
+
+    this.dialogKeys_[key]  = key + 
+	    this.constructor.DIALOG_SPLIT + goog.string.createUniqueString();
+
+
+    //
+    // Create the dialog
+    //
+    this.Dialogs_.createToggleableDialog(
+	this.dialogKeys_[key],
+	this.constructor.CSS.GENERIC_DIALOG,
+	this.constructor.CSS.GENERIC_TOGGLE,
+	serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-' + 
+	    'Settings' + '.png',
+	'Settings',
+	false,
+	false
+    );
+
+
+    this.zippyTrees_[key] = new nrg.ui.ScrollableZippyTree();
+    this.zippyTrees_[key].render();
+
+    //
+    // Zippy Trees
+    //
+    var ctrlTreeElt = this.zippyTrees_[key].getElement();
+    goog.dom.classes.add(ctrlTreeElt, 
+			 this.constructor.CSS.GENERIC_ZIPPYTREE);
+    this.Dialogs_.getDialogs()[this.dialogKeys_[key]].
+	getElement().appendChild(ctrlTreeElt);
+    this.zippyTrees_[key].expandAll();
+    
+
+
+
+    // create
+    var controller = new xiv.ui.ctrl.CheckboxController();
+    controller.render();
+
+    // set label
+    controller.setLabel('Enable 3D Rendering');
+    controller.getComponent().setChecked(true);
+
+    this.zippyTrees_[key].addContents(controller.getElement(), '3D Rendering');
+
+    // set events
+
+    goog.events.listen(controller, 
+		       xiv.ui.ctrl.XtkController.EventType.CHANGE, 
+		       function(e){
+			   this.Renderer_.setPlaneEnabled('V', e.checked);
+		       }.bind(this))
+    
+
+
+    return controller;
+
+
+    //var ctrl = goog.dom.createDom()
+
+    this.zippyTrees_[key].addContents(ctrl.getElement(), folders);
 }
 
 
@@ -1651,9 +1776,10 @@ function() {
     //
     // Create the zippy trees
     //
-    this.zippyTrees_ = xiv.ui.ctrl.XtkControllerTree.getEmptyPropertiesObject();
-    this.dialogKeys_ = xiv.ui.ctrl.XtkControllerTree.getEmptyPropertiesObject();
-
+    this.zippyTrees_ = 
+	xiv.ui.ctrl.XtkControllerTree.getEmptyPropertiesObject();
+    this.dialogKeys_ = goog.object.clone(this.zippyTrees_);
+    
     goog.object.forEach(this.zippyTrees_, function(tree, key){
 	
 	//
@@ -1687,11 +1813,7 @@ function() {
 		//
 		//
 		//
-		window.console.log('\n\n');
-		//window.console.log(ctrl, ctrl.getElement(), folders);
-		window.console.log(folders)
 		this.zippyTrees_[key].addContents(ctrl.getElement(), folders);
-
 	    }.bind(this))
 	}.bind(this))	    
     }.bind(this))
@@ -1718,7 +1840,7 @@ function() {
 	//
 	// Create the dialog
 	//
-	this.Dialogs_.createGenericDialog(
+	this.Dialogs_.createToggleableDialog(
 	    this.dialogKeys_[key],
 	    this.constructor.CSS.GENERIC_DIALOG,
 	    this.constructor.CSS.GENERIC_TOGGLE,

@@ -191,11 +191,29 @@ xiv.vis.XtkEngine.prototype.getAnnotations_ = function(ViewableGroup) {
 
 
 /**
+ * @param {!string} plane
  * @param {!boolean} on
  * @public
  */
-xiv.vis.XtkEngine.prototype.setVPlaneOn = function(on) {
-    this.PlaneV_.setOn(on);
+xiv.vis.XtkEngine.prototype.setPlaneEnabled = function(plane, on) {
+
+    switch(plane.toLowerCase()){
+	case 'x':
+	this.PlaneX_.setEnabled(on);
+	break;
+
+	case 'y':
+	this.PlaneY_.setEnabled(on);
+	break;
+
+	case 'z':
+	this.PlaneZ_.setEnabled(on);
+	break;
+
+	case 'v':
+	this.PlaneV_.setEnabled(on);
+	break;
+    }
 }
 
 
@@ -528,7 +546,7 @@ xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
 	var Planes = this.getPlanes();
 	var key = '';
 	for (key in Planes) {
-	    if (Planes[key].isOn()){
+	    if (Planes[key].isEnabled()){
 		this.setPrimaryRenderPlane(Planes[key]);
 		break;
 	    }
@@ -537,7 +555,7 @@ xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
 	// Then render
 	this.renderAllPlanes();
 
-    } else if (this.PlaneV_.isOn()) {
+    } else if (this.PlaneV_.isEnabled()) {
 	this.render3dPlane();
     }
 }
@@ -560,7 +578,7 @@ function(xVolume, planeOrientations){
 	// or any plane that has been turned off
 	//
 	if ((Plane == this.primaryRenderPlane_) ||
-	   !Plane.isOn()) { return };
+	   !Plane.isEnabled()) { return };
 
 	//
 	// Add the volume to the other planes.
@@ -1281,8 +1299,8 @@ goog.exportSymbol('xiv.vis.XtkEngine.getViewables',
 	xiv.vis.XtkEngine.getViewables);
 goog.exportSymbol('xiv.vis.XtkEngine.createXObject',
 	xiv.vis.XtkEngine.createXObject);
-goog.exportSymbol('xiv.vis.XtkEngine.prototype.setVPlaneOn',
-	xiv.vis.XtkEngine.prototype.setVPlaneOn);
+goog.exportSymbol('xiv.vis.XtkEngine.prototype.setPlaneEnabled',
+	xiv.vis.XtkEngine.prototype.setPlaneEnabled);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.setPrimaryRenderPlane',
 	xiv.vis.XtkEngine.prototype.setPrimaryRenderPlane);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.updateControllers',

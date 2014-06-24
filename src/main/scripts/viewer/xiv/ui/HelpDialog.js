@@ -125,50 +125,106 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
     // Generate widget text
     //    
     var imageManipLines = [
-	['Zoom', 'right-click + drag', '2D and 3D panels'],
+	/*
+	['Zoom', 'keystroke \'Z\'<br>Zoom In ' + 
+	 '(drag up)<br>Zoom Out (drag down)', '2D and 3D panels'],
 	['Pan', 'middle-click + drag<br>ctrl + left-click + drag' +
 	  '<br>ctrl + right-click + drag', 
 	 '2D and 3D panels<br>2D panels<br>2D panels'],
-	['Slice-scroll', 'shift + mousemove', '2D panels'],
 	['Contrast', 'left-click + drag vertically', '2D panels'],
 	['Brightness', 'left-click + drag horizontally', '2D panels'],
+	*/
+	['Slice-scroll', 'shift + mousemove', '2D panels'],
 	['Resize', 'left-click + drag', 'panel borders'],
     ]
     
     var viewboxToggles = [
-	['Change Layouts', '<img height=15 width=15 ' + 
+	['Change Layouts', 
+	 '<img height=15 width=15 ' + 
 	 'id=' + xiv.ui.HelpDialog.LAYOUT_IMAGE_ID + 
 	 '></img>'],
-	['3D Rendering', 
-	 '<img style="height:15px;width:15px" src="' +
-	 serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-3D.png'
-	 + '"></img>'	 
-	],
-	['Crosshairs', 
+
+	['2D Crosshairs', 
+	 'keystroke: C',
 	 '<img style="height:15px;width:15px" src="' +
 	 serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Crosshairs.png'
-	 + '"></img>'	 
-	],
+	 + '"></img>'],
+
+
 	['Help', 
+	 'keystroke: ?',
 	 '<img style="height:15px;width:15px" src="' +
 	 serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Help.png'
-	 + '"></img>'	 
-	],
+	 + '"></img>'],
+
+
 	['Info. Metadata', 
+	 'keystroke: I',
 	 '<img style="height:15px;width:15px" src="' +
 	 serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Info.png'
 	 + '"></img>'	 
 	],
-	['Brightness / Contrast / Window Level', 
+
+
+	['2D Pan', 
+	 'keystroke: H or P',
+	 '<img style="height:15px;width:15px" src="' +
+	 serverRoot + 
+	 '/images/viewer/xiv/ui/ViewBox/Toggle-2DPan.png'
+	 + '"></img>'	 
+	],
+
+
+	['2D Zoom', 
+	 'keystroke: Z',
+	 '<img style="height:15px;width:15px" src="' +
+	 serverRoot + 
+	 '/images/viewer/xiv/ui/ViewBox/Toggle-2DZoom.png'
+	 + '"></img>'	 
+	],
+
+
+	['Levels', 
+	 'keystroke: B or L',
 	 '<img style="height:15px;width:15px" src="' +
 	 serverRoot + 
 	 '/images/viewer/xiv/ui/ViewBox/Toggle-Levels.png'
 	 + '"></img>'	 
 	],
-	['Renderer Controls', 
+
+
+	['Settings', 
+	 'keystroke: S',
 	 '<img style="height:15px;width:15px" src="' +
 	 serverRoot + 
-	 '/images/viewer/xiv/ui/ViewBox/Toggle-RenderControlMenu.png'
+	 '/images/viewer/xiv/ui/ViewBox/Toggle-Settings.png'
+	 + '"></img>'	 
+	],
+
+
+	['Volumes', 
+	 'keystroke: V',
+	 '<img style="height:15px;width:15px" src="' +
+	 serverRoot + 
+	 '/images/viewer/xiv/ui/ViewBox/Toggle-Volumes.png'
+	 + '"></img>'	 
+	],
+
+
+	['Meshes', 
+	 'keystroke: M',
+	 '<img style="height:15px;width:15px" src="' +
+	 serverRoot + 
+	 '/images/viewer/xiv/ui/ViewBox/Toggle-Meshes.png'
+	 + '"></img>'	 
+	],
+
+
+	['Annotations', 
+	 'keystroke: A',
+	 '<img style="height:15px;width:15px" src="' +
+	 serverRoot + 
+	 '/images/viewer/xiv/ui/ViewBox/Toggle-Annotations.png'
 	 + '"></img>'	 
 	],
     ]
@@ -256,10 +312,10 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
 	    folderName = 'Image Manipulation';
 	    break;
 	    case 2:
-	    folderName = 'ViewBox Toggles';
+	    folderName = 'Toggles';
 	    break;
 	    case 3:
-	    folderName = 'Modal Toggles';
+	    folderName = 'Modal';
 	    break;
 	}
 	//lastAddedText.style.top = '0px';

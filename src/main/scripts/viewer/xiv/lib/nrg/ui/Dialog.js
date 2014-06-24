@@ -14,6 +14,7 @@ goog.require('goog.ui.Dialog');
 goog.provide('nrg.ui.Dialog');
 nrg.ui.Dialog = function () {
     goog.base(this);
+    this.setEscapeToCancel(false);
 }
 goog.inherits(nrg.ui.Dialog, goog.ui.Dialog);
 goog.exportSymbol('nrg.ui.Dialog', nrg.ui.Dialog);

@@ -130,7 +130,7 @@ xiv.ui.ViewBoxDialogs.prototype.getDialog = function(dialogKey){
  * @param {string=} opt_buttonSet
  * @public
  */
-xiv.ui.ViewBoxDialogs.prototype.createGenericDialog = 
+xiv.ui.ViewBoxDialogs.prototype.createToggleableDialog = 
 function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
 	 opt_title, opt_isOn, opt_setModal, opt_buttonSet, opt_onToggle){
 
@@ -250,7 +250,7 @@ function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
  * @public
  */
 xiv.ui.ViewBoxDialogs.prototype.createMeshesDialog = function(){
-    this.createGenericDialog(
+    this.createToggleableDialog(
 	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.MESHES,
 	'xiv-ui-viewboxdialogs-meshes-dialog',
 	xiv.ui.ViewBoxDialogs.CSS.GENERIC_TOGGLE,
@@ -269,7 +269,7 @@ xiv.ui.ViewBoxDialogs.prototype.createMeshesDialog = function(){
  * @public
  */
 xiv.ui.ViewBoxDialogs.prototype.createVolumesDialog = function(){
-    this.createGenericDialog(
+    this.createToggleableDialog(
 	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.VOLUMES,
 	'xiv-ui-viewboxdialogs-volumes-dialog',
 	xiv.ui.ViewBoxDialogs.CSS.GENERIC_TOGGLE,

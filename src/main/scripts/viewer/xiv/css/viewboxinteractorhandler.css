@@ -78,4 +78,6 @@
     position: absolute;
     z-index: 1000;
     visibility: hidden;
+    text-wrap: none;
+    width: 200px;
 }

@@ -60,7 +60,7 @@ xiv.vis.XtkPlane.prototype.background_;
 /**
 * @param {boolean}
 */
-xiv.vis.XtkPlane.prototype.isOn_ = true;
+xiv.vis.XtkPlane.prototype.isEnabled_ = true;
 
 
 
@@ -283,6 +283,7 @@ xiv.vis.XtkPlane.prototype.onSliceNavigated_ = function(e) {
  */
 xiv.vis.XtkPlane.prototype.destroyRenderer_ = function() {
     if (goog.isDefAndNotNull(this.Renderer)) { 
+	goog.events.removeAll(this.Renderer);
 	this.Renderer.destroy();
 	this.Renderer = null;
     } 
@@ -344,7 +345,7 @@ xiv.vis.XtkPlane.prototype.init = function(containerElt) {
  */
 xiv.vis.XtkPlane.prototype.add = function(xObj) {
 
-    if (!this.isOn_){
+    if (!this.isEnabled_){
 	//window.console.log('Not adding xObj to Plane' + this.orientation);
 	return;
     }
@@ -363,28 +364,54 @@ xiv.vis.XtkPlane.prototype.add = function(xObj) {
  * @return {!boolean}
  * @public
  */
-xiv.vis.XtkPlane.prototype.isOn = function() {
-    return this.isOn_;
+xiv.vis.XtkPlane.prototype.isEnabled = function() {
+    return this.isEnabled_;
 }
 
 
 /**
  * @private
  */
+xiv.vis.XtkPlane.prototype.disposeDisabledOverlay_ = function() {
+    //
+    // Overlay
+    //
+    if (goog.isDefAndNotNull(this.DisabledOverlay_)){
+	goog.dom.removeNode(this.DisabledOverlay_);
+	delete this.DisabledOverlay_;
+    }
+}
+
+
+
+
+
+/**
+ * @private
+ */
 xiv.vis.XtkPlane.prototype.createDisabledOverlay_ = function() {
+    //
+    // Create the overlay
+    //
     this.DisabledOverlay_ = goog.dom.createDom('div', {
 	'id': 'DisabledOverlay_' + goog.string.createUniqueString(),
     });
-
     goog.dom.classes.set(this.DisabledOverlay_, 
-			 'xiv-vis-xtkplane-disabledoverlay')
+			 'xiv-vis-xtkplane-disabledoverlay');
 
+    //
+    // We create a child element so that we can vertically center it.
+    //
     var renderPlane = this.orientation;
-    if (this.orientation == 'V'){
-	renderPlane = '3D';
-    }
-
-    this.DisabledOverlay_.innerHTML = renderPlane + ' rendering disabled.';
+    if (this.orientation == 'V'){ renderPlane = '3D';}
+    var innerDisplay = goog.dom.createDom('div', {
+	'id': 'DisabledOverlay_' + goog.string.createUniqueString(),
+    });
+    innerDisplay.style.display = 'table-cell';
+    innerDisplay.style.verticalAlign = 'middle';
+    innerDisplay.innerHTML = renderPlane + ' render plane disabled.';
+    goog.dom.appendChild(this.DisabledOverlay_, innerDisplay); 
+    
     goog.dom.appendChild(this.container, this.DisabledOverlay_);
 }
 
@@ -394,16 +421,16 @@ xiv.vis.XtkPlane.prototype.createDisabledOverlay_ = function() {
  * @param {!boolean} on
  * @public
  */
-xiv.vis.XtkPlane.prototype.setOn = function(on) {
+xiv.vis.XtkPlane.prototype.setEnabled = function(on) {
     //
     // Store the on value.
     //
-    this.isOn_ = !(on === false);
+    this.isEnabled_ = !(on === false);
 
     //
     // Re-initialize whether on or off.
     //
-    if (!this.isOn_){
+    if (!this.isEnabled_){
 
 	//
 	// Apply the disabled overlay if needed
@@ -420,9 +447,9 @@ xiv.vis.XtkPlane.prototype.setOn = function(on) {
 	//
 	nrg.fx.fadeIn(this.DisabledOverlay_, 200, 
 		      function(){
-			  this.storeCamera_();
-			  this.storeBackground_();
-			  this.removeXObjectsFromRenderer();
+			  //this.storeCamera_();
+			  //this.storeBackground_();
+			  //this.removeXObjectsFromRenderer();
 		      }.bind(this));
 
 
@@ -431,13 +458,14 @@ xiv.vis.XtkPlane.prototype.setOn = function(on) {
 	//
 	// Otherwise, restore...
 	//
-	this.restore();
+	//this.restore();
 
 	//
-	// ...and fade out display
+	// ...and fade out and destroy display
 	//
 	nrg.fx.fadeOut(this.DisabledOverlay_, 200, function(){
 	    this.DisabledOverlay_.style.visibility = 'hidden';
+	    this.disposeDisabledOverlay_();
 	}.bind(this));
     }
 }
@@ -447,16 +475,24 @@ xiv.vis.XtkPlane.prototype.setOn = function(on) {
  * @public
  */
 xiv.vis.XtkPlane.prototype.restore = function() {
+    window.console.log('\n\nrestore');
     //
     // Restore methods
     //
-    this.restoreXObjectsToRenderer_();
-    this.restoreCamera_();
-    this.restoreBackground_();
+    //this.Renderer.dispose();
+    //this.Renderer.init();
+    //this.restoreXObjectsToRenderer_();
+    //this.restoreCamera_();
+    //this.restoreBackground_();
 
     //
     // Render the object
     //
+    //this.Renderer.container = this.container;
+    this.init();
+    this.restoreXObjectsToRenderer_();
+    this.restoreCamera_();
+    this.restoreBackground_();
     this.render();
 }
 
@@ -479,6 +515,7 @@ xiv.vis.XtkPlane.prototype.removeXObjectsFromRenderer = function() {
  */
 xiv.vis.XtkPlane.prototype.restoreXObjectsToRenderer_ = function() {
     goog.array.forEach(this.xObjs_, function(xObj){
+	window.console.log('adding', xObj);
 	this.Renderer.add(xObj);
     }.bind(this))
 };
@@ -513,11 +550,11 @@ xiv.vis.XtkPlane.prototype.restoreBackground_ = function() {
  * @public
  */
 xiv.vis.XtkPlane.prototype.render = function() {
-    if (!this.isOn_) { 
-	//window.console.log('Plane' + this.orientation + ' is switched off.');
+    if (!this.isEnabled_) { 
+	window.console.log('Plane' + this.orientation + ' is switched off.');
 	return; 
     };
-
+    //window.console.log('Rendering');
     this.Renderer.render();  
 };
 
@@ -548,13 +585,8 @@ xiv.vis.XtkPlane.prototype.dispose = function() {
 	delete this.Renderer;
     }
 
-    //
-    // Overlay
-    //
-    if (goog.isDefAndNotNull(this.DisabledOverlay_)){
-	goog.dom.removeNode(this.DisabledOverlay_);
-	delete this.DisabledOverlay_;
-    }
+
+    this.disposeDisabledOverlay_();
 
 
     //
@@ -585,7 +617,7 @@ xiv.vis.XtkPlane.prototype.dispose = function() {
 
 
     // primitive types
-    delete this.isOn_;
+    delete this.isEnabled_;
     delete this.XRenderer;
     delete this.container;
     delete this.orientation;
@@ -625,8 +657,8 @@ goog.exportSymbol('xiv.vis.XtkPlane.prototype.init',
 	xiv.vis.XtkPlane.prototype.init);
 goog.exportSymbol('xiv.vis.XtkPlane.prototype.add',
 	xiv.vis.XtkPlane.prototype.add);
-goog.exportSymbol('xiv.vis.XtkPlane.prototype.isOn',
-	xiv.vis.XtkPlane.prototype.isOn);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.isEnabled',
+	xiv.vis.XtkPlane.prototype.isEnabled);
 goog.exportSymbol('xiv.vis.XtkPlane.prototype.setOn',
 	xiv.vis.XtkPlane.prototype.setOn);
 goog.exportSymbol('xiv.vis.XtkPlane.prototype.restore',

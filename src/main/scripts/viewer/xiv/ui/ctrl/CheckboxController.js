@@ -84,8 +84,7 @@ xiv.ui.ctrl.CheckboxController.prototype.setChecked = function(checked){
  * @inheritDoc
  */
 xiv.ui.ctrl.CheckboxController.prototype.dispatchComponentEvent = function(){
-
-    window.console.log("DISPATCH CHECKBOX", this.checkbox_.isChecked());
+    //window.console.log("DISPATCH CHECKBOX", this.checkbox_.isChecked());
     this.dispatchEvent({
 	type: xiv.ui.ctrl.XtkController.EventType.CHANGE,
 	checked: this.checkbox_.isChecked()
