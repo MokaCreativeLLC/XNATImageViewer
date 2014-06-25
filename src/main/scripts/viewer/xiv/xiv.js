@@ -532,7 +532,7 @@ xiv.prototype.startLiveLoadChain_ = function(){
 	// Create zippy folders
 	//
 	var folders = this.createFoldersFromTreeNode_(node);
-	
+
 	//
 	// For the first project
 	//
@@ -561,7 +561,6 @@ xiv.prototype.startLiveLoadChain_ = function(){
 		zippyTree.setExpanded(folders[2], 
 				      this.initSubjFolderNode_)
 	}
-
 	nodeCount++;
     }.bind(this))
 }
@@ -1045,6 +1044,19 @@ function(ViewableTree, opt_folderList){
 	    //
 	    var thumb = ThumbGallery.createAndAddThumbnail(
 		ViewableTree, opt_folderList);
+
+	    //
+	    // Expand any non-scan folders (e.g. Slicer)
+	    //
+	    if (ViewableTree.getCategory() != 'Scans'){
+		var folderNodes = ThumbGallery.getZippyTree().
+				   getFolderNodes(opt_folderList);
+		if (opt_folderList.length > 0 && folderNodes.length > 1){
+		    ThumbGallery.setExpanded(
+			opt_folderList[opt_folderList.length -1],  
+			folderNodes[folderNodes.length - 2]);
+		}
+	    }
 
 	    //
 	    // Set the hoverable parent for the thumbnail gallery.

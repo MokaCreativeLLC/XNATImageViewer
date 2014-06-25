@@ -137,6 +137,8 @@ function(folder, opt_startNode) {
  */
 nrg.ui.ScrollableZippyTree.prototype.setExpanded = 
 function(folder, opt_startNode) {
+
+    window.console.log('\n\n\nsetExpanded', folder);
     this.ZippyTree.setExpanded(folder, opt_startNode);
 }
 

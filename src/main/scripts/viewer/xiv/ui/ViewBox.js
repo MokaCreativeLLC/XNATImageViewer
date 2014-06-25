@@ -1701,7 +1701,7 @@ xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
 
     // Controller handler
     if (goog.isDefAndNotNull(this.InteractorHandler_)){
-	this.InteractorHandler_.dispose();
+	this.InteractorHandler_.dispose()
     } 
     
     if (goog.isDefAndNotNull(this.toggleButtons_)){

@@ -267,9 +267,9 @@ nrg.ui.ZippyTree.prototype.getElement = function() {
  * @return {nrg.ui.ZippyNode} The expanded zippy node.
  */
 nrg.ui.ZippyTree.prototype.setExpanded = function(folder, opt_startNode) {
-    //window.console.log("set EXPAND", folder, opt_startNode);
+    window.console.log("set EXPAND", folder, opt_startNode);
     opt_startNode = goog.isDefAndNotNull(opt_startNode) ? opt_startNode : this;
-    //window.console.log(opt_startNode.getNodes());
+    window.console.log(opt_startNode.getNodes());
 
     if (goog.isDefAndNotNull(opt_startNode.getNodes()[folder])){
 	var currNode = opt_startNode.getNodes()[folder];
