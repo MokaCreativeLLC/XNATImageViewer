@@ -1382,6 +1382,9 @@ xiv.ui.ViewBox.prototype.getToggleButton = function(buttonKey){
  * @public
  */
 xiv.ui.ViewBox.prototype.fireToggleButton = function(buttonKey){
+    window.console.log('fire toggle button', 
+		       'buttonKey:', buttonKey, 
+		       '\nbutton:', this.toggleButtons_[buttonKey]);
     goog.testing.events.fireClickEvent(this.toggleButtons_[buttonKey]);
 }
 
@@ -1698,7 +1701,7 @@ xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
 
     // Controller handler
     if (goog.isDefAndNotNull(this.InteractorHandler_)){
-	this.InteractorHandler_.disposeInternal();
+	this.InteractorHandler_.dispose();
     } 
     
     if (goog.isDefAndNotNull(this.toggleButtons_)){

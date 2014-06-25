@@ -1880,6 +1880,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
     goog.base(this, 'dispose');
     
     if (goog.isDefAndNotNull(this.keyHandler_)){
+	window.console.log('disposing key handler');
 	this.keyHandler_.dispose();
 	delete this.keyHandler_;
     }
@@ -1913,14 +1914,15 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
     // Mouse events  
     //    
     goog.object.forEach(this.mouseEvents_, function(mouseKeyObj){
-	goog.objectForEach(mouseKeyObj, function(mouseKey){
-	    goog.events.unlisten(mouseKey);
+	goog.object.forEach(mouseKeyObj, function(mouseKey){
+	    //window.console.log(mouseKey);
+	    goog.events.unlistenByKey(mouseKey);
 	    delete mouseKey;
 	})
 	goog.object.clear(mouseKeyObj);
     })
     goog.object.clear(this.mouseEvents_);
-    delete this.mouseEvents_();
+    delete this.mouseEvents_;
 
 
     goog.dom.removeNode(this.zoomFollower_);
