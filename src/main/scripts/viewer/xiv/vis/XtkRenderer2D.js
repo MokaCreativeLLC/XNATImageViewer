@@ -2,6 +2,9 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
+// goog
+goog.require('goog.math.Matrix');
+
 // xiv
 goog.require('xiv.vis.XtkEngine');
 
@@ -148,6 +151,30 @@ xiv.vis.XtkRenderer2D.prototype.isMouseOver = function() {
  */
 xiv.vis.XtkRenderer2D.prototype.onInteractorMouseMove_ = function(e){
     this.mouseOver_ = true;
+
+    /**
+       FOR TESTING PURPOSES  
+
+
+    var _origin = new goog.math.Matrix([[0],
+					[0],
+					[0],
+					[1]]);
+    var _mult = new goog.math.Matrix([[1, 0, 0, 0],
+				      [0, 1, 0, 0],
+				      [0, 0, 1, 0],
+				      [0, 0, 0, 1]])
+
+    var _mult2 = new goog.math.Matrix([[-1, 0, 0, -10.4524],
+				       [0, 1, 0, 20.637],
+				       [0, 0, 1, -13.7861],
+				       [0, 0, 0, 1]])
+    window.console.log(_volume);
+    window.console.log(_origin, '\n', _origin.toString());
+    window.console.log(_mult, '\n', _mult.toString());
+    window.console.log(_mult2.multiply(_origin).toString());
+    */
+
     this.dispatchEvent({
 	type: goog.events.EventType.MOUSEOVER,
 	mousePosition: this.interactor.mousePosition,

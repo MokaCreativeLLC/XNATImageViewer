@@ -151,7 +151,18 @@ xiv.vis.XtkEngine.ANATOMICAL_TO_CARTESIAN =  {
  * @const
  * @expose
  */
-xiv.vis.XtkEngine.SELECTED_VOL_KEY =  'isSelectedVolume';
+xiv.vis.XtkEngine.SELECTED_VOL_KEY =  'isSelectedVolume' + 
+    goog.string.createUniqueString();
+
+
+
+/**
+ * @type {!string} 
+ * @const
+ * @expose
+ */
+xiv.vis.XtkEngine.SLICE_TO_RAS_KEY =  'sliceToRAS' + 
+    goog.string.createUniqueString();
 
 
 
@@ -350,7 +361,6 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
     goog.array.forEach(ViewableGroup.getViewables(), function(Viewable){
 	fileList = Viewable.getFiles();
 	if (!goog.isDefAndNotNull(fileList)) { return };
-
 	//window.console.log(ViewableGroup, Viewable, Viewable.getFiles());
 	currXObj = xiv.vis.XtkEngine.createXObject(fileList, 
 						   Viewable.getFileData());
@@ -597,6 +607,7 @@ function(xVolume, planeOrientations){
 		// When all renderers have finished, run onRenderEnd_
 		//
 		if (unrenderedNonPrimary == 0){
+
 		    this.onRenderEnd_();
 		}
 	    }.bind(this))
@@ -712,7 +723,12 @@ function(xObj, renderProperties){
     //
     xObj[xiv.vis.XtkEngine.SELECTED_VOL_KEY] = 
 	renderProperties.isSelectedVolume;
-    
+
+    //
+    // Slice to RAS
+    //
+    xObj[xiv.vis.XtkEngine.SLICE_TO_RAS_KEY] = renderProperties.sliceToRAS;
+
 
     if (goog.isDefAndNotNull(renderProperties.labelMapFile)){
 	xObj.labelmap.file = renderProperties.labelMapFile;

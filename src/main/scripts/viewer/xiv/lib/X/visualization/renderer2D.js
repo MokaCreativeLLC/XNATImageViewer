@@ -846,7 +846,7 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
     goog.vec.Mat4.multVec4(_currentSlice._XYToIJK, _xyz, _ijk);
     var _ras = goog.vec.Mat4.createFloat32();
     goog.vec.Mat4.multVec4(_currentSlice._XYToRAS, _xyz, _ras);
-
+      window.console.log(_ras);
     var _dx = _volume._childrenInfo[0]._sliceNormal[0]*_ras[0]
       + _volume._childrenInfo[0]._sliceNormal[1]*_ras[1]
       + _volume._childrenInfo[0]._sliceNormal[2]*_ras[2]

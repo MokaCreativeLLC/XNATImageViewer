@@ -247,6 +247,14 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors = function() {
     //
     this.setVolumeSlidersHalfway_();
 
+
+    //
+    // Set volume sliders halfway
+    //
+    this.adjustToPredefinedSliceIndices_();
+
+
+
     //
     // Create 3D rendering toggle
     //
@@ -1490,6 +1498,57 @@ function() {
 	}
 	planeInteractors.SLIDER.setValue(
 		planeInteractors.SLIDER.getMaximum()/2);
+    }.bind(this))
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.adjustToPredefinedSliceIndices_ =
+function(){
+    this.loopIR_(
+    function(renderPlane, renderPlaneOr, planeInteractors, volume){
+	if (goog.isDefAndNotNull(volume[xiv.vis.XtkEngine.SLICE_TO_RAS_KEY])) { 
+
+	    if (!goog.isDefAndNotNull(planeInteractors.SLIDER)) { 
+		return; 
+	    };
+	    slider = planeInteractors.SLIDER;
+	    orientation = slider[this.constructor.ORIENTATION_KEY];
+
+	    //
+	    // Params
+	    //
+	    var bbox = volume.bbox;
+	    var sliceToRAS = volume[xiv.vis.XtkEngine.SLICE_TO_RAS_KEY];
+	    var range, slicePct;
+
+	    //
+	    // Adjust orientation by plane
+	    //
+	    if (orientation == 'X'){
+		range = bbox[1] - bbox[0];
+		slicePct = 
+		    (sliceToRAS.sagittalSliceCenter[0] - bbox[0]) / range;
+	    }
+	    else if (orientation == 'Y'){
+		range = bbox[3] - bbox[2];
+		slicePct = 
+		    (sliceToRAS.coronalSliceCenter[1] - bbox[2]) / range;
+	    }
+	    else if (orientation == 'Z'){
+		range = bbox[5] - bbox[4];
+		slicePct = 
+		    (sliceToRAS.axialSliceCenter[2] - bbox[4]) / range;
+	    }
+
+	    //
+	    // Set the slider value
+	    //
+	    slider.setValue(Math.round(slider.getMaximum() * slicePct) + 1);
+	}
     }.bind(this))
 }
 

@@ -10,6 +10,16 @@ goog.require('goog.dom.xml');
 // gxnat
 goog.require('gxnat');
 goog.require('gxnat.slicer.Node');
+goog.require('gxnat.slicer.DisplayableNode');
+goog.require('gxnat.slicer.MrmlNode');
+goog.require('gxnat.slicer.SceneViewNode');
+goog.require('gxnat.slicer.CameraNode');
+goog.require('gxnat.slicer.MrmlNode');
+goog.require('gxnat.slicer.BackgroundColorNode');
+goog.require('gxnat.slicer.LayoutNode');
+goog.require('gxnat.slicer.MeshDisplayNode');
+goog.require('gxnat.slicer.VolumeDisplayNode');
+
 
 
 /**
@@ -833,10 +843,10 @@ gxnat.slicer.getVolumes = function(sceneView) {
     // Finally, we add the properties to the volume.
     //
     goog.array.forEach(culledVolumes, function(volume){
+	window.console.log(volume);
 	volume.properties = new gxnat.slicer.VolumeDisplayNode(
 	    sceneView, volume.node, selectedVolumeID);
-
-	window.console.log(volume.properties);
+	//window.console.log(volume.properties);
 	if (volume.labelMap) { 
 	    volume.properties.labelMap = volume.labelMap;
 	    delete volume.labelMap;

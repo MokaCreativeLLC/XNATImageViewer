@@ -106,6 +106,66 @@ goog.addDependency('../../../gxnat/slicer/Node.js',
 ]);
 
 
+goog.addDependency('../../../gxnat/slicer/DisplayableNode.js',
+['gxnat.slicer.DisplayableNode'], [
+    'gxnat.slicer.Node'
+]);
+
+
+goog.addDependency('../../../gxnat/slicer/MrmlNode.js',
+['gxnat.slicer.MrmlNode'], [
+    'gxnat.slicer.Node'
+]);
+
+
+goog.addDependency('../../../gxnat/slicer/SceneViewNode.js',
+['gxnat.slicer.SceneViewNode'], [
+    'gxnat.slicer.Node'
+]);
+
+
+goog.addDependency('../../../gxnat/slicer/CameraNode.js',
+['gxnat.slicer.CameraNode'], [
+    'gxnat.slicer.Node'
+]);
+
+
+
+goog.addDependency('../../../gxnat/slicer/LayoutNode.js',
+['gxnat.slicer.LayoutNode'], [
+    'gxnat.slicer.Node'
+]);
+
+
+goog.addDependency('../../../gxnat/slicer/AnnotationsNode.js',
+['gxnat.slicer.AnnotationsNode'], [
+    'gxnat.slicer.Node'
+]);
+
+
+
+goog.addDependency('../../../gxnat/slicer/BackgroundColorNode.js',
+['gxnat.slicer.BackgroundColorNode'], [
+    'gxnat.slicer.Node'
+]);
+
+
+
+goog.addDependency('../../../gxnat/slicer/DisplayNode.js',
+['gxnat.slicer.DisplayNode'], [
+    'gxnat.slicer.Node'
+]);
+
+
+goog.addDependency('../../../gxnat/slicer/VolumeDisplayNode.js',
+['gxnat.slicer.VolumeDisplayNode'], [
+    'gxnat.slicer.DisplayNode'
+]);
+
+goog.addDependency('../../../gxnat/slicer/MeshDisplayNode.js',
+['gxnat.slicer.MeshDisplayNode'], [
+    'gxnat.slicer.DisplayNode'
+]);
 
 goog.addDependency('../../../gxnat/vis/RenderProperties.js',
 ['gxnat.vis.RenderProperties'], [

@@ -42,6 +42,7 @@ gxnat.vis.RenderProperties = function(slicerNode){
 	this.lowerThreshold = slicerNode.lowerThreshold || -10000;
 	this.volumeRendering = slicerNode.volumeRendering || false;
 	this.isSelectedVolume = slicerNode.isSelectedVolume || false;
+	this.sliceToRAS = slicerNode.sliceToRAS || null;
 
 	//window.console.log("SLICER VOL", this, slicerNode);
 	if (slicerNode.labelMap){
