@@ -101,14 +101,13 @@ xiv.ui.layouts.LayoutFrame.prototype.isResizable_ = false;
  * @return {nrg.ui.Resizable)
  * @public
  */
-xiv.ui.layouts.LayoutFrame.prototype.getResizable = function(opt_resizeDirs){
+xiv.ui.layouts.LayoutFrame.prototype.getResizable = function(){
     return this.Resizeable_;
 }
 
 
 
 /**
- * @type {nrg.ui.Resizable}
  * @param {Array.string=} opt_resizeDirs The optional resize directions.  
  *    Defaults to the resizeable defaults.
  * @public
