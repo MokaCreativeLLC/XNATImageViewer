@@ -56,6 +56,21 @@ xiv.ui.ctrl.LevelsController.CONTROLLERS = {
 
 
 
+/**
+ * @type {!number}
+ * @const
+ */
+xiv.ui.ctrl.LevelsController.LEVEL_MAX = 1000;
+
+
+
+/**
+ * @type {!number}
+ * @const
+ */
+xiv.ui.ctrl.LevelsController.LEVEL_MIN = 0;
+
+
 
 /**
  * @param {!xiv.ui.ctrl.Histogram} hist
@@ -97,8 +112,11 @@ xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
 				   this.updateHistogram_(hist);
 			       }.bind(this))
 	}.bind(this))
-}
 
+
+    //window.console.log('Auto-level images.');
+}
+ 
 
 
 /**
@@ -152,11 +170,11 @@ xiv.ui.ctrl.LevelsController.prototype.add_levelMin = function(xObj) {
     this.masterControllers.push(ctrl);
 
     // set defaults
-    ctrl.getComponent().setMaximum(1000);
-    ctrl.getComponent().setMinimum(0);
+    ctrl.getComponent().setMaximum(xiv.ui.ctrl.LevelsController.LEVEL_MAX);
+    ctrl.getComponent().setMinimum(xiv.ui.ctrl.LevelsController.LEVEL_MIN);
 
 
-    ctrl.getComponent().setValue(0);
+    ctrl.getComponent().setValue(xiv.ui.ctrl.LevelsController.LEVEL_MIN);
     ctrl.getComponent().setStep(1);
     ctrl.setValueDecimals(0);
     ctrl.update();
@@ -198,9 +216,9 @@ xiv.ui.ctrl.LevelsController.prototype.add_levelMax = function(xObj) {
     this.masterControllers.push(ctrl);
 
 
-    ctrl.getComponent().setMaximum(1000);
-    ctrl.getComponent().setMinimum(0);
-    ctrl.getComponent().setValue(1000);
+    ctrl.getComponent().setMaximum(xiv.ui.ctrl.LevelsController.LEVEL_MAX);
+    ctrl.getComponent().setMinimum(xiv.ui.ctrl.LevelsController.LEVEL_MIN);
+    ctrl.getComponent().setValue(xiv.ui.ctrl.LevelsController.LEVEL_MAX);
     ctrl.getComponent().setStep(1);
     ctrl.setValueDecimals(0);
     ctrl.update();

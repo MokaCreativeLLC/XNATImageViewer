@@ -1284,6 +1284,38 @@ function(e){
 
 
 
+/**
+ * @public
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
+    window.console.log("Applying auto window/level");
+
+    var hist, levelMax, ctrl;
+    var i=0, len = this.viewableCtrls_['levels']['all'].length;
+
+    for (; i<len; i++){
+	ctrl = this.viewableCtrls_['levels']['all'][i];
+
+	if (ctrl instanceof xiv.ui.ctrl.Histogram){
+	    hist = ctrl;
+	} 
+	else if (ctrl.getLabel().innerHTML.indexOf('Level Max') > -1){
+	    levelMax = ctrl;
+	}
+
+	if (goog.isDefAndNotNull(levelMax) && 
+	    goog.isDefAndNotNull(hist)){
+	    break;
+	}
+    }
+
+    var levelMaxVal = hist.getLevelByPixelThreshold(
+	xiv.ui.ctrl.Histogram.LEVEL_CUTOFF);
+    //window.console.log("AUTO LEVEL", hist, levelMax, levelMaxVal);
+    levelMax.getComponent().setValue(levelMaxVal)
+}
+
+
 
 /**
  * @param {nrg.ui.Slider} slider

@@ -59,6 +59,15 @@ xiv.ui.ctrl.Histogram.CSS_SUFFIX = {
 
 
 /**
+ * @expose
+ * @type {!number}
+ * @const
+ */
+xiv.ui.ctrl.Histogram.LEVEL_CUTOFF = .99;
+
+
+
+/**
  * @const
  * @private
  */
@@ -248,69 +257,40 @@ xiv.ui.ctrl.Histogram.prototype.render = function(opt_parent){
 
 
 
-
 /*
- * @public
+ * @private
  */
-xiv.ui.ctrl.Histogram.prototype.draw = function() {
-    //
-    // We can't do anything if there's no volume
-    //
-    if (!goog.isDefAndNotNull(this.getXObj())) { return }
+xiv.ui.ctrl.Histogram.prototype.tallyLevels_ = function() {
 
     //
-    // params
+    // We don't need to re-tally if it's already there (it takes way too 
+    // long to run more than once, given the size of the data).
     //
-    var size = goog.style.getSize(this.canvas_);
-    var canvasWidth = size.width;
-    var canvasHeight = size.height;
+    if (goog.isDefAndNotNull(this.levels_)) { return } 
+
+    //
+    // Increment the value counts and the total pixels
+    //
     var i = 0, len = this.getXObj().max;
+    goog.array.forEach(this.getXObj().image, function(sliceImg){
+	goog.array.forEach(sliceImg, function(sliceData){
+	    //window.console.log(sliceData);
+	    goog.array.forEach(sliceData, function(pixelData){
 
-    //
-    // Creates bugs otherwise
-    //
-    this.canvas_.height = canvasHeight;
-    this.canvas_.width = canvasWidth;
-    this.lineCanvas_.height = canvasHeight;
-    this.lineCanvas_.width = canvasWidth;
+		if (!goog.isDefAndNotNull(this.levels_)){
+		    this.levels_ = [];
+		    for(; i <= len; i++) { this.levels_.push(0) };
+		}
 
-
-    //
-    // Tally all of the levels
-    //
-    if (!goog.isDefAndNotNull(this.levels_)){
-
-
-
-	//
-	// Increment the value counts and the total pixels
-	//
-	goog.array.forEach(this.getXObj().image, function(sliceImg){
-	    goog.array.forEach(sliceImg, function(sliceData){
-		//window.console.log(sliceData);
-		goog.array.forEach(sliceData, function(pixelData){
-
-		    if (!goog.isDefAndNotNull(this.levels_)){
-			this.levels_ = [];
-			for(; i <= len; i++) { this.levels_.push(0) };
-		    }
-
-
-		    this.levels_[parseInt(pixelData)]++;
-		    this.totalPixels_++;
-		}.bind(this))
+		this.levels_[parseInt(pixelData)]++;
+		this.totalPixels_++;
 	    }.bind(this))
 	}.bind(this))
-    }
+    }.bind(this))
 
-
-    //
-    // Exit if no levels were retrieved
-    //
     if (!goog.isDefAndNotNull(this.levels_)){
 	return;
     }
-
 
     //
     // Tally and store the percentage to draw each bar
@@ -325,21 +305,89 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
 	    this.maxPct_ = Math.max(this.maxPct_, pct);
 	}.bind(this))
     }
+}
 
 
 
+
+/**
+ * @public
+ */
+xiv.ui.ctrl.Histogram.prototype.draw = function() {
+    //
+    // We can't do anything if there's no volume
+    //
+    if (!goog.isDefAndNotNull(this.getXObj())) { return }
+
+    //
+    // params
+    //
+    var size = goog.style.getSize(this.canvas_);
+    var canvasWidth = size.width;
+    var canvasHeight = size.height;
+
+
+    //
+    // Creates bugs otherwise
+    //
+    this.canvas_.height = canvasHeight;
+    this.canvas_.width = canvasWidth;
+    this.lineCanvas_.height = canvasHeight;
+    this.lineCanvas_.width = canvasWidth;
+
+    //
+    // Tally all of the levels
+    // Exit if no levels were retrieved
+    //
+    this.tallyLevels_();
+    if (!goog.isDefAndNotNull(this.levels_)){
+	return;
+    }
+
+
+    //var cutoffThreshold = .99
+    var cutoffLevel = this.getXObj().windowHigh;
+    var barWidth = Math.round(canvasWidth/cutoffLevel);
+    barWidth = barWidth > 0 ? barWidth: 1;
+    //window.console.log('barWidth', barWidth);
+    
     //
     // If the percentages are too low, apply a multiplier
     //
     var multiplyer = this.heightLimit_ / this.maxPct_;
-    goog.array.forEach(this.percentages_, function(pct, i){
-	pct = pct * multiplyer * canvasHeight;
-	x = Math.round((i / this.getXObj().max) * canvasWidth);
-	this.context_.fillRect(x, canvasHeight, 1, -Math.round(pct));
-    }.bind(this))
+
+    var pct;
+    var i =0, len = this.percentages_.length; 
+    for (; i<len; i++){
+	pct = this.percentages_[i] * multiplyer * canvasHeight;
+	//x = Math.round((i / cutoffLevel) * canvasWidth);
+	//barWidth * i
+	this.context_.fillRect(	barWidth * i, canvasHeight, 
+			       barWidth, -Math.round(pct));
+    }
 }
 
 
+
+
+/**
+ * @param {!number} The pixel cutoff threshold (between 0 and 1).
+ * @return {number} The amount of level where the threshold first starts.
+ * @public
+ */
+xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold = function(thresh) {
+    //
+    // For auto-level calcuations
+    //
+    if (!goog.isDefAndNotNull(this.levels_)){ return }
+    var t = 0, i = 0, len = this.levels_.length;
+    for (; i < len; i++){
+	t += this.levels_[i];
+	if ((t / this.totalPixels_) >= thresh){
+	    return i;
+	}
+    }
+}
 
 
 
@@ -398,7 +446,7 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
     //
     // Draw the sloped line
     //
-    this.lineContext_.strokeStyle = "black";
+    this.lineContext_.strokeStyle = "gray";
     this.lineContext_.moveTo(startX, canvasHeight);
     this.lineContext_.lineTo(endX, 0);
     this.lineContext_.lineWidth = .5;

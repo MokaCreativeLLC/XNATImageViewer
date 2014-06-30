@@ -534,6 +534,12 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     this.InteractorHandler_.createInteractors();
 
     //
+    // Apply auto-level
+    //
+    this.InteractorHandler_.applyAutoLevel();
+
+
+    //
     // Hide progress bar
     //
     this.hideProgressBarPanel_(800, function(){
@@ -562,6 +568,7 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 	// unhighlight
 	//
 	this.unhighlight();
+
 
     }.bind(this));
 }
