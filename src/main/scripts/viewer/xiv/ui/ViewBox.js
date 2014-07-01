@@ -11,19 +11,33 @@ goog.require('goog.array');
 goog.require('goog.object');
 goog.require('goog.style');
 goog.require('goog.format');
+goog.require('goog.Timer');
+goog.require('goog.testing');
+goog.require('goog.dom.classes');
+goog.require('goog.testing.events');
 
 // nrg
 goog.require('nrg.ui.Component');
 goog.require('nrg.style');
 goog.require('nrg.ui.SlideInMenu');
 goog.require('nrg.ui.ErrorOverlay');
+goog.require('nrg.fx');
+
+// gxnat
+goog.require('gxnat.vis.ViewableTree');
+goog.require('gxnat.vis.ViewableGroup');
 
 // xiv
 goog.require('xiv.vis.RenderEngine');
 goog.require('xiv.vis.XtkEngine');
+goog.require('xiv.vis.RenderEngine.EventType');
+goog.require('xiv.vis.XtkEngine.EventType');
 goog.require('xiv.ui.ProgressBarPanel');
 goog.require('xiv.ui.layouts.LayoutHandler');
 goog.require('xiv.ui.ViewableGroupMenu');
+goog.require('xiv.ui.Displayer');
+goog.require('xiv.ui.layouts.LayoutHandler.EventType');
+goog.require('xiv.ui.ViewableGroupMenu.EventType');
 
 
 

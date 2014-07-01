@@ -4,6 +4,10 @@
 
 // goog
 goog.require('goog.string');
+goog.require('goog.typeOf');
+
+// nrg
+goog.require('nrg.path');
 
 
 

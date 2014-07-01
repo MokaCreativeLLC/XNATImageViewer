@@ -4,6 +4,7 @@
 
 // goog
 goog.require('goog.dom');
+goog.require('goog.dom.classes');
 
 // nrg
 goog.require('nrg.ui.Dialog');

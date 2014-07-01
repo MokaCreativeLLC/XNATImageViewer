@@ -8,12 +8,15 @@ goog.require('goog.dom');
 goog.require('goog.events');
 goog.require('goog.string');
 goog.require('goog.object');
+goog.require('goog.dom.classes');
 
 // nrg
 goog.require('nrg.style');
 goog.require('nrg.dom');
 goog.require('nrg.ui.Thumbnail');
 goog.require('nrg.ui.ScrollableZippyTree');
+goog.require('nrg.ui.Slider.EventType');
+goog.require('nrg.ui.Thumbnail.EventType');
 
 
 

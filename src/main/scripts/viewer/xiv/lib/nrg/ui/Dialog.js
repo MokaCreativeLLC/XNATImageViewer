@@ -2,8 +2,25 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-// nrg
+// goog
 goog.require('goog.ui.Dialog');
+goog.require('goog.events');
+goog.require('goog.dom.classes');
+goog.require('goog.dom');
+goog.require('goog.string');
+goog.require('goog.fx.dom.FadeIn');
+goog.require('goog.fx.dom.FadeOut');
+goog.require('goog.style');
+goog.require('goog.fx.Dragger');
+goog.require('goog.dom.classlist');
+goog.require('goog.asserts');
+goog.require('goog.events.Event');
+goog.require('goog.math.Rect');
+goog.require('goog.array');
+
+// nrg
+goog.require('nrg.style');
+goog.require('nrg.ui.Component.animationLengths');
 
 
 /**

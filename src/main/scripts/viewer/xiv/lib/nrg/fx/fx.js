@@ -5,7 +5,7 @@
 // goog
 goog.require('goog.events');
 goog.require('goog.color');
-goog.require('goog.fx.dom');
+goog.require('goog.fx');
 goog.require('goog.fx.Transition');
 goog.require('goog.fx.dom.Fade');
 goog.require('goog.fx.dom.FadeInAndShow');
@@ -15,6 +15,14 @@ goog.require('goog.fx.dom.Resize');
 goog.require('goog.fx.dom.Slide');
 goog.require('goog.fx.AnimationParallelQueue');
 goog.require('goog.fx.Animation');
+goog.require('goog.fx.Transition.EventType');
+goog.require('goog.fx.dom.Animation');
+goog.require('goog.object');
+goog.require('goog.fx.easing');
+goog.require('goog.array');
+goog.require('goog.style');
+goog.require('goog.fx.AnimationSerialQueue');
+goog.require('goog.events.EventType');
 
 // nrg
 goog.require('nrg.style');

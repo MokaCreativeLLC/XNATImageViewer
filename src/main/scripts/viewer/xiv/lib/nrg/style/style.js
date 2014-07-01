@@ -8,6 +8,8 @@ goog.require('goog.style');
 goog.require('goog.dom');
 goog.require('goog.string');
 goog.require('goog.array');
+goog.require('goog.dom.classes');
+goog.require('goog.math.Coordinate');
 
 // nrg
 goog.require('nrg.convert');

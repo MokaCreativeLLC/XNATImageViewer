@@ -9,10 +9,14 @@ goog.require('goog.object');
 goog.require('goog.array');
 goog.require('goog.style');
 goog.require('goog.math.Size');
-goog.require('goog.math.Coordinate'); 
+goog.require('goog.math.Coordinate');
 goog.require('goog.fx.Dragger');
 goog.require('goog.fx.Dragger.EventType');
-goog.require('goog.fx.dom.Slide'); 
+goog.require('goog.fx.dom.Slide');
+goog.require('goog.require');
+goog.require('goog.math');
+goog.require('goog.math.Rect');
+goog.require('goog.events');
 
 // nrg
 goog.require('nrg.ui.Component');
@@ -22,10 +26,12 @@ goog.require('nrg.ui.ResizeDraggerTop');
 goog.require('nrg.ui.ResizeDraggerBottom');
 goog.require('nrg.ui.ResizeDraggerLeft');
 goog.require('nrg.ui.ResizeDraggerTopRight');
+goog.require('nrg.style');
+goog.require('nrg.ui.ResizeDragger.EventType');
 //goog.require('nrg.ui.ResizeDraggerBottomRight');
 //goog.require('nrg.ui.ResizeDraggerTopLeft');
 //goog.require('nrg.ui.ResizeDraggerBottomLeft');
-goog.require('nrg.style');
+
 
 
 
@@ -43,8 +49,8 @@ goog.require('nrg.style');
  *    are also valid.
  * @extends {nrg.ui.Component}
  */
-goog.provide('goog.ui.Resizable');
-goog.provide('goog.ui.Resizable.EventType');
+goog.provide('nrg.ui.Resizable');
+goog.provide('nrg.ui.Resizable.EventType');
 nrg.ui.Resizable = function(element, opt_dirs) {
     goog.base(this);
 

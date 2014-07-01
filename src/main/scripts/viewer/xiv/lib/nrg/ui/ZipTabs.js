@@ -10,10 +10,12 @@ goog.require('goog.style');
 goog.require('goog.dom');
 goog.require('goog.math.Coordinate');
 goog.require('goog.math.Size');
+goog.require('goog.dom.classes');
 
 // nrg
 goog.require('nrg.ui.Tabs');
 goog.require('nrg.ui.Resizable');
+goog.require('nrg.ui.Resizable.EventType');
 
 
 

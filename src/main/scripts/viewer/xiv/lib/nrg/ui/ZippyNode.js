@@ -4,17 +4,19 @@
 
 // goog
 goog.require('goog.events');
-goog.require('goog.dom.classes');
-goog.require('goog.string');
 goog.require('goog.dom');
+goog.require('goog.string');
 goog.require('goog.ui.AnimatedZippy');
 goog.require('goog.ui.Zippy.Events');
 goog.require('goog.ui.Zippy');
+goog.require('goog.ui.ZippyNode');
+goog.require('goog.dom.classes');
 
 // nrg
 goog.require('nrg.ui');
 goog.require('nrg.string');
 goog.require('nrg.ui.Component');
+goog.require('nrg.style');
 
 
 

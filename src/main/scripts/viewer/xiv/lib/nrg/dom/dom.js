@@ -5,12 +5,17 @@
 // goog
 goog.require('goog.dom');
 goog.require('goog.string');
+goog.require('goog.string.path');
+
+// nrg
+goog.require('nrg.fx');
+goog.require('nrg.string');
 
 
 
 
 /**
- * 'nrg.com' is a utility class that handles element and 
+ * 'nrg.dom' is a utility class that handles element and 
  * dom operations not provided by the JS platform or goog.dom.
  * @constructor
  */

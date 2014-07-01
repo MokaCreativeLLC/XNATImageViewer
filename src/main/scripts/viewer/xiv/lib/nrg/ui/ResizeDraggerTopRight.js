@@ -3,7 +3,9 @@
  */
 
 // goog
-
+goog.require('goog.math.Rect');
+goog.require('goog.style');
+goog.require('goog.math.Coordinate');
 
 // nrg
 goog.require('nrg.ui.ResizeDragger');
@@ -18,7 +20,7 @@ goog.require('nrg.ui.ResizeDraggerRight');
  * @extends {nrg.ui.ResizeDragger}
  * @param {!Element} resizee The element that will be resized.
  */
-goog.provide('goog.ui.ResizeDraggerTopRight');
+goog.provide('nrg.ui.ResizeDraggerTopRight');
 nrg.ui.ResizeDraggerTopRight = function(resizee) {
     goog.base(this, 'right', resizee);
 };

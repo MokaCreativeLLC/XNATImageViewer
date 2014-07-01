@@ -3,10 +3,21 @@
  */
 
 // goog
-
+goog.require('goog.fx.Dragger');
+goog.require('goog.math.Coordinate');
+goog.require('goog.math.Size');
+goog.require('goog.math.Rect');
+goog.require('goog.style');
+goog.require('goog.object');
+goog.require('goog.events');
+goog.require('goog.events.Event');
+goog.require('goog.fx.dom.Slide');
+goog.require('goog.fx.easing');
+goog.require('goog.dom');
 
 // nrg
 goog.require('nrg.ui.Component');
+goog.require('nrg.ui.Resizable');
 
 
 
@@ -16,8 +27,8 @@ goog.require('nrg.ui.Component');
  * @param {!Element} resizee The element to be be resized.
  * @extends {nrg.ui.Component}
  */
-goog.provide('goog.ui.ResizeDragger');
-goog.provide('goog.ui.ResizeDragger.EventType');
+goog.provide('nrg.ui.ResizeDragger');
+goog.provide('nrg.ui.ResizeDragger.EventType');
 nrg.ui.ResizeDragger = function(direction, resizee) {
     if (!goog.isDefAndNotNull(direction)){
 	throw new Error ('Invalid direction for ResizeDragger: ' + direction);

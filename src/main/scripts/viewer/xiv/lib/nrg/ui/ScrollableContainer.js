@@ -7,6 +7,10 @@ goog.require('goog.string');
 goog.require('goog.object');
 goog.require('goog.dom');
 goog.require('goog.events');
+goog.require('goog.ui.AnimatedZippy');
+goog.require('goog.ui.Zippy');
+goog.require('goog.dom.classes');
+goog.require('goog.style');
 
 // nrg
 goog.require('nrg.fx');
@@ -16,6 +20,7 @@ goog.require('nrg.style');
 goog.require('nrg.string');
 goog.require('nrg.ui.Slider');
 goog.require('nrg.ui.Component');
+goog.require('nrg.ui.Slider.EventType');
 
 
 

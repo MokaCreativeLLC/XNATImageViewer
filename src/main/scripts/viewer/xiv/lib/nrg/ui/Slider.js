@@ -5,12 +5,17 @@
 // goog
 goog.require('goog.ui.Slider');
 goog.require('goog.dom');
-goog.require('goog.dom.classes');
 goog.require('goog.ui.Component');
 goog.require('goog.array');
 goog.require('goog.events');
 goog.require('goog.string');
 goog.require('goog.object');
+goog.require('goog.events.MouseWheelHandler');
+goog.require('goog.events.KeyHandler');
+goog.require('goog.events.MouseWheelHandler.EventType');
+goog.require('goog.ui.SliderBase.Orientation');
+goog.require('goog.dom.classes');
+goog.require('goog.events.EventType');
 
 // nrg
 goog.require('nrg.dom');

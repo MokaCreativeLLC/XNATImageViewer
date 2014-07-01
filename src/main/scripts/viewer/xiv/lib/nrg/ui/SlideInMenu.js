@@ -13,12 +13,23 @@ goog.require('goog.events');
 goog.require('goog.string');
 goog.require('goog.dom');
 goog.require('goog.fx');
+goog.require('goog.fx.AnimationParallelQueue');
+goog.require('goog.fx.Animation');
+goog.require('goog.dom.classes');
+goog.require('goog.fx.dom.FadeIn');
+goog.require('goog.fx.dom.Slide');
+goog.require('goog.fx.easing');
+goog.require('goog.fx.dom.FadeOut');
+goog.require('goog.object');
+goog.require('goog.Timer');
 
-// utils
+// nrg
+goog.require('nrg.ui.Component');
 goog.require('nrg.dom');
 goog.require('nrg.style');
 goog.require('nrg.fx');
-goog.require('nrg.ui.Component');
+goog.require('nrg.ui');
+
 
 
 

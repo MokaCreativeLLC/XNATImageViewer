@@ -4,7 +4,7 @@
 
 // goog
 goog.require('goog.array');
-
+goog.require('goog.object');
 
 
 

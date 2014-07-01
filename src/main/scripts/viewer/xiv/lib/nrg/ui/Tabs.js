@@ -7,24 +7,25 @@ goog.require('goog.dom');
 goog.require('goog.object');
 goog.require('goog.events');
 goog.require('goog.array');
-goog.require('goog.events');
 goog.require('goog.string');
 goog.require('goog.ui.TabPane');
 goog.require('goog.ui.TabPane.TabPage');
+goog.require('goog.math.Size');
+goog.require('goog.dom.classes');
+goog.require('goog.events.EventType');
+goog.require('goog.ui.Tab');
+goog.require('goog.style');
 
 // nrg
 goog.require('nrg.style');
 goog.require('nrg.ui.Component');
 goog.require('nrg.ui.ScrollableContainer');
+goog.require('nrg.ui.TabItemCollection');
 
 
 
 
 /**
- * nrg.ui.Tabs are the tabs that occur at the bottom
- * of the xiv.ui.ViewBox.  They are only visible when a viewable is in the 
- * xiv.ui.ViewBox. These tabs are multi-purpose and could be used for 
- * information, object togling, image adjusting, etc.
  * @constructor
  * @param {string=} opt_tabOrientation
  * @extends {nrg.ui.Component}

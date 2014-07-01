@@ -6,6 +6,12 @@
 goog.require('goog.ui.Component');
 goog.require('goog.string');
 goog.require('goog.object');
+goog.require('goog.array');
+goog.require('goog.dom.classes');
+goog.require('goog.math.Size');
+goog.require('goog.style');
+goog.require('goog.dom');
+goog.require('goog.events');
 
 // nrg
 goog.require('nrg.dom');

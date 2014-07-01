@@ -13,10 +13,18 @@ goog.require('goog.ui.Zippy.Events');
 goog.require('goog.fx.AnimationSerialQueue');
 goog.require('goog.fx.dom.FadeIn');
 goog.require('goog.ui.Zippy');
+goog.require('goog.dom.classes');
+goog.require('goog.fx.Transition.EventType');
+goog.require('goog.fx.AnimationParallelQueue');
+goog.require('goog.dom.classlist');
 
 // nrg
 goog.require('nrg.style');
 goog.require('nrg.ui.ZippyNode');
+goog.require('nrg.ui.ZippyNode.EventType');
+goog.require('nrg.ui.ZippyNode.NODE');
+goog.require('nrg.ui.ZippyNode.CSS');
+
 
 
 

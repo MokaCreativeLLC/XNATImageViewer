@@ -7,6 +7,10 @@ goog.require('goog.dom');
 goog.require('goog.array');
 goog.require('goog.events');
 goog.require('goog.string');
+goog.require('goog.dom.classes');
+goog.require('goog.math.Coordinate');
+goog.require('goog.style');
+goog.require('goog.events.EventType');
 
 // nrg
 goog.require('nrg.dom');

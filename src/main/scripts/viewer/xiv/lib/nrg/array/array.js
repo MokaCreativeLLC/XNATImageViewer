@@ -3,7 +3,8 @@
  */
 
 
-
+// goog
+goog.require('goog.array');
 
 /**
  * Utility class that provides array operations not part of the native 

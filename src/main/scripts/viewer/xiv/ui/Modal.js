@@ -6,29 +6,45 @@
 // goog
 goog.require('goog.object');
 goog.require('goog.dom');
-goog.require('goog.dom.fullscreen');
 goog.require('goog.array');
 goog.require('goog.string');
-goog.require('goog.string.path');
 goog.require('goog.fx');
-goog.require('goog.fx.easing');
+goog.require('goog.events');
+goog.require('goog.style');
 goog.require('goog.fx.AnimationParallelQueue');
 goog.require('goog.fx.dom.Slide');
 goog.require('goog.fx.dom.Resize');
-goog.require('goog.events');
+goog.require('goog.dom.classes');
+goog.require('goog.getCssName');
+goog.require('goog.fx.dom.PredefinedEffect');
+goog.require('goog.events.Event');
+goog.require('goog.events.EventType');
 
-// utils
-goog.require('nrg.ui.Component');
-goog.require('nrg.ui.Resizable');
+
+// nrg
 goog.require('nrg.dom');
 goog.require('nrg.style');
 goog.require('nrg.convert');
 goog.require('nrg.fx');
+goog.require('nrg.ui');
+goog.require('nrg.ui.Component');
+goog.require('nrg.ui.Resizable');
 goog.require('nrg.ui.Thumbnail');
+goog.require('nrg.ui.Components');
+goog.require('nrg.ui.ZipTabs');
+goog.require('nrg.ui.Resizable.EventType');
+goog.require('nrg.ui.Thumbnail.EventType');
+
 
 // xiv
 goog.require('xiv.ui.ThumbnailGallery');
 goog.require('xiv.ui.ViewBoxHandler');
+goog.require('xiv.ui.ViewBox');
+goog.require('xiv.ui.ViewBoxes');
+goog.require('xiv.ui.ViewBox.ID');
+goog.require('xiv.ui.ViewBoxHandler.EventType');
+goog.require('xiv.ui.ThumbnailGallery.EventType');
+
 
 
 
