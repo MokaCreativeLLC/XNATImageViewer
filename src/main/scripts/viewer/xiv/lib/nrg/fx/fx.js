@@ -16,7 +16,6 @@ goog.require('goog.fx.dom.Slide');
 goog.require('goog.fx.AnimationParallelQueue');
 goog.require('goog.fx.Animation');
 goog.require('goog.fx.Transition.EventType');
-goog.require('goog.fx.dom.Animation');
 goog.require('goog.object');
 goog.require('goog.fx.easing');
 goog.require('goog.array');

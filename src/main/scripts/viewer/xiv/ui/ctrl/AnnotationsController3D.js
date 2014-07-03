@@ -51,6 +51,7 @@ xiv.ui.ctrl.AnnotationsController3D.prototype.add = function(xObj) {
     goog.base(this, 'add', xObj);
 
     // Add color palette
+    this.add_visible(xObj);
     this.add_colorPalette(xObj);
 }
 

@@ -4,6 +4,31 @@
  */
 
 
+// goog
+goog.require('goog.events');
+goog.require('goog.events.EventTarget');
+goog.require('goog.Timer');
+goog.require('goog.dom');
+goog.require('goog.string');
+goog.require('goog.array');
+goog.require('goog.dom.classes');
+
+// X
+goog.require('X.object');
+goog.require('X.camera');
+goog.require('X.renderer2D');
+
+// nrg
+goog.require('nrg.fx');
+
+// gxnat
+goog.require('gxnat.slicer');
+goog.require('gxnat.slicerNode.BackgroundColorNode');
+
+// xiv
+goog.require('xiv.vis.RenderEngine');
+goog.require('xiv.vis.XtkEngine');
+
 
 
 
@@ -42,7 +67,7 @@ xiv.vis.XtkPlane.DEFAULT_BACKGROUND = 'black';
 
 
 /**
- * @type {gxnat.slicer.cameraNode | X.Camera}
+ * @type {gxnat.slicerNode.cameraNode | X.Camera}
  * @private
  */
 xiv.vis.XtkPlane.prototype.camera_;
@@ -157,7 +182,7 @@ xiv.vis.XtkPlane.prototype.storeBackground_ = function(){
 
 
 /**
- * @param {gxnat.slicer.cameraNode} opt_cameraNode
+ * @param {gxnat.slicerNode.cameraNode} opt_cameraNode
  * @public
  */
 xiv.vis.XtkPlane.prototype.setCamera = function(opt_cameraNode){
@@ -189,7 +214,7 @@ xiv.vis.XtkPlane.prototype.setCamera = function(opt_cameraNode){
 
 
 /**
- * @param {gxnat.slicer.BackgroundColorNode | string} opt_bgColorNode
+ * @param {gxnat.slicerNode.BackgroundColorNode | string} opt_bgColorNode
  * @public
  */
 xiv.vis.XtkPlane.prototype.setBackground = function(opt_bgColorNode) { 

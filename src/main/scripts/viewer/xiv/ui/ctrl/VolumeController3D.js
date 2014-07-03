@@ -179,7 +179,8 @@ xiv.ui.ctrl.VolumeController3D.prototype.add_threshold = function(xObj) {
 xiv.ui.ctrl.VolumeController3D.prototype.add = function(xObj) {
     // Call superclass add
     goog.base(this, 'add', xObj);
-
+    
+    //this.add_visible(xObj);
     this.add_volumeRendering(xObj);
     this.add_threshold(xObj);
 }

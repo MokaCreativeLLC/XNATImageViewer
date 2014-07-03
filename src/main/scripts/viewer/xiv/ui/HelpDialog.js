@@ -3,11 +3,15 @@
  */
 
 // goog
-
+goog.require('goog.dom.classes');
+goog.require('goog.dom');
+goog.require('goog.array');
 
 // nrg
 goog.require('nrg.ui.ScrollableZippyTree');
 goog.require('nrg.ui.Dialog');
+
+//-----------
 
 
 

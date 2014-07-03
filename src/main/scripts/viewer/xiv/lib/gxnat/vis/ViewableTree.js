@@ -4,14 +4,17 @@
 
 // goog
 goog.require('goog.array');
+goog.require('goog.object');
 
 // gxnat
 goog.require('gxnat.vis.VisNode');
+goog.require('gxnat.vis.ViewableGroup');
+//-----------
 
 
 
 /**
- * @extends {goog.VisNode}
+ * @extends {gxnat.vis.VisNode}
  */
 goog.provide('gxnat.vis.ViewableTree');
 gxnat.vis.ViewableTree = function(opt_files, opt_displayProperties) {

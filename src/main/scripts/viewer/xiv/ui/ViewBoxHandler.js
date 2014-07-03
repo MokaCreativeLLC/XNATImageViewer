@@ -7,20 +7,29 @@ goog.require('goog.array');
 goog.require('goog.string');
 goog.require('goog.dom');
 goog.require('goog.events');
-goog.require('goog.fx.easing');
+goog.require('goog.fx');
 goog.require('goog.fx.dom.Slide');
 goog.require('goog.fx.DragDrop');
 goog.require('goog.fx.DragDropGroup');
 goog.require('goog.fx.AnimationParallelQueue');
+goog.require('goog.style');
+goog.require('goog.fx.easing');
+goog.require('goog.dom.classes');
+goog.require('goog.object');
 
-// utils
+// nrg
 goog.require('nrg.string');
 goog.require('nrg.style');
 goog.require('nrg.fx');
+goog.require('nrg.ui.Component');
+
+// gxnat
+goog.require('gxnat.vis.VisNode');
 
 // xiv
 goog.require('xiv.ui.ViewBox');
-goog.require('nrg.ui.Component');
+
+//-----------
 
 
 

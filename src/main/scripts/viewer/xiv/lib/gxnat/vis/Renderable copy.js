@@ -4,8 +4,6 @@
 
 // gxnat
 goog.require('gxnat.vis.VisNode');
-goog.require('gxnat.vis.RenderProperties');
-
 
 
 /**

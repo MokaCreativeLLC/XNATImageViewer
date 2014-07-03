@@ -69,16 +69,12 @@ xiv.ui.ctrl.MasterController3D.prototype.add = function(xObj) {
 
     // Generic controls -- per object
     this.xObjs.push(xObj);
-    this.add_visible(xObj);
     this.add_opacity(xObj);
 
 
     // Generic master controls -- all objects
     if (this.xObjs.length == 1){
 	goog.dom.append(document.body, this.getElement());
-
-	this.add_displayAll(xObj);
-	this.add_masterOpacity(xObj);
     }
 }
 

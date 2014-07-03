@@ -17,39 +17,31 @@ goog.require('goog.dom.classes');
 goog.require('goog.testing.events');
 
 // nrg
-goog.require('nrg.ui.Component');
 goog.require('nrg.style');
+goog.require('nrg.fx');
+goog.require('nrg.ui.Component');
 goog.require('nrg.ui.SlideInMenu');
 goog.require('nrg.ui.ErrorOverlay');
-goog.require('nrg.fx');
 
 // gxnat
+goog.require('gxnat');
 goog.require('gxnat.vis.ViewableTree');
 goog.require('gxnat.vis.ViewableGroup');
 
 // xiv
 goog.require('xiv.vis.RenderEngine');
 goog.require('xiv.vis.XtkEngine');
-goog.require('xiv.vis.RenderEngine.EventType');
-goog.require('xiv.vis.XtkEngine.EventType');
 goog.require('xiv.ui.ProgressBarPanel');
-goog.require('xiv.ui.layouts.LayoutHandler');
 goog.require('xiv.ui.ViewableGroupMenu');
-goog.require('xiv.ui.Displayer');
-goog.require('xiv.ui.layouts.LayoutHandler.EventType');
-goog.require('xiv.ui.ViewableGroupMenu.EventType');
+goog.require('xiv.ui.layouts.LayoutHandler');
+goog.require('xiv.ui.ViewBoxDialogs');
+goog.require('xiv.ui.ViewBoxInteractorHandler');
+
+//-----------
 
 
 
 /**
- * Viewing box for viewable types (images, 3d volumes and meshes, 
- * Slicer scenes). xiv.ui.ViewBoxes accept xiv.thumbnails, either dropped or 
- * clicked in, and load them based on their characteristics.
- * xiv.ui.ViewBox is also a communicator class in the sense that it gets
- * various interaction and visualization classes to talk to one another.  F
- * or instance, it links the nrg.ui.SlideInMenu to the 
- * xiv.ui.layouts.LayoutHandler 
- * to the xiv.ui.Displayer. 
  * @constructor
  * @extends {nrg.ui.Component}
  */
@@ -863,7 +855,7 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
     //
     var firstFile = ViewableSet.getViewables()[0].getFiles()[0];
     var filesUrl = firstFile.split('/files/')[0] + '/files';
-    window.console.log("XImgView Zip Downloading (XHR): " +  filesUrl);
+    //window.console.log("XImgView Zip Downloading (XHR): " +  filesUrl);
 
     //
     // Get files as zip
@@ -1403,9 +1395,11 @@ xiv.ui.ViewBox.prototype.getToggleButton = function(buttonKey){
  * @public
  */
 xiv.ui.ViewBox.prototype.fireToggleButton = function(buttonKey){
+    /**
     window.console.log('fire toggle button', 
 		       'buttonKey:', buttonKey, 
 		       '\nbutton:', this.toggleButtons_[buttonKey]);
+    */
     goog.testing.events.fireClickEvent(this.toggleButtons_[buttonKey]);
 }
 
@@ -1599,7 +1593,7 @@ xiv.ui.ViewBox.prototype.getToggleButtons = function(){
 
 
 /**
- * Initializes the 'xiv.ui.Displayer' object which allows
+ * Initializes the 'xiv.vis.RenderEngine' object which allows
  * various viewable content to be displayed, based on 
  * the 'loadFramework' internal variable.
  * @private

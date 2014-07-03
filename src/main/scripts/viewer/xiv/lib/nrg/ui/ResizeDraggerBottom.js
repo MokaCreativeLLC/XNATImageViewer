@@ -66,8 +66,7 @@ goog.exportSymbol('nrg.ui.ResizeDraggerBottom.calculateDraggerLimits',
 nrg.ui.ResizeDraggerBottom.resizeMethod = function() {
     var deltaY = this.handlePos.y - this.resizeePos.bottom; 
     var height = this.resizeeSize.height + deltaY;
-    window.console.log("DELTA Y", deltaY);
-
+    //window.console.log("DELTA Y", deltaY);
     goog.style.setHeight(this.resizee, Math.max(height, 
 	this.minSize.height));
 }

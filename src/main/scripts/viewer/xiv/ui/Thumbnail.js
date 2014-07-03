@@ -6,9 +6,16 @@
 // goog
 goog.require('goog.dom');
 goog.require('goog.string');
+goog.require('goog.dom.classes');
+goog.require('goog.array');
 
-// utils
+// nrg
 goog.require('nrg.ui.Thumbnail');
+
+// gxnat
+goog.require('gxnat.vis.ViewableTree');
+
+//-----------
 
 
 

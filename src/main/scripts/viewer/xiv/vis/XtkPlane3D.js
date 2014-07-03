@@ -3,7 +3,10 @@
  */
 
 // xiv
+goog.require('xiv.vis.XtkPlane');
 goog.require('xiv.vis.XtkRenderer3D');
+
+//-----------
 
 
 /**

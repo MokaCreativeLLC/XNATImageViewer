@@ -1,13 +1,18 @@
-goog.require('gxnat.slicer.VolumeDisplayNode');
+// goog
+goog.require('goog.array');
+goog.require('goog.math.Matrix');
+
+// gxnat
+goog.require('gxnat.slicerNode.DisplayNode');
 
 
 
 /**
  * @struct
- * @extends {gxnat.slicer.DisplayNode}
+ * @extends {gxnat.slicerNode.DisplayNode}
  */
-goog.provide('gxnat.slicer.VolumeDisplayNode');
-gxnat.slicer.VolumeDisplayNode = 
+goog.provide('gxnat.slicerNode.VolumeDisplayNode');
+gxnat.slicerNode.VolumeDisplayNode = 
 function(sceneViewElt, sceneViewDisplayableElt, selectedVolumeID) {
     goog.base(this, sceneViewElt, sceneViewDisplayableElt);
 
@@ -51,7 +56,7 @@ function(sceneViewElt, sceneViewDisplayableElt, selectedVolumeID) {
 
 
     this.sliceToRAS = 
-	new gxnat.slicer.VolumeDisplayNode.sliceToRAS(
+	new gxnat.slicerNode.VolumeDisplayNode.sliceToRAS(
 	    _sagittal, _coronal, _axial);
     
 
@@ -90,9 +95,9 @@ function(sceneViewElt, sceneViewDisplayableElt, selectedVolumeID) {
     this.visible = isVisible;
     
 }
-goog.inherits(gxnat.slicer.VolumeDisplayNode, gxnat.slicer.DisplayNode)
-goog.exportSymbol('gxnat.slicer.VolumeDisplayNode', 
-		  gxnat.slicer.VolumeDisplayNode);
+goog.inherits(gxnat.slicerNode.VolumeDisplayNode, gxnat.slicerNode.DisplayNode)
+goog.exportSymbol('gxnat.slicerNode.VolumeDisplayNode', 
+		  gxnat.slicerNode.VolumeDisplayNode);
 
 
 
@@ -103,8 +108,8 @@ goog.exportSymbol('gxnat.slicer.VolumeDisplayNode',
  * @param {!goog.math.Matrix} coronal
  * @param {!goog.math.Matrix} axial
  */
-goog.provide('gxnat.slicer.VolumeDisplayNode.sliceToRAS');
-gxnat.slicer.VolumeDisplayNode.sliceToRAS = 
+goog.provide('gxnat.slicerNode.VolumeDisplayNode.sliceToRAS');
+gxnat.slicerNode.VolumeDisplayNode.sliceToRAS = 
 function(sagittal, coronal, axial) {
 
     this.sagittal = sagittal;
@@ -132,7 +137,7 @@ function(sagittal, coronal, axial) {
 	}
     }.bind(this))
 
-    window.console.log('\n\n\n', this)
+    //window.console.log('\n\n\n', this)
 }
-goog.exportSymbol('gxnat.slicer.VolumeDisplayNode.sliceToRAS', 
-		  gxnat.slicer.VolumeDisplayNode.sliceToRAS);
+goog.exportSymbol('gxnat.slicerNode.VolumeDisplayNode.sliceToRAS', 
+		  gxnat.slicerNode.VolumeDisplayNode.sliceToRAS);

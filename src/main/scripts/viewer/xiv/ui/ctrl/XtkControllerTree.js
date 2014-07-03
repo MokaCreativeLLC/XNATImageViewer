@@ -16,7 +16,7 @@ goog.require('X.sphere');
 
 // xiv
 goog.require('xiv.ui.ctrl.LevelsController');
-goog.require('xiv.ui.ctrl.VolumeController2D');
+goog.require('xiv.ui.ctrl.VolumeController');
 goog.require('xiv.ui.ctrl.VolumeController3D');
 goog.require('xiv.ui.ctrl.MeshController3D');
 goog.require('xiv.ui.ctrl.AnnotationsController3D');
@@ -102,10 +102,10 @@ xiv.ui.ctrl.XtkControllerTree.prototype.LevelsController_;
 
 
 /**
- * @type {xiv.ui.ctrl.VolumeController2D}
+ * @type {xiv.ui.ctrl.VolumeController}
  * @private
  */
-xiv.ui.ctrl.XtkControllerTree.prototype.VolumeController2D_;
+xiv.ui.ctrl.XtkControllerTree.prototype.VolumeController_;
 
 
 
@@ -167,16 +167,6 @@ function(){
 
 
 
-/**
- * @return {Array.<xiv.ui.ctrl.XtkController>}
- * @public
- */
-xiv.ui.ctrl.XtkControllerTree.prototype.Volumes2D = 
-function(){
-    return this.getControllers([this.VolumeController2D_])
-}
-
-
 
 /**
  * @return {Array.<xiv.ui.ctrl.XtkController>}
@@ -197,8 +187,9 @@ function(){
 
     this['volumes'] =
 	new xiv.ui.ctrl.XtkControllerTree.ControlSet(
-	    this.getControllers([this.VolumeController2D_]), 
-	    this.getControllers([this.VolumeController3D_]));
+	    null, 
+	    this.getControllers([this.VolumeController3D_]),
+	    this.getControllers([this.VolumeController_]));
 
 
     this['annotations'] =
@@ -273,7 +264,7 @@ function(mainControls) {
 xiv.ui.ctrl.XtkControllerTree.prototype.updateControllers = function() {
     var ctrls =  this.getControllers([
 	this.LevelsController_,
-	this.VolumeController2D_,
+	this.VolumeController_,
 	this.VolumeController3D_,
 	this.MeshController3D_,
 	this.AnnotationsController3D_,
@@ -297,13 +288,15 @@ function(xObj, renderProps) {
 
     //window.console.log(xObj);
     if (xObj instanceof X.volume) {
-	if (!goog.isDefAndNotNull(this.VolumeController2D_)){
+	if (!goog.isDefAndNotNull(this.VolumeController_)){
 	    this.LevelsController_ = new xiv.ui.ctrl.LevelsController();
-	    this.VolumeController2D_ = new xiv.ui.ctrl.VolumeController2D();
+	    this.VolumeController_ = new xiv.ui.ctrl.VolumeController();
+	    //this.VolumeController2D_ = new xiv.ui.ctrl.VolumeController2D();
 	    this.VolumeController3D_ = new xiv.ui.ctrl.VolumeController3D();
 	}
 	this.LevelsController_.add(xObj, renderProps);
-	this.VolumeController2D_.add(xObj, renderProps);
+	this.VolumeController_.add(xObj, renderProps);
+	//this.VolumeController2D_.add(xObj, renderProps);
 	this.VolumeController3D_.add(xObj, renderProps);
     }
 
@@ -355,6 +348,11 @@ xiv.ui.ctrl.XtkControllerTree.prototype.disposeInternal = function() {
 	delete this.LevelsController_;
     }
 
+
+    if (goog.isDefAndNotNull(this.VolumeController_)){
+	this.VolumeController_.dispose();
+	delete this.VolumeController_;
+    }
 
 
     if (goog.isDefAndNotNull(this.VolumeController2D_)){

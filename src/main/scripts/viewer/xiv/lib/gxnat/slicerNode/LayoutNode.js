@@ -1,11 +1,11 @@
-goog.require('gxnat.slicer.Node');
+goog.require('gxnat.slicerNode.Node');
 
 /**
  * @struct
  * @param {!number} layoutNum
- * @extends {gxnat.slicer.Node}
+ * @extends {gxnat.slicerNode.Node}
  */
-gxnat.slicer.LayoutNode = function(layoutNum){
+gxnat.slicerNode.LayoutNode = function(layoutNum){
     goog.base(this);
 
     var layoutName = 'Conventional';
@@ -19,5 +19,5 @@ gxnat.slicer.LayoutNode = function(layoutNum){
     }
     this.layoutName = layoutName
 }
-goog.inherits(gxnat.slicer.LayoutNode, gxnat.slicer.Node);
-goog.exportSymbol('gxnat.slicer.LayoutNode', gxnat.slicer.LayoutNode);
+goog.inherits(gxnat.slicerNode.LayoutNode, gxnat.slicerNode.Node);
+goog.exportSymbol('gxnat.slicerNode.LayoutNode', gxnat.slicerNode.LayoutNode);

@@ -6,7 +6,7 @@
 goog.require('goog.object');
 
 // xiv
-goog.require('xiv.ui.ctrl.MasterController2D');
+goog.require('xiv.ui.ctrl.MasterController');
 goog.require('xiv.ui.ctrl.RadioButtonController');
 
 
@@ -16,13 +16,13 @@ goog.require('xiv.ui.ctrl.RadioButtonController');
  * @constructor
  * @extends {xiv.ui.ctrl.MasterController2D}
  */
-goog.provide('xiv.ui.ctrl.VolumeController2D');
-xiv.ui.ctrl.VolumeController2D = function() {
+goog.provide('xiv.ui.ctrl.VolumeController');
+xiv.ui.ctrl.VolumeController = function() {
     goog.base(this);
 }
-goog.inherits(xiv.ui.ctrl.VolumeController2D, xiv.ui.ctrl.MasterController2D);
-goog.exportSymbol('xiv.ui.ctrl.VolumeController2D', 
-		  xiv.ui.ctrl.VolumeController2D);
+goog.inherits(xiv.ui.ctrl.VolumeController, xiv.ui.ctrl.MasterController);
+goog.exportSymbol('xiv.ui.ctrl.VolumeController', 
+		  xiv.ui.ctrl.VolumeController);
 
 
 /**
@@ -30,7 +30,7 @@ goog.exportSymbol('xiv.ui.ctrl.VolumeController2D',
  * @const
  * @expose
  */
-xiv.ui.ctrl.VolumeController2D.ID_PREFIX =  'xiv.ui.ctrl.VolumeController2D';
+xiv.ui.ctrl.VolumeController.ID_PREFIX =  'xiv.ui.ctrl.VolumeController';
 
 
 
@@ -38,18 +38,19 @@ xiv.ui.ctrl.VolumeController2D.ID_PREFIX =  'xiv.ui.ctrl.VolumeController2D';
  * @enum {string}
  * @public
  */
-xiv.ui.ctrl.VolumeController2D.CSS_SUFFIX = {};
+xiv.ui.ctrl.VolumeController.CSS_SUFFIX = {};
 
 
 
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.VolumeController2D.prototype.add = function(xObj) {
+xiv.ui.ctrl.VolumeController.prototype.add = function(xObj) {
     // Call superclass add
     goog.base(this, 'add', xObj);
 
     this.add_visibleRadio(xObj);
+
     this.add_labelMapToggle(xObj);
 }
 
@@ -63,13 +64,13 @@ xiv.ui.ctrl.VolumeController2D.prototype.add = function(xObj) {
  * @param {!X.Object} xObj
  * @protected
  */
-xiv.ui.ctrl.VolumeController2D.prototype.add_visibleRadio = function(xObj) {
+xiv.ui.ctrl.VolumeController.prototype.add_visibleRadio = function(xObj) {
 
     // create
     var visible = this.createController(
 	xiv.ui.ctrl.RadioButtonController, 'Visible', 
 	function(e){
-	    
+	    //window.console.log(e);
 	});
 
     // set folder
@@ -80,7 +81,8 @@ xiv.ui.ctrl.VolumeController2D.prototype.add_visibleRadio = function(xObj) {
     visible.setXObj(xObj);
 
     // set defaults
-    visible.getComponent().checked = xObj['isSelectedVolume'] || false;
+    visible.getComponent().checked = xObj[xiv.vis.XtkEngine.SELECTED_VOL_KEY] 
+	|| false;
 }
 
 
@@ -89,13 +91,14 @@ xiv.ui.ctrl.VolumeController2D.prototype.add_visibleRadio = function(xObj) {
  * @param {!X.Object} xObj
  * @protected
  */
-xiv.ui.ctrl.VolumeController2D.prototype.add_labelMapToggle = function(xObj) {
+xiv.ui.ctrl.VolumeController.prototype.add_labelMapToggle = function(xObj) {
 
     // create
     var labelMapCheckBox = this.createController( 
 	xiv.ui.ctrl.CheckboxController, 'Show Label Map', 
 	function(e){
-	    window.console.log(e);
+	    //window.console.log(e);
+	    //window.console.log('label map toggle:', xObj, xObj.labelmap);
 	    xObj.labelmap.visible = e.checked;
 	});
 
@@ -118,11 +121,11 @@ xiv.ui.ctrl.VolumeController2D.prototype.add_labelMapToggle = function(xObj) {
  * @param {!string} labelTitle;
  * @public
  */
-xiv.ui.ctrl.VolumeController2D.prototype.disposeInternal = function() {
+xiv.ui.ctrl.VolumeController.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
     
     window.console.log("need to implement dispose methods" + 
-		       " for VolumeController2D");
+		       " for VolumeController");
 }
 
 

@@ -3,8 +3,11 @@
  * @author amh1646@rih.edu (Amanda Hartung)
  */
 
-// xtk
+// xiv
 goog.require('xiv.vis.XtkRenderer2D');
+goog.require('xiv.vis.XtkPlane');
+
+//-----------
 
 
 /**

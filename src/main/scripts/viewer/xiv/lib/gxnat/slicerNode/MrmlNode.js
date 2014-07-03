@@ -1,4 +1,4 @@
-goog.require('gxnat.slicer.Node');
+goog.require('gxnat.slicerNode.Node');
 
 
 
@@ -9,9 +9,9 @@ goog.require('gxnat.slicer.Node');
  * @param {!string} mrbUrl
  * @param {!string | !Array.<string>} fileList The file list of the given mrb
  *    where the mrml is located.
- * @extends {gxnat.slicer.Node}
+ * @extends {gxnat.slicerNode.Node}
  */
-gxnat.slicer.MrmlNode = function(fileName, mrmlDoc, mrbUrl, fileList) {
+gxnat.slicerNode.MrmlNode = function(fileName, mrmlDoc, mrbUrl, fileList) {
     goog.base(this);
 
     this.url = fileName;
@@ -19,5 +19,5 @@ gxnat.slicer.MrmlNode = function(fileName, mrmlDoc, mrbUrl, fileList) {
     this.files = fileList;
     this.mrbUrl = mrbUrl
 }
-goog.inherits(gxnat.slicer.MrmlNode, gxnat.slicer.Node);
-goog.exportSymbol('gxnat.slicer.MrmlNode', gxnat.slicer.MrmlNode);
+goog.inherits(gxnat.slicerNode.MrmlNode, gxnat.slicerNode.Node);
+goog.exportSymbol('gxnat.slicerNode.MrmlNode', gxnat.slicerNode.MrmlNode);

@@ -2,6 +2,8 @@
 goog.require('xiv.sampleData.Sample');
 goog.require('xiv.sampleData.SampleCollection');
 
+//-----------
+
 /**
  * @extends {xiv.sampleData.SampleCollection}
  * @constructor

@@ -4,6 +4,8 @@
 
 // goog
 goog.require('goog.string');
+goog.require('goog.array');
+goog.require('goog.string.path');
 
 // nrg
 goog.require('nrg.string');
@@ -13,6 +15,13 @@ goog.require('gxnat');
 goog.require('gxnat.slicer');
 goog.require('gxnat.vis.AjaxViewableTree');
 goog.require('gxnat.vis.ViewableGroup');
+goog.require('gxnat.vis.Scan');
+goog.require('gxnat.vis.Viewable');
+goog.require('gxnat.slicerNode.SceneViewNode');
+goog.require('gxnat.slicerNode.MrmlNode');
+goog.require('gxnat.slicerNode.VolumeDisplayNode');
+goog.require('gxnat.slicerNode.DisplayableNode');
+//-----------
 
 
 
@@ -157,8 +166,8 @@ gxnat.vis.Slicer.prototype.getMrmlNodes_ = function(opt_initComplete){
 
 
 /**
- * @param {!Array.<gxnat.slicer.SceneViewNode>} sceneViewNodes
- * @param {!Array.<gxnat.slicer.MrmlNode>} mrmlNodes
+ * @param {!Array.<gxnat.slicerNode.SceneViewNode>} sceneViewNodes
+ * @param {!Array.<gxnat.slicerNode.MrmlNode>} mrmlNodes
  * @param {Function=} opt_initComplete The callback when the init process is 
  *     complete.
  */
@@ -191,8 +200,7 @@ function(sceneViewNodes, mrmlNodes, opt_initComplete) {
 		    this.mrbFiles_);
 		//window.console.log(displayable.file, this.mrbFiles_,fileName);
 		// Make some specialized adjustments for volumes
-		if (displayable.properties instanceof 
-		    gxnat.slicer.VolumeDisplayNode) {
+		if (displayable.properties instanceof gxnat.slicerNode.VolumeDisplayNode) {
 		    this.adjustVolumeDisplayProperties_(displayable);
 		}
 
@@ -236,7 +244,7 @@ function(sceneViewNodes, mrmlNodes, opt_initComplete) {
 
 
 /**
- * @param {!gxnat.slicer.DisplayableNode} displayable
+ * @param {!gxnat.slicerNode.DisplayableNode} displayable
  */
 gxnat.vis.Slicer.prototype.adjustVolumeDisplayProperties_ = 
 function(displayable){

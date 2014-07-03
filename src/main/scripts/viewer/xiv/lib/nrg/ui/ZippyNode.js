@@ -9,7 +9,6 @@ goog.require('goog.string');
 goog.require('goog.ui.AnimatedZippy');
 goog.require('goog.ui.Zippy.Events');
 goog.require('goog.ui.Zippy');
-goog.require('goog.ui.ZippyNode');
 goog.require('goog.dom.classes');
 
 // nrg
@@ -105,7 +104,7 @@ function (title, parentElement, opt_expanded, opt_insertMethod) {
 
 
     /**
-     * @type {!Object.<string, goog.ui.ZippyNode>}
+     * @type {!Object.<string, nrg.ui.ZippyNode>}
      * @private
      */
     this.Nodes_ = {};
@@ -135,6 +134,7 @@ nrg.ui.ZippyNode.ID_PREFIX = 'nrg.ui.ZippyNode';
 nrg.ui.ZippyNode.EventType = {
   EXPANDED: goog.events.getUniqueId('expanded'),
   COLLAPSED: goog.events.getUniqueId('collapsed'),
+  CLICKED: goog.events.getUniqueId('clicked'),
 };
 
 
@@ -351,6 +351,9 @@ nrg.ui.ZippyNode.prototype.setZippyEvents_ExpandAndCollapse_ = function() {
 		this.onZippyCollapsed_();
 	    }
 	}
+	else {
+	    this.onZippyClicked_();
+	}
     }.bind(this));
 }
 
@@ -366,6 +369,19 @@ nrg.ui.ZippyNode.prototype.setZippyEvents_Hover_ = function() {
     goog.events.listen(this.header_, goog.events.EventType.MOUSEOUT, 
 		       this.onZippyMouseOut_.bind(this));
 } 
+
+
+
+/**
+ * Callback for when a zippy is expanded.
+ * @private
+ */
+nrg.ui.ZippyNode.prototype.onZippyClicked_ = function(){
+    this.dispatchEvent({
+	type: nrg.ui.ZippyNode.EventType.CLICKED
+    });
+}
+
 
 
 

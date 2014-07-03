@@ -1,4 +1,18 @@
+
+// goog
+goog.require('goog.labs.userAgent.browser');
+goog.require('goog.object');
+goog.require('goog.string');
+goog.require('goog.dom.classes');
+goog.require('goog.dom');
+
+// nrg
+goog.require('nrg.fx');
 goog.require('nrg.ui.ErrorOverlay');
+
+
+//-----------
+
 
 
 /**

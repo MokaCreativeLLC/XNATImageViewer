@@ -5,12 +5,19 @@
 // goog
 goog.require('goog.array');
 goog.require('goog.dom');
+goog.require('goog.events');
+goog.require('goog.string');
+goog.require('goog.dom.classes');
 
-// utils
+// nrg
 goog.require('nrg.dom');
 goog.require('nrg.style');
 goog.require('nrg.fx');
 goog.require('nrg.ui.ThumbnailGallery');
+goog.require('nrg.ui.Component');
+goog.require('nrg.ui.Thumbnail');
+
+//-----------
 
 
 

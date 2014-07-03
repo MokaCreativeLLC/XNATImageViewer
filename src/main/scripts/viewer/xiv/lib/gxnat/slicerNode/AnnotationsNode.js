@@ -1,4 +1,5 @@
-goog.require('gxnat.slicer.Node');
+// goog
+goog.require('gxnat.slicerNode.Node');
 
 
 /**
@@ -8,9 +9,9 @@ goog.require('gxnat.slicer.Node');
  * @param {!string} fcsvText
  * @param {!string} markupsFiducialId
  * @param {!string} displayNodeId
- * @extends {gxnat.slicer.Node}
+ * @extends {gxnat.slicerNode.Node}
  */
-gxnat.slicer.AnnotationsNode = 
+gxnat.slicerNode.AnnotationsNode = 
 function(position, color, fcsvText, markupsFiducialId, displayNodeId, name) {
     goog.base(this);
 
@@ -21,6 +22,6 @@ function(position, color, fcsvText, markupsFiducialId, displayNodeId, name) {
     this.displayNodeId = displayNodeId;
     this.name = name;
 }
-goog.inherits(gxnat.slicer.AnnotationsNode, gxnat.slicer.Node);
-goog.exportSymbol('gxnat.slicer.AnnotationsNode', 
-		  gxnat.slicer.AnnotationsNode);
+goog.inherits(gxnat.slicerNode.AnnotationsNode, gxnat.slicerNode.Node);
+goog.exportSymbol('gxnat.slicerNode.AnnotationsNode', 
+		  gxnat.slicerNode.AnnotationsNode);

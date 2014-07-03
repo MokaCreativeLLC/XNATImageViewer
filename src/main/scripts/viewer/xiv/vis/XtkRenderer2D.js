@@ -4,13 +4,19 @@
 
 // goog
 goog.require('goog.math.Matrix');
+goog.require('goog.events');
+
+// X
+goog.require('X.renderer');
+goog.require('X.renderer2D');
+goog.require('X.camera2D');
+goog.require('X.volume');
 
 // xiv
 goog.require('xiv.vis.XtkEngine');
+goog.require('xiv.vis.RenderEngine');
 
-
-// xtk
-goog.require('X.renderer2D');
+//-----------
 
 
 /**

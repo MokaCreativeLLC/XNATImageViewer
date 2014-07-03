@@ -4,7 +4,8 @@
 
 // goog
 goog.require('goog.Disposable');
-//goog.require('JSZip');
+goog.require('goog.object');
+goog.require('JSZip');
 
 
 /**
@@ -27,7 +28,7 @@ goog.exportSymbol('gxnat.Zip', gxnat.Zip);
 
 
 /**
- * @return {Object.<string, JSZip.file>}
+ * @return {Object.<string, ZipObject>}
  */
 gxnat.Zip.prototype.getFiles = function(url) {
     return this.Zip_.files;

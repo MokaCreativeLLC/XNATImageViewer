@@ -2,11 +2,13 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-// goog 
+// goog
 goog.require('goog.array');
 goog.require('goog.string');
+goog.require('goog.object');
 
 // gxnat
+goog.require('gxnat');
 goog.require('gxnat.Path');
 goog.require('gxnat.vis.ViewableTree');
 
@@ -20,7 +22,7 @@ goog.require('gxnat.vis.ViewableTree');
  * @param {!string} category The category of the viewable.
  * @param {Object=} opt_viewableJson The json associated with the viewable.
  * @param {string=} opt_experimentUrl The experiment-level url of the viewable.
- * @extends {goog.vis.ViewableTree}
+ * @extends {gxnat.vis.ViewableTree}
  */
 goog.provide('gxnat.vis.AjaxViewableTree');
 gxnat.vis.AjaxViewableTree = 

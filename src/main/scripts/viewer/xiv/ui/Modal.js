@@ -14,43 +14,32 @@ goog.require('goog.style');
 goog.require('goog.fx.AnimationParallelQueue');
 goog.require('goog.fx.dom.Slide');
 goog.require('goog.fx.dom.Resize');
-goog.require('goog.dom.classes');
-goog.require('goog.getCssName');
 goog.require('goog.fx.dom.PredefinedEffect');
 goog.require('goog.events.Event');
-goog.require('goog.events.EventType');
-
+goog.require('goog.dom.classes');
 
 // nrg
 goog.require('nrg.dom');
 goog.require('nrg.style');
 goog.require('nrg.convert');
 goog.require('nrg.fx');
-goog.require('nrg.ui');
 goog.require('nrg.ui.Component');
 goog.require('nrg.ui.Resizable');
 goog.require('nrg.ui.Thumbnail');
-goog.require('nrg.ui.Components');
 goog.require('nrg.ui.ZipTabs');
-goog.require('nrg.ui.Resizable.EventType');
-goog.require('nrg.ui.Thumbnail.EventType');
-
 
 // xiv
 goog.require('xiv.ui.ThumbnailGallery');
 goog.require('xiv.ui.ViewBoxHandler');
 goog.require('xiv.ui.ViewBox');
-goog.require('xiv.ui.ViewBoxes');
-goog.require('xiv.ui.ViewBox.ID');
-goog.require('xiv.ui.ViewBoxHandler.EventType');
-goog.require('xiv.ui.ThumbnailGallery.EventType');
 
+//-----------
 
 
 
 
 /**
- * xiv.ui.Modal is the central class where various nrg.ui.Components meet.
+ * xiv.ui.Modal is the central class where various nrg.ui.Component meet.
  * @constructor
  * @extends {nrg.ui.Component}
  */

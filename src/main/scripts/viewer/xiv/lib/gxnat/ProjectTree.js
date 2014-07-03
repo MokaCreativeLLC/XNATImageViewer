@@ -3,10 +3,12 @@
  */
 
 // goog
-goog.require('goog.array');
 goog.require('goog.Disposable');
+goog.require('goog.array');
+goog.require('goog.object');
+goog.require('goog.string');
 
-//nrg
+// gxnat
 goog.require('gxnat');
 goog.require('gxnat.Path');
 

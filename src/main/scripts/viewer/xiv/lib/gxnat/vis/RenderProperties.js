@@ -6,12 +6,18 @@
 goog.require('goog.object');
 goog.require('goog.Disposable');
 
+// gxnat
+goog.require('gxnat.slicerNode.Node');
+goog.require('gxnat.slicerNode.SceneViewNode');
+goog.require('gxnat.slicerNode.VolumeDisplayNode');
+goog.require('gxnat.slicerNode.MeshDisplayNode');
+
 
 
 
 /**
  * @struct
- * @param {!gxnat.slicer.Node}
+ * @param {!gxnat.slicerNode.Node}
  * @extends {goog.Disposable}
  */
 goog.provide('gxnat.vis.RenderProperties');
@@ -23,7 +29,7 @@ gxnat.vis.RenderProperties = function(slicerNode){
     //
     // Scene Views
     //
-    if (slicerNode instanceof gxnat.slicer.SceneViewNode){
+    if (slicerNode instanceof gxnat.slicerNode.SceneViewNode){
 	this.annotations = slicerNode.annotations;
 	this.camera = slicerNode.camera;
 	this.backgroundColor = slicerNode.backgroundColor;
@@ -35,7 +41,7 @@ gxnat.vis.RenderProperties = function(slicerNode){
     //
     // Volumes
     //
-    else if (slicerNode instanceof gxnat.slicer.VolumeDisplayNode){
+    else if (slicerNode instanceof gxnat.slicerNode.VolumeDisplayNode){
 	//window.console.log("VOLUME DISPLAY", slicerNode);
 	this.origin = slicerNode.origin || [0,0,0];
 	this.upperThreshold = slicerNode.upperThreshold || 10000;
@@ -56,7 +62,7 @@ gxnat.vis.RenderProperties = function(slicerNode){
     //
     // Meshes
     //
-    else if (slicerNode instanceof gxnat.slicer.MeshDisplayNode){
+    else if (slicerNode instanceof gxnat.slicerNode.MeshDisplayNode){
 	this.color = slicerNode.color || [.5,.5,.5];
 	this.opacity = slicerNode.opacity || 1;
     }

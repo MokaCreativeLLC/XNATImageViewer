@@ -1,3 +1,6 @@
+
+//-----------
+
 /**
  * @param {!Array.string} files
  * @param {!Object.<string, string | number>} metadata

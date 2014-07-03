@@ -1,14 +1,14 @@
-goog.require('gxnat.slicer.Node');
-
+goog.require('gxnat.slicer');
+goog.require('gxnat.slicerNode.Node');
 
 /**
  * @struct
  * @param {!Element} sceneViewElt
  * @param {!Element} sceneViewDisplayableElt
- * @extends {gxnat.slicer.Node}
+ * @extends {gxnat.slicerNode.Node}
  */
-goog.provide('gxnat.slicer.DisplayNode');
-gxnat.slicer.DisplayNode = function(sceneViewElt, sceneViewDisplayableElt){
+goog.provide('gxnat.slicerNode.DisplayNode');
+gxnat.slicerNode.DisplayNode = function(sceneViewElt, sceneViewDisplayableElt){
     goog.base(this);
 
     var displayProperties = [];
@@ -43,9 +43,6 @@ gxnat.slicer.DisplayNode = function(sceneViewElt, sceneViewDisplayableElt){
 	    > -1) {
 	    displayNodeElt = displayNodeElts[i];
 	    break;
-	    //displayProperties.push(
-	//	new gxnat.slicer.GenericDisplayNode(displayNodeElts[i], 
-	//				sceneViewDisplayableElt));
 	}
     }
     
@@ -65,5 +62,5 @@ gxnat.slicer.DisplayNode = function(sceneViewElt, sceneViewDisplayableElt){
 
 
 }
-goog.inherits(gxnat.slicer.DisplayNode, gxnat.slicer.Node);
-goog.exportSymbol('gxnat.slicer.DisplayNode', gxnat.slicer.DisplayNode);
+goog.inherits(gxnat.slicerNode.DisplayNode, gxnat.slicerNode.Node);
+goog.exportSymbol('gxnat.slicerNode.DisplayNode', gxnat.slicerNode.DisplayNode);

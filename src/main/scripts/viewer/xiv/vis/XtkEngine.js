@@ -3,18 +3,38 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-// xtk
+// goog
+goog.require('goog.events');
+goog.require('goog.string');
+goog.require('goog.array');
+goog.require('goog.object');
+goog.require('goog.string.path');
+
+// X
 goog.require('X.mesh');
 goog.require('X.volume');
 goog.require('X.fibers');
 goog.require('X.sphere');
+goog.require('X.object');
+
+// nrg
+goog.require('nrg.string');
+
+// gxnat
+goog.require('gxnat.vis.ViewableGroup');
+goog.require('gxnat.vis.RenderProperties');
+goog.require('gxnat.slicerNode.AnnotationsNode');
 
 // xiv
 goog.require('xiv.vis.XtkPlane');
 goog.require('xiv.vis.XtkPlane2D');
 goog.require('xiv.vis.XtkPlane3D');
+goog.require('xiv.vis.RenderEngine');
 goog.require('xiv.ui.ctrl.XtkController');
 goog.require('xiv.ui.ctrl.XtkControllerTree');
+
+
+//-----------
 
 
 
@@ -36,7 +56,7 @@ xiv.vis.XtkEngine = function () {
 
 
     /**
-     * @type {!Object.<string, X.Object>}
+     * @type {!Object.<string, X.object>}
      * @private
      */
     this.currXObjects_ = {
@@ -89,6 +109,7 @@ xiv.vis.XtkEngine = function () {
     this.Planes_[this.PlaneY_.getOrientation()] = this.PlaneY_;
     this.Planes_[this.PlaneZ_.getOrientation()] = this.PlaneZ_;
     this.Planes_[this.PlaneV_.getOrientation()] = this.PlaneV_;
+
 
 
     /**
@@ -444,7 +465,40 @@ xiv.vis.XtkEngine.prototype.render3dPlane = function(){
 
 
 /**
+ * @param {X.volume=} opt_volume The optional volume to render.  Defaults to 
+ *    the selected volume.
+ * @public
+ */
+xiv.vis.XtkEngine.prototype.render2D = function(opt_volume){
+    var volume = goog.isDefAndNotNull(opt_volume) ? opt_volume :
+	this.getSelectedVolume();
+    goog.object.forEach(this.Planes_, function(Plane, planeOr){
+	if (planeOr.toLowerCase() == 'v') { return }
+	Plane.init();
+	Plane.add(volume);
+	Plane.render();    
+    })  
+}
+
+
+
+/**
  * @private
+ */
+xiv.vis.XtkEngine.prototype.hideNonSelectedVolumes_ = function(){
+    var selVol = this.getSelectedVolume();
+    goog.object.forEach(this.currXObjects_['volumes'], function(vol){
+	if (vol !== selVol){
+	    vol.visible = false;
+	}
+    })
+}
+
+
+
+
+/**
+ * @public
  */
 xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
     var selectedVolume = this.getSelectedVolume();
@@ -472,10 +526,11 @@ xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
 
 
     //
-    // Add all the other volumes to plane V if they're visible
+    // Add all the other volumes to plane V, but make sure they're not visible
     //
     goog.array.forEach(volumes, function(vol){
-	if (vol !== selectedVolume && vol.visible){
+	if (vol !== selectedVolume){
+	    vol.visible = true;
 	    this.PlaneV_.add(vol);
 	}
     }.bind(this))
@@ -622,7 +677,7 @@ function(xVolume, planeOrientations){
 
 
 /**
- * @return {X.Volume}
+ * @return {X.volume}
  * @public
  */
 xiv.vis.XtkEngine.prototype.getSelectedVolume = function(){
@@ -667,7 +722,7 @@ xiv.vis.XtkEngine.prototype.updateStyle = function(){
 
 
 /**
- * @param {!X.Object} xObj 
+ * @param {!X.object} xObj 
  * @param {!gxnat.vis.RenderProperties} renderProperties 
  * @private
  */
@@ -680,7 +735,7 @@ function(xObj, renderProperties){
 
 
 /**
- * @param {!X.Object} xObj 
+ * @param {!X.object} xObj 
  * @param {!gxnat.vis.RenderProperties} renderProperties 
  * @private
  */
@@ -769,6 +824,16 @@ xiv.vis.XtkEngine.prototype.onRenderEnd_ = function(e){
 		       this.PlaneX_.getVolume().dimensionsRAS);
     */
     
+
+    //
+    // Hide non-selected volumes
+    //
+    // NOTE: This is to accommodate for an XTK bug, where if a volume's
+    // visibility is set to false, and it is then added to a renderer,
+    // the renderer will not render it.
+    //
+    this.hideNonSelectedVolumes_();
+
     //
     // Unlisten for the rendering
     //
@@ -1143,7 +1208,7 @@ xiv.vis.XtkEngine.ViewablesObject = {
  * The object type will be either 'volume', 'mesh', or 'fiber'.
  *
  * @param {!string | !Array.<string>} fileCollection The files to 
- *    categorize based on X.Objects.
+ *    categorize based on X.objects.
  * @return {!string | !Array.<string>}
  */
 
@@ -1232,7 +1297,7 @@ xiv.vis.XtkEngine.getViewables = function(fileCollection) {
  *
  * @param {!string | !Array.<string>} fileCollection
  * @param {!string | !Array} opt_fileData
- * @return {X.Object}
+ * @return {X.object}
  */
 xiv.vis.XtkEngine.createXObject = function(fileCollection, opt_fileData) {
 

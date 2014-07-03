@@ -5,6 +5,53 @@
 // goog
 goog.require('goog.events.EventTarget');
 goog.require('goog.math.Vec2');
+goog.require('goog.events.Key');
+goog.require('goog.dom');
+goog.require('goog.dom.classes');
+goog.require('goog.events');
+goog.require('goog.string');
+goog.require('goog.events.KeyHandler');
+goog.require('goog.events.Event');
+goog.require('goog.object');
+goog.require('goog.array');
+
+// X
+goog.require('X.volume');
+
+// nrg
+goog.require('nrg.fx');
+goog.require('nrg.ui.ScrollableZippyTree');
+goog.require('nrg.ui.Slider');
+goog.require('nrg.ui.SlideInMenu');
+goog.require('nrg.ui.ZippyNode');
+goog.require('nrg.ui.Dialog');
+
+// xiv
+goog.require('xiv.vis.RenderEngine');
+goog.require('xiv.vis.XtkRenderer2D');
+goog.require('xiv.vis.XtkEngine');
+goog.require('xiv.ui.ViewBox');
+goog.require('xiv.ui.ViewBoxDialogs');
+goog.require('xiv.ui.ctrl.XtkController');
+goog.require('xiv.ui.ctrl.CheckboxController');
+goog.require('xiv.ui.ctrl.Histogram');
+goog.require('xiv.ui.ctrl.RadioButtonController');
+goog.require('xiv.ui.layouts.Layout');
+goog.require('xiv.ui.layouts.LayoutHandler');
+goog.require('xiv.ui.layouts.interactors.InputController');
+goog.require('xiv.ui.layouts.interactors.ZoomDisplay');
+goog.require('xiv.ui.layouts.interactors.FrameDisplay');
+goog.require('xiv.ui.layouts.Sagittal');
+goog.require('xiv.ui.layouts.Coronal');
+goog.require('xiv.ui.layouts.Transverse');
+goog.require('xiv.ui.layouts.ThreeD');
+goog.require('xiv.ui.layouts.Conventional');
+goog.require('xiv.ui.layouts.FourUp');
+goog.require('xiv.ui.layouts.TwoDRow');
+goog.require('xiv.ui.layouts.TwoDWidescreen');
+goog.require('xiv.ui.ctrl.XtkControllerTree');
+
+//-----------
 
 
 
@@ -229,6 +276,14 @@ xiv.ui.ViewBoxInteractorHandler.prototype.panning_ = false;
  * @type {Object.<string, string>}
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.dialogKeys_ = {};
+
+
+
+/**
+ * @private
+ * @type {Array.<xiv.ui.ctrl.XtkController>}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.volumeToggles_;
 
 
 
@@ -606,6 +661,15 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
 
     case 86: // V (Volumes)
 	this.ViewBox_.fireToggleButton(this.dialogKeys_['volumes']);
+	break;
+
+    case 77: // M (Meshes)
+	this.ViewBox_.fireToggleButton(this.dialogKeys_['meshes']);
+	break;
+
+
+    case 65: // A (Annotations)
+	this.ViewBox_.fireToggleButton(this.dialogKeys_['annotations']);
 	break;
 
     case 67: // C (Crosshairs)
@@ -1043,6 +1107,7 @@ function(){
 			 this.constructor.CSS.GENERIC_ZIPPYTREE);
     this.Dialogs_.getDialogs()[this.dialogKeys_[key]].
 	getElement().appendChild(ctrlTreeElt);
+
     this.zippyTrees_[key].expandAll();
     
 
@@ -1069,11 +1134,6 @@ function(){
 
 
     return controller;
-
-
-    //var ctrl = goog.dom.createDom()
-
-    this.zippyTrees_[key].addContents(ctrl.getElement(), folders);
 }
 
 
@@ -1187,7 +1247,6 @@ function() {
 
 
 
-
 /**
  * @private
  */
@@ -1199,87 +1258,146 @@ xiv.ui.ViewBoxInteractorHandler.prototype.setDialogEvents_ = function() {
 }
 
 
+
 /**
- * @param {xiv.ui.Dialogs.Event} e
+ * @param {xiv.ui.ctrl.XtkController} ctrl
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.updateLevelControllers_ = 
+function(ctrl){
+    //----------------------------------------
+    // IMPORTANT EXCEPTION!! 
+    //
+    // We only need to update the style of the level sliders 
+    // because LEVEL_MIN and LEVEL_MAX are often set to values 
+    // that go beyond the slider values.
+    //----------------------------------------
+    if (!(ctrl instanceof xiv.ui.ctrl.Histogram)){
+	ctrl.getComponent().updateStyle();
+    } 
+    else {
+	ctrl.update();
+    }
+}
+
+
+
+
+/**
+ * @param {!xiv.ui.ctrl.XtkController} ctrl
+ * @param {!string} typeKey
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.updateVolumeToggle_ = 
+function(ctrl, typeKey){
+
+    ctrl.getComponent().checked = 
+	ctrl.getXObj()[xiv.vis.XtkEngine.SELECTED_VOL_KEY] 
+	|| false;
+
+    if (!goog.isDefAndNotNull(this.volumeToggles_)){
+	this.volumeToggles_ = [];
+    }
+
+    if (this.volumeToggles_.indexOf(ctrl) == -1){
+	this.volumeToggles_.push(ctrl);
+    }
+}
+
+
+
+/**
+ * @param {!xiv.ui.ctrl.XtkController} ctrl
+ * @param {!string} typeKey
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.updateLabelMapToggle_ = 
+function(ctrl, typeKey){
+    //window.console.log('labelmap', ctrl.getElement(),
+    //		  xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY);
+
+    if (!ctrl.getXObj()[xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY]){
+	goog.dom.removeNode(ctrl.getElement());
+	ctrl.getElement().style.visibility = 'hidden';
+	ctrl.getElement().style.height = '0px';
+    } 
+    else if (ctrl.getXObj().labelmap.visible &&
+	     !ctrl.getComponent().isChecked()){
+	ctrl.getComponent().setChecked(true);
+    }
+
+    this.zippyTrees_[typeKey].mapSliderToContents();
+}
+
+
+
+
+/**
+ * @param {!xiv.ui.ctrl.XtkController} ctrl
+ * @param {!string} key
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.updateVolumeControllers_ = 
+    function(ctrl, key){
+	var typeKey = key.split(this.constructor.DIALOG_SPLIT)[0];
+	if (ctrl instanceof xiv.ui.ctrl.RadioButtonController){
+	    this.updateVolumeToggle_(ctrl, typeKey);
+	}
+	else if (ctrl.getLabel().innerHTML == 'Show Label Map'){
+	    this.updateLabelMapToggle_(ctrl, typeKey);
+	}
+	ctrl.update();
+    }
+
+
+/**
+ * @param {!string} key
+ * @param {!string} typeKey
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.updateControllers_ = function(key){
+    // Derive the type key
+    var typeKey = key.split(this.constructor.DIALOG_SPLIT)[0];
+
+    // Make sure zippy tree's slider is matched to the contents size    
+    this.zippyTrees_[typeKey].mapSliderToContents();
+
+    // Update the controls
+    goog.object.forEach(this.viewableCtrls_[typeKey], function(ctrls, setKey){
+	if (!goog.isDefAndNotNull(ctrls)) { return }
+	goog.array.forEach(ctrls, function(ctrl){
+
+	    switch(typeKey){
+	    case 'levels':
+		this.updateLevelControllers_(ctrl, key);
+		break;
+	    case 'volumes':
+		this.updateVolumeControllers_(ctrl, key);
+		break;
+	    } 
+
+	}.bind(this))
+    }.bind(this))
+}
+
+
+
+
+/**
+ * @param {?xiv.ui.Dialogs.Event} e
+ * @param {string=} opt_dialogKey
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onControllerDialogOpened_ = 
-function(e){
-
-    if (!goog.isDefAndNotNull(e.dialogKey)){ return }
-    //
-    // Derive the key for referencing the various widgets
-    //
-    var typeKey = e.dialogKey.split(this.constructor.DIALOG_SPLIT)[0];
+function(e, opt_dialogKey){
+    if (!goog.isDefAndNotNull(e.dialogKey) &&
+	!goog.isDefAndNotNull(opt_dialogKey)){ return }
+    var key = goog.isDefAndNotNull(opt_dialogKey) ? opt_dialogKey : e.dialogKey;
 
     //
-    // Access the controls associated with the key
+    // Update controllers
     //
-    goog.object.forEach(this.viewableCtrls_[typeKey], function(ctrls, setKey){
-	//
-	// exit out if no ctrls
-	//
-	if (!goog.isDefAndNotNull(ctrls)) { return }
-
-	//
-	// Make sure zippy tree's slider is matched to the contents size
-	//
-	this.zippyTrees_[typeKey].mapSliderToContents();
-
-	//
-	// loop through all of the controls
-	//
-	goog.array.forEach(ctrls, function(ctrl){
-
-
-	    //----------------------------------------
-	    // IMPORTANT EXCEPTION!! 
-	    //
-	    // We only need to update the style of the level sliders 
-	    // because LEVEL_MIN and LEVEL_MAX are often set to values 
-	    // that go beyond the slider values.
-	    //----------------------------------------
-	    if (typeKey == 'levels' && 
-		!(ctrl instanceof xiv.ui.ctrl.Histogram)){
-		ctrl.getComponent().updateStyle();
-		return;
-	    } 
-	    
-
-	    //
-	    // Selected volme radio button
-	    //
-	    else if (typeKey == 'volumes' && 
-		(ctrl instanceof xiv.ui.ctrl.RadioButtonController)){
-		ctrl.getComponent().checked =  
-		    ctrl.getXObj()[xiv.vis.XtkEngine.SELECTED_VOL_KEY] 
-		    || false;
-		return;
-	    }
-
-
-	    //
-	    // Hide the label map button
-	    //
-	    else if (typeKey == 'volumes' && 
-		(ctrl.getLabel().innerHTML == 'Show Label Map')){
-
-		window.console.log(ctrl.getElement(),
-				  xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY);
-
-		if (!ctrl.getXObj()[xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY]){
-		    ctrl.getComponent().setEnabled(false);
-		    ctrl.getLabel().style.opacity = .5;
-		}
-		this.zippyTrees_[typeKey].mapSliderToContents();
-	    }
-	    
-	    //
-	    // Update
-	    //
-	    ctrl.update();
-	}.bind(this))
-    }.bind(this))
+    this.updateControllers_(key);
 }
 
 
@@ -1290,29 +1408,38 @@ function(e){
 xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
     window.console.log("Applying auto window/level");
 
-    var hist, levelMax, ctrl;
-    var i=0, len = this.viewableCtrls_['levels']['all'].length;
+    var ctrl, currFolders;
+    var folderSet = [], ctrlSet = {};
 
-    for (; i<len; i++){
-	ctrl = this.viewableCtrls_['levels']['all'][i];
+    goog.array.forEach(this.viewableCtrls_['levels']['all'], function(ctrl, i){
+	hist = null;
+	levelMax = null;
+	currFolders = ctrl.getFolders();
+	folderStr = '';
+	goog.array.forEach(currFolders, function(folder){
+	    folderStr += folder;
+	})
+
+	if (!goog.isDefAndNotNull(ctrlSet[folderStr])){
+	    ctrlSet[folderStr] = {};	    
+	}
 
 	if (ctrl instanceof xiv.ui.ctrl.Histogram){
-	    hist = ctrl;
+	    ctrlSet[folderStr].hist = ctrl;
 	} 
 	else if (ctrl.getLabel().innerHTML.indexOf('Level Max') > -1){
-	    levelMax = ctrl;
+	    ctrlSet[folderStr].levelMax = ctrl;
 	}
 
-	if (goog.isDefAndNotNull(levelMax) && 
-	    goog.isDefAndNotNull(hist)){
-	    break;
-	}
-    }
+    }.bind(this))
 
-    var levelMaxVal = hist.getLevelByPixelThreshold(
-	xiv.ui.ctrl.Histogram.LEVEL_CUTOFF);
-    //window.console.log("AUTO LEVEL", hist, levelMax, levelMaxVal);
-    levelMax.getComponent().setValue(levelMaxVal)
+
+    goog.object.forEach(ctrlSet, function(set){
+	var levelMaxVal = set.hist.getLevelByPixelThreshold(
+	    xiv.ui.ctrl.Histogram.LEVEL_CUTOFF);
+	//window.console.log("AUTO LEVEL", hist, levelMax, levelMaxVal);
+	set.levelMax.getComponent().setValue(levelMaxVal)
+    })
 }
 
 
@@ -1854,63 +1981,160 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMenuItemSelected_ = function(e) {
 
 
 
+
+/**
+ * @param {!string} key
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.setZippyTreeEvents_ = function(key){
+    // Update when a zippy header is clicked
+    goog.events.listen(
+	this.zippyTrees_[key].getZippyTree(),
+	nrg.ui.ZippyNode.EventType.CLICKED,
+	function(e){
+	    this.onControllerDialogOpened_(e, this.dialogKeys_[key])
+	}.bind(this));
+}
+
+
+
+
+/**
+ * @param {!string} key
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.createZippyTree_ = 
+function(key) {
+    this.zippyTrees_[key] = new nrg.ui.ScrollableZippyTree();
+    this.zippyTrees_[key].render();
+}
+
+
+
+/**
+ * @param {!string} key
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.createDialogKey_ =
+function(key) {
+    this.dialogKeys_[key] = key + 
+	this.constructor.DIALOG_SPLIT + goog.string.createUniqueString();
+}
+
+
+
+/**
+ * @param {!string} ctrl
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.setVolumeToggleEvents_ =
+function(ctrl){
+    goog.events.listen(
+	ctrl, 
+	xiv.ui.ctrl.XtkController.EventType.CHANGE, 
+	function(e){
+	    goog.array.forEach(this.volumeToggles_, function(tog){
+		var xObj = tog.getXObj();
+		if (tog !== e.target){
+		    tog.getComponent().checked = false;
+		    xObj.visible = false;
+		} else {
+		    xObj.visible = true;
+		    this.Renderer_.render2D(xObj);
+		}
+	    }.bind(this))
+	}.bind(this))
+}
+
+
+
+/**
+ * @param {!string} key
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.addControlsToZippyTree_ =
+    function(key) {
+	// Loop through the viewable controls by category
+	goog.object.forEach(this.viewableCtrls_[key], function(ctrls, sKey){
+	    if (!goog.isArray(ctrls)) { return }
+	    goog.array.forEach(ctrls, function(ctrl){
+		// Get and add the folders.
+		var folders = ctrl.getFolders() || [];
+		if (sKey !== 'all' && folders.length > 0) {
+		    folders.push(sKey)
+		};
+		// Add the contents
+		this.zippyTrees_[key].addContents(ctrl.getElement(), folders);
+		
+		// Set the volume toggle events
+		if (ctrl instanceof xiv.ui.ctrl.RadioButtonController){
+		    this.setVolumeToggleEvents_(ctrl, key);
+		}
+	    }.bind(this))
+	}.bind(this))
+    }
+
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.createControllerZippyTrees_ = 
+function() {
+    //
+    // Create the zippy trees and corresponding dialogs as blank objects with
+    // keys.
+    //
+    this.zippyTrees_ = 
+	xiv.ui.ctrl.XtkControllerTree.getEmptyPropertiesObject();
+    this.dialogKeys_ = goog.object.clone(this.zippyTrees_);
+    
+    //
+    // Create zippy trees
+    //
+    goog.object.forEach(this.zippyTrees_, function(tree, key){
+	this.createZippyTree_(key);
+	this.createDialogKey_(key);
+	this.addControlsToZippyTree_(key);
+	this.setZippyTreeEvents_(key);
+    }.bind(this))
+}
+
+
+
 /**
  * @public
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.createViewableCtrls = 
-function() {
+xiv.ui.ViewBoxInteractorHandler.prototype.createViewableCtrls = function() {
     //
     // Get the controls
     //
     this.viewableCtrls_ = this.Renderer_.getControllerTree();
 
     //
-    // Create the zippy trees
+    // Create the zuppy Trees
     //
-    this.zippyTrees_ = 
-	xiv.ui.ctrl.XtkControllerTree.getEmptyPropertiesObject();
-    this.dialogKeys_ = goog.object.clone(this.zippyTrees_);
-    
-    goog.object.forEach(this.zippyTrees_, function(tree, key){
-	
-	//
-	//
-	//
-	this.zippyTrees_[key] = new nrg.ui.ScrollableZippyTree();
-	this.zippyTrees_[key].render();
+    this.createControllerZippyTrees_();
 
-	//
-	//
-	//
-	this.dialogKeys_[key] = key + 
-	    this.constructor.DIALOG_SPLIT + goog.string.createUniqueString();
-	
-	goog.object.forEach(this.viewableCtrls_[key], function(ctrls, sKey){
-	    if (!goog.isArray(ctrls)) { return }
-	    goog.array.forEach(ctrls, function(ctrl){
-		
-		//
-		//
-		//
-		var folders = ctrl.getFolders() || [];
+    //
+    // Create the controller dialogs
+    //
+    this.createControllerDialogs_();
 
-		//
-		//
-		//
-		if (sKey !== 'all' && folders.length > 0) {
-		    folders.push(sKey)
-		};
-
-		//
-		//
-		//
-		this.zippyTrees_[key].addContents(ctrl.getElement(), folders);
-	    }.bind(this))
-	}.bind(this))	    
-    }.bind(this))
+    //
+    // Sync the render controllers with the renderer
+    //
+    this.syncVolumeCtrlsToRenderer_();
+}
 
 
 
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.createControllerDialogs_ = 
+function() {
     //
     // Create the dialogs
     //
@@ -1951,13 +2175,19 @@ function() {
 			     this.constructor.CSS.GENERIC_ZIPPYTREE);
 	this.Dialogs_.getDialogs()[this.dialogKeys_[key]].
 	    getElement().appendChild(ctrlTreeElt);
-	this.zippyTrees_[key].expandAll();
-    }.bind(this))
 
-    //
-    // Sync the render controllers with the renderer
-    //
-    this.syncVolumeCtrlsToRenderer_();
+	//
+	// Expand collapse trees based on the node count
+	//
+	var nodeCount = 
+	    this.zippyTrees_[key].getZippyTree().getTopLevelNodes().length;
+	if (nodeCount > 1){
+	    this.zippyTrees_[key].collapseAll();
+	}
+	else {
+	    this.zippyTrees_[key].expandAll(); 
+	}
+    }.bind(this))
 }
 
 

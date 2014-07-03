@@ -5,21 +5,27 @@
 // goog
 goog.require('goog.string');
 goog.require('goog.dom');
-goog.require('goog.dom.classes');
 goog.require('goog.events');
 goog.require('goog.array');
 goog.require('goog.fx.DragDrop');
 goog.require('goog.fx.DragDropGroup');
+goog.require('goog.object');
+goog.require('goog.dom.classes');
 
-// utils
+// nrg
 goog.require('nrg.string');
 goog.require('nrg.fx');
 goog.require('nrg.ui.Thumbnail');
 goog.require('nrg.ui.ThumbnailGallery');
 goog.require('nrg.ui.Resizable');
 
+// gxnat
+goog.require('gxnat.vis.ViewableTree');
+
 // xiv
 goog.require('xiv.ui.Thumbnail');
+
+//-----------
 
 
 

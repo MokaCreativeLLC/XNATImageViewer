@@ -14,16 +14,13 @@ goog.require('goog.fx.AnimationSerialQueue');
 goog.require('goog.fx.dom.FadeIn');
 goog.require('goog.ui.Zippy');
 goog.require('goog.dom.classes');
-goog.require('goog.fx.Transition.EventType');
+goog.require('goog.fx.Transition');
 goog.require('goog.fx.AnimationParallelQueue');
 goog.require('goog.dom.classlist');
 
 // nrg
 goog.require('nrg.style');
 goog.require('nrg.ui.ZippyNode');
-goog.require('nrg.ui.ZippyNode.EventType');
-goog.require('nrg.ui.ZippyNode.NODE');
-goog.require('nrg.ui.ZippyNode.CSS');
 
 
 
@@ -235,6 +232,49 @@ nrg.ui.ZippyTree.prototype.contractAll = function() {
  * @return {!boolean}
  * @public
  */
+nrg.ui.ZippyTree.prototype.collapseAll = function() {
+    this.contractAll();
+}
+
+
+
+/**
+ * WARNING: O(N) operation.  Use sparingly.
+ *
+ * @return {!Array.<nrg.ui.ZippyNode>}
+ * @public
+ */
+nrg.ui.ZippyTree.prototype.getAllNodes = function() {
+    var nodes = [];
+    this.traverse(function(node){
+	nodes.push(node);
+    }, this)
+    return nodes;
+};
+
+
+
+/**
+ * WARNING: Potentially O(N) operation.  Use sparingly.
+ *
+ * @return {!Array.<nrg.ui.ZippyNode>}
+ * @public
+ */
+nrg.ui.ZippyTree.prototype.getTopLevelNodes = function() {
+    var nodes = [];
+    goog.object.forEach(this.getNodes(), function(node){
+	nodes.push(node);
+    })
+    return nodes;
+};
+
+
+
+/**
+ * As stated.
+ * @return {!boolean}
+ * @public
+ */
 nrg.ui.ZippyTree.prototype.expandAll = function() {
     this.traverse(function(node){
 	node.getZippy().setExpanded(true);
@@ -275,9 +315,9 @@ nrg.ui.ZippyTree.prototype.getElement = function() {
  * @return {nrg.ui.ZippyNode} The expanded zippy node.
  */
 nrg.ui.ZippyTree.prototype.setExpanded = function(folder, opt_startNode) {
-    window.console.log("set EXPAND", folder, opt_startNode);
+    //window.console.log("set EXPAND", folder, opt_startNode);
     opt_startNode = goog.isDefAndNotNull(opt_startNode) ? opt_startNode : this;
-    window.console.log(opt_startNode.getNodes());
+    //window.console.log(opt_startNode.getNodes());
 
     if (goog.isDefAndNotNull(opt_startNode.getNodes()[folder])){
 	var currNode = opt_startNode.getNodes()[folder];
@@ -526,6 +566,49 @@ function(elt, depth, opt_applyWidth, opt_applyLeft){
 
 
 
+/**
+ * @param {!nrg.ui.ZippyNode} node The parent node.
+ * @private
+ */
+nrg.ui.ZippyTree.prototype.setNodeEvents_ = function(node) {
+    //
+    // Listen and dispatch the EXPANDED event
+    //
+    goog.events.listen(node, nrg.ui.ZippyNode.EventType.EXPANDED, function(){
+	//window.console.log('expanded!');
+	//this.indentNodes_();
+	this.dispatchEvent({
+	    type: nrg.ui.ZippyNode.EventType.EXPANDED,
+	    node: node
+	});
+    }.bind(this))
+
+
+    //
+    // Listen and dispatch the EXPANDED event
+    //
+    goog.events.listen(node, nrg.ui.ZippyNode.EventType.CLICKED, function(){
+	this.dispatchEvent({
+	    type: nrg.ui.ZippyNode.EventType.CLICKED,
+	    node: node
+	});
+    }.bind(this))
+
+
+    //
+    // Listen and dispatch the COLLASPED event
+    //
+    goog.events.listen(node, nrg.ui.ZippyNode.EventType.COLLAPSED, function(){
+	this.dispatchEvent({
+	    type: nrg.ui.ZippyNode.EventType.COLLAPSED,
+	    node: node
+	});
+    }.bind(this))
+}
+
+
+
+
 
 /**
  * Conducts node creation specific for the ZippyTree.
@@ -543,13 +626,6 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     //
     parent.style.opacity = this.initOp_;
     var node = new nrg.ui.ZippyNode(title, parent, false);
-    //var node = new nrg.ui.ZippyNode(title, parent, false, 
-    //				    nrg.ui.ZippyTree.folderSorter);
-    //node.setExpanded(false);
-
-    //window.console.log("CREATE NODE", title, parent);
-    //this.putFoldersAtEnd_(parent);
-
 
     //
     // For the very first nodes, we have to set the margin top to 0
@@ -565,30 +641,12 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     node.getHeader().style.left = 'inherit';
     node.getHeader().style.width = 'inherit';
 
-    //
-    // Listen and dispatch the EXPANDED event
-    //
-    goog.events.listen(node, nrg.ui.ZippyNode.EventType.EXPANDED, function(){
-	//window.console.log('expanded!');
-	//this.indentNodes_();
-	this.dispatchEvent({
-	    type: nrg.ui.ZippyNode.EventType.EXPANDED,
-	    node: node
-	});
-    }.bind(this))
-
 
     //
-    // Listen and dispatch the COLLASPED event
+    // Node events
     //
-    goog.events.listen(node, nrg.ui.ZippyNode.EventType.COLLAPSED, function(){
-	//window.console.log('collapsed!');
-	//this.indentNodes_();
-	this.dispatchEvent({
-	    type: nrg.ui.ZippyNode.EventType.COLLAPSED,
-	    node: node
-	});
-    }.bind(this))
+    this.setNodeEvents_(node);
+
 
     //
     // Set the parent node

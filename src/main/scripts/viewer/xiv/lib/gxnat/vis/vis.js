@@ -2,12 +2,6 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-// goog
-goog.require('goog.object');
-
-// gxnat
-goog.require('gxnat.vis.RenderProperties');
-
 
 /**
  * @constructor

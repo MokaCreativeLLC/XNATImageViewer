@@ -20,8 +20,6 @@ goog.require('goog.style');
 goog.require('nrg.style');
 goog.require('nrg.ui.Component');
 goog.require('nrg.ui.ScrollableContainer');
-goog.require('nrg.ui.TabItemCollection');
-
 
 
 

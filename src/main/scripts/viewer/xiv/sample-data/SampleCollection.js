@@ -1,6 +1,15 @@
+
+
+
 // goog
 goog.require('goog.array');
 goog.require('goog.object');
+goog.require('goog.Disposable');
+
+// xiv
+goog.require('xiv.sampleData.Sample');
+
+//-----------
 
 
 /**

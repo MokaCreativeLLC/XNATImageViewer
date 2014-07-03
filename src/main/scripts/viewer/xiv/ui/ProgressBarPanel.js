@@ -4,8 +4,14 @@
 
 // goog
 goog.require('goog.ui.ProgressBar');
+goog.require('goog.dom');
+goog.require('goog.string');
+goog.require('goog.dom.classes');
 
 // nrg
+goog.require('nrg.ui.Component');
+
+//-----------
 
 
 

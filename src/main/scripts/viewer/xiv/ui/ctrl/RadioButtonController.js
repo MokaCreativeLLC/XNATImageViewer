@@ -59,8 +59,7 @@ xiv.ui.ctrl.RadioButtonController.CSS_SUFFIX = {
  * @inheritDoc
  */
 xiv.ui.ctrl.RadioButtonController.prototype.dispatchComponentEvent = function(){
-
-    window.console.log("DISPATCH RADIO", this.getComponent().checked);
+    //window.console.log("DISPATCH RADIO", this.getComponent().checked);
     this.dispatchEvent({
 	type: xiv.ui.ctrl.XtkController.EventType.CHANGE,
 	checked: this.getComponent().checked

@@ -15,7 +15,6 @@ goog.require('goog.inherits');
 goog.require('goog.Timer');
 goog.require('goog.events');
 goog.require('goog.object');
-goog.require('goog.labs.userAgent');
 goog.require('goog.events.EventType');
 
 // X
@@ -26,8 +25,6 @@ goog.require('X.parserIMA');
 goog.require('nrg.fx');
 goog.require('nrg.ui.ErrorOverlay');
 goog.require('nrg.ui.ZippyNode');
-goog.require('nrg.ui.ZippyNode.EventType');
-goog.require('nrg.ui.ZippyTree.EventType');
 
 // gxnat
 goog.require('gxnat');
@@ -37,16 +34,13 @@ goog.require('gxnat.vis.AjaxViewableTree');
 goog.require('gxnat.vis.ViewableTree');
 goog.require('gxnat.vis.Scan');
 goog.require('gxnat.vis.Slicer');
+goog.require('gxnat.ProjectTree');
 goog.require('gxnat.ProjectTree.TreeNode');
-goog.require('gxnat.ProjectTree.METADATA');
-goog.require('gxnat.PrjectTree.TreeNode');
 
 // xiv
 goog.require('xiv.sampleData.Scans');
 goog.require('xiv.sampleData.SlicerScenes');
 goog.require('xiv.ui.Modal');
-goog.require('xiv.ui.Modal.EventType');
-goog.require('xiv.ui.Modal.States');
 
 
 
@@ -268,7 +262,7 @@ xiv.prototype.initProjNode_;
 
 
 /** 
- * @type {gxnat.PrjectTree.TreeNode}
+ * @type {gxnat.ProjectTree.TreeNode}
  * @private
  */
 xiv.prototype.initSubjNode_;

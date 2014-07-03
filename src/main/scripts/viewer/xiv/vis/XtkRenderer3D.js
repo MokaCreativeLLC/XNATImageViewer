@@ -2,8 +2,14 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-// xtk
+// X
 goog.require('X.renderer3D');
+goog.require('X');
+
+// xiv
+goog.require('xiv.vis.RenderEngine');
+
+//-----------
 
 
 /**

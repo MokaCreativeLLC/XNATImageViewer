@@ -2,9 +2,16 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-// goog 
+// goog
+goog.require('goog.object');
+goog.require('goog.array');
+goog.require('goog.string');
+
+// gxnat
 goog.require('gxnat.vis.Renderable');
 goog.require('gxnat.Zip');
+goog.require('gxnat.slicerNode.Node');
+//-----------
 
 
 
@@ -13,8 +20,8 @@ goog.require('gxnat.Zip');
  * since it is a sub-class of Renderable.
  * 
  * @param {string= | Array.string=} opt_files
- * @param {gxnat.slicer.Node=} opt_renderProperties A subclass of 
- *    gxnat.slicer.Node that will be converted to render properties.
+ * @param {gxnat.slicerNode.Node=} opt_renderProperties A subclass of 
+ *    gxnat.slicerNode.Node that will be converted to render properties.
  * @extends {gxnat.vis.Renderable}
  */
 goog.provide('gxnat.vis.Viewable');

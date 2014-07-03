@@ -2,11 +2,13 @@ import sys
 import os
 import shutil
 import collections
+from subprocess import call
+
        
 
 IMG_VIEW_HOME = os.environ.get('XNATIMAGEVIEWER_HOME')
 LOAD_FILE = IMG_VIEW_HOME + \
-            "/src/main/scripts/viewer/xiv/lib/nrg/ui/ZipTabs.js"
+            "/src/main/scripts/viewer/xiv/sample-data/SlicerScenes.js"
 
 
 
@@ -133,7 +135,8 @@ def parseDeps(filename):
                             prov = line.split(PROVIDE_PREFIX + '\'')[1]
                             prov = prov.replace(' ' , '').split('\'')[0]
                             #print 'PROV', prov
-                            providers.append(prov)
+                            if not prov in providers:
+                                providers.append(prov)
 
                 #
                 # Savers
@@ -183,7 +186,7 @@ def parseDeps(filename):
             # Split line by EventType
             #
             if 'EventType' in depSplit:
-                depSplit  = depSplit.split('EventType')[0] + 'EventType' 
+                depSplit  = depSplit.split('.EventType')[0] 
 
             if (len(depSplit) == 0):
                 continue
@@ -198,7 +201,7 @@ def parseDeps(filename):
                 talliedDeps[key] = 0
             talliedDeps[key] += 1
 
-    #print talliedDeps
+    #print 'PROVIDERS', providers
     #
     # Retally by main prefix
     #
@@ -216,8 +219,13 @@ def parseDeps(filename):
 
         isProvider = False
         for prov in providers:
-            if prov in dep:
+            print prov.strip(), dep.strip(), prov.strip() == dep.strip()
+            if prov.strip() == dep.strip():
                 isProvider = True
+            elif prov in dep:
+                suffix = dep.split(prov)[1]
+                if len(suffix) > 0 and suffix[0].islower():
+                    isProvider = True
 
         isGoogSkipper = False
         for skip in GOOG_SKIPPERS:
@@ -235,20 +243,41 @@ def parseDeps(filename):
 
     #
     # PRINT!!
-    #       
+    #      
+    lines = []
     for depPrefix in DEPS_PREFIXES:
         if depsByRoot.has_key(depPrefix):
-            print '\n// ' + depPrefix.split('.')[0]
+            lines.append('\n// ' + depPrefix.split('.')[0] + '\n')
             for req in depsByRoot[depPrefix]:
-                print req
+                lines.append(req + '\n')
                 continue
+
+    lines.append('\n//-----------\n\n')
+    return lines
 
 
 
 
 def main():
-    parseDeps(LOAD_FILE)
-        
+    lines = parseDeps(LOAD_FILE) 
+    for l in lines:
+        print l
+
+    #
+    # read the file, line-by-line
+    #
+    fileLines = lines + [line for line in open(LOAD_FILE)]
+
+    
+    _file = open(LOAD_FILE, "w")
+    for line in fileLines:
+        _file.write(line)
+    _file.close()
+
+    os.system("open " + LOAD_FILE)
+    #call(["emacs", LOAD_FILE])
+
+
     #
     #  WALK THROUGH + REPLACE
     #  

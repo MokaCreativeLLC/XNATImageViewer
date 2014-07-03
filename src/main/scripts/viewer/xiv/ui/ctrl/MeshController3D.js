@@ -49,6 +49,7 @@ xiv.ui.ctrl.MeshController3D.prototype.add = function(xObj) {
     goog.base(this, 'add', xObj);
 
     // Add color palette
+    this.add_visible(xObj);
     this.add_colorPalette(xObj);
 }
 

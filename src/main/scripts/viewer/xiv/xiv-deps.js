@@ -116,9 +116,9 @@ goog.addDependency('../../../../ui/ctrl/MasterController2D.js',
 ['xiv.ui.ctrl.MasterController2D'], [
 ]);
 
-goog.addDependency('../../../../ui/ctrl/VolumeController2D.js', 
-['xiv.ui.ctrl.VolumeController2D'], [
-    'xiv.ui.ctrl.MasterController2D'
+goog.addDependency('../../../../ui/ctrl/VolumeController.js', 
+['xiv.ui.ctrl.VolumeController'], [
+    'xiv.ui.ctrl.MasterController'
 ]);
 
 goog.addDependency('../../../../ui/ctrl/MasterController3D.js', 

@@ -4,11 +4,26 @@
 
 // goog
 goog.require('goog.ui.ToggleButton');
+goog.require('goog.ui.Dialog');
+goog.require('goog.events');
+goog.require('goog.string');
+goog.require('goog.dom');
+goog.require('goog.dom.classes');
+goog.require('goog.testing.events');
+goog.require('goog.ui.Dialog.ButtonSet');
+goog.require('goog.object');
+goog.require('goog.string.path');
 
 // nrg
-
+goog.require('nrg.ui.Component');
+goog.require('nrg.ui.Dialog');
+goog.require('nrg.fx');
 
 // xiv
+goog.require('xiv.ui.ViewBox');
+goog.require('xiv.ui.HelpDialog');
+
+//-----------
 
 
 

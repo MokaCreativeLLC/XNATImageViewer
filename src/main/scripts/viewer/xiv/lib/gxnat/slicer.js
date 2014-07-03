@@ -5,20 +5,25 @@
 
 // goog
 goog.require('goog.dom.DomHelper');
+goog.require('goog.dom');
+goog.require('goog.string');
 goog.require('goog.dom.xml');
+goog.require('goog.array');
+goog.require('goog.string.path');
 
 // gxnat
 goog.require('gxnat');
-goog.require('gxnat.slicer.Node');
-goog.require('gxnat.slicer.DisplayableNode');
-goog.require('gxnat.slicer.MrmlNode');
-goog.require('gxnat.slicer.SceneViewNode');
-goog.require('gxnat.slicer.CameraNode');
-goog.require('gxnat.slicer.MrmlNode');
-goog.require('gxnat.slicer.BackgroundColorNode');
-goog.require('gxnat.slicer.LayoutNode');
-goog.require('gxnat.slicer.MeshDisplayNode');
-goog.require('gxnat.slicer.VolumeDisplayNode');
+goog.require('gxnat.slicerNode.Node');
+goog.require('gxnat.slicerNode.DisplayableNode');
+goog.require('gxnat.slicerNode.MrmlNode');
+goog.require('gxnat.slicerNode.SceneViewNode');
+goog.require('gxnat.slicerNode.CameraNode');
+goog.require('gxnat.slicerNode.BackgroundColorNode');
+goog.require('gxnat.slicerNode.LayoutNode');
+goog.require('gxnat.slicerNode.MeshDisplayNode');
+goog.require('gxnat.slicerNode.VolumeDisplayNode');
+goog.require('gxnat.slicerNode.AnnotationsNode');
+goog.require('gxnat.slicerNode.SceneViewNode');
 
 
 
@@ -94,7 +99,7 @@ gxnat.slicer.getMrmlNodes = function(fileList, mrbUrl, callback) {
     goog.array.forEach(mrmlUrls, function(mrmlUrl){
 	gxnat.slicer.getMrmlAsXml(mrmlUrl, function(mDoc) {
 	    counter++;
-	    mrmlNodes.push(new gxnat.slicer.MrmlNode
+	    mrmlNodes.push(new gxnat.slicerNode.MrmlNode
 			   (mrmlUrl, mDoc, mrbUrl, fileList));
 	    if (counter == mrmlUrls.length) {
 		//window.console.log('MRM SCTRUCTS RETRIEVED', mrmlNodes);
@@ -112,8 +117,8 @@ gxnat.slicer.getMrmlNodes = function(fileList, mrbUrl, callback) {
 
 /**
  * @param {!Element} sceneViewElt The scene view element.
- * @param {!gxnat.slicer.MrmlNode} mrmlNode 
- * @return {gxnat.slicer.SceneViewNode}
+ * @param {!gxnat.slicerNode.MrmlNode} mrmlNode 
+ * @return {gxnat.slicerNode.SceneViewNode}
  * @public
  */
 gxnat.slicer.createSceneViewProperties = 
@@ -122,7 +127,7 @@ function(sceneViewElt, mrmlNode, callback){
     gxnat.slicer.getAnnotations(sceneViewElt, mrmlNode, function(annotations){
 	//window.console.log("\n\n3. CREATE SCENE VIEW NODE, ANNOT", 
 	//mrmlNode.mrbUrl);
-	callback(new gxnat.slicer.SceneViewNode(
+	callback(new gxnat.slicerNode.SceneViewNode(
 	    sceneViewElt,
 	    gxnat.slicer.getCameraFromSceneView(sceneViewElt),
 	    gxnat.slicer.getBackgroundColorFromSceneView(sceneViewElt),
@@ -231,7 +236,7 @@ gxnat.slicer.toFloatArray = function(str){
  *    1) the position, 2) the up vector of the camera. 3) The focal point.
  */
 gxnat.slicer.getCameraFromSceneView = function(sceneViewElt) {
-    return new gxnat.slicer.CameraNode(
+    return new gxnat.slicerNode.CameraNode(
 	gxnat.slicer.toFloatArray(
 	    sceneViewElt.getElementsByTagName('Camera')[0].
 		getAttribute('position')
@@ -298,7 +303,7 @@ gxnat.slicer.mrmlColorToRgb = function(mrmlColor) {
  *    the background.
  */
 gxnat.slicer.getBackgroundColorFromSceneView = function(scene) {
-    return new gxnat.slicer.BackgroundColorNode(
+    return new gxnat.slicerNode.BackgroundColorNode(
 	scene.getElementsByTagName('View')[0].getAttribute('backgroundColor'), 
 	scene.getElementsByTagName('View')[0].getAttribute('backgroundColor2'));
 }
@@ -313,7 +318,7 @@ gxnat.slicer.getBackgroundColorFromSceneView = function(scene) {
  * @return {number} The layout string.
  */
 gxnat.slicer.getLayoutFromSceneView = function(sceneView) { 
-    return new gxnat.slicer.LayoutNode(sceneView.
+    return new gxnat.slicerNode.LayoutNode(sceneView.
 	getElementsByTagName('Layout')[0].
 	getAttribute('currentViewArrangement'));
 }
@@ -546,7 +551,7 @@ function(sceneView, mrmlNode, callback) {
 		//
 		// Store the annotations in an array
 		//
-		annots.push(new gxnat.slicer.AnnotationsNode(
+		annots.push(new gxnat.slicerNode.AnnotationsNode(
 		    position, color, splitLine,
 		    markupsFiducialId, displayNodeId, name));
 		
@@ -587,7 +592,7 @@ function(sceneView, mrmlNode, callback) {
 gxnat.slicer.getDisplayables = 
 function(sceneViewElt, tagName, storageNodeTagName) {
 
-    var objects = /**@type {!Array.<gxnat.slicer.SceneViewNodeNode>}*/ [];
+    var objects = /**@type {!Array.<gxnat.slicer.SceneViewNode>}*/ [];
     var storageNodes = /**@types {Array.<Element>}*/
     sceneViewElt.getElementsByTagName(storageNodeTagName);
     var storageNode = /**@types {?Element}*/ null;
@@ -600,7 +605,7 @@ function(sceneViewElt, tagName, storageNodeTagName) {
 	    storageNode = storageNodes[i];
             if (storageNode.getAttribute('id') === 
 		sceneViewDisplayableElt.getAttribute('storageNodeRef')) {  
-		objects.push(new gxnat.slicer.DisplayableNode(
+		objects.push(new gxnat.slicerNode.DisplayableNode(
 		    storageNode.getAttribute('fileName'),
 		    sceneViewDisplayableElt,
 		    storageNode
@@ -843,8 +848,8 @@ gxnat.slicer.getVolumes = function(sceneView) {
     // Finally, we add the properties to the volume.
     //
     goog.array.forEach(culledVolumes, function(volume){
-	window.console.log(volume);
-	volume.properties = new gxnat.slicer.VolumeDisplayNode(
+	//window.console.log(volume);
+	volume.properties = new gxnat.slicerNode.VolumeDisplayNode(
 	    sceneView, volume.node, selectedVolumeID);
 	//window.console.log(volume.properties);
 	if (volume.labelMap) { 
@@ -869,7 +874,7 @@ gxnat.slicer.getMeshes = function(sceneView) {
 
     goog.array.forEach(meshes, function(mesh){
 	//window.console.log("MESH", mesh);
-	mesh.properties = new gxnat.slicer.MeshDisplayNode(
+	mesh.properties = new gxnat.slicerNode.MeshDisplayNode(
 	    sceneView, mesh.node);
     })
     //window.console.log('TODO: Verify meshes that have color tables');

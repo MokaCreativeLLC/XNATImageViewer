@@ -129,9 +129,17 @@ function(elements, opt_folders) {
 /**
  * @public
  */
-nrg.ui.ScrollableZippyTree.prototype.expandAll = 
-function(folder, opt_startNode) {
+nrg.ui.ScrollableZippyTree.prototype.expandAll = function() {
     this.ZippyTree.expandAll();
+}
+
+
+
+/**
+ * @public
+ */
+nrg.ui.ScrollableZippyTree.prototype.collapseAll = function() {
+    this.ZippyTree.collapseAll();
 }
 
 
@@ -143,8 +151,7 @@ function(folder, opt_startNode) {
  */
 nrg.ui.ScrollableZippyTree.prototype.setExpanded = 
 function(folder, opt_startNode) {
-
-    window.console.log('\n\n\nsetExpanded', folder);
+    //window.console.log('\n\n\nsetExpanded', folder);
     this.ZippyTree.setExpanded(folder, opt_startNode);
 }
 

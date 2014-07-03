@@ -4,10 +4,6 @@
 
 // goog
 goog.require('goog.string');
-goog.require('goog.typeOf');
-
-// nrg
-goog.require('nrg.path');
 
 
 
@@ -81,7 +77,7 @@ nrg.string.getFileExtension = function(file) {
 
 /** 
  * Check if two fileNames are equal to one another
- * via the 'nrg.path.basename' method.
+ * via the 'nrg.string.basename' method.
  * @param {!string} file1 Filename 1.
  * @param {!string} file2 Filename 2.
  * @return {boolean} Whether there's equality.
