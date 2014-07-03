@@ -4,15 +4,20 @@
 
 // goog
 goog.require('goog.object');
+goog.require('goog.array');
+
+// X
+goog.require('X.object');
+goog.require('X.volume');
+goog.require('X.mesh');
+goog.require('X.sphere');
+goog.require('X.fibers');
 
 // nrg
 goog.require('nrg.ui.Component');
 
-// xtk
-goog.require('X.volume');
-goog.require('X.mesh');
-goog.require('X.sphere');
-
+// gxnat
+goog.require('gxnat.vis.RenderProperties');
 
 // xiv
 goog.require('xiv.ui.ctrl.LevelsController');
@@ -20,6 +25,12 @@ goog.require('xiv.ui.ctrl.VolumeController');
 goog.require('xiv.ui.ctrl.VolumeController3D');
 goog.require('xiv.ui.ctrl.MeshController3D');
 goog.require('xiv.ui.ctrl.AnnotationsController3D');
+goog.require('xiv.ui.ctrl.XtkController');
+goog.require('xiv.ui.ctrl.MasterController3D');
+goog.require('xiv.ui.ctrl.MasterController2D');
+goog.require('xiv.ui.ctrl.VolumeController');
+
+//-----------
 
 
 
@@ -279,7 +290,7 @@ xiv.ui.ctrl.XtkControllerTree.prototype.updateControllers = function() {
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @param {!gxnat.vis.RenderProperties} renderProps
  * @public
  */

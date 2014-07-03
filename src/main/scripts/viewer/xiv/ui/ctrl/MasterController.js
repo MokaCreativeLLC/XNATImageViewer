@@ -4,12 +4,18 @@
 
 // goog
 goog.require('goog.object');
+goog.require('goog.array');
+
+// X
+goog.require('X.object');
 
 // xiv
 goog.require('xiv.ui.ctrl.XtkController');
 goog.require('xiv.ui.ctrl.CheckboxController');
 goog.require('xiv.ui.ctrl.SliderController');
 goog.require('xiv.ui.ctrl.TwoThumbSliderController');
+
+//-----------
 
 
 
@@ -24,7 +30,7 @@ xiv.ui.ctrl.MasterController = function() {
 
 
     /**
-     * @type {!Array.<X.Object>}
+     * @type {!Array.<X.object>}
      * @protected
      */
     this.xObjs = [];
@@ -59,7 +65,7 @@ xiv.ui.ctrl.MasterController.CONTROLLERS = {};
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @public
  */
 xiv.ui.ctrl.MasterController.prototype.add = function(xObj) {

@@ -2,8 +2,20 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
+
+// goog
+goog.require('goog.dom.classes');
+goog.require('goog.events');
+goog.require('goog.dom');
+goog.require('goog.math');
+
+// nrg
+goog.require('nrg.ui.Slider');
+
 // xiv
 goog.require('xiv.ui.ctrl.XtkController');
+
+//-----------
 
 
 

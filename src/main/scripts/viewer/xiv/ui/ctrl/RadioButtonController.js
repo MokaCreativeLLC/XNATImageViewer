@@ -3,9 +3,15 @@
  */
 
 // goog
+goog.require('goog.dom');
+goog.require('goog.string');
+goog.require('goog.dom.classes');
+goog.require('goog.events');
 
 // xiv
 goog.require('xiv.ui.ctrl.XtkController');
+
+//-----------
 
 
 

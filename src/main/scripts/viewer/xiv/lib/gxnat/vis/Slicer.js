@@ -111,8 +111,6 @@ gxnat.vis.Slicer.prototype.getFileList = function(callback){
 
 
     gxnat.vis.Scan.superClass_.getFileList.call(this, function(){
-	//this.getThumbnailImage();
-	//callback();
 	//
 	// Then get the thumbnail image
 	//
@@ -200,7 +198,8 @@ function(sceneViewNodes, mrmlNodes, opt_initComplete) {
 		    this.mrbFiles_);
 		//window.console.log(displayable.file, this.mrbFiles_,fileName);
 		// Make some specialized adjustments for volumes
-		if (displayable.properties instanceof gxnat.slicerNode.VolumeDisplayNode) {
+		if (displayable.properties instanceof 
+		    gxnat.slicerNode.VolumeDisplayNode) {
 		    this.adjustVolumeDisplayProperties_(displayable);
 		}
 
@@ -311,7 +310,7 @@ gxnat.vis.Slicer.prototype.getThumbnailImage = function(opt_callback){
 	}
 	if (thumbFound) { break };
     }
-
+    window.console.log('Thumbnail files', this['thumbnailFiles']);
 
     //
     // Clean the file urls.
@@ -341,7 +340,7 @@ gxnat.vis.Slicer.prototype.getThumbnailImage = function(opt_callback){
 	    break;
 	}
     }
-    
+    window.console.log('Thumbnail files2', this['thumbnailFiles']);
 
     //
     // Run callback

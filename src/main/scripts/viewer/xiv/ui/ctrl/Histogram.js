@@ -4,9 +4,15 @@
 
 // goog
 goog.require('goog.ui.ProgressBar');
+goog.require('goog.dom');
+goog.require('goog.string');
+goog.require('goog.array');
+goog.require('goog.style');
 
 // xiv
 goog.require('xiv.ui.ctrl.XtkController');
+
+//-----------
 
 
 

@@ -4,9 +4,18 @@
 
 // goog
 goog.require('goog.object');
+goog.require('goog.string');
+
+// X
+goog.require('X.object');
 
 // xiv
 goog.require('xiv.ui.ctrl.MasterController3D');
+goog.require('xiv.ui.ctrl.CheckboxController');
+goog.require('xiv.ui.ctrl.XtkController');
+goog.require('xiv.ui.ctrl.TwoThumbSliderController');
+
+//-----------
 
 
 
@@ -49,7 +58,7 @@ xiv.ui.ctrl.VolumeController3D.CSS_SUFFIX = {};
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @protected
  */
 xiv.ui.ctrl.VolumeController3D.prototype.add_volumeRendering = function(xObj) {
@@ -95,7 +104,7 @@ xiv.ui.ctrl.VolumeController3D.VOLUME_ID = goog.string.createUniqueString();
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @protected
  */
 xiv.ui.ctrl.VolumeController3D.prototype.add_threshold = function(xObj) {

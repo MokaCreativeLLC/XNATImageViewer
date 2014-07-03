@@ -4,9 +4,17 @@
 
 // goog
 goog.require('goog.ui.HsvPalette');
+goog.require('goog.dom');
+goog.require('goog.string');
+goog.require('goog.events');
+goog.require('goog.dom.classes');
+goog.require('goog.style');
+goog.require('goog.color');
 
 // xiv
 goog.require('xiv.ui.ctrl.XtkController');
+
+//-----------
 
 
 

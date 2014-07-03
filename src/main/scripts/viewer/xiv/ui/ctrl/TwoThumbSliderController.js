@@ -2,11 +2,22 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
-//
+// goog
+goog.require('goog.ui.TwoThumbSlider');
+goog.require('goog.string');
+goog.require('goog.dom.classes');
+goog.require('goog.dom');
+goog.require('goog.events');
+goog.require('goog.style');
+goog.require('goog.ui.RangeModel');
+
+// nrg
 goog.require('nrg.style');
 
 // xiv
 goog.require('xiv.ui.ctrl.XtkController');
+
+//-----------
 
 
 

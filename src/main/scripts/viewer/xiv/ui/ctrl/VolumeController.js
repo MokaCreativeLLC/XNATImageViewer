@@ -5,9 +5,19 @@
 // goog
 goog.require('goog.object');
 
+// X
+goog.require('X.object');
+
 // xiv
+goog.require('xiv.vis.XtkEngine');
+goog.require('xiv.ui.ctrl.XtkController');
 goog.require('xiv.ui.ctrl.MasterController');
 goog.require('xiv.ui.ctrl.RadioButtonController');
+goog.require('xiv.ui.ctrl.MasterController2D');
+goog.require('xiv.ui.ctrl.VolumeController');
+goog.require('xiv.ui.ctrl.CheckboxController');
+
+//-----------
 
 
 
@@ -61,7 +71,7 @@ xiv.ui.ctrl.VolumeController.prototype.add = function(xObj) {
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @protected
  */
 xiv.ui.ctrl.VolumeController.prototype.add_visibleRadio = function(xObj) {
@@ -88,7 +98,7 @@ xiv.ui.ctrl.VolumeController.prototype.add_visibleRadio = function(xObj) {
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @protected
  */
 xiv.ui.ctrl.VolumeController.prototype.add_labelMapToggle = function(xObj) {

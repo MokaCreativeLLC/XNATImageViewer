@@ -4,12 +4,17 @@
 
 // goog
 goog.require('goog.object');
+goog.require('goog.array');
+
+// X
+goog.require('X.object');
 
 // xiv
 goog.require('xiv.ui.ctrl.XtkController');
 goog.require('xiv.ui.ctrl.CheckboxController');
 goog.require('xiv.ui.ctrl.RadioButtonController');
 
+//-----------
 
 
 
@@ -24,7 +29,7 @@ xiv.ui.ctrl.MasterController2D = function() {
 
 
     /**
-     * @type {!Array.<X.Object>}
+     * @type {!Array.<X.object>}
      * @private
      */
     this.xObjs_ = [];
@@ -52,7 +57,7 @@ xiv.ui.ctrl.MasterController2D.CSS_SUFFIX = {};
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @public
  */
 xiv.ui.ctrl.MasterController2D.prototype.add = function(xObj) {}

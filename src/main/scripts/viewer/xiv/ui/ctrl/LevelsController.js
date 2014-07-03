@@ -4,11 +4,22 @@
 
 // goog
 goog.require('goog.object');
+goog.require('goog.array');
+goog.require('goog.events');
+
+// X
+goog.require('X.object');
+
+// nrg
+goog.require('nrg.ui.Slider');
 
 // xiv
 goog.require('xiv.ui.ctrl.XtkController');
 goog.require('xiv.ui.ctrl.SliderController');
 goog.require('xiv.ui.ctrl.Histogram');
+goog.require('xiv.ui.ctrl.MasterController');
+
+//-----------
 
 
 
@@ -84,7 +95,7 @@ xiv.ui.ctrl.LevelsController.prototype.updateHistogram_ = function(hist){
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @public
  */
 xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
@@ -120,7 +131,7 @@ xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @return {xiv.ui.ctrl.XtkController}
  * @protected
  */
@@ -147,7 +158,7 @@ xiv.ui.ctrl.LevelsController.prototype.add_histogram = function(xObj) {
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @return {xiv.ui.ctrl.XtkController}
  * @protected
  */
@@ -187,7 +198,7 @@ xiv.ui.ctrl.LevelsController.prototype.add_levelMin = function(xObj) {
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @return {xiv.ui.ctrl.XtkController}
  * @protected
  */
@@ -230,7 +241,7 @@ xiv.ui.ctrl.LevelsController.prototype.add_levelMax = function(xObj) {
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @param {!xiv.ui.ctrl.XtkController} levelMin
  * @param {!xiv.ui.ctrl.XtkController} levelMax
  * @return {xiv.ui.ctrl.XtkController}
@@ -288,7 +299,7 @@ function(xObj, levelMin, levelMax) {
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @param {!xiv.ui.ctrl.XtkController} levelMin
  * @param {!xiv.ui.ctrl.XtkController} levelMax
  * @return {xiv.ui.ctrl.XtkController}

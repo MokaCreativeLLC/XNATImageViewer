@@ -3,16 +3,26 @@
  * @author amh1646@rih.edu (Amanda Hartung)
  */
 
+
 // goog
 goog.require('goog.ui.TwoThumbSlider');
 goog.require('goog.events');
 goog.require('goog.array');
 goog.require('goog.string');
-goog.require('goog.string.path');
 goog.require('goog.dom');
 goog.require('goog.ui.Checkbox');
+goog.require('goog.string.path');
+goog.require('goog.ui.Component');
+goog.require('goog.dom.classes');
 
-// lib
+// X
+goog.require('X.mesh');
+goog.require('X.volume');
+goog.require('X.fibers');
+goog.require('X.sphere');
+goog.require('X.object');
+
+// nrg
 goog.require('nrg.ui.Component');
 goog.require('nrg.string');
 goog.require('nrg.dom');
@@ -26,6 +36,9 @@ goog.require('xiv.ui.ctrl.SliderController');
 goog.require('xiv.ui.ctrl.TwoThumbSliderController');
 goog.require('xiv.ui.ctrl.ColorPaletteController');
 goog.require('xiv.ui.ctrl.RadioButtonController');
+goog.require('xiv.ui.ctrl.XtkController');
+
+//-----------
 
 
 
@@ -115,7 +128,7 @@ xiv.ui.ctrl.XtkController.createLabel = function(){
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @return {!string}
  * @protected
  */
@@ -128,7 +141,7 @@ xiv.ui.ctrl.XtkController.getXObjLabel = function(xObj){
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @return {!string}
  * @public
  */
@@ -152,7 +165,7 @@ function(xObj){
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @param {!xiv.ui.ctrl.XtkController} controller
  * @public
  */
@@ -449,7 +462,7 @@ xiv.ui.ctrl.XtkController.prototype.updateStyle = function() {
 
 
 /**
- * @param {!X.Object | Array.<X.Object>} xObjs
+ * @param {!X.object | Array.<X.object>} xObjs
  * @protected
  */
 xiv.ui.ctrl.XtkController.prototype.add_colorPalette = function(xObj) {
@@ -476,7 +489,7 @@ xiv.ui.ctrl.XtkController.prototype.add_colorPalette = function(xObj) {
 
 
 /**
- * @param {!X.Object} xObj
+ * @param {!X.object} xObj
  * @protected
  */
 xiv.ui.ctrl.XtkController.prototype.add_opacity = function(xObj) {
@@ -507,8 +520,8 @@ xiv.ui.ctrl.XtkController.prototype.add_opacity = function(xObj) {
 
 
 /**
- * @param {!X.Object} xObj
- * @return {!xiv.ui.ctr.XtkController}
+ * @param {!X.object} xObj
+ * @return {!xiv.ui.ctrl.XtkController}
  * @protected
  */
 xiv.ui.ctrl.XtkController.prototype.add_visible = function(xObj) {

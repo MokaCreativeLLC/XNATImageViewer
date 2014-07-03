@@ -7,8 +7,8 @@ from subprocess import call
        
 
 IMG_VIEW_HOME = os.environ.get('XNATIMAGEVIEWER_HOME')
-LOAD_FILE = IMG_VIEW_HOME + \
-            "/src/main/scripts/viewer/xiv/sample-data/SlicerScenes.js"
+LOAD_PATH = IMG_VIEW_HOME + \
+            "/src/main/scripts/viewer/xiv/ui/ctrl"
 
 
 
@@ -46,10 +46,12 @@ PROVIDE_PREFIX = 'goog.provide('
 
 
 def filterLastCapital(depLine):
-    
+    """
+    @type depLine: string
+    @param depLine: The dependency line
+    """
 
     depArr = depLine.split('.')
-
     lastCap = -1;
     count = 0;
     newLine = ''
@@ -86,7 +88,10 @@ def filterLastCapital(depLine):
 
 
 def parseDeps(filename):
-
+    """
+    @type filename: string
+    @param filename: the file to parse
+    """
     #
     # found deps
     #
@@ -241,9 +246,9 @@ def parseDeps(filename):
             depsByRoot[depPrefix].append(REQUIRE_PREFIX + '\'' + dep + '\');')
             
 
-    #
+    #---------------
     # PRINT!!
-    #      
+    #---------------      
     lines = []
     for depPrefix in DEPS_PREFIXES:
         if depsByRoot.has_key(depPrefix):
@@ -258,38 +263,64 @@ def parseDeps(filename):
 
 
 
-def main():
-    lines = parseDeps(LOAD_FILE) 
-    for l in lines:
-        print l
+def modifyFile(filename):
+    """
+    @type filename: string
+    @param filename: the file to parse
+    """
 
-    #
-    # read the file, line-by-line
-    #
-    fileLines = lines + [line for line in open(LOAD_FILE)]
+    #---------------
+    # Get the dependencies as lines
+    #---------------
+    depsAsLines = parseDeps(filename) 
+    for l in depsAsLines: print l
 
-    
-    _file = open(LOAD_FILE, "w")
+    #---------------
+    # Add dependencies to the top of the file's lines
+    #---------------
+    fileLines = depsAsLines + [line for line in open(filename)]
+
+    #---------------
+    # Re-write the file
+    #---------------
+    _file = open(filename, "w")
     for line in fileLines:
         _file.write(line)
     _file.close()
 
-    os.system("open " + LOAD_FILE)
-    #call(["emacs", LOAD_FILE])
 
 
-    #
-    #  WALK THROUGH + REPLACE
-    #  
-    #for root, dirs, files in os.walk(rootDir):
 
-        #
-        # loop the files
-        #
-        # for f in files:   
-        # filename = os.path.join(root, f)
+def openFile(filename):
+    """
+    @type filename: string
+    @param filename: the file to parse
+    """
+    os.system("open " + filename)
+
+
+
+
+def main():
+    #---------------
+    # Walk through LOAD_PATH, modifying each file
+    #---------------
+    files = []
+    for (dirpath, dirnames, filenames) in os.walk(LOAD_PATH):
+        for f in filenames:
+            if (dirpath == LOAD_PATH):
+                filename = os.path.join(dirpath, f)
+                files.append(filename)
+                modifyFile(filename)
+
+    #---------------
+    # Open each file using the default system editor
+    #---------------
+    for f in files:
+        openFile(f)
 
       
+
 
 if __name__ == "__main__":
     main()
