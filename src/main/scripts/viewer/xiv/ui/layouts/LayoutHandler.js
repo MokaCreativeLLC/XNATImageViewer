@@ -3,42 +3,50 @@
  */
 
 // goog
-goog.require('goog.fx.AnimationParallelQueue');
-goog.require('goog.dom');
-goog.require('goog.string');
-goog.require('goog.events');
 goog.require('goog.fx.Animation');
-goog.require('goog.fx.dom.FadeInAndShow');
-goog.require('goog.fx.dom.FadeOut');
-goog.require('goog.fx.dom.Resize');
 goog.require('goog.fx.dom.Slide');
+goog.require('goog.fx.dom.Resize');
+goog.require('goog.events');
+goog.require('goog.fx.AnimationParallelQueue');
+goog.require('goog.fx.dom.FadeOut');
+goog.require('goog.string');
 goog.require('goog.fx.dom.BgColorTransform');
+goog.require('goog.style');
+goog.require('goog.object');
+goog.require('goog.dom');
+goog.require('goog.fx.dom.FadeInAndShow');
+goog.require('goog.array');
 
-// utils
-goog.require('nrg.dom');
-goog.require('nrg.array');
-goog.require('nrg.string');
-goog.require('nrg.style');
-goog.require('nrg.fx');
+// nrg
 goog.require('nrg.ui.Component');
+goog.require('nrg.dom');
+goog.require('nrg.fx');
+goog.require('nrg.string');
+goog.require('nrg.ui');
+goog.require('nrg.array');
+goog.require('nrg.style');
 
 // xiv
-goog.require('xiv.ui.layouts.Layout');
-goog.require('xiv.ui.layouts.Conventional');
-goog.require('xiv.ui.layouts.FourUp');
-goog.require('xiv.ui.layouts.Sagittal');
-goog.require('xiv.ui.layouts.Coronal');
-goog.require('xiv.ui.layouts.Transverse');
-goog.require('xiv.ui.layouts.TwoDRow');
 goog.require('xiv.ui.layouts.TwoDWidescreen');
+goog.require('xiv.ui.layouts.Layout');
 goog.require('xiv.ui.layouts.ThreeD');
+goog.require('xiv.ui.layouts.Sagittal');
+goog.require('xiv.ui.layouts.Conventional');
+goog.require('xiv.ui.layouts.Transverse');
+goog.require('xiv.ui.layouts.FourUp');
+goog.require('xiv.ui.layouts.LayoutFrame');
+goog.require('xiv.ui.layouts.TwoDRow');
+goog.require('xiv.ui.layouts.Coronal');
+goog.require('xiv.ui.layouts.XyzvLayout.InteractorSet');
+
+//-----------
 
 
 
 
 /**
  * xiv.ui.layouts.LayoutHandler is the class that handles the various 
- * xiv.ui.layout.Layout when viewing a dataset in the xiv.ui.ViewBox.  
+ * xiv.ui.layouts.Layout when viewing a dataset in the xiv.ui.ViewBox.  
  *
  * @constructor
  * @extends {nrg.ui.Component}
@@ -61,7 +69,7 @@ xiv.ui.layouts.LayoutHandler = function() {
 
 
     /**
-     * Stores the constructor classes of xiv.uiLayout.  
+     * Stores the constructor classes of xiv.ui.layouts.Layout.  
      * We have this because we don't want to create an instance of a Layout 
      * unless absolutely necessary -- (i.e. when the menu selection chooses 
      * a given layout).  In short, we create the layouts as they are selected,

@@ -1,3 +1,26 @@
+
+// goog
+goog.require('goog.style')
+goog.require('goog.string')
+goog.require('goog.object')
+goog.require('goog.dom')
+goog.require('goog.dom.classes')
+goog.require('goog.array')
+
+// nrg
+goog.require('nrg.ui.Slider')
+goog.require('nrg.string')
+
+// xiv
+goog.require('xiv.ui.layouts.Layout')
+goog.require('xiv.ui.layouts.LayoutFrame')
+goog.require('xiv.ui.layouts.interactors.FrameDisplay')
+goog.require('xiv.ui.layouts.interactors.Slider')
+goog.require('xiv.ui.layouts.interactors.Crosshairs')
+goog.require('xiv.ui.layouts.interactors.ZoomDisplay')
+
+//-----------
+
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
@@ -228,7 +251,7 @@ xiv.ui.layouts.XyzvLayout.prototype.addLayoutFrames_ = function(frames){
 
 /**
  * @public
- * @param{xiv.ui.layout.XyzvLayout} newLayout
+ * @param{xiv.ui.layouts.XyzvLayout} newLayout
  */
 xiv.ui.layouts.XyzvLayout.prototype.transferInteractors = function(Layout) {
     Layout.setInteractors(this.getInteractors());

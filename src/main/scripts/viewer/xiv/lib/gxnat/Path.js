@@ -278,8 +278,6 @@ goog.exportSymbol('gxnat.Path.getDeepestSharedXnatLevel',
 	gxnat.Path.getDeepestSharedXnatLevel);
 goog.exportSymbol('gxnat.Path.graftUrl', gxnat.Path.graftUrl);
 goog.exportSymbol('gxnat.Path.xnatLevelOrder', gxnat.Path.xnatLevelOrder);
-
-
 goog.exportSymbol('gxnat.Path.prototype.getDeepestLevel',
 	gxnat.Path.prototype.getDeepestLevel);
 goog.exportSymbol('gxnat.Path.prototype.pathByLevel',

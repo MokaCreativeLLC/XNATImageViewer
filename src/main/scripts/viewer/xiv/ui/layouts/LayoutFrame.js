@@ -3,13 +3,15 @@
  */
 
 // goog
-goog.require('goog.string');
-goog.require('goog.array');
+goog.require('goog.array')
+goog.require('goog.string')
 
 // nrg
-goog.require('nrg.string');
-goog.require('nrg.ui.Component');
-goog.require('nrg.ui.Resizable');
+goog.require('nrg.ui.Component')
+goog.require('nrg.ui.Resizable')
+goog.require('nrg.string')
+
+//-----------
 
 
 

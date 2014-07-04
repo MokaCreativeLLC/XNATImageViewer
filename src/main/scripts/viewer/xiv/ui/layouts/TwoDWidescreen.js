@@ -3,15 +3,21 @@
  */
 
 // goog
-goog.require('goog.string');
-goog.require('goog.array');
+goog.require('goog.style')
+goog.require('goog.events')
+goog.require('goog.array')
+goog.require('goog.string')
 
 // nrg
-goog.require('nrg.string');
+goog.require('nrg.string')
+goog.require('nrg.style')
+goog.require('nrg.ui.Resizable')
 
 // xiv
-goog.require('xiv.ui.layouts.Layout');
-goog.require('xiv.ui.layouts.XyzvLayout');
+goog.require('xiv.ui.layouts.Layout')
+goog.require('xiv.ui.layouts.XyzvLayout')
+
+//-----------
 
 
 

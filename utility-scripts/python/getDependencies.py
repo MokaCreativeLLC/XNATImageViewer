@@ -2,22 +2,23 @@ import sys
 import os
 import shutil
 import collections
+import pprint
 from subprocess import call
 
+
+
+PPRINT = pprint.PrettyPrinter(indent=2)
        
-
 IMG_VIEW_HOME = os.environ.get('XNATIMAGEVIEWER_HOME')
+
 LOAD_PATH = IMG_VIEW_HOME + \
-            "/src/main/scripts/viewer/xiv/ui/ctrl"
-
-
+            "/src/main/scripts/viewer/xiv/ui/layouts/interactors"
 
 SKIP_SUBSTRS = ['goog.require(' , 
                 'goog.provide(' , 
                 'goog.exportSymbol(', 
                 '=function', 
                 '= function']
-
 
 GOOG_SKIPPERS = [
     'goog.inherits',
@@ -39,7 +40,9 @@ DEPS_PREFIXES = ['goog.', 'X.', 'nrg.', 'gxnat.', 'xiv.']
 SAVE_FOR_LATERS = ['prototype']
 
 EXPORT_PREFIX = 'goog.exportSymbol('
+
 REQUIRE_PREFIX = 'goog.require('
+
 PROVIDE_PREFIX = 'goog.provide('
 
 
@@ -47,156 +50,235 @@ PROVIDE_PREFIX = 'goog.provide('
 
 def filterLastCapital(depLine):
     """
+    Filters an isolated dependency line by breaking it apart by the periods, 
+    and thenfinding the last capitalized sub-property. 
+
+    -----------------
+    EXAMPLES: 
+    -----------------
+
+    filterLastCapital('nrg.ui.Component.getElement')
+    >>> 'nrg.ui.Component'
+
+    filterLastCapital('nrg.ui.Component.SubComponent')
+    >>> 'nrg.ui.Component.SubComponent'
+
+
+    -----------------
+    EXCEPTIONS:
+    -----------------
+
+    # Does not filter 2-level dependency lines
+    filterLastCapital('nrg.string')
+    >>> 'nrg.string'
+
+    # Returns the property/dependecy before the last if no capitals
+    filterLastCapital('nrg.fx.fadeIn')
+    >>> 'nrg.fx'
+
+
+
     @type depLine: string
     @param depLine: The dependency line
-    """
 
-    depArr = depLine.split('.')
+    @rtype: string
+    @return: The filtered dependecy line.
+    """
     lastCap = -1;
     count = 0;
-    newLine = ''
- 
+    filteredDepLine = ''
+
+    #---------------
+    # split the dependencies
+    #---------------
+    depArr = depLine.split('.') 
     for depSub in depArr:
         if len(depSub) > 0 and depSub[0].isupper():
             lastCap = count
         count += 1
         
+    #print 'DEP ARR:', depArr[-1], depArr[-1].isupper()
+    #---------------
+    # If we have a two-level dependecy (i.e 'goog.math') then
+    # we just keep the entire line.  
+    #
+    # We can filter any unneeded things manually.
+    #---------------
     if len(depArr) == 2:
-        newLine = depLine
+        filteredDepLine = depLine
 
+    #---------------
+    # If there are no capital letters in the dependency line, we filter
+    # to the second to last property
+    #---------------
     elif lastCap == -1:
-        newLine = depLine.rpartition('.')[0]
+        filteredDepLine = depLine.rpartition('.')[0]
 
+
+    #---------------
+    # ALL caps
+    #---------------
+    elif len(depArr) > 1 and depArr[-1].isupper():
+        filteredDepLine = depLine.rpartition('.')[0]
+
+
+    #---------------
+    # Otherwise we create a new dependecy based on the last capital letter.
+    # For instance, if we have 'nrg.ui.Component.getElement' we crop this to
+    # 'nrg.ui.Component'
+    #---------------
     else:
-        newLine = ''
+        filteredDepLine = ''
         count = 0;
         for depSub in depArr:
-            newLine += depSub + '.'
-            #print newLine
+            filteredDepLine += depSub + '.'
+            #print filteredDepLine
             if count == lastCap:
-                newLine = newLine[:-1]
+                filteredDepLine = filteredDepLine[:-1]
                 break
             count += 1
+
+
+
+
 
     #print '\ndepLine: ', depLine
     #print lastCap
     #print 'depArr:', depArr          
-    #print 'filtered:', newLine
-    return newLine
+    #print 'filtered:', filteredDepLine
+    return filteredDepLine
 
 
 
 
-def parseDeps(filename):
+def stripRequireLine(line):
     """
-    @type filename: string
-    @param filename: the file to parse
+    @type line: string
+    @param line: The line to strip
+
+    @rtype: string, string
+    @return: The stripped line, the store key for the reqLine
     """
-    #
-    # found deps
-    #
-    foundDeps = dict((key, []) for key in DEPS_PREFIXES)
+    reqLine = line.strip(REQUIRE_PREFIX).\
+              replace(')', '').\
+              replace("'",'').\
+              replace('"', '').\
+              replace(';', '').\
+              replace('//', '').strip()
+    return reqLine.split('.')[0] + '.', reqLine 
     
 
-    #
-    # read the file, line-by-line
-    #
-    lines = [line for line in open(filename)]
+
+def getProvides(fileLines):
+    """
+    @type fileLines: array.<string>
+    @param fileLines: the filelines to parse
+
+    @rtype: array.<string>
+    @return: the provides 
+    """
+    provides = []  
+    for line in fileLines:
+        if PROVIDE_PREFIX in line:
+            prov = line.split(PROVIDE_PREFIX + '\'')[1]
+            prov = prov.replace(' ' , '').split('\'')[0]
+            #print 'PROV', prov
+            if not prov in provides:
+                provides.append(prov.strip())
+    return provides
+
+
+
+def stripDepsPrefixLine(line, depsPrefix):
+    """
+    @type line: string
+    @param line: The line to strip
+
+    @rtype: string, string
+    @return: The stripped line, the store key for the reqLine
+    """
+
+    skip = False
+    line = line.strip().strip(';').strip('\n')
     savers = {}
-    providers = []                                            
 
 
-    for line in lines:
-        #print line
-
-        #
-        # Strip the require line
-        #
-        if 'goog.require(' in line:
-            requireLine = line.strip('goog.require(').\
-                          replace(')', '').replace("'",'').\
-                          replace('"', '').replace(';', '').\
-                          replace('//', '').strip()
-
-            foundDeps[requireLine.split('.')[0] + '.'].append(requireLine);
-
-               
-        #
-        # find a line with depstr in it
-        #
-        for depsPrefix in DEPS_PREFIXES:
-            if depsPrefix in line:
-
-                skip = False
-                line = line.strip().strip(';').strip('\n')
-
-                #
-                # Skippables and providers
-                # 
-                for skipSubstr in SKIP_SUBSTRS:
-                    if skipSubstr in line:              
-                        skip = True
-                        if PROVIDE_PREFIX in line:
-                            prov = line.split(PROVIDE_PREFIX + '\'')[1]
-                            prov = prov.replace(' ' , '').split('\'')[0]
-                            #print 'PROV', prov
-                            if not prov in providers:
-                                providers.append(prov)
-
-                #
-                # Savers
-                #
-                for saver in SAVE_FOR_LATERS:
-                    if saver in line:              
-                        savers[saver] = line;
-                        skip = True;
-
-                #
-                # Now we need to break apart the lines
-                #
-                foundArr =  depsPrefix + line.split(depsPrefix)[1]
-                foundArr = foundArr.rsplit(" ")[0].rsplit('.')
-
-                if not skip:
-                    #print foundArr
-                    foundDeps[foundArr[0] + '.'].append(line)
+    #---------------
+    # Skippables
+    # ---------------
+    for skipSubstr in SKIP_SUBSTRS:
+        if skipSubstr in line:  
+            skip = True
 
 
-  
-    talliedDeps = collections.OrderedDict()
-    depsByRoot = {}
 
-    #
-    # Loop throgh every line
-    #
+    #---------------
+    # Savers
+    #---------------
+    for saver in SAVE_FOR_LATERS:
+        if saver in line:              
+            savers[saver] = line;
+            skip = True;
+
+    #---------------
+    # Now we need to break apart the lines
+    #---------------
+    foundArr =  depsPrefix + line.split(depsPrefix)[1]
+    foundArr = foundArr.rsplit(" ")[0].rsplit('.')
+
+    if not skip:
+        return foundArr[0] + '.', line 
+    else:
+        return None, None
+
+    
+
+
+
+
+def tallyDependencies(foundDeps):
+    """
+    @type foundDeps: dict
+    @param foundDeps: The found dependency dictionary
+    """
+
+    talliedDeps = {}
+    #---------------
+    # Loop through every found depency line
+    #---------------
     for dep, item in foundDeps.iteritems():
         for line in item:
 
             #print '\n\nline:', line
-            #
+            #---------------
             # Split line by dep
-            #            
+            #---------------        
             depSplit = line
             if dep in depSplit:
                 depSplit = depSplit.split(dep)[1]
 
-            #
+            #---------------
             # Split line by left splitters
-            #
+            #---------------
             for splitter in LEFT_SPLITTERS:
                 if splitter in depSplit:
                     depSplit = depSplit.split(splitter)[0]
 
-            #
+            #---------------
             # Split line by EventType
-            #
+            #---------------
             if 'EventType' in depSplit:
                 depSplit  = depSplit.split('.EventType')[0] 
 
+            #---------------
+            # Skip all that have nothing after the splut
+            #---------------
             if (len(depSplit) == 0):
                 continue
 
-
+            #---------------
+            # filtered the last capital
+            #---------------
             key = filterLastCapital(dep + depSplit)
 
             #
@@ -206,31 +288,72 @@ def parseDeps(filename):
                 talliedDeps[key] = 0
             talliedDeps[key] += 1
 
-    #print 'PROVIDERS', providers
-    #
-    # Retally by main prefix
-    #
-    for dep in talliedDeps:
-        # skip anything ending with a period
-        if dep.endswith('.'):
-            continue
+    return talliedDeps
 
-        depPrefix = dep.split('.')[0] + '.'
+
+
+def getRawDependency(line):
+    """
+    @type line: string
+    @param line: The line to get the raw dependencies from
+
+    @rtype: ?string, ?string 
+    @return: A dictionary of the raw dependencies
+    """    
+
+    #---------------
+    # store 'goog.require(' lines
+    #---------------
+    if REQUIRE_PREFIX in line: 
+        return stripRequireLine(line)
+
+    #---------------
+    # find a line with a DEPS_PREFIX (see above) in it
+    #---------------
+    for depsPrefix in DEPS_PREFIXES:
+        if depsPrefix in line:
+            depsLineKey, depsLine = stripDepsPrefixLine(line, depsPrefix)
+            if depsLineKey != None:
+                return depsLineKey, depsLine
+
+    return None, None
+
+    
+
+
+def getDependenciesByRoot(talliedDeps, skippables = []):
+    """
+    @type talliedDeps: array.<string> | dict.<string, string>
+    @param talliedDeps: The tallied dependices
+
+    @rtype: dict
+    @return: A dictionary of the dependencies by root.
+    """  
+
+    depsByRoot = {}
+    for dep in talliedDeps:
+
+        #---------------
+        # skip anything ending with a period
+        #---------------
+        if dep.endswith('.'): continue
 
         
+        #---------------
+        # Derive the root dependency key
+        #---------------
+        depPrefix = dep.split('.')[0] + '.'        
         if not depsByRoot.has_key(depPrefix):
             depsByRoot[depPrefix] = []
 
+        #---------------
+        # Derive the root dependency key
+        #---------------
+        isSkipper = False
+        for skippable in skippables:
+            if skippable == dep.strip():
+                isSkipper = True
 
-        isProvider = False
-        for prov in providers:
-            print prov.strip(), dep.strip(), prov.strip() == dep.strip()
-            if prov.strip() == dep.strip():
-                isProvider = True
-            elif prov in dep:
-                suffix = dep.split(prov)[1]
-                if len(suffix) > 0 and suffix[0].islower():
-                    isProvider = True
 
         isGoogSkipper = False
         for skip in GOOG_SKIPPERS:
@@ -238,27 +361,77 @@ def parseDeps(filename):
                 isGoogSkipper = True
 
         #print isProvider, dep
-        if isProvider:
+        if isSkipper or isGoogSkipper: 
             continue
-        elif isGoogSkipper:
-            continue
-        else:
-            depsByRoot[depPrefix].append(REQUIRE_PREFIX + '\'' + dep + '\');')
-            
+        else: 
+            depsByRoot[depPrefix].append(dep)
+    
+    return depsByRoot
+
+    
+
+
+def getRawDependencies(fileLines):
+    """
+    @type fileLines: array.<string>
+    @param fileLines: the filelines to parse
+
+    @rtype: dict
+    @return: A dictionary of the raw dependencies
+    """
+    rawDeps = dict((key, []) for key in DEPS_PREFIXES)
+    for line in fileLines:
+        key, val = getRawDependency(line)
+        if key:
+            rawDeps[key].append(val)
+    return rawDeps
+
+
+
+
+def getDependencies(filename):
+    """
+    @type filename: string
+    @param filename: the file to parse
+    """
+    fileLines = [line for line in open(filename)]
+
+    #---------------
+    # Get the provides
+    #--------------- 
+    provides = getProvides(fileLines)
+    #print "PROVIDES"
+    #PPRINT.pprint(provides)
+
+    #---------------
+    # Get the raw dependicies dictionary
+    #--------------- 
+    rawDeps = getRawDependencies(fileLines)
+    PPRINT.pprint(rawDeps)
+
+    #---------------
+    # Tally the dependencies from the raw dependencies
+    #---------------
+    talliedDeps = tallyDependencies(rawDeps)
+
+    #---------------
+    # Filter the tallied dependencies
+    #---------------
+    depsByRoot = getDependenciesByRoot(talliedDeps, provides)
 
     #---------------
     # PRINT!!
     #---------------      
-    lines = []
+    depLines = []
     for depPrefix in DEPS_PREFIXES:
         if depsByRoot.has_key(depPrefix):
-            lines.append('\n// ' + depPrefix.split('.')[0] + '\n')
+            depLines.append('\n// ' + depPrefix.split('.')[0] + '\n')
             for req in depsByRoot[depPrefix]:
-                lines.append(req + '\n')
+                depLines.append(REQUIRE_PREFIX + '\'' + req + '\');\n')
                 continue
 
-    lines.append('\n//-----------\n\n')
-    return lines
+    depLines.append('\n//-----------\n\n')
+    return depLines
 
 
 
@@ -269,16 +442,18 @@ def modifyFile(filename):
     @param filename: the file to parse
     """
 
+    
     #---------------
     # Get the dependencies as lines
     #---------------
-    depsAsLines = parseDeps(filename) 
+    depsAsLines = getDependencies(filename) 
     for l in depsAsLines: print l
 
     #---------------
     # Add dependencies to the top of the file's lines
     #---------------
     fileLines = depsAsLines + [line for line in open(filename)]
+
 
     #---------------
     # Re-write the file
@@ -308,11 +483,10 @@ def main():
     files = []
     for (dirpath, dirnames, filenames) in os.walk(LOAD_PATH):
         for f in filenames:
-            if (dirpath == LOAD_PATH):
+            if dirpath == LOAD_PATH and not f.startswith('.'):
                 filename = os.path.join(dirpath, f)
                 files.append(filename)
                 modifyFile(filename)
-
     #---------------
     # Open each file using the default system editor
     #---------------

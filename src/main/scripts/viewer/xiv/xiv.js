@@ -125,6 +125,7 @@ goog.exportSymbol('xiv', xiv);
 
 /**
  * @enum {string}
+ * @expose
  */
 xiv.States = {
     DEMO: 'demo',
@@ -1213,13 +1214,11 @@ function (url, opt_runCallback, opt_doneCallback) {
 }
 
 
+goog.exportSymbol('xiv.States', xiv.States);
 goog.exportSymbol('xiv.loadCustomExtensions', xiv.loadCustomExtensions);
 goog.exportSymbol('xiv.adjustDocumentStyle', xiv.adjustDocumentStyle);
-
+goog.exportSymbol('xiv.prototype.setServerRoot', xiv.prototype.setServerRoot);
 goog.exportSymbol('xiv.prototype.begin', xiv.prototype.begin);
 goog.exportSymbol('xiv.prototype.show', xiv.prototype.show);
 goog.exportSymbol('xiv.prototype.hide', xiv.prototype.hide);
 goog.exportSymbol('xiv.prototype.dispose', xiv.prototype.dispose);
-goog.exportSymbol('xiv.prototype.setServerRoot', xiv.prototype.setServerRoot);
-
-

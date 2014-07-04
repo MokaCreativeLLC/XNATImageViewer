@@ -1,9 +1,15 @@
+
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 
+// goog
+goog.require('goog.dom.classes')
+
 // xiv
-goog.require('xiv.ui.layouts.SingleFrameLayout');
+goog.require('xiv.ui.layouts.SingleFrameLayout')
+
+//-----------
 
 
 

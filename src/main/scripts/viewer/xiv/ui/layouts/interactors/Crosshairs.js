@@ -3,10 +3,14 @@
  */
 
 // goog
+goog.require('goog.object');
+goog.require('goog.string');
 goog.require('goog.dom');
 
-// utils
+// nrg
 goog.require('nrg.ui.Component');
+
+//-----------
 
 
 

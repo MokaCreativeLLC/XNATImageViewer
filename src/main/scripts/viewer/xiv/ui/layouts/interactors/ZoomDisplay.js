@@ -3,11 +3,16 @@
  */
 
 // goog
-goog.require('goog.dom');
 goog.require('goog.cssom');
+goog.require('goog.dom');
 
-// utils
+// nrg
 goog.require('nrg.ui.Component');
+
+// xiv
+goog.require('xiv.ui.layouts.interactors.InputController');
+
+//-----------
 
 
 

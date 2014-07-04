@@ -3,7 +3,6 @@
  */
 
 // goog
-goog.require('goog.ui.ProgressBar');
 goog.require('goog.dom');
 goog.require('goog.string');
 goog.require('goog.array');

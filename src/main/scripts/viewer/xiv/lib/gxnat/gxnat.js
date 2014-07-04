@@ -304,6 +304,8 @@ gxnat.sortXnatPropertiesArray = function (viewables, keyDepthArr){
 
 goog.exportSymbol('gxnat.JPEG_CONVERT_SUFFIX', gxnat.JPEG_CONVERT_SUFFIX);
 goog.exportSymbol('gxnat.folderAbbrev', gxnat.folderAbbrev);
+goog.exportSymbol('gxnat.ZIP_SUFFIX', gxnat.ZIP_SUFFIX);
+goog.exportSymbol('gxnat.getFilesAsZip', gxnat.getFilesAsZip);
 goog.exportSymbol('gxnat.jsonGet', gxnat.jsonGet);
 goog.exportSymbol('gxnat.get', gxnat.get);
 goog.exportSymbol('gxnat.naturalSort', gxnat.naturalSort);

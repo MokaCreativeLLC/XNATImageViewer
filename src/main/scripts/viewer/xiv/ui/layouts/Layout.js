@@ -3,15 +3,21 @@
  */
 
 // goog
-goog.require('goog.string');
+goog.require('goog.events');
+goog.require('goog.object');
 goog.require('goog.array');
+goog.require('goog.string');
 
-// utils
+// nrg
 goog.require('nrg.string');
 goog.require('nrg.ui.Component');
+goog.require('nrg.ui');
 
 // xiv
 goog.require('xiv.ui.layouts.LayoutFrame');
+goog.require('xiv.ui.layouts.Layout');
+
+//-----------
 
 
 
@@ -28,7 +34,7 @@ xiv.ui.layouts.Layout = function() {
 	window.console.log('\n\n\n\n' + 
 			   'This is the class attempting to inherit from it:');
 	window.console.log(this);
-	throw new Error('Sublcasses of xiv.ui.layous.Layout must have ' + 
+	throw new Error('Sublcasses of xiv.ui.layouts.Layout must have ' + 
 			' the TITLE defined as a constructor property!');
 
     }

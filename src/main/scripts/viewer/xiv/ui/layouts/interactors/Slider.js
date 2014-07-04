@@ -5,8 +5,12 @@
 // goog
 goog.require('goog.dom');
 
-// utils
+// nrg
 goog.require('nrg.ui.Slider');
+
+// xiv
+
+//-----------
 
 
 
