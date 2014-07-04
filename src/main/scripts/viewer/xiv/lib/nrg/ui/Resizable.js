@@ -710,4 +710,51 @@ nrg.ui.Resizable.prototype.disposeInternal = function() {
 
 
 
-
+goog.exportSymbol('nrg.ui.Resizable.EventType', nrg.ui.Resizable.EventType);
+goog.exportSymbol('nrg.ui.Resizable.ID_PREFIX', nrg.ui.Resizable.ID_PREFIX);
+goog.exportSymbol('nrg.ui.Resizable.CSS_SUFFIX', nrg.ui.Resizable.CSS_SUFFIX);
+goog.exportSymbol('nrg.ui.Resizable.DIRECTIONS', nrg.ui.Resizable.DIRECTIONS);
+goog.exportSymbol('nrg.ui.Resizable.DEFAULT_DIRECTIONS',
+	nrg.ui.Resizable.DEFAULT_DIRECTIONS);
+goog.exportSymbol('nrg.ui.Resizable.DEFAULT_LIMITS',
+	nrg.ui.Resizable.DEFAULT_LIMITS);
+goog.exportSymbol('nrg.ui.Resizable.DEFAULT_MIN_HEIGHT',
+	nrg.ui.Resizable.DEFAULT_MIN_HEIGHT);
+goog.exportSymbol('nrg.ui.Resizable.DEFAULT_MIN_WIDTH',
+	nrg.ui.Resizable.DEFAULT_MIN_WIDTH);
+goog.exportSymbol('nrg.ui.Resizable.createResizeDragger',
+	nrg.ui.Resizable.createResizeDragger);
+goog.exportSymbol('nrg.ui.Resizable.prototype.setBoundThreshold',
+	nrg.ui.Resizable.prototype.setBoundThreshold);
+goog.exportSymbol('nrg.ui.Resizable.prototype.getHandle',
+	nrg.ui.Resizable.prototype.getHandle);
+goog.exportSymbol('nrg.ui.Resizable.prototype.getResizeDragger',
+	nrg.ui.Resizable.prototype.getResizeDragger);
+goog.exportSymbol('nrg.ui.Resizable.prototype.getHandles',
+	nrg.ui.Resizable.prototype.getHandles);
+goog.exportSymbol('nrg.ui.Resizable.prototype.getBoundaryElement',
+	nrg.ui.Resizable.prototype.getBoundaryElement);
+goog.exportSymbol('nrg.ui.Resizable.prototype.setBoundaryElement',
+	nrg.ui.Resizable.prototype.setBoundaryElement);
+goog.exportSymbol('nrg.ui.Resizable.prototype.setMinHeight',
+	nrg.ui.Resizable.prototype.setMinHeight);
+goog.exportSymbol('nrg.ui.Resizable.prototype.setMinWidth',
+	nrg.ui.Resizable.prototype.setMinWidth);
+goog.exportSymbol('nrg.ui.Resizable.prototype.getMinHeight',
+	nrg.ui.Resizable.prototype.getMinHeight);
+goog.exportSymbol('nrg.ui.Resizable.prototype.getMinWidth',
+	nrg.ui.Resizable.prototype.getMinWidth);
+goog.exportSymbol('nrg.ui.Resizable.prototype.setResizeDirections',
+	nrg.ui.Resizable.prototype.setResizeDirections);
+goog.exportSymbol('nrg.ui.Resizable.prototype.checkDirectionValid',
+	nrg.ui.Resizable.prototype.checkDirectionValid);
+goog.exportSymbol('nrg.ui.Resizable.prototype.hasDragger',
+	nrg.ui.Resizable.prototype.hasDragger);
+goog.exportSymbol('nrg.ui.Resizable.prototype.slideToLimits',
+	nrg.ui.Resizable.prototype.slideToLimits);
+goog.exportSymbol('nrg.ui.Resizable.prototype.addResizeDirection',
+	nrg.ui.Resizable.prototype.addResizeDirection);
+goog.exportSymbol('nrg.ui.Resizable.prototype.update',
+	nrg.ui.Resizable.prototype.update);
+goog.exportSymbol('nrg.ui.Resizable.prototype.disposeInternal',
+	nrg.ui.Resizable.prototype.disposeInternal);

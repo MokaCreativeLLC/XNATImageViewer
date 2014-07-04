@@ -647,3 +647,83 @@ nrg.ui.ResizeDragger.prototype.disposeInternal = function() {
     // direction
     delete this.direction_;
 }
+
+
+
+
+goog.exportSymbol('nrg.ui.ResizeDragger.EventType',
+	nrg.ui.ResizeDragger.EventType);
+goog.exportSymbol('nrg.ui.ResizeDragger.ID_PREFIX',
+	nrg.ui.ResizeDragger.ID_PREFIX);
+goog.exportSymbol('nrg.ui.ResizeDragger.CSS_SUFFIX',
+	nrg.ui.ResizeDragger.CSS_SUFFIX);
+goog.exportSymbol('nrg.ui.ResizeDragger.ANIM_MED',
+	nrg.ui.ResizeDragger.ANIM_MED);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.vertDraggerOffset',
+	nrg.ui.ResizeDragger.prototype.vertDraggerOffset);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.horizDraggerOffset',
+	nrg.ui.ResizeDragger.prototype.horizDraggerOffset);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.draggerLimitLeft',
+	nrg.ui.ResizeDragger.prototype.draggerLimitLeft);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.draggerLimitRight',
+	nrg.ui.ResizeDragger.prototype.draggerLimitRight);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.draggerLimitTop',
+	nrg.ui.ResizeDragger.prototype.draggerLimitTop);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.draggerLimitBottom',
+	nrg.ui.ResizeDragger.prototype.draggerLimitBottom);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.draggerLimitWidth',
+	nrg.ui.ResizeDragger.prototype.draggerLimitWidth);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.draggerLimitHeight',
+	nrg.ui.ResizeDragger.prototype.draggerLimitHeight);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.offsetX',
+	nrg.ui.ResizeDragger.prototype.offsetX);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.setOffsetX',
+	nrg.ui.ResizeDragger.prototype.setOffsetX);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.offsetY',
+	nrg.ui.ResizeDragger.prototype.offsetY);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.setOffsetY',
+	nrg.ui.ResizeDragger.prototype.setOffsetY);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.handlePos',
+	nrg.ui.ResizeDragger.prototype.handlePos);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.handleSize',
+	nrg.ui.ResizeDragger.prototype.handleSize);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.resizeePos',
+	nrg.ui.ResizeDragger.prototype.resizeePos);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.resizeeSize',
+	nrg.ui.ResizeDragger.prototype.resizeeSize);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.boundaryPos',
+	nrg.ui.ResizeDragger.prototype.boundaryPos);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.boundarySize',
+	nrg.ui.ResizeDragger.prototype.boundarySize);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.isAnimating',
+	nrg.ui.ResizeDragger.prototype.isAnimating);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.minSize',
+	nrg.ui.ResizeDragger.prototype.minSize);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.getBoundaryElement',
+	nrg.ui.ResizeDragger.prototype.getBoundaryElement);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.setBoundaryElement',
+	nrg.ui.ResizeDragger.prototype.setBoundaryElement);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.getDragger',
+	nrg.ui.ResizeDragger.prototype.getDragger);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.getDirection',
+	nrg.ui.ResizeDragger.prototype.getDirection);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.getHandle',
+	nrg.ui.ResizeDragger.prototype.getHandle);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.updateTrackingValues',
+	nrg.ui.ResizeDragger.prototype.updateTrackingValues);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.setMinSize',
+	nrg.ui.ResizeDragger.prototype.setMinSize);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.onResizeStart',
+	nrg.ui.ResizeDragger.prototype.onResizeStart);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.onResize',
+	nrg.ui.ResizeDragger.prototype.onResize);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.onResizeEnd',
+	nrg.ui.ResizeDragger.prototype.onResizeEnd);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.update',
+	nrg.ui.ResizeDragger.prototype.update);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.getSlideTrajectory',
+	nrg.ui.ResizeDragger.prototype.getSlideTrajectory);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.slideToLimits',
+	nrg.ui.ResizeDragger.prototype.slideToLimits);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.disposeInternal',
+	nrg.ui.ResizeDragger.prototype.disposeInternal);

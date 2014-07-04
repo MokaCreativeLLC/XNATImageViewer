@@ -175,6 +175,12 @@ gxnat.vis.Viewable.prototype.dispose = function() {
 
 
 
+goog.exportSymbol('gxnat.vis.Viewable.prototype.getFileData',
+	gxnat.vis.Viewable.prototype.getFileData);
+goog.exportSymbol('gxnat.vis.Viewable.prototype.setFileData',
+	gxnat.vis.Viewable.prototype.setFileData);
+goog.exportSymbol('gxnat.vis.Viewable.prototype.setFileDataFromZip',
+	gxnat.vis.Viewable.prototype.setFileDataFromZip);
 goog.exportSymbol('gxnat.vis.Viewable.prototype.getFiles',
 	gxnat.vis.Viewable.prototype.getFiles);
 goog.exportSymbol('gxnat.vis.Viewable.prototype.removeFile',

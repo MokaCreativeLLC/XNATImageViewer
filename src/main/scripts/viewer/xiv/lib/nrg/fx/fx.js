@@ -624,3 +624,27 @@ nrg.fx.setBasicHoverStates = function(elt, overOp, outOp){
 }
 
 
+
+goog.exportSymbol('nrg.fx.fadeIn', nrg.fx.fadeIn);
+goog.exportSymbol('nrg.fx.fadeInFromZero', nrg.fx.fadeInFromZero);
+goog.exportSymbol('nrg.fx.fadeOut', nrg.fx.fadeOut);
+goog.exportSymbol('nrg.fx.fadeOutAndRemove', nrg.fx.fadeOutAndRemove);
+goog.exportSymbol('nrg.fx.fadeTo', nrg.fx.fadeTo);
+goog.exportSymbol('nrg.fx.animGenStyles', nrg.fx.animGenStyles);
+goog.exportSymbol('nrg.fx.generateAnim_Slide', nrg.fx.generateAnim_Slide);
+goog.exportSymbol('nrg.fx.generateAnim_Resize', nrg.fx.generateAnim_Resize);
+goog.exportSymbol('nrg.fx.generateAnim_Fade', nrg.fx.generateAnim_Fade);
+goog.exportSymbol('nrg.fx.generateAnim_RemoveAddFade',
+	nrg.fx.generateAnim_RemoveAddFade);
+goog.exportSymbol('nrg.fx.generateAnim_BgColorTrans',
+	nrg.fx.generateAnim_BgColorTrans);
+goog.exportSymbol('nrg.fx.TransitionDims', nrg.fx.TransitionDims);
+goog.exportSymbol('nrg.fx.filterTransitionStyles',
+	nrg.fx.filterTransitionStyles);
+goog.exportSymbol('nrg.fx.getTransitionStyles', nrg.fx.getTransitionStyles);
+goog.exportSymbol('nrg.fx.generateTransitionDims',
+	nrg.fx.generateTransitionDims);
+goog.exportSymbol('nrg.fx.generateAnimations', nrg.fx.generateAnimations);
+goog.exportSymbol('nrg.fx.parallelAnimate', nrg.fx.parallelAnimate);
+goog.exportSymbol('nrg.fx.serialAnimate', nrg.fx.serialAnimate);
+goog.exportSymbol('nrg.fx.setBasicHoverStates', nrg.fx.setBasicHoverStates);

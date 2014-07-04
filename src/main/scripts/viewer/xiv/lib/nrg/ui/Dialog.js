@@ -672,3 +672,45 @@ nrg.ui.Dialog.prototype.disposeInternal = function() {
 
 
 }
+
+
+goog.exportSymbol('nrg.ui.Dialog.ID_PREFIX', nrg.ui.Dialog.ID_PREFIX);
+goog.exportSymbol('nrg.ui.Dialog.EventType', nrg.ui.Dialog.EventType);
+goog.exportSymbol('nrg.ui.Dialog.prototype.setMouseoverClass',
+	nrg.ui.Dialog.prototype.setMouseoverClass);
+goog.exportSymbol('nrg.ui.Dialog.prototype.addTitleClass',
+	nrg.ui.Dialog.prototype.addTitleClass);
+goog.exportSymbol('nrg.ui.Dialog.prototype.addContentClass',
+	nrg.ui.Dialog.prototype.addContentClass);
+goog.exportSymbol('nrg.ui.Dialog.prototype.addCloseButtonClass',
+	nrg.ui.Dialog.prototype.addCloseButtonClass);
+goog.exportSymbol('nrg.ui.Dialog.prototype.addCloseButtonImageClass',
+	nrg.ui.Dialog.prototype.addCloseButtonImageClass);
+goog.exportSymbol('nrg.ui.Dialog.prototype.addCloseSpanClass',
+	nrg.ui.Dialog.prototype.addCloseSpanClass);
+goog.exportSymbol('nrg.ui.Dialog.prototype.addButtonsClass',
+	nrg.ui.Dialog.prototype.addButtonsClass);
+goog.exportSymbol('nrg.ui.Dialog.prototype.applyFadeTransitions',
+	nrg.ui.Dialog.prototype.applyFadeTransitions);
+goog.exportSymbol('nrg.ui.Dialog.prototype.moveToCorner',
+	nrg.ui.Dialog.prototype.moveToCorner);
+goog.exportSymbol('nrg.ui.Dialog.prototype.center',
+	nrg.ui.Dialog.prototype.center);
+goog.exportSymbol('nrg.ui.Dialog.prototype.setDraggable',
+	nrg.ui.Dialog.prototype.setDraggable);
+goog.exportSymbol('nrg.ui.Dialog.prototype.updateLimits',
+	nrg.ui.Dialog.prototype.updateLimits);
+goog.exportSymbol('nrg.ui.Dialog.prototype.addImage',
+	nrg.ui.Dialog.prototype.addImage);
+goog.exportSymbol('nrg.ui.Dialog.prototype.addText',
+	nrg.ui.Dialog.prototype.addText);
+goog.exportSymbol('nrg.ui.Dialog.prototype.getOverlay',
+	nrg.ui.Dialog.prototype.getOverlay);
+goog.exportSymbol('nrg.ui.Dialog.prototype.render',
+	nrg.ui.Dialog.prototype.render);
+goog.exportSymbol('nrg.ui.Dialog.prototype.setVisible',
+	nrg.ui.Dialog.prototype.setVisible);
+goog.exportSymbol('nrg.ui.Dialog.prototype.getTextElements',
+	nrg.ui.Dialog.prototype.getTextElements);
+goog.exportSymbol('nrg.ui.Dialog.prototype.disposeInternal',
+	nrg.ui.Dialog.prototype.disposeInternal);

@@ -323,10 +323,28 @@ nrg.ui.ScrollableContainer.prototype.disposeInternal = function() {
 
 
 
-
-
-
-
+goog.exportSymbol('nrg.ui.ScrollableContainer.ID_PREFIX',
+	nrg.ui.ScrollableContainer.ID_PREFIX);
+goog.exportSymbol('nrg.ui.ScrollableContainer.CSS_SUFFIX',
+	nrg.ui.ScrollableContainer.CSS_SUFFIX);
+goog.exportSymbol('nrg.ui.ScrollableContainer.MAX_LABEL_LENGTH',
+	nrg.ui.ScrollableContainer.MAX_LABEL_LENGTH);
+goog.exportSymbol('nrg.ui.ScrollableContainer.prototype.render',
+	nrg.ui.ScrollableContainer.prototype.render);
+goog.exportSymbol('nrg.ui.ScrollableContainer.prototype.addContents',
+	nrg.ui.ScrollableContainer.prototype.addContents);
+goog.exportSymbol('nrg.ui.ScrollableContainer.prototype.getElement',
+	nrg.ui.ScrollableContainer.prototype.getElement);
+goog.exportSymbol('nrg.ui.ScrollableContainer.prototype.getSlider',
+	nrg.ui.ScrollableContainer.prototype.getSlider);
+goog.exportSymbol('nrg.ui.ScrollableContainer.prototype.getScrollArea',
+	nrg.ui.ScrollableContainer.prototype.getScrollArea);
+goog.exportSymbol('nrg.ui.ScrollableContainer.prototype.updateStyle',
+	nrg.ui.ScrollableContainer.prototype.updateStyle);
+goog.exportSymbol('nrg.ui.ScrollableContainer.prototype.mapSliderToContents',
+	nrg.ui.ScrollableContainer.prototype.mapSliderToContents);
+goog.exportSymbol('nrg.ui.ScrollableContainer.prototype.disposeInternal',
+	nrg.ui.ScrollableContainer.prototype.disposeInternal);
 
 
 

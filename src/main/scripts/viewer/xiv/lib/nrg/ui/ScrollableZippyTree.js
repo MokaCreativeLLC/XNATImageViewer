@@ -227,3 +227,32 @@ nrg.ui.ScrollableZippyTree.prototype.disposeInternal = function() {
     }
 }
 
+
+
+
+goog.exportSymbol('nrg.ui.ScrollableZippyTree.EventType',
+	nrg.ui.ScrollableZippyTree.EventType);
+goog.exportSymbol('nrg.ui.ScrollableZippyTree.ID_PREFIX',
+	nrg.ui.ScrollableZippyTree.ID_PREFIX);
+goog.exportSymbol('nrg.ui.ScrollableZippyTree.CSS_SUFFIX',
+	nrg.ui.ScrollableZippyTree.CSS_SUFFIX);
+goog.exportSymbol('nrg.ui.ScrollableZippyTree.prototype.render',
+	nrg.ui.ScrollableZippyTree.prototype.render);
+goog.exportSymbol('nrg.ui.ScrollableZippyTree.prototype.addContents',
+	nrg.ui.ScrollableZippyTree.prototype.addContents);
+goog.exportSymbol('nrg.ui.ScrollableZippyTree.prototype.expandAll',
+	nrg.ui.ScrollableZippyTree.prototype.expandAll);
+goog.exportSymbol('nrg.ui.ScrollableZippyTree.prototype.collapseAll',
+	nrg.ui.ScrollableZippyTree.prototype.collapseAll);
+goog.exportSymbol('nrg.ui.ScrollableZippyTree.prototype.setExpanded',
+	nrg.ui.ScrollableZippyTree.prototype.setExpanded);
+goog.exportSymbol('nrg.ui.ScrollableZippyTree.prototype.getZippyTree',
+	nrg.ui.ScrollableZippyTree.prototype.getZippyTree);
+goog.exportSymbol('nrg.ui.ScrollableZippyTree.prototype.addFolders',
+	nrg.ui.ScrollableZippyTree.prototype.addFolders);
+goog.exportSymbol('nrg.ui.ScrollableZippyTree.prototype.setZippyTreeEvents',
+	nrg.ui.ScrollableZippyTree.prototype.setZippyTreeEvents);
+goog.exportSymbol('nrg.ui.ScrollableZippyTree.prototype.updateStyle',
+	nrg.ui.ScrollableZippyTree.prototype.updateStyle);
+goog.exportSymbol('nrg.ui.ScrollableZippyTree.prototype.disposeInternal',
+	nrg.ui.ScrollableZippyTree.prototype.disposeInternal);

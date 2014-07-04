@@ -514,38 +514,44 @@ xiv.vis.XtkRenderer2D.prototype.destroy = function() {
     goog.base(this, 'destroy');
 }
 
-
-
-
-goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.init',
-	xiv.vis.XtkRenderer2D.prototype.init);
-goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.render',
-	xiv.vis.XtkRenderer2D.prototype.render);
-
-
 goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.onResize',
 	xiv.vis.XtkRenderer2D.prototype.onResize);
 goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.onScroll',
 	xiv.vis.XtkRenderer2D.prototype.onScroll);
 goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.onProgress',
 	xiv.vis.XtkRenderer2D.prototype.onProgress);
+goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.init',
+	xiv.vis.XtkRenderer2D.prototype.init);
+goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.getOrientation',
+	xiv.vis.XtkRenderer2D.prototype.getOrientation);
+goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.getCamera',
+	xiv.vis.XtkRenderer2D.prototype.getCamera);
+goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.getMousePosition',
+	xiv.vis.XtkRenderer2D.prototype.getMousePosition);
+goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.isMouseOver',
+	xiv.vis.XtkRenderer2D.prototype.isMouseOver);
 goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.onSliceNavigation',
 	xiv.vis.XtkRenderer2D.prototype.onSliceNavigation);
-
-
+goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.render',
+	xiv.vis.XtkRenderer2D.prototype.render);
 goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.getCanvas',
 	xiv.vis.XtkRenderer2D.prototype.getCanvas);
-goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.getZoom',
-	xiv.vis.XtkRenderer2D.prototype.getZoom);
-goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.getVerticalSliceX',
-	xiv.vis.XtkRenderer2D.prototype.getVerticalSliceX);
-goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.getHorizontalSliceY',
-	xiv.vis.XtkRenderer2D.prototype.getHorizontalSliceY);
 goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.getVolume',
 	xiv.vis.XtkRenderer2D.prototype.getVolume);
 goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.getNumberSlices',
 	xiv.vis.XtkRenderer2D.prototype.getNumberSlices);
-
+goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.getZoom',
+	xiv.vis.XtkRenderer2D.prototype.getZoom);
+goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.setZoom',
+	xiv.vis.XtkRenderer2D.prototype.setZoom);
+goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.zoomIn',
+	xiv.vis.XtkRenderer2D.prototype.zoomIn);
+goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.zoomOut',
+	xiv.vis.XtkRenderer2D.prototype.zoomOut);
+goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.getVerticalSliceX',
+	xiv.vis.XtkRenderer2D.prototype.getVerticalSliceX);
+goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.getHorizontalSliceY',
+	xiv.vis.XtkRenderer2D.prototype.getHorizontalSliceY);
 goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.destroy',
 	xiv.vis.XtkRenderer2D.prototype.destroy);
 

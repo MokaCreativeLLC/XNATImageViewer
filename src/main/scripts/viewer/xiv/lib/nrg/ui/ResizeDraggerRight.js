@@ -157,3 +157,18 @@ nrg.ui.ResizeDraggerRight.prototype.getSlideTrajectory = function(limitType) {
 	    new goog.math.Coordinate(this.draggerLimitRight, this.handlePos.y)
     }
 }
+
+
+
+goog.exportSymbol('nrg.ui.ResizeDraggerRight.ID_PREFIX',
+	nrg.ui.ResizeDraggerRight.ID_PREFIX);
+goog.exportSymbol('nrg.ui.ResizeDraggerRight.CSS_SUFFIX',
+	nrg.ui.ResizeDraggerRight.CSS_SUFFIX);
+goog.exportSymbol('nrg.ui.ResizeDraggerRight.calculateDraggerLimits',
+	nrg.ui.ResizeDraggerRight.calculateDraggerLimits);
+goog.exportSymbol('nrg.ui.ResizeDraggerRight.resizeMethod',
+	nrg.ui.ResizeDraggerRight.resizeMethod);
+goog.exportSymbol('nrg.ui.ResizeDraggerRight.prototype.update',
+	nrg.ui.ResizeDraggerRight.prototype.update);
+goog.exportSymbol('nrg.ui.ResizeDraggerRight.prototype.getSlideTrajectory',
+	nrg.ui.ResizeDraggerRight.prototype.getSlideTrajectory);

@@ -167,3 +167,17 @@ nrg.string.truncateString = function(str, opt_maxLen){
     return (str.length > opt_maxLen) ? 
 	str.substring(0, opt_maxLen - 3) + '...' : str;
 }
+
+
+
+
+goog.exportSymbol('nrg.string.basename', nrg.string.basename);
+goog.exportSymbol('nrg.string.dirname', nrg.string.dirname);
+goog.exportSymbol('nrg.string.getFileExtension', nrg.string.getFileExtension);
+goog.exportSymbol('nrg.string.fileNameMatch', nrg.string.fileNameMatch);
+goog.exportSymbol('nrg.string.stripNonAlphanumeric',
+	nrg.string.stripNonAlphanumeric);
+goog.exportSymbol('nrg.string.stripIllegal', nrg.string.stripIllegal);
+goog.exportSymbol('nrg.string.getLettersOnly', nrg.string.getLettersOnly);
+goog.exportSymbol('nrg.string.replaceIllegal', nrg.string.replaceIllegal);
+goog.exportSymbol('nrg.string.truncateString', nrg.string.truncateString);

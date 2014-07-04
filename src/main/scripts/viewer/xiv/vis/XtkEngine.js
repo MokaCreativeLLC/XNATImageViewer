@@ -1362,6 +1362,12 @@ goog.exportSymbol('xiv.vis.XtkEngine.EventType', xiv.vis.XtkEngine.EventType);
 goog.exportSymbol('xiv.vis.XtkEngine.ID_PREFIX', xiv.vis.XtkEngine.ID_PREFIX);
 goog.exportSymbol('xiv.vis.XtkEngine.ANATOMICAL_TO_CARTESIAN',
 	xiv.vis.XtkEngine.ANATOMICAL_TO_CARTESIAN);
+goog.exportSymbol('xiv.vis.XtkEngine.SELECTED_VOL_KEY',
+	xiv.vis.XtkEngine.SELECTED_VOL_KEY);
+goog.exportSymbol('xiv.vis.XtkEngine.SLICE_TO_RAS_KEY',
+	xiv.vis.XtkEngine.SLICE_TO_RAS_KEY);
+goog.exportSymbol('xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY',
+	xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY);
 goog.exportSymbol('xiv.vis.XtkEngine.generateXtkObjectFromExtension',
 	xiv.vis.XtkEngine.generateXtkObjectFromExtension);
 goog.exportSymbol('xiv.vis.XtkEngine.createAnnotation',
@@ -1375,7 +1381,6 @@ goog.exportSymbol('xiv.vis.XtkEngine.isMesh', xiv.vis.XtkEngine.isMesh);
 goog.exportSymbol('xiv.vis.XtkEngine.isFiber', xiv.vis.XtkEngine.isFiber);
 goog.exportSymbol('xiv.vis.XtkEngine.ViewablesObject',
 	xiv.vis.XtkEngine.ViewablesObject);
-
 goog.exportSymbol('xiv.vis.XtkEngine.getViewables',
 	xiv.vis.XtkEngine.getViewables);
 goog.exportSymbol('xiv.vis.XtkEngine.createXObject',
@@ -1384,10 +1389,16 @@ goog.exportSymbol('xiv.vis.XtkEngine.prototype.setPlaneEnabled',
 	xiv.vis.XtkEngine.prototype.setPlaneEnabled);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.setPrimaryRenderPlane',
 	xiv.vis.XtkEngine.prototype.setPrimaryRenderPlane);
+goog.exportSymbol('xiv.vis.XtkEngine.prototype.getPrimaryRenderPlane',
+	xiv.vis.XtkEngine.prototype.getPrimaryRenderPlane);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.updateControllers',
 	xiv.vis.XtkEngine.prototype.updateControllers);
+goog.exportSymbol('xiv.vis.XtkEngine.prototype.getControllerTree',
+	xiv.vis.XtkEngine.prototype.getControllerTree);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.render3dPlane',
 	xiv.vis.XtkEngine.prototype.render3dPlane);
+goog.exportSymbol('xiv.vis.XtkEngine.prototype.render2D',
+	xiv.vis.XtkEngine.prototype.render2D);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.renderAllPlanes',
 	xiv.vis.XtkEngine.prototype.renderAllPlanes);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.render',

@@ -684,8 +684,8 @@ goog.exportSymbol('xiv.vis.XtkPlane.prototype.add',
 	xiv.vis.XtkPlane.prototype.add);
 goog.exportSymbol('xiv.vis.XtkPlane.prototype.isEnabled',
 	xiv.vis.XtkPlane.prototype.isEnabled);
-goog.exportSymbol('xiv.vis.XtkPlane.prototype.setOn',
-	xiv.vis.XtkPlane.prototype.setOn);
+goog.exportSymbol('xiv.vis.XtkPlane.prototype.setEnabled',
+	xiv.vis.XtkPlane.prototype.setEnabled);
 goog.exportSymbol('xiv.vis.XtkPlane.prototype.restore',
 	xiv.vis.XtkPlane.prototype.restore);
 goog.exportSymbol('xiv.vis.XtkPlane.prototype.removeXObjectsFromRenderer',

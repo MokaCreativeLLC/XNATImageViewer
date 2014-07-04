@@ -736,3 +736,37 @@ nrg.ui.Slider.prototype.disposeInternal = function() {
     delete this.deltaMultiplyer_;
     delete this.isSliding_;
 };
+
+
+
+goog.exportSymbol('nrg.ui.Slider.EventType', nrg.ui.Slider.EventType);
+goog.exportSymbol('nrg.ui.Slider.ID_PREFIX', nrg.ui.Slider.ID_PREFIX);
+goog.exportSymbol('nrg.ui.Slider.CSS_SUFFIX', nrg.ui.Slider.CSS_SUFFIX);
+goog.exportSymbol('nrg.ui.Slider.prototype.suspendSlideEvent',
+	nrg.ui.Slider.prototype.suspendSlideEvent);
+goog.exportSymbol('nrg.ui.Slider.prototype.suspendChangeEvent',
+	nrg.ui.Slider.prototype.suspendChangeEvent);
+goog.exportSymbol('nrg.ui.Slider.prototype.render',
+	nrg.ui.Slider.prototype.render);
+goog.exportSymbol('nrg.ui.Slider.prototype.getElement',
+	nrg.ui.Slider.prototype.getElement);
+goog.exportSymbol('nrg.ui.Slider.prototype.getTrack',
+	nrg.ui.Slider.prototype.getTrack);
+goog.exportSymbol('nrg.ui.Slider.prototype.getThumb',
+	nrg.ui.Slider.prototype.getThumb);
+goog.exportSymbol('nrg.ui.Slider.prototype.bindToMouseWheel',
+	nrg.ui.Slider.prototype.bindToMouseWheel);
+goog.exportSymbol('nrg.ui.Slider.prototype.bindToArrowKeys',
+	nrg.ui.Slider.prototype.bindToArrowKeys);
+goog.exportSymbol('nrg.ui.Slider.prototype.updateStyle',
+	nrg.ui.Slider.prototype.updateStyle);
+goog.exportSymbol('nrg.ui.Slider.prototype.setOrientation',
+	nrg.ui.Slider.prototype.setOrientation);
+goog.exportSymbol('nrg.ui.Slider.prototype.setUseDeltaToScroll',
+	nrg.ui.Slider.prototype.setUseDeltaToScroll);
+goog.exportSymbol('nrg.ui.Slider.prototype.addThumbHoverClass',
+	nrg.ui.Slider.prototype.addThumbHoverClass);
+goog.exportSymbol('nrg.ui.Slider.prototype.addTrackHoverClass',
+	nrg.ui.Slider.prototype.addTrackHoverClass);
+goog.exportSymbol('nrg.ui.Slider.prototype.disposeInternal',
+	nrg.ui.Slider.prototype.disposeInternal);

@@ -9,6 +9,7 @@ goog.require('goog.object');
 // gxnat
 goog.require('gxnat.vis.VisNode');
 goog.require('gxnat.vis.ViewableGroup');
+
 //-----------
 
 

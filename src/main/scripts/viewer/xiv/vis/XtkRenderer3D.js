@@ -83,11 +83,11 @@ xiv.vis.XtkRenderer3D.prototype.remove = function(xObj) {
 
 
 
-goog.exportSymbol('xiv.vis.XtkRenderer3D.prototype.render',
-	xiv.vis.XtkRenderer3D.prototype.render);
-goog.exportSymbol('xiv.vis.XtkRenderer3D.prototype.remove',
-	xiv.vis.XtkRenderer3D.prototype.remove);
 goog.exportSymbol('xiv.vis.XtkRenderer3D.prototype.onResize',
 	xiv.vis.XtkRenderer3D.prototype.onResize);
 goog.exportSymbol('xiv.vis.XtkRenderer3D.prototype.onProgress',
 	xiv.vis.XtkRenderer3D.prototype.onProgress);
+goog.exportSymbol('xiv.vis.XtkRenderer3D.prototype.render',
+	xiv.vis.XtkRenderer3D.prototype.render);
+goog.exportSymbol('xiv.vis.XtkRenderer3D.prototype.remove',
+	xiv.vis.XtkRenderer3D.prototype.remove);

@@ -69,4 +69,3 @@ goog.exportSymbol('gxnat.vis.Renderable.prototype.getRenderProperties',
 	gxnat.vis.Renderable.prototype.getRenderProperties);
 goog.exportSymbol('gxnat.vis.Renderable.prototype.dispose',
 	gxnat.vis.Renderable.prototype.dispose);
-

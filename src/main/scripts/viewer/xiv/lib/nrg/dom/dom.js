@@ -260,3 +260,18 @@ nrg.dom.readCSS = function(cssClassName) {
     }
     return classes;
 }
+
+
+
+
+goog.exportSymbol('nrg.dom.createBasicHoverButtonSet',
+	nrg.dom.createBasicHoverButtonSet);
+goog.exportSymbol('nrg.dom.createDivChildImage', nrg.dom.createDivChildImage);
+goog.exportSymbol('nrg.dom.createBasicHoverButton',
+	nrg.dom.createBasicHoverButton);
+goog.exportSymbol('nrg.dom.createUniqueDom', nrg.dom.createUniqueDom);
+goog.exportSymbol('nrg.dom.stopPropagation', nrg.dom.stopPropagation);
+goog.exportSymbol('nrg.dom.checkForExtraneousArgs',
+	nrg.dom.checkForExtraneousArgs);
+goog.exportSymbol('nrg.dom.readCSS',
+	nrg.dom.readCSS);

@@ -62,5 +62,13 @@ nrg.ui.ErrorOverlay.prototype.addText = function(text) {
  */
 nrg.ui.ErrorOverlay.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
-
 }
+
+
+
+goog.exportSymbol('nrg.ui.ErrorOverlay.ID_PREFIX',
+	nrg.ui.ErrorOverlay.ID_PREFIX);
+goog.exportSymbol('nrg.ui.ErrorOverlay.prototype.addText',
+	nrg.ui.ErrorOverlay.prototype.addText);
+goog.exportSymbol('nrg.ui.ErrorOverlay.prototype.disposeInternal',
+	nrg.ui.ErrorOverlay.prototype.disposeInternal);

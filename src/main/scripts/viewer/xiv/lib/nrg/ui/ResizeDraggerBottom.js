@@ -136,3 +136,19 @@ nrg.ui.ResizeDraggerBottom.prototype.getSlideTrajectory = function(limitType) {
 		this.draggerLimitBottom)
     }
 }
+
+
+
+
+goog.exportSymbol('nrg.ui.ResizeDraggerBottom.ID_PREFIX',
+	nrg.ui.ResizeDraggerBottom.ID_PREFIX);
+goog.exportSymbol('nrg.ui.ResizeDraggerBottom.CSS_SUFFIX',
+	nrg.ui.ResizeDraggerBottom.CSS_SUFFIX);
+goog.exportSymbol('nrg.ui.ResizeDraggerBottom.calculateDraggerLimits',
+	nrg.ui.ResizeDraggerBottom.calculateDraggerLimits);
+goog.exportSymbol('nrg.ui.ResizeDraggerBottom.resizeMethod',
+	nrg.ui.ResizeDraggerBottom.resizeMethod);
+goog.exportSymbol('nrg.ui.ResizeDraggerBottom.prototype.update',
+	nrg.ui.ResizeDraggerBottom.prototype.update);
+goog.exportSymbol('nrg.ui.ResizeDraggerBottom.prototype.getSlideTrajectory',
+	nrg.ui.ResizeDraggerBottom.prototype.getSlideTrajectory);

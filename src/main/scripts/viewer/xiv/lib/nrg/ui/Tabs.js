@@ -907,3 +907,46 @@ nrg.ui.Tabs.prototype.disposeInternal = function() {
 }
 
 
+
+goog.exportSymbol('nrg.ui.Tabs.ORIENTATIONS', nrg.ui.Tabs.ORIENTATIONS);
+goog.exportSymbol('nrg.ui.Tabs.DEFAULT_ORIENTATION',
+	nrg.ui.Tabs.DEFAULT_ORIENTATION);
+goog.exportSymbol('nrg.ui.Tabs.ID_PREFIX', nrg.ui.Tabs.ID_PREFIX);
+goog.exportSymbol('nrg.ui.Tabs.CSS_SUFFIX', nrg.ui.Tabs.CSS_SUFFIX);
+goog.exportSymbol('nrg.ui.Tabs.TabItemCollection',
+	nrg.ui.Tabs.TabItemCollection);
+goog.exportSymbol('nrg.ui.Tabs.prototype.tabSize',
+	nrg.ui.Tabs.prototype.tabSize);
+goog.exportSymbol('nrg.ui.Tabs.prototype.render',
+	nrg.ui.Tabs.prototype.render);
+goog.exportSymbol('nrg.ui.Tabs.prototype.getTabCount',
+	nrg.ui.Tabs.prototype.getTabCount);
+goog.exportSymbol('nrg.ui.Tabs.prototype.getLastActiveTab',
+	nrg.ui.Tabs.prototype.getLastActiveTab);
+goog.exportSymbol('nrg.ui.Tabs.prototype.getPreviousActiveTab',
+	nrg.ui.Tabs.prototype.getPreviousActiveTab);
+goog.exportSymbol('nrg.ui.Tabs.prototype.getTabElements',
+	nrg.ui.Tabs.prototype.getTabElements);
+goog.exportSymbol('nrg.ui.Tabs.prototype.getTabPages',
+	nrg.ui.Tabs.prototype.getTabPages);
+goog.exportSymbol('nrg.ui.Tabs.prototype.getTabIcons',
+	nrg.ui.Tabs.prototype.getTabIcons);
+goog.exportSymbol('nrg.ui.Tabs.prototype.addTabs',
+	nrg.ui.Tabs.prototype.addTabs);
+goog.exportSymbol('nrg.ui.Tabs.prototype.reset', nrg.ui.Tabs.prototype.reset);
+goog.exportSymbol('nrg.ui.Tabs.prototype.tabExists',
+	nrg.ui.Tabs.prototype.tabExists);
+goog.exportSymbol('nrg.ui.Tabs.prototype.addTab',
+	nrg.ui.Tabs.prototype.addTab);
+goog.exportSymbol('nrg.ui.Tabs.prototype.setTabPageContents',
+	nrg.ui.Tabs.prototype.setTabPageContents);
+goog.exportSymbol('nrg.ui.Tabs.prototype.setActive',
+	nrg.ui.Tabs.prototype.setActive);
+goog.exportSymbol('nrg.ui.Tabs.prototype.deactivate',
+	nrg.ui.Tabs.prototype.deactivate);
+goog.exportSymbol('nrg.ui.Tabs.prototype.deactivateAll',
+	nrg.ui.Tabs.prototype.deactivateAll);
+goog.exportSymbol('nrg.ui.Tabs.prototype.updateStyle',
+	nrg.ui.Tabs.prototype.updateStyle);
+goog.exportSymbol('nrg.ui.Tabs.prototype.disposeInternal',
+	nrg.ui.Tabs.prototype.disposeInternal);

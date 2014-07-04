@@ -65,3 +65,12 @@ nrg.ui.InfoOverlay.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
 }
+
+
+
+goog.exportSymbol('nrg.ui.InfoOverlay.ID_PREFIX',
+	nrg.ui.InfoOverlay.ID_PREFIX);
+goog.exportSymbol('nrg.ui.InfoOverlay.prototype.addText',
+	nrg.ui.InfoOverlay.prototype.addText);
+goog.exportSymbol('nrg.ui.InfoOverlay.prototype.disposeInternal',
+	nrg.ui.InfoOverlay.prototype.disposeInternal);

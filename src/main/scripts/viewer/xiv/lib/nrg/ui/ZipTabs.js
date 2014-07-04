@@ -397,3 +397,27 @@ nrg.ui.ZipTabs.prototype.disposeInternal = function() {
     this.Resizable_.dispose(); 
     delete this.Resizable_;
 }
+
+
+
+
+goog.exportSymbol('nrg.ui.ZipTabs.BOUND_THRESHOLD_VERT',
+	nrg.ui.ZipTabs.BOUND_THRESHOLD_VERT);
+goog.exportSymbol('nrg.ui.ZipTabs.BOUND_THRESHOLD_HORIZ',
+	nrg.ui.ZipTabs.BOUND_THRESHOLD_HORIZ);
+goog.exportSymbol('nrg.ui.ZipTabs.EventType', nrg.ui.ZipTabs.EventType);
+goog.exportSymbol('nrg.ui.ZipTabs.ID_PREFIX', nrg.ui.ZipTabs.ID_PREFIX);
+goog.exportSymbol('nrg.ui.ZipTabs.prototype.render',
+	nrg.ui.ZipTabs.prototype.render);
+goog.exportSymbol('nrg.ui.ZipTabs.prototype.setBoundaryElement',
+	nrg.ui.ZipTabs.prototype.setBoundaryElement);
+goog.exportSymbol('nrg.ui.ZipTabs.prototype.getResizable',
+	nrg.ui.ZipTabs.prototype.getResizable);
+goog.exportSymbol('nrg.ui.ZipTabs.prototype.setExpanded',
+	nrg.ui.ZipTabs.prototype.setExpanded);
+goog.exportSymbol('nrg.ui.ZipTabs.prototype.updateStyle',
+	nrg.ui.ZipTabs.prototype.updateStyle);
+goog.exportSymbol('nrg.ui.ZipTabs.prototype.addTab',
+	nrg.ui.ZipTabs.prototype.addTab);
+goog.exportSymbol('nrg.ui.ZipTabs.prototype.disposeInternal',
+	nrg.ui.ZipTabs.prototype.disposeInternal);

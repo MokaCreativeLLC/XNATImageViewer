@@ -384,3 +384,33 @@ nrg.ui.Component.prototype.disposeInternal = function() {
 
     this.disposeInternalCalled_ = true;
 }
+
+
+
+
+goog.exportSymbol('nrg.ui.Component.validateIdPrefix',
+	nrg.ui.Component.validateIdPrefix);
+goog.exportSymbol('nrg.ui.Component.createCssMap',
+	nrg.ui.Component.createCssMap);
+goog.exportSymbol('nrg.ui.Component.applyCssHierarchy',
+	nrg.ui.Component.applyCssHierarchy);
+goog.exportSymbol('nrg.ui.Component.animationLengths',
+	nrg.ui.Component.animationLengths);
+goog.exportSymbol('nrg.ui.Component.prototype.imagePrefix',
+	nrg.ui.Component.prototype.imagePrefix);
+goog.exportSymbol('nrg.ui.Component.prototype.setImagePrefix',
+	nrg.ui.Component.prototype.setImagePrefix);
+goog.exportSymbol('nrg.ui.Component.prototype.getImagePrefix',
+	nrg.ui.Component.prototype.getImagePrefix);
+goog.exportSymbol('nrg.ui.Component.prototype.addSubComponent',
+	nrg.ui.Component.prototype.addSubComponent);
+goog.exportSymbol('nrg.ui.Component.prototype.calcDims',
+	nrg.ui.Component.prototype.calcDims);
+goog.exportSymbol('nrg.ui.Component.prototype.updateStyle',
+	nrg.ui.Component.prototype.updateStyle);
+goog.exportSymbol('nrg.ui.Component.prototype.render',
+	nrg.ui.Component.prototype.render);
+goog.exportSymbol('nrg.ui.Component.prototype.disposeInternalCalled',
+	nrg.ui.Component.prototype.disposeInternalCalled);
+goog.exportSymbol('nrg.ui.Component.prototype.disposeInternal',
+	nrg.ui.Component.prototype.disposeInternal);

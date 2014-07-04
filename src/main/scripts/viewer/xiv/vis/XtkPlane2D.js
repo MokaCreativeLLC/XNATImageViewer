@@ -97,12 +97,13 @@ xiv.vis.XtkPlane2D.prototype.dispose = function() {
 
 
 
-
 goog.exportSymbol('xiv.vis.XtkPlane2D.prototype.getSliceRelativeToContainerX',
 	xiv.vis.XtkPlane2D.prototype.getSliceRelativeToContainerX);
 goog.exportSymbol('xiv.vis.XtkPlane2D.prototype.getSliceRelativeToContainerY',
 	xiv.vis.XtkPlane2D.prototype.getSliceRelativeToContainerY);
 goog.exportSymbol('xiv.vis.XtkPlane2D.prototype.getVolume',
 	xiv.vis.XtkPlane2D.prototype.getVolume);
+goog.exportSymbol('xiv.vis.XtkPlane2D.prototype.setContainer',
+	xiv.vis.XtkPlane2D.prototype.setContainer);
 goog.exportSymbol('xiv.vis.XtkPlane2D.prototype.dispose',
 	xiv.vis.XtkPlane2D.prototype.dispose);

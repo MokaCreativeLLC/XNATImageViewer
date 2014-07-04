@@ -997,3 +997,52 @@ nrg.ui.ZippyTree.prototype.disposeInternal = function(){
     delete this.initOp_;
     delete this.fadeDur_;
 }
+
+
+
+
+goog.exportSymbol('nrg.ui.ZippyTree.EventType', nrg.ui.ZippyTree.EventType);
+goog.exportSymbol('nrg.ui.ZippyTree.INDENT_PCT', nrg.ui.ZippyTree.INDENT_PCT);
+goog.exportSymbol('nrg.ui.ZippyTree.ID_PREFIX', nrg.ui.ZippyTree.ID_PREFIX);
+goog.exportSymbol('nrg.ui.ZippyTree.CSS_SUFFIX', nrg.ui.ZippyTree.CSS_SUFFIX);
+goog.exportSymbol('nrg.ui.ZippyTree.FADE_TIME', nrg.ui.ZippyTree.FADE_TIME);
+goog.exportSymbol('nrg.ui.ZippyTree.NODE_DEPTH_KEY',
+	nrg.ui.ZippyTree.NODE_DEPTH_KEY);
+goog.exportSymbol('nrg.ui.ZippyTree.MAX_DEPTH_KEY',
+	nrg.ui.ZippyTree.MAX_DEPTH_KEY);
+goog.exportSymbol('nrg.ui.ZippyTree.folderSorter',
+	nrg.ui.ZippyTree.folderSorter);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.setCustomInsertMethod',
+	nrg.ui.ZippyTree.prototype.setCustomInsertMethod);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.isEmpty',
+	nrg.ui.ZippyTree.prototype.isEmpty);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.contractAll',
+	nrg.ui.ZippyTree.prototype.contractAll);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.collapseAll',
+	nrg.ui.ZippyTree.prototype.collapseAll);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.getAllNodes',
+	nrg.ui.ZippyTree.prototype.getAllNodes);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.getTopLevelNodes',
+	nrg.ui.ZippyTree.prototype.getTopLevelNodes);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.expandAll',
+	nrg.ui.ZippyTree.prototype.expandAll);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.traverse',
+	nrg.ui.ZippyTree.prototype.traverse);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.getElement',
+	nrg.ui.ZippyTree.prototype.getElement);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.setExpanded',
+	nrg.ui.ZippyTree.prototype.setExpanded);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.setCollapsed',
+	nrg.ui.ZippyTree.prototype.setCollapsed);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.getFolderNodes',
+	nrg.ui.ZippyTree.prototype.getFolderNodes);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.addContents',
+	nrg.ui.ZippyTree.prototype.addContents);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.createBranch',
+	nrg.ui.ZippyTree.prototype.createBranch);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.playFx',
+	nrg.ui.ZippyTree.prototype.playFx);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.toggleFadeInFx',
+	nrg.ui.ZippyTree.prototype.toggleFadeInFx);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.disposeInternal',
+	nrg.ui.ZippyTree.prototype.disposeInternal);

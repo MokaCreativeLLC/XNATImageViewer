@@ -8,6 +8,7 @@ goog.require('goog.array');
 // gxnat
 goog.require('gxnat.vis.Renderable');
 goog.require('gxnat.vis.Viewable');
+
 //-----------
 
 

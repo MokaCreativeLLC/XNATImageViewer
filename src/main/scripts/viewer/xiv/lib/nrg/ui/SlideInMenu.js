@@ -856,21 +856,6 @@ nrg.ui.SlideInMenu.prototype.setMenuEvents_ = function() {
 
 
 
-/** 
- * @inheritDoc 
- */
-nrg.ui.SlideInMenu.prototype.disposeInternal = function() {
-    nrg.ui.SlideInMenu.superClass_.disposeInternal.call(this);
-    goog.object.forEach(this.menuItems_, function(item, pos){
-	item.ITEM.dispose();
-	goog.dom.remove(item.getElement());
-	item = null;
-    })
-
-};
-
-
-
 /**
  * @inheritDoc
  */
@@ -932,3 +917,68 @@ nrg.ui.SlideInMenu.prototype.disposeInternal = function() {
     delete this.matchMenuIconToSelected_;
     delete this.matchMenuTitleToSelected_;
 }
+
+
+
+
+
+goog.exportSymbol('nrg.ui.SlideInMenu.ID_PREFIX',
+	nrg.ui.SlideInMenu.ID_PREFIX);
+goog.exportSymbol('nrg.ui.SlideInMenu.EventType',
+	nrg.ui.SlideInMenu.EventType);
+goog.exportSymbol('nrg.ui.SlideInMenu.CSS_SUFFIX',
+	nrg.ui.SlideInMenu.CSS_SUFFIX);
+goog.exportSymbol('nrg.ui.SlideInMenu.menuItemCollection',
+	nrg.ui.SlideInMenu.menuItemCollection);
+goog.exportSymbol('nrg.ui.SlideInMenu.FADE_OUT_COUNTDOWN',
+	nrg.ui.SlideInMenu.FADE_OUT_COUNTDOWN);
+goog.exportSymbol('nrg.ui.SlideInMenu.ANIM_LEN_IN',
+	nrg.ui.SlideInMenu.ANIM_LEN_IN);
+goog.exportSymbol('nrg.ui.SlideInMenu.ANIM_LEN_OUT',
+	nrg.ui.SlideInMenu.ANIM_LEN_OUT);
+goog.exportSymbol('nrg.ui.SlideInMenu.MOUSEOUT_HIDE',
+	nrg.ui.SlideInMenu.MOUSEOUT_HIDE);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.setHidePosition',
+	nrg.ui.SlideInMenu.prototype.setHidePosition);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.setShowPosition',
+	nrg.ui.SlideInMenu.prototype.setShowPosition);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.getHidePosition',
+	nrg.ui.SlideInMenu.prototype.getHidePosition);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.getShowPosition',
+	nrg.ui.SlideInMenu.prototype.getShowPosition);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.getMenu',
+	nrg.ui.SlideInMenu.prototype.getMenu);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.getMenuHolder',
+	nrg.ui.SlideInMenu.prototype.getMenuHolder);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.getMenuIcon',
+	nrg.ui.SlideInMenu.prototype.getMenuIcon);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.setMenuIconSrc',
+	nrg.ui.SlideInMenu.prototype.setMenuIconSrc);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.setMenuItemIconSrc',
+	nrg.ui.SlideInMenu.prototype.setMenuItemIconSrc);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.getIndexFromTitle',
+	nrg.ui.SlideInMenu.prototype.getIndexFromTitle);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.getTitleFromIndex',
+	nrg.ui.SlideInMenu.prototype.getTitleFromIndex);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.getItemCollectionFromIndex',
+	nrg.ui.SlideInMenu.prototype.getItemCollectionFromIndex);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.matchMenuIconToSelected',
+	nrg.ui.SlideInMenu.prototype.matchMenuIconToSelected);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.matchMenuTitleToSelected',
+	nrg.ui.SlideInMenu.prototype.matchMenuTitleToSelected);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.getSelectedMenuItem',
+	nrg.ui.SlideInMenu.prototype.getSelectedMenuItem);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.setHighlightedIndex',
+	nrg.ui.SlideInMenu.prototype.setHighlightedIndex);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.deselectAll',
+	nrg.ui.SlideInMenu.prototype.deselectAll);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.addMenuItem',
+	nrg.ui.SlideInMenu.prototype.addMenuItem);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.setSelected',
+	nrg.ui.SlideInMenu.prototype.setSelected);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.showMenu',
+	nrg.ui.SlideInMenu.prototype.showMenu);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.hideMenu',
+	nrg.ui.SlideInMenu.prototype.hideMenu);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.disposeInternal',
+	nrg.ui.SlideInMenu.prototype.disposeInternal);

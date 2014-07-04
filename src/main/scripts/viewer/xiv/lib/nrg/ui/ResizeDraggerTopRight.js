@@ -153,3 +153,19 @@ function(limitType) {
 	end: end
     }
 }
+
+
+
+
+goog.exportSymbol('nrg.ui.ResizeDraggerTopRight.ID_PREFIX',
+	nrg.ui.ResizeDraggerTopRight.ID_PREFIX);
+goog.exportSymbol('nrg.ui.ResizeDraggerTopRight.CSS_SUFFIX',
+	nrg.ui.ResizeDraggerTopRight.CSS_SUFFIX);
+goog.exportSymbol('nrg.ui.ResizeDraggerTopRight.prototype.updateTrackingValues',
+	nrg.ui.ResizeDraggerTopRight.prototype.updateTrackingValues);
+goog.exportSymbol('nrg.ui.ResizeDraggerTopRight.prototype.onResize',
+	nrg.ui.ResizeDraggerTopRight.prototype.onResize);
+goog.exportSymbol('nrg.ui.ResizeDraggerTopRight.prototype.update',
+	nrg.ui.ResizeDraggerTopRight.prototype.update);
+goog.exportSymbol('nrg.ui.ResizeDraggerTopRight.prototype.getSlideTrajectory',
+	nrg.ui.ResizeDraggerTopRight.prototype.getSlideTrajectory);

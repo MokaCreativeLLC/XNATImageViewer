@@ -991,9 +991,6 @@ goog.exportSymbol('gxnat.ProjectTree.compareNodeTitles',
 	gxnat.ProjectTree.compareNodeTitles);
 goog.exportSymbol('gxnat.ProjectTree.getColumnQuery',
 	gxnat.ProjectTree.getColumnQuery);
-
-
-
 goog.exportSymbol('gxnat.ProjectTree.prototype.getBranchTitles',
 	gxnat.ProjectTree.prototype.getBranchTitles);
 goog.exportSymbol('gxnat.ProjectTree.prototype.getBranchUris',

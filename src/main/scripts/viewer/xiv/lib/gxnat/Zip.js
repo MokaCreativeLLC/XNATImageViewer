@@ -66,3 +66,9 @@ gxnat.Zip.prototype.dispose = function(url) {
 }
 
 
+
+goog.exportSymbol('gxnat.Zip.prototype.getFiles',
+	gxnat.Zip.prototype.getFiles);
+goog.exportSymbol('gxnat.Zip.prototype.loopFiles',
+	gxnat.Zip.prototype.loopFiles);
+goog.exportSymbol('gxnat.Zip.prototype.dispose', gxnat.Zip.prototype.dispose);

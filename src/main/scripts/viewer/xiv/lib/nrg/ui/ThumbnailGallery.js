@@ -645,3 +645,39 @@ nrg.ui.ThumbnailGallery.prototype.disposeInternal = function() {
     delete this.storedHoverThumbId_;
 }
 
+
+
+goog.exportSymbol('nrg.ui.ThumbnailGallery.ID_PREFIX',
+	nrg.ui.ThumbnailGallery.ID_PREFIX);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.CSS_SUFFIX',
+	nrg.ui.ThumbnailGallery.CSS_SUFFIX);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.THUMB_SORT_TAG',
+	nrg.ui.ThumbnailGallery.THUMB_SORT_TAG);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.thumbnailSorter',
+	nrg.ui.ThumbnailGallery.thumbnailSorter);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.sortThumbnailsOnInsert',
+	nrg.ui.ThumbnailGallery.prototype.sortThumbnailsOnInsert);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.render',
+	nrg.ui.ThumbnailGallery.prototype.render);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.createThumbnail',
+	nrg.ui.ThumbnailGallery.prototype.createThumbnail);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.loop',
+	nrg.ui.ThumbnailGallery.prototype.loop);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.setHoverParent',
+	nrg.ui.ThumbnailGallery.prototype.setHoverParent);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.addThumbnail',
+	nrg.ui.ThumbnailGallery.prototype.addThumbnail);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.createAndAddThumbnail',
+	nrg.ui.ThumbnailGallery.prototype.createAndAddThumbnail);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.setZippyTreeEvents',
+	nrg.ui.ThumbnailGallery.prototype.setZippyTreeEvents);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.addThumbnailClass',
+	nrg.ui.ThumbnailGallery.prototype.addThumbnailClass);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.addThumbnailImageClass',
+	nrg.ui.ThumbnailGallery.prototype.addThumbnailImageClass);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.addThumbnailTextClass',
+	nrg.ui.ThumbnailGallery.prototype.addThumbnailTextClass);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.updateStyle',
+	nrg.ui.ThumbnailGallery.prototype.updateStyle);
+goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.disposeInternal',
+	nrg.ui.ThumbnailGallery.prototype.disposeInternal);

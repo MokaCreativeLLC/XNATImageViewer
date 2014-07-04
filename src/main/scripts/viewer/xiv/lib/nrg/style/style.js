@@ -571,3 +571,21 @@ nrg.style.getPositionRelativeToAncestor = function(element, ancestor) {
 	return {'left': currLeft, 'top': currTop};
     }
 }
+
+
+
+
+goog.exportSymbol('nrg.style.cssProperties', nrg.style.cssProperties);
+goog.exportSymbol('nrg.style.removeClassesThatContain',
+	nrg.style.removeClassesThatContain);
+goog.exportSymbol('nrg.style.absolutePosition', nrg.style.absolutePosition);
+goog.exportSymbol('nrg.style.dims', nrg.style.dims);
+goog.exportSymbol('nrg.style.getStyleSheet', nrg.style.getStyleSheet);
+goog.exportSymbol('nrg.style.getComputedStyle', nrg.style.getComputedStyle);
+goog.exportSymbol('nrg.style.parseIntNumericalProperties',
+	nrg.style.parseIntNumericalProperties);
+goog.exportSymbol('nrg.style.setStyle', nrg.style.setStyle);
+goog.exportSymbol('nrg.style.IS_HOVERED', nrg.style.IS_HOVERED);
+goog.exportSymbol('nrg.style.setHoverClass', nrg.style.setHoverClass);
+goog.exportSymbol('nrg.style.getPositionRelativeToAncestor',
+	nrg.style.getPositionRelativeToAncestor);

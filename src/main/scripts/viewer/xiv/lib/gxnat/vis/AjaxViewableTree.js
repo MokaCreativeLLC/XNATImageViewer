@@ -542,12 +542,22 @@ goog.exportSymbol('gxnat.vis.AjaxViewableTree.SUBJECT_KEY_MAP',
 	gxnat.vis.AjaxViewableTree.SUBJECT_KEY_MAP);
 goog.exportSymbol('gxnat.vis.AjaxViewableTree.EXPERIMENT_KEY_MAP',
 	gxnat.vis.AjaxViewableTree.EXPERIMENT_KEY_MAP);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.FILE_SIZE_KEY',
+	gxnat.vis.AjaxViewableTree.FILE_SIZE_KEY);
 goog.exportSymbol('gxnat.vis.AjaxViewableTree.loopFolderContents',
 	gxnat.vis.AjaxViewableTree.loopFolderContents);
 goog.exportSymbol('gxnat.vis.AjaxViewableTree.getViewableTrees',
 	gxnat.vis.AjaxViewableTree.getViewableTrees);
 goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.filesGotten',
 	gxnat.vis.AjaxViewableTree.prototype.filesGotten);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.setFileMetadata',
+	gxnat.vis.AjaxViewableTree.prototype.setFileMetadata);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.getTotalSize',
+	gxnat.vis.AjaxViewableTree.prototype.getTotalSize);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.getFileSize',
+	gxnat.vis.AjaxViewableTree.prototype.getFileSize);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.getFileMetadata',
+	gxnat.vis.AjaxViewableTree.prototype.getFileMetadata);
 goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.getFilesGotten',
 	gxnat.vis.AjaxViewableTree.prototype.getFilesGotten);
 goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.setFilesGotten',

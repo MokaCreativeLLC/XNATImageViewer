@@ -65,7 +65,4 @@ nrg.array.naturalCompare = function (a, b) {
 }
 
 
-
-
-
-
+goog.exportSymbol('nrg.array.naturalCompare', nrg.array.naturalCompare);

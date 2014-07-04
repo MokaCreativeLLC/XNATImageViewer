@@ -537,3 +537,44 @@ nrg.ui.Thumbnail.prototype.disposeInternal = function() {
     // is active
     delete this.isActive_;
 }
+
+
+
+
+goog.exportSymbol('nrg.ui.Thumbnail.EventType', nrg.ui.Thumbnail.EventType);
+goog.exportSymbol('nrg.ui.Thumbnail.ID_PREFIX', nrg.ui.Thumbnail.ID_PREFIX);
+goog.exportSymbol('nrg.ui.Thumbnail.CSS_SUFFIX', nrg.ui.Thumbnail.CSS_SUFFIX);
+goog.exportSymbol('nrg.ui.Thumbnail.HOVERABLE_PREFIX',
+	nrg.ui.Thumbnail.HOVERABLE_PREFIX);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.getImage',
+	nrg.ui.Thumbnail.prototype.getImage);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.setBrokenThumbnailUrl',
+	nrg.ui.Thumbnail.prototype.setBrokenThumbnailUrl);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.getTextElement',
+	nrg.ui.Thumbnail.prototype.getTextElement);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.getText',
+	nrg.ui.Thumbnail.prototype.getText);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.getHoverable',
+	nrg.ui.Thumbnail.prototype.getHoverable);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.isActive',
+	nrg.ui.Thumbnail.prototype.isActive);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.setImage',
+	nrg.ui.Thumbnail.prototype.setImage);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.setText',
+	nrg.ui.Thumbnail.prototype.setText);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.removeHoverable',
+	nrg.ui.Thumbnail.prototype.removeHoverable);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.createHoverable',
+	nrg.ui.Thumbnail.prototype.createHoverable);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.setActive',
+	nrg.ui.Thumbnail.prototype.setActive);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.updateStyle',
+	nrg.ui.Thumbnail.prototype.updateStyle);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.repositionHoverable',
+	nrg.ui.Thumbnail.prototype.repositionHoverable);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.onMouseOver',
+	nrg.ui.Thumbnail.prototype.onMouseOver);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.onMouseOut',
+	nrg.ui.Thumbnail.prototype.onMouseOut);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.disposeInternal',
+	nrg.ui.Thumbnail.prototype.disposeInternal);

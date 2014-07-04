@@ -291,3 +291,18 @@ nrg.convert.filterZeroLengthStrings = function(obj) {
     })
     return newObj;
 }
+
+
+
+
+goog.exportSymbol('nrg.convert.pct', nrg.convert.pct);
+goog.exportSymbol('nrg.convert.px', nrg.convert.px);
+goog.exportSymbol('nrg.convert.remap1D', nrg.convert.remap1D);
+goog.exportSymbol('nrg.convert.toInt', nrg.convert.toInt);
+goog.exportSymbol('nrg.convert.toFloatArray', nrg.convert.toFloatArray);
+goog.exportSymbol('nrg.convert.objectToArray', nrg.convert.objectToArray);
+goog.exportSymbol('nrg.convert.rgbToArray', nrg.convert.rgbToArray);
+goog.exportSymbol('nrg.convert.arrayToRgb', nrg.convert.arrayToRgb);
+goog.exportSymbol('nrg.convert.filterNaN', nrg.convert.filterNaN);
+goog.exportSymbol('nrg.convert.filterZeroLengthStrings',
+	nrg.convert.filterZeroLengthStrings);
