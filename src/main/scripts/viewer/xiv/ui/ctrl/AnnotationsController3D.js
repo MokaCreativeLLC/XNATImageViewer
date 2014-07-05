@@ -13,7 +13,6 @@ goog.require('xiv.ui.ctrl.MasterController3D');
 
 
 /**
- *
  * @constructor
  * @extends {xiv.ui.ctrl.MasterController3D}
  */
@@ -59,3 +58,10 @@ xiv.ui.ctrl.AnnotationsController3D.prototype.add = function(xObj) {
 
 
 
+
+goog.exportSymbol('xiv.ui.ctrl.AnnotationsController3D.ID_PREFIX',
+	xiv.ui.ctrl.AnnotationsController3D.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ctrl.AnnotationsController3D.CSS_SUFFIX',
+	xiv.ui.ctrl.AnnotationsController3D.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ctrl.AnnotationsController3D.prototype.add',
+	xiv.ui.ctrl.AnnotationsController3D.prototype.add);

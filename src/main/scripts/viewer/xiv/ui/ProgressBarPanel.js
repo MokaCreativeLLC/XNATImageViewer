@@ -196,21 +196,19 @@ xiv.ui.ProgressBarPanel.prototype.disposeInternal = function() {
 
 
 
-
-goog.exportSymbol('xiv.ui.ProgressBarPanel.EventType', 
-		  xiv.ui.ProgressBarPanel.EventType);
-goog.exportSymbol('xiv.ui.ProgressBarPanel.ID_PREFIX', 
-		  xiv.ui.ProgressBarPanel.ID_PREFIX);
-goog.exportSymbol('xiv.ui.ProgressBarPanel.CSS_SUFFIX', 
-		  xiv.ui.ProgressBarPanel.CSS_SUFFIX);
-
-goog.exportSymbol('xiv.ui.ProgressBarPanel.prototype.setLabel', 
-		  xiv.ui.ProgressBarPanel.prototype.setLabel);
-goog.exportSymbol('xiv.ui.ProgressBarPanel.prototype.showValue', 
-		  xiv.ui.ProgressBarPanel.prototype.showValue);
-goog.exportSymbol('xiv.ui.ProgressBarPanel.prototype.setValue', 
-		  xiv.ui.ProgressBarPanel.prototype.setValue);
-goog.exportSymbol('xiv.ui.ProgressBarPanel.prototype.getValue', 
-		  xiv.ui.ProgressBarPanel.prototype.getValue);
-goog.exportSymbol('xiv.ui.ProgressBarPanel.prototype.disposeInternal', 
-		  xiv.ui.ProgressBarPanel.prototype.disposeInternal);
+goog.exportSymbol('xiv.ui.ProgressBarPanel.EventType',
+	xiv.ui.ProgressBarPanel.EventType);
+goog.exportSymbol('xiv.ui.ProgressBarPanel.ID_PREFIX',
+	xiv.ui.ProgressBarPanel.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ProgressBarPanel.CSS_SUFFIX',
+	xiv.ui.ProgressBarPanel.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ProgressBarPanel.prototype.setLabel',
+	xiv.ui.ProgressBarPanel.prototype.setLabel);
+goog.exportSymbol('xiv.ui.ProgressBarPanel.prototype.showValue',
+	xiv.ui.ProgressBarPanel.prototype.showValue);
+goog.exportSymbol('xiv.ui.ProgressBarPanel.prototype.setValue',
+	xiv.ui.ProgressBarPanel.prototype.setValue);
+goog.exportSymbol('xiv.ui.ProgressBarPanel.prototype.getValue',
+	xiv.ui.ProgressBarPanel.prototype.getValue);
+goog.exportSymbol('xiv.ui.ProgressBarPanel.prototype.disposeInternal',
+	xiv.ui.ProgressBarPanel.prototype.disposeInternal);

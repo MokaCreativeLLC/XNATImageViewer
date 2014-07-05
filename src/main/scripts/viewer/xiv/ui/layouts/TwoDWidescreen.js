@@ -307,4 +307,31 @@ xiv.ui.layouts.TwoDWidescreen.prototype.updateStyle_Z = function() {
 }
 
 
-
+goog.exportSymbol('xiv.ui.layouts.TwoDWidescreen.TITLE',
+	xiv.ui.layouts.TwoDWidescreen.TITLE);
+goog.exportSymbol('xiv.ui.layouts.TwoDWidescreen.EventType',
+	xiv.ui.layouts.TwoDWidescreen.EventType);
+goog.exportSymbol('xiv.ui.layouts.TwoDWidescreen.ID_PREFIX',
+	xiv.ui.layouts.TwoDWidescreen.ID_PREFIX);
+goog.exportSymbol('xiv.ui.layouts.TwoDWidescreen.CSS_SUFFIX',
+	xiv.ui.layouts.TwoDWidescreen.CSS_SUFFIX);
+goog.exportSymbol(
+    'xiv.ui.layouts.TwoDWidescreen.prototype.setupLayoutFrame_X',
+    xiv.ui.layouts.TwoDWidescreen.prototype.setupLayoutFrame_X);
+goog.exportSymbol(
+    'xiv.ui.layouts.TwoDWidescreen.prototype.setupLayoutFrame_Y',
+    xiv.ui.layouts.TwoDWidescreen.prototype.setupLayoutFrame_Y);
+goog.exportSymbol(
+    'xiv.ui.layouts.TwoDWidescreen.prototype.onLayoutFrameResize_X',
+    xiv.ui.layouts.TwoDWidescreen.prototype.onLayoutFrameResize_X);
+goog.exportSymbol(
+    'xiv.ui.layouts.TwoDWidescreen.prototype.onLayoutFrameResize_Y',
+    xiv.ui.layouts.TwoDWidescreen.prototype.onLayoutFrameResize_Y);
+goog.exportSymbol('xiv.ui.layouts.TwoDWidescreen.prototype.updateStyle',
+	xiv.ui.layouts.TwoDWidescreen.prototype.updateStyle);
+goog.exportSymbol('xiv.ui.layouts.TwoDWidescreen.prototype.updateStyle_X',
+	xiv.ui.layouts.TwoDWidescreen.prototype.updateStyle_X);
+goog.exportSymbol('xiv.ui.layouts.TwoDWidescreen.prototype.updateStyle_Y',
+	xiv.ui.layouts.TwoDWidescreen.prototype.updateStyle_Y);
+goog.exportSymbol('xiv.ui.layouts.TwoDWidescreen.prototype.updateStyle_Z',
+	xiv.ui.layouts.TwoDWidescreen.prototype.updateStyle_Z);

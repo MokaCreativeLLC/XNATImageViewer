@@ -118,3 +118,18 @@ xiv.ui.ctrl.CheckboxController.prototype.disposeInternal = function() {
 
 
 
+goog.exportSymbol('xiv.ui.ctrl.CheckboxController.ID_PREFIX',
+	xiv.ui.ctrl.CheckboxController.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ctrl.CheckboxController.CSS_SUFFIX',
+	xiv.ui.ctrl.CheckboxController.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ctrl.CheckboxController.prototype.setChecked',
+	xiv.ui.ctrl.CheckboxController.prototype.setChecked);
+goog.exportSymbol(
+    'xiv.ui.ctrl.CheckboxController.prototype.dispatchComponentEvent',
+    xiv.ui.ctrl.CheckboxController.prototype.dispatchComponentEvent);
+goog.exportSymbol('xiv.ui.ctrl.CheckboxController.prototype.disposeInternal',
+	xiv.ui.ctrl.CheckboxController.prototype.disposeInternal);
+
+
+
+

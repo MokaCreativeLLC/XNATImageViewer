@@ -387,3 +387,15 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.disposeInternal = function() {
 
 
 
+goog.exportSymbol('xiv.ui.ctrl.TwoThumbSliderController.ID_PREFIX',
+	xiv.ui.ctrl.TwoThumbSliderController.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ctrl.TwoThumbSliderController.CSS_SUFFIX',
+	xiv.ui.ctrl.TwoThumbSliderController.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ctrl.TwoThumbSliderController.prototype.update',
+	xiv.ui.ctrl.TwoThumbSliderController.prototype.update);
+goog.exportSymbol(
+    'xiv.ui.ctrl.TwoThumbSliderController.prototype.dispatchComponentEvent',
+    xiv.ui.ctrl.TwoThumbSliderController.prototype.dispatchComponentEvent);
+goog.exportSymbol(
+    'xiv.ui.ctrl.TwoThumbSliderController.prototype.disposeInternal',
+    xiv.ui.ctrl.TwoThumbSliderController.prototype.disposeInternal);

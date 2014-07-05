@@ -1780,55 +1780,65 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
 goog.exportSymbol('xiv.ui.ViewBox.EventType', xiv.ui.ViewBox.EventType);
 goog.exportSymbol('xiv.ui.ViewBox.ID_PREFIX', xiv.ui.ViewBox.ID_PREFIX);
 goog.exportSymbol('xiv.ui.ViewBox.CSS_SUFFIX', xiv.ui.ViewBox.CSS_SUFFIX);
-goog.exportSymbol('xiv.ui.ViewBox.defaultLayout', 
-		  xiv.ui.ViewBox.defaultLayout);
-goog.exportSymbol('xiv.ui.ViewBox.MIN_HOLDER_HEIGHT', 
-		  xiv.ui.ViewBox.MIN_HOLDER_HEIGHT);
-goog.exportSymbol('xiv.ui.ViewBox.SCAN_TAB_LABEL_HEIGHT', 
-		  xiv.ui.ViewBox.SCAN_TAB_LABEL_HEIGHT);
+goog.exportSymbol('xiv.ui.ViewBox.defaultLayout',
+	xiv.ui.ViewBox.defaultLayout);
+goog.exportSymbol('xiv.ui.ViewBox.MIN_HOLDER_HEIGHT',
+	xiv.ui.ViewBox.MIN_HOLDER_HEIGHT);
+goog.exportSymbol('xiv.ui.ViewBox.SCAN_TAB_LABEL_HEIGHT',
+	xiv.ui.ViewBox.SCAN_TAB_LABEL_HEIGHT);
 goog.exportSymbol('xiv.ui.ViewBox.SCAN_TAB_LABEL_WIDTH',
-		  xiv.ui.ViewBox.SCAN_TAB_LABEL_WIDTH);
-goog.exportSymbol('xiv.ui.ViewBox.MIN_TAB_H_PCT', 
-		  xiv.ui.ViewBox.MIN_TAB_H_PCT);
-
-goog.exportSymbol('xiv.ui.ViewBox.prototype.getToggleButtons', 
-		  xiv.ui.ViewBox.prototype.getToggleButtons);
-
-goog.exportSymbol('xiv.ui.ViewBox.prototype.getMenus', 
-		  xiv.ui.ViewBox.prototype.getMenus);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.getLoadState', 
-		  xiv.ui.ViewBox.prototype.getLoadState);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.getViewableTrees', 
-		  xiv.ui.ViewBox.prototype.getViewableTrees);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.getLayoutHandler', 
-		  xiv.ui.ViewBox.prototype.getLayoutHandler);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.getViewableGroupMenu', 
-		  xiv.ui.ViewBox.prototype.getViewableGroupMenu);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.getViewFrame', 
-		  xiv.ui.ViewBox.prototype.getViewFrame);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.highlight', 
-		  xiv.ui.ViewBox.prototype.highlight);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.unhighlight', 
-		  xiv.ui.ViewBox.prototype.unhighlight);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.getThumbnailLoadTime', 
-		  xiv.ui.ViewBox.prototype.getThumbnailLoadTime);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.clearThumbnailLoadTime', 
-		  xiv.ui.ViewBox.prototype.clearThumbnailLoadTime);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.updateIconSrcFolder', 
-		  xiv.ui.ViewBox.prototype.updateIconSrcFolder);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.doNotHide', 
-		  xiv.ui.ViewBox.prototype.doNotHide);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.setLayout', 
-		  xiv.ui.ViewBox.prototype.setLayout);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.load', 
-		  xiv.ui.ViewBox.prototype.load);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.checkInUseAndShowDialog', 
-		  xiv.ui.ViewBox.prototype.checkInUseAndShowDialog);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.showInUseDialog', 
-		  xiv.ui.ViewBox.prototype.showInUseDialog);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.addToMenu', 
-		  xiv.ui.ViewBox.prototype.addToMenu);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.updateStyle', 
-		  xiv.ui.ViewBox.prototype.updateStyle);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.disposeInternal', 
-		  xiv.ui.ViewBox.prototype.disposeInternal);
+	xiv.ui.ViewBox.SCAN_TAB_LABEL_WIDTH);
+goog.exportSymbol('xiv.ui.ViewBox.MIN_TAB_H_PCT',
+	xiv.ui.ViewBox.MIN_TAB_H_PCT);
+goog.exportSymbol('xiv.ui.ViewBox.ControllersSet',
+	xiv.ui.ViewBox.ControllersSet);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.getMenus',
+	xiv.ui.ViewBox.prototype.getMenus);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.getLoadState',
+	xiv.ui.ViewBox.prototype.getLoadState);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.getViewableTrees',
+	xiv.ui.ViewBox.prototype.getViewableTrees);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.getViewFrame',
+	xiv.ui.ViewBox.prototype.getViewFrame);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.getLayoutHandler',
+	xiv.ui.ViewBox.prototype.getLayoutHandler);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.getViewableGroupMenu',
+	xiv.ui.ViewBox.prototype.getViewableGroupMenu);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.highlight',
+	xiv.ui.ViewBox.prototype.highlight);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.unhighlight',
+	xiv.ui.ViewBox.prototype.unhighlight);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.getThumbnailLoadTime',
+	xiv.ui.ViewBox.prototype.getThumbnailLoadTime);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.clearThumbnailLoadTime',
+	xiv.ui.ViewBox.prototype.clearThumbnailLoadTime);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.doNotHide',
+	xiv.ui.ViewBox.prototype.doNotHide);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.setLayout',
+	xiv.ui.ViewBox.prototype.setLayout);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.showInUseDialog',
+	xiv.ui.ViewBox.prototype.showInUseDialog);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.checkInUseAndShowDialog',
+	xiv.ui.ViewBox.prototype.checkInUseAndShowDialog);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.load',
+	xiv.ui.ViewBox.prototype.load);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.addToMenu',
+	xiv.ui.ViewBox.prototype.addToMenu);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.onToggleButtonClicked',
+	xiv.ui.ViewBox.prototype.onToggleButtonClicked);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.toggleButtonChecked',
+	xiv.ui.ViewBox.prototype.toggleButtonChecked);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.getToggleButton',
+	xiv.ui.ViewBox.prototype.getToggleButton);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.fireToggleButton',
+	xiv.ui.ViewBox.prototype.fireToggleButton);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.untoggle',
+	xiv.ui.ViewBox.prototype.untoggle);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.createToggleButton',
+	xiv.ui.ViewBox.prototype.createToggleButton);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.getToggleButtons',
+	xiv.ui.ViewBox.prototype.getToggleButtons);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.updateStyle',
+	xiv.ui.ViewBox.prototype.updateStyle);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.disposeInternal',
+	xiv.ui.ViewBox.prototype.disposeInternal);

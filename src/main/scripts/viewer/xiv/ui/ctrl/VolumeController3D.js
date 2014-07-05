@@ -206,3 +206,21 @@ xiv.ui.ctrl.VolumeController3D.prototype.updateStyle = function(xObj) {
 }
 
 
+
+goog.exportSymbol('xiv.ui.ctrl.VolumeController3D.ID_PREFIX',
+	xiv.ui.ctrl.VolumeController3D.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ctrl.VolumeController3D.DEFAULT_THRESHOLD',
+	xiv.ui.ctrl.VolumeController3D.DEFAULT_THRESHOLD);
+goog.exportSymbol('xiv.ui.ctrl.VolumeController3D.CSS_SUFFIX',
+	xiv.ui.ctrl.VolumeController3D.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ctrl.VolumeController3D.VOLUME_ID',
+	xiv.ui.ctrl.VolumeController3D.VOLUME_ID);
+goog.exportSymbol(
+    'xiv.ui.ctrl.VolumeController3D.prototype.add_volumeRendering',
+    xiv.ui.ctrl.VolumeController3D.prototype.add_volumeRendering);
+goog.exportSymbol('xiv.ui.ctrl.VolumeController3D.prototype.add_threshold',
+	xiv.ui.ctrl.VolumeController3D.prototype.add_threshold);
+goog.exportSymbol('xiv.ui.ctrl.VolumeController3D.prototype.add',
+	xiv.ui.ctrl.VolumeController3D.prototype.add);
+goog.exportSymbol('xiv.ui.ctrl.VolumeController3D.prototype.updateStyle',
+	xiv.ui.ctrl.VolumeController3D.prototype.updateStyle);

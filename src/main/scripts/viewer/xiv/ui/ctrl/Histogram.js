@@ -571,12 +571,25 @@ xiv.ui.ctrl.Histogram.prototype.disposeInternal = function() {
 
 
 
-goog.exportSymbol('xiv.ui.ctrl.Histogram.EventType', 
-		  xiv.ui.ctrl.Histogram.EventType);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.ID_PREFIX', 
-		  xiv.ui.ctrl.Histogram.ID_PREFIX);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.CSS_SUFFIX', 
-		  xiv.ui.ctrl.Histogram.CSS_SUFFIX);
-
-goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.setVolume', 
-		  xiv.ui.ctrl.Histogram.prototype.setVolume);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.EventType',
+	xiv.ui.ctrl.Histogram.EventType);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.ID_PREFIX',
+	xiv.ui.ctrl.Histogram.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.CSS_SUFFIX',
+	xiv.ui.ctrl.Histogram.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.LEVEL_CUTOFF',
+	xiv.ui.ctrl.Histogram.LEVEL_CUTOFF);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.render',
+	xiv.ui.ctrl.Histogram.prototype.render);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.draw',
+	xiv.ui.ctrl.Histogram.prototype.draw);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold',
+	xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.drawLine',
+	xiv.ui.ctrl.Histogram.prototype.drawLine);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.update',
+	xiv.ui.ctrl.Histogram.prototype.update);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.updateMaxMin',
+	xiv.ui.ctrl.Histogram.prototype.updateMaxMin);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.disposeInternal',
+	xiv.ui.ctrl.Histogram.prototype.disposeInternal);

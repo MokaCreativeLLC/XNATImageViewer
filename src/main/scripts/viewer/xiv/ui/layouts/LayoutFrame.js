@@ -130,3 +130,20 @@ xiv.ui.layouts.LayoutFrame.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
     delete this.title_;
 }
+
+
+
+goog.exportSymbol('xiv.ui.layouts.LayoutFrame.EventType',
+	xiv.ui.layouts.LayoutFrame.EventType);
+goog.exportSymbol('xiv.ui.layouts.LayoutFrame.ID_PREFIX',
+	xiv.ui.layouts.LayoutFrame.ID_PREFIX);
+goog.exportSymbol('xiv.ui.layouts.LayoutFrame.CSS_SUFFIX',
+	xiv.ui.layouts.LayoutFrame.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.layouts.LayoutFrame.prototype.getTitle',
+	xiv.ui.layouts.LayoutFrame.prototype.getTitle);
+goog.exportSymbol('xiv.ui.layouts.LayoutFrame.prototype.getResizable',
+	xiv.ui.layouts.LayoutFrame.prototype.getResizable);
+goog.exportSymbol('xiv.ui.layouts.LayoutFrame.prototype.setResizeDirections',
+	xiv.ui.layouts.LayoutFrame.prototype.setResizeDirections);
+goog.exportSymbol('xiv.ui.layouts.LayoutFrame.prototype.disposeInternal',
+	xiv.ui.layouts.LayoutFrame.prototype.disposeInternal);

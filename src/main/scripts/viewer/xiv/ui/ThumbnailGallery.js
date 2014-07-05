@@ -465,7 +465,6 @@ xiv.ui.ThumbnailGallery.prototype.disposeInternal = function(){
     this.clearDragDropGroups_();
 }
 
-
 goog.exportSymbol('xiv.ui.ThumbnailGallery.EventType',
 	xiv.ui.ThumbnailGallery.EventType);
 goog.exportSymbol('xiv.ui.ThumbnailGallery.ID_PREFIX',
@@ -478,8 +477,6 @@ goog.exportSymbol('xiv.ui.ThumbnailGallery.DRAGGER_ID',
 	xiv.ui.ThumbnailGallery.DRAGGER_ID);
 goog.exportSymbol('xiv.ui.ThumbnailGallery.DRAGGER_FADER_ID',
 	xiv.ui.ThumbnailGallery.DRAGGER_FADER_ID);
-
-
 goog.exportSymbol('xiv.ui.ThumbnailGallery.prototype.createAndAddThumbnail',
 	xiv.ui.ThumbnailGallery.prototype.createAndAddThumbnail);
 goog.exportSymbol('xiv.ui.ThumbnailGallery.prototype.createThumbnail',

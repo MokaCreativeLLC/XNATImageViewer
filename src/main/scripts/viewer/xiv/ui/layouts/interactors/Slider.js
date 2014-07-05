@@ -82,3 +82,16 @@ xiv.ui.layouts.interactors.Slider.prototype.disposeInternal = function(){
 
 
 
+goog.exportSymbol('xiv.ui.layouts.interactors.Slider.EventType',
+	xiv.ui.layouts.interactors.Slider.EventType);
+goog.exportSymbol('xiv.ui.layouts.interactors.Slider.ID_PREFIX',
+	xiv.ui.layouts.interactors.Slider.ID_PREFIX);
+goog.exportSymbol('xiv.ui.layouts.interactors.Slider.CSS_SUFFIX',
+	xiv.ui.layouts.interactors.Slider.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.layouts.interactors.Slider.prototype.render',
+	xiv.ui.layouts.interactors.Slider.prototype.render);
+goog.exportSymbol('xiv.ui.layouts.interactors.Slider.prototype.disposeInternal',
+	xiv.ui.layouts.interactors.Slider.prototype.disposeInternal);
+
+
+

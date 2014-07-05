@@ -55,4 +55,12 @@ function(){
 
 
 
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.ZoomDisplay.ID_PREFIX',
+    xiv.ui.layouts.interactors.ZoomDisplay.ID_PREFIX);
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.ZoomDisplay.prototype.updateValue',
+    xiv.ui.layouts.interactors.ZoomDisplay.prototype.updateValue);
+
+
 

@@ -1,12 +1,18 @@
 import os
+import pprint
 
+
+FILE_PREFIX = 'xiv.ui.layouts.interactors'
+PPRINT = pprint.PrettyPrinter(indent=2)
+IMG_VIEW_HOME = os.environ.get('XNATIMAGEVIEWER_HOME')
+LOAD_PATH = IMG_VIEW_HOME + \
+            "/src/main/scripts/viewer/xiv/ui/layouts/interactors"
 
 
 def getFiles(walkPath):
     """ Use os.walk to walk through the file list.
     """
     fileDict = {}
-    walkPath = '../../sample-data/slicer-scenes'
     for root, dirs, files in os.walk(walkPath):
        for f in files:
            if not root in  fileDict:
@@ -44,15 +50,14 @@ def printWithReplace(fileDict, opt_searchStr = '', opt_replaceStr = ''):
 
 
 def main():
-    walkPath = '../../sample-data'
-    fileDict = getFiles(walkPath)
-    
-    searchStr = '../../'
-    replaceStr = ''
-
-    printWithReplace(fileDict, searchStr, replaceStr);
-    
-
+    fileDict = getFiles(LOAD_PATH)
+    #PPRINT.pprint(fileDict)
+    for key, val in fileDict.iteritems():
+        for val2 in fileDict[key]:
+            _str = FILE_PREFIX + '.' + \
+                   os.path.basename(val2.rpartition('.')[0])
+            print '\'' + _str + '\': ' + _str + ',' 
+        
 
 
 if __name__ == "__main__":

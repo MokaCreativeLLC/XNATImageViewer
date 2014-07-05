@@ -2263,5 +2263,62 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
 
 
 
-goog.exportSymbol('xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY', 
-		  xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY);
+goog.exportSymbol('xiv.ui.ViewBoxInteractorHandler.EventType',
+	xiv.ui.ViewBoxInteractorHandler.EventType);
+goog.exportSymbol('xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE',
+	xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE);
+goog.exportSymbol('xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY',
+	xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY);
+goog.exportSymbol('xiv.ui.ViewBoxInteractorHandler.DIALOG_SPLIT',
+	xiv.ui.ViewBoxInteractorHandler.DIALOG_SPLIT);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors',
+    xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.createTwoDZoomToggle',
+    xiv.ui.ViewBoxInteractorHandler.prototype.createTwoDZoomToggle);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.createTwoDPanToggle',
+    xiv.ui.ViewBoxInteractorHandler.prototype.createTwoDPanToggle);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.createCrosshairToggle',
+    xiv.ui.ViewBoxInteractorHandler.prototype.createCrosshairToggle);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.createSettingsDialog',
+    xiv.ui.ViewBoxInteractorHandler.prototype.createSettingsDialog);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.syncAllCrosshairs',
+    xiv.ui.ViewBoxInteractorHandler.prototype.syncAllCrosshairs);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel',
+    xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.onLayoutResize',
+    xiv.ui.ViewBoxInteractorHandler.prototype.onLayoutResize);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.toggleInteractorsVisible',
+    xiv.ui.ViewBoxInteractorHandler.prototype.toggleInteractorsVisible);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.hideInteractors',
+    xiv.ui.ViewBoxInteractorHandler.prototype.hideInteractors);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.showInteractors',
+    xiv.ui.ViewBoxInteractorHandler.prototype.showInteractors);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.update',
+    xiv.ui.ViewBoxInteractorHandler.prototype.update);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.toggleCrosshairsVisible',
+    xiv.ui.ViewBoxInteractorHandler.prototype.toggleCrosshairsVisible);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.updateInteractorStyles',
+    xiv.ui.ViewBoxInteractorHandler.prototype.updateInteractorStyles);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.syncLayoutMenuToLayoutHandler',
+    xiv.ui.ViewBoxInteractorHandler.prototype.syncLayoutMenuToLayoutHandler);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.createViewableCtrls',
+    xiv.ui.ViewBoxInteractorHandler.prototype.createViewableCtrls);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.dispose',
+    xiv.ui.ViewBoxInteractorHandler.prototype.dispose);

@@ -48,7 +48,9 @@ xiv.ui.layouts.ThreeD.ID_PREFIX =  'xiv.ui.layouts.ThreeD';
 
 
 
-
+goog.exportSymbol('xiv.ui.layouts.ThreeD.TITLE', xiv.ui.layouts.ThreeD.TITLE);
+goog.exportSymbol('xiv.ui.layouts.ThreeD.ID_PREFIX',
+	xiv.ui.layouts.ThreeD.ID_PREFIX);
 
 
 

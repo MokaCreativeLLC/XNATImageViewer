@@ -48,7 +48,10 @@ xiv.ui.layouts.Sagittal.ID_PREFIX =  'xiv.ui.layouts.Sagittal';
 
 
 
-
+goog.exportSymbol('xiv.ui.layouts.Sagittal.TITLE',
+	xiv.ui.layouts.Sagittal.TITLE);
+goog.exportSymbol('xiv.ui.layouts.Sagittal.ID_PREFIX',
+	xiv.ui.layouts.Sagittal.ID_PREFIX);
 
 
 

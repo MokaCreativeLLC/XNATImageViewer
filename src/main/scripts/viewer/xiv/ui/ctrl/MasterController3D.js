@@ -178,3 +178,14 @@ xiv.ui.ctrl.MasterController3D.prototype.disposeInternal = function() {
 
 
 
+goog.exportSymbol('xiv.ui.ctrl.MasterController3D.ID_PREFIX',
+	xiv.ui.ctrl.MasterController3D.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ctrl.MasterController3D.CSS_SUFFIX',
+	xiv.ui.ctrl.MasterController3D.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ctrl.MasterController3D.CONTROLLERS',
+	xiv.ui.ctrl.MasterController3D.CONTROLLERS);
+goog.exportSymbol('xiv.ui.ctrl.MasterController3D.prototype.add',
+	xiv.ui.ctrl.MasterController3D.prototype.add);
+goog.exportSymbol('xiv.ui.ctrl.MasterController3D.prototype.disposeInternal',
+	xiv.ui.ctrl.MasterController3D.prototype.disposeInternal);
+

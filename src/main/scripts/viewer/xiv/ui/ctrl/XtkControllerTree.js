@@ -396,3 +396,29 @@ xiv.ui.ctrl.XtkControllerTree.prototype.disposeInternal = function() {
 
 
 
+goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.ControlSet',
+	xiv.ui.ctrl.XtkControllerTree.ControlSet);
+goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.ID_PREFIX',
+	xiv.ui.ctrl.XtkControllerTree.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.CSS_SUFFIX',
+	xiv.ui.ctrl.XtkControllerTree.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.getEmptyPropertiesObject',
+	xiv.ui.ctrl.XtkControllerTree.getEmptyPropertiesObject);
+goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.prototype.Levels',
+	xiv.ui.ctrl.XtkControllerTree.prototype.Levels);
+goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.prototype.Annotations',
+	xiv.ui.ctrl.XtkControllerTree.prototype.Annotations);
+goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.prototype.Volumes3D',
+	xiv.ui.ctrl.XtkControllerTree.prototype.Volumes3D);
+goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.prototype.getHistograms',
+	xiv.ui.ctrl.XtkControllerTree.prototype.getHistograms);
+goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.prototype.getControllers',
+	xiv.ui.ctrl.XtkControllerTree.prototype.getControllers);
+goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.prototype.updateControllers',
+	xiv.ui.ctrl.XtkControllerTree.prototype.updateControllers);
+goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.prototype.createControllers',
+	xiv.ui.ctrl.XtkControllerTree.prototype.createControllers);
+goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.prototype.disposeInternal',
+	xiv.ui.ctrl.XtkControllerTree.prototype.disposeInternal);
+
+

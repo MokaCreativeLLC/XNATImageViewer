@@ -303,3 +303,29 @@ xiv.ui.layouts.FourUp.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
     
 }
+
+
+
+goog.exportSymbol('xiv.ui.layouts.FourUp.TITLE', xiv.ui.layouts.FourUp.TITLE);
+goog.exportSymbol('xiv.ui.layouts.FourUp.EventType',
+	xiv.ui.layouts.FourUp.EventType);
+goog.exportSymbol('xiv.ui.layouts.FourUp.ID_PREFIX',
+	xiv.ui.layouts.FourUp.ID_PREFIX);
+goog.exportSymbol('xiv.ui.layouts.FourUp.CSS_SUFFIX',
+	xiv.ui.layouts.FourUp.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.layouts.FourUp.prototype.setupLayoutFrame_X',
+	xiv.ui.layouts.FourUp.prototype.setupLayoutFrame_X);
+goog.exportSymbol('xiv.ui.layouts.FourUp.prototype.onLayoutFrameResize_X',
+	xiv.ui.layouts.FourUp.prototype.onLayoutFrameResize_X);
+goog.exportSymbol('xiv.ui.layouts.FourUp.prototype.updateStyle',
+	xiv.ui.layouts.FourUp.prototype.updateStyle);
+goog.exportSymbol('xiv.ui.layouts.FourUp.prototype.updateStyle_X',
+	xiv.ui.layouts.FourUp.prototype.updateStyle_X);
+goog.exportSymbol('xiv.ui.layouts.FourUp.prototype.updateStyle_Y',
+	xiv.ui.layouts.FourUp.prototype.updateStyle_Y);
+goog.exportSymbol('xiv.ui.layouts.FourUp.prototype.updateStyle_Z',
+	xiv.ui.layouts.FourUp.prototype.updateStyle_Z);
+goog.exportSymbol('xiv.ui.layouts.FourUp.prototype.updateStyle_V',
+	xiv.ui.layouts.FourUp.prototype.updateStyle_V);
+goog.exportSymbol('xiv.ui.layouts.FourUp.prototype.disposeInternal',
+	xiv.ui.layouts.FourUp.prototype.disposeInternal);

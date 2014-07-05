@@ -175,7 +175,6 @@ xiv.ui.Thumbnail.prototype.disposeInternal = function(){
 
 goog.exportSymbol('xiv.ui.Thumbnail.ID_PREFIX', xiv.ui.Thumbnail.ID_PREFIX);
 goog.exportSymbol('xiv.ui.Thumbnail.CSS_SUFFIX', xiv.ui.Thumbnail.CSS_SUFFIX);
-
 goog.exportSymbol('xiv.ui.Thumbnail.prototype.updateHoverable',
 	xiv.ui.Thumbnail.prototype.updateHoverable);
 goog.exportSymbol('xiv.ui.Thumbnail.prototype.createHoverable',

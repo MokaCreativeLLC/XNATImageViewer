@@ -363,3 +363,27 @@ xiv.ui.ctrl.LevelsController.prototype.disposeInternal = function() {
 
 
 
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.ID_PREFIX',
+	xiv.ui.ctrl.LevelsController.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.CSS_SUFFIX',
+	xiv.ui.ctrl.LevelsController.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.CONTROLLERS',
+	xiv.ui.ctrl.LevelsController.CONTROLLERS);
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.LEVEL_MAX',
+	xiv.ui.ctrl.LevelsController.LEVEL_MAX);
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.LEVEL_MIN',
+	xiv.ui.ctrl.LevelsController.LEVEL_MIN);
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.add',
+	xiv.ui.ctrl.LevelsController.prototype.add);
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.add_histogram',
+	xiv.ui.ctrl.LevelsController.prototype.add_histogram);
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.add_levelMin',
+	xiv.ui.ctrl.LevelsController.prototype.add_levelMin);
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.add_levelMax',
+	xiv.ui.ctrl.LevelsController.prototype.add_levelMax);
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.add_brightness',
+	xiv.ui.ctrl.LevelsController.prototype.add_brightness);
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.add_contrast',
+	xiv.ui.ctrl.LevelsController.prototype.add_contrast);
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.disposeInternal',
+	xiv.ui.ctrl.LevelsController.prototype.disposeInternal);

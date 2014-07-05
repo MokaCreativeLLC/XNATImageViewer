@@ -972,3 +972,58 @@ xiv.ui.layouts.LayoutHandler.prototype.disposeInternal = function(){
     delete this.currLayoutTitle_;
     delete this.prevLayoutTitle_;
 }
+
+
+
+
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.EventType',
+	xiv.ui.layouts.LayoutHandler.EventType);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.ID_PREFIX',
+	xiv.ui.layouts.LayoutHandler.ID_PREFIX);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.CSS_SUFFIX',
+	xiv.ui.layouts.LayoutHandler.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.ANIM_TIME',
+	xiv.ui.layouts.LayoutHandler.ANIM_TIME);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.SLIDER_BOUND',
+	xiv.ui.layouts.LayoutHandler.SLIDER_BOUND);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.prototype.layoutChanging',
+	xiv.ui.layouts.LayoutHandler.prototype.layoutChanging);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.prototype.animateLayoutChange',
+	xiv.ui.layouts.LayoutHandler.prototype.animateLayoutChange);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.prototype.getCurrentLayout',
+	xiv.ui.layouts.LayoutHandler.prototype.getCurrentLayout);
+goog.exportSymbol(
+    'xiv.ui.layouts.LayoutHandler.prototype.getCurrentLayoutFrame',
+    xiv.ui.layouts.LayoutHandler.prototype.getCurrentLayoutFrame);
+goog.exportSymbol(
+    'xiv.ui.layouts.LayoutHandler.prototype.updateInteractors',
+    xiv.ui.layouts.LayoutHandler.prototype.updateInteractors);
+goog.exportSymbol(
+    'xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractors',
+    xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractors);
+goog.exportSymbol(
+    'xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractorsByPlane',
+    xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractorsByPlane);
+goog.exportSymbol(
+    'xiv.ui.layouts.LayoutHandler.prototype.getMasterFrameByPlane',
+    xiv.ui.layouts.LayoutHandler.prototype.getMasterFrameByPlane);
+goog.exportSymbol(
+    'xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractorByPlane',
+    xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractorByPlane);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.prototype.setMasterLayout',
+	xiv.ui.layouts.LayoutHandler.prototype.setMasterLayout);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.prototype.addLayout',
+	xiv.ui.layouts.LayoutHandler.prototype.addLayout);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.prototype.setLayout',
+	xiv.ui.layouts.LayoutHandler.prototype.setLayout);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.prototype.switchLayout',
+	xiv.ui.layouts.LayoutHandler.prototype.switchLayout);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.prototype.hideAllLayouts',
+	xiv.ui.layouts.LayoutHandler.prototype.hideAllLayouts);
+goog.exportSymbol(
+    'xiv.ui.layouts.LayoutHandler.prototype.onLayoutFrameDoubleClicked',
+    xiv.ui.layouts.LayoutHandler.prototype.onLayoutFrameDoubleClicked);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.prototype.updateStyle',
+	xiv.ui.layouts.LayoutHandler.prototype.updateStyle);
+goog.exportSymbol('xiv.ui.layouts.LayoutHandler.prototype.disposeInternal',
+	xiv.ui.layouts.LayoutHandler.prototype.disposeInternal);

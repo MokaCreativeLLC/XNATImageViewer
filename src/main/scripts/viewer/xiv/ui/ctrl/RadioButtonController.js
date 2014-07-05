@@ -86,3 +86,13 @@ xiv.ui.ctrl.RadioButtonController.prototype.disposeInternal = function() {
 
 
 
+goog.exportSymbol('xiv.ui.ctrl.RadioButtonController.ID_PREFIX',
+	xiv.ui.ctrl.RadioButtonController.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ctrl.RadioButtonController.CSS_SUFFIX',
+	xiv.ui.ctrl.RadioButtonController.CSS_SUFFIX);
+goog.exportSymbol(
+    'xiv.ui.ctrl.RadioButtonController.prototype.dispatchComponentEvent',
+    xiv.ui.ctrl.RadioButtonController.prototype.dispatchComponentEvent);
+goog.exportSymbol(
+    'xiv.ui.ctrl.RadioButtonController.prototype.disposeInternal',
+    xiv.ui.ctrl.RadioButtonController.prototype.disposeInternal);

@@ -55,3 +55,12 @@ xiv.ui.ctrl.MeshController3D.prototype.add = function(xObj) {
 }
 
 
+
+goog.exportSymbol('xiv.ui.ctrl.MeshController3D.ID_PREFIX',
+	xiv.ui.ctrl.MeshController3D.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ctrl.MeshController3D.CSS_SUFFIX',
+	xiv.ui.ctrl.MeshController3D.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ctrl.MeshController3D.prototype.add',
+	xiv.ui.ctrl.MeshController3D.prototype.add);
+goog.exportSymbol('xiv.ui.ctrl.MeshController3D.prototype.disposeInternal',
+	xiv.ui.ctrl.MeshController3D.prototype.disposeInternal);

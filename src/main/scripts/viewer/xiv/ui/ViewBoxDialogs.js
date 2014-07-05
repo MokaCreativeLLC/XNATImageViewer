@@ -613,3 +613,41 @@ xiv.ui.ViewBoxDialogs.prototype.disposeInternal = function(){
 	goog.object.clear(this.Dialogs_);
     }
 }
+
+
+
+
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.EventType',
+	xiv.ui.ViewBoxDialogs.EventType);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.ID_PREFIX',
+	xiv.ui.ViewBoxDialogs.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.CSS_SUFFIX',
+	xiv.ui.ViewBoxDialogs.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.DIALOG_KEYS',
+	xiv.ui.ViewBoxDialogs.DIALOG_KEYS);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.TOGGLED_CLASS',
+	xiv.ui.ViewBoxDialogs.TOGGLED_CLASS);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.getDialogs',
+	xiv.ui.ViewBoxDialogs.prototype.getDialogs);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.getDialog',
+	xiv.ui.ViewBoxDialogs.prototype.getDialog);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.createToggleableDialog',
+	xiv.ui.ViewBoxDialogs.prototype.createToggleableDialog);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.createMeshesDialog',
+	xiv.ui.ViewBoxDialogs.prototype.createMeshesDialog);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.createVolumesDialog',
+	xiv.ui.ViewBoxDialogs.prototype.createVolumesDialog);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.createDialogs',
+	xiv.ui.ViewBoxDialogs.prototype.createDialogs);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.setInUseSelect',
+	xiv.ui.ViewBoxDialogs.prototype.setInUseSelect);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.showInUseDialog',
+	xiv.ui.ViewBoxDialogs.prototype.showInUseDialog);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.update',
+	xiv.ui.ViewBoxDialogs.prototype.update);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.toggleVisible',
+	xiv.ui.ViewBoxDialogs.prototype.toggleVisible);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.getHelpDialog',
+	xiv.ui.ViewBoxDialogs.prototype.getHelpDialog);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.disposeInternal',
+	xiv.ui.ViewBoxDialogs.prototype.disposeInternal);

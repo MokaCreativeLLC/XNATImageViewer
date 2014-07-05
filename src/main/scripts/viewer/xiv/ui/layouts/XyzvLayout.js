@@ -670,3 +670,65 @@ xiv.ui.layouts.XyzvLayout.prototype.disposeInternal = function(){
 
 
 
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.TITLE',
+	xiv.ui.layouts.XyzvLayout.TITLE);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.EventType',
+	xiv.ui.layouts.XyzvLayout.EventType);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.ID_PREFIX',
+	xiv.ui.layouts.XyzvLayout.ID_PREFIX);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.FRAMES',
+	xiv.ui.layouts.XyzvLayout.FRAMES);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.CSS_SUFFIX',
+	xiv.ui.layouts.XyzvLayout.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.InteractorSet',
+	xiv.ui.layouts.XyzvLayout.InteractorSet);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.resizeMargin',
+	xiv.ui.layouts.XyzvLayout.prototype.resizeMargin);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.setLayoutFrameResizable',
+	xiv.ui.layouts.XyzvLayout.prototype.setLayoutFrameResizable);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.createResizeBoundary',
+	xiv.ui.layouts.XyzvLayout.prototype.createResizeBoundary);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.transferInteractors',
+	xiv.ui.layouts.XyzvLayout.prototype.transferInteractors);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.setInteractors',
+	xiv.ui.layouts.XyzvLayout.prototype.setInteractors);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.addInteractors',
+	xiv.ui.layouts.XyzvLayout.prototype.addInteractors);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.getInteractors',
+	xiv.ui.layouts.XyzvLayout.prototype.getInteractors);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.getInteractorsByPlane',
+	xiv.ui.layouts.XyzvLayout.prototype.getInteractorsByPlane);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.getInteractorByPlane',
+	xiv.ui.layouts.XyzvLayout.prototype.getInteractorByPlane);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.getFrameByPlane',
+	xiv.ui.layouts.XyzvLayout.prototype.getFrameByPlane);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.loopXyz',
+	xiv.ui.layouts.XyzvLayout.prototype.loopXyz);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.loop',
+	xiv.ui.layouts.XyzvLayout.prototype.loop);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_X',
+	xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_X);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_Y',
+	xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_Y);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_Z',
+	xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_Z);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_V',
+	xiv.ui.layouts.XyzvLayout.prototype.setupLayoutFrame_V);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_X',
+	xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_X);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_Y',
+	xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_Y);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_Z',
+	xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_Z);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_V',
+	xiv.ui.layouts.XyzvLayout.prototype.onLayoutFrameResize_V);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.updateStyle_X',
+	xiv.ui.layouts.XyzvLayout.prototype.updateStyle_X);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.updateStyle_Z',
+	xiv.ui.layouts.XyzvLayout.prototype.updateStyle_Z);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.updateStyle_Y',
+	xiv.ui.layouts.XyzvLayout.prototype.updateStyle_Y);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.updateStyle_V',
+	xiv.ui.layouts.XyzvLayout.prototype.updateStyle_V);
+goog.exportSymbol('xiv.ui.layouts.XyzvLayout.prototype.disposeInternal',
+	xiv.ui.layouts.XyzvLayout.prototype.disposeInternal);

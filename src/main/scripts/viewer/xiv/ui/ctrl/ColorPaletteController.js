@@ -232,4 +232,22 @@ xiv.ui.ctrl.ColorPaletteController.prototype.disposeInternal = function() {
 
 
 
+goog.exportSymbol('xiv.ui.ctrl.ColorPaletteController.ID_PREFIX',
+	xiv.ui.ctrl.ColorPaletteController.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ctrl.ColorPaletteController.CSS_SUFFIX',
+	xiv.ui.ctrl.ColorPaletteController.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_X',
+	xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_X);
+goog.exportSymbol('xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_Y',
+	xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_Y);
+goog.exportSymbol('xiv.ui.ctrl.ColorPaletteController.prototype.update',
+	xiv.ui.ctrl.ColorPaletteController.prototype.update);
+goog.exportSymbol(
+    'xiv.ui.ctrl.ColorPaletteController.prototype.dispatchComponentEvent',
+    xiv.ui.ctrl.ColorPaletteController.prototype.dispatchComponentEvent);
+goog.exportSymbol(
+    'xiv.ui.ctrl.ColorPaletteController.prototype.disposeInternal',
+    xiv.ui.ctrl.ColorPaletteController.prototype.disposeInternal);
+
+
 

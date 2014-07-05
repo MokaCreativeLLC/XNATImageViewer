@@ -87,6 +87,15 @@ xiv.ui.layouts.SingleFrameLayout.prototype.updateStyle = function(){
 
 
 
+goog.exportSymbol('xiv.ui.layouts.SingleFrameLayout.TITLE',
+	xiv.ui.layouts.SingleFrameLayout.TITLE);
+goog.exportSymbol('xiv.ui.layouts.SingleFrameLayout.ID_PREFIX',
+	xiv.ui.layouts.SingleFrameLayout.ID_PREFIX);
+goog.exportSymbol('xiv.ui.layouts.SingleFrameLayout.prototype.updateStyle',
+	xiv.ui.layouts.SingleFrameLayout.prototype.updateStyle);
+
+
+
 
 
 

@@ -249,4 +249,24 @@ xiv.ui.ctrl.SliderController.prototype.disposeInternal = function() {
 
 
 
+goog.exportSymbol('xiv.ui.ctrl.SliderController.ID_PREFIX',
+	xiv.ui.ctrl.SliderController.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ctrl.SliderController.CSS_SUFFIX',
+	xiv.ui.ctrl.SliderController.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ctrl.SliderController.prototype.setValueDecimals',
+	xiv.ui.ctrl.SliderController.prototype.setValueDecimals);
+goog.exportSymbol('xiv.ui.ctrl.SliderController.prototype.render',
+	xiv.ui.ctrl.SliderController.prototype.render);
+goog.exportSymbol('xiv.ui.ctrl.SliderController.prototype.getValueInput',
+	xiv.ui.ctrl.SliderController.prototype.getValueInput);
+goog.exportSymbol(
+    'xiv.ui.ctrl.SliderController.prototype.dispatchComponentEvent',
+    xiv.ui.ctrl.SliderController.prototype.dispatchComponentEvent);
+goog.exportSymbol('xiv.ui.ctrl.SliderController.prototype.update',
+	xiv.ui.ctrl.SliderController.prototype.update);
+goog.exportSymbol('xiv.ui.ctrl.SliderController.prototype.disposeInternal',
+	xiv.ui.ctrl.SliderController.prototype.disposeInternal);
+
+
+
 

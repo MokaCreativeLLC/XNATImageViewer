@@ -48,6 +48,11 @@ xiv.ui.layouts.Transverse.ID_PREFIX =  'xiv.ui.layouts.Transverse';
 
 
 
+goog.exportSymbol('xiv.ui.layouts.Transverse.TITLE',
+	xiv.ui.layouts.Transverse.TITLE);
+goog.exportSymbol('xiv.ui.layouts.Transverse.ID_PREFIX',
+	xiv.ui.layouts.Transverse.ID_PREFIX);
+
 
 
 

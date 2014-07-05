@@ -1535,50 +1535,56 @@ xiv.ui.ViewBoxHandler.prototype.disposeInternal = function() {
 
 
 
-goog.exportSymbol('xiv.ui.ViewBoxHandler.CSS_SUFFIX', 
-		  xiv.ui.ViewBoxHandler.CSS_SUFFIX);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.EventType', 
-		  xiv.ui.ViewBoxHandler.EventType);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR', 
-		  xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.ID_PREFIX', 
-		  xiv.ui.ViewBoxHandler.ID_PREFIX);
 
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getEmptyMatrix', 
-		  xiv.ui.ViewBoxHandler.prototype.getEmptyMatrix);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.loop', 
-		  xiv.ui.ViewBoxHandler.prototype.loop);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.insertColumn', 
-		  xiv.ui.ViewBoxHandler.prototype.insertColumn);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.rowCount', 
-		  xiv.ui.ViewBoxHandler.prototype.rowCount);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.removeColumn', 
-		  xiv.ui.ViewBoxHandler.prototype.removeColumn);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.insertRow', 
-		  xiv.ui.ViewBoxHandler.prototype.insertRow);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.removeRow', 
-		  xiv.ui.ViewBoxHandler.prototype.removeRow);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBoxByElement', 
-		  xiv.ui.ViewBoxHandler.prototype.getViewBoxByElement);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBoxElement', 
-		  xiv.ui.ViewBoxHandler.prototype.getViewBoxElement);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBox', 
-		  xiv.ui.ViewBoxHandler.prototype.getViewBox);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBoxes', 
-		  xiv.ui.ViewBoxHandler.prototype.getViewBoxes);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBoxElements', 
-		  xiv.ui.ViewBoxHandler.prototype.getViewBoxElements);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.setViewBoxesParent', 
-		  xiv.ui.ViewBoxHandler.prototype.setViewBoxesParent);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.swap', 
-		  xiv.ui.ViewBoxHandler.prototype.swap);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.isMatch', 
-		  xiv.ui.ViewBoxHandler.prototype.isMatch);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.numViewBoxes', 
-		  xiv.ui.ViewBoxHandler.prototype.numViewBoxes);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBoxAfter', 
-		  xiv.ui.ViewBoxHandler.prototype.getViewBoxAfter);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getFirstEmpty', 
-		  xiv.ui.ViewBoxHandler.prototype.getFirstEmpty);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.disposeInternal', 
-		  xiv.ui.ViewBoxHandler.prototype.disposeInternal);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.CSS_SUFFIX',
+	xiv.ui.ViewBoxHandler.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.EventType',
+	xiv.ui.ViewBoxHandler.EventType);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR',
+	xiv.ui.ViewBoxHandler.VIEW_BOX_ATTR);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.ID_PREFIX',
+	xiv.ui.ViewBoxHandler.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.MAX_ROWS',
+	xiv.ui.ViewBoxHandler.prototype.MAX_ROWS);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.MAX_COLUMNS',
+	xiv.ui.ViewBoxHandler.prototype.MAX_COLUMNS);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.rowCount',
+	xiv.ui.ViewBoxHandler.prototype.rowCount);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getEmptyMatrix',
+	xiv.ui.ViewBoxHandler.prototype.getEmptyMatrix);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.loop',
+	xiv.ui.ViewBoxHandler.prototype.loop);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.insertColumn',
+	xiv.ui.ViewBoxHandler.prototype.insertColumn);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.removeColumn',
+	xiv.ui.ViewBoxHandler.prototype.removeColumn);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.insertRow',
+	xiv.ui.ViewBoxHandler.prototype.insertRow);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.removeRow',
+	xiv.ui.ViewBoxHandler.prototype.removeRow);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBoxByElement',
+	xiv.ui.ViewBoxHandler.prototype.getViewBoxByElement);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBoxElement',
+	xiv.ui.ViewBoxHandler.prototype.getViewBoxElement);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBox',
+	xiv.ui.ViewBoxHandler.prototype.getViewBox);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBoxes',
+	xiv.ui.ViewBoxHandler.prototype.getViewBoxes);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBoxElements',
+	xiv.ui.ViewBoxHandler.prototype.getViewBoxElements);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.setViewBoxesParent',
+	xiv.ui.ViewBoxHandler.prototype.setViewBoxesParent);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.ViewBoxFromVisNode',
+	xiv.ui.ViewBoxHandler.prototype.ViewBoxFromVisNode);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.isMatch',
+	xiv.ui.ViewBoxHandler.prototype.isMatch);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.swap',
+	xiv.ui.ViewBoxHandler.prototype.swap);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.numViewBoxes',
+	xiv.ui.ViewBoxHandler.prototype.numViewBoxes);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBoxAfter',
+	xiv.ui.ViewBoxHandler.prototype.getViewBoxAfter);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getFirstEmpty',
+	xiv.ui.ViewBoxHandler.prototype.getFirstEmpty);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.disposeInternal',
+	xiv.ui.ViewBoxHandler.prototype.disposeInternal);

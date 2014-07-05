@@ -140,3 +140,16 @@ xiv.ui.ctrl.VolumeController.prototype.disposeInternal = function() {
 
 
 
+
+goog.exportSymbol('xiv.ui.ctrl.VolumeController.ID_PREFIX',
+	xiv.ui.ctrl.VolumeController.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ctrl.VolumeController.CSS_SUFFIX',
+	xiv.ui.ctrl.VolumeController.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ctrl.VolumeController.prototype.add',
+	xiv.ui.ctrl.VolumeController.prototype.add);
+goog.exportSymbol('xiv.ui.ctrl.VolumeController.prototype.add_visibleRadio',
+	xiv.ui.ctrl.VolumeController.prototype.add_visibleRadio);
+goog.exportSymbol('xiv.ui.ctrl.VolumeController.prototype.add_labelMapToggle',
+	xiv.ui.ctrl.VolumeController.prototype.add_labelMapToggle);
+goog.exportSymbol('xiv.ui.ctrl.VolumeController.prototype.disposeInternal',
+	xiv.ui.ctrl.VolumeController.prototype.disposeInternal);

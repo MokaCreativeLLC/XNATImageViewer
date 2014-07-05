@@ -273,3 +273,33 @@ function(){
 
 
 
+goog.exportSymbol('xiv.ui.layouts.interactors.InputController.EventType',
+	xiv.ui.layouts.interactors.InputController.EventType);
+goog.exportSymbol('xiv.ui.layouts.interactors.InputController.ID_PREFIX',
+	xiv.ui.layouts.interactors.InputController.ID_PREFIX);
+goog.exportSymbol('xiv.ui.layouts.interactors.InputController.CSS_SUFFIX',
+	xiv.ui.layouts.interactors.InputController.CSS_SUFFIX);
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.InputController.prototype.getValue',
+    xiv.ui.layouts.interactors.InputController.prototype.getValue);
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.InputController.prototype.setValue',
+    xiv.ui.layouts.interactors.InputController.prototype.setValue);
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.InputController.prototype.setMaximum',
+    xiv.ui.layouts.interactors.InputController.prototype.setMaximum);
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.InputController.prototype.setMinimum',
+    xiv.ui.layouts.interactors.InputController.prototype.setMinimum);
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.InputController.prototype.updateValue',
+    xiv.ui.layouts.interactors.InputController.prototype.updateValue);
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.InputController.prototype.onInput',
+    xiv.ui.layouts.interactors.InputController.prototype.onInput);
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.InputController.prototype.render',
+    xiv.ui.layouts.interactors.InputController.prototype.render);
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.InputController.prototype.disposeInternal',
+    xiv.ui.layouts.interactors.InputController.prototype.disposeInternal);

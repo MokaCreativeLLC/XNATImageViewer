@@ -182,4 +182,28 @@ xiv.ui.layouts.interactors.Crosshairs.prototype.disposeInternal = function(){
 
 
 
+goog.exportSymbol('xiv.ui.layouts.interactors.Crosshairs.EventType',
+	xiv.ui.layouts.interactors.Crosshairs.EventType);
+goog.exportSymbol('xiv.ui.layouts.interactors.Crosshairs.ID_PREFIX',
+	xiv.ui.layouts.interactors.Crosshairs.ID_PREFIX);
+goog.exportSymbol('xiv.ui.layouts.interactors.Crosshairs.CSS_SUFFIX',
+	xiv.ui.layouts.interactors.Crosshairs.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.layouts.interactors.Crosshairs.prototype.vertical',
+	xiv.ui.layouts.interactors.Crosshairs.prototype.vertical);
+goog.exportSymbol('xiv.ui.layouts.interactors.Crosshairs.prototype.horizontal',
+	xiv.ui.layouts.interactors.Crosshairs.prototype.horizontal);
+goog.exportSymbol('xiv.ui.layouts.interactors.Crosshairs.prototype.setX',
+	xiv.ui.layouts.interactors.Crosshairs.prototype.setX);
+goog.exportSymbol('xiv.ui.layouts.interactors.Crosshairs.prototype.setY',
+	xiv.ui.layouts.interactors.Crosshairs.prototype.setY);
+goog.exportSymbol('xiv.ui.layouts.interactors.Crosshairs.prototype.render',
+	xiv.ui.layouts.interactors.Crosshairs.prototype.render);
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.Crosshairs.prototype.toggleVisible',
+    xiv.ui.layouts.interactors.Crosshairs.prototype.toggleVisible);
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.Crosshairs.prototype.disposeInternal',
+    xiv.ui.layouts.interactors.Crosshairs.prototype.disposeInternal);
+
+
 

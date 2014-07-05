@@ -276,3 +276,39 @@ xiv.ui.layouts.Layout.prototype.disposeInternal = function(){
     nrg.ui.disposeComponentMap(this.LayoutFrames_);
     delete this.LayoutFrames_;
 }
+
+
+
+
+goog.exportSymbol('xiv.ui.layouts.Layout.EventType',
+	xiv.ui.layouts.Layout.EventType);
+goog.exportSymbol('xiv.ui.layouts.Layout.INTERACTORS',
+	xiv.ui.layouts.Layout.INTERACTORS);
+goog.exportSymbol('xiv.ui.layouts.Layout.ID_PREFIX',
+	xiv.ui.layouts.Layout.ID_PREFIX);
+goog.exportSymbol('xiv.ui.layouts.Layout.CSS_SUFFIX',
+	xiv.ui.layouts.Layout.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.layouts.Layout.prototype.setMinLayoutFrameHeight',
+	xiv.ui.layouts.Layout.prototype.setMinLayoutFrameHeight);
+goog.exportSymbol('xiv.ui.layouts.Layout.prototype.setMinLayoutFrameWidth',
+	xiv.ui.layouts.Layout.prototype.setMinLayoutFrameWidth);
+goog.exportSymbol('xiv.ui.layouts.Layout.prototype.getLayoutFrames',
+	xiv.ui.layouts.Layout.prototype.getLayoutFrames);
+goog.exportSymbol('xiv.ui.layouts.Layout.prototype.getLayoutFrameByTitle',
+	xiv.ui.layouts.Layout.prototype.getLayoutFrameByTitle);
+goog.exportSymbol('xiv.ui.layouts.Layout.prototype.getLayoutFrameInteractors',
+	xiv.ui.layouts.Layout.prototype.getLayoutFrameInteractors);
+goog.exportSymbol('xiv.ui.layouts.Layout.prototype.getTitle',
+	xiv.ui.layouts.Layout.prototype.getTitle);
+goog.exportSymbol('xiv.ui.layouts.Layout.prototype.addLayoutFrame',
+	xiv.ui.layouts.Layout.prototype.addLayoutFrame);
+goog.exportSymbol('xiv.ui.layouts.Layout.prototype.dispatchResize',
+	xiv.ui.layouts.Layout.prototype.dispatchResize);
+goog.exportSymbol('xiv.ui.layouts.Layout.prototype.removeAllInteractors',
+	xiv.ui.layouts.Layout.prototype.removeAllInteractors);
+goog.exportSymbol('xiv.ui.layouts.Layout.prototype.updateInteractors',
+	xiv.ui.layouts.Layout.prototype.updateInteractors);
+goog.exportSymbol('xiv.ui.layouts.Layout.prototype.updateStyle',
+	xiv.ui.layouts.Layout.prototype.updateStyle);
+goog.exportSymbol('xiv.ui.layouts.Layout.prototype.disposeInternal',
+	xiv.ui.layouts.Layout.prototype.disposeInternal);

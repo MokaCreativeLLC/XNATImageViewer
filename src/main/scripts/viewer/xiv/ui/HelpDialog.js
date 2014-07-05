@@ -351,14 +351,12 @@ xiv.ui.HelpDialog.prototype.disposeInternal = function(){
 }
 
 
-goog.exportSymbol('xiv.ui.HelpDialog.EventType',
-	xiv.ui.HelpDialog.EventType);
-goog.exportSymbol('xiv.ui.HelpDialog.ID_PREFIX',
-	xiv.ui.HelpDialog.ID_PREFIX);
-goog.exportSymbol('xiv.ui.HelpDialog.CSS_SUFFIX',
-	xiv.ui.HelpDialog.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.HelpDialog.EventType', xiv.ui.HelpDialog.EventType);
+goog.exportSymbol('xiv.ui.HelpDialog.ID_PREFIX', xiv.ui.HelpDialog.ID_PREFIX);
 goog.exportSymbol('xiv.ui.HelpDialog.LAYOUT_IMAGE_ID',
 	xiv.ui.HelpDialog.LAYOUT_IMAGE_ID);
+goog.exportSymbol('xiv.ui.HelpDialog.CSS_SUFFIX',
+	xiv.ui.HelpDialog.CSS_SUFFIX);
 goog.exportSymbol('xiv.ui.HelpDialog.prototype.render',
 	xiv.ui.HelpDialog.prototype.render);
 goog.exportSymbol('xiv.ui.HelpDialog.prototype.setLayoutButton',

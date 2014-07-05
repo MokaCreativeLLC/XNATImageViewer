@@ -47,9 +47,7 @@ xiv.ui.layouts.Coronal.ID_PREFIX =  'xiv.ui.layouts.Coronal';
 
 
 
-
-
-
-
-
-
+goog.exportSymbol('xiv.ui.layouts.Coronal.TITLE',
+	xiv.ui.layouts.Coronal.TITLE);
+goog.exportSymbol('xiv.ui.layouts.Coronal.ID_PREFIX',
+	xiv.ui.layouts.Coronal.ID_PREFIX);

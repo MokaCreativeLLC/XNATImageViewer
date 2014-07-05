@@ -57,3 +57,8 @@ function(){
 
 
 
+goog.exportSymbol('xiv.ui.layouts.interactors.FrameDisplay.ID_PREFIX',
+	xiv.ui.layouts.interactors.FrameDisplay.ID_PREFIX);
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.FrameDisplay.prototype.updateValue',
+    xiv.ui.layouts.interactors.FrameDisplay.prototype.updateValue);

@@ -1358,36 +1358,35 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
 
 
 goog.exportSymbol('xiv.ui.Modal.EventType', xiv.ui.Modal.EventType);
-goog.exportSymbol('xiv.ui.Modal.States', xiv.ui.Modal.States);
 goog.exportSymbol('xiv.ui.Modal.ID_PREFIX', xiv.ui.Modal.ID_PREFIX);
 goog.exportSymbol('xiv.ui.Modal.CSS_SUFFIX', xiv.ui.Modal.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.Modal.States', xiv.ui.Modal.States);
 goog.exportSymbol('xiv.ui.Modal.ButtonTypes', xiv.ui.Modal.ButtonTypes);
-
-goog.exportSymbol('xiv.ui.Modal.prototype.getViewBoxHandler', 
-		  xiv.ui.Modal.prototype.getViewBoxHandler);
-goog.exportSymbol('xiv.ui.Modal.prototype.getThumbnailGallery', 
-		  xiv.ui.Modal.prototype.getThumbnailGallery);
-goog.exportSymbol('xiv.ui.Modal.prototype.getProjectTab', 
-		  xiv.ui.Modal.prototype.getProjectTab);
-goog.exportSymbol('xiv.ui.Modal.prototype.getPopupButton', 
-		  xiv.ui.Modal.prototype.getPopupButton);
-goog.exportSymbol('xiv.ui.Modal.prototype.getCloseButton', 
-		  xiv.ui.Modal.prototype.getCloseButton);
-goog.exportSymbol('xiv.ui.Modal.prototype.getFullScreenButton', 
-		  xiv.ui.Modal.prototype.getFullScreenButton);
-goog.exportSymbol('xiv.ui.Modal.prototype.render', 
-		  xiv.ui.Modal.prototype.render);
-goog.exportSymbol('xiv.ui.Modal.prototype.setState', 
-		  xiv.ui.Modal.prototype.setState);
-goog.exportSymbol('xiv.ui.Modal.prototype.getState', 
-		  xiv.ui.Modal.prototype.getState);
-goog.exportSymbol('xiv.ui.Modal.prototype.highlightInUseThumbnails', 
-		  xiv.ui.Modal.prototype.highlightInUseThumbnails);
-goog.exportSymbol('xiv.ui.Modal.prototype.animateModal', 
-		  xiv.ui.Modal.prototype.animateModal);
-goog.exportSymbol('xiv.ui.Modal.prototype.updateStyle', 
-		  xiv.ui.Modal.prototype.updateStyle);
-goog.exportSymbol('xiv.ui.Modal.prototype.initSubComponents', 
-		  xiv.ui.Modal.prototype.initSubComponents);
-goog.exportSymbol('xiv.ui.Modal.prototype.disposeInternal', 
-		  xiv.ui.Modal.prototype.disposeInternal);
+goog.exportSymbol('xiv.ui.Modal.prototype.getViewBoxHandler',
+	xiv.ui.Modal.prototype.getViewBoxHandler);
+goog.exportSymbol('xiv.ui.Modal.prototype.getThumbnailGallery',
+	xiv.ui.Modal.prototype.getThumbnailGallery);
+goog.exportSymbol('xiv.ui.Modal.prototype.getProjectTab',
+	xiv.ui.Modal.prototype.getProjectTab);
+goog.exportSymbol('xiv.ui.Modal.prototype.getPopupButton',
+	xiv.ui.Modal.prototype.getPopupButton);
+goog.exportSymbol('xiv.ui.Modal.prototype.getCloseButton',
+	xiv.ui.Modal.prototype.getCloseButton);
+goog.exportSymbol('xiv.ui.Modal.prototype.getFullScreenButton',
+	xiv.ui.Modal.prototype.getFullScreenButton);
+goog.exportSymbol('xiv.ui.Modal.prototype.render',
+	xiv.ui.Modal.prototype.render);
+goog.exportSymbol('xiv.ui.Modal.prototype.setState',
+	xiv.ui.Modal.prototype.setState);
+goog.exportSymbol('xiv.ui.Modal.prototype.getState',
+	xiv.ui.Modal.prototype.getState);
+goog.exportSymbol('xiv.ui.Modal.prototype.highlightInUseThumbnails',
+	xiv.ui.Modal.prototype.highlightInUseThumbnails);
+goog.exportSymbol('xiv.ui.Modal.prototype.animateModal',
+	xiv.ui.Modal.prototype.animateModal);
+goog.exportSymbol('xiv.ui.Modal.prototype.updateStyle',
+	xiv.ui.Modal.prototype.updateStyle);
+goog.exportSymbol('xiv.ui.Modal.prototype.initSubComponents',
+	xiv.ui.Modal.prototype.initSubComponents);
+goog.exportSymbol('xiv.ui.Modal.prototype.disposeInternal',
+	xiv.ui.Modal.prototype.disposeInternal);

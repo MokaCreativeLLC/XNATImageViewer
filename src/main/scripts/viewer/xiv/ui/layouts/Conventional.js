@@ -526,5 +526,35 @@ xiv.ui.layouts.Conventional.prototype.updateStyle_V = function() {
 
 
 
-
-
+goog.exportSymbol('xiv.ui.layouts.Conventional.TITLE',
+	xiv.ui.layouts.Conventional.TITLE);
+goog.exportSymbol('xiv.ui.layouts.Conventional.EventType',
+	xiv.ui.layouts.Conventional.EventType);
+goog.exportSymbol('xiv.ui.layouts.Conventional.ID_PREFIX',
+	xiv.ui.layouts.Conventional.ID_PREFIX);
+goog.exportSymbol('xiv.ui.layouts.Conventional.CSS_SUFFIX',
+	xiv.ui.layouts.Conventional.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.layouts.Conventional.prototype.setupLayoutFrame_X',
+	xiv.ui.layouts.Conventional.prototype.setupLayoutFrame_X);
+goog.exportSymbol('xiv.ui.layouts.Conventional.prototype.setupLayoutFrame_Y',
+	xiv.ui.layouts.Conventional.prototype.setupLayoutFrame_Y);
+goog.exportSymbol('xiv.ui.layouts.Conventional.prototype.setupLayoutFrame_Z',
+	xiv.ui.layouts.Conventional.prototype.setupLayoutFrame_Z);
+goog.exportSymbol('xiv.ui.layouts.Conventional.prototype.setupLayoutFrame_V',
+	xiv.ui.layouts.Conventional.prototype.setupLayoutFrame_V);
+goog.exportSymbol('xiv.ui.layouts.Conventional.prototype.onLayoutFrameResize_X',
+	xiv.ui.layouts.Conventional.prototype.onLayoutFrameResize_X);
+goog.exportSymbol('xiv.ui.layouts.Conventional.prototype.onLayoutFrameResize_Y',
+	xiv.ui.layouts.Conventional.prototype.onLayoutFrameResize_Y);
+goog.exportSymbol('xiv.ui.layouts.Conventional.prototype.onLayoutFrameResize_V',
+	xiv.ui.layouts.Conventional.prototype.onLayoutFrameResize_V);
+goog.exportSymbol('xiv.ui.layouts.Conventional.prototype.updateStyle',
+	xiv.ui.layouts.Conventional.prototype.updateStyle);
+goog.exportSymbol('xiv.ui.layouts.Conventional.prototype.updateStyle_X',
+	xiv.ui.layouts.Conventional.prototype.updateStyle_X);
+goog.exportSymbol('xiv.ui.layouts.Conventional.prototype.updateStyle_Y',
+	xiv.ui.layouts.Conventional.prototype.updateStyle_Y);
+goog.exportSymbol('xiv.ui.layouts.Conventional.prototype.updateStyle_Z',
+	xiv.ui.layouts.Conventional.prototype.updateStyle_Z);
+goog.exportSymbol('xiv.ui.layouts.Conventional.prototype.updateStyle_V',
+	xiv.ui.layouts.Conventional.prototype.updateStyle_V);
