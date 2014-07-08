@@ -36,6 +36,7 @@ nrg.ui.ErrorOverlay.ID_PREFIX =  'nrg.ui.ErrorOverlay';
 
 /**
  * @enum {string}
+ * @expose
  */
 nrg.ui.ErrorOverlay.CSS = {
     OVERLAY: 'nrg-ui-infooverlay-overlay',

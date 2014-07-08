@@ -60,6 +60,7 @@ nrg.ui.Dialog.EventType = {
 
 /**
  * @enum {string}
+ * @expose
  */
 nrg.ui.Dialog.CSS = {
     OVERLAY: 'nrg-ui-dialog-overlay',

@@ -61,7 +61,7 @@ xiv.ui.layouts.LayoutFrame.ID_PREFIX =  'xiv.ui.layouts.LayoutFrame';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.layouts.LayoutFrame.CSS_SUFFIX = {}
 

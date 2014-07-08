@@ -139,7 +139,7 @@ xiv.ui.layouts.LayoutHandler.ID_PREFIX =  'xiv.ui.layouts.LayoutHandler';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.layouts.LayoutHandler.CSS_SUFFIX = {}
 

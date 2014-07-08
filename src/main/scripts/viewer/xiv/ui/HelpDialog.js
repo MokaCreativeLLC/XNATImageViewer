@@ -48,9 +48,9 @@ xiv.ui.HelpDialog.ID_PREFIX =  'xiv.ui.HelpDialog';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
-xiv.ui.HelpDialog.CSS= {
+xiv.ui.HelpDialog.CSS = {
     DIALOG: 'nrg-ui-helpdialog-dialog',
     TEXT: 'nrg-ui-helpdialog-text',
     SCROLLABLEZIPPYTREE: 'xiv-ui-helpdialog-scrollablezippytree',

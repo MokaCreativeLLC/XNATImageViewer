@@ -54,7 +54,7 @@ goog.exportSymbol('xiv.ui.Thumbnail', xiv.ui.Thumbnail);
 
 /**
  * @type {!string} 
- * @const
+ * @expose
 */
 xiv.ui.Thumbnail.ID_PREFIX =  'xiv.ui.Thumbnail';
 
@@ -63,7 +63,7 @@ xiv.ui.Thumbnail.ID_PREFIX =  'xiv.ui.Thumbnail';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.Thumbnail.CSS_SUFFIX = {};
 

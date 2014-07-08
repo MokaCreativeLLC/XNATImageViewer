@@ -141,7 +141,7 @@ nrg.ui.ZippyNode.EventType = {
 
 /**
  * @enum {string}
- * @const
+ * @expose
  */ 
 nrg.ui.ZippyNode.CSS_SUFFIX = {
     HEADER: 'header',

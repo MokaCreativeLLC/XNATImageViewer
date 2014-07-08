@@ -51,7 +51,7 @@ xiv.ui.ctrl.Histogram.ID_PREFIX =  'xiv.ui.ctrl.Histogram';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.Histogram.CSS_SUFFIX = {
     CANVAS: 'canvas',

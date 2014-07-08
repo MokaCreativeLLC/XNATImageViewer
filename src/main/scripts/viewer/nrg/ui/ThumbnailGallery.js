@@ -45,7 +45,7 @@ nrg.ui.ThumbnailGallery.ID_PREFIX = 'nrg.ui.ThumbnailGallery';
 
 /**
  * @type {!Array.string} 
- * @const
+ * @expose
  */ 
 nrg.ui.ThumbnailGallery.CSS_SUFFIX = {
     DIALOG : 'dialog',

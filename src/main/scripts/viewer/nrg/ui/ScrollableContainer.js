@@ -52,7 +52,7 @@ nrg.ui.ScrollableContainer.ID_PREFIX = 'nrg.ui.ScrollableContainer';
 
 /**
  * @enum {string} 
- * @const
+ * @expose
  */ 
 nrg.ui.ScrollableContainer.CSS_SUFFIX = {
     SCROLLAREA : 'scrollarea', 

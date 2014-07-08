@@ -86,7 +86,7 @@ xiv.ui.layouts.Layout.ID_PREFIX =  'xiv.ui.layouts.Layout';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.layouts.Layout.CSS_SUFFIX = {}
 

@@ -16,6 +16,7 @@ goog.require('goog.events');
 // nrg
 goog.require('nrg.dom');
 goog.require('nrg.style');
+goog.require('nrg.string');
 
 
 
@@ -32,7 +33,7 @@ nrg.ui.Component = function (opt_domHelper) {
     goog.base(this, opt_domHelper);
     
     // Validate ID_PREFIX
-    nrg.ui.Component.validateIdPrefix(this);
+    this.validateIdPrefix();
 
     // Parent elt.
     this.setElementInternal(
@@ -41,10 +42,10 @@ nrg.ui.Component = function (opt_domHelper) {
 
 
     // Create CSS map
-    nrg.ui.Component.createCssMap(this);
+    this.createCssMap();
 
     // apply CSS hierarchy
-    nrg.ui.Component.applyCssHierarchy(this);
+    this.applyCssHierarchy_();
 };
 goog.inherits(nrg.ui.Component, goog.ui.Component);
 goog.exportSymbol('nrg.ui.Component', nrg.ui.Component);
@@ -53,35 +54,41 @@ goog.exportSymbol('nrg.ui.Component', nrg.ui.Component);
 
 /**
  * Validates the ID_PREFIX property of the nrg.ui.Component subclass.
- * @param {!Object} obj The object to validate. 
  * @throws {Error} If the constructor property 'ID_PREFIX' is not defined.
- * @public
+ * @protected
  */
-nrg.ui.Component.validateIdPrefix = function(obj) {
+nrg.ui.Component.prototype.validateIdPrefix = function() {
 
-    if (!(obj instanceof nrg.ui.Component)){
+    if (!(this instanceof nrg.ui.Component)){
 	return;
     }
 
-    if (obj.constructor.superClass_ &&
-       ((obj.constructor.superClass_ instanceof nrg.ui.Component))) {
-	nrg.ui.Component.validateIdPrefix(obj.constructor.superClass_);
+    if (this.constructor.superClass_ &&
+       ((this.constructor.superClass_ instanceof nrg.ui.Component))) {
+	nrg.ui.Component.prototype.validateIdPrefix.
+	    bind(this.constructor.superClass_)();
     }
 
-    if (!obj.constructor.ID_PREFIX){
+    if (!this.constructor.ID_PREFIX){
 	throw new Error("nrg.ui.Component subclass should " + 
-			   "have the property 'ID_PREFIX' .", obj);
+			   "have the property 'ID_PREFIX' .", this);
     }
 
     // We can assume the other properties are defined if CSS_CLASS_PREFIX is.
-    if (goog.isDef(obj.constructor.CSS_CLASS_PREFIX)) {
+    if (goog.isDef(this.constructor.CSS_CLASS_PREFIX)) {
 	return;
     }
 
-    obj.constructor.CSS_CLASS_PREFIX = 
-	obj.constructor.ID_PREFIX.toLowerCase().replace(/\./g,'-');
-    obj.constructor.ELEMENT_CLASS = 
-	goog.getCssName(obj.constructor.CSS_CLASS_PREFIX, '');
+    /**
+     * @public
+     */
+    this.constructor.CSS_CLASS_PREFIX = 
+	this.constructor.ID_PREFIX.toLowerCase().replace(/\./g,'-');
+
+    /**
+     * @public
+     */
+    this.constructor.ELEMENT_CLASS = this.constructor.CSS_CLASS_PREFIX;
 }
 
 
@@ -89,50 +96,57 @@ nrg.ui.Component.validateIdPrefix = function(obj) {
 /**
  * Creates the classMap property of the nrg.ui.Component subclass from the 
  * constructor object CLASSES.
- * @param {!Object} obj The object to construct the classMap for. 
- * @public
+ * @protected
  */
-nrg.ui.Component.createCssMap = function(obj) {
-
+nrg.ui.Component.prototype.createCssMap = function() {
+    //window.console.log('\n\ncreateCSSMap', this.constructor.ID_PREFIX);
     // Propagate upwards in the class chain to see if those
     // properties have yet to be set.
-    if (obj.constructor.superClass_) {
-	nrg.ui.Component.createCssMap(obj.constructor.superClass_);
-    }
+    if (goog.isDefAndNotNull(this.constructor.superClass_)) {
 
+	var obj = this.constructor.superClass_;
+	//window.console.log('Begin', obj, obj.constructor.ID_PREFIX);
+
+	while(obj.constructor.ID_PREFIX != null){
+	    //window.console.log(this,
+	    //obj.constructor.ID_PREFIX);
+	    nrg.ui.Component.prototype.createCssMap.bind(obj)();
+	    obj = obj.constructor.superClass_;
+	}
+    }
+    //window.console.log('\n\ncreateCSSMap1', this.constructor.ID_PREFIX);
+    //window.console.log('\n\ncreateCSSMap1', this.constructor.CSS_SUFFIX);
     // Return if no property defined.
-    if (!goog.isDef(obj.constructor.CSS_SUFFIX) || 
-	goog.isDef(obj.constructor.CSS)){
+    if (!goog.isDef(this.constructor.CSS_SUFFIX) || 
+	goog.isDef(this.constructor.CSS)){
 	return;
     }    
+    //window.console.log('\n\ncreateCSSMap2', this.constructor.ID_PREFIX);
 
-    obj.constructor.CSS = goog.object.clone(obj.constructor.CSS_SUFFIX);
-    //window.console.log(obj.constructor.CSS);
-    goog.object.forEach(obj.constructor.CSS, function(val, key){
-	obj.constructor.CSS[key] = 
-	    obj.constructor.ID_PREFIX.toLowerCase().replace(/\.|_/g,'-') + '-' +
-	    val.toLowerCase().replace(/\.|_/g,'-')
 
-    })
-    obj.constructor.CSS.ELEMENT = 
-	    obj.constructor.ID_PREFIX.toLowerCase().replace(/\.|_/g,'-');
-    //window.console.log(obj.constructor.ID_PREFIX, obj.constructor.CSS);
+    /**
+     * @public 
+     */
+    this.constructor.CSS = goog.object.clone(this.constructor.CSS_SUFFIX);
+    goog.object.forEach(this.constructor.CSS, function(val, key){
+	this.constructor.CSS[key] = nrg.string.makeCssName(
+	    this.constructor.ID_PREFIX, val)
+    }.bind(this))
 }
 
 
 
 /**
- * @param {!Object} obj The object to construct the CSS hierarchy for. 
- * @public
+ * @private
  */
-nrg.ui.Component.applyCssHierarchy = function(obj) {
+nrg.ui.Component.prototype.applyCssHierarchy_ = function() {
 
-    var pObj = obj;
     var baseClasses = [];
+    var obj = this;
 
-    while (pObj instanceof nrg.ui.Component) {
-	goog.array.insert(baseClasses, pObj.constructor.ELEMENT_CLASS);
-	pObj = pObj.constructor.superClass_;
+    while (obj instanceof nrg.ui.Component) {
+	goog.array.insert(baseClasses, this.constructor.ELEMENT_CLASS);
+	obj = obj.constructor.superClass_;
     }
 
     goog.array.forEach(baseClasses, function(baseClass) {
@@ -386,17 +400,14 @@ nrg.ui.Component.prototype.disposeInternal = function() {
 
 
 
-
-goog.exportSymbol('nrg.ui.Component.validateIdPrefix',
-	nrg.ui.Component.validateIdPrefix);
-goog.exportSymbol('nrg.ui.Component.createCssMap',
-	nrg.ui.Component.createCssMap);
-goog.exportSymbol('nrg.ui.Component.applyCssHierarchy',
-	nrg.ui.Component.applyCssHierarchy);
 goog.exportSymbol('nrg.ui.Component.animationLengths',
 	nrg.ui.Component.animationLengths);
+goog.exportSymbol('nrg.ui.Component.prototype.validateIdPrefix',
+	nrg.ui.Component.prototype.validateIdPrefix);
 goog.exportSymbol('nrg.ui.Component.prototype.imagePrefix',
 	nrg.ui.Component.prototype.imagePrefix);
+goog.exportSymbol('nrg.ui.Component.prototype.createCssMap',
+	nrg.ui.Component.prototype.createCssMap);
 goog.exportSymbol('nrg.ui.Component.prototype.setImagePrefix',
 	nrg.ui.Component.prototype.setImagePrefix);
 goog.exportSymbol('nrg.ui.Component.prototype.getImagePrefix',

@@ -53,7 +53,7 @@ xiv.ui.layouts.interactors.Crosshairs.ID_PREFIX =
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.layouts.interactors.Crosshairs.CSS_SUFFIX = {
     HORIZONTAL: 'horizontal',
@@ -159,8 +159,8 @@ function(orientation) {
     return goog.dom.createDom('div', {
 	'id': this.constructor.ID_PREFIX + '_' + orientation + '_' +
 	    goog.string.createUniqueString(),
-	'class': goog.getCssName(this.constructor.ELEMENT_CLASS, 
-				 orientation)
+	'class': this.constructor.ELEMENT_CLASS + '-' + 
+	    orientation.toLowerCase()
     })
 }
 

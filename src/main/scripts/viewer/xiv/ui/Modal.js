@@ -20,6 +20,7 @@ goog.require('goog.dom.classes');
 
 // nrg
 goog.require('nrg.dom');
+goog.require('nrg.string');
 goog.require('nrg.style');
 goog.require('nrg.convert');
 goog.require('nrg.fx');
@@ -29,7 +30,7 @@ goog.require('nrg.ui.Thumbnail');
 goog.require('nrg.ui.ZipTabs');
 
 // xiv
-goog.require('xiv');
+//goog.require('xiv');
 goog.require('xiv.ui.ThumbnailGallery');
 goog.require('xiv.ui.ViewBoxHandler');
 goog.require('xiv.ui.ViewBox');
@@ -52,10 +53,26 @@ xiv.ui.Modal = function () {
      * @type {!string}
      * @private
      */
-    this.currState_ = xiv.ModalStates.DEMO;
+    this.currState_ = xiv.ui.Modal.ModalStates.DEMO;
+    window.console.log('currState', this.currState_);
 }
 goog.inherits(xiv.ui.Modal, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.Modal', xiv.ui.Modal);
+
+
+
+/**
+ * @enum {string}
+ * @expose
+ */
+xiv.ui.Modal.ModalStates = {
+    FULLSCREEN: 'fullscreen',
+    POPUP: 'popup',
+    FULLSCREEN_POPUP: 'fullscreen-popup',
+    WINDOWED: 'windowed',
+    DEMO: 'demo',
+    DEMO_FULLSCREEN: 'demp-fullscreen',
+}
 
 
 
@@ -70,6 +87,7 @@ xiv.ui.Modal.ID_PREFIX =  'xiv.ui.Modal';
 
 /**
  * @enum {string}
+ * @expose
  */
 xiv.ui.Modal.CSS_SUFFIX = {
     BACKGROUND: 'background',
@@ -134,7 +152,7 @@ xiv.ui.Modal.createButtons_ = function(iconUrl){
     goog.object.forEach(buttonIds, function(newKey, oldKey){
 	buttonsWithOriginalKeys[oldKey] = buttons[newKey];
 	goog.dom.classes.set(buttons[newKey], 
-	    goog.getCssName(xiv.ui.Modal.CSS_CLASS_PREFIX, 
+	    nrg.string.makeCssName(xiv.ui.Modal.CSS_CLASS_PREFIX, 
 			oldKey.toLowerCase() + '-' + 'button'));
     })
     return buttonsWithOriginalKeys
@@ -965,7 +983,7 @@ xiv.ui.Modal.prototype.initViewBoxHandler_ = function() {
  * @private
  */ 
 xiv.ui.Modal.prototype.onCloseButtonClicked_ = function() {
-    if (this.currState_ === xiv.ModalStates.FULLSCREEN){
+    if (this.currState_ === xiv.ui.Modal.ModalStates.FULLSCREEN){
 	goog.dom.fullscreen.exitFullScreen();
     }
 }
@@ -979,11 +997,11 @@ xiv.ui.Modal.prototype.onCloseButtonClicked_ = function() {
  */ 
 xiv.ui.Modal.prototype.onFullScreenButtonClicked_ = function() {
     goog.dom.fullscreen.requestFullScreen(this.getElement().parentNode); 
-    if (this.currState_ === xiv.ModalStates.POPUP){
-	this.setState(xiv.ModalStates.FULLSCREEN_POPUP);
+    if (this.currState_ === xiv.ui.Modal.ModalStates.POPUP){
+	this.setState(xiv.ui.Modal.ModalStates.FULLSCREEN_POPUP);
     }
     else {
-	this.setState(xiv.ModalStates.FULLSCREEN);
+	this.setState(xiv.ui.Modal.ModalStates.FULLSCREEN);
     }
 }
 
@@ -1042,40 +1060,42 @@ xiv.ui.Modal.prototype.adaptToState_ = function(){
     //
     if (goog.isDefAndNotNull(this.prevState_)){
     goog.dom.classes.remove(this.getElement(), 
-			    goog.getCssName(this.constructor.CSS.ELEMENT, 
-					    this.prevState_))
+			    nrg.string.makeCssName(
+				this.constructor.ELEMENT_CLASS, 
+				this.prevState_))
     }
 
     //
     // Add new state's CSS
     //
     goog.dom.classes.add(this.getElement(), 
-			 goog.getCssName(this.constructor.CSS.ELEMENT, 
-					 this.currState_))
+			 nrg.string.makeCssName(
+			     this.constructor.ELEMENT_CLASS, 
+			     this.currState_))
 
-    if (this.currState_ == xiv.ModalStates.DEMO) {
+    if (this.currState_ == xiv.ui.Modal.ModalStates.DEMO) {
 	this.buttons_.FULLSCREEN.style.visibility = 'visible';
 	this.buttons_.WINDOWED.style.visibility = 'hidden';
     } 
-    else if (this.currState_ == xiv.ModalStates.WINDOWED) {
+    else if (this.currState_ == xiv.ui.Modal.ModalStates.WINDOWED) {
 	this.buttons_.FULLSCREEN.style.visibility = 'visible';
 	this.buttons_.WINDOWED.style.visibility = 'hidden';
     } 
 
-    else if (this.currState_ == xiv.ModalStates.POPUP) {
+    else if (this.currState_ == xiv.ui.Modal.ModalStates.POPUP) {
 	this.buttons_.POPUP.style.visibility = 'hidden';
 	this.buttons_.CLOSE.style.visibility = 'hidden';
 	this.buttons_.FULLSCREEN.style.visibility = 'visible';
 	this.buttons_.WINDOWED.style.visibility = 'hidden';
     } 
 
-    else if (this.currState_ == xiv.ModalStates.FULLSCREEN_POPUP) {
+    else if (this.currState_ == xiv.ui.Modal.ModalStates.FULLSCREEN_POPUP) {
 	this.buttons_.POPUP.style.visibility = 'hidden';
 	this.buttons_.FULLSCREEN.style.visibility = 'hidden';
 	this.buttons_.WINDOWED.style.visibility = 'visible';
     } 
 
-    else if (this.currState_ == xiv.ModalStates.FULLSCREEN) {
+    else if (this.currState_ == xiv.ui.Modal.ModalStates.FULLSCREEN) {
 	this.buttons_.POPUP.style.visibility = 'visible';
 	this.buttons_.FULLSCREEN.style.visibility = 'hidden';
 	this.buttons_.WINDOWED.style.visibility = 'visible';
@@ -1362,3 +1382,15 @@ goog.exportSymbol('xiv.ui.Modal.prototype.initSubComponents',
 	xiv.ui.Modal.prototype.initSubComponents);
 goog.exportSymbol('xiv.ui.Modal.prototype.disposeInternal',
 	xiv.ui.Modal.prototype.disposeInternal);
+
+
+
+
+//
+// These functions are accessed outside of the scope of the application,
+// which is why we have to export them to the global scope
+//
+window['xiv.ui.Modal'] = xiv.ui.Modal;
+window['xiv.ui.Modal.ModalStates'] = xiv.ui.Modal.ModalStates;
+
+

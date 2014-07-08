@@ -82,7 +82,7 @@ xiv.ui.ctrl.XtkControllerTree.ID_PREFIX =  'xiv.ui.ctrl.XtkControllerTree';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.XtkControllerTree.CSS_SUFFIX = {};
 

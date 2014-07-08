@@ -97,6 +97,7 @@ nrg.ui.Resizable.ID_PREFIX =  'nrg.ui.Resizable';
 
 /**
  * @enum {string} 
+ * @expose
  * @const
  */ 
 nrg.ui.Resizable.CSS_SUFFIX = {

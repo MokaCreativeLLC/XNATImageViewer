@@ -185,7 +185,7 @@ xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE = {
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ViewBoxInteractorHandler.CSS = {
     GENERIC_TOGGLE: 'xiv-ui-viewboxinteractorhandler-generic-toggle',
@@ -198,7 +198,7 @@ xiv.ui.ViewBoxInteractorHandler.CSS = {
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS = {
     ZOOM_FOLLOWER: 'xiv-ui-viewboxinteractorhandler-zoom-follower',

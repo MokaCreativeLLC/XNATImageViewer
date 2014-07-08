@@ -68,7 +68,7 @@ xiv.ui.ctrl.CheckboxController.ID_PREFIX =  'xiv.ui.ctrl.CheckboxController';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.CheckboxController.CSS_SUFFIX = {
     CHECKBOXHOLDER: 'checkboxholder'

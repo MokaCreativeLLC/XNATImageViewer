@@ -53,7 +53,7 @@ xiv.ui.layouts.interactors.Slider.ID_PREFIX =
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.layouts.interactors.Slider.CSS_SUFFIX = {}
 

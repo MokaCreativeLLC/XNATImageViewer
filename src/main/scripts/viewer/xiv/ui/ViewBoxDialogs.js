@@ -81,7 +81,7 @@ xiv.ui.ViewBoxDialogs.ID_PREFIX =  'xiv.ui.ViewBoxDialogs';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ViewBoxDialogs.CSS_SUFFIX = {
     GENERIC_TOGGLE: 'generic-toggle',

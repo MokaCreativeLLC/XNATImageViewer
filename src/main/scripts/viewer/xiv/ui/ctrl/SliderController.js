@@ -45,7 +45,7 @@ xiv.ui.ctrl.SliderController.ID_PREFIX =  'xiv.ui.ctrl.SliderController';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.SliderController.CSS_SUFFIX = {
     SLIDER: 'slider',

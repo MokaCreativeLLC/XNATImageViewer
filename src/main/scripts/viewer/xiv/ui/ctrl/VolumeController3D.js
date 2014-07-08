@@ -51,7 +51,7 @@ xiv.ui.ctrl.VolumeController3D.DEFAULT_THRESHOLD = 1000;
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.VolumeController3D.CSS_SUFFIX = {};
 

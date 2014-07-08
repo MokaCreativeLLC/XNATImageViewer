@@ -96,7 +96,7 @@ nrg.ui.ZippyTree.ID_PREFIX =  'nrg.ui.ZippyTree';
 
 /**
  * @enum {string} 
- * @const
+ * @expose
 */
 nrg.ui.ZippyTree.CSS_SUFFIX = {
     ROOT_NODE: 'rootnode'

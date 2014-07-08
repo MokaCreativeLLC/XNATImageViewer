@@ -65,7 +65,7 @@ xiv.ui.layouts.TwoDRow.ID_PREFIX =  'xiv.ui.layouts.TwoDRow';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.layouts.TwoDRow.CSS_SUFFIX = {
     X: 'x',

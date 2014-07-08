@@ -55,7 +55,7 @@ xiv.ui.ctrl.RadioButtonController.ID_PREFIX =
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.RadioButtonController.CSS_SUFFIX = {
     RADIOBUTTON: 'radiobutton'

@@ -40,7 +40,7 @@ xiv.ui.ctrl.AnnotationsController3D.ID_PREFIX =
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.AnnotationsController3D.CSS_SUFFIX = {};
 

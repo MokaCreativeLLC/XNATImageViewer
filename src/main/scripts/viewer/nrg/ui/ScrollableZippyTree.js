@@ -54,7 +54,7 @@ nrg.ui.ScrollableZippyTree.ID_PREFIX = 'nrg.ui.ScrollableZippyTree';
 
 /**
  * @type {!Array.string} 
- * @const
+ * @expose
  */ 
 nrg.ui.ScrollableZippyTree.CSS_SUFFIX = {
     ZIPPYTREE: 'zippytree'

@@ -35,6 +35,7 @@ nrg.ui.InfoOverlay.ID_PREFIX =  'nrg.ui.InfoOverlay';
 
 /**
  * @enum {string}
+ * @expose
  */
 nrg.ui.InfoOverlay.CSS_SUFFIX = {
     TEXT: 'text'

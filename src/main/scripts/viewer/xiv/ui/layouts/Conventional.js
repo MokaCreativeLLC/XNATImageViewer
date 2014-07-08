@@ -64,7 +64,7 @@ xiv.ui.layouts.Conventional.ID_PREFIX =  'xiv.ui.layouts.Conventional';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.layouts.Conventional.CSS_SUFFIX = {
     X: 'x',

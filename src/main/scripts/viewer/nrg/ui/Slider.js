@@ -19,6 +19,7 @@ goog.require('goog.events.EventType');
 
 // nrg
 goog.require('nrg.dom');
+goog.require('nrg.string');
 goog.require('nrg.ui.Component');
 
 
@@ -44,8 +45,16 @@ nrg.ui.Slider = function (opt_orientation) {
     // We do this because we're not inheriting from nrg.ui.component.
     // This is basically a hacked substitute for multiple inheritance.
     //
-    nrg.ui.Component.validateIdPrefix(this);
-    nrg.ui.Component.createCssMap(this);
+    /**
+     * @public
+     */
+    this.constructor.CSS_CLASS_PREFIX = 
+	this.constructor.ID_PREFIX.toLowerCase().replace(/\./g,'-');
+    /**
+     * @public
+     */
+    this.constructor.ELEMENT_CLASS = this.constructor.CSS_CLASS_PREFIX;
+    nrg.ui.Component.prototype.createCssMap.bind(this)();
 
 
     //
@@ -83,7 +92,7 @@ nrg.ui.Slider.ID_PREFIX =  'nrg.ui.Slider';
 
 /**
  * @enum {string} 
- * @const
+ * @expose
  */ 
 nrg.ui.Slider.CSS_SUFFIX = {
     TRACK: 'track', 
@@ -363,15 +372,16 @@ nrg.ui.Slider.prototype.setOrientation = function(orient) {
 nrg.ui.Slider.prototype.setCssClasses_ = function(orientation) {
 
     function addRemove(elt, className){
-	goog.dom.classes.addRemove(elt,
-				   [goog.getCssName(className, 'horizontal'),
-				    goog.getCssName(className, 'vertical')],
-				   [goog.getCssName(className),
-				    goog.getCssName(className, orientation),
-				   ]);
+	goog.dom.classes.addRemove(
+	    elt,
+	    [nrg.string.makeCssName(className, 'horizontal'),
+	     nrg.string.makeCssName(className, 'vertical')],
+	    [className,
+	     nrg.string.makeCssName(className, orientation),
+	    ]);
     }
 
-    addRemove(this.element_, nrg.ui.Slider.CSS.ELEMENT);
+    addRemove(this.element_, this.constructor.ELEMENT_CLASS);
     addRemove(this.track_, nrg.ui.Slider.CSS.TRACK);
     addRemove(this.thumb_, nrg.ui.Slider.CSS.THUMB);  
 }

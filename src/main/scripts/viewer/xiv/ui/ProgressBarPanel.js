@@ -94,7 +94,7 @@ xiv.ui.ProgressBarPanel.ID_PREFIX =  'xiv.ui.ProgressBarPanel';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ProgressBarPanel.CSS_SUFFIX = {
     THUMB: 'thumb',

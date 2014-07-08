@@ -53,7 +53,7 @@ xiv.ui.ctrl.TwoThumbSliderController.ID_PREFIX =
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.TwoThumbSliderController.CSS_SUFFIX = {
     SLIDER: 'slider',

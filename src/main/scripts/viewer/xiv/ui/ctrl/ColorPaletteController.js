@@ -105,7 +105,7 @@ xiv.ui.ctrl.ColorPaletteController.ID_PREFIX =
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.ColorPaletteController.CSS_SUFFIX = {
     COLORSQUARE: 'colorsquare',

@@ -65,7 +65,7 @@ xiv.ui.layouts.TwoDWidescreen.ID_PREFIX =  'xiv.ui.layouts.TwoDWidescreen';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.layouts.TwoDWidescreen.CSS_SUFFIX = {
     X: 'x',

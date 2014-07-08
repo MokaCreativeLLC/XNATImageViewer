@@ -75,7 +75,7 @@ xiv.ui.ThumbnailGallery.ID_PREFIX = 'xiv.ui.ThumbnailGallery';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ThumbnailGallery.CSS_SUFFIX = {
     THUMBNAIL_DRAGGING: 'thumbnail-dragging',

@@ -5,7 +5,10 @@
  */
 
 // goog
+goog.require('goog.labs.userAgent.browser');
 goog.require('goog.dom');
+goog.require('goog.dom.classes');
+goog.require('goog.string');
 goog.require('goog.array');
 goog.require('goog.window');
 goog.require('goog.Disposable');
@@ -32,7 +35,7 @@ goog.require('gxnat.vis.ViewableTree');
 goog.require('gxnat.vis.Scan');
 goog.require('gxnat.vis.Slicer');
 
-
+goog.require('xiv.ui.Modal');
 
 /**
  * The main XNAT Image Viewer class.
@@ -75,7 +78,6 @@ xiv = function(xivState, modalState, dataPath, rootUrl){
     }
 
 
-
     /**
      * @type {!boolean}
      * @private
@@ -109,6 +111,7 @@ xiv = function(xivState, modalState, dataPath, rootUrl){
     // Add the data path
     //
     this.addDataPath_(dataPath);
+
 };
 goog.inherits(xiv, goog.Disposable);
 goog.exportSymbol('xiv', xiv);
@@ -128,7 +131,7 @@ xiv.EventType = {
 
 /**
  * @enum {string}
- * @expose
+ * @expose  
  */
 xiv.ModalStates = {
     FULLSCREEN: 'fullscreen',
@@ -346,17 +349,16 @@ xiv.prototype.setServerRoot = function(_serverRoot) {
  * @public
  */
 xiv.prototype.begin = function() {
-
     //
     // Create the modal
     //
     this.createModal_();
-
+    window.console.log("show0!");
     //
     // Show the modal
     //
     this.show();
-
+    window.console.log("show!");
     //
     // Demo load chain
     //
@@ -377,7 +379,7 @@ xiv.prototype.begin = function() {
 	return;
 
     } 
-    
+    window.console.log("currState!", this.currState_, this.modalState_);
     //
     // Set the state to windowed
     //
@@ -395,7 +397,7 @@ xiv.prototype.begin = function() {
  * @public
  */
 xiv.prototype.setModalType = function(modalType){
-    this.modalType_ = modalType;
+    //this.modalType_ = modalType;
 }
 
 
@@ -409,7 +411,8 @@ xiv.prototype.createModal_ = function(){
     //
     // Create new Modal object
     //
-    this.Modal_ = new this.modalType_();
+    //this.Modal_ = new this.modalType_();
+    this.Modal_ = new xiv.ui.Modal();
 
     //
     // Set the image prefix of the modal
@@ -472,7 +475,7 @@ xiv.prototype.show = function(opt_callback){
     this.Modal_.getElement().style.opacity = 0;
     this.Modal_.render();
 
-   
+    window.console.log("showa!");
     //----------------------------------------------
     // IMPORTANT!!!!    DO NOT ERASE!!!!!!!
     //
@@ -480,21 +483,22 @@ xiv.prototype.show = function(opt_callback){
     // in order to Async load unloaded experiments
     //----------------------------------------------
     this.setOnZippyExpanded_();
-
+window.console.log("showb!");
     //
     // Set the button callbacks once rendered.
     //
     this.setModalButtonCallbacks_();
-
+window.console.log("showc!");
     //
     // The the project tab expanded
     //
     this.Modal_.getProjectTab().setExpanded(true, 0, this.introTabSlideTime_);
-
+window.console.log("showd!");
     //
     // Important that this be here
     //
     nrg.fx.fadeInFromZero(this.Modal_.getElement(), this.animTime_);
+window.console.log("showe!");
 }
 
 
@@ -749,16 +753,18 @@ xiv.prototype.hide = function(opt_callback){
  * @private
  */
 xiv.prototype.addDataPath_ = function(path) {
+    window.console.log("here");
     this.dataPaths_ = this.dataPaths_ ? this.dataPaths_ : [];
 
-    
+    window.console.log("here", path);
     var updatedPath = (path[0] !== "/") ? "/" + path : path;
+    window.console.log("here1");
     if (this.dataPaths_.indexOf(this.queryPrefix_ + updatedPath) === -1) {
 	var finalPath = (updatedPath.indexOf(this.queryPrefix_) === -1) ?
 	    this.queryPrefix_ + updatedPath : updatedPath;
 	this.dataPaths_.push(finalPath); 
     }
-
+    window.console.log("here");
     if (this.dataPaths_.length == 1){
 	this.initPath_ = new gxnat.Path(this.dataPaths_[0]);
     }
@@ -1232,13 +1238,250 @@ function (url, opt_runCallback, opt_doneCallback) {
 }
 
 
+
+
+/**
+ * @public
+ * @return {boolean}
+ */
+xiv.isCompatible = function(){
+    var isCompatible = true;
+    var version = goog.labs.userAgent.browser.getVersion();
+    var browserList = {
+	'Chrome': {
+	    isBrowser: goog.labs.userAgent.browser.isChrome(),
+	    minVersion: 11
+	},
+	'IE': {
+	    isBrowser: goog.labs.userAgent.browser.isIE(),
+	    minVersion: 11
+	},
+	'Safari': {
+	    isBrowser: goog.labs.userAgent.browser.isSafari(),
+	    minVersion: 5.1
+	},
+	'Opera': {
+	    isBrowser: goog.labs.userAgent.browser.isOpera(),
+	    minVersion: 12
+	},
+	'Firefox': {
+	    isBrowser: goog.labs.userAgent.browser.isFirefox(),
+	    minVersion: 4
+	}
+    }
+
+    var oldBrowserDetected = false;
+    goog.object.forEach(browserList, function(browser){
+	if (browser.isBrowser && !oldBrowserDetected){
+	    //window.console.log(browser.minVersion, version,
+	    //goog.string.compareVersions(browser.minVersion, version)
+	    //)
+	    if (goog.string.compareVersions(browser.minVersion, version)
+	       == 1){
+		xiv.onOutdatedBrowser_();
+		isCompatible = false;
+		oldBrowserDetected = true;
+	    }	    
+	}
+    })
+
+    //----------------------
+    //  WebGL Check
+    //----------------------
+    if (isCompatible && !xiv.checkForWebGL()){
+	xiv.onWebGLDisabled_();
+	isCompatible = false;
+    }
+    return isCompatible;
+}
+
+
+/**
+ * @private
+ */
+xiv.onOutdatedBrowser_ = function(){
+    var errorString = '<br>'+
+	'XImgView is supported on the following browsers:<br>' +
+	'Google Chrome, Version 12+<br>' + 
+	'Firefox, Version 4+<br>' + 
+	'Safari, Version 5.1+<br>' + 
+	'Opera Next, Version 12+<br>' +
+	'Internet Explorer, Version 11+<br>';
+
+
+    //alert(errorString);    
+    var ErrorOverlay = new nrg.ui.ErrorOverlay(errorString);
+
+    //
+    // Add bg and closebutton
+    //
+    ErrorOverlay.addBackground();
+    ErrorOverlay.addCloseButton();
+
+    //
+    // Add image
+    //
+    var errorImg = ErrorOverlay.addImage();
+    goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE);
+    errorImg.src = serverRoot + 
+	'/images/viewer/xiv/ui/Overlay/sadbrain-white.png';
+
+    //
+    // Positions the overlay relative to the window as opposed to the 
+    // document.
+    //
+    ErrorOverlay.getElement().style.position = 'fixed'
+    ErrorOverlay.getElement().style.height = '240px'
+
+    //
+    // Add above text and render
+    //
+    ErrorOverlay.addText(errorString);
+    ErrorOverlay.getTextElements()[0].style.top = '120px';
+    ErrorOverlay.render();
+
+    //
+    // Fade in the error overlay
+    //
+    ErrorOverlay.getElement().style.opacity = 0;
+    nrg.fx.fadeInFromZero(ErrorOverlay.getElement(), 400);
+}
+
+
+
+/**
+ * @private
+ */
+xiv.onWebGLDisabled_ = function(){
+    var errorString = '<br>'+
+	'It looks like ' +
+	'<a style="color: #00FFFF" ' + 
+	'href="https://developer.mozilla.org/en-US/docs/Web/WebGL/' + 
+	'Getting_started_with_WebGL">WebGL or Experimental-WebGL</a>' + 
+	' is disabled.<br><br>How to enable WebGL in '; 
+    var browserName;
+    var howToUrl = ':<br> <a  style="color: #00FFFF" href=';;
+
+    if (goog.labs.userAgent.browser.isIE()){
+	browserName = 'Internet Explorer'
+	howToUrl += 
+      '"http://msdn.microsoft.com/en-us/library/ie/bg182648(v=vs.85).aspx">' + 
+	'http://msdn.microsoft.com/en-us/library/ie/bg182648(v=vs.85).aspx' 
+	    + '</a>'
+    }
+    else if (goog.labs.userAgent.browser.isChrome()){
+	browserName = 'Chrome'
+	howToUrl += 
+	    '"https://www.biodigitalhuman.com/home/enabling-webgl.html">' + 
+	'https://www.biodigitalhuman.com/home/enabling-webgl.html' + '</a>'
+    }
+    else if (goog.labs.userAgent.browser.isFirefox()){
+	browserName = 'Firefox'
+	howToUrl += 
+	    '"https://www.biodigitalhuman.com/home/enabling-webgl.html">' + 
+	'https://www.biodigitalhuman.com/home/enabling-webgl.html' + '</a>'
+    }
+    else if (goog.labs.userAgent.browser.isSafari()){
+	browserName = 'Safari'
+	howToUrl += '"https://discussions.apple.com/thread/3300585?start=0">' + 
+	'https://discussions.apple.com/thread/3300585?start=0' + '</a>'
+    }
+    else if (goog.labs.userAgent.browser.isOpera()){
+	browserName = 'Opera'
+	howToUrl += '"http://techdows.com/2012/06/turn-on-hardware-' + 
+	    'acceleration-and-webgl-in-opera-12.html">' + 
+	'http://techdows.com/2012/06/turn-on-hardware-acceleration' + 
+	    '-and-webgl-in-opera-12.html' + '</a>'
+    }
+
+
+    errorString += browserName + howToUrl;
+
+    //alert(errorString);    
+    var ErrorOverlay = new nrg.ui.ErrorOverlay(errorString);
+
+    //
+    // Add bg and closebutton
+    //
+    ErrorOverlay.addBackground();
+    ErrorOverlay.addCloseButton();
+
+    //
+    // Add image
+    //
+    var errorImg = ErrorOverlay.addImage();
+    goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE); 
+    errorImg.src = serverRoot + 
+	'/images/viewer/xiv/ui/Overlay/sadbrain-white.png';
+
+    //
+    // Add above text and render
+    //
+    ErrorOverlay.addText(errorString)
+    ErrorOverlay.getTextElements()[0].style.top = '120px';
+    ErrorOverlay.render();
+
+    //
+    // Positions the overlay relative to the window as opposed to the 
+    // document.
+    //
+    ErrorOverlay.getElement().style.position = 'fixed'
+
+    //
+    // Fade in the error overlay
+    //
+    ErrorOverlay.getElement().style.opacity = 0;
+    nrg.fx.fadeInFromZero(ErrorOverlay.getElement(), 400);
+}
+
+
+
+/**
+ * NOTE: Derived from: 
+ * http://stackoverflow.com/questions/11871077/proper-way-to-detect-
+ *     webgl-support
+ * @expose
+ * @public
+ */
+xiv.checkForWebGL = function(){
+    var canvas = goog.dom.createDom('canvas');
+    var webGlFound;
+    try { 
+	webGlFound = canvas.getContext("webgl") || 
+	    canvas.getContext("experimental-webgl"); 
+    }
+    catch (x) { 	
+	webGlFound = null; 
+    }
+    return goog.isDefAndNotNull(webGlFound) ? true : false;
+}
+
+
+
 goog.exportSymbol('xiv.States', xiv.States);
 goog.exportSymbol('xiv.loadCustomExtensions', xiv.loadCustomExtensions);
 goog.exportSymbol('xiv.adjustDocumentStyle', xiv.adjustDocumentStyle);
 goog.exportSymbol('xiv.ModalStates', xiv.ModalStates);
+goog.exportSymbol('xiv.checkForWebGL', xiv.checkForWebGL);
+goog.exportSymbol('xiv.isCompatible', xiv.isCompatible);
 goog.exportSymbol('xiv.prototype.setServerRoot', xiv.prototype.setServerRoot);
 goog.exportSymbol('xiv.prototype.setModalType', xiv.prototype.setModalType);
 goog.exportSymbol('xiv.prototype.begin', xiv.prototype.begin);
 goog.exportSymbol('xiv.prototype.show', xiv.prototype.show);
 goog.exportSymbol('xiv.prototype.hide', xiv.prototype.hide);
 goog.exportSymbol('xiv.prototype.dispose', xiv.prototype.dispose);
+
+
+
+//
+// These functions are accessed outside of the scope of the application,
+// which is why we have to export them to the global scope
+//
+window['xiv.isCompatible'] = xiv.isCompatible;
+window['xiv.checkForWebGL'] = xiv.checkForWebGL;
+window['xiv.ModalStates'] = xiv.ModalStates;
+
+
+xiv.prototype['setServerRoot'] = xiv.prototype.setServerRoot;
+xiv.prototype['begin'] = xiv.prototype.begin;
+

@@ -8,6 +8,9 @@ goog.require('goog.dom.classes')
 // xiv
 goog.require('xiv.ui.layouts.SingleFrameLayout')
 
+// nrg
+goog.require('nrg.string');
+
 //-----------
 
 
@@ -22,7 +25,7 @@ goog.provide('xiv.ui.layouts.Sagittal');
 xiv.ui.layouts.Sagittal = function() { 
     goog.base(this, 'X');
     goog.dom.classes.add(this.LayoutFrames['X'].getElement(), 
-	goog.getCssName(xiv.ui.layouts.LayoutFrame.ELEMENT_CLASS, 
+	nrg.string.makeCssName(xiv.ui.layouts.LayoutFrame.ELEMENT_CLASS, 
 			this.constructor.TITLE.toLowerCase()))
 }
 goog.inherits(xiv.ui.layouts.Sagittal, xiv.ui.layouts.SingleFrameLayout);

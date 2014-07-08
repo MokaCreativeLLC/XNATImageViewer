@@ -55,7 +55,7 @@ xiv.ui.layouts.interactors.InputController.ID_PREFIX =
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.layouts.interactors.InputController.CSS_SUFFIX = {
     INPUT_BOX: 'inputbox',

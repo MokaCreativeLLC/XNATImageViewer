@@ -77,7 +77,7 @@ xiv.ui.ctrl.XtkController.ID_PREFIX =  'xiv.ui.ctrl.XtkController';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.XtkController.CSS_SUFFIX = {
     LABEL: 'label',

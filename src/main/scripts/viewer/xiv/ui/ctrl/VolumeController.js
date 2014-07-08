@@ -45,7 +45,7 @@ xiv.ui.ctrl.VolumeController.ID_PREFIX =  'xiv.ui.ctrl.VolumeController';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.VolumeController.CSS_SUFFIX = {};
 

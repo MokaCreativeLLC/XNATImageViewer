@@ -311,6 +311,15 @@ function JSZip(data, options) {
         return newObj;
     };
 }
+
+    /**
+     * @public
+     */
+JSZip.prototype.files = undefined;
+    /**
+     * @public
+     */
+JSZip.prototype.remove = undefined;
 JSZip.prototype = require('./object');
 JSZip.prototype.load = require('./load');
 JSZip.support = require('./support');
@@ -453,6 +462,10 @@ var dataToString = function(asUTF8) {
  * @param {Object} options the options of the file
  */
 var ZipObject = function(name, data, options) {
+
+    /**
+     * @public
+     */
     this.name = name;
     this._data = data;
     this.options = options;
@@ -8645,13 +8658,5 @@ module.exports = ZStream;
 
 
 goog.exportSymbol('JSZip');
-goog.exportSymbol('JSZip.prototype.files', JSZip.prototype.files);
-goog.exportSymbol('JSZip.prototype.remove', JSZip.prototype.remove);
-
-
 goog.exportSymbol('ZipObject');
-goog.exportSymbol('ZipObject.name', 
-		  ZipObject.name);
-goog.exportSymbol('ZipObject.prototype', 
-		  ZipObject.prototype);
 

@@ -18,6 +18,7 @@ goog.require('goog.style');
 
 // nrg
 goog.require('nrg.style');
+goog.require('nrg.string');
 goog.require('nrg.ui.Component');
 goog.require('nrg.ui.ScrollableContainer');
 
@@ -74,7 +75,7 @@ nrg.ui.Tabs.ID_PREFIX =  'nrg.ui.Tabs';
 
 /**
  * @enum {string} 
- * @const
+ * @expose
  */ 
 nrg.ui.Tabs.CSS_SUFFIX = {
     TAB: 'tab',
@@ -569,8 +570,8 @@ nrg.ui.Tabs.prototype.setTabMouseOver_ = function(ind) {
 	// Add the hovered class by orientation
 	//
 	goog.dom.classes.add(this.Tabs_[ind].TAB, 
-	    goog.getCssName(nrg.ui.Tabs.CSS.TAB_ACTIVE, 
-	    this.orientation.toLowerCase()));
+	    nrg.string.makeCssName(nrg.ui.Tabs.CSS.TAB_ACTIVE, 
+	    this.orientation));
 	
 	//
 	// Set TabIcon style change (opacity) -- applies whether active 
@@ -605,8 +606,8 @@ nrg.ui.Tabs.prototype.setTabMouseOut_ = function(ind) {
 	//
 	// Remove the hovered class by orientation
 	//
-	goog.dom.classes.remove(this.Tabs_[ind].TAB, goog.getCssName(
-	    nrg.ui.Tabs.CSS.TAB_ACTIVE, this.orientation.toLowerCase()));
+	goog.dom.classes.remove(this.Tabs_[ind].TAB, nrg.string.makeCssName(
+	    nrg.ui.Tabs.CSS.TAB_ACTIVE, this.orientation));
 
 	//
 	// TabIcon style change (opacity) -- applies whether active or inactive
@@ -647,18 +648,18 @@ nrg.ui.Tabs.prototype.setActive = function (ind) {
     // Classes
     //
     goog.dom.classes.add(this.Tabs_[ind].TAB, nrg.ui.Tabs.CSS.TAB_ACTIVE);
-    goog.dom.classes.add(this.Tabs_[ind].TAB, goog.getCssName(
-	nrg.ui.Tabs.CSS.TAB_ACTIVE, this.orientation.toLowerCase()));
+    goog.dom.classes.add(this.Tabs_[ind].TAB, nrg.string.makeCssName(
+	nrg.ui.Tabs.CSS.TAB_ACTIVE, this.orientation));
 
     // Page
     goog.dom.classes.add(this.Tabs_[ind].PAGE, nrg.ui.Tabs.CSS.PAGE_ACTIVE);
-    goog.dom.classes.add(this.Tabs_[ind].PAGE, goog.getCssName(
-	nrg.ui.Tabs.CSS.PAGE_ACTIVE, this.orientation.toLowerCase()));
+    goog.dom.classes.add(this.Tabs_[ind].PAGE, nrg.string.makeCssName(
+	nrg.ui.Tabs.CSS.PAGE_ACTIVE, this.orientation));
 
     // Icon
     goog.dom.classes.add(this.Tabs_[ind].ICON, nrg.ui.Tabs.CSS.ICON_ACTIVE);
-    goog.dom.classes.add(this.Tabs_[ind].ICON, goog.getCssName(
-	nrg.ui.Tabs.CSS.ICON_ACTIVE, this.orientation.toLowerCase()));
+    goog.dom.classes.add(this.Tabs_[ind].ICON, nrg.string.makeCssName(
+	nrg.ui.Tabs.CSS.ICON_ACTIVE, this.orientation));
 }
 
 
@@ -685,18 +686,18 @@ nrg.ui.Tabs.prototype.deactivate = function (ind) {
     // Classes
     //
     goog.dom.classes.remove(this.Tabs_[ind].TAB, nrg.ui.Tabs.CSS.TAB_ACTIVE);
-    goog.dom.classes.remove(this.Tabs_[ind].TAB, goog.getCssName(
-	nrg.ui.Tabs.CSS.TAB_ACTIVE, this.orientation.toLowerCase()));
+    goog.dom.classes.remove(this.Tabs_[ind].TAB, nrg.string.makeCssName(
+	nrg.ui.Tabs.CSS.TAB_ACTIVE, this.orientation));
 
     // Page
     goog.dom.classes.remove(this.Tabs_[ind].PAGE, nrg.ui.Tabs.CSS.PAGE_ACTIVE);
-    goog.dom.classes.remove(this.Tabs_[ind].PAGE, goog.getCssName(
-	nrg.ui.Tabs.CSS.PAGE_ACTIVE, this.orientation.toLowerCase()));
+    goog.dom.classes.remove(this.Tabs_[ind].PAGE, nrg.string.makeCssName(
+	nrg.ui.Tabs.CSS.PAGE_ACTIVE, this.orientation));
 
     // Icon
     goog.dom.classes.remove(this.Tabs_[ind].ICON, nrg.ui.Tabs.CSS.ICON_ACTIVE);
-    goog.dom.classes.remove(this.Tabs_[ind].ICON, goog.getCssName(
-	nrg.ui.Tabs.CSS.ICON_ACTIVE, this.orientation.toLowerCase()));
+    goog.dom.classes.remove(this.Tabs_[ind].ICON, nrg.string.makeCssName(
+	nrg.ui.Tabs.CSS.ICON_ACTIVE, this.orientation));
 }
 
 
@@ -721,7 +722,7 @@ nrg.ui.Tabs.prototype.deactivateAll = function () {
  */
 nrg.ui.Tabs.prototype.updateStyle = function () {
 
-    //window.console.log("\n\n\n\n**********UPDATE STULE", this.orientation);
+    window.console.log("\n\n\n\n**********UPDATE STULE", this.orientation);
     if (!this.getElement().parentNode) { return };
     
     //
@@ -729,22 +730,22 @@ nrg.ui.Tabs.prototype.updateStyle = function () {
     //
     goog.dom.classes.add(this.getElement(), nrg.ui.Tabs.ELEMENT_CLASS);
     goog.dom.classes.add(this.getElement(), 
-	    goog.getCssName(nrg.ui.Tabs.ELEMENT_CLASS, 
-			    this.orientation.toLowerCase()));
-
+	    nrg.string.makeCssName(nrg.ui.Tabs.ELEMENT_CLASS, 
+			    this.orientation));
+    window.console.log(nrg.ui.Tabs.ELEMENT_CLASS);
     //
     // IMPORTANT: Necessary because google takes it over...
     //
     goog.array.forEach(this.Tabs_, function(tabColl, i){
 
-	goog.dom.classes.add(tabColl.TAB, goog.getCssName(
-	    nrg.ui.Tabs.CSS.TAB, this.orientation.toLowerCase()));
+	goog.dom.classes.add(tabColl.TAB, nrg.string.makeCssName(
+	    nrg.ui.Tabs.CSS.TAB, this.orientation));
 
-	goog.dom.classes.add(tabColl.ICON, goog.getCssName(
-	    nrg.ui.Tabs.CSS.ICON, this.orientation.toLowerCase()));
+	goog.dom.classes.add(tabColl.ICON, nrg.string.makeCssName(
+	    nrg.ui.Tabs.CSS.ICON, this.orientation));
 
-	goog.dom.classes.add(tabColl.PAGE, goog.getCssName(
-	    nrg.ui.Tabs.CSS.PAGE, this.orientation.toLowerCase()));
+	goog.dom.classes.add(tabColl.PAGE, nrg.string.makeCssName(
+	    nrg.ui.Tabs.CSS.PAGE, this.orientation));
 	
     }.bind(this))
 

@@ -63,7 +63,7 @@ xiv.ui.layouts.FourUp.ID_PREFIX =  'xiv.ui.layouts.FourUp';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.layouts.FourUp.CSS_SUFFIX = {
     X: 'x',

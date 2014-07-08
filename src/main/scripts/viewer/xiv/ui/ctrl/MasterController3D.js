@@ -52,7 +52,7 @@ xiv.ui.ctrl.MasterController3D.ID_PREFIX =  'xiv.ui.ctrl.MasterController3D';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.MasterController3D.CSS_SUFFIX = {};
 

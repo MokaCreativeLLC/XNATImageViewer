@@ -48,7 +48,7 @@ xiv.ui.ctrl.LevelsController.ID_PREFIX =  'xiv.ui.ctrl.LevelsController';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.LevelsController.CSS_SUFFIX = {};
 

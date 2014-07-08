@@ -154,7 +154,6 @@ nrg.string.replaceIllegal = function (value, opt_replaceStr) {
 
 
 
-
 /**
  * Truncates a string to a length, the adds '...' to the end of it.
  * @param {!string} str The string to shorten.
@@ -170,6 +169,19 @@ nrg.string.truncateString = function(str, opt_maxLen){
 
 
 
+/**
+ * @param {!string} str1
+ * @param {!string} str2
+ * @return {string} The css name
+ * @public 
+ */
+nrg.string.makeCssName = function (str1, str2) {
+    //window.console.log(str1, str2);
+    return str1.toLowerCase().replace(/\.|_/g,'-') + '-' + 
+	str2.toLowerCase().replace(/\.|_/g,'-');
+}
+
+
 
 goog.exportSymbol('nrg.string.basename', nrg.string.basename);
 goog.exportSymbol('nrg.string.dirname', nrg.string.dirname);
@@ -181,3 +193,4 @@ goog.exportSymbol('nrg.string.stripIllegal', nrg.string.stripIllegal);
 goog.exportSymbol('nrg.string.getLettersOnly', nrg.string.getLettersOnly);
 goog.exportSymbol('nrg.string.replaceIllegal', nrg.string.replaceIllegal);
 goog.exportSymbol('nrg.string.truncateString', nrg.string.truncateString);
+goog.exportSymbol('nrg.string.makeCssName', nrg.string.makeCssName);

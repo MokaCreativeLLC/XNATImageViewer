@@ -37,7 +37,7 @@ nrg.ui.ResizeDraggerTop.ID_PREFIX =  'nrg.ui.ResizeDraggerTop';
 
 /**
  * @enum {string} 
- * @const
+ * @expose
  */ 
 nrg.ui.ResizeDraggerTop.CSS_SUFFIX = {}
 

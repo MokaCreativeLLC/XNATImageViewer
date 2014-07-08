@@ -143,7 +143,7 @@ nrg.ui.SlideInMenu.EventType = {
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 nrg.ui.SlideInMenu.CSS_SUFFIX = {
     ICON: 'icon',

@@ -131,7 +131,7 @@ xiv.ui.ViewBox.ID_PREFIX =  'xiv.ui.ViewBox';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ViewBox.CSS_SUFFIX = {
     HIDDEN: 'hidden',

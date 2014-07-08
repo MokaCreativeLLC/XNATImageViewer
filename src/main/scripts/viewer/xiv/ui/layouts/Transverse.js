@@ -6,6 +6,9 @@
 // goog
 goog.require('goog.dom.classes')
 
+// nrg
+goog.require('nrg.string');
+
 // xiv
 goog.require('xiv.ui.layouts.SingleFrameLayout')
 
@@ -23,8 +26,8 @@ goog.provide('xiv.ui.layouts.Transverse');
 xiv.ui.layouts.Transverse = function() { 
     goog.base(this, 'Z'); 
     goog.dom.classes.add(this.LayoutFrames['Z'].getElement(), 
-	goog.getCssName(xiv.ui.layouts.LayoutFrame.ELEMENT_CLASS, 
-			this.constructor.TITLE.toLowerCase()))
+	nrg.string.makeCssName(xiv.ui.layouts.LayoutFrame.ELEMENT_CLASS, 
+			       this.constructor.TITLE))
 }
 goog.inherits(xiv.ui.layouts.Transverse, xiv.ui.layouts.SingleFrameLayout);
 goog.exportSymbol('xiv.ui.layouts.Transverse', xiv.ui.layouts.Transverse);

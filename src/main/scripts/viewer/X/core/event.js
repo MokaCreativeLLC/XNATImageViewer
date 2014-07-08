@@ -93,7 +93,7 @@ goog.inherits(X.event, goog.events.Event);
  */
 X.event.uniqueId = function(id) {
 
-  return goog.events.getUniqueId(id);
+  return id + '_' + goog.string.createUniqueString();
   
 };
 

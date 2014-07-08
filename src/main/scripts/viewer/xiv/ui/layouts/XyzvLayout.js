@@ -114,7 +114,7 @@ xiv.ui.layouts.XyzvLayout.FRAMES = {
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.layouts.XyzvLayout.CSS_SUFFIX = {
     X: 'x',
@@ -194,8 +194,8 @@ xiv.ui.layouts.XyzvLayout.prototype.createResizeBoundary = function(planeOr){
     return  goog.dom.createDom('div', {
 	'id' : this.constructor.ID_PREFIX + '_ResizeBoundary_' + 
 	    planeOr + '_' + goog.string.createUniqueString(),
-	'class': goog.getCssName(this.constructor.ELEMENT_CLASS, 
-				 planeOr.toLowerCase() + '-resizeboundary')
+	'class': nrg.string.makeCssName(this.constructor.ELEMENT_CLASS,   
+	    planeOr.toLowerCase() + '-resizeboundary')
     })
 }
 
@@ -404,7 +404,7 @@ xiv.ui.layouts.XyzvLayout.prototype.addLayoutFrameSliders_ = function(){
 
 	    goog.dom.classes.addRemove(slider.getTrack(), null,
 			[xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK ,
-			 goog.getCssName(
+			 nrg.string.makeCssName(
 			     xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK, 
 			 key.toLowerCase())]);
 			 

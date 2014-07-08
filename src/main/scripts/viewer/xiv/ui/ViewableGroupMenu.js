@@ -60,7 +60,7 @@ xiv.ui.ViewableGroupMenu.EventType = {
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ViewableGroupMenu.CSS_SUFFIX = {
     HEADER: 'header',

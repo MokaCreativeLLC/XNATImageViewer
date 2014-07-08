@@ -13,6 +13,7 @@ goog.require('goog.math.Size');
 goog.require('goog.dom.classes');
 
 // nrg
+goog.require('nrg.string');
 goog.require('nrg.ui.Tabs');
 goog.require('nrg.ui.Resizable');
 goog.require('nrg.ui.Resizable.EventType');
@@ -87,8 +88,8 @@ nrg.ui.ZipTabs.prototype.Resizable_;
 nrg.ui.ZipTabs.prototype.render = function(opt_parentElement) {
     goog.base(this, 'render', opt_parentElement);
     goog.dom.classes.add(this.getElement(), 
-	    goog.getCssName(nrg.ui.ZipTabs.ELEMENT_CLASS, 
-			    this.orientation.toLowerCase()));
+	    nrg.string.makeCssName(nrg.ui.ZipTabs.ELEMENT_CLASS, 
+				   this.orientation));
     this.Resizable_ = new nrg.ui.Resizable(this.getElement(),
 					    this.orientation); 
     this.setResizeEvents_();

@@ -51,7 +51,7 @@ xiv.ui.ctrl.MasterController.ID_PREFIX =  'xiv.ui.ctrl.MasterController';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.MasterController.CSS_SUFFIX = {};
 

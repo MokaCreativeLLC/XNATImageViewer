@@ -54,10 +54,8 @@ goog.exportSymbol('xiv.ui.ViewBoxHandler', xiv.ui.ViewBoxHandler);
 
 
 /**
- * Event types. 
- *
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ViewBoxHandler.CSS_SUFFIX = {
     HANDLE: 'handle',

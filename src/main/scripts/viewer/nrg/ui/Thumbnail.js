@@ -89,7 +89,7 @@ nrg.ui.Thumbnail.ID_PREFIX = 'nrg.ui.Thumbnail';
 
 /**
  * @enum {string}
- * @const
+ * @expose
  */ 
 nrg.ui.Thumbnail.CSS_SUFFIX = {
     IMAGE: 'image',

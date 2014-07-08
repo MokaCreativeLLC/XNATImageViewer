@@ -38,7 +38,7 @@ xiv.ui.ctrl.MeshController3D.ID_PREFIX =  'xiv.ui.ctrl.MeshController3D';
 
 /**
  * @enum {string}
- * @public
+ * @expose
  */
 xiv.ui.ctrl.MeshController3D.CSS_SUFFIX = {};
 
