@@ -76,7 +76,7 @@ xiv.ui.ctrl.MasterController3D.prototype.add = function(xObj) {
 
     // Generic controls -- per object
     this.xObjs.push(xObj);
-    this.add_opacity(xObj);
+    this.add_opacity(xObj, xiv.ui.ctrl.SliderController);
 
 
     // Generic master controls -- all objects

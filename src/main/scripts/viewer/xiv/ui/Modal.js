@@ -29,6 +29,7 @@ goog.require('nrg.ui.Thumbnail');
 goog.require('nrg.ui.ZipTabs');
 
 // xiv
+goog.require('xiv');
 goog.require('xiv.ui.ThumbnailGallery');
 goog.require('xiv.ui.ViewBoxHandler');
 goog.require('xiv.ui.ViewBox');
@@ -45,21 +46,16 @@ goog.require('xiv.ui.ViewBox');
  */
 goog.provide('xiv.ui.Modal');
 xiv.ui.Modal = function () {
-    goog.base(this);   
+    goog.base(this);  
+ 
+    /**
+     * @type {!string}
+     * @private
+     */
+    this.currState_ = xiv.ModalStates.DEMO;
 }
 goog.inherits(xiv.ui.Modal, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.Modal', xiv.ui.Modal);
-
-
-
-/**
- * Event types.
- * @enum {string}
- * @public
- */
-xiv.ui.Modal.EventType = {
-  ADD_SUBJECTS: goog.events.getUniqueId('add_subjects')
-}
 
 
 
@@ -86,21 +82,6 @@ xiv.ui.Modal.CSS_SUFFIX = {
     PROJECTTAB_DRAGGER : 'projecttab-dragger',
     PROJECTTAB_DRAGGER_HANDLE : 'projecttab-dragger-handle',
     ADDSUBJECTS : 'addsubjects',
-}
-
-
-
-/**
- * @enum {string}
- * @expose
- */
-xiv.ui.Modal.States = {
-    FULLSCREEN: 'fullscreen',
-    POPUP: 'popup',
-    FULLSCREEN_POPUP: 'fullscreen-popup',
-    WINDOWED: 'windowed',
-    DEMO: 'demo',
-    DEMO_FULLSCREEN: 'demp-fullscreen',
 }
 
 
@@ -198,14 +179,6 @@ xiv.ui.Modal.prototype.minWidth_ = 320;
  * @const
  */
 xiv.ui.Modal.prototype.animLen_ = 500;
-
-
-
-/**
- * @type {!string}
- * @private
- */
-xiv.ui.Modal.prototype.currState_ = xiv.ui.Modal.States.DEMO;
 
 
 
@@ -818,7 +791,7 @@ xiv.ui.Modal.prototype.onAddSubjectsClicked_ = function() {
     // dispatch the event
     //
     this.dispatchEvent({
-	type: xiv.ui.Modal.EventType.ADD_SUBJECTS
+	type: xiv.EventType.ADD_SUBJECTS
     })
 
     //
@@ -992,7 +965,7 @@ xiv.ui.Modal.prototype.initViewBoxHandler_ = function() {
  * @private
  */ 
 xiv.ui.Modal.prototype.onCloseButtonClicked_ = function() {
-    if (this.currState_ === xiv.ui.Modal.States.FULLSCREEN){
+    if (this.currState_ === xiv.ModalStates.FULLSCREEN){
 	goog.dom.fullscreen.exitFullScreen();
     }
 }
@@ -1006,11 +979,11 @@ xiv.ui.Modal.prototype.onCloseButtonClicked_ = function() {
  */ 
 xiv.ui.Modal.prototype.onFullScreenButtonClicked_ = function() {
     goog.dom.fullscreen.requestFullScreen(this.getElement().parentNode); 
-    if (this.currState_ === xiv.ui.Modal.States.POPUP){
-	this.setState(xiv.ui.Modal.States.FULLSCREEN_POPUP);
+    if (this.currState_ === xiv.ModalStates.POPUP){
+	this.setState(xiv.ModalStates.FULLSCREEN_POPUP);
     }
     else {
-	this.setState(xiv.ui.Modal.States.FULLSCREEN);
+	this.setState(xiv.ModalStates.FULLSCREEN);
     }
 }
 
@@ -1080,29 +1053,29 @@ xiv.ui.Modal.prototype.adaptToState_ = function(){
 			 goog.getCssName(this.constructor.CSS.ELEMENT, 
 					 this.currState_))
 
-    if (this.currState_ == xiv.ui.Modal.States.DEMO) {
+    if (this.currState_ == xiv.ModalStates.DEMO) {
 	this.buttons_.FULLSCREEN.style.visibility = 'visible';
 	this.buttons_.WINDOWED.style.visibility = 'hidden';
     } 
-    else if (this.currState_ == xiv.ui.Modal.States.WINDOWED) {
+    else if (this.currState_ == xiv.ModalStates.WINDOWED) {
 	this.buttons_.FULLSCREEN.style.visibility = 'visible';
 	this.buttons_.WINDOWED.style.visibility = 'hidden';
     } 
 
-    else if (this.currState_ == xiv.ui.Modal.States.POPUP) {
+    else if (this.currState_ == xiv.ModalStates.POPUP) {
 	this.buttons_.POPUP.style.visibility = 'hidden';
 	this.buttons_.CLOSE.style.visibility = 'hidden';
 	this.buttons_.FULLSCREEN.style.visibility = 'visible';
 	this.buttons_.WINDOWED.style.visibility = 'hidden';
     } 
 
-    else if (this.currState_ == xiv.ui.Modal.States.FULLSCREEN_POPUP) {
+    else if (this.currState_ == xiv.ModalStates.FULLSCREEN_POPUP) {
 	this.buttons_.POPUP.style.visibility = 'hidden';
 	this.buttons_.FULLSCREEN.style.visibility = 'hidden';
 	this.buttons_.WINDOWED.style.visibility = 'visible';
     } 
 
-    else if (this.currState_ == xiv.ui.Modal.States.FULLSCREEN) {
+    else if (this.currState_ == xiv.ModalStates.FULLSCREEN) {
 	this.buttons_.POPUP.style.visibility = 'visible';
 	this.buttons_.FULLSCREEN.style.visibility = 'hidden';
 	this.buttons_.WINDOWED.style.visibility = 'visible';
@@ -1360,7 +1333,6 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
 goog.exportSymbol('xiv.ui.Modal.EventType', xiv.ui.Modal.EventType);
 goog.exportSymbol('xiv.ui.Modal.ID_PREFIX', xiv.ui.Modal.ID_PREFIX);
 goog.exportSymbol('xiv.ui.Modal.CSS_SUFFIX', xiv.ui.Modal.CSS_SUFFIX);
-goog.exportSymbol('xiv.ui.Modal.States', xiv.ui.Modal.States);
 goog.exportSymbol('xiv.ui.Modal.ButtonTypes', xiv.ui.Modal.ButtonTypes);
 goog.exportSymbol('xiv.ui.Modal.prototype.getViewBoxHandler',
 	xiv.ui.Modal.prototype.getViewBoxHandler);

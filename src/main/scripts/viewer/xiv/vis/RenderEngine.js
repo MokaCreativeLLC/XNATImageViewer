@@ -45,7 +45,20 @@ xiv.vis.RenderEngine.EventType = {
 
 
 
+/**
+ * @type {!string} 
+ * @const
+ */
+xiv.vis.RenderEngine.SELECTED_VOL_KEY =  'isSelectedVolume' + 
+    goog.string.createUniqueString();
+
+
+
+
+
 goog.exportSymbol('xiv.vis.RenderEngine.EventType',
 	xiv.vis.RenderEngine.EventType);
+goog.exportSymbol('xiv.vis.RenderEngine.SELECTED_VOL_KEY',
+	xiv.vis.RenderEngine.SELECTED_VOL_KEY);
 goog.exportSymbol('xiv.vis.RenderEngine.prototype.ID_PREFIX',
 	xiv.vis.RenderEngine.prototype.ID_PREFIX);

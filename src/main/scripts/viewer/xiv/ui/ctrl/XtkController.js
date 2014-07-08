@@ -30,14 +30,6 @@ goog.require('nrg.array');
 goog.require('nrg.style');
 goog.require('nrg.ui.ZippyTree');
 
-// xiv
-goog.require('xiv.ui.ctrl.CheckboxController');
-goog.require('xiv.ui.ctrl.SliderController');
-goog.require('xiv.ui.ctrl.TwoThumbSliderController');
-goog.require('xiv.ui.ctrl.ColorPaletteController');
-goog.require('xiv.ui.ctrl.RadioButtonController');
-goog.require('xiv.ui.ctrl.XtkController');
-
 //-----------
 
 
@@ -463,12 +455,13 @@ xiv.ui.ctrl.XtkController.prototype.updateStyle = function() {
 
 /**
  * @param {!X.object | Array.<X.object>} xObjs
+ * @param {!xiv.ui.ctrl.XtkController} ctrl
  * @protected
  */
-xiv.ui.ctrl.XtkController.prototype.add_colorPalette = function(xObj) {
+xiv.ui.ctrl.XtkController.prototype.add_colorPalette = function(xObj, ctrl) {
     // create
     var color = this.createController(
-	xiv.ui.ctrl.ColorPaletteController, 'Color', 
+	ctrl, 'Color', 
 	function(e){
 	    xObj.color = e.color;
 	}.bind(this));
@@ -490,12 +483,13 @@ xiv.ui.ctrl.XtkController.prototype.add_colorPalette = function(xObj) {
 
 /**
  * @param {!X.object} xObj
+ * @param {!xiv.ui.ctrl.XtkController} ctrl
  * @protected
  */
-xiv.ui.ctrl.XtkController.prototype.add_opacity = function(xObj) {
+xiv.ui.ctrl.XtkController.prototype.add_opacity = function(xObj, ctrl) {
     // create
     var opacity = this.createController( 
-	xiv.ui.ctrl.SliderController, 'Opacity', 
+	ctrl, 'Opacity', 
 	function(e){
 	    xObj.opacity = parseFloat(e.value);
 	});
@@ -521,13 +515,14 @@ xiv.ui.ctrl.XtkController.prototype.add_opacity = function(xObj) {
 
 /**
  * @param {!X.object} xObj
+ * @param {!xiv.ui.ctrl.XtkController} ctrl
  * @return {!xiv.ui.ctrl.XtkController}
  * @protected
  */
-xiv.ui.ctrl.XtkController.prototype.add_visible = function(xObj) {
+xiv.ui.ctrl.XtkController.prototype.add_visible = function(xObj, ctrl) {
     // create
     var visibleCheckBox = this.createController(
-	 xiv.ui.ctrl.CheckboxController, 'Visible', 
+	 ctrl, 'Visible', 
 	 function(e){
 	     xObj.visible = e.checked;
 	 });

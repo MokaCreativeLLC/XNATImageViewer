@@ -21,6 +21,7 @@ goog.require('xiv.ui.ctrl.XtkController');
  * @constructor
  * @extends {xiv.ui.ctrl.XtkController}
  */
+goog.provide('xiv.ui.ctrl.CheckboxController');
 xiv.ui.ctrl.CheckboxController = function(){
     goog.base(this);
 

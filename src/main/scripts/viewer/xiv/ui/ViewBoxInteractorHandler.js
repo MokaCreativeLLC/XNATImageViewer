@@ -30,7 +30,6 @@ goog.require('nrg.ui.Dialog');
 goog.require('xiv.vis.RenderEngine');
 goog.require('xiv.vis.XtkRenderer2D');
 goog.require('xiv.vis.XtkEngine');
-goog.require('xiv.ui.ViewBox');
 goog.require('xiv.ui.ViewBoxDialogs');
 goog.require('xiv.ui.ctrl.XtkController');
 goog.require('xiv.ui.ctrl.CheckboxController');
@@ -1292,7 +1291,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.updateVolumeToggle_ =
 function(ctrl, typeKey){
 
     ctrl.getComponent().checked = 
-	ctrl.getXObj()[xiv.vis.XtkEngine.SELECTED_VOL_KEY] 
+	ctrl.getXObj()[xiv.vis.RenderEngine.SELECTED_VOL_KEY] 
 	|| false;
 
     if (!goog.isDefAndNotNull(this.volumeToggles_)){

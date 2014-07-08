@@ -9,12 +9,11 @@ goog.require('goog.object');
 goog.require('X.object');
 
 // xiv
-goog.require('xiv.vis.XtkEngine');
+goog.require('xiv.vis.RenderEngine');
 goog.require('xiv.ui.ctrl.XtkController');
 goog.require('xiv.ui.ctrl.MasterController');
 goog.require('xiv.ui.ctrl.RadioButtonController');
 goog.require('xiv.ui.ctrl.MasterController2D');
-goog.require('xiv.ui.ctrl.VolumeController');
 goog.require('xiv.ui.ctrl.CheckboxController');
 
 //-----------
@@ -91,7 +90,7 @@ xiv.ui.ctrl.VolumeController.prototype.add_visibleRadio = function(xObj) {
     visible.setXObj(xObj);
 
     // set defaults
-    visible.getComponent().checked = xObj[xiv.vis.XtkEngine.SELECTED_VOL_KEY] 
+    visible.getComponent().checked = xObj[xiv.vis.RenderEngine.SELECTED_VOL_KEY] 
 	|| false;
 }
 

@@ -23,6 +23,7 @@ goog.require('xiv.ui.ctrl.XtkController');
  * @constructor
  * @extends {xiv.ui.ctrl.XtkController}
  */
+goog.provide('xiv.ui.ctrl.ColorPaletteController');
 xiv.ui.ctrl.ColorPaletteController = function(){
     goog.base(this);
 

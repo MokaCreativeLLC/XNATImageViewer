@@ -37,7 +37,7 @@ goog.require('xiv.ui.layouts.FourUp');
 goog.require('xiv.ui.layouts.LayoutFrame');
 goog.require('xiv.ui.layouts.TwoDRow');
 goog.require('xiv.ui.layouts.Coronal');
-goog.require('xiv.ui.layouts.XyzvLayout.InteractorSet');
+goog.require('xiv.ui.layouts.XyzvLayout');
 
 //-----------
 

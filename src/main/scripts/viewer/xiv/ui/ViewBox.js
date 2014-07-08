@@ -860,7 +860,7 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
     //
     // Get files as zip
     //
-    gxnat.getFilesAsZip(
+    gxnat.Zip.getFilesAsZip(
 	filesUrl, 
 	function(zip) { 
 	    //window.console.log('Downloaded: ' + filesUrl + '!');

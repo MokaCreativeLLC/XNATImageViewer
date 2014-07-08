@@ -22,12 +22,10 @@ goog.require('X.renderer2D');
 goog.require('nrg.fx');
 
 // gxnat
-goog.require('gxnat.slicer');
-goog.require('gxnat.slicerNode.BackgroundColorNode');
+goog.require('gxnat.slicerNode.BackgroundColor');
 
 // xiv
 goog.require('xiv.vis.RenderEngine');
-goog.require('xiv.vis.XtkEngine');
 
 
 
@@ -49,6 +47,15 @@ xiv.vis.XtkPlane = function() {
 goog.inherits(xiv.vis.XtkPlane, goog.events.EventTarget);
 goog.exportSymbol('xiv.vis.XtkPlane', xiv.vis.XtkPlane);
 
+
+/**
+ * Event types.
+ * @enum {string}
+ * @public
+ */
+xiv.vis.XtkPlane.EventType = {
+    SLICE_NAVIGATED: goog.events.getUniqueId('slice-navigated')
+}
 
 
 /**
@@ -214,7 +221,7 @@ xiv.vis.XtkPlane.prototype.setCamera = function(opt_cameraNode){
 
 
 /**
- * @param {gxnat.slicerNode.BackgroundColorNode | string} opt_bgColorNode
+ * @param {gxnat.slicerNode.BackgroundColor | string} opt_bgColorNode
  * @public
  */
 xiv.vis.XtkPlane.prototype.setBackground = function(opt_bgColorNode) { 
@@ -358,7 +365,7 @@ xiv.vis.XtkPlane.prototype.init = function(containerElt) {
     // Slice Navigated Event
     //
     goog.events.listen(this.Renderer, 
-		       xiv.vis.XtkEngine.EventType.SLICE_NAVIGATED, 
+		       xiv.vis.XtkPlane.EventType.SLICE_NAVIGATED, 
 		       this.onSliceNavigated_.bind(this))
 }
 

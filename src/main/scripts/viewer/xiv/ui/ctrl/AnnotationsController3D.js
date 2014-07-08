@@ -7,6 +7,8 @@ goog.require('goog.object');
 
 // xiv
 goog.require('xiv.ui.ctrl.MasterController3D');
+goog.require('xiv.ui.ctrl.ColorPaletteController');
+goog.require('xiv.ui.ctrl.CheckboxController');
 
 //-----------
 
@@ -52,8 +54,8 @@ xiv.ui.ctrl.AnnotationsController3D.prototype.add = function(xObj) {
     goog.base(this, 'add', xObj);
 
     // Add color palette
-    this.add_visible(xObj);
-    this.add_colorPalette(xObj);
+    this.add_visible(xObj, xiv.ui.ctrl.CheckboxController);
+    this.add_colorPalette(xObj, xiv.ui.ctrl.ColorPaletteController);
 }
 
 

@@ -9,9 +9,6 @@ goog.require('goog.dom');
 goog.require('goog.array');
 goog.require('goog.window');
 goog.require('goog.Disposable');
-goog.require('goog.base');
-goog.require('goog.isDefAndNotNull');
-goog.require('goog.inherits');
 goog.require('goog.Timer');
 goog.require('goog.events');
 goog.require('goog.object');
@@ -34,13 +31,6 @@ goog.require('gxnat.vis.AjaxViewableTree');
 goog.require('gxnat.vis.ViewableTree');
 goog.require('gxnat.vis.Scan');
 goog.require('gxnat.vis.Slicer');
-goog.require('gxnat.ProjectTree');
-goog.require('gxnat.ProjectTree.TreeNode');
-
-// xiv
-goog.require('xiv.sampleData.Scans');
-goog.require('xiv.sampleData.SlicerScenes');
-goog.require('xiv.ui.Modal');
 
 
 
@@ -75,6 +65,18 @@ xiv = function(xivState, modalState, dataPath, rootUrl){
 
 
     /**
+     * @const
+     * @private
+     * @type {!Object.<string, gxnat.vis.ViewableTree>}
+     */
+    this.ViewableTypes_ = {
+	scan: gxnat.vis.Scan,
+	slicer: gxnat.vis.Slicer,
+    }
+
+
+
+    /**
      * @type {!boolean}
      * @private
      */
@@ -103,16 +105,6 @@ xiv = function(xivState, modalState, dataPath, rootUrl){
     this.queryPrefix_ = gxnat.Path.getQueryPrefix(rootUrl);
 
 
-    /** 
-     * NOTE: Necessary!!! If not done it creates weird dependency 
-     * issues if declared outside of the constructor method.
-     *
-     * @type {Object} 
-     * @private
-     */
-    this.modalType_ = xiv.ui.Modal;
-
-
     //
     // Add the data path
     //
@@ -120,6 +112,32 @@ xiv = function(xivState, modalState, dataPath, rootUrl){
 };
 goog.inherits(xiv, goog.Disposable);
 goog.exportSymbol('xiv', xiv);
+
+
+
+/**
+ * Event types.
+ * @enum {string}
+ * @public
+ */
+xiv.EventType = {
+  ADD_SUBJECTS: goog.events.getUniqueId('add_subjects')
+}
+
+
+
+/**
+ * @enum {string}
+ * @expose
+ */
+xiv.ModalStates = {
+    FULLSCREEN: 'fullscreen',
+    POPUP: 'popup',
+    FULLSCREEN_POPUP: 'fullscreen-popup',
+    WINDOWED: 'windowed',
+    DEMO: 'demo',
+    DEMO_FULLSCREEN: 'demp-fullscreen',
+}
 
 
 
@@ -156,17 +174,6 @@ xiv.adjustDocumentStyle = function() {
  */
 xiv.revertDocumentStyle_ = function() {
     document.body.style.overflow = 'visible';
-}
-
-
-/**
- * @const
- * @private
- * @type {!Object.<string, gxnat.vis.ViewableTree>}
- */
-xiv.prototype.ViewableTypes_ = {
-    scan: gxnat.vis.Scan,
-    slicer: gxnat.vis.Slicer,
 }
 
 
@@ -207,7 +214,7 @@ xiv.prototype.initPath_;
 
 
 /** 
- * @type {xiv.ui.Modal} 
+ * @type {nrg.ui.Component} 
  * @private
  */
 xiv.prototype.Modal_;
@@ -384,6 +391,16 @@ xiv.prototype.begin = function() {
 
 
 /**
+ * @param {nrg.ui.Component} modalType
+ * @public
+ */
+xiv.prototype.setModalType = function(modalType){
+    this.modalType_ = modalType;
+}
+
+
+
+/**
  * Creates the modal element.
  *
  * @private
@@ -402,7 +419,8 @@ xiv.prototype.createModal_ = function(){
     //
     // Listen for the addSubjects event
     //
-    goog.events.listen(this.Modal_, xiv.ui.Modal.EventType.ADD_SUBJECTS,
+    goog.events.listen(this.Modal_, 
+		       xiv.EventType.ADD_SUBJECTS,
 		       this.onModalAddSubjectsClicked_.bind(this));
 
     //
@@ -885,7 +903,7 @@ xiv.prototype.createModalPopup_ = function(){
     //
     var dataPath = this.dataPaths_[0];
     var pOnload = function() {
-	popup.launchXImgView(dataPath, xiv.ui.Modal.States.POPUP, serverRoot);
+	popup.launchXImgView(dataPath, xiv.ModalStates.POPUP, serverRoot);
     }
     popup.onload = pOnload.bind(this);
 
@@ -1217,7 +1235,9 @@ function (url, opt_runCallback, opt_doneCallback) {
 goog.exportSymbol('xiv.States', xiv.States);
 goog.exportSymbol('xiv.loadCustomExtensions', xiv.loadCustomExtensions);
 goog.exportSymbol('xiv.adjustDocumentStyle', xiv.adjustDocumentStyle);
+goog.exportSymbol('xiv.ModalStates', xiv.ModalStates);
 goog.exportSymbol('xiv.prototype.setServerRoot', xiv.prototype.setServerRoot);
+goog.exportSymbol('xiv.prototype.setModalType', xiv.prototype.setModalType);
 goog.exportSymbol('xiv.prototype.begin', xiv.prototype.begin);
 goog.exportSymbol('xiv.prototype.show', xiv.prototype.show);
 goog.exportSymbol('xiv.prototype.hide', xiv.prototype.hide);

@@ -25,6 +25,7 @@ goog.require('xiv.ui.ctrl.XtkController');
  * @constructor
  * @extends {xiv.ui.ctrl.XtkController}
  */
+goog.provide('xiv.ui.ctrl.TwoThumbSliderController');
 xiv.ui.ctrl.TwoThumbSliderController = function(){
     goog.base(this);
     this.setLabel('TwoThumb');

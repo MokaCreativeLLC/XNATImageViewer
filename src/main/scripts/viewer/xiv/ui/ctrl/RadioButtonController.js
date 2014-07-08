@@ -20,6 +20,7 @@ goog.require('xiv.ui.ctrl.XtkController');
  * @constructor
  * @extends {xiv.ui.ctrl.XtkController}
  */
+goog.provide('xiv.ui.ctrl.RadioButtonController');
 xiv.ui.ctrl.RadioButtonController = function(){
     goog.base(this);
 

@@ -20,7 +20,6 @@ goog.require('nrg.ui.Dialog');
 goog.require('nrg.fx');
 
 // xiv
-goog.require('xiv.ui.ViewBox');
 goog.require('xiv.ui.HelpDialog');
 
 //-----------

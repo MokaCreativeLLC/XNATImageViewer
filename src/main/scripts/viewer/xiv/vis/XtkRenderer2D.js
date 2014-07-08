@@ -13,7 +13,6 @@ goog.require('X.camera2D');
 goog.require('X.volume');
 
 // xiv
-goog.require('xiv.vis.XtkEngine');
 goog.require('xiv.vis.RenderEngine');
 
 //-----------
@@ -32,6 +31,18 @@ xiv.vis.XtkRenderer2D = function () {
 }
 goog.inherits(xiv.vis.XtkRenderer2D, X.renderer2D);
 goog.exportSymbol('xiv.vis.XtkRenderer2D', xiv.vis.XtkRenderer2D);
+
+
+
+
+/**
+ * Event types.
+ * @enum {string}
+ * @public
+ */
+xiv.vis.XtkRenderer2D.EventType = {
+    SLICE_NAVIGATED: goog.events.getUniqueId('slice-navigated')
+}
 
 
 
@@ -217,7 +228,7 @@ xiv.vis.XtkRenderer2D.prototype.onSliceNavigation = function() {
     //['index' + this._orientation]);
     
     this.dispatchEvent({
-	type: xiv.vis.XtkEngine.EventType.SLICE_NAVIGATED,
+	type: xiv.vis.XtkRenderer2D.EventType.SLICE_NAVIGATED,
 	volume: this._topLevelObjects[0],
 	changeValue: this._topLevelObjects[0]
 	    ['index' + this._orientation],

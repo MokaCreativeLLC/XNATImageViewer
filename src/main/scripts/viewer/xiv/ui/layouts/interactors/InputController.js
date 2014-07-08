@@ -10,9 +10,6 @@ goog.require('goog.dom');
 // nrg
 goog.require('nrg.ui.Component');
 
-// xiv
-goog.require('xiv.ui.layouts.interactors.InputController');
-
 //-----------
 
 

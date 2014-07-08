@@ -15,7 +15,6 @@ goog.require('nrg.ui');
 
 // xiv
 goog.require('xiv.ui.layouts.LayoutFrame');
-goog.require('xiv.ui.layouts.Layout');
 
 //-----------
 

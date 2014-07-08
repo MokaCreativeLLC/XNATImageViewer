@@ -23,7 +23,8 @@ goog.require('nrg.string');
 // gxnat
 goog.require('gxnat.vis.ViewableGroup');
 goog.require('gxnat.vis.RenderProperties');
-goog.require('gxnat.slicerNode.AnnotationsNode');
+goog.require('gxnat.slicerNode.Annotations');
+
 
 // xiv
 goog.require('xiv.vis.XtkPlane');
@@ -164,16 +165,6 @@ xiv.vis.XtkEngine.ANATOMICAL_TO_CARTESIAN =  {
     'AXIAL' : 'Z',
     'TRANSVERSE': 'Z'
 };
-
-
-
-/**
- * @type {!string} 
- * @const
- * @expose
- */
-xiv.vis.XtkEngine.SELECTED_VOL_KEY =  'isSelectedVolume' + 
-    goog.string.createUniqueString();
 
 
 
@@ -693,7 +684,7 @@ xiv.vis.XtkEngine.prototype.getSelectedVolume = function(){
     var len = this.currXObjects_.volumes.length;
     for (; i<len; i++){
 	var vol = this.currXObjects_.volumes[i];
-	if (vol[xiv.vis.XtkEngine.SELECTED_VOL_KEY]){
+	if (vol[xiv.vis.RenderEngine.SELECTED_VOL_KEY]){
 	    //window.console.log("\n*\n*\n*\n*\n*\n*SELECTED VOLUME FOUND!");
 	    return vol;
 	}
@@ -703,7 +694,7 @@ xiv.vis.XtkEngine.prototype.getSelectedVolume = function(){
     // Default to the first volume if no selected volume
     //
     //window.console.log("\n*\n*\n*\n*\n*\n*SELECTED VOLUME NOT FOUND!");
-    this.currXObjects_.volumes[0][xiv.vis.XtkEngine.SELECTED_VOL_KEY] = true;
+    this.currXObjects_.volumes[0][xiv.vis.RenderEngine.SELECTED_VOL_KEY] = true;
     return this.currXObjects_.volumes[0];
     
 }
@@ -776,7 +767,7 @@ function(xObj, renderProperties){
     //
     // Selected Volume
     //
-    xObj[xiv.vis.XtkEngine.SELECTED_VOL_KEY] = 
+    xObj[xiv.vis.RenderEngine.SELECTED_VOL_KEY] = 
 	renderProperties.isSelectedVolume;
 
     //
@@ -1069,7 +1060,7 @@ xiv.vis.XtkEngine.generateXtkObjectFromExtension = function(ext) {
  * and applying the relevant parameters to that
  * sphere (center, name, color, radius, etc.).
  * 
- * @param {!gxnat.slicer.AnnotationsNode} annotationsNode
+ * @param {!gxnat.slicerNode.Annotations} annotationsNode
  * @param {number=} opt_radius The optional radius.
  * @return {X.sphere}
  */
@@ -1362,8 +1353,6 @@ goog.exportSymbol('xiv.vis.XtkEngine.EventType', xiv.vis.XtkEngine.EventType);
 goog.exportSymbol('xiv.vis.XtkEngine.ID_PREFIX', xiv.vis.XtkEngine.ID_PREFIX);
 goog.exportSymbol('xiv.vis.XtkEngine.ANATOMICAL_TO_CARTESIAN',
 	xiv.vis.XtkEngine.ANATOMICAL_TO_CARTESIAN);
-goog.exportSymbol('xiv.vis.XtkEngine.SELECTED_VOL_KEY',
-	xiv.vis.XtkEngine.SELECTED_VOL_KEY);
 goog.exportSymbol('xiv.vis.XtkEngine.SLICE_TO_RAS_KEY',
 	xiv.vis.XtkEngine.SLICE_TO_RAS_KEY);
 goog.exportSymbol('xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY',
