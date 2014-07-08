@@ -3,6 +3,7 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  * @author herrickr@mir.wustl.edu (Rick Herrick)
  */
+goog.provide('gxnat');
 
 // goog
 goog.require('goog.net.XhrIo');
@@ -22,7 +23,6 @@ goog.require('goog.array');
  * especially goog.net.XhrIo.
  *
  */
-goog.provide('gxnat');
 gxnat = function(){}
 goog.exportSymbol('gxnat', gxnat);
 

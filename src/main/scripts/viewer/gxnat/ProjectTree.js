@@ -1,6 +1,8 @@
  /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('gxnat.ProjectTree');
+
 
 // goog
 goog.require('goog.Disposable');
@@ -27,7 +29,6 @@ goog.require('gxnat.Path');
  * @extends {goog.Disposable}
  * @constructor
  */
-goog.provide('gxnat.ProjectTree');
 gxnat.ProjectTree = function(xnatProjUrl){
     //window.console.log("\n\nProject Tree init path: ", xnatProjUrl);
 

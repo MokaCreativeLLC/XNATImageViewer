@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.Sagittal');
+
 
 // goog
 goog.require('goog.dom.classes')
@@ -21,7 +23,6 @@ goog.require('nrg.string');
  * @constructor
  * @extends {xiv.ui.layouts.SingleFrameLayout}
  */
-goog.provide('xiv.ui.layouts.Sagittal');
 xiv.ui.layouts.Sagittal = function() { 
     goog.base(this, 'X');
     goog.dom.classes.add(this.LayoutFrames['X'].getElement(), 

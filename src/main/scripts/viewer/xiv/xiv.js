@@ -3,6 +3,7 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  * @author herrickr@mir.wustl.edu (Rick Herrick)
  */
+goog.provide('xiv');
 
 // goog
 goog.require('goog.labs.userAgent.browser');
@@ -36,7 +37,6 @@ goog.require('gxnat.vis.Scan');
 goog.require('gxnat.vis.Slicer');
 
 // xiv
-//goog.require('xiv.ui');
 goog.require('xiv.ui.Modal');
 
 
@@ -50,7 +50,6 @@ goog.require('xiv.ui.Modal');
  * @extends {goog.Disposable}
  * @constructor
  */
-goog.provide('xiv');
 xiv = function(xivState, modalState, dataPath, rootUrl){
     //
     // Superclass init

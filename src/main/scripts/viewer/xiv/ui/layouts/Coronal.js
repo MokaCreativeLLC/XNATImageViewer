@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.Coronal');
+
 
 // goog
 goog.require('goog.dom.classes')
@@ -21,7 +23,6 @@ goog.require('nrg.string');
  * @constructor
  * @extends {xiv.ui.layouts.SingleFrameLayout}
  */
-goog.provide('xiv.ui.layouts.Coronal');
 xiv.ui.layouts.Coronal = function() { 
     goog.base(this, 'Y'); 
     goog.dom.classes.add(this.LayoutFrames['Y'].getElement(), 

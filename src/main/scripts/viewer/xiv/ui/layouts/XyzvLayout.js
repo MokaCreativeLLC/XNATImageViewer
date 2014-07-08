@@ -1,3 +1,8 @@
+/**
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+goog.provide('xiv.ui.layouts.XyzvLayout');
+
 
 // goog
 goog.require('goog.style')
@@ -21,26 +26,6 @@ goog.require('xiv.ui.layouts.interactors.ZoomDisplay')
 
 //-----------
 
-/**
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
- */
-
-// goog
-goog.require('goog.string');
-goog.require('goog.array');
-goog.require('goog.object');
-
-// nrg
-goog.require('nrg.string');
-
-// xiv
-goog.require('xiv.ui.layouts.Layout');
-goog.require('xiv.ui.layouts.LayoutFrame');
-goog.require('xiv.ui.layouts.interactors.Crosshairs');
-goog.require('xiv.ui.layouts.interactors.FrameDisplay');
-goog.require('xiv.ui.layouts.interactors.ZoomDisplay');
-goog.require('xiv.ui.layouts.interactors.Slider');
-
 
 
 
@@ -51,7 +36,6 @@ goog.require('xiv.ui.layouts.interactors.Slider');
  * @param {string= | Array.<string>=} opt_frames
  * @extends {xiv.ui.layouts.Layout}
  */
-goog.provide('xiv.ui.layouts.XyzvLayout');
 xiv.ui.layouts.XyzvLayout = function(opt_frames) { 
     goog.base(this);
 
@@ -135,6 +119,7 @@ xiv.ui.layouts.XyzvLayout.CSS_SUFFIX = {
  
 /**
  * @struct
+ * @constructor
  */
 xiv.ui.layouts.XyzvLayout.InteractorSet = 
 function(slider, display, crosshairs, zoom) {
@@ -143,8 +128,6 @@ function(slider, display, crosshairs, zoom) {
     this.CROSSHAIRS = crosshairs;   
     this.ZOOM_DISPLAY = zoom;   
 }
-goog.exportSymbol('xiv.ui.layouts.XyzvLayout.InteractorSet', 
-		  xiv.ui.layouts.XyzvLayout.InteractorSet);
 
 
 

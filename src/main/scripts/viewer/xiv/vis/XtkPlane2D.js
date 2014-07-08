@@ -2,6 +2,8 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  * @author amh1646@rih.edu (Amanda Hartung)
  */
+goog.provide('xiv.vis.XtkPlane2D');
+
 
 // xiv
 goog.require('xiv.vis.XtkRenderer2D');
@@ -15,7 +17,6 @@ goog.require('xiv.vis.XtkPlane');
  * @param {!string} orientation The plane orientation.
  * @extends {xiv.vis.XtkPlane}
  */
-goog.provide('xiv.vis.XtkPlane2D');
 xiv.vis.XtkPlane2D = function (orientation) {
     goog.base(this);
 

@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.vis.XtkRenderer3D');
+
 
 // X
 goog.require('X.renderer3D');
@@ -12,6 +14,7 @@ goog.require('xiv.vis.RenderEngine');
 //-----------
 
 
+
 /**
  * Exists for the purpose of making the protected
  * X.renderer.onResize_ function public.
@@ -19,7 +22,6 @@ goog.require('xiv.vis.RenderEngine');
  * @constructor
  * @extends {X.renderer3D}
  */
-goog.provide('xiv.vis.XtkRenderer3D');
 xiv.vis.XtkRenderer3D = function () {
     goog.base(this);
 }

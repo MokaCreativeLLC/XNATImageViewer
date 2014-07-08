@@ -2,6 +2,7 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  * @author amh1646@rih.edu (Amanda Hartung)
  */
+goog.provide('xiv.vis.XtkPlane');
 
 
 // goog
@@ -27,14 +28,13 @@ goog.require('gxnat.slicerNode.BackgroundColor');
 // xiv
 goog.require('xiv.vis.RenderEngine');
 
-
+//---------
 
 
 /**
  * @constructor
  * @extends {goog.events.EventTarget}
  */
-goog.provide('xiv.vis.XtkPlane');
 xiv.vis.XtkPlane = function() {
     goog.base(this);
 
@@ -90,14 +90,14 @@ xiv.vis.XtkPlane.prototype.background_;
 
 
 /**
-* @param {boolean}
+* @type {boolean}
 */
 xiv.vis.XtkPlane.prototype.isEnabled_ = true;
 
 
 
 /**
-* @param {Element}
+* @type {Element}
 */
 xiv.vis.XtkPlane.prototype.DisabledOverlay_;
 

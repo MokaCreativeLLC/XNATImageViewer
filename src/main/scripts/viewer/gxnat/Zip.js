@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('gxnat.Zip');
+
 
 // goog
 goog.require('goog.Disposable');
@@ -15,7 +17,6 @@ goog.require('gxnat');
  * @param {Array} arrayBuffer 
  * @extends {goog.Disposable}
  */
-goog.provide('gxnat.Zip');
 gxnat.Zip = function(arrayBuffer){
     /**
      * @type {JSZip}

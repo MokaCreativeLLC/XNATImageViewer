@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('gxnat.Path');
+
 
 // goog
 goog.require('goog.Disposable');
@@ -9,13 +11,14 @@ goog.require('goog.object');
 // gxnat
 goog.require('gxnat');
 
+
+
 /**
  * Splits the 'url' argument into various XNAT level folders.
  * @param {!string} url The URL to derive the path object from.
  * @constructor
  * @extends {goog.Disposable}
  */
-goog.provide('gxnat.Path');
 gxnat.Path = function(url){
     //window.console.log(url);
     this['originalUrl'] = url;

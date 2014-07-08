@@ -1,11 +1,11 @@
 /** 
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.vis');
 
 /**
  * @constructor
  */
-goog.provide('xiv.vis');
 xiv.vis = {}
 goog.exportSymbol('xiv.vis', xiv.vis);
 

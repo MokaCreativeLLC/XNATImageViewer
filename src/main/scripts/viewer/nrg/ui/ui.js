@@ -7,7 +7,7 @@
  * @constructor
  */
 goog.provide('nrg.ui');
-nrg.ui = function () {};
+nrg.ui = {};
 goog.exportSymbol('nrg.ui', nrg.ui);
 
 

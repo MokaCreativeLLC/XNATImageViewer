@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ctrl.XtkControllerTree');
+
 
 // goog
 goog.require('goog.object');
@@ -35,11 +37,9 @@ goog.require('xiv.ui.ctrl.VolumeController');
 
 
 /**
- *
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.ctrl.XtkControllerTree');
 xiv.ui.ctrl.XtkControllerTree = function() {
     goog.base(this);
 

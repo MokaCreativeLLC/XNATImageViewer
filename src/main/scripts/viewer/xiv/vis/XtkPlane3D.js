@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.vis.XtkPlane3D');
+
 
 // xiv
 goog.require('xiv.vis.XtkPlane');
@@ -13,7 +15,6 @@ goog.require('xiv.vis.XtkRenderer3D');
  * @constructor
  * @extends {xiv.vis.XtkPlane}
  */
-goog.provide('xiv.vis.XtkPlane3D');
 xiv.vis.XtkPlane3D = function () {
     goog.base(this);
     this.orientation = 'V'; 

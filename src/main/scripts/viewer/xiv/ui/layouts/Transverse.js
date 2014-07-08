@@ -1,7 +1,8 @@
-
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.Transverse');
+
 
 // goog
 goog.require('goog.dom.classes')
@@ -22,7 +23,6 @@ goog.require('xiv.ui.layouts.SingleFrameLayout')
  * @constructor
  * @extends {xiv.ui.layouts.SingleFrameLayout}
  */
-goog.provide('xiv.ui.layouts.Transverse');
 xiv.ui.layouts.Transverse = function() { 
     goog.base(this, 'Z'); 
     goog.dom.classes.add(this.LayoutFrames['Z'].getElement(), 

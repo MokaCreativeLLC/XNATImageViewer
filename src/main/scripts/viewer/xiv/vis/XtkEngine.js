@@ -1,7 +1,9 @@
- /**
+/**
  * @author amh1646@rih.edu (Amanda Hartung)
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.vis.XtkEngine');
+
 
 // goog
 goog.require('goog.events');
@@ -34,16 +36,14 @@ goog.require('xiv.vis.RenderEngine');
 goog.require('xiv.ui.ctrl.XtkController');
 goog.require('xiv.ui.ctrl.XtkControllerTree');
 
-
 //-----------
 
 
 
 /**
- * @constructor
  * @extends {xiv.vis.RenderEngine}
+ * @constructor
  */
-goog.provide('xiv.vis.XtkEngine');
 xiv.vis.XtkEngine = function () {
     goog.base(this);
     
@@ -780,10 +780,10 @@ function(xObj, renderProperties){
 	xObj.labelmap.file = renderProperties.labelMapFile;
 	xObj.labelmap.colortable.file = 
 	    renderProperties.labelMapColorTableFile;
-	xObj[this.constructor.HAS_LABEL_MAP_KEY] = true;
+	xObj[xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY] = true;
 	//window.console.log(renderProperties.labelMapColorTableFile);
     } else {
-	xObj[this.constructor.HAS_LABEL_MAP_KEY] = false;
+	xObj[xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY] = false;
     }
 }
 
@@ -1040,11 +1040,13 @@ xiv.vis.XtkEngine.fiberExtensions_ = [
  */
 xiv.vis.XtkEngine.generateXtkObjectFromExtension = function(ext) {
     var obj = undefined;
-    if (this.isMesh(ext)) { 
+    if (xiv.vis.XtkEngine.isMesh(ext)) { 
 	obj = new X.mesh();
-    } else if (this.isVolume(ext) || this.isDicom(ext) || this.isImage(ext)){
+    } else if (xiv.vis.XtkEngine.isVolume(ext) || 
+	       xiv.vis.XtkEngine.isDicom(ext) || 
+	       xiv.vis.XtkEngine.isImage(ext)){
 	obj = new X.volume();
-    } else if (this.isFiber(ext)){
+    } else if (xiv.vis.XtkEngine.isFiber(ext)){
 	obj = new X.fibers();
     } else {
 
@@ -1094,7 +1096,8 @@ function(annotationsNode, opt_radius) {
  * @return {boolean} Whether the extension matches the category.
  */
 xiv.vis.XtkEngine.isVolume = function(ext) {
-     return (this.volumeExtensions_.indexOf(ext) > -1 ) ?  true: false;
+     return (xiv.vis.XtkEngine.volumeExtensions_.indexOf(ext) > -1 ) ?  
+	true: false;
 }
 
 
@@ -1108,7 +1111,8 @@ xiv.vis.XtkEngine.isVolume = function(ext) {
  * @return {boolean} Whether the extension matches the category.
  */
 xiv.vis.XtkEngine.isImage = function(ext) {
-     return (this.imageExtensions_.indexOf(ext) > -1 ) ?  true: false;
+     return (xiv.vis.XtkEngine.imageExtensions_.indexOf(ext) > -1 ) ?  
+	true: false;
 }
 
 
@@ -1121,7 +1125,8 @@ xiv.vis.XtkEngine.isImage = function(ext) {
  * @return {boolean} Whether the extension matches the category.
  */
 xiv.vis.XtkEngine.isDicom = function(ext) {
-     return (this.dicomExtensions_.indexOf(ext) > -1 ) ?  true: false;
+     return (xiv.vis.XtkEngine.dicomExtensions_.indexOf(ext) > -1 ) ?  
+	true: false;
 }
 
 
@@ -1133,7 +1138,8 @@ xiv.vis.XtkEngine.isDicom = function(ext) {
  * @return {boolean} Whether the extension matches the category.
  */
 xiv.vis.XtkEngine.isAnalyze = function(ext) {
-     return (this.analyzeExtensions_.indexOf(ext) > -1 ) ?  true: false;
+     return (xiv.vis.XtkEngine.analyzeExtensions_.indexOf(ext) > -1 ) ?  
+	true: false;
 }
 
 
@@ -1145,7 +1151,8 @@ xiv.vis.XtkEngine.isAnalyze = function(ext) {
  * @return {boolean} Whether the extension matches the category.
  */
 xiv.vis.XtkEngine.isNifti = function(ext) {
-     return (this.niftiExtensions_.indexOf(ext) > -1 ) ?  true: false;
+     return (xiv.vis.XtkEngine.niftiExtensions_.indexOf(ext) > -1 ) ?  
+	true: false;
 }
 
 
@@ -1158,7 +1165,8 @@ xiv.vis.XtkEngine.isNifti = function(ext) {
  * @return {boolean} Whether the extension matches the category.
  */
 xiv.vis.XtkEngine.isMesh = function(ext) {
-    return (this.meshExtensions_.indexOf(ext) > -1 ) ?  true: false;
+    return (xiv.vis.XtkEngine.meshExtensions_.indexOf(ext) > -1 ) ?  
+	true: false;
 }
 
 
@@ -1172,7 +1180,8 @@ xiv.vis.XtkEngine.isMesh = function(ext) {
  * @return {boolean} Whether the extension matches the category.
  */
 xiv.vis.XtkEngine.isFiber = function(ext) {
-   return (this.fiberExtensions_.indexOf(ext) > -1 ) ?  true: false;
+   return (xiv.vis.XtkEngine.fiberExtensions_.indexOf(ext) > -1 ) ?  
+	true: false;
 }
 
 
@@ -1240,19 +1249,19 @@ xiv.vis.XtkEngine.getViewables = function(fileCollection) {
 	if (ext === 'mrml') { 
 	    viewableTypes['slicer'].push(fileCollection[i]);
 	
-	} else if (this.isVolume(ext)) {
+	} else if (xiv.vis.XtkEngine.isVolume(ext)) {
 	    viewableTypes['volumes'].push(fileCollection[i]);
 
-	} else if (this.isDicom(ext)) {
+	} else if (xiv.vis.XtkEngine.isDicom(ext)) {
 	    viewableTypes['dicoms'].push(fileCollection[i]);
 
-	} else if (this.isMesh(ext)){
+	} else if (xiv.vis.XtkEngine.isMesh(ext)){
 	    viewableTypes['meshes'].push(fileCollection[i]);
 
-	} else if (this.isFiber(ext)){
+	} else if (xiv.vis.XtkEngine.isFiber(ext)){
 	    viewableTypes['fibers'].push(fileCollection[i]);
 
-	} else if (this.isImage(ext)){
+	} else if (xiv.vis.XtkEngine.isImage(ext)){
 	    viewableTypes['images'].push(fileCollection[i]);
 
 	} 
@@ -1297,7 +1306,7 @@ xiv.vis.XtkEngine.createXObject = function(fileCollection, opt_fileData) {
 	nrg.string.getFileExtension(fileCollection[0]) : 
 	nrg.string.getFileExtension(fileCollection);
 
-    var obj = this.generateXtkObjectFromExtension(ext);  
+    var obj = xiv.vis.XtkEngine.generateXtkObjectFromExtension(ext);  
     
     if (!goog.isDefAndNotNull(obj)){
 	var errorString = 'No renderable files in the set :(<br>';

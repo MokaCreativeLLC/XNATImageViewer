@@ -2,6 +2,8 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  * @author amh1646@rih.edu (Amanda Hartung)
  */
+goog.provide('gxnat.slicerUtils');
+
 
 // goog
 goog.require('goog.dom.DomHelper');
@@ -32,7 +34,6 @@ goog.require('gxnat.slicerNode.SceneView');
 /**
  * @constructor
  */
-goog.provide('gxnat.slicerUtils');
 gxnat.slicerUtils = {};
 goog.exportSymbol('gxnat.slicerUtils', gxnat.slicerUtils);
 

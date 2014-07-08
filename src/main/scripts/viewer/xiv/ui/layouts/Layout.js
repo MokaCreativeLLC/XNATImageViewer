@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.Layout');
+
 
 // goog
 goog.require('goog.events');
@@ -27,7 +29,6 @@ goog.require('xiv.ui.layouts.LayoutFrame');
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.layouts.Layout');
 xiv.ui.layouts.Layout = function() {
     if (!this.constructor.TITLE){
 	window.console.log('\n\n\n\n' + 

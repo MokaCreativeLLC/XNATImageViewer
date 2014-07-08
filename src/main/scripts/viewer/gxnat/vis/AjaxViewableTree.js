@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('gxnat.vis.AjaxViewableTree');
+
 
 // goog
 goog.require('goog.array');
@@ -24,7 +26,6 @@ goog.require('gxnat.vis.ViewableTree');
  * @param {string=} opt_experimentUrl The experiment-level url of the viewable.
  * @extends {gxnat.vis.ViewableTree}
  */
-goog.provide('gxnat.vis.AjaxViewableTree');
 gxnat.vis.AjaxViewableTree = 
 function(category,  opt_viewableJson, opt_experimentUrl) {
     goog.base(this);

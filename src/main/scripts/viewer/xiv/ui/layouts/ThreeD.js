@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.ThreeD');
+
 
 // goog
 goog.require('goog.dom.classes');
@@ -21,7 +23,6 @@ goog.require('nrg.string');
  * @constructor
  * @extends {xiv.ui.layouts.SingleFrameLayout}
  */
-goog.provide('xiv.ui.layouts.ThreeD');
 xiv.ui.layouts.ThreeD = function() { 
     goog.base(this, 'V'); 
     goog.dom.classes.add(this.LayoutFrames['V'].getElement(), 

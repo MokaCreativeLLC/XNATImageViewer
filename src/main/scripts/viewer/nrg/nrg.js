@@ -10,7 +10,7 @@
  * @constructor
  */
 goog.provide('nrg');
-nrg = function() {};
+nrg = {};
 goog.exportSymbol('nrg', nrg);
 
 
@@ -22,7 +22,7 @@ goog.exportSymbol('nrg', nrg);
  * @constructor
  */
 goog.provide("nrg.globals");
-nrg.globals = function(){};
+nrg.globals = {};
 goog.exportSymbol('nrg.globals', nrg.globals);
 
 

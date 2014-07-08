@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.SlideInMenu');
+
 
 // goog
 goog.require('goog.ui.MenuButton');
@@ -37,20 +39,11 @@ goog.require('nrg.ui');
  * nrg.ui.SlideInMenu is a menu that appears on user hovering over an icon.
  * It then rotates the icon of the menu based on the item selected.
  *
- * @constructor
  * @extends {nrg.ui.Component}
+ * @constructor
  */
-goog.provide('nrg.ui.SlideInMenu');
 nrg.ui.SlideInMenu = function () {	
     goog.base(this);
-
-
-    /**
-     * @private
-     * @type {Object.<string, nrg.ui.SlideInMenu.menuItemCollection>}
-     */
-    this.menuItems_ = {};
-
 
 
     /**
@@ -242,18 +235,26 @@ function (elt, startPos, endPos, opt_animTime) {
 
 
 
+/**
+ * @private
+ * @type {?Object.<string, nrg.ui.SlideInMenu.menuItemCollection>}
+ */
+nrg.ui.SlideInMenu.prototype.menuItems_ = null;
+
+
+
 
 /**
- * @type {string}
+ * @type {?string}
  */
-nrg.ui.SlideInMenu.prototype.prevSelectedItem_ = undefined;
+nrg.ui.SlideInMenu.prototype.prevSelectedItem_ = null;
 
 
 
 /**
- * @type {string}
+ * @type {?string}
  */
-nrg.ui.SlideInMenu.prototype.currSelectedItem_ = undefined;
+nrg.ui.SlideInMenu.prototype.currSelectedItem_ = null;
 
 
 
@@ -629,6 +630,10 @@ nrg.ui.SlideInMenu.prototype.deselectAll = function() {
 nrg.ui.SlideInMenu.prototype.addMenuItem = function(itemTitles, 
 							opt_iconSrc) {
 
+    if (!goog.isDefAndNotNull(this.menuItems_)){
+	this.menuItems_ = {};
+    }
+
     itemTitles = goog.isString(itemTitles) ?  [itemTitles] : itemTitles;
     opt_iconSrc = opt_iconSrc || [];
     opt_iconSrc = goog.isArray(opt_iconSrc) ? opt_iconSrc : [opt_iconSrc];
@@ -901,7 +906,7 @@ nrg.ui.SlideInMenu.prototype.disposeInternal = function() {
     //
     goog.events.removeAll(this.menu_);
     this.menu_.dispose();
-    delete this.menu_;
+    //delete this.menu_;
 
     //
     // Animation Queue

@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ctrl.VolumeController');
+
 
 // goog
 goog.require('goog.object');
@@ -25,7 +27,6 @@ goog.require('xiv.ui.ctrl.CheckboxController');
  * @constructor
  * @extends {xiv.ui.ctrl.MasterController2D}
  */
-goog.provide('xiv.ui.ctrl.VolumeController');
 xiv.ui.ctrl.VolumeController = function() {
     goog.base(this);
 }

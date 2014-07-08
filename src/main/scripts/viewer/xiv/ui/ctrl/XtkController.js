@@ -2,6 +2,7 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  * @author amh1646@rih.edu (Amanda Hartung)
  */
+goog.provide('xiv.ui.ctrl.XtkController');
 
 
 // goog
@@ -43,7 +44,6 @@ goog.require('nrg.ui.ZippyTree');
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.ctrl.XtkController');
 xiv.ui.ctrl.XtkController = function() {
     goog.base(this);
 

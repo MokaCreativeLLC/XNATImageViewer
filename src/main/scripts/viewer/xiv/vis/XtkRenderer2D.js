@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.vis.XtkRenderer2D');
+
 
 // goog
 goog.require('goog.math.Matrix');
@@ -25,7 +27,6 @@ goog.require('xiv.vis.RenderEngine');
  * @constructor
  * @extends {X.renderer2D}
  */
-goog.provide('xiv.vis.XtkRenderer2D');
 xiv.vis.XtkRenderer2D = function () {
     goog.base(this);
 }

@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.LayoutHandler');
 
 // goog
 goog.require('goog.fx.Animation');
@@ -51,7 +52,6 @@ goog.require('xiv.ui.layouts.XyzvLayout');
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.layouts.LayoutHandler');
 xiv.ui.layouts.LayoutHandler = function() {
     goog.base(this);
 

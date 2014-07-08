@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.LayoutFrame');
 
 // goog
 goog.require('goog.array')
@@ -25,7 +26,6 @@ goog.require('nrg.string')
  * if otherwise.
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.layouts.LayoutFrame');
 xiv.ui.layouts.LayoutFrame = function(title, opt_resizeDirs) {
     goog.base(this);
     

@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ctrl.VolumeController3D');
+
 
 // goog
 goog.require('goog.object');
@@ -24,7 +26,6 @@ goog.require('xiv.ui.ctrl.TwoThumbSliderController');
  * @constructor
  * @extends {xiv.ui.ctrl.MasterController3D}
  */
-goog.provide('xiv.ui.ctrl.VolumeController3D');
 xiv.ui.ctrl.VolumeController3D = function() {
     goog.base(this);
 }

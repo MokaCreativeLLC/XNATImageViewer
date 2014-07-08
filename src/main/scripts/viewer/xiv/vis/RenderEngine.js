@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.vis.RenderEngine');
+
 
 // goog
 goog.require('goog.events.EventTarget');
@@ -13,7 +15,6 @@ goog.require('goog.events');
  * @constructor
  * @extends {goog.events.EventTarget}
  */
-goog.provide('xiv.vis.RenderEngine');
 xiv.vis.RenderEngine = function () {
      goog.base(this);
 }
