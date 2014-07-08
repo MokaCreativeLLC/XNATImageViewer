@@ -10,10 +10,6 @@ goog.require('goog.object');
 goog.require('goog.string');
 goog.require('goog.array');
 
-// gxnat
-goog.require('gxnat.Zip');
-
-
 
 
 /**

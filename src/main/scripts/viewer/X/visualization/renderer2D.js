@@ -846,7 +846,7 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
     goog.vec.Mat4.multVec4(_currentSlice._XYToIJK, _xyz, _ijk);
     var _ras = goog.vec.Mat4.createFloat32();
     goog.vec.Mat4.multVec4(_currentSlice._XYToRAS, _xyz, _ras);
-      window.console.log(_ras);
+
     var _dx = _volume._childrenInfo[0]._sliceNormal[0]*_ras[0]
       + _volume._childrenInfo[0]._sliceNormal[1]*_ras[1]
       + _volume._childrenInfo[0]._sliceNormal[2]*_ras[2]
@@ -1055,11 +1055,8 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
       var _intensity = _sliceData[_index] / 255 * _maxScalarRange;
       var _origIntensity = _sliceData[_index];
 
-	
-
       // apply window/level
       var _fac = _windowHigh - _windowLow;
-	//window.console.log(_fac);
       _origIntensity = (_origIntensity / 255 - _windowLow) / _fac;
       _origIntensity = _origIntensity * 255;
 
@@ -1080,7 +1077,7 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
         // .. and back to an array
         _color = [Math.floor(_color.x), Math.floor(_color.y),
                   Math.floor(_color.z), 255];
-	  //window.console.log("INT", _color);
+
         if (_currentLabelMap) {
 
           // we have a label map here

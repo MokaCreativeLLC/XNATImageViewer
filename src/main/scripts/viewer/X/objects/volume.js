@@ -448,7 +448,6 @@ X.volume.prototype.slicing_ = function() {
 
     }
 
-
     // RESLICE VOLUME IF NECESSARY!
     if(!goog.isDefAndNotNull(this._children[xyz]._children[parseInt(currentIndex, 10)])){
 
@@ -481,7 +480,6 @@ X.volume.prototype.slicing_ = function() {
     }
     // DONE RESLICING!
 
-
     // hide the old slice
     var _oldSlice = _child._children[parseInt(oldIndex, 10)];
     if(!this._volumeRendering){
@@ -489,7 +487,6 @@ X.volume.prototype.slicing_ = function() {
       _oldSlice['visible'] = false;
 
     }
-
 
     // show the current slice and also show the borders if they exist by
     // calling the setter of visible rather than accessing the _visible property

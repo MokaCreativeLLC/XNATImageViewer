@@ -197,7 +197,7 @@ X.parserVTK.prototype.parseLine = function(line) {
   
   // the first field of the line can be a keyword to indicate different modes
   var firstLineField = lineFields[0];
-
+  
   // KEYWORD CHECK / MODE SWITCH
   //
   // identify the section of the next coming lines using the vtk keywords
@@ -308,8 +308,6 @@ X.parserVTK.prototype.parseLine = function(line) {
     
   }
   
-
-  //window.console.log(this._pointDataMode, this._pointsMode, this._geometryMode);
   // PARSING
   //
   // now we parse according to the current mode

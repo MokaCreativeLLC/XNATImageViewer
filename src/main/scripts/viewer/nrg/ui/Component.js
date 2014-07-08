@@ -109,13 +109,13 @@ nrg.ui.Component.createCssMap = function(obj) {
     obj.constructor.CSS = goog.object.clone(obj.constructor.CSS_SUFFIX);
     //window.console.log(obj.constructor.CSS);
     goog.object.forEach(obj.constructor.CSS, function(val, key){
-	obj.constructor.CSS[key] = goog.getCssName(
-	    obj.constructor.ID_PREFIX.toLowerCase().replace(/\.|_/g,'-'),
+	obj.constructor.CSS[key] = 
+	    obj.constructor.ID_PREFIX.toLowerCase().replace(/\.|_/g,'-') + '-' +
 	    val.toLowerCase().replace(/\.|_/g,'-')
-	);
+
     })
-    obj.constructor.CSS.ELEMENT = goog.getCssName(
-	    obj.constructor.ID_PREFIX.toLowerCase().replace(/\.|_/g,'-'), '');
+    obj.constructor.CSS.ELEMENT = 
+	    obj.constructor.ID_PREFIX.toLowerCase().replace(/\.|_/g,'-');
     //window.console.log(obj.constructor.ID_PREFIX, obj.constructor.CSS);
 }
 

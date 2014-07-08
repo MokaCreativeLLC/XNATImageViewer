@@ -1986,7 +1986,6 @@ X.renderer3D.prototype.remove = function(object) {
 
 	// call the remove_ method of the superclass
 	goog.base(this, 'remove', object);
-    
 
 	// check if this object has children
 	if (object._children.length > 0) {

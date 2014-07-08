@@ -866,7 +866,9 @@ X.renderer.prototype.remove = function(object) {
 X.renderer.prototype.update_ = function(object) {
 
   if (!this._canvas || !this._context) {
-      throw new Error('The renderer was not initialized properly.');
+
+    throw new Error('The renderer was not initialized properly.');
+
   }
 
   if (!goog.isDefAndNotNull(object)) {

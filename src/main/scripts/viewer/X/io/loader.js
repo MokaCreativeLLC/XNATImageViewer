@@ -40,6 +40,7 @@ goog.require('X.parserLBL');
 goog.require('X.parserLUT');
 goog.require('X.parserMGZ');
 goog.require('X.parserNII');
+goog.require('X.parserMRC');
 goog.require('X.parserNRRD');
 goog.require('X.parserOBJ');
 goog.require('X.parserOFF');
@@ -209,7 +210,6 @@ X.loader.prototype.load = function(container, object) {
   var _checkresult = this.checkFileFormat(container);
   var filepath = _checkresult[0];
 
-
   if (container._filedata != null) {
 
     // we have raw file data attached and therefor can skip the loading
@@ -365,6 +365,8 @@ X.loader.extensions = {
   'STL': [X.parserSTL, null],
   'VTK': [X.parserVTK, null],
   'TRK': [X.parserTRK, null],
+  'MRC': [X.parserMRC, null],
+  'ST': [X.parserMRC, null],
   // FSM, INFLATED, SMOOTHWM, SPHERE, PIAL and ORIG are all freesurfer meshes
   'FSM': [X.parserFSM, null],
   'INFLATED': [X.parserFSM, null],
