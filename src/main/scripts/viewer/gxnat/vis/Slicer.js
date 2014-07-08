@@ -311,7 +311,7 @@ gxnat.vis.Slicer.prototype.getThumbnailImage = function(opt_callback){
 	}
 	if (thumbFound) { break };
     }
-    window.console.log('Thumbnail files', this['thumbnailFiles']);
+    //window.console.log('Thumbnail files', this['thumbnailFiles']);
 
     //
     // Clean the file urls.
@@ -341,7 +341,7 @@ gxnat.vis.Slicer.prototype.getThumbnailImage = function(opt_callback){
 	    break;
 	}
     }
-    window.console.log('Thumbnail files2', this['thumbnailFiles']);
+    //window.console.log('Thumbnail files2', this['thumbnailFiles']);
 
     //
     // Run callback

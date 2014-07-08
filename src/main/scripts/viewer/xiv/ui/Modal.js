@@ -30,7 +30,7 @@ goog.require('nrg.ui.Thumbnail');
 goog.require('nrg.ui.ZipTabs');
 
 // xiv
-//goog.require('xiv');
+goog.require('xiv.ui');
 goog.require('xiv.ui.ThumbnailGallery');
 goog.require('xiv.ui.ViewBoxHandler');
 goog.require('xiv.ui.ViewBox');
@@ -54,7 +54,7 @@ xiv.ui.Modal = function () {
      * @private
      */
     this.currState_ = xiv.ui.Modal.ModalStates.DEMO;
-    window.console.log('currState', this.currState_);
+    //window.console.log('currState', this.currState_);
 }
 goog.inherits(xiv.ui.Modal, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.Modal', xiv.ui.Modal);
@@ -105,26 +105,6 @@ xiv.ui.Modal.CSS_SUFFIX = {
 
 
 /**
- * @enum {string}
- */
-xiv.ui.Modal.ButtonTypes = {
-    CLOSE : 'Close XNAT Image Viewer.',
-    FULLSCREEN: 'Enter full-screen mode.',
-    POPUP: 'Popup to new window.',
-    WINDOWED: 'Exit full-screen mode.',
-
-    /**
-     * Deprecated
-     * 
-     INSERTROW : 'Insert ViewBox row',
-     INSERTCOLUMN: 'Insert ViewBox column',
-     REMOVEROW: 'Remove ViewBox row',
-     REMOVECOLUMN: 'Remove ViewBox column',
-    */
-}
-
-
-/**
  * As stated.
  * @param {!string} iconUrl
  * @private
@@ -134,7 +114,9 @@ xiv.ui.Modal.createButtons_ = function(iconUrl){
     // Generate new button IDs
     //
     var buttonIds = {};
-    goog.object.forEach(xiv.ui.Modal.ButtonTypes, function(buttonType, key){
+    var key;
+    goog.object.forEach(xiv.ui.Modal.ButtonTypes_, function(buttonObj, key){
+	key = buttonObj.key;
 	buttonIds[key] = xiv.ui.Modal.ID_PREFIX + '.' + 
 			 goog.string.toTitleCase(key) + 'Button';
     })
@@ -156,6 +138,31 @@ xiv.ui.Modal.createButtons_ = function(iconUrl){
 			oldKey.toLowerCase() + '-' + 'button'));
     })
     return buttonsWithOriginalKeys
+}
+
+
+
+/**
+ * @const
+ * @private
+ */
+xiv.ui.Modal.ButtonTypes_ = {
+    CLOSE: {
+	key: 'CLOSE',
+	title: 'Close XNAT Image Viewer.'
+    },
+    FULLSCREEN:{
+	key: 'FULLSCREEN', 
+	title: 'Enter full-screen mode.'
+    },
+    POPUP:{
+	key: 'POPUP',
+	title: 'Popup to new window.'
+    },
+    WINDOWED: {
+	key: 'WINDOWED',
+	title: 'Exit full-screen mode.'
+    }
 }
 
 
@@ -1353,7 +1360,6 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
 goog.exportSymbol('xiv.ui.Modal.EventType', xiv.ui.Modal.EventType);
 goog.exportSymbol('xiv.ui.Modal.ID_PREFIX', xiv.ui.Modal.ID_PREFIX);
 goog.exportSymbol('xiv.ui.Modal.CSS_SUFFIX', xiv.ui.Modal.CSS_SUFFIX);
-goog.exportSymbol('xiv.ui.Modal.ButtonTypes', xiv.ui.Modal.ButtonTypes);
 goog.exportSymbol('xiv.ui.Modal.prototype.getViewBoxHandler',
 	xiv.ui.Modal.prototype.getViewBoxHandler);
 goog.exportSymbol('xiv.ui.Modal.prototype.getThumbnailGallery',
@@ -1392,5 +1398,5 @@ goog.exportSymbol('xiv.ui.Modal.prototype.disposeInternal',
 //
 window['xiv.ui.Modal'] = xiv.ui.Modal;
 window['xiv.ui.Modal.ModalStates'] = xiv.ui.Modal.ModalStates;
-
+//window.console.log('modal', xiv.ui.Modal);
 

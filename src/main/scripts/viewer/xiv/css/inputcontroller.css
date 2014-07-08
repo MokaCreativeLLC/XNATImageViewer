@@ -43,6 +43,7 @@
 .xiv-ui-layouts-interactors-inputcontroller-inputbox {
     opacity: 0;
     width: 56px;
+    height: 18px;
     left: calc(100% - 56px);
     background-color: rgb(0,0,0);
     border: solid 1px rgb(95,95,95);

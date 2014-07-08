@@ -83,12 +83,22 @@ nrg.ui.Component.prototype.validateIdPrefix = function() {
      * @public
      */
     this.constructor.CSS_CLASS_PREFIX = 
-	this.constructor.ID_PREFIX.toLowerCase().replace(/\./g,'-');
+	nrg.ui.Component.idPrefixToCssClass(this.constructor.ID_PREFIX);
 
     /**
      * @public
      */
     this.constructor.ELEMENT_CLASS = this.constructor.CSS_CLASS_PREFIX;
+}
+
+
+
+/**
+ * @param {!string} idPrefix
+ * @public
+ */
+nrg.ui.Component.idPrefixToCssClass = function(idPrefix) {
+    return idPrefix.toLowerCase().replace(/\./g,'-');
 }
 
 
@@ -140,20 +150,24 @@ nrg.ui.Component.prototype.createCssMap = function() {
  * @private
  */
 nrg.ui.Component.prototype.applyCssHierarchy_ = function() {
-
     var baseClasses = [];
     var obj = this;
+    var cssName;
 
-    while (obj instanceof nrg.ui.Component) {
-	goog.array.insert(baseClasses, this.constructor.ELEMENT_CLASS);
+    while (goog.isDefAndNotNull(obj.constructor.ID_PREFIX)) {
+	cssName = 
+	    nrg.ui.Component.idPrefixToCssClass(obj.constructor.ID_PREFIX);
+	goog.array.insert(baseClasses, cssName);
 	obj = obj.constructor.superClass_;
     }
 
+    //window.console.log(this.constructor.ID_PREFIX, baseClasses);
+
     goog.array.forEach(baseClasses, function(baseClass) {
-	if (goog.isDefAndNotNull(obj.getElement())){
-	    goog.dom.classes.add(obj.getElement(), baseClass);
-	}
-    })
+	if (goog.isDefAndNotNull(this.getElement())){
+	    goog.dom.classes.add(this.getElement(), baseClass);
+	} 
+    }.bind(this))
 }
 
 
@@ -402,6 +416,8 @@ nrg.ui.Component.prototype.disposeInternal = function() {
 
 goog.exportSymbol('nrg.ui.Component.animationLengths',
 	nrg.ui.Component.animationLengths);
+goog.exportSymbol('nrg.ui.Component.idPrefixToCssClass',
+	nrg.ui.Component.idPrefixToCssClass);
 goog.exportSymbol('nrg.ui.Component.prototype.validateIdPrefix',
 	nrg.ui.Component.prototype.validateIdPrefix);
 goog.exportSymbol('nrg.ui.Component.prototype.imagePrefix',

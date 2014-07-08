@@ -13,7 +13,6 @@ goog.require('goog.ui.TabPane.TabPage');
 goog.require('goog.math.Size');
 goog.require('goog.dom.classes');
 goog.require('goog.events.EventType');
-goog.require('goog.ui.Tab');
 goog.require('goog.style');
 
 // nrg
@@ -721,8 +720,7 @@ nrg.ui.Tabs.prototype.deactivateAll = function () {
  * @inheritDoc
  */
 nrg.ui.Tabs.prototype.updateStyle = function () {
-
-    window.console.log("\n\n\n\n**********UPDATE STULE", this.orientation);
+    //window.console.log("\n\n\n\n**********UPDATE STYLE", this.orientation);
     if (!this.getElement().parentNode) { return };
     
     //
@@ -732,7 +730,7 @@ nrg.ui.Tabs.prototype.updateStyle = function () {
     goog.dom.classes.add(this.getElement(), 
 	    nrg.string.makeCssName(nrg.ui.Tabs.ELEMENT_CLASS, 
 			    this.orientation));
-    window.console.log(nrg.ui.Tabs.ELEMENT_CLASS);
+    //window.console.log(nrg.ui.Tabs.ELEMENT_CLASS);
     //
     // IMPORTANT: Necessary because google takes it over...
     //

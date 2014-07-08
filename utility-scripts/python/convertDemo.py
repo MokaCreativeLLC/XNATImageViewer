@@ -86,7 +86,7 @@ def convertDemoToPopup(demoPath):
         # Set the Image viewer mode
         #
         if isModalStateLine(line):
-            line = 'var modalState = xiv.ModalStates.POPUP;';
+            line = 'var modalState = \'popup\';';
 
         if isModeLine(line):
             line = XIV_STATE_TAG + ' = \'live\';';
@@ -148,7 +148,7 @@ def convertDemoToVM(demoPath):
         if isModeLine(line):
             line = XIV_STATE_TAG + ' = \'live\';';
         elif isModalStateLine(line):
-            line = 'var modalState = xiv.ModalStates.WINDOWED;';
+            line = 'var modalState = \'windowed\';';
 
             
         #
