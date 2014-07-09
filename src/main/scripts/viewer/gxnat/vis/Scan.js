@@ -90,10 +90,11 @@ gxnat.vis.Scan.acceptableFileTypes = [
 
 
 /**
+ * @private
  * @param {!string} abbrev
  * @return {string}
  */
-gxnat.vis.Scan.getOrientationFromAbbreviation = function(abbrev){
+gxnat.vis.Scan.prototype.getOrientationFromAbbreviation_ = function(abbrev){
     switch (abbrev){
     case 'Sag':
 	return 'Sagittal';
@@ -153,7 +154,7 @@ gxnat.vis.Scan.prototype.setViewableMetadata = function(){
     //
     if (goog.isDefAndNotNull(this.scanMetadata_['parameters/orientation'])){
 	this.sessionInfo['Orientation'] = 
-	    this.constructor.getOrientationFromAbbreviation(
+	    this.getOrientationFromAbbreviation_(
 		this.scanMetadata_['parameters/orientation']);
 
 	//
@@ -205,7 +206,7 @@ gxnat.vis.Scan.prototype.getFileList = function(callback){
 	// Store the metadata
 	//
 	this.scanMetadata_ = scanMetadata['items'][0]['data_fields'];
-	//window.console.log("SCAN JSON", this.scanMetadata_);
+	window.console.log("SCAN JSON2", this.scanMetadata_);
 	
 	//
 	// set the metadata
@@ -365,8 +366,6 @@ gxnat.vis.Scan.prototype.dispose = function(){
 
 goog.exportSymbol('gxnat.vis.Scan.acceptableFileTypes',
 	gxnat.vis.Scan.acceptableFileTypes);
-goog.exportSymbol('gxnat.vis.Scan.getOrientationFromAbbreviation',
-	gxnat.vis.Scan.getOrientationFromAbbreviation);
 goog.exportSymbol('gxnat.vis.Scan.prototype.folderQuerySuffix',
 	gxnat.vis.Scan.prototype.folderQuerySuffix);
 goog.exportSymbol('gxnat.vis.Scan.prototype.fileQuerySuffix',

@@ -116,10 +116,9 @@ xiv.ui.Modal.createButtons_ = function(iconUrl){
     //
     var buttonIds = {};
     var key;
-    goog.object.forEach(xiv.ui.Modal.ButtonTypes_, function(buttonObj, key){
-	key = buttonObj.key;
-	buttonIds[key] = xiv.ui.Modal.ID_PREFIX + '.' + 
-			 goog.string.toTitleCase(key) + 'Button';
+    goog.object.forEach(xiv.ui.Modal.ButtonTypes_, function(buttonObj, oldKey){
+	buttonIds[oldKey] = xiv.ui.Modal.ID_PREFIX + '.' + 
+			 goog.string.toTitleCase(buttonObj.key) + '.Button';
     })
 
     //
@@ -135,8 +134,7 @@ xiv.ui.Modal.createButtons_ = function(iconUrl){
     goog.object.forEach(buttonIds, function(newKey, oldKey){
 	buttonsWithOriginalKeys[oldKey] = buttons[newKey];
 	goog.dom.classes.set(buttons[newKey], 
-	    nrg.string.makeCssName(xiv.ui.Modal.CSS_CLASS_PREFIX, 
-			oldKey.toLowerCase() + '-' + 'button'));
+	    nrg.string.makeCssName(newKey));
     })
     return buttonsWithOriginalKeys
 }

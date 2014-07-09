@@ -171,14 +171,17 @@ nrg.string.truncateString = function(str, opt_maxLen){
 
 /**
  * @param {!string} str1
- * @param {!string} str2
+ * @param {string=} opt_str2
  * @return {string} The css name
  * @public 
  */
-nrg.string.makeCssName = function (str1, str2) {
-    //window.console.log(str1, str2);
-    return str1.toLowerCase().replace(/\.|_/g,'-') + '-' + 
-	str2.toLowerCase().replace(/\.|_/g,'-');
+nrg.string.makeCssName = function (str1, opt_str2) {
+    var returner = str1.toLowerCase().replace(/\.|_/g,'-');
+    if (goog.isDefAndNotNull(opt_str2)){
+	returner += '-' + 
+	    opt_str2.toLowerCase().replace(/\.|_/g,'-');
+    }
+    return returner;
 }
 
 
