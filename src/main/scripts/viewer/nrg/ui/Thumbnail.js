@@ -1,6 +1,7 @@
 /** 
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.Thumbnail');
 
 // goog
 goog.require('goog.dom');
@@ -29,7 +30,6 @@ goog.require('nrg.ui.Component');
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('nrg.ui.Thumbnail');
 nrg.ui.Thumbnail = function () {
     goog.base(this);
 

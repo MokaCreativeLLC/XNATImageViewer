@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('gxnat.vis.Renderable');
 
 // gxnat
 goog.require('gxnat.slicerNode.Node');
@@ -15,7 +16,6 @@ goog.require('gxnat.vis.RenderProperties');
  *
  * @extends {gxnat.vis.VisNode}
  */
-goog.provide('gxnat.vis.Renderable');
 gxnat.vis.Renderable = function(opt_displayProperties) {
     goog.base(this);
     

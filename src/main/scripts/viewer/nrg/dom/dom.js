@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.dom');
 
 // goog
 goog.require('goog.dom');
@@ -19,7 +20,6 @@ goog.require('nrg.string');
  * dom operations not provided by the JS platform or goog.dom.
  * @constructor
  */
-goog.provide('nrg.dom');
 nrg.dom = function () {};
 goog.exportSymbol('nrg.dom', nrg.dom);
 

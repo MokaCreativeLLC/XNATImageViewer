@@ -36,8 +36,6 @@ goog.require('gxnat.vis.ViewableTree');
 goog.require('gxnat.vis.Scan');
 goog.require('gxnat.vis.Slicer');
 
-// xiv
-goog.require('xiv.ui.Modal');
 
 
 
@@ -399,7 +397,7 @@ xiv.prototype.begin = function() {
  * @public
  */
 xiv.prototype.setModalType = function(modalType){
-    //this.modalType_ = modalType;
+    this.modalType_ = modalType;
 }
 
 
@@ -413,10 +411,10 @@ xiv.prototype.createModal_ = function(){
     //
     // Create new Modal object
     //
-    //this.Modal_ = new this.modalType_();
+    this.Modal_ = new this.modalType_();
     //window.console.log(xiv.ui);
     //window.console.log(xiv.ui.Modal);
-    this.Modal_ = new xiv.ui.Modal();
+    //this.Modal_ = new xiv.ui.Modal();
 
     //
     // Set the image prefix of the modal

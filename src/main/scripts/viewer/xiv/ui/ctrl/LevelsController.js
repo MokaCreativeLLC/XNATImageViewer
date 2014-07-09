@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ctrl.LevelsController');
 
 // goog
 goog.require('goog.object');
@@ -28,7 +29,6 @@ goog.require('xiv.ui.ctrl.MasterController');
  * @constructor
  * @extends {xiv.ui.ctrl.MasterController}
  */
-goog.provide('xiv.ui.ctrl.LevelsController');
 xiv.ui.ctrl.LevelsController = function() {
     goog.base(this);
 }

@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.convert');
 
 // goog
 goog.require('goog.array');
@@ -12,7 +13,6 @@ goog.require('goog.object');
  * Utility class for conducting conversions.
  * @constructor
  */
-goog.provide('nrg.convert');
 nrg.convert = function () {};
 goog.exportSymbol('nrg.convert', nrg.convert);
 

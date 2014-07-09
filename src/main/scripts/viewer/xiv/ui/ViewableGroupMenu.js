@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ViewableGroupMenu');
 
 // goog
 goog.require('goog.array');
@@ -29,7 +30,6 @@ goog.require('nrg.ui.Thumbnail');
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.ViewableGroupMenu');
 xiv.ui.ViewableGroupMenu = function () {
     goog.base(this);
 }

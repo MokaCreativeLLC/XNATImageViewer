@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.ZippyTree');
 
 // goog
 goog.require('goog.array');
@@ -32,7 +33,6 @@ goog.require('nrg.ui.ZippyNode');
  * @constructor
  * @extends {nrg.ui.ZippyNode}
  */
-goog.provide('nrg.ui.ZippyTree');
 nrg.ui.ZippyTree = function () {
     // goog.base called later...
 
@@ -968,12 +968,12 @@ nrg.ui.ZippyTree.prototype.continueAnim_ = function() {
 nrg.ui.ZippyTree.prototype.disposeAnims_ = function(){
 
     if (goog.isDefAndNotNull(this.secondaryAnimationQueue_)){
-	nrg.ui.disposeAnimations(this.secondaryAnimationQueue_);
+	this.disposeAnimations(this.secondaryAnimationQueue_);
 	delete this.secondaryAnimationQueue_;
     }
 
     if (goog.isDefAndNotNull(this.AnimQueue_)){
-	nrg.ui.disposeAnimationQueue(this.AnimQueue_);
+	this.disposeAnimationQueue(this.AnimQueue_);
 	delete this.AnimQueue_;
     }
 }

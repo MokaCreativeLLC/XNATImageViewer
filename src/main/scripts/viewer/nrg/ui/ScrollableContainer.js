@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com
  */
+goog.provide('nrg.ui.ScrollableContainer');
 
 // goog
 goog.require('goog.string');
@@ -32,7 +33,6 @@ goog.require('nrg.ui.Component');
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('nrg.ui.ScrollableContainer');
 nrg.ui.ScrollableContainer = function (opt_args) {
     goog.base(this);
 }

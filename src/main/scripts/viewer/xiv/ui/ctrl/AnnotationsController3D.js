@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ctrl.AnnotationsController3D');
 
 // goog
 goog.require('goog.object');
@@ -18,7 +19,6 @@ goog.require('xiv.ui.ctrl.CheckboxController');
  * @constructor
  * @extends {xiv.ui.ctrl.MasterController3D}
  */
-goog.provide('xiv.ui.ctrl.AnnotationsController3D');
 xiv.ui.ctrl.AnnotationsController3D = function() {
     goog.base(this);
 }

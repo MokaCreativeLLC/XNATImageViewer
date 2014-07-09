@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.HelpDialog');
 
 // goog
 goog.require('goog.dom.classes');
@@ -19,7 +20,6 @@ goog.require('nrg.ui.Dialog');
  * @constructor
  * @extends {nrg.ui.Dialog}
  */
-goog.provide('xiv.ui.HelpDialog');
 xiv.ui.HelpDialog = function () {
     goog.base(this);
 }

@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('gxnat.vis.ViewableTree');
 
 // goog
 goog.require('goog.array');
@@ -17,7 +18,6 @@ goog.require('gxnat.vis.ViewableGroup');
 /**
  * @extends {gxnat.vis.VisNode}
  */
-goog.provide('gxnat.vis.ViewableTree');
 gxnat.vis.ViewableTree = function(opt_files, opt_displayProperties) {
     goog.base(this);
 

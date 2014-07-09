@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ctrl.MasterController2D');
 
 // goog
 goog.require('goog.object');
@@ -23,7 +24,6 @@ goog.require('xiv.ui.ctrl.RadioButtonController');
  * @constructor
  * @extends {xiv.ui.ctrl.XtkController}
  */
-goog.provide('xiv.ui.ctrl.MasterController2D');
 xiv.ui.ctrl.MasterController2D = function() {
     goog.base(this);
 

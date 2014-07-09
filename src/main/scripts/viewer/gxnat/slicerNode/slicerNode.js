@@ -2,12 +2,12 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  * @author amh1646@rih.edu (Amanda Hartung)
  */
+goog.provide('gxnat.slicerNode');
 
 
 /**
  * @constructor
  */
-goog.provide('gxnat.slicerNode');
 gxnat.slicerNode = {};
 goog.exportSymbol('gxnat.slicerNode', gxnat.slicerNode);
 

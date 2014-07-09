@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ViewBoxDialogs');
 
 // goog
 goog.require('goog.ui.ToggleButton');
@@ -32,7 +33,6 @@ goog.require('xiv.ui.HelpDialog');
  * @param {xiv.ui.ViewBox} ViewBox
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.ViewBoxDialogs');
 
 xiv.ui.ViewBoxDialogs = function (ViewBox) {
     goog.base(this);

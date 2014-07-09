@@ -1,12 +1,12 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('gxnat.vis');
 
 
 /**
  * @constructor
  */
-goog.provide('gxnat.vis');
 gxnat.vis = {};
 goog.exportSymbol('gxnat.vis', gxnat.vis);
 

@@ -1,6 +1,7 @@
 /** 
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.InfoOverlay');
 
 // goog
 goog.require('goog.dom');
@@ -15,7 +16,6 @@ goog.require('nrg.ui.Dialog');
  * @constructor
  * @extends {nrg.ui.Dialog}
  */
-goog.provide('nrg.ui.InfoOverlay');
 nrg.ui.InfoOverlay = function () {
     goog.base(this);   
 }

@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.ThumbnailGallery');
 
 // goog
 goog.require('goog.array');
@@ -25,7 +26,6 @@ goog.require('nrg.ui.ScrollableZippyTree');
  * @constructor
  * @extends {nrg.ui.ScrollableZippyTree}
  */
-goog.provide('nrg.ui.ThumbnailGallery');
 nrg.ui.ThumbnailGallery = function () {
     goog.base(this);
 }
@@ -611,7 +611,7 @@ nrg.ui.ThumbnailGallery.prototype.disposeInternal = function() {
     
     // Thumbs
     if (goog.isDefAndNotNull(this.Thumbs_)){
-	nrg.ui.disposeComponentMap(this.Thumbs_);
+	this.disposeComponentMap(this.Thumbs_);
 	delete this.Thumbs_;
     }
 

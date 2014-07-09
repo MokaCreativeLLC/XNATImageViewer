@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ViewBoxHandler');
 
 // goog
 goog.require('goog.array');
@@ -44,7 +45,6 @@ goog.require('xiv.ui.ViewBox');
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.ViewBoxHandler');
 xiv.ui.ViewBoxHandler = function () {
     goog.base(this);
 }
@@ -1495,12 +1495,12 @@ xiv.ui.ViewBoxHandler.prototype.disposeInternal = function() {
 
 
     // Drag Drop handles
-    nrg.ui.disposeElementMap(this.dragDropHandles_);
+    this.disposeElementMap(this.dragDropHandles_);
     delete this.dragDropHandles_;
 
 
     // Drag Drop handles
-    nrg.ui.disposeElementMap(this.closeButtons_);
+    this.disposeElementMap(this.closeButtons_);
     delete this.closeButtons_;
 
 

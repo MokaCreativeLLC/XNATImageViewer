@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.ZippyNode');
 
 // goog
 goog.require('goog.events');
@@ -12,7 +13,6 @@ goog.require('goog.ui.Zippy');
 goog.require('goog.dom.classes');
 
 // nrg
-goog.require('nrg.ui');
 goog.require('nrg.string');
 goog.require('nrg.ui.Component');
 goog.require('nrg.style');
@@ -31,7 +31,6 @@ goog.require('nrg.style');
  * @construtctor
  * @extends {nrg.ui.Component}
  */
-goog.provide('nrg.ui.ZippyNode');
 nrg.ui.ZippyNode = 
 function (title, parentElement, opt_expanded, opt_insertMethod) {
     goog.base(this);
@@ -469,7 +468,7 @@ nrg.ui.ZippyNode.prototype.disposeInternal = function(){
     }
 
     // Sub-Nodes
-    nrg.ui.disposeComponentMap(this.Nodes_);
+    this.disposeComponentMap(this.Nodes_);
     delete this.Nodes_;
 
 

@@ -2,6 +2,7 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 goog.provide('xiv.ui.ctrl.XtkControllerTree');
+goog.provide('xiv.ui.ctrl.XtkControllerTree.ControlSet');
 
 
 // goog
@@ -60,7 +61,6 @@ goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree',
  * @constructor
  * @dict
  */
-goog.provide('xiv.ui.ctrl.XtkControllerTree.ControlSet');
 xiv.ui.ctrl.XtkControllerTree.ControlSet = function(c2d, c3d, opt_all){
     this['2D']  =  c2d;
     this['3D']  =  c3d;

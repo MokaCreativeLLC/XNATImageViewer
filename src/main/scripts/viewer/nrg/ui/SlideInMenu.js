@@ -30,7 +30,7 @@ goog.require('nrg.ui.Component');
 goog.require('nrg.dom');
 goog.require('nrg.style');
 goog.require('nrg.fx');
-goog.require('nrg.ui');
+
 
 
 
@@ -911,7 +911,7 @@ nrg.ui.SlideInMenu.prototype.disposeInternal = function() {
     //
     // Animation Queue
     //
-    nrg.ui.disposeAnimationQueue(this.animQueue_);
+    this.disposeAnimationQueue(this.animQueue_);
     delete this.animQueue_;
 
     delete this.prevSelectedItem_;

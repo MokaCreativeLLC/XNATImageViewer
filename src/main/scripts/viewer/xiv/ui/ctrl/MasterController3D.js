@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ctrl.MasterController3D');
 
 // goog
 goog.require('goog.object');
@@ -25,7 +26,6 @@ goog.require('xiv.ui.ctrl.TwoThumbSliderController');
  * @constructor
  * @extends {xiv.ui.ctrl.XtkController}
  */
-goog.provide('xiv.ui.ctrl.MasterController3D');
 xiv.ui.ctrl.MasterController3D = function() {
     goog.base(this);
 

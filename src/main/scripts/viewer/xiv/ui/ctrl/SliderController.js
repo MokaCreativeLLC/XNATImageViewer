@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ctrl.SliderController');
 
 
 // goog
@@ -23,7 +24,6 @@ goog.require('xiv.ui.ctrl.XtkController');
  * @constructor
  * @extends {xiv.ui.ctrl.XtkController}
  */
-goog.provide('xiv.ui.ctrl.SliderController');
 xiv.ui.ctrl.SliderController = function(){
     goog.base(this);
     this.setLabel('Master Opacity');

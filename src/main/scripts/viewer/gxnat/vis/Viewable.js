@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('gxnat.vis.Viewable');
 
 // goog
 goog.require('goog.object');
@@ -24,7 +25,6 @@ goog.require('gxnat.Zip');
  *    gxnat.slicerNode.Node that will be converted to render properties.
  * @extends {gxnat.vis.Renderable}
  */
-goog.provide('gxnat.vis.Viewable');
 gxnat.vis.Viewable = function(opt_files, opt_renderProperties) {
     goog.base(this, opt_renderProperties);
 

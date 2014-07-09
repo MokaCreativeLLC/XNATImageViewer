@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg');
+goog.provide("nrg.globals");
 
 
 
@@ -9,7 +11,6 @@
  *
  * @constructor
  */
-goog.provide('nrg');
 nrg = {};
 goog.exportSymbol('nrg', nrg);
 
@@ -21,7 +22,6 @@ goog.exportSymbol('nrg', nrg);
  * 
  * @constructor
  */
-goog.provide("nrg.globals");
 nrg.globals = {};
 goog.exportSymbol('nrg.globals', nrg.globals);
 

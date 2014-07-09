@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.interactors.ZoomDisplay');
 
 // goog
 goog.require('goog.cssom');
@@ -23,7 +24,6 @@ goog.require('xiv.ui.layouts.interactors.InputController');
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.layouts.interactors.ZoomDisplay');
 xiv.ui.layouts.interactors.ZoomDisplay = function() { 
     goog.base(this);
 }

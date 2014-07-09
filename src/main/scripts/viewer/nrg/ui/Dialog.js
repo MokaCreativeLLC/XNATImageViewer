@@ -1,6 +1,7 @@
 /** 
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.Dialog');
 
 // goog
 goog.require('goog.ui.Dialog');
@@ -28,7 +29,6 @@ goog.require('nrg.ui.Component');
  * @constructor
  * @extends {goog.ui.Dialog}
  */
-goog.provide('nrg.ui.Dialog');
 nrg.ui.Dialog = function () {
     goog.base(this);
     this.setEscapeToCancel(false);

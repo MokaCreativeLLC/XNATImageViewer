@@ -12,8 +12,9 @@ goog.require('goog.string');
 
 // nrg
 goog.require('nrg.string');
+//goog.require('nrg.ui');
 goog.require('nrg.ui.Component');
-goog.require('nrg.ui');
+
 
 // xiv
 goog.require('xiv.ui.layouts.LayoutFrame');
@@ -273,7 +274,7 @@ xiv.ui.layouts.Layout.prototype.disposeInternal = function(){
     delete this.minLayoutFrameHeight_;
     delete this.minLayoutFrameWidth_;
 
-    nrg.ui.disposeComponentMap(this.LayoutFrames_);
+    this.disposeComponentMap(this.LayoutFrames_);
     delete this.LayoutFrames_;
 }
 

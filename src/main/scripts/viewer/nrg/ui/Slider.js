@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.Slider');
 
 // goog
 goog.require('goog.ui.Slider');
@@ -35,7 +36,6 @@ goog.require('nrg.ui.Component');
  *    'horizontal'.  Default is 'horizontal'.
  * @extends {goog.ui.Slider}
  */
-goog.provide('nrg.ui.Slider');
 nrg.ui.Slider = function (opt_orientation) {	 
     goog.base(this);
 

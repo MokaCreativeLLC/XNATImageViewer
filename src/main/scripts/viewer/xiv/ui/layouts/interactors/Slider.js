@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.interactors.Slider');
 
 // goog
 goog.require('goog.dom');
@@ -21,7 +22,6 @@ goog.require('nrg.ui.Slider');
  * @constructor
  * @extends {nrg.ui.Slider}
  */
-goog.provide('xiv.ui.layouts.interactors.Slider');
 xiv.ui.layouts.interactors.Slider = function() { 
     goog.base(this);
 }

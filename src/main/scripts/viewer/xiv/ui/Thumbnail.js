@@ -2,6 +2,7 @@
 * @author sunilk@mokacreativellc.com (Sunil Kumar)
 * @author amh1646@rit.edu (Amanda Hartung)
 */
+goog.provide('xiv.ui.Thumbnail');
 
 // goog
 goog.require('goog.dom');
@@ -26,7 +27,6 @@ goog.require('gxnat.vis.ViewableTree');
  *    define the XNAT-specific thumbnail
  * @extends {nrg.ui.Thumbnail}
  */
-goog.provide('xiv.ui.Thumbnail');
 xiv.ui.Thumbnail = function (Viewable_) {
     goog.base(this);
 

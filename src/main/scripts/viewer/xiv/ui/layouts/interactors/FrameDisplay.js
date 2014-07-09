@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.interactors.FrameDisplay');
 
 // goog
 goog.require('goog.dom');
@@ -22,7 +23,6 @@ goog.require('xiv.ui.layouts.interactors.InputController');
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.layouts.interactors.FrameDisplay');
 xiv.ui.layouts.interactors.FrameDisplay = function() { 
     goog.base(this);
 }

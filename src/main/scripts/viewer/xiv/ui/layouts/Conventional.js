@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.Conventional');
 
 // goog
 goog.require('goog.style')
@@ -27,7 +28,6 @@ goog.require('xiv.ui.layouts.XyzvLayout')
  * @constructor
  * @extends {xiv.ui.layouts.XyzvLayout}
  */
-goog.provide('xiv.ui.layouts.Conventional');
 xiv.ui.layouts.Conventional = function() { 
     goog.base(this); 
 }

@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.fx');
 
 // goog
 goog.require('goog.events');
@@ -36,7 +37,6 @@ goog.require('nrg.convert');
  * 'goog.fx' package where it can.  
  * @constructor
  */
-goog.provide('nrg.fx');
 nrg.fx = function () {};
 goog.exportSymbol('nrg.fx', nrg.fx);
 

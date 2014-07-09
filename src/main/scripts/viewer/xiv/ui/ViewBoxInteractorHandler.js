@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ViewBoxInteractorHandler');
 
 // goog
 goog.require('goog.events.EventTarget');
@@ -62,7 +63,6 @@ goog.require('xiv.ui.ctrl.XtkControllerTree');
  * @type {!xiv.ui.ViewBoxDialogs} Dialogs
  * @extends {goog.events.EventTarget}
  */
-goog.provide('xiv.ui.ViewBoxInteractorHandler');
 xiv.ui.ViewBoxInteractorHandler = 
 function (ViewBox, Renderer, LayoutHandler, Dialogs) {
     goog.base(this);

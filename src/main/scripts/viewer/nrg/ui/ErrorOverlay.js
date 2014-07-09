@@ -1,6 +1,7 @@
 /** 
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.ErrorOverlay');
 
 // goog
 goog.require('goog.dom');
@@ -15,7 +16,6 @@ goog.require('nrg.ui.Dialog');
  * @constructor
  * @extends {nrg.ui.Dialog}
  */
-goog.provide('nrg.ui.ErrorOverlay');
 nrg.ui.ErrorOverlay = function () {
     goog.base(this);   
     goog.dom.classes.add(this.overlay_, nrg.ui.ErrorOverlay.CSS.OVERLAY);

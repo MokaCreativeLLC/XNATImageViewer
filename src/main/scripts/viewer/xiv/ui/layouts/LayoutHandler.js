@@ -23,7 +23,6 @@ goog.require('nrg.ui.Component');
 goog.require('nrg.dom');
 goog.require('nrg.fx');
 goog.require('nrg.string');
-goog.require('nrg.ui');
 goog.require('nrg.array');
 goog.require('nrg.style');
 
@@ -963,7 +962,7 @@ xiv.ui.layouts.LayoutHandler.prototype.disposeInternal = function(){
     // Master layout
     delete this.masterLayout_;
 
-    nrg.ui.disposeComponentMap(this.Layouts_);
+    this.disposeComponentMap(this.Layouts_);
     delete this.Layouts_;
 
     goog.object.clear(this.LayoutObjects_);

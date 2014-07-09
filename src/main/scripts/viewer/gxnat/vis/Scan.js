@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('gxnat.vis.Scan');
 
 // goog
 goog.require('goog.string');
@@ -27,7 +28,6 @@ goog.require('gxnat.vis.ViewableGroup');
  * @constructor
  * @extends {gxnat.vis.AjaxViewableTree}
  */
-goog.provide('gxnat.vis.Scan');
 gxnat.vis.Scan = 
 function(opt_viewableJson, opt_experimentUrl, opt_initComplete) {
     //

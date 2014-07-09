@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ThumbnailGallery');
 
 // goog
 goog.require('goog.string');
@@ -36,7 +37,6 @@ goog.require('xiv.ui.Thumbnail');
  * @constructor
  * @extends {nrg.ui.ThumbnailGallery}
  */
-goog.provide('xiv.ui.ThumbnailGallery');
 xiv.ui.ThumbnailGallery = function () {
     goog.base(this);
 

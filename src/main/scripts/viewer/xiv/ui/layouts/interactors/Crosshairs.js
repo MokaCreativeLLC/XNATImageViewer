@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.interactors.Crosshairs');
 
 // goog
 goog.require('goog.object');
@@ -21,7 +22,6 @@ goog.require('nrg.ui.Component');
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.layouts.interactors.Crosshairs');
 xiv.ui.layouts.interactors.Crosshairs = function() { 
     goog.base(this);
 }

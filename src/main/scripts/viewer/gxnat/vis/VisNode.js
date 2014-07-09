@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('gxnat.vis.VisNode');
 
 // goog
 goog.require('goog.Disposable');
@@ -9,7 +10,6 @@ goog.require('goog.Disposable');
 /**
  * @extends {goog.Disposable}
  */
-goog.provide('gxnat.vis.VisNode');
 gxnat.vis.VisNode = function(opt_files, opt_displayProperties) {
     goog.base(this);
 }

@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.ScrollableZippyTree');
 
 // goog
 goog.require('goog.array');
@@ -26,7 +27,6 @@ goog.require('nrg.style');
  * @constructor
  * @extends {nrg.ui.ScrollableContainer}
  */
-goog.provide('nrg.ui.ScrollableZippyTree');
 nrg.ui.ScrollableZippyTree = function () {
     goog.base(this);
 }

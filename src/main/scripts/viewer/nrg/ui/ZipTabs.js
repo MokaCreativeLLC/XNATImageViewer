@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.ZipTabs');
 
 // goog
 goog.require('goog.array');
@@ -30,7 +31,6 @@ goog.require('nrg.ui.Resizable.EventType');
  * @param {string=} opt_orientation
  * @extends {nrg.ui.Tabs}
  */
-goog.provide('nrg.ui.ZipTabs');
 nrg.ui.ZipTabs = function (opt_orientation) {
     goog.base(this, opt_orientation);
 }

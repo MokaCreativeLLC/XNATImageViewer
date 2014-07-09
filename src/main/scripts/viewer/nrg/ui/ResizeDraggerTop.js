@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar))
  */
+goog.provide('nrg.ui.ResizeDraggerTop');
 
 // goog
 goog.require('goog.style');
@@ -18,7 +19,6 @@ goog.require('nrg.ui.ResizeDragger');
  * @extends {nrg.ui.ResizeDragger}
  * @param {!Element} resizee The element that will be resized.
  */
-goog.provide('nrg.ui.ResizeDraggerTop');
 nrg.ui.ResizeDraggerTop = function(resizee) {
     goog.base(this, 'right', resizee);
 };

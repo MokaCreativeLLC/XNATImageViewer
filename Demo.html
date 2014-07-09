@@ -62,19 +62,24 @@
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/framedisplay.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/zoomdisplay.css">
 
-<!--
+
 <script src="src/main/scripts/viewer/closure-library/closure/goog/base.js"></script>
 <script src="src/main/scripts/viewer/X/xtk-deps.js"></script>
 <script src="src/main/scripts/viewer/_custom/X/xtk-custom-deps.js"></script>
 <script src="src/main/scripts/viewer/jszip/jszip.js"></script>
-<script src="src/main/scripts/viewer/gxnat/gxnat-deps.js"></script>
 <script src="src/main/scripts/viewer/nrg/nrg-deps.js"></script>
+<script src="src/main/scripts/viewer/gxnat/gxnat-deps.js"></script>
 <script src="src/main/scripts/viewer/xiv/xiv-deps.js"></script>
+
+
+<!--
+<script src="src/main/scripts/viewer/test-compile.js"></script>
 -->
 
-
-<script src="src/main/scripts/viewer/test-compile.js"></script>
-
+<script>
+goog.require('xiv');
+goog.require('xiv.ui.Modal');
+</script>
 
 </head>
 <body>
@@ -88,7 +93,7 @@
 //goog.require('xiv');
 //goog.require('xiv.compatibility');
 //goog.require('xiv.ui');
-//goog.require('xiv.ui.Modal');
+goog.require('xiv.ui.Modal');
 //goog.require('xiv.sampleData.Scans');
 //goog.require('xiv.sampleData.SlicerScenes');
 
@@ -121,7 +126,7 @@ function launchXImgView(opt_dataPath, opt_modalState, opt_serverRoot) {
     //window.console.log('xiv', xiv);  
     //window.console.log('compat', xiv.isCompatible);
     //window.console.log('root', xiv.prototype.setServerRoot);
-    //window.console.log('states', xiv.ui.Modal);
+    window.console.log('states', xiv.ui.Modal);
 
     //-------------------
     // Verify compatibilities (browser, WebGL, etc.)
@@ -183,7 +188,7 @@ function launchXImgView(opt_dataPath, opt_modalState, opt_serverRoot) {
     //-------------------
     //window.console.log('modal state', modalState);
     var XnatImageViewer = new xiv(XIV_STATE, modalState, dataPath, rootUrl);
-
+    XnatImageViewer.setModalType(xiv.ui.Modal);
 
     //-------------------
     // Track the serverRoot property within xiv.

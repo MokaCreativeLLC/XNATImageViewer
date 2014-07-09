@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.array');
 
 
 // goog
@@ -11,7 +12,6 @@ goog.require('goog.array');
  * JS platform or goog.array library.
  * @constructor
  */
-goog.provide('nrg.array');
 nrg.array = function () {};
 goog.exportSymbol('nrg.array', nrg.array);
 

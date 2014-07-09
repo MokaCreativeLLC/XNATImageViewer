@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.ResizeDragger');
+goog.provide('nrg.ui.ResizeDragger.EventType');
 
 // goog
 goog.require('goog.fx.Dragger');
@@ -26,8 +28,6 @@ goog.require('nrg.ui.Component');
  * @param {!Element} resizee The element to be be resized.
  * @extends {nrg.ui.Component}
  */
-goog.provide('nrg.ui.ResizeDragger');
-goog.provide('nrg.ui.ResizeDragger.EventType');
 nrg.ui.ResizeDragger = function(direction, resizee) {
     if (!goog.isDefAndNotNull(direction)){
 	throw new Error ('Invalid direction for ResizeDragger: ' + direction);

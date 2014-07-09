@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.SingleFrameLayout');
 
 // goog
 goog.require('goog.style')
@@ -19,7 +20,6 @@ goog.require('xiv.ui.layouts.XyzvLayout')
  * @param {string= | Array.<string>=} opt_frames
  * @extends {xiv.ui.layouts.XyzvLayout}
  */
-goog.provide('xiv.ui.layouts.SingleFrameLayout');
 xiv.ui.layouts.SingleFrameLayout = function(opt_frames) { 
     goog.base(this, opt_frames); 
 }

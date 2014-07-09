@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('gxnat.vis.ViewableGroup');
 
 // goog
 goog.require('goog.array');
@@ -17,7 +18,6 @@ goog.require('gxnat.vis.Viewable');
  * @param {gxnat.vis.Viewable= | Array.<gxnat.vis.Viewable>=} opt_viewables   
  * @extends {gxnat.vis.Renderable}
  */
-goog.provide('gxnat.vis.ViewableGroup');
 gxnat.vis.ViewableGroup = function(opt_viewables) {
     goog.base(this);
 

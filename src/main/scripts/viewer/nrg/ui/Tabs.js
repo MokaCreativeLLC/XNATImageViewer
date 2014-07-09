@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.Tabs');
 
 // goog
 goog.require('goog.dom');
@@ -28,7 +29,6 @@ goog.require('nrg.ui.ScrollableContainer');
  * @param {string=} opt_tabOrientation
  * @extends {nrg.ui.Component}
  */
-goog.provide('nrg.ui.Tabs');
 nrg.ui.Tabs = function (opt_tabOrientation) {
     goog.base(this);
     //

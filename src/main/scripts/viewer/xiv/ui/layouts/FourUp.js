@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.FourUp');
 
 // goog
 goog.require('goog.style')
@@ -26,7 +27,6 @@ goog.require('xiv.ui.layouts.XyzvLayout')
  * @constructor
  * @extends {xiv.ui.layouts.XyzvLayout}
  */
-goog.provide('xiv.ui.layouts.FourUp');
 xiv.ui.layouts.FourUp = function() { 
     goog.base(this); 
 }

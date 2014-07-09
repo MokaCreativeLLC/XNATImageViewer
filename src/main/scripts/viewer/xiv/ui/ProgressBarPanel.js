@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ProgressBarPanel');
 
 // goog
 goog.require('goog.ui.ProgressBar');
@@ -22,7 +23,6 @@ goog.require('nrg.ui.Component');
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.ProgressBarPanel');
 xiv.ui.ProgressBarPanel = function() {
     goog.base(this);
 

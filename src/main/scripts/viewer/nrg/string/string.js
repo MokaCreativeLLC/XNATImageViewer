@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.string');
 
 // goog
 goog.require('goog.string');
@@ -10,7 +11,6 @@ goog.require('goog.string');
 /**
  * @constructor
  */
-goog.provide('nrg.string');
 nrg.string = function () {};
 goog.exportSymbol('nrg.string', nrg.string);
 

@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.style');
 
 // goog
 goog.require('goog.events');
@@ -22,7 +23,6 @@ goog.require('nrg.convert');
  * goog.style.
  * @constructor
  */
-goog.provide('nrg.style');
 nrg.style = function () {};
 goog.exportSymbol('nrg.style', nrg.style);
 

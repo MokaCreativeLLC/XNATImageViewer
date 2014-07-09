@@ -2,6 +2,7 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  * @author amh1646@rit.edu (Amanda Hartung)
  */
+goog.provide('xiv.ui.ViewBox');
 
 // goog
 goog.require('goog.string');
@@ -45,7 +46,6 @@ goog.require('xiv.ui.ViewBoxInteractorHandler');
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.ViewBox');
 
 xiv.ui.ViewBox = function () {
     goog.base(this);

@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('gxnat.vis.Slicer');
 
 // goog
 goog.require('goog.string');
@@ -36,7 +37,6 @@ goog.require('gxnat.vis.Viewable');
  * @constructor
  * @extends {gxnat.vis.AjaxViewableTree}
  */
-goog.provide('gxnat.vis.Slicer');
 gxnat.vis.Slicer = 
 function(opt_viewableJson, opt_experimentUrl, opt_initComplete) {
 

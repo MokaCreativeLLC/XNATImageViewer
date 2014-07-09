@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.Component');
 
 // goog
 goog.require('goog.ui.Component');
@@ -28,7 +29,6 @@ goog.require('nrg.string');
  * @constructor
  * @extends {goog.ui.Component}
  */
-goog.provide('nrg.ui.Component');
 nrg.ui.Component = function (opt_domHelper) {
     goog.base(this, opt_domHelper);
     
@@ -414,6 +414,72 @@ nrg.ui.Component.prototype.disposeInternal = function() {
 
 
 
+/**
+ * @param {!goog.fx.Animation || !Array.<goog.fx.Animation>} The animation 
+ *     or animations to destroy.
+ * @public
+ */
+nrg.ui.Component.prototype.disposeAnimations = function(anims) {
+    if (!goog.isDefAndNotNull(anims)) { return } ;
+
+    anims = !goog.isArray(anims) ? [anims] : anims;
+    goog.array.forEach(anims, function(anim){
+	goog.events.removeAll(anim);
+	anim.dispose();
+    })
+    goog.array.clear(anims);
+}
+
+
+
+/**
+ * @param {!goog.fx.AnimationQueue} The animation queue to dispose of.
+ * @public
+ */
+nrg.ui.Component.prototype.disposeAnimationQueue = function(animQueue) {
+    if (!goog.isDefAndNotNull(animQueue)) { return } ;
+    goog.events.removeAll(animQueue);
+    animQueue.dispose();
+}
+
+
+
+/**
+ * Disposes of a map whose key-valye pairs are strings to Elements.
+ *
+ * @param {!Object} An object with properties described above.
+ * @public
+ */
+nrg.ui.Component.prototype.disposeElementMap = function(obj) {
+    goog.object.forEach(obj, function(node, key){
+	goog.events.removeAll(node);
+	goog.dom.removeNode(node);
+	delete obj[key];
+    })
+    goog.object.clear(obj);
+}
+
+
+
+/**
+ * Disposes of a map whose key-valye pairs are strings to goog.ui.Components.
+ *
+ * @param {!Object} An object with string-defined properties whose values 
+ *    inherit from goog.ui.Component.
+ * @public
+ */
+nrg.ui.Component.prototype.disposeComponentMap = function(obj) {
+    goog.object.forEach(obj, function(node, key){
+	goog.events.removeAll(node);
+	node.dispose();
+	delete obj[key];
+    })
+    goog.object.clear(obj);
+}
+
+
+
+
 goog.exportSymbol('nrg.ui.Component.animationLengths',
 	nrg.ui.Component.animationLengths);
 goog.exportSymbol('nrg.ui.Component.idPrefixToCssClass',
@@ -438,5 +504,15 @@ goog.exportSymbol('nrg.ui.Component.prototype.render',
 	nrg.ui.Component.prototype.render);
 goog.exportSymbol('nrg.ui.Component.prototype.disposeInternalCalled',
 	nrg.ui.Component.prototype.disposeInternalCalled);
+
+goog.exportSymbol('nrg.ui.Component.prototype.disposeAnimations',
+	nrg.ui.Component.prototype.disposeAnimations);
+goog.exportSymbol('nrg.ui.Component.prototype.disposeAnimationQueue',
+	nrg.ui.Component.prototype.disposeAnimationQueue);
+goog.exportSymbol('nrg.ui.Component.prototype.disposeElementMap',
+	nrg.ui.Component.prototype.disposeElementMap);
+goog.exportSymbol('nrg.ui.Component.prototype.disposeComponentMap',
+	nrg.ui.Component.prototype.disposeComponentMap);
+
 goog.exportSymbol('nrg.ui.Component.prototype.disposeInternal',
 	nrg.ui.Component.prototype.disposeInternal);

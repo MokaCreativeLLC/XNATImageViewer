@@ -1,6 +1,8 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('nrg.ui.Resizable');
+goog.provide('nrg.ui.Resizable.EventType');
 
 // goog
 goog.require('goog.dom');
@@ -48,8 +50,6 @@ goog.require('nrg.ui.ResizeDragger.EventType');
  *    are also valid.
  * @extends {nrg.ui.Component}
  */
-goog.provide('nrg.ui.Resizable');
-goog.provide('nrg.ui.Resizable.EventType');
 nrg.ui.Resizable = function(element, opt_dirs) {
     goog.base(this);
 

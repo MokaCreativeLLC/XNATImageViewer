@@ -2,6 +2,8 @@
  * @preserve Copyright 2014 Washington Universityf
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.Modal');
+
 
 // goog
 goog.require('goog.object');
@@ -18,6 +20,7 @@ goog.require('goog.fx.dom.PredefinedEffect');
 goog.require('goog.events.Event');
 goog.require('goog.dom.classes');
 
+
 // nrg
 goog.require('nrg.dom');
 goog.require('nrg.string');
@@ -30,7 +33,6 @@ goog.require('nrg.ui.Thumbnail');
 goog.require('nrg.ui.ZipTabs');
 
 // xiv
-goog.require('xiv.ui');
 goog.require('xiv.ui.ThumbnailGallery');
 goog.require('xiv.ui.ViewBoxHandler');
 goog.require('xiv.ui.ViewBox');
@@ -45,7 +47,6 @@ goog.require('xiv.ui.ViewBox');
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.Modal');
 xiv.ui.Modal = function () {
     goog.base(this);  
  
@@ -1320,15 +1321,15 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
     delete this.dims_;
 
     // anims_
-    nrg.ui.disposeAnimations(this.anims_);
+    this.disposeAnimations(this.anims_);
     delete this.anims_;
 
     // animQueue_
-    nrg.ui.disposeAnimationQueue(this.animQueue_);
+    this.disposeAnimationQueue(this.animQueue_);
     delete this.animQueue_;
     
     // buttons_
-    nrg.ui.disposeElementMap(this.buttons_);
+    this.disposeElementMap(this.buttons_);
     delete this.buttons_;
 
     // ViewBoxHandler_

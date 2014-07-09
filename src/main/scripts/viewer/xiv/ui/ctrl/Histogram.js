@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.ctrl.Histogram');
 
 // goog
 goog.require('goog.dom');
@@ -22,7 +23,6 @@ goog.require('xiv.ui.ctrl.XtkController');
  * @constructor
  * @extends {xiv.ui.ctrl.XtkController}
  */
-goog.provide('xiv.ui.ctrl.Histogram');
 xiv.ui.ctrl.Histogram = function() {
     goog.base(this);
 }

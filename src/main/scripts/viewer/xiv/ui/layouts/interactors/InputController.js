@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('xiv.ui.layouts.interactors.InputController');
 
 // goog
 goog.require('goog.dom.classes');
@@ -21,7 +22,6 @@ goog.require('nrg.ui.Component');
  * @constructor
  * @extends {nrg.ui.Component}
  */
-goog.provide('xiv.ui.layouts.interactors.InputController');
 xiv.ui.layouts.interactors.InputController = function() { 
     goog.base(this);
 }

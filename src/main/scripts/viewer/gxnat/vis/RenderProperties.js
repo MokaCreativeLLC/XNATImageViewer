@@ -1,6 +1,7 @@
 /**
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
+goog.provide('gxnat.vis.RenderProperties');
 
 // goog
 goog.require('goog.object');
@@ -19,7 +20,6 @@ goog.require('gxnat.slicerNode.Mesh');
  * @param {!gxnat.slicerNode.Node}
  * @extends {goog.Disposable}
  */
-goog.provide('gxnat.vis.RenderProperties');
 gxnat.vis.RenderProperties = function(slicerNode){
     goog.base(this);
     
