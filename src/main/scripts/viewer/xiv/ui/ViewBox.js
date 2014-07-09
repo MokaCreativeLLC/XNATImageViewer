@@ -462,6 +462,7 @@ xiv.ui.ViewBox.prototype.onRendering_ = function(e){
 
 /**
  * @struct
+ * @constructor
  */
 xiv.ui.ViewBox.ControllersSet = function(controller, folders){
     this.CONTROLLER = controller;

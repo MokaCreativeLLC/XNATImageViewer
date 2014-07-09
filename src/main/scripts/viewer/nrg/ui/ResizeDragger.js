@@ -27,6 +27,7 @@ goog.require('nrg.ui.Component');
  * @param {!string} direction The resize direction of the dragger.
  * @param {!Element} resizee The element to be be resized.
  * @extends {nrg.ui.Component}
+ * @constructor
  */
 nrg.ui.ResizeDragger = function(direction, resizee) {
     if (!goog.isDefAndNotNull(direction)){
@@ -379,8 +380,8 @@ nrg.ui.ResizeDragger.prototype.updateTrackingValues = function() {
     //
     // Calculate dragger limits specific to the dragger
     //
-    if (this.constructor.calculateDraggerLimits) {
-	this.constructor.calculateDraggerLimits.bind(this)();
+    if (this.calculateDraggerLimits) {
+	this.calculateDraggerLimits(this);
     }
 }
 
@@ -445,8 +446,8 @@ nrg.ui.ResizeDragger.prototype.onResize = function(e) {
     //
     // Call resize method
     //
-    if (goog.isDefAndNotNull(this.constructor.resizeMethod)) {
-	this.constructor.resizeMethod.bind(this)();
+    if (goog.isDefAndNotNull(this.resizeMethod)) {
+	this.resizeMethod();
     }
 }
 

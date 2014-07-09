@@ -443,7 +443,7 @@ nrg.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(event){
 	return;
     }
 
-    var hoverThumbId = /**@type{!string}*/ 
+    var hoverThumbId = 
     mouseThumb.id.replace(nrg.ui.Thumbnail.HOVERABLE_PREFIX, '');
 
     if (this.storedHoverThumbId_ !== hoverThumbId) {
@@ -476,8 +476,8 @@ nrg.ui.ThumbnailGallery.prototype.setThumbnailClasses_ =
 	 * @type {Element} 
 	 */
 	var element;
-	var classes = /**@type {!Array.string} */ [];
-	var thumbID = /**@type {!string} */ '';
+	var classes = [];
+	var thumbID =  '';
 	for (thumbID in this.Thumbs_) {
 	    switch(nodeCategory){
 	    case 'thumbnail':

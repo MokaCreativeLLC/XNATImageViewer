@@ -2,7 +2,6 @@
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 goog.provide('nrg.ui.Resizable');
-goog.provide('nrg.ui.Resizable.EventType');
 
 // goog
 goog.require('goog.dom');
@@ -28,7 +27,6 @@ goog.require('nrg.ui.ResizeDraggerBottom');
 goog.require('nrg.ui.ResizeDraggerLeft');
 goog.require('nrg.ui.ResizeDraggerTopRight');
 goog.require('nrg.style');
-goog.require('nrg.ui.ResizeDragger.EventType');
 //goog.require('nrg.ui.ResizeDraggerBottomRight');
 //goog.require('nrg.ui.ResizeDraggerTopLeft');
 //goog.require('nrg.ui.ResizeDraggerBottomLeft');
@@ -42,13 +40,13 @@ goog.require('nrg.ui.ResizeDragger.EventType');
  * This is an adaptation from the following source:
  * http://dev.ariel-networks.com/Members/uchida/stuff/goog-ui-resizable.zip/
  * 
- * @constructor
  * @param {!Element} element The element that will be resizable.
  * @param {!Array.string | !string} opt_dirs The optional directions. See
  *    property keys of 'nrg.ui.Resizable.Directions'. Defaults to 
  *    property 'nrg.ui.Resizable.defaultDirections'. 'ALL' or 'DEFAULT' 
  *    are also valid.
  * @extends {nrg.ui.Component}
+ * @constructor
  */
 nrg.ui.Resizable = function(element, opt_dirs) {
     goog.base(this);
@@ -66,6 +64,27 @@ nrg.ui.Resizable = function(element, opt_dirs) {
      * @private
      */
     this.ResizeDraggers_ = {};
+
+    /**
+     * @type {!goog.math.Rect}
+     * @private
+     */
+    this.limits_ = nrg.ui.Resizable.DEFAULT_LIMITS;
+
+
+    /**
+     * @type {!number}
+     * @private
+     */
+    this.minWidth_ = nrg.ui.Resizable.DEFAULT_MIN_WIDTH; 
+
+
+    /**
+     * @type {!number}
+     * @private
+     */
+    this.minHeight_ = nrg.ui.Resizable.DEFAULT_MIN_HEIGHT;
+
 
 
     this.setResizeDirections(opt_dirs || nrg.ui.Resizable.defaultDirections);
@@ -156,8 +175,9 @@ nrg.ui.Resizable.DEFAULT_MIN_WIDTH = 20;
 
 /**
  * @type {Object.<string, number>}
+ * @const
  */
-this.boundThresholds_ = {
+nrg.ui.Resizable.boundThresholds_ = {
     'TOP': 4,
     'LEFT': 4,
     'RIGHT': 4,
@@ -204,25 +224,7 @@ nrg.ui.Resizable.prototype.boundaryElt_;
 
 
 
-/**
- * @type {goog.math.Rect}
- * @private
- */
-nrg.ui.Resizable.prototype.limits_ = nrg.ui.Resizable.DEFAULT_LIMITS;
 
-
-/**
- * @type {number}
- * @private
- */
-nrg.ui.Resizable.prototype.minWidth_ = nrg.ui.Resizable.DEFAULT_MIN_WIDTH, 
-
-
-/**
- * @type {number}
- * @private
- */
-nrg.ui.Resizable.prototype.minHeight_ = nrg.ui.Resizable.DEFAULT_MIN_HEIGHT;
 
 
 

@@ -61,8 +61,8 @@ nrg.ui.ResizeDraggerTopRight.prototype.updateTrackingValues = function() {
     //
     if (this.Dragger.isDragging() || this.isAnimating) { return };
 
-    nrg.ui.ResizeDraggerRight.calculateDraggerLimits.bind(this)();
-    nrg.ui.ResizeDraggerTop.calculateDraggerLimits.bind(this)();
+    nrg.ui.ResizeDraggerRight.prototype.calculateDraggerLimits.bind(this)();
+    nrg.ui.ResizeDraggerTop.prototype.calculateDraggerLimits.bind(this)();
 }
 
 
@@ -72,8 +72,8 @@ nrg.ui.ResizeDraggerTopRight.prototype.updateTrackingValues = function() {
  */
 nrg.ui.ResizeDraggerTopRight.prototype.onResize = function(e) {
     goog.base(this, 'onResize');
-    nrg.ui.ResizeDraggerRight.resizeMethod.bind(this)();
-    nrg.ui.ResizeDraggerTop.resizeMethod.bind(this)();
+    nrg.ui.ResizeDraggerRight.prototype.resizeMethod.bind(this)();
+    nrg.ui.ResizeDraggerTop.prototype.resizeMethod.bind(this)();
 }
 
 

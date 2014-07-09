@@ -694,7 +694,8 @@ nrg.ui.ZippyTree.prototype.createFadeAnim_ = function(elt, opt_callback) {
 
     anim.play();
     return;
-
+    
+    /**
     if (!this.AnimQueue_.isPlaying()){		
 	this.AnimQueue_.add(anim);
     } else {
@@ -709,6 +710,7 @@ nrg.ui.ZippyTree.prototype.createFadeAnim_ = function(elt, opt_callback) {
 	    opt_callback(e);
 	})
     }
+    */
 }
 
 
@@ -987,7 +989,7 @@ nrg.ui.ZippyTree.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
 
     goog.dom.removeNode(this.rootElt_);
-    this.rootElt_;
+    delete this.rootElt_;
 
     this.disposeAnims_();
 

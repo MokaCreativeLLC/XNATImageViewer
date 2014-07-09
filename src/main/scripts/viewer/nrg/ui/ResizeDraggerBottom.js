@@ -47,15 +47,15 @@ nrg.ui.ResizeDraggerBottom.CSS_SUFFIX = {}
 /**
  * @public
  */
-nrg.ui.ResizeDraggerBottom.calculateDraggerLimits = function() {
+nrg.ui.ResizeDraggerBottom.prototype.calculateDraggerLimits = function() {
     this.draggerLimitTop = this.resizeePos.top + this.minSize.height +
 	this.vertDraggerOffset;
 
     this.draggerLimitBottom = this.boundaryPos.bottom + this.vertDraggerOffset;
     this.draggerLimitHeight = this.draggerLimitBottom - this.draggerLimitTop;
 }
-goog.exportSymbol('nrg.ui.ResizeDraggerBottom.calculateDraggerLimits', 
-		  nrg.ui.ResizeDraggerBottom.calculateDraggerLimits)
+goog.exportSymbol('nrg.ui.ResizeDraggerBottom.prototype.calculateDraggerLimits', 
+		  nrg.ui.ResizeDraggerBottom.prototype.calculateDraggerLimits)
 
 
 
@@ -63,15 +63,15 @@ goog.exportSymbol('nrg.ui.ResizeDraggerBottom.calculateDraggerLimits',
 /**
  * @public
  */
-nrg.ui.ResizeDraggerBottom.resizeMethod = function() {
+nrg.ui.ResizeDraggerBottom.prototype.resizeMethod = function() {
     var deltaY = this.handlePos.y - this.resizeePos.bottom; 
     var height = this.resizeeSize.height + deltaY;
     //window.console.log("DELTA Y", deltaY);
     goog.style.setHeight(this.resizee, Math.max(height, 
 	this.minSize.height));
 }
-goog.exportSymbol('nrg.ui.ResizeDraggerBottom.resizeMethod', 
-		  nrg.ui.ResizeDraggerBottom.resizeMethod);
+goog.exportSymbol('nrg.ui.ResizeDraggerBottom.prototype.resizeMethod', 
+		  nrg.ui.ResizeDraggerBottom.prototype.resizeMethod);
 
 
 
@@ -144,10 +144,6 @@ goog.exportSymbol('nrg.ui.ResizeDraggerBottom.ID_PREFIX',
 	nrg.ui.ResizeDraggerBottom.ID_PREFIX);
 goog.exportSymbol('nrg.ui.ResizeDraggerBottom.CSS_SUFFIX',
 	nrg.ui.ResizeDraggerBottom.CSS_SUFFIX);
-goog.exportSymbol('nrg.ui.ResizeDraggerBottom.calculateDraggerLimits',
-	nrg.ui.ResizeDraggerBottom.calculateDraggerLimits);
-goog.exportSymbol('nrg.ui.ResizeDraggerBottom.resizeMethod',
-	nrg.ui.ResizeDraggerBottom.resizeMethod);
 goog.exportSymbol('nrg.ui.ResizeDraggerBottom.prototype.update',
 	nrg.ui.ResizeDraggerBottom.prototype.update);
 goog.exportSymbol('nrg.ui.ResizeDraggerBottom.prototype.getSlideTrajectory',

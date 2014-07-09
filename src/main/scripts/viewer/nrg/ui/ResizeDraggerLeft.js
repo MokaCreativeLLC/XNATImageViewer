@@ -46,7 +46,7 @@ nrg.ui.ResizeDraggerLeft.CSS_SUFFIX = {}
 /**
  * @public
  */
-nrg.ui.ResizeDraggerLeft.resizeMethod = function() {
+nrg.ui.ResizeDraggerLeft.prototype.resizeMethod = function() {
 
     //
     // Resize
@@ -67,8 +67,8 @@ nrg.ui.ResizeDraggerLeft.resizeMethod = function() {
     goog.style.setPosition(this.getElement(), this.handlePos.x,
 			   this.resizeePos.y)
 }
-goog.exportSymbol('nrg.ui.ResizeDraggerLeft.resizeMethod', 
-		  nrg.ui.ResizeDraggerLeft.resizeMethod);
+goog.exportSymbol('nrg.ui.ResizeDraggerLeft.prototype.resizeMethod', 
+		  nrg.ui.ResizeDraggerLeft.prototype.resizeMethod);
 
 
 

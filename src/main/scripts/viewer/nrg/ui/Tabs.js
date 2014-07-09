@@ -420,7 +420,7 @@ nrg.ui.Tabs.prototype.addTab = function(tabTitle) {
     //
     // create Create goog TabPage object, add to tabPane
     //
-    var googTab = /**@type {!goog.ui.TabPane.TabPage}*/ 
+    var googTab = 
     new goog.ui.TabPane.TabPage(content, tabTitle)
     this.googTabPane_.addPage(googTab);
 
@@ -679,7 +679,7 @@ nrg.ui.Tabs.prototype.deactivate = function (ind) {
     //
     // goog.ui.Tab method
     //
-    this.googTabPane_.setSelectedIndex(01);
+    this.googTabPane_.setSelectedIndex(0);
 
     //
     // Classes

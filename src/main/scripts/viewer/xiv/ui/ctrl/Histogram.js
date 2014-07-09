@@ -262,7 +262,7 @@ xiv.ui.ctrl.Histogram.prototype.render = function(opt_parent){
 
 
 
-/*
+/**
  * @private
  */
 xiv.ui.ctrl.Histogram.prototype.tallyLevels_ = function() {

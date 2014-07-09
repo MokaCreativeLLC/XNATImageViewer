@@ -46,7 +46,7 @@ nrg.ui.ResizeDraggerTop.CSS_SUFFIX = {}
 /**
  * @public
  */
-nrg.ui.ResizeDraggerTop.calculateDraggerLimits = function() {
+nrg.ui.ResizeDraggerTop.prototype.calculateDraggerLimits = function() {
     this.draggerLimitTop = this.boundaryPos.top - this.vertDraggerOffset;
     this.draggerLimitBottom = this.resizeePos.bottom - this.minSize.height + 
 	this.vertDraggerOffset;
@@ -60,7 +60,7 @@ goog.exportSymbol('nrg.ui.ResizeDraggerTop.calculateDraggerLimits',
 /**
  * @public
  */
-nrg.ui.ResizeDraggerTop.resizeMethod = function() {
+nrg.ui.ResizeDraggerTop.prototype.resizeMethod = function() {
     //
     // Calculate height
     //
@@ -78,8 +78,7 @@ nrg.ui.ResizeDraggerTop.resizeMethod = function() {
     this.resizee.style.top = (newEltTop).toString() + 'px';
     goog.style.setHeight(this.resizee, Math.max(height, this.minSize.height));
 }
-goog.exportSymbol('nrg.ui.ResizeDraggerTop.resizeMethod', 
-		  nrg.ui.ResizeDraggerTop.resizeMethod);
+
 
 
 
@@ -152,8 +151,10 @@ goog.exportSymbol('nrg.ui.ResizeDraggerTop.ID_PREFIX',
 	nrg.ui.ResizeDraggerTop.ID_PREFIX);
 goog.exportSymbol('nrg.ui.ResizeDraggerTop.CSS_SUFFIX',
 	nrg.ui.ResizeDraggerTop.CSS_SUFFIX);
-goog.exportSymbol('nrg.ui.ResizeDraggerTop.calculateDraggerLimits',
-	nrg.ui.ResizeDraggerTop.calculateDraggerLimits);
+goog.exportSymbol('nrg.ui.ResizeDraggerTop.prototype.calculateDraggerLimits',
+	nrg.ui.ResizeDraggerTop.prototype.calculateDraggerLimits);
+goog.exportSymbol('nrg.ui.ResizeDraggerTop.prototype.resizeMethod', 
+		  nrg.ui.ResizeDraggerTop.prototype.resizeMethod);
 goog.exportSymbol('nrg.ui.ResizeDraggerTop.resizeMethod',
 	nrg.ui.ResizeDraggerTop.resizeMethod);
 goog.exportSymbol('nrg.ui.ResizeDraggerTop.prototype.update',

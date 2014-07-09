@@ -337,7 +337,7 @@ nrg.ui.Thumbnail.prototype.setActive = function(active, opt_highlightBg) {
 
 /**
  * Generic style update method.
- * @private {Object=} opt_args The arguments to apply to the style.
+ * @type {Object=} opt_args The arguments to apply to the style.
  * @public
  */
 nrg.ui.Thumbnail.prototype.updateStyle = function (opt_args) {
@@ -361,14 +361,14 @@ nrg.ui.Thumbnail.prototype.repositionHoverable = function(){
 
 
     // Find the common ancestor
-    var commonAncestor = /**@type {Element}*/
+    var commonAncestor = 
     goog.dom.findCommonAncestor(elt, hoverNode);
-    var thumbPos = /**@type {!goog.math.Coordinate}*/
+    var thumbPos = 
     goog.style.getRelativePosition(elt, commonAncestor);
     
-    var imgClone = /**@type {Element}*/ 
+    var imgClone = 
     hoverNode.getElementsByTagName('img')[0];
-    var textClone = /**@type {Element}*/ 
+    var textClone = 
     hoverNode.getElementsByTagName('div')[0];
     var cloneWidth =  0;
 

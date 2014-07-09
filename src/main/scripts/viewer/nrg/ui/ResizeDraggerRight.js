@@ -47,21 +47,21 @@ nrg.ui.ResizeDraggerRight.CSS_SUFFIX = {}
 /**
  * @public
  */
-nrg.ui.ResizeDraggerRight.calculateDraggerLimits = function() {
+nrg.ui.ResizeDraggerRight.prototype.calculateDraggerLimits = function() {
     this.draggerLimitLeft = this.resizeePos.left + this.minSize.width + 
 	this.horizDraggerOffset; 
     this.draggerLimitRight = this.boundaryPos.right + this.horizDraggerOffset; 
     this.draggerLimitWidth = this.draggerLimitRight -  this.draggerLimitLeft;
 }
-goog.exportSymbol('nrg.ui.ResizeDraggerRight.calculateDraggerLimits', 
-		  nrg.ui.ResizeDraggerRight.calculateDraggerLimits);
+goog.exportSymbol('nrg.ui.ResizeDraggerRight.prototype.calculateDraggerLimits', 
+		  nrg.ui.ResizeDraggerRight.prototype.calculateDraggerLimits);
 
 
 
 /**
  * @public
  */
-nrg.ui.ResizeDraggerRight.resizeMethod = function() {
+nrg.ui.ResizeDraggerRight.prototype.resizeMethod = function() {
     //
     // Calculate the deltaX
     // 
@@ -88,8 +88,8 @@ nrg.ui.ResizeDraggerRight.resizeMethod = function() {
     //goog.style.setPosition(this.getElement(), this.handlePos.x,
     //this.resizeePos.y)
 }
-goog.exportSymbol('nrg.ui.ResizeDraggerRight.resizeMethod', 
-		  nrg.ui.ResizeDraggerRight.resizeMethod);
+goog.exportSymbol('nrg.ui.ResizeDraggerRight.prototype.resizeMethod', 
+		  nrg.ui.ResizeDraggerRight.prototype.resizeMethod);
 
 
 
@@ -164,10 +164,6 @@ goog.exportSymbol('nrg.ui.ResizeDraggerRight.ID_PREFIX',
 	nrg.ui.ResizeDraggerRight.ID_PREFIX);
 goog.exportSymbol('nrg.ui.ResizeDraggerRight.CSS_SUFFIX',
 	nrg.ui.ResizeDraggerRight.CSS_SUFFIX);
-goog.exportSymbol('nrg.ui.ResizeDraggerRight.calculateDraggerLimits',
-	nrg.ui.ResizeDraggerRight.calculateDraggerLimits);
-goog.exportSymbol('nrg.ui.ResizeDraggerRight.resizeMethod',
-	nrg.ui.ResizeDraggerRight.resizeMethod);
 goog.exportSymbol('nrg.ui.ResizeDraggerRight.prototype.update',
 	nrg.ui.ResizeDraggerRight.prototype.update);
 goog.exportSymbol('nrg.ui.ResizeDraggerRight.prototype.getSlideTrajectory',

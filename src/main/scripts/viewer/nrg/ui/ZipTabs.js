@@ -17,7 +17,6 @@ goog.require('goog.dom.classes');
 goog.require('nrg.string');
 goog.require('nrg.ui.Tabs');
 goog.require('nrg.ui.Resizable');
-goog.require('nrg.ui.Resizable.EventType');
 
 
 

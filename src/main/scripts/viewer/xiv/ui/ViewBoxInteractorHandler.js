@@ -1615,9 +1615,9 @@ function() {
 	var renderZoom = renderPlane.getRenderer().getZoom();
 	var displayZoom = planeInteractors.ZOOM_DISPLAY.getValue() / 100;
 
-	if (renderZoom < displayZoom && !this.mouseDown_.right) {
+	//if (renderZoom < displayZoom && !this.mouseDown_.right) {
 	    //renderPlane.getRenderer().setZoom(displayZoom);  
-	} 
+	//} 
 	//else {
 	    planeInteractors.ZOOM_DISPLAY.setValue(
 		Math.round(renderZoom * 100));
