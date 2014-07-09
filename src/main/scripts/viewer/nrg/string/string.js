@@ -185,6 +185,17 @@ nrg.string.makeCssName = function (str1, opt_str2) {
 }
 
 
+/**
+ * @param {!string} mrmlColor
+ * @return {!string}
+ */
+nrg.string.mrmlColorToRgb = function(mrmlColor) {
+    return 'rgb(' + mrmlColor.
+	split(" ").map(function(x){return Math.round(parseFloat(x) * 255)})
+	.toString() + ')'
+}
+
+
 
 goog.exportSymbol('nrg.string.basename', nrg.string.basename);
 goog.exportSymbol('nrg.string.dirname', nrg.string.dirname);
@@ -197,3 +208,4 @@ goog.exportSymbol('nrg.string.getLettersOnly', nrg.string.getLettersOnly);
 goog.exportSymbol('nrg.string.replaceIllegal', nrg.string.replaceIllegal);
 goog.exportSymbol('nrg.string.truncateString', nrg.string.truncateString);
 goog.exportSymbol('nrg.string.makeCssName', nrg.string.makeCssName);
+goog.exportSymbol('nrg.string.mrmlColorToRgb', nrg.string.mrmlColorToRgb);

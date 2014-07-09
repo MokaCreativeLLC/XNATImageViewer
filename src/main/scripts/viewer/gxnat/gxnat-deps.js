@@ -5,7 +5,7 @@ goog.addDependency('../../../gxnat/ProjectTree.js', ['gxnat.ProjectTree'], ['goo
 goog.addDependency('../../../gxnat/Zip.js', ['gxnat.Zip'], ['JSZip', 'goog.Disposable', 'goog.object', 'gxnat']);
 goog.addDependency('../../../gxnat/gxnat.js', ['gxnat'], ['goog.array', 'goog.net.XhrIo', 'goog.object', 'goog.string']);
 goog.addDependency('../../../gxnat/slicerNode/Annotations.js', ['gxnat.slicerNode.Annotations'], ['gxnat.slicerNode.Node']);
-goog.addDependency('../../../gxnat/slicerNode/BackgroundColor.js', ['gxnat.slicerNode.BackgroundColor'], ['gxnat.slicerNode.Node']);
+goog.addDependency('../../../gxnat/slicerNode/BackgroundColor.js', ['gxnat.slicerNode.BackgroundColor'], ['gxnat.slicerNode.Node', 'nrg.string']);
 goog.addDependency('../../../gxnat/slicerNode/Camera.js', ['gxnat.slicerNode.Camera'], ['gxnat.slicerNode.Node']);
 goog.addDependency('../../../gxnat/slicerNode/Display.js', ['gxnat.slicerNode.Display'], ['gxnat.slicerNode', 'gxnat.slicerNode.Node']);
 goog.addDependency('../../../gxnat/slicerNode/Displayable.js', ['gxnat.slicerNode.Displayable'], ['gxnat.slicerNode.Node']);

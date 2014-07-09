@@ -12,5 +12,5 @@ python ./closure-library/closure/bin/build/closurebuilder.py \
 --output_mode=compiled \
 --compiler_jar=./compiler-latest/compiler.jar \
 --compiler_flags="--language_in=ECMASCRIPT5" \
---compiler_flags="--compilation_level=ADVANCED_OPTIMIZATIONS" \
+--compiler_flags="--compilation_level=SIMPLE_OPTIMIZATIONS" \
 > ./xiv-min.js
