@@ -17,6 +17,7 @@ goog.require('gxnat.vis.ViewableGroup');
 
 /**
  * @extends {gxnat.vis.VisNode}
+ * @constructor 
  */
 gxnat.vis.ViewableTree = function(opt_files, opt_displayProperties) {
     goog.base(this);
@@ -45,6 +46,7 @@ goog.exportSymbol('gxnat.vis.ViewableTree', gxnat.vis.ViewableTree);
  * @param {!Object} subjMeta
  * @param {!Object} exptMeta
  * @struct
+ * @constructor
  */
 gxnat.vis.ViewableTree.metadataCollection = 
 function(projMeta, subjMeta, exptMeta){

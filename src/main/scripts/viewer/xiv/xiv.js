@@ -4,6 +4,7 @@
  * @author herrickr@mir.wustl.edu (Rick Herrick)
  */
 goog.provide('xiv');
+goog.provide('xiv.start');
 
 // goog
 goog.require('goog.labs.userAgent.browser');
@@ -37,6 +38,10 @@ goog.require('gxnat.vis.Scan');
 goog.require('gxnat.vis.Slicer');
 
 
+xiv = function(){}
+goog.exportSymbol('xiv', xiv);
+
+
 
 
 /**
@@ -48,7 +53,7 @@ goog.require('gxnat.vis.Slicer');
  * @extends {goog.Disposable}
  * @constructor
  */
-xiv = function(xivState, modalState, dataPath, rootUrl){
+xiv.start = function(xivState, modalState, dataPath, rootUrl){
     //
     // Superclass init
     //
@@ -58,14 +63,14 @@ xiv = function(xivState, modalState, dataPath, rootUrl){
     // 
     // Load the custom extensions
     //
-    xiv.loadCustomExtensions();
+    xiv.start.loadCustomExtensions();
 
 
     //
     // Adjust the document style (this gets reverted when we close out
     // of the viwer)
     //
-    xiv.adjustDocumentStyle();
+    xiv.start.adjustDocumentStyle();
 
 
     /**
@@ -84,7 +89,7 @@ xiv = function(xivState, modalState, dataPath, rootUrl){
      * @private
      */
     this.currState_ = goog.isDefAndNotNull(xivState) ? xivState : 
-	xiv.States.DEMO;
+	xiv.start.States.DEMO;
 
 
     /**
@@ -114,8 +119,8 @@ xiv = function(xivState, modalState, dataPath, rootUrl){
     this.addDataPath_(dataPath);
 
 };
-goog.inherits(xiv, goog.Disposable);
-goog.exportSymbol('xiv', xiv);
+goog.inherits(xiv.start, goog.Disposable);
+goog.exportSymbol('xiv.start', xiv.start);
 
 
 
@@ -124,7 +129,7 @@ goog.exportSymbol('xiv', xiv);
  * @enum {string}
  * @public
  */
-xiv.EventType = {
+xiv.start.EventType = {
   ADD_SUBJECTS: goog.events.getUniqueId('add_subjects')
 }
 
@@ -134,7 +139,7 @@ xiv.EventType = {
  * @enum {string}
  * @expose  
  */
-xiv.ModalStates = {
+xiv.start.ModalStates = {
     FULLSCREEN: 'fullscreen',
     POPUP: 'popup',
     FULLSCREEN_POPUP: 'fullscreen-popup',
@@ -149,7 +154,7 @@ xiv.ModalStates = {
  * @enum {string}
  * @expose
  */
-xiv.States = {
+xiv.start.States = {
     DEMO: 'demo',
     LIVE: 'live'
 }
@@ -158,7 +163,7 @@ xiv.States = {
 /**
  * @public
  */
-xiv.loadCustomExtensions = function() {
+xiv.start.loadCustomExtensions = function() {
     X.loader.extensions['IMA'] = [X.parserIMA, null];
 }
 
@@ -167,7 +172,7 @@ xiv.loadCustomExtensions = function() {
 /**
  * @public
  */
-xiv.adjustDocumentStyle = function() {
+xiv.start.adjustDocumentStyle = function() {
     document.body.style.overflow = 'hidden';
 }
 
@@ -176,7 +181,7 @@ xiv.adjustDocumentStyle = function() {
 /**
  * @private
  */
-xiv.revertDocumentStyle_ = function() {
+xiv.start.revertDocumentStyle_ = function() {
     document.body.style.overflow = 'visible';
 }
 
@@ -187,7 +192,7 @@ xiv.revertDocumentStyle_ = function() {
  * @private 
  * @const
  */
-xiv.prototype.zippyDataKey_ = goog.string.createUniqueString();
+xiv.start.prototype.zippyDataKey_ = goog.string.createUniqueString();
 
 
 
@@ -196,7 +201,7 @@ xiv.prototype.zippyDataKey_ = goog.string.createUniqueString();
  * @private 
  * @const
  */
-xiv.prototype.animTime_ = 300;
+xiv.start.prototype.animTime_ = 300;
 
 
 
@@ -205,7 +210,7 @@ xiv.prototype.animTime_ = 300;
  * @type {!number}
  * @private
  */
-xiv.prototype.introTabSlideTime_ = 1000;
+xiv.start.prototype.introTabSlideTime_ = 1000;
 
 
 
@@ -213,7 +218,7 @@ xiv.prototype.introTabSlideTime_ = 1000;
  * @type {gxnat.Path}
  * @private
  */
-xiv.prototype.initPath_;
+xiv.start.prototype.initPath_;
 
 
 
@@ -221,7 +226,7 @@ xiv.prototype.initPath_;
  * @type {nrg.ui.Component} 
  * @private
  */
-xiv.prototype.Modal_;
+xiv.start.prototype.Modal_;
 
 
 
@@ -229,7 +234,7 @@ xiv.prototype.Modal_;
  * @type {gxnat.ProjectTree}
  * @private
  */
-xiv.prototype.ProjectTree_;
+xiv.start.prototype.ProjectTree_;
 
 
 
@@ -237,7 +242,7 @@ xiv.prototype.ProjectTree_;
  * @type {string}
  * @private
  */
-xiv.prototype.serverRoot_;
+xiv.start.prototype.serverRoot_;
 
 
 
@@ -245,7 +250,7 @@ xiv.prototype.serverRoot_;
  * @type {Array.string}
  * @private
  */
-xiv.prototype.dataPaths_;
+xiv.start.prototype.dataPaths_;
 
 
 
@@ -253,7 +258,7 @@ xiv.prototype.dataPaths_;
  * @type {Object.<string, Array.<gxnat.vis.ViewableTree>>}
  * @private
  */
-xiv.prototype.ViewableTrees_;
+xiv.start.prototype.ViewableTrees_;
 
 
 
@@ -261,7 +266,7 @@ xiv.prototype.ViewableTrees_;
  * @type {Array.<!string>}
  * @private
  */
-xiv.prototype.loadedExperiments_;
+xiv.start.prototype.loadedExperiments_;
 
 
 
@@ -269,7 +274,7 @@ xiv.prototype.loadedExperiments_;
  * @type {gxnat.ProjectTree.TreeNode}
  * @private
  */
-xiv.prototype.initProjNode_;
+xiv.start.prototype.initProjNode_;
 
 
 
@@ -277,7 +282,7 @@ xiv.prototype.initProjNode_;
  * @type {gxnat.ProjectTree.TreeNode}
  * @private
  */
-xiv.prototype.initSubjNode_;
+xiv.start.prototype.initSubjNode_;
 
 
 
@@ -285,22 +290,14 @@ xiv.prototype.initSubjNode_;
  * @type {gxnat.PrjectTree.TreeNode}
  * @private
  */
-xiv.prototype.initExptNode_;
+xiv.start.prototype.initExptNode_;
 
 
 /** 
  * @type {nrg.ui.ZippyNode}
  * @private
  */
-xiv.prototype.initProjFolderNode_;
-
-
-
-/** 
- * @type {nrg.ui.ZippyNode}
- * @private
- */
-xiv.prototype.initSubjFolderNode_;
+xiv.start.prototype.initProjFolderNode_;
 
 
 
@@ -308,7 +305,15 @@ xiv.prototype.initSubjFolderNode_;
  * @type {nrg.ui.ZippyNode}
  * @private
  */
-xiv.prototype.initExptFolderNode_;
+xiv.start.prototype.initSubjFolderNode_;
+
+
+
+/** 
+ * @type {nrg.ui.ZippyNode}
+ * @private
+ */
+xiv.start.prototype.initExptFolderNode_;
 
 
 
@@ -316,7 +321,7 @@ xiv.prototype.initExptFolderNode_;
  * @type {!boolean}
  * @private
  */
-xiv.prototype.initExptExpanding_ = false;
+xiv.start.prototype.initExptExpanding_ = false;
 
 
 
@@ -324,7 +329,7 @@ xiv.prototype.initExptExpanding_ = false;
  * @type {!boolean}
  * @private
  */
-xiv.prototype.initSubjExpanding_ = false;
+xiv.start.prototype.initSubjExpanding_ = false;
 
 
 
@@ -332,7 +337,7 @@ xiv.prototype.initSubjExpanding_ = false;
  * @type {string}
  * @private
  */
-xiv.prototype.serverRoot_;
+xiv.start.prototype.serverRoot_;
 
 
 
@@ -340,7 +345,7 @@ xiv.prototype.serverRoot_;
  * @param {!string} _serverRoot
  * @public
  */
-xiv.prototype.setServerRoot = function(_serverRoot) {
+xiv.start.prototype.setServerRoot = function(_serverRoot) {
     this.serverRoot_ = _serverRoot
 }
 
@@ -349,7 +354,7 @@ xiv.prototype.setServerRoot = function(_serverRoot) {
 /**
  * @public
  */
-xiv.prototype.begin = function() {
+xiv.start.prototype.begin = function() {
     //
     // Create the modal
     //
@@ -362,7 +367,7 @@ xiv.prototype.begin = function() {
     //
     // Demo load chain
     //
-    if (this.currState_ == xiv.States.DEMO){
+    if (this.currState_ == xiv.start.States.DEMO){
 	//
 	// Remove the popup (we don't need it)
 	//
@@ -396,7 +401,7 @@ xiv.prototype.begin = function() {
  * @param {nrg.ui.Component} modalType
  * @public
  */
-xiv.prototype.setModalType = function(modalType){
+xiv.start.prototype.setModalType = function(modalType){
     this.modalType_ = modalType;
 }
 
@@ -407,14 +412,14 @@ xiv.prototype.setModalType = function(modalType){
  *
  * @private
  */
-xiv.prototype.createModal_ = function(){
+xiv.start.prototype.createModal_ = function(){
     //
     // Create new Modal object
     //
     this.Modal_ = new this.modalType_();
-    //window.console.log(xiv.ui);
-    //window.console.log(xiv.ui.Modal);
-    //this.Modal_ = new xiv.ui.Modal();
+    //window.console.log(xiv.start.ui);
+    //window.console.log(xiv.start.ui.Modal);
+    //this.Modal_ = new xiv.start.ui.Modal();
 
     //
     // Set the image prefix of the modal
@@ -425,7 +430,7 @@ xiv.prototype.createModal_ = function(){
     // Listen for the addSubjects event
     //
     goog.events.listen(this.Modal_, 
-		       xiv.EventType.ADD_SUBJECTS,
+		       xiv.start.EventType.ADD_SUBJECTS,
 		       this.onModalAddSubjectsClicked_.bind(this));
 
     //
@@ -444,7 +449,7 @@ xiv.prototype.createModal_ = function(){
 /**
  * @private
  */
-xiv.prototype.onModalAddSubjectsClicked_ = function() {
+xiv.start.prototype.onModalAddSubjectsClicked_ = function() {
     this.ProjectTree_.loadSubjects(null, function(subjNodes){
 	//
 	// Expand the init Subject's zippy and store that zippy 
@@ -470,7 +475,7 @@ xiv.prototype.onModalAddSubjectsClicked_ = function() {
  * @param {Function=} opt_callback
  * @public
  */
-xiv.prototype.show = function(opt_callback){
+xiv.start.prototype.show = function(opt_callback){
     //
     // Set the Modal's opacity to 0, then attatch to document.
     //
@@ -507,7 +512,7 @@ xiv.prototype.show = function(opt_callback){
 /**
  * @private
  */
-xiv.prototype.startDemoLoadChain_ = function(){
+xiv.start.prototype.startDemoLoadChain_ = function(){
     var ThumbGallery = this.Modal_.getThumbnailGallery();
     var sampleDatasets = {
 	'slicer':  (new xiv.sampleData.SlicerScenes()).getSamples(), 
@@ -545,7 +550,7 @@ xiv.prototype.startDemoLoadChain_ = function(){
 /**
  * @private
  */
-xiv.prototype.startLiveLoadChain_ = function(){
+xiv.start.prototype.startLiveLoadChain_ = function(){
 
     //
     // Get the modal's zippy tree
@@ -609,7 +614,7 @@ xiv.prototype.startLiveLoadChain_ = function(){
  * @return {Array.<Array.string>>} The folder titles.
  * @private
  */
-xiv.prototype.getFolderTitlesFromTreeNode_ = function(treeNode){
+xiv.start.prototype.getFolderTitlesFromTreeNode_ = function(treeNode){
     
     //window.console.log(treeNode);
 
@@ -633,7 +638,7 @@ xiv.prototype.getFolderTitlesFromTreeNode_ = function(treeNode){
  * @return {Array.<Array.string>>} The folder collection
  * @private
  */
-xiv.prototype.createFoldersFromTreeNode_ = function(treeNode){
+xiv.start.prototype.createFoldersFromTreeNode_ = function(treeNode){
     var branchUris = this.ProjectTree_.getBranchUris(treeNode);    
     var branchTitles = this.getFolderTitlesFromTreeNode_(treeNode);
     //window.console.log(branchTitles, branchUris);
@@ -648,7 +653,7 @@ xiv.prototype.createFoldersFromTreeNode_ = function(treeNode){
  * @param {!gxnat.Path} path The gxnat.Path object associated with the zippy.
  * @private
  */
-xiv.prototype.onSubjectZippyExpanded_ = function(path) {
+xiv.start.prototype.onSubjectZippyExpanded_ = function(path) {
     //window.console.log(path, path.getDeepestLevel());
 
     //
@@ -697,7 +702,7 @@ xiv.prototype.onSubjectZippyExpanded_ = function(path) {
  * @param {!gxnat.Path} path The gxnat.Path object associated with the zippy.
  * @private
  */
-xiv.prototype.onExperimentZippyExpanded_ = function(path) {
+xiv.start.prototype.onExperimentZippyExpanded_ = function(path) {
     this.loadExperiment_(path['originalUrl']);
 }
 
@@ -706,7 +711,7 @@ xiv.prototype.onExperimentZippyExpanded_ = function(path) {
 /**
  * @private
  */
-xiv.prototype.onZippyExpanded_ = function(e){
+xiv.start.prototype.onZippyExpanded_ = function(e){
     if (!goog.isDefAndNotNull(e.node[this.zippyDataKey_])) { return };
     var path = new gxnat.Path(e.node[this.zippyDataKey_]);
     var deepestLevel = path.getDeepestLevel();
@@ -726,7 +731,7 @@ xiv.prototype.onZippyExpanded_ = function(e){
 /**
  * @private
  */
-xiv.prototype.setOnZippyExpanded_ = function() {
+xiv.start.prototype.setOnZippyExpanded_ = function() {
     goog.events.listen(this.Modal_.getThumbnailGallery().getZippyTree(),
 	nrg.ui.ZippyNode.EventType.EXPANDED, this.onZippyExpanded_.bind(this));
 }
@@ -741,7 +746,7 @@ xiv.prototype.setOnZippyExpanded_ = function() {
  *     finishes.
  * @public
  */
-xiv.prototype.hide = function(opt_callback){
+xiv.start.prototype.hide = function(opt_callback){
     nrg.fx.fadeOut(this.Modal_.getElement(), this.animTime_, opt_callback);
 }
 
@@ -753,7 +758,7 @@ xiv.prototype.hide = function(opt_callback){
  * @param {!string} path The XNAT path to set for querying.
  * @private
  */
-xiv.prototype.addDataPath_ = function(path) {
+xiv.start.prototype.addDataPath_ = function(path) {
 
     this.dataPaths_ = this.dataPaths_ ? this.dataPaths_ : [];
 
@@ -778,7 +783,7 @@ xiv.prototype.addDataPath_ = function(path) {
  *
  * @public
  */
-xiv.prototype.dispose = function() {
+xiv.start.prototype.dispose = function() {
     this.hide(this.dispose_.bind(this));
 }
 
@@ -789,7 +794,7 @@ xiv.prototype.dispose = function() {
  * @param {Function=} opt_callback The optional callback.
  * @private
  */
-xiv.prototype.loadExperiment_ = function(exptUrl, opt_callback) {
+xiv.start.prototype.loadExperiment_ = function(exptUrl, opt_callback) {
 
     //window.console.log("fetch viewable trees 1");
 
@@ -852,7 +857,7 @@ xiv.prototype.loadExperiment_ = function(exptUrl, opt_callback) {
 /**
  * @private
  */
-xiv.prototype.onZippyAdded_ = function(e) {
+xiv.start.prototype.onZippyAdded_ = function(e) {
     var prevDur =
     e.node.getZippy().animationDuration;
     e.node.getZippy().animationDuration = 0;
@@ -866,7 +871,7 @@ xiv.prototype.onZippyAdded_ = function(e) {
  *
  * @private
  */
-xiv.prototype.collapseZippys_ = function() {
+xiv.start.prototype.collapseZippys_ = function() {
     if (!this.Modal_.getThumbnailGallery()) { return };
     goog.events.listen(this.Modal_.getThumbnailGallery().getZippyTree(),
        nrg.ui.ZippyTree.EventType.NODEADDED, this.onZippyAdded_.bind(this));
@@ -877,7 +882,7 @@ xiv.prototype.collapseZippys_ = function() {
 /**.
  * @private
  */
-xiv.prototype.setModalButtonCallbacks_ = function(){
+xiv.start.prototype.setModalButtonCallbacks_ = function(){
     goog.events.listen(this.Modal_.getPopupButton(), 
 		       goog.events.EventType.CLICK, 
 		       this.createModalPopup_.bind(this))
@@ -895,7 +900,7 @@ xiv.prototype.setModalButtonCallbacks_ = function(){
  *
  * @private
  */
-xiv.prototype.createModalPopup_ = function(){
+xiv.start.prototype.createModalPopup_ = function(){
     //
     // Create the popup
     //
@@ -910,7 +915,7 @@ xiv.prototype.createModalPopup_ = function(){
     //
     var dataPath = this.dataPaths_[0];
     var pOnload = function() {
-	popup.launchXImgView(dataPath, xiv.ModalStates.POPUP, serverRoot);
+	popup.launchXImgView(dataPath, xiv.start.ModalStates.POPUP, serverRoot);
     }
     popup.onload = pOnload.bind(this);
 
@@ -930,7 +935,7 @@ xiv.prototype.createModalPopup_ = function(){
  * @param {Object=} opt_metadata
  * @private
  */
-xiv.prototype.fetchViewableTreesAtExperiment_ = 
+xiv.start.prototype.fetchViewableTreesAtExperiment_ = 
 function(exptUri, opt_doneCallback, opt_metadata){
     //window.console.log(exptUri);
     //window.console.log(exptUri.split('/experiments/'))
@@ -981,7 +986,7 @@ function(exptUri, opt_doneCallback, opt_metadata){
  *    data to add the the zippys.
  * @private
  */
-xiv.prototype.addFoldersToGallery_ = 
+xiv.start.prototype.addFoldersToGallery_ = 
 function(folders, opt_correspondingData){
     
     //window.console.log("ADD FOLDERS", folders);
@@ -1026,7 +1031,7 @@ function(folders, opt_correspondingData){
  *    derived from the ViewableTree argument, otherwise.
  * @private
  */
-xiv.prototype.addViewableTreeToModal_ = 
+xiv.start.prototype.addViewableTreeToModal_ = 
 function(ViewableTree, opt_folderList){
     //window.console.log("Add Viewable Tree to Modal", ViewableTree, 
     //opt_folderList);
@@ -1127,7 +1132,7 @@ function(ViewableTree, opt_folderList){
  *    is stored. This will not be called if the ViewableTree already exists.
  * @private
  */
-xiv.prototype.storeViewableTree_ = function(ViewableTree, path, opt_onStore) {
+xiv.start.prototype.storeViewableTree_ = function(ViewableTree, path, opt_onStore) {
     this.ViewableTrees_ = this.ViewableTrees_ ? this.ViewableTrees_ : {};
     if (!goog.isDefAndNotNull(this.ViewableTrees_[path])){
 	this.ViewableTrees_[path] = ViewableTree;
@@ -1142,13 +1147,13 @@ xiv.prototype.storeViewableTree_ = function(ViewableTree, path, opt_onStore) {
  *
  * @private
  */
-xiv.prototype.dispose_ = function() {
+xiv.start.prototype.dispose_ = function() {
 
     // Call superclass dispose.
-    xiv.superClass_.dispose.call(this)
+    xiv.start.superClass_.dispose.call(this)
 
     // Revert the document.
-    xiv.revertDocumentStyle_();
+    xiv.start.revertDocumentStyle_();
 
     // ViewableTrees
     goog.object.forEach(this.ViewableTrees_, function(ViewableTree, key){
@@ -1204,7 +1209,7 @@ xiv.prototype.dispose_ = function() {
  *     when retrieval is complete.
  * @private
  */
-xiv.prototype.getViewableTreesFromXnat_ = 
+xiv.start.prototype.getViewableTreesFromXnat_ = 
 function (url, opt_runCallback, opt_doneCallback) {
 
     //
@@ -1245,7 +1250,7 @@ function (url, opt_runCallback, opt_doneCallback) {
  * @public
  * @return {boolean}
  */
-xiv.isCompatible = function(){
+xiv.start.isCompatible = function(){
 
     var isCompatible = true;
     var version = goog.labs.userAgent.browser.getVersion();
@@ -1282,7 +1287,7 @@ xiv.isCompatible = function(){
 	    //)
 	    if (goog.string.compareVersions(browser.minVersion, version)
 	       == 1){
-		xiv.onOutdatedBrowser_();
+		xiv.start.onOutdatedBrowser_();
 		isCompatible = false;
 		oldBrowserDetected = true;
 	    }	    
@@ -1292,8 +1297,8 @@ xiv.isCompatible = function(){
     //----------------------
     //  WebGL Check
     //----------------------
-    if (isCompatible && !xiv.checkForWebGL()){
-	xiv.onWebGLDisabled_();
+    if (isCompatible && !xiv.start.checkForWebGL()){
+	xiv.start.onWebGLDisabled_();
 	isCompatible = false;
     }
     return isCompatible;
@@ -1303,7 +1308,7 @@ xiv.isCompatible = function(){
 /**
  * @private
  */
-xiv.onOutdatedBrowser_ = function(){
+xiv.start.onOutdatedBrowser_ = function(){
     var errorString = '<br>'+
 	'XImgView is supported on the following browsers:<br>' +
 	'Google Chrome, Version 12+<br>' + 
@@ -1356,7 +1361,7 @@ xiv.onOutdatedBrowser_ = function(){
 /**
  * @private
  */
-xiv.onWebGLDisabled_ = function(){
+xiv.start.onWebGLDisabled_ = function(){
     var errorString = '<br>'+
 	'It looks like ' +
 	'<a style="color: #00FFFF" ' + 
@@ -1447,7 +1452,7 @@ xiv.onWebGLDisabled_ = function(){
  * @expose
  * @public
  */
-xiv.checkForWebGL = function(){
+xiv.start.checkForWebGL = function(){
     var canvas = goog.dom.createDom('canvas');
     var webGlFound;
     try { 
@@ -1462,18 +1467,22 @@ xiv.checkForWebGL = function(){
 
 
 
-goog.exportSymbol('xiv.States', xiv.States);
-goog.exportSymbol('xiv.loadCustomExtensions', xiv.loadCustomExtensions);
-goog.exportSymbol('xiv.adjustDocumentStyle', xiv.adjustDocumentStyle);
-goog.exportSymbol('xiv.ModalStates', xiv.ModalStates);
-goog.exportSymbol('xiv.checkForWebGL', xiv.checkForWebGL);
-goog.exportSymbol('xiv.isCompatible', xiv.isCompatible);
-goog.exportSymbol('xiv.prototype.setServerRoot', xiv.prototype.setServerRoot);
-goog.exportSymbol('xiv.prototype.setModalType', xiv.prototype.setModalType);
-goog.exportSymbol('xiv.prototype.begin', xiv.prototype.begin);
-goog.exportSymbol('xiv.prototype.show', xiv.prototype.show);
-goog.exportSymbol('xiv.prototype.hide', xiv.prototype.hide);
-goog.exportSymbol('xiv.prototype.dispose', xiv.prototype.dispose);
+goog.exportSymbol('xiv.start.States', xiv.start.States);
+goog.exportSymbol('xiv.start.loadCustomExtensions', 
+		  xiv.start.loadCustomExtensions);
+goog.exportSymbol('xiv.start.adjustDocumentStyle', 
+		  xiv.start.adjustDocumentStyle);
+goog.exportSymbol('xiv.start.ModalStates', xiv.start.ModalStates);
+goog.exportSymbol('xiv.start.checkForWebGL', xiv.start.checkForWebGL);
+goog.exportSymbol('xiv.start.isCompatible', xiv.start.isCompatible);
+goog.exportSymbol('xiv.start.prototype.setServerRoot', 
+		  xiv.start.prototype.setServerRoot);
+goog.exportSymbol('xiv.start.prototype.setModalType', 
+		  xiv.start.prototype.setModalType);
+goog.exportSymbol('xiv.start.prototype.begin', xiv.start.prototype.begin);
+goog.exportSymbol('xiv.start.prototype.show', xiv.start.prototype.show);
+goog.exportSymbol('xiv.start.prototype.hide', xiv.start.prototype.hide);
+goog.exportSymbol('xiv.start.prototype.dispose', xiv.start.prototype.dispose);
 
 
 
@@ -1481,11 +1490,9 @@ goog.exportSymbol('xiv.prototype.dispose', xiv.prototype.dispose);
 // These functions are accessed outside of the scope of the application,
 // which is why we have to export them to the global scope
 //
-window['xiv.isCompatible'] = xiv.isCompatible;
-window['xiv.checkForWebGL'] = xiv.checkForWebGL;
-window['xiv.ModalStates'] = xiv.ModalStates;
-
-
-xiv.prototype['setServerRoot'] = xiv.prototype.setServerRoot;
-xiv.prototype['begin'] = xiv.prototype.begin;
+window['xiv.start.isCompatible'] = xiv.start.isCompatible;
+window['xiv.start.checkForWebGL'] = xiv.start.checkForWebGL;
+window['xiv.start.ModalStates'] = xiv.start.ModalStates;
+xiv.start.prototype['setServerRoot'] = xiv.start.prototype.setServerRoot;
+xiv.start.prototype['begin'] = xiv.start.prototype.begin;
 

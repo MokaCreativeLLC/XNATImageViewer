@@ -80,7 +80,7 @@ nrg.convert.px = function (args) {
 nrg.convert.remap1D = function (startVal, prevRange, newRange) {
 
     function swapElts(darr) {
-	var holder = /**@type {Array.number}*/ darr[0];
+	var holder = darr[0];
 	darr[0] = darr[1];
 	darr[1] = holder;
 	return darr;
@@ -128,7 +128,7 @@ nrg.convert.remap1D = function (startVal, prevRange, newRange) {
     //------------------
     // Determine the newVal mathetmaically.
     //------------------
-    var newVal = /**@type {number}*/ 
+    var newVal = 
     Math.round((startVal/(prevRange[1]-prevRange[0])) * 
 			    ((newRange[1]-newRange[0])));
 
@@ -180,7 +180,7 @@ nrg.convert.toFloatArray = function (val) {
     if ((!goog.isString(val))){
 	throw new TypeError('String expected!', val);
     }
-    var numArr = /**@type {!Array.number}*/ [];
+    var numArr = [];
     val = val.split(' ');
     goog.array.forEach(val, function(num, i) { 
 	numArr[i] = parseFloat(num, 10)});
@@ -199,8 +199,8 @@ nrg.convert.objectToArray = function (val) {
     if ((!goog.isObject(val))){
 	throw new TypeError('Object expected!', val);
     }
-    var returnable = /**@type {!Array.Object}*/[];
-    var key = /**@type {!string}*/ '';
+    var returnable = [];
+    var key =  '';
     for (key in val){ 
 	returnable = returnable.concat(val[key])
     }
@@ -219,8 +219,8 @@ nrg.convert.rgbToArray = function (val) {
     if ((!goog.isString(val))){
 	throw new TypeError('String expected!', val);
     }
-    var arr = /**@type {Array.<string> | Array.<number>}*/val.match(/\d+/g);
-    var i = /**@type {!number} */ 0;
+    var arr = val.match(/\d+/g);
+    var i = 0;
     for (i = 0, len = arr.length; i < len; i++){
 	arr[i] = parseInt(arr[i], 10);
     }

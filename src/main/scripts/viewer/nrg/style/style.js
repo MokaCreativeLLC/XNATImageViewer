@@ -151,9 +151,9 @@ nrg.style.cssProperties = [
  */
 nrg.style.removeClassesThatContain = function (elt, containsStr) {
 
-    var classes = /**@type{!Array.string}*/ goog.dom.classes.get(elt);
-    var removeClasses = /**@type{!Array.string}*/ [];
-    var i = /**@type{!number}*/ 0;
+    var classes = goog.dom.classes.get(elt);
+    var removeClasses = [];
+    var i = 0;
    
     //------------------
     // Loop throught the classes, track all that contain 'containsStr'.
@@ -207,7 +207,7 @@ nrg.style.dims = function (elt, property) {
     // go right to the kill...
     //------------------
     if (property && typeof property === 'string') {
-	var val /**@type{!number | !string}*/ = '';
+	var val = '';
 	
 	switch(property) {
 	case 'height':
@@ -230,9 +230,9 @@ nrg.style.dims = function (elt, property) {
 		return nrg.convert.toInt(elt.style[property]);
 	    }
 	    
-	    var p = /**@type {!goog.math.Coordinate}*/ 
+	    var p = 
 	    goog.style.getRelativePosition(elt, elt.parentNode);
-	    var posObj = /**@type {!Object.<string, number>}*/{
+	    var posObj = {
 		'left': nrg.convert.toInt(elt.style.left) || p.x,
 		'top': nrg.convert.toInt(elt.style.top) || p.y
 	    };
@@ -255,12 +255,12 @@ nrg.style.dims = function (elt, property) {
 	var retObj = /**{Object.<string, number> | Object.<string, string>} */
 	{};
 
-	var p = /**@type {!Element}*/
+	var p = 
 	(elt.parentNode) ? goog.style.getRelativePosition(elt, 
 							  elt.parentNode) : 
 	    goog.style.getRelativePosition(elt, document.body)
 
-	var posObj = /**@type {!Object.<string, number>}*/{
+	var posObj ={
 	    left: nrg.convert.toInt(elt.style.left) || (p.x),
 	    top: nrg.convert.toInt(elt.style.top) || (p.y)
 	};
@@ -327,8 +327,8 @@ nrg.style.getComputedStyle = function (elt, opt_propertyKey) {
 	 */
 	var attrs = {};
 	var styleSheet = window.getComputedStyle(elt, null);
-	var i = /**@type {!number}*/ 0;
-	var len = /**@type {!number}*/ opt_propertyKey.length;
+	var i =  0;
+	var len =  opt_propertyKey.length;
 	for (i=0; i < len; i++) {
 	    attrs[opt_propertyKey[i]] = 
 		styleSheet.getPropertyValue(opt_propertyKey[i]);
@@ -369,8 +369,8 @@ nrg.style.parseIntNumericalProperties = function (obj) {
 	'margin-left'
     ];
 
-    var i = /**@type {!number}*/ 0;
-    var len = /**@type {!number}*/ 0;
+    var i =  0;
+    var len =  0;
     for (key in obj) {
 	for (i = 0, len = pxConvertArr.length; i < len; i++){
 	    if (key === pxConvertArr[i]) {
@@ -408,7 +408,7 @@ nrg.style.setStyle = function (elt, styleObj) {
     //------------------
     // For numerical properties (px)
     //------------------
-    var arr = /**@type {!Array.<string>}*/ 
+    var arr = 
     ["top", "left", "height", "width", "fontSize", 
 	       "borderWidth", "borderRadius"]
     goog.array.forEach(arr, function(dim) { 
@@ -505,7 +505,7 @@ nrg.style.determineStartEndDimsCSS = function(elt, toBeClass,
     // Determine the end dimenions by creating a tempEndStateElt and 
     // applying the to-be CSS to it.
     //------------------
-    var tempEndStateElt = /**@type {!Element}*/ goog.dom.createDom("div", {
+    var tempEndStateElt =  goog.dom.createDom("div", {
 	'id': 'tempEndStateElt' + goog.string.getUniqueString()
     });
     elt.parentNode.appendChild(tempEndStateElt);
@@ -559,10 +559,10 @@ nrg.style.determineStartEndDimsCSS = function(elt, toBeClass,
  * @public
  */
 nrg.style.getPositionRelativeToAncestor = function(element, ancestor) {
-    var currLeft = /**@type {!number}*/ 0;
-    var currTop = /**@type {!number}*/ 0;
+    var currLeft =  0;
+    var currTop =  0;
     if (element.offsetParent) {
-	var parent = /**@type {!Element}*/ element;
+	var parent =  element;
 	while (parent !== ancestor){
 	    currLeft += parent.offsetLeft;
 	    currTop += parent.offsetTop;

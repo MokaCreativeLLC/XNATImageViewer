@@ -131,7 +131,7 @@ function launchXImgView(opt_dataPath, opt_modalState, opt_serverRoot) {
     //-------------------
     // Verify compatibilities (browser, WebGL, etc.)
     //-------------------
-    if (!xiv.isCompatible()){
+    if (!xiv.start.isCompatible()){
         return;
     } 
 
@@ -187,7 +187,7 @@ function launchXImgView(opt_dataPath, opt_modalState, opt_serverRoot) {
     // Create the viewer, passing in above arguments.
     //-------------------
     //window.console.log('modal state', modalState);
-    var XnatImageViewer = new xiv(XIV_STATE, modalState, dataPath, rootUrl);
+    var XnatImageViewer = new xiv.start(XIV_STATE, modalState, dataPath, rootUrl);
     XnatImageViewer.setModalType(xiv.ui.Modal);
 
     //-------------------

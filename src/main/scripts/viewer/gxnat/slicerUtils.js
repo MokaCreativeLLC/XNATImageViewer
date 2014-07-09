@@ -52,9 +52,9 @@ gxnat.slicerUtils.GENERIC_COLORTABLE_FILE =
  * @return {!Array.<string>}
  */
 gxnat.slicerUtils.extractMrmls = function(fileList){
-    var mrmlUrls = /**@type{Array.string}*/ [];
-    var i = /**@type{!number}*/ 0;
-    var len = /**@type{!number}*/ fileList.length;
+    var mrmlUrls = [];
+    var i = 0;
+    var len =  fileList.length;
     for (; i<len; i++){
 	if (goog.string.caseInsensitiveEndsWith(fileList[i], '.mrml')) {
 	   mrmlUrls.push(fileList[i]);
@@ -200,7 +200,7 @@ gxnat.slicerUtils.getSceneViewNodes = function(mrmlNodes, callback) {
  */
 gxnat.slicerUtils.getElementsFromMrml = function(mrml, tagName) {
     mrml = goog.isString(mrml) ?  gxnat.slicerUtils.getMrmlAsXml(mrml) : mrml;
-    var elts = /**@type {Array.Document}*/ [];
+    var elts = [];
     goog.array.forEach(mrml.getElementsByTagName(tagName), function(node) {
 	elts.push(node);
     });	
@@ -311,10 +311,10 @@ gxnat.slicerUtils.matchFileToSet = function(fileUrl, fileSet) {
 
     if (!goog.isDefAndNotNull(fileUrl)) { return };
  
-    var i = /**@type {!number}*/ 0;
-    var len = /**@type {!number}*/ fileSet.length;
-    var setName = /**@type {!string}*/ '';
-    var urlName = /**@type {!string}*/ '';
+    var i =  0;
+    var len =  fileSet.length;
+    var setName =  '';
+    var urlName =  '';
 
     //
     // IMPORTANT!!! DO NOT ERASE!!!
@@ -397,9 +397,9 @@ function(sceneView, mrmlNode, callback) {
     var storageFiducials = 
 	sceneView.getElementsByTagName('MarkupsFiducialStorage');
     //window.console.log('STORED FID', storageFiducials, mrbUrl);
-    var annots = /**@type {Array.<gxnat.slicerUtils.AnnotationsNode>}*/ [];
-    var fcsvUrls = /**@type {Array.<string>}*/ [];
-    var getCounter = /**@type {Array.<number>}*/ 0;
+    var annots = [];
+    var fcsvUrls = [];
+    var getCounter =  0;
     var storeFile = '';
     var fcsvQuery = '';
     var splitLine;
@@ -490,7 +490,7 @@ function(sceneView, mrmlNode, callback) {
 		//
 		i = 0;
 		len = markupFiducials.length;
-		mFid;
+		//mFid;
 		for (; i<len; i++) {
 		    mFid = markupFiducials[i];
 		    currId = mFid.getAttribute('id'); 
@@ -506,7 +506,7 @@ function(sceneView, mrmlNode, callback) {
 		// Get the color from the displayNode fiducial
 		//
 		len = displayFiducials.length;
-		dispFid;
+		//dispFid;
 		for (i=0; i<len; i++) {
 		    dispFid = displayFiducials[i];
 		    currId = dispFid.getAttribute('id'); 
@@ -569,12 +569,12 @@ function(sceneView, mrmlNode, callback) {
 gxnat.slicerUtils.getDisplayables = 
 function(sceneViewElt, tagName, storageNodeTagName) {
 
-    var objects = /**@type {!Array.<gxnat.slicerUtils.SceneViewNode>}*/ [];
-    var storageNodes = /**@types {Array.<Element>}*/
+    var objects =  [];
+    var storageNodes = 
     sceneViewElt.getElementsByTagName(storageNodeTagName);
-    var storageNode = /**@types {?Element}*/ null;
-    var i = /**@types {!number}*/ 0;
-    var len = /**@types {!number}*/ storageNodes.length;
+    var storageNode = null;
+    var i = 0;
+    var len = storageNodes.length;
 
     goog.array.forEach(sceneViewElt.getElementsByTagName(tagName), 
     function(sceneViewDisplayableElt) {
@@ -609,7 +609,7 @@ gxnat.slicerUtils.getFibers = function(scene) {
 
     //window.console.log("TODO: SUSPENDING GET FIBERS -- remember to turn on");
     return null;
-    
+    /**
     var fancyId = '';
     var fancyColorTableStorage;
     var colorTableFile = '';
@@ -668,7 +668,7 @@ gxnat.slicerUtils.getFibers = function(scene) {
 	node['properties'] = {};
 	node['properties']['fiberDisplay'] = fiberProperties;
     })
-
+    */
 }
 
 
@@ -749,8 +749,8 @@ gxnat.slicerUtils.getVolumes = function(sceneView) {
     // We then need to associate the label map volumes with the 
     // appropriate display volume.
     //
-    var attrs = /**@type {!string}*/ '';
-    var revVol = /**@type {!string}*/ '';
+    var attrs =  '';
+    var revVol =  '';
     goog.array.forEach(labelMapVolumes, function(labelVol){
 	// we now need to get the volume it belongs to.
 	attrs = labelVol.node.getAttribute('attributes').split(';');

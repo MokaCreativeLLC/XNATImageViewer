@@ -7,8 +7,9 @@ python ./closure-library/closure/bin/build/closurebuilder.py \
 --root ./jszip \
 --root ./xiv \
 --namespace "xiv" \
+--namespace "xiv.start" \
 --output_mode=compiled \
 --compiler_jar=./compiler-latest/compiler.jar \
 --compiler_flags="--language_in=ECMASCRIPT5" \
 --compiler_flags="--compilation_level=ADVANCED_OPTIMIZATIONS" \
-> ./test-compile.js
+> ./xiv-min.js

@@ -1,3 +1,5 @@
+goog.provide('gxnat.slicerNode.Display');
+
 // goog
 goog.require('gxnat.slicerNode');
 goog.require('gxnat.slicerNode.Node');
@@ -9,8 +11,8 @@ goog.require('gxnat.slicerNode.Node');
  * @param {!Element} sceneViewElt
  * @param {!Element} sceneViewDisplayableElt
  * @extends {gxnat.slicerNode.Node}
+ * @constructor
  */
-goog.provide('gxnat.slicerNode.Display');
 gxnat.slicerNode.Display = function(sceneViewElt, sceneViewDisplayableElt){
     goog.base(this);
 

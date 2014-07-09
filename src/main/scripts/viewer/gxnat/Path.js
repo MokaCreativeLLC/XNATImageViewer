@@ -218,7 +218,7 @@ gxnat.Path.prototype.findDeepestLevel_ = function() {
  */
 gxnat.Path.prototype.getDeepestLevel = function() {
     if (!goog.isDefAndNotNull(this.deepestLevel_)){
-	this.findDeepestLevel_;
+	this.findDeepestLevel_();
     }
     return this.deepestLevel_;
 }

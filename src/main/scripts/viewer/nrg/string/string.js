@@ -65,7 +65,7 @@ nrg.string.getFileExtension = function(file) {
     //------------------
     // Special cases.
     //------------------
-    var ext = /**@type {!string}*/ file.slice(file.lastIndexOf(".") + 1);
+    var ext =  file.slice(file.lastIndexOf(".") + 1);
     // .nii.gz files will be wrongly stripped to .gz, check and correct for it
     if (ext == "gz") {
 	ext = "nii." + ext;
@@ -147,7 +147,7 @@ nrg.string.replaceIllegal = function (value, opt_replaceStr) {
     //------------------
     // Replace 'slashes', commas
     //------------------
-    var replaced = /**@type {!string}*/ value.replace(/\/./g, opt_replaceStr);
+    var replaced =  value.replace(/\/./g, opt_replaceStr);
     replaced = replaced.replace(/[|&;$%@"<>()+,]/g, opt_replaceStr);    
     return replaced;
 }

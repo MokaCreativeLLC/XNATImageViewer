@@ -1,11 +1,13 @@
+goog.provide('gxnat.slicerNode.Mesh');
+
 goog.require('gxnat.slicerNode.Display');
 
 
 /**
  * @struct
  * @extends {gxnat.slicerNode.Display}
+ * @constructor
  */
-goog.provide('gxnat.slicerNode.Mesh');
 gxnat.slicerNode.Mesh = 
 function(sceneViewElt, sceneViewDisplayableElt) {
     goog.base(this, sceneViewElt, sceneViewDisplayableElt);

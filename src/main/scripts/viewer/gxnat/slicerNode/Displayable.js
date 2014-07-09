@@ -1,3 +1,6 @@
+goog.provide('gxnat.slicerNode.Displayable');
+
+
 // gxnat
 goog.require('gxnat.slicerNode.Node');
 
@@ -8,8 +11,8 @@ goog.require('gxnat.slicerNode.Node');
  * @param {!Element} node
  * @param {!Element} storageNode
  * @extends {gxnat.slicerNode.Node}
+ * @constructor
  */
-goog.provide('gxnat.slicerNode.Displayable');
 gxnat.slicerNode.Displayable = function(file, node, storageNode) {
     goog.base(this);
 

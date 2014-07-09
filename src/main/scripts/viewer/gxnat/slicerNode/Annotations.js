@@ -1,3 +1,5 @@
+goog.provide('gxnat.slicerNode.Annotations');
+
 // goog
 goog.require('gxnat.slicerNode.Node');
 
@@ -10,8 +12,8 @@ goog.require('gxnat.slicerNode.Node');
  * @param {!string} markupsFiducialId
  * @param {!string} displayNodeId
  * @extends {gxnat.slicerNode.Node}
+ * @constructor
  */
-goog.provide('gxnat.slicerNode.Annotations');
 gxnat.slicerNode.Annotations = 
 function(position, color, fcsvText, markupsFiducialId, displayNodeId, name) {
     goog.base(this);

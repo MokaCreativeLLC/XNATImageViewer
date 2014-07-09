@@ -8,8 +8,8 @@ from subprocess import call
 
 IMG_VIEW_HOME = os.environ.get('XNATIMAGEVIEWER_HOME')
 LOAD_PATH = IMG_VIEW_HOME + \
-            "/src/main/scripts/viewer/xiv/ui/layouts/interactors"
-PROVIDE = 'goog.provde('
+            "/src/main/scripts/viewer/gxnat"
+PROVIDE = 'goog.provide('
 
 
 

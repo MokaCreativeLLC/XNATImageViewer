@@ -1,3 +1,5 @@
+goog.provide('gxnat.slicerNode.BackgroundColor');
+
 goog.require('gxnat.slicerNode.Node');
 
 /**
@@ -5,9 +7,8 @@ goog.require('gxnat.slicerNode.Node');
  * @param {!string | !Array.<number>} color1
  * @param {!string | !Array.<number>} color2
  * @extends {gxnat.slicerNode.Node}
- *
+ * @constructor
  */
-goog.provide('gxnat.slicerNode.BackgroundColor');
 gxnat.slicerNode.BackgroundColor = function(color1, color2){
     goog.base(this);
     this.backgroundColor = this.constructor.mrmlColorToRgb(color1);

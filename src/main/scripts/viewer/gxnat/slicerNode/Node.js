@@ -1,10 +1,12 @@
+goog.provide('gxnat.slicerNode.Node');
+
+
 goog.require('gxnat.slicerNode');
 
 /**
  * @struct
  * @constructor
  */
-goog.provide('gxnat.slicerNode.Node');
 gxnat.slicerNode.Node = function(){
     goog.getUid(this);
 };

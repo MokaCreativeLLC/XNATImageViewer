@@ -24,6 +24,7 @@ goog.require('gxnat.Zip');
  * @param {gxnat.slicerNode.Node=} opt_renderProperties A subclass of 
  *    gxnat.slicerNode.Node that will be converted to render properties.
  * @extends {gxnat.vis.Renderable}
+ * @constructor
  */
 gxnat.vis.Viewable = function(opt_files, opt_renderProperties) {
     goog.base(this, opt_renderProperties);

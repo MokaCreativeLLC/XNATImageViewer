@@ -8,7 +8,7 @@ goog.provide('gxnat.slicerNode');
 /**
  * @constructor
  */
-gxnat.slicerNode = {};
+gxnat.slicerNode = function(){};
 goog.exportSymbol('gxnat.slicerNode', gxnat.slicerNode);
 
 
@@ -16,6 +16,7 @@ goog.exportSymbol('gxnat.slicerNode', gxnat.slicerNode);
  *
  * @param {Object} sceneViewDisplayableElt
  * @return {?string}
+ * @constructor
  */
 gxnat.slicerNode.getDisplayNodeTypes = function(sceneViewDisplayableElt) {
 

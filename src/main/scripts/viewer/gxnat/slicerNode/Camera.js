@@ -1,3 +1,6 @@
+goog.provide('gxnat.slicerNode.Camera');
+
+
 goog.require('gxnat.slicerNode.Node');
 
 
@@ -7,8 +10,8 @@ goog.require('gxnat.slicerNode.Node');
  * @param {!Array.<number>} up
  * @param {!Array.<number>} focus
  * @extends {gxnat.slicerNode.Node}
+ * @constructor
  */
-goog.provide('gxnat.slicerNode.Camera');
 gxnat.slicerNode.Camera = function(position, up, focus){
     goog.base(this);
     

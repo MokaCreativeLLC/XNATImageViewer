@@ -17,6 +17,7 @@ goog.require('gxnat.vis.Viewable');
 /**
  * @param {gxnat.vis.Viewable= | Array.<gxnat.vis.Viewable>=} opt_viewables   
  * @extends {gxnat.vis.Renderable}
+ * @constructor
  */
 gxnat.vis.ViewableGroup = function(opt_viewables) {
     goog.base(this);

@@ -195,7 +195,7 @@ nrg.ui.Tabs.prototype.createTabElt_ = function(tabTitle) {
 nrg.ui.Tabs.prototype.createTabIcon_ = function(tabTitle) {
     //window.console.log("ICON", this.iconUrl);
 
-    var icon = /**@type {!Element}*/ goog.dom.createDom('div', {
+    var icon =  goog.dom.createDom('div', {
 	'id' : 'TabIcon_' + goog.string.createUniqueString(),
 	'class' : nrg.ui.Tabs.CSS.ICON,
     });
@@ -334,7 +334,7 @@ nrg.ui.Tabs.prototype.addTabs = function(tabTitles) {
  * @public
  */
 nrg.ui.Tabs.prototype.reset = function() {	
-    var count = /**@type {!number}*/ this.Tabs_.length;
+    var count =  this.Tabs_.length;
     while (count > 0) {
 	this.googTabPane_.removePage(count - 1)
 	count--;
@@ -401,19 +401,19 @@ nrg.ui.Tabs.prototype.addTab = function(tabTitle) {
     //
     // create Tab Element
     //
-    var tab = /**@type {!Element}*/ this.createTabElt_(tabTitle);
+    var tab =  this.createTabElt_(tabTitle);
     goog.dom.append(this.getElement(), tab);
 
     //
     //  create Tab icon	
     //
-    var tabIcon = /**@type {!Element}*/ this.createTabIcon_(tabTitle);
+    var tabIcon =  this.createTabIcon_(tabTitle);
     goog.dom.append(tab, tabIcon);
 
     //
     //  create Tab page	
     //
-    var content = /**@type {!Element}*/ this.createTabPage_(tabTitle);
+    var content =  this.createTabPage_(tabTitle);
     nrg.style.setStyle(content, nrg.style.dims(this.getElement(), 'width'))
     goog.dom.append(this.getElement().parentNode, content);
 

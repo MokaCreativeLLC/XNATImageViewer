@@ -993,9 +993,9 @@ X.parserIMA.prototype.parseStream = function(data, object) {
 
 
 
-      if ((_tagGroup !== undefined) && (_tagElement !== undefined)){
+      //if ((_tagGroup !== undefined) && (_tagElement !== undefined)){
 	  //window.console.log( '(' + _tagGroup.toString(16) + ',' + _tagElement.toString(16) +')');
-      }
+      //}
 
       // var _b0 = _VR & 0x00FF;
       // var _b1 = (_VR & 0xFF00) >> 8;

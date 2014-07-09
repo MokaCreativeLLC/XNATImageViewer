@@ -355,7 +355,7 @@ nrg.ui.Thumbnail.prototype.updateStyle = function (opt_args) {
 nrg.ui.Thumbnail.prototype.repositionHoverable = function(){
 
     var elt = this.getElement();
-    var hoverNode = /**@type {!Element}*/ this.getHoverable();
+    var hoverNode =  this.getHoverable();
     // Adjust only if the hover node is different from the element.
     if (hoverNode === elt) { return }
 
@@ -370,7 +370,7 @@ nrg.ui.Thumbnail.prototype.repositionHoverable = function(){
     hoverNode.getElementsByTagName('img')[0];
     var textClone = /**@type {Element}*/ 
     hoverNode.getElementsByTagName('div')[0];
-    var cloneWidth = /**@type {!number}*/ 0;
+    var cloneWidth =  0;
 
 
     // Set the clone width to something wider than the original thumbnail 
@@ -422,7 +422,7 @@ nrg.ui.Thumbnail.prototype.onMouseOver = function() {
  */
 nrg.ui.Thumbnail.prototype.onMouseOut = function() {
     //window.console.log("MOUSEPUT");
-    var hoverNode = /**@type {!Element}*/ this.getHoverable();
+    var hoverNode =  this.getHoverable();
     if (hoverNode && hoverNode.childNodes.length > 1) { 
 	
 	//window.console.log("MOUSEPUT_2");
@@ -453,7 +453,7 @@ nrg.ui.Thumbnail.prototype.onMouseOut = function() {
  * @private
  */
 nrg.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
-    var hoverNode = /**@type {!Element}*/ this.getHoverable();
+    var hoverNode =  this.getHoverable();
     if (set) {
 	goog.events.listen(hoverNode, 
 			   goog.events.EventType.MOUSEOVER, 

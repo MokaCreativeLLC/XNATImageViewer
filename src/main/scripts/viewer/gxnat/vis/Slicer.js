@@ -294,10 +294,10 @@ function(displayable){
  */
 gxnat.vis.Slicer.prototype.getThumbnailImage = function(opt_callback){
 
-    var ext = /** @type {!string} */ '';
-    var i = /** @type {!number} */ 0;
-    var len = /** @type {!number} */ this.mrbFiles_.length;
-    var thumbFound = /** @type {!boolean} */ false;
+    var ext = '';
+    var i =  0;
+    var len = this.mrbFiles_.length;
+    var thumbFound = false;
 
     this['thumbnailFiles'] = [];
 

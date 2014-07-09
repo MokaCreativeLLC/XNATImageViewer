@@ -15,6 +15,7 @@ goog.require('gxnat.vis.RenderProperties');
  * A Renderable is a VisNode that has render properties associated with it.
  *
  * @extends {gxnat.vis.VisNode}
+ * @constructor
  */
 gxnat.vis.Renderable = function(opt_displayProperties) {
     goog.base(this);

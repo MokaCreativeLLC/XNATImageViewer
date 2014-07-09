@@ -317,7 +317,7 @@ xiv.ui.ThumbnailGallery.prototype.initDragDrop_ = function(){
  */
 xiv.ui.ThumbnailGallery.prototype.createDragElement_ = function(srcElt) {
     // Get the thumbnail ID from the ancestor.
-    var thumbId = /**@type {!string}*/  goog.dom.getAncestorByTagNameAndClass(
+    var thumbId =   goog.dom.getAncestorByTagNameAndClass(
 	srcElt, 'div', xiv.ui.Thumbnail.ELEMENT_CLASS).id.replace(
 	    nrg.ui.Thumbnail.HOVERABLE_PREFIX, '');
 
@@ -330,7 +330,7 @@ xiv.ui.ThumbnailGallery.prototype.createDragElement_ = function(srcElt) {
     this.Thumbs_[thumbId].setActive(true, true);
 
     // Create  and return the drag element
-    var dragEl = /**@type {!Element}*/ 
+    var dragEl =  
 	this.Thumbs_[thumbId].getElement().cloneNode(true);
     dragEl.setAttribute('id', xiv.ui.ThumbnailGallery.DRAGGER_ID + 
 		       dragEl.id);

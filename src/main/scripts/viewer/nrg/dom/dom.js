@@ -55,10 +55,10 @@ nrg.dom.createBasicHoverButtonSet = function(idPrefixes, opt_iconSrcFolder,
 	throw new TypeError('String expected!', opt_iconExt);
     }
 
-    var buttonSet = /**@type {Object.<string, Element>}*/{};
-    var ext = /**@type {!string}*/ opt_iconExt ? opt_iconExt : 'png';
-    var key = /**@type {!string}*/ '';
-    var i = /**@type {!number}*/ 0;
+    var buttonSet = {};
+    var ext =  opt_iconExt ? opt_iconExt : 'png';
+    var key =  '';
+    var i =  0;
 
     for (i=0, len = idPrefixes.length; i < len; i++){
 	key = idPrefixes[i];
@@ -81,7 +81,7 @@ nrg.dom.createBasicHoverButtonSet = function(idPrefixes, opt_iconSrcFolder,
  * @public
  */
 nrg.dom.createDivChildImage = function(div, src){
-    var imgElt = /**@type {!Element}*/ goog.dom.createDom('img', {
+    var imgElt =  goog.dom.createDom('img', {
 	'src': src
     })
     // Restyle image to fit in div
@@ -122,8 +122,8 @@ nrg.dom.createBasicHoverButton = function(idPrefix,
 	&& !goog.isNumber(opt_mouseOutOpacity)){
 	throw new TypeError('Number expected!');
     }
-    var attrs = /**@type {!Object}*/ opt_attrs ? opt_attrs : {};
-    var buttonDiv = /**@type {!Element}*/ 
+    var attrs = opt_attrs ? opt_attrs : {};
+    var buttonDiv =  
     nrg.dom.createUniqueDom('div', idPrefix, attrs);
     //
     // Make an 'img' element if there's a 'src' attrib.
@@ -176,7 +176,7 @@ nrg.dom.createUniqueDom = function (type, idPrefix, opt_attrs) {
 	throw new TypeError('Object expected!');
     }
 
-    var opt_attrs = /**@type {!Object}*/ 
+    var opt_attrs = 
     opt_attrs && goog.isObject(opt_attrs) ? opt_attrs : {}
 
     
@@ -200,7 +200,7 @@ nrg.dom.createUniqueDom = function (type, idPrefix, opt_attrs) {
  * @public
  */
 nrg.dom.stopPropagation = function (e) {
-    if (!e) var e = /**@type {!Event}*/ window.event;
+    if (!e) var e =  window.event;
     e.cancelBubble = true;
     if (e.stopPropagation) 
 	e.stopPropagation();
@@ -223,7 +223,7 @@ nrg.dom.stopPropagation = function (e) {
  * @public
  */
 nrg.dom.checkForExtraneousArgs = function (templateArgs, args, opt_callback) {
-    var extraneousArgStr = /**@type {!string} @const*/ 
+    var extraneousArgStr = 
         'Invalid arguments detected in args:';
     for (var attr in args) { 
     	if (! (attr in templateArgs)) {
@@ -249,9 +249,9 @@ nrg.dom.checkForExtraneousArgs = function (templateArgs, args, opt_callback) {
  * @public 
  */ 
 nrg.dom.readCSS = function(cssClassName) {
-    var classes = /**@type {!number}*/ document.styleSheets[0].rules || 
+    var classes =  document.styleSheets[0].rules || 
 	document.styleSheets[0].cssRules
-    var x = /**@type {!number}*/ 0;
+    var x =  0;
     for(x=0; x < classes.length; x++) {
         if(classes[x].selectorText == cssClassName) {
             (classes[x].cssText) ? alert(classes[x].cssText) : 

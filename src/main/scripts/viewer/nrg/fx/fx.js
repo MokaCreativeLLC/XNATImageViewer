@@ -354,6 +354,7 @@ nrg.fx.generateAnim_BgColorTrans = function(elt, startDim, endDim, duration) {
  * @struct
  * @param {!Object} asIsDims
  * @param {!Object} toBeDims
+ * @constructor
  */
 nrg.fx.TransitionDims = function(asIsDims, toBeDims){
     this.asIs = asIsDims;
@@ -449,7 +450,7 @@ function(asIsElt, toBeElt) {
  */
 nrg.fx.generateAnimations = function (elt, startDim, endDim, duration) {
     
-    var anims = /**@type {!Array.<goog.fx.Animation>}*/ [];
+    var anims =  [];
 
     goog.array.forEach(nrg.fx.animGenStyles, function(style){
 	//
@@ -559,7 +560,7 @@ function (anims, opt_onBegin, opt_onAnimate, opt_onEnd) {
  */
 nrg.fx.serialAnimate = 
 function (anims, opt_onBegin, opt_onAnimate, opt_onEnd) {
-    var animQueue = /**@type {!goog.fx.AnimationParallelQueue}*/ 
+    var animQueue = 
     new goog.fx.AnimationSerialQueue();  
 
     goog.array.forEach(anims, function(anim){
@@ -601,12 +602,12 @@ nrg.fx.setBasicHoverStates = function(elt, overOp, outOp){
     overOp = overOp === undefined ? 1 : overOp
     outOp = outOp === undefined ? .5 : outOp
 
-    var mouseOver = /**@type {!function} */ function(event) { 
+    var mouseOver =  function(event) { 
 	nrg.style.setStyle(elt, {
 	    'opacity': overOp
 	});
     }
-    var mouseOut = /**@type {!function} */ function(event) {
+    var mouseOut =  function(event) {
 	nrg.style.setStyle(elt, {
 	    'opacity': outOp
 	})

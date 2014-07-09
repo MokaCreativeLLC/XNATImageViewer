@@ -19,6 +19,7 @@ goog.require('gxnat.slicerNode.Mesh');
  * @struct
  * @param {!gxnat.slicerNode.Node}
  * @extends {goog.Disposable}
+ * @constructor
  */
 gxnat.vis.RenderProperties = function(slicerNode){
     goog.base(this);

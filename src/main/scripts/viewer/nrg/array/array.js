@@ -36,13 +36,13 @@ goog.exportSymbol('nrg.array', nrg.array);
 nrg.array.naturalCompare = function (a, b) {
     function chunkify(t) {
 	var tz = /**@type {!Array.number}*/ []; 
-	var x = /**@type {!number}*/ 0; 
-	var y =/**@type {!number}*/ -1; 
-	var n = /**@type {!number}*/ 0; 
+	var x =  0; 
+	var y = -1; 
+	var n =  0; 
 	var /**@type {number}*/ i;
 	var /**@type {number}*/ j;
 	while (i = (j = t.charAt(x++)).charCodeAt(0)) {
-	    var m = /**@type {!number}*/ (i == 46 || (i >=48 && i <= 57));
+	    var m =  (i == 46 || (i >=48 && i <= 57));
 	    if (m !== n) {
 		tz[++y] = "";
 		n = m;
@@ -55,7 +55,7 @@ nrg.array.naturalCompare = function (a, b) {
     var bb = /**@type {!Array.number}*/ chunkify(b);
     for (x = 0; aa[x] && bb[x]; x++) {
 	if (aa[x] !== bb[x]) {
-	    var c = /**@type {!number}*/ Number(aa[x]), d = Number(bb[x]);
+	    var c =  Number(aa[x]), d = Number(bb[x]);
 	    if (c == aa[x] && d == bb[x]) {
 		return c - d;
 	    } else return (aa[x] > bb[x]) ? 1 : -1;

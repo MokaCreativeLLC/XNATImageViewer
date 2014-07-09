@@ -1,3 +1,6 @@
+goog.provide('gxnat.slicerNode.Volume');
+
+
 // goog
 goog.require('goog.array');
 goog.require('goog.math.Matrix');
@@ -13,8 +16,8 @@ goog.require('gxnat.slicerNode.Display');
  * @struct
  * @constructor
  * @extends {gxnat.slicerNode.Display}
+ * @constructor
  */
-goog.provide('gxnat.slicerNode.Volume');
 gxnat.slicerNode.Volume = 
 function(sceneViewElt, sceneViewDisplayableElt, selectedVolumeID) {
     goog.base(this, sceneViewElt, sceneViewDisplayableElt);
@@ -107,6 +110,7 @@ goog.exportSymbol('gxnat.slicerNode.Volume',
  * @param {!goog.math.Matrix} sagittal
  * @param {!goog.math.Matrix} coronal
  * @param {!goog.math.Matrix} axial
+ * @constructor
  */
 
 gxnat.slicerNode.Volume.sliceToRAS = 

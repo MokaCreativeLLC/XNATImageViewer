@@ -1,3 +1,7 @@
+goog.provide('gxnat.slicerNode.SceneView');
+
+
+
 goog.require('gxnat.slicerNode.Node');
 //goog.require('gxnat.slicerNode.Camera');
 goog.require('gxnat.slicerNode.BackgroundColor');
@@ -10,8 +14,8 @@ goog.require('gxnat.slicerNode.BackgroundColor');
  * @param {!gxnat.slicerNode.BackgroundColor} bgCol
  * @param {!string} layout
  * @extends {gxnat.slicerNode.Node}
+ * @constructor
  */
-goog.provide('gxnat.slicerNode.SceneView');
 gxnat.slicerNode.SceneView = 
 function(sceneViewElt, cam, bgCol, layout, annots, vols, 
 	 meshes, fibers) {

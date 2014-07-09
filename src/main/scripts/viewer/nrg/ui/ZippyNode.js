@@ -28,7 +28,7 @@ goog.require('nrg.style');
  * @param {boolean=} opt_expanded Defaults to false.
  * @param {Function=} opt_insertMethod The optional insert method.
  *
- * @construtctor
+ * @constructor
  * @extends {nrg.ui.Component}
  */
 nrg.ui.ZippyNode = 

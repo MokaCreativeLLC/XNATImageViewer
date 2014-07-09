@@ -1,11 +1,14 @@
+goog.provide('gxnat.slicerNode.Layout');
+
+
 goog.require('gxnat.slicerNode.Node');
 
 /**
  * @struct
  * @param {!number} layoutNum
  * @extends {gxnat.slicerNode.Node}
+ * @constructor
  */
-goog.provide('gxnat.slicerNode.Layout');
 gxnat.slicerNode.Layout = function(layoutNum){
     goog.base(this);
 
