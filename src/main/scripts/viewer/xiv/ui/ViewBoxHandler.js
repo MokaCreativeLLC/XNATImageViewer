@@ -595,7 +595,7 @@ xiv.ui.ViewBoxHandler.prototype.addAddColumnButton_ = function(ViewBox){
 
 
     // Tool tip
-    addColumnButton.title = "Add ViewBox Column.";
+    addColumnButton.title = "Add ViewBox Column";
 }
 
 
@@ -647,7 +647,7 @@ xiv.ui.ViewBoxHandler.prototype.addAddRowButton_ = function(ViewBox){
 
 
     // Tool tip
-    addRowButton.title = "Close ViewBox.";
+    addRowButton.title = "Add ViewBox Row";
 }
 
 
@@ -698,7 +698,7 @@ xiv.ui.ViewBoxHandler.prototype.addCloseButton_ = function(ViewBox){
 
 
     // Tool tip
-    closeButton.title = "Close ViewBox.";
+    closeButton.title = "Close ViewBox";
 }
 
 
@@ -725,7 +725,7 @@ xiv.ui.ViewBoxHandler.prototype.addDragDropHandle_ = function(ViewBox) {
     this.dragDropHandles_[ViewBox.getElement().id] = dragDropHandle;
 
     // Tool tip
-    dragDropHandle.title = "Drag and drop view box to swap.";
+    dragDropHandle.title = "Drag / Swap ViewBox";
 }
 
 

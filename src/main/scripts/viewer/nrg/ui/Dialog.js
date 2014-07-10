@@ -108,6 +108,32 @@ nrg.ui.Dialog.prototype.texts_;
 
 
 
+/**
+ * Whether the dialog is draggable. Defaults to true.
+ * @type {boolean}
+ * @private
+ */
+nrg.ui.Dialog.prototype.draggable_ = true;
+
+
+
+
+/**
+ * Dragger.
+ * @type {?goog.fx.Dragger}
+ * @private
+ */
+nrg.ui.Dialog.prototype.dragger_ = null;
+
+
+
+/**
+ * @type {?goog.math.Coordinate}
+ * @private
+ */
+nrg.ui.Dialog.prototype.posOnClose_ = null;
+
+
 
 /** 
  * @param {string=} opt_eltMouseover
@@ -376,22 +402,7 @@ nrg.ui.Dialog.prototype.center = function() {
 
 
 
-/**
- * Whether the dialog is draggable. Defaults to true.
- * @type {boolean}
- * @private
- */
-nrg.ui.Dialog.prototype.draggable_ = true;
 
-
-
-
-/**
- * Dragger.
- * @type {goog.fx.Dragger}
- * @private
- */
-nrg.ui.Dialog.prototype.dragger_ = null;
 
 
 
@@ -603,8 +614,9 @@ nrg.ui.Dialog.prototype.render = function(opt_parentElement) {
      * @private
      * @type {Element}
      */
-    this.buttonCollection_ = goog.dom.getElementsByClass('modal-dialog-buttons', 
-					    this.getElement())[0];
+    this.buttonCollection_ = goog.dom.getElementsByClass(
+	'modal-dialog-buttons', 
+	this.getElement())[0];
 
 
     /**
@@ -635,7 +647,24 @@ nrg.ui.Dialog.prototype.render = function(opt_parentElement) {
  * @inheritDoc
  */
 nrg.ui.Dialog.prototype.setVisible = function(visible) {
-    goog.base(this, 'setVisible', visible);
+    //window.console.log("SET VISIBLE", visible, 
+    //this.getTitle(), this.isVisible())
+	
+    if (!goog.isDefAndNotNull(this.posOnClose_)){
+	this.posOnClose_ = goog.style.getPosition(this.getElement());
+    }
+
+    if (this.isVisible() && visible == false){
+	this.posOnClose_ = goog.style.getPosition(this.getElement());
+	goog.base(this, 'setVisible', visible);
+    } 
+
+
+    else if (!this.isVisible() && visible == true){
+	goog.base(this, 'setVisible', visible);
+	goog.style.setPosition(this.getElement(), this.posOnClose_);
+	return;
+    }
 }
 
 
@@ -686,7 +715,10 @@ nrg.ui.Dialog.prototype.disposeInternal = function() {
 	delete this.images_;
     }
 
-    
+    if (goog.isDefAndNotNull(this.posOnClose_)){
+	goog.object.clear(this.posOnClose_);
+	delete this.posOnClose_;
+    }
 
 
 }

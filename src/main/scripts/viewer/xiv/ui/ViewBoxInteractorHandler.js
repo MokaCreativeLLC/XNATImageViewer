@@ -139,10 +139,18 @@ function (ViewBox, Renderer, LayoutHandler, Dialogs) {
     this.listenForKeyboardEvents_();
 
 
+    /**
+     * @private
+     * @type {!boolean}
+     */
+    this.useZoomFollower_ = false;
+
     //
     // Create the zoom follower
     //
-    this.createZoomFollower_();
+    if (this.useZoomFollower_){
+	this.createZoomFollower_();
+    }
 }
 goog.inherits(xiv.ui.ViewBoxInteractorHandler, goog.events.EventTarget);
 goog.exportSymbol('xiv.ui.ViewBoxInteractorHandler', 
@@ -523,13 +531,18 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
 
     //window.console.log("MOUSEMOVE", this.ctrlDown_, this.mouseDown_.right);
 
-    this.zoomFollower_.style.visibility = 'hidden';
+    if (this.useZoomFollower_){
+	this.zoomFollower_.style.visibility = 'hidden';
+    }
+
 
     //
     // ZOOM
     //
     if (this.zooming_){
-	this.updateZoomFollower_();
+	if (this.useZoomFollower_){
+	    this.updateZoomFollower_();
+	}
 	this.setCursorZoomIn_();	
 	if (this.mouseDown_.left){
 	    this.onRenderPlaneZoom_(xDist, yDist);
@@ -556,7 +569,9 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
 xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOut_ = function(e) {
     this.clearCursorStyle_();
     this.currMouseRenderer_ = null;
-    this.zoomFollower_.style.visibility = 'hidden';
+    if (this.useZoomFollower_){
+	this.zoomFollower_.style.visibility = 'hidden';
+    }
 } 
 
 
@@ -1088,7 +1103,7 @@ function(){
     //
     // Create the dialog
     //
-    this.Dialogs_.createToggleableDialog(
+    this.Dialogs_.createGenericToggleableDialog(
 	this.dialogKeys_[key],
 	xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_DIALOG,
 	xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_TOGGLE,
@@ -1431,7 +1446,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
 	if (ctrl instanceof xiv.ui.ctrl.Histogram){
 	    ctrlSet[folderStr].hist = ctrl;
 	} 
-	else if (ctrl.getLabel().innerHTML.indexOf('Level Max') > -1){
+	else if (ctrl.getLabel().innerHTML.indexOf('Window Max') > -1){
 	    ctrlSet[folderStr].levelMax = ctrl;
 	}
 
@@ -1681,6 +1696,8 @@ function(){
 	    // Params
 	    //
 	    var bbox = volume['bbox'];
+	    //var range = volume['range'];
+	    //window.console.log('\n\nRANGE', range);
 	    var sliceToRAS = volume[xiv.vis.XtkEngine.SLICE_TO_RAS_KEY];
 	    var range, slicePct;
 
@@ -2163,7 +2180,7 @@ function() {
 	//
 	// Create the dialog
 	//
-	this.Dialogs_.createToggleableDialog(
+	this.Dialogs_.createGenericToggleableDialog(
 	    this.dialogKeys_[key],
 	    xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_DIALOG,
 	    xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_TOGGLE,
@@ -2194,60 +2211,86 @@ function() {
 	}
 	else {
 	    this.zippyTrees_[key].expandAll(); 
-	    //this.zippyTrees_[key].hideZippyHeaders();
-
-	    /*
-	    goog.array.forEach(
-		this.zippyTrees_[key].getZippyTree().getTopLevelNodes(), 
-		function(node){
-		    node.getHeader().style.visibility = 'hidden';
-		})
-	    this.zippyTrees_[key].getElement().style.top = '-1px';
-	    */
 	    this.zippyTrees_[key].mapSliderToContents();
 	}
 
 
 	if (key == 'levels'){
-	    var levelDia = this.Dialogs_.getDialogs()[this.dialogKeys_[key]];
-	    goog.dom.classes.add(levelDia.getElement(), 
-		xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_DIALOG);
-	    levelDia.setMouseoverClass(
-		xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_DIALOG_HOVERED);
-
-	    this.ViewBox_.fireToggleButton(this.dialogKeys_['levels']);
-
-	    goog.array.forEach(
-		this.viewableCtrls_['levels']['all'], 
-		function(ctrl, i){
-		    if (!(ctrl instanceof xiv.ui.ctrl.Histogram)){
-			ctrl.getLabel().style.fontSize = '9px';
-			ctrl.getElement().style.height = '45px';
-			ctrl.getComponent().getElement().style.top = '28px';
-			ctrl.getComponent().getElement().style.width = '115px';
-			ctrl.getComponent().updateStyle();
-		    }
-
-		}.bind(this))
-
-
-	    levelDia.moveToCorner('right', 'top', 4, 50);
+	    this.customizeLevelsDialog_();
 	}
+	
     }.bind(this))
 }
 
 
 
+
+/**
+* @private
+*/
+xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
+
+    var levelDia = this.Dialogs_.getDialogs()[
+	this.dialogKeys_['levels']];
+
+    //
+    // Add the new class
+    //
+    goog.dom.classes.add(levelDia.getElement(), 
+			 xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_DIALOG);
+
+    //
+    // Change the mouseover class
+    //
+    levelDia.setMouseoverClass(
+	xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_DIALOG_HOVERED);
+
+    //
+    // Keep it open
+    //
+    this.ViewBox_.fireToggleButton(this.dialogKeys_['levels']);
+
+    goog.array.forEach(
+	this.viewableCtrls_['levels']['all'], 
+	function(ctrl, i){
+	    if (!(ctrl instanceof xiv.ui.ctrl.Histogram)){
+		ctrl.getLabel().style.fontSize = '9px';
+		ctrl.getElement().style.height = '45px';
+		ctrl.getComponent().getElement().style.top = '28px';
+		ctrl.getComponent().getElement().style.width = '115px';
+		ctrl.getComponent().updateStyle();
+	    }
+
+	}.bind(this))
+
+
+    //
+    // Move to corner
+    //
+    levelDia.moveToCorner('right', 'top', 4, 50);
+
+
+    goog.array.forEach(
+	this.zippyTrees_['levels'].getZippyTree().getTopLevelNodes(), 
+	function(node){
+	    node.truncateHeaderLabel(10);
+	})
+
+
+}
+
 /**
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.updateZoomFollower_ = function(){
-    goog.dom.removeNode(this.zoomFollower_);
-    goog.dom.append(this.currMouseRenderer_.container,
-		    this.zoomFollower_);
-    this.zoomFollower_.style.visibility = 'visible';
-    this.zoomFollower_.style.left = this.mouseXY_.curr[0] + 20 + 'px';
-    this.zoomFollower_.style.top = this.mouseXY_.curr[1]  + 'px';
+    if (this.useZoomFollower_){
+	goog.dom.removeNode(this.zoomFollower_);
+	goog.dom.append(this.currMouseRenderer_.container,
+			this.zoomFollower_);
+	this.zoomFollower_.style.visibility = 'visible';
+	this.zoomFollower_.style.left = this.mouseXY_.curr[0] + 20 + 'px';
+	this.zoomFollower_.style.top = this.mouseXY_.curr[1]  + 'px';
+    }
 }
 
 
@@ -2326,8 +2369,11 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
     delete this.mouseEvents_;
 
 
-    goog.dom.removeNode(this.zoomFollower_);
-    delete this.zoomFollower_;
+    if (this.useZoomFollower_){
+	goog.dom.removeNode(this.zoomFollower_);
+	delete this.zoomFollower_;
+    }
+    delete this.useZoomFollower_;
 
 
     delete this.viewableCtrls_;

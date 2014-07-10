@@ -97,7 +97,7 @@ xiv.vis.XtkRenderer2D.prototype.onScroll = function() {
  * @inheritDoc
  */
 xiv.vis.XtkRenderer2D.prototype.onProgress = function(e) {
-    window.console.log('onProg: 2D', e._value);
+    //window.console.log('onProg: 2D', e._value);
     goog.base(this, 'onProgress', e);
     this.dispatchEvent({
 	type: xiv.vis.RenderEngine.EventType.RENDERING,
@@ -206,6 +206,8 @@ xiv.vis.XtkRenderer2D.prototype.onInteractorMouseMove_ = function(e){
     window.console.log(_mult2.multiply(_origin).toString());
     */
 
+    //window.console.log('\n\nreslicing', this.getVolume());
+    
     this.dispatchEvent({
 	type: goog.events.EventType.MOUSEOVER,
 	mousePosition: this._interactor.mousePosition,

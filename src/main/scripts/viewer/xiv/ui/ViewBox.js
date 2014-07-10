@@ -566,8 +566,6 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     // Hide progress bar
     //
     this.hideProgressBarPanel_(800, function(){
-	window.console.log('hereea');
-
 	//
 	// Set progress bar value to 0
 	//
@@ -696,7 +694,6 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 	//
 	// Otherwise just load the individual group
 	//
-	window.console.log('loadad');
 	this.load(viewGroups[0], false);
     }
 }
@@ -738,9 +735,7 @@ xiv.ui.ViewBox.prototype.checkInUseAndShowDialog = function(opt_onYes){
  * @public
  */
 xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
-    window.console.log('load');
 
-    //if (this.loading_
     //
     // Dispatch preload
     //
@@ -884,7 +879,7 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
     gxnat.Zip.getFilesAsZip(
 	filesUrl, 
 	function(zip) { 
-	    window.console.log('Downloaded: ' + filesUrl + '!');
+	    //window.console.log('Downloaded: ' + filesUrl + '!');
 	    ViewableSet.getViewables()[0].setFileDataFromZip(zip);
 	    this.renderViewableSet_(ViewableSet);
 	}.bind(this), 

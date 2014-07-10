@@ -60,8 +60,8 @@ xiv.ui.ctrl.LevelsController.CSS_SUFFIX = {};
 xiv.ui.ctrl.LevelsController.CONTROLLERS = {
     BRIGHTNESS: 'Brightness',
     CONTRAST: 'Contrast',
-    LEVEL_MIN: 'Level Min.',
-    LEVEL_MAX: 'Level Max.',
+    LEVEL_MIN: 'Window Min.',
+    LEVEL_MAX: 'Window Max.',
     HISTOGRAM: 'Histogram'
 };
 
@@ -100,17 +100,13 @@ xiv.ui.ctrl.LevelsController.prototype.updateHistogram_ = function(hist){
  */
 xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
     goog.base(this, 'add', xObj);
-    window.console.log('a');
+
     var hist = this.add_histogram(xObj);
-    window.console.log('a1');
     var c1 = this.add_levelMin(xObj);
-    window.console.log('a2');
     var c2 = this.add_levelMax(xObj);
-    window.console.log('a3');
     var c3 = this.add_brightness(xObj, c1, c2);
-    window.console.log('a4');
     var c4 = this.add_contrast(xObj, c1, c2);
-    window.console.log('b');
+ 
 
 
     //
@@ -128,7 +124,7 @@ xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
 	}.bind(this))
 
 
-    window.console.log('Auto-level images.');
+    //window.console.log('Auto-level images.');
 }
  
 

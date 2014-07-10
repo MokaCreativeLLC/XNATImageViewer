@@ -67,6 +67,7 @@ function (title, parentElement, opt_expanded, opt_insertMethod) {
      * @private
      */
     this.headerLabel_ = nrg.ui.ZippyNode.createZippyHeaderLabel_(title);
+    this.truncateHeaderLabel();
     this.header_.appendChild(this.headerLabel_);
 
 
@@ -155,7 +156,6 @@ nrg.ui.ZippyNode.CSS_SUFFIX = {
 
 
 /**
- * As stated.
  * @param {!string} title The title of the zippy.
  * @return {!Element} The header label.
  * @private
@@ -166,23 +166,9 @@ nrg.ui.ZippyNode.createZippyHeaderLabel_ = function(title){
 	    goog.string.createUniqueString(),
 	'class': nrg.ui.ZippyNode.CSS.HEADER_LABEL
     })
-
-
-    // 
-    // Truncate accordingly
-    //
-    var htmlStrippedTitle = title.replace(/<(?:.|\n)*?>/gm, '').
-	replace('&nbsp', ' ');
-
-    if (htmlStrippedTitle.length < title){
-	label.innerHTML = goog.string.truncateMiddle(title, 105);
-    } else if (htmlStrippedTitle.length == title.length) {
-	label.innerHTML = goog.string.truncateMiddle(title, 45);
-    } else {
-	label.innerHTML = title;
-    }
     return label;
 }
+
 
 
 
@@ -245,6 +231,40 @@ nrg.ui.ZippyNode.NODE_STORT_TAG = goog.string.createUniqueString();
  * @private
  */
 nrg.ui.ZippyNode.prototype.zippyType_ = goog.ui.AnimatedZippy;
+
+
+
+
+
+
+
+/**
+ * @param {number=} opt_max Defaults to 45
+ * @public
+ */
+nrg.ui.ZippyNode.prototype.truncateHeaderLabel = function(opt_max){
+
+    opt_max = goog.isDefAndNotNull(opt_max) ? opt_max : 45;
+
+    var label = this.headerLabel_;
+    //window.console.log(this.headerLabel_);
+
+    // 
+    // Truncate accordingly
+    //
+    var htmlStrippedTitle = this.title_.replace(/<(?:.|\n)*?>/gm, '').
+	replace('&nbsp', ' ');
+
+    if (htmlStrippedTitle.length < this.title_){
+	label.innerHTML = goog.string.truncateMiddle(this.title_, opt_max + 60);
+    } else if (htmlStrippedTitle.length == this.title_.length) {
+	label.innerHTML = goog.string.truncateMiddle(this.title_, opt_max);
+    } else {
+	label.innerHTML = this.title_;
+    }
+    return label;
+}
+
 
 
 
@@ -480,3 +500,28 @@ nrg.ui.ZippyNode.prototype.disposeInternal = function(){
 
 
 
+goog.exportSymbol('nrg.ui.ZippyNode.ID_PREFIX', nrg.ui.ZippyNode.ID_PREFIX);
+goog.exportSymbol('nrg.ui.ZippyNode.EventType', nrg.ui.ZippyNode.EventType);
+goog.exportSymbol('nrg.ui.ZippyNode.CSS_SUFFIX', nrg.ui.ZippyNode.CSS_SUFFIX);
+goog.exportSymbol('nrg.ui.ZippyNode.NODE_STORT_TAG',
+	nrg.ui.ZippyNode.NODE_STORT_TAG);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.truncateHeaderLabel',
+	nrg.ui.ZippyNode.prototype.truncateHeaderLabel);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.getTitle',
+	nrg.ui.ZippyNode.prototype.getTitle);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.getNodes',
+	nrg.ui.ZippyNode.prototype.getNodes);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.getHeader',
+	nrg.ui.ZippyNode.prototype.getHeader);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.getContentHolder',
+	nrg.ui.ZippyNode.prototype.getContentHolder);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.getHeaderLabel',
+	nrg.ui.ZippyNode.prototype.getHeaderLabel);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.getZippy',
+	nrg.ui.ZippyNode.prototype.getZippy);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.setExpanded',
+	nrg.ui.ZippyNode.prototype.setExpanded);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.setAnimated',
+	nrg.ui.ZippyNode.prototype.setAnimated);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.disposeInternal',
+	nrg.ui.ZippyNode.prototype.disposeInternal);

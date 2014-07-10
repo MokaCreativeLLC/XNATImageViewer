@@ -405,23 +405,26 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
     goog.array.forEach(ViewableGroup.getViewables(), function(Viewable){
 	fileList = Viewable.getFiles();
 	if (!goog.isDefAndNotNull(fileList)) { return };
-	window.console.log('f', ViewableGroup, Viewable, Viewable.getFiles());
+	//window.console.log('f', ViewableGroup, Viewable, Viewable.getFiles());
 	currXObj = this.createXObject_(fileList, Viewable.getFileData());
 	renderProps = Viewable.getRenderProperties();
 
 	if (!currXObj) { return }
-	window.console.log('here2');
+	//window.console.log('here2');
 	//
 	// Create controllers
 	//
 	this.ControllerTree_.createControllers(currXObj, renderProps);
-	window.console.log('here12');
+	//window.console.log('here12');
 	// Volumes
 	if (currXObj instanceof X.volume) {
 	    xiv.vis.XtkEngine.setRenderProperties_Volume_(
 		currXObj, renderProps);
 	    this.currXObjects_['volumes'].push(currXObj);
-	    window.console.log(currXObj, currXObj.dimensionsRAS);
+	    currXObj['reslicing'] = false;
+	    //window.console.log('\n\nreslicing', currXObj['reslicing']);
+	    //window.console.log('\n\nreslicing', currXObj['transform']);
+	    //window.console.log(currXObj, currXObj['dimensionsRAS']);
 	}
 
 	// Meshes
@@ -538,8 +541,8 @@ xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
 	   currArr.push(xObj);
 	})
     }.bind(this))
-    window.console.log('VOLUMES', volumes);
-    window.console.log('SELECTED VOLUMES', selectedVolume);
+    //window.console.log('VOLUMES', volumes);
+    //window.console.log('SELECTED VOLUMES', selectedVolume);
 
     //
     // Add all non-volumes to PlaneV
@@ -591,13 +594,13 @@ xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
 xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
 
     this.renderEndCalled_ = false;
-    window.console.log('currXObjects', this.currXObjects_);
+    //window.console.log('currXObjects', this.currXObjects_);
 
     //
     // Create the XObjects
     //
     this.createXObjects_(ViewableGroup);
-    window.console.log('currXObjects2', this.currXObjects_);
+    //window.console.log('currXObjects2', this.currXObjects_);
     
     //
     // Set the background color and camera if render properties are defined
@@ -647,7 +650,7 @@ xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
 		break;
 	    }
 	}
-	window.console.log("PRIM", this.primaryRenderPlane_);
+	//window.console.log("PRIM", this.primaryRenderPlane_);
 	// Then render
 	this.renderAllPlanes();
 
@@ -689,9 +692,10 @@ function(xVolume, planeOrientations){
 	    function(e){
 		
 		unrenderedNonPrimary--;
+		/*
 		window.console.log("RENDER END!", Plane.getOrientation(),
 				  unrenderedNonPrimary);
-
+				  */
 	
 		//
 		// When all renderers have finished, run onRenderEnd_
@@ -763,7 +767,7 @@ xiv.vis.XtkEngine.prototype.updateStyle = function(){
  */
 xiv.vis.XtkEngine.setRenderProperties_Mesh_ = 
 function(xObj, renderProperties){
-    window.console.log('here1');
+    //window.console.log('here1');
     xObj.color = renderProperties.color || [.5,.5,.5];
     xObj.opacity = renderProperties.opacity || 1;
 }
@@ -776,7 +780,7 @@ function(xObj, renderProperties){
  */
 xiv.vis.XtkEngine.setRenderProperties_Volume_ = 
 function(xObj, renderProperties){
-    window.console.log('here2a');
+    //window.console.log('here2a');
     if (!goog.isDefAndNotNull(renderProperties)) {  
 	renderProperties = {
 	    origin: [0,0,0],
@@ -1248,7 +1252,7 @@ xiv.vis.XtkEngine.isFiber = function(ext) {
 xiv.vis.XtkEngine.prototype.createXObject_ = 
 function(fileCollection, opt_fileData) {
 
-    window.console.log("FILE COLLECT", fileCollection);
+    //window.console.log("FILE COLLECT", fileCollection);
     var ext = (goog.isArray(fileCollection)) ? 
 	nrg.string.getFileExtension(fileCollection[0]) : 
 	nrg.string.getFileExtension(fileCollection);
@@ -1289,7 +1293,7 @@ function(fileCollection, opt_fileData) {
 	fileCollection = urlEncode(fileCollection)
     }
 
-    window.console.log("Fildedata", opt_fileData);
+    //window.console.log("Fildedata", opt_fileData);
     if (goog.isDefAndNotNull(opt_fileData)){
 	obj['file'] = goog.object.getKeys(opt_fileData);
 	obj['filedata'] = goog.object.getValues(opt_fileData);

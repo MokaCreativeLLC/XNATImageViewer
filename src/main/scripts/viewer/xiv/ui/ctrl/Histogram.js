@@ -276,7 +276,7 @@ xiv.ui.ctrl.Histogram.prototype.getXObj = function() {
  * @private
  */
 xiv.ui.ctrl.Histogram.prototype.tallyLevels_ = function() {
-    window.console.log('tally1');
+
     //
     // We don't need to re-tally if it's already there (it takes way too 
     // long to run more than once, given the size of the data).
@@ -342,19 +342,19 @@ xiv.ui.ctrl.Histogram.prototype.tallyLevels_ = function() {
  * @public
  */
 xiv.ui.ctrl.Histogram.prototype.draw = function() {
-    window.console.log('c');
+
     //
     // We can't do anything if there's no volume
     //
     if (!goog.isDefAndNotNull(this.getXObj())) { return }
-    window.console.log('c1');
+
     //
     // params
     //
     var size = goog.style.getSize(this.canvas_);
     var canvasWidth = size.width;
     var canvasHeight = size.height;
-    window.console.log('c2');
+ 
 
     //
     // Creates bugs otherwise
@@ -363,7 +363,7 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
     this.canvas_.width = canvasWidth;
     this.lineCanvas_.height = canvasHeight;
     this.lineCanvas_.width = canvasWidth;
-    window.console.log('c3');
+
     //
     // Tally all of the levels
     // Exit if no levels were retrieved
@@ -373,14 +373,13 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
 	return;
     }
 
-    window.console.log('c4');
+ 
     //var cutoffThreshold = .99
     var cutoffLevel = this.getXObj().windowHigh;
     var barWidth = Math.round(canvasWidth/cutoffLevel);
     barWidth = barWidth > 0 ? barWidth: 1;
-    window.console.log('barWidth', barWidth);
+ 
     
-    window.console.log('c5');
     //
     // If the percentages are too low, apply a multiplier
     //
@@ -395,7 +394,6 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
 			       barWidth, -Math.round(pct));
     }
 
-    window.console.log('c6');
 }
 
 
@@ -499,15 +497,9 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
  * @public
  */
 xiv.ui.ctrl.Histogram.prototype.update = function(){
-    window.console.log('b');
-
     this.draw();
-  
-    window.console.log('b1');
     this.updateMaxMin();
-    window.console.log('b2');
     this.drawLine();
-    window.console.log('b3');
 }
 
 

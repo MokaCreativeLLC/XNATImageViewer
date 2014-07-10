@@ -144,7 +144,7 @@ xiv.ui.ViewBoxDialogs.prototype.getDialog = function(dialogKey){
  * @param {string=} opt_buttonSet
  * @public
  */
-xiv.ui.ViewBoxDialogs.prototype.createToggleableDialog = 
+xiv.ui.ViewBoxDialogs.prototype.createGenericToggleableDialog = 
 function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
 	 opt_title, opt_isOn, opt_setModal, opt_buttonSet, opt_onToggle){
 
@@ -166,7 +166,7 @@ function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
 
 	    var opened = button.getAttribute('checked') == 'true';
 	    this.Dialogs_[dialogKey].setVisible(opened);
-	    this.Dialogs_[dialogKey].center();
+	    //this.Dialogs_[dialogKey].center();
 	    
 	    var eventKey = opened ? 
 		xiv.ui.ViewBoxDialogs.EventType.DIALOG_OPENED :
@@ -218,7 +218,8 @@ function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
     //
     // Center the dialog
     //
-    currDialog.reposition();
+    this.Dialogs_[dialogKey].center();
+ 
 
     //
     // Set the dialog title
@@ -264,7 +265,7 @@ function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
  * @public
  */
 xiv.ui.ViewBoxDialogs.prototype.createMeshesDialog = function(){
-    this.createToggleableDialog(
+    this.createGenericToggleableDialog(
 	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.MESHES,
 	'xiv-ui-viewboxdialogs-meshes-dialog',
 	xiv.ui.ViewBoxDialogs.CSS.GENERIC_TOGGLE,
@@ -283,7 +284,7 @@ xiv.ui.ViewBoxDialogs.prototype.createMeshesDialog = function(){
  * @public
  */
 xiv.ui.ViewBoxDialogs.prototype.createVolumesDialog = function(){
-    this.createToggleableDialog(
+    this.createGenericToggleableDialog(
 	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.VOLUMES,
 	'xiv-ui-viewboxdialogs-volumes-dialog',
 	xiv.ui.ViewBoxDialogs.CSS.GENERIC_TOGGLE,
@@ -629,8 +630,9 @@ goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.getDialogs',
 	xiv.ui.ViewBoxDialogs.prototype.getDialogs);
 goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.getDialog',
 	xiv.ui.ViewBoxDialogs.prototype.getDialog);
-goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.createToggleableDialog',
-	xiv.ui.ViewBoxDialogs.prototype.createToggleableDialog);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxDialogs.prototype.createGenericToggleableDialog',
+	xiv.ui.ViewBoxDialogs.prototype.createGenericToggleableDialog);
 goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.createMeshesDialog',
 	xiv.ui.ViewBoxDialogs.prototype.createMeshesDialog);
 goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.createVolumesDialog',
