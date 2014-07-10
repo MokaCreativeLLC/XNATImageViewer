@@ -18,6 +18,9 @@ goog.require('X.volume');
 goog.require('X.fibers');
 goog.require('X.sphere');
 goog.require('X.object');
+goog.require('X.renderer');
+goog.require('X.renderer2D');
+goog.require('X.renderer3D');
 
 // nrg
 goog.require('nrg.string');
@@ -236,8 +239,7 @@ xiv.vis.XtkEngine.prototype.extractAnnotations_ = function(ViewableGroup) {
     goog.array.forEach(ViewableGroup.getRenderProperties().annotations,
 		       function(annotationsNode){
 			   this.currXObjects_['spheres'].push(
-			       xiv.vis.XtkEngine.createAnnotation(
-				   annotationsNode))
+			       this.createAnnotation_(annotationsNode))
 		       }.bind(this))
 }
 
@@ -403,23 +405,23 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
     goog.array.forEach(ViewableGroup.getViewables(), function(Viewable){
 	fileList = Viewable.getFiles();
 	if (!goog.isDefAndNotNull(fileList)) { return };
-	//window.console.log(ViewableGroup, Viewable, Viewable.getFiles());
-	currXObj = xiv.vis.XtkEngine.createXObject(fileList, 
-						   Viewable.getFileData());
+	window.console.log('f', ViewableGroup, Viewable, Viewable.getFiles());
+	currXObj = this.createXObject_(fileList, Viewable.getFileData());
 	renderProps = Viewable.getRenderProperties();
 
 	if (!currXObj) { return }
+	window.console.log('here2');
 	//
 	// Create controllers
 	//
 	this.ControllerTree_.createControllers(currXObj, renderProps);
-
+	window.console.log('here12');
 	// Volumes
 	if (currXObj instanceof X.volume) {
 	    xiv.vis.XtkEngine.setRenderProperties_Volume_(
 		currXObj, renderProps);
 	    this.currXObjects_['volumes'].push(currXObj);
-	    //window.console.log(currXObj, currXObj.dimensionsRAS);
+	    window.console.log(currXObj, currXObj.dimensionsRAS);
 	}
 
 	// Meshes
@@ -536,7 +538,8 @@ xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
 	   currArr.push(xObj);
 	})
     }.bind(this))
-    //window.console.log('VOLUMES', volumes);
+    window.console.log('VOLUMES', volumes);
+    window.console.log('SELECTED VOLUMES', selectedVolume);
 
     //
     // Add all non-volumes to PlaneV
@@ -547,11 +550,11 @@ xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
 
 
     //
-    // Add all the other volumes to plane V, but make sure they're not visible
+    // Add all the other volumes to plane V
     //
     goog.array.forEach(volumes, function(vol){
 	if (vol !== selectedVolume){
-	    vol.visible = true;
+	    vol['visible'] = true;
 	    this.PlaneV_.add(vol);
 	}
     }.bind(this))
@@ -559,12 +562,19 @@ xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
     //
     // Render only non-primary's selected volume once the primary is finished.
     //
-    this.primaryRenderPlane_.getRenderer().onShowtime = function(){
+
+    /**
+     * @type {X.renderer}
+     */
+    var renderer = this.primaryRenderPlane_.getRenderer();
+
+
+    renderer['onShowtime'] = function(){
 	var ors = goog.array.remove(planeArr, 
 		this.primaryRenderPlane_.getOrientation().toLowerCase());
 	this.renderNonPrimary_(selectedVolume, ors);
-    }.bind(this);		
-  
+    }.bind(this);
+
     //
     // Render!
     //
@@ -581,13 +591,13 @@ xiv.vis.XtkEngine.prototype.renderAllPlanes = function(){
 xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
 
     this.renderEndCalled_ = false;
-
+    window.console.log('currXObjects', this.currXObjects_);
 
     //
     // Create the XObjects
     //
     this.createXObjects_(ViewableGroup);
-
+    window.console.log('currXObjects2', this.currXObjects_);
     
     //
     // Set the background color and camera if render properties are defined
@@ -637,7 +647,7 @@ xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
 		break;
 	    }
 	}
-	//window.console.log("PRIM", this.primaryRenderPlane_);
+	window.console.log("PRIM", this.primaryRenderPlane_);
 	// Then render
 	this.renderAllPlanes();
 
@@ -677,13 +687,16 @@ function(xVolume, planeOrientations){
 	goog.events.listenOnce(
 	    Plane.getRenderer(), xiv.vis.RenderEngine.EventType.RENDER_END, 
 	    function(e){
+		
 		unrenderedNonPrimary--;
+		window.console.log("RENDER END!", Plane.getOrientation(),
+				  unrenderedNonPrimary);
 
+	
 		//
 		// When all renderers have finished, run onRenderEnd_
 		//
 		if (unrenderedNonPrimary == 0){
-
 		    this.onRenderEnd_();
 		}
 	    }.bind(this))
@@ -750,9 +763,9 @@ xiv.vis.XtkEngine.prototype.updateStyle = function(){
  */
 xiv.vis.XtkEngine.setRenderProperties_Mesh_ = 
 function(xObj, renderProperties){
+    window.console.log('here1');
     xObj.color = renderProperties.color || [.5,.5,.5];
     xObj.opacity = renderProperties.opacity || 1;
-
 }
 
 
@@ -763,7 +776,7 @@ function(xObj, renderProperties){
  */
 xiv.vis.XtkEngine.setRenderProperties_Volume_ = 
 function(xObj, renderProperties){
-
+    window.console.log('here2a');
     if (!goog.isDefAndNotNull(renderProperties)) {  
 	renderProperties = {
 	    origin: [0,0,0],
@@ -777,22 +790,22 @@ function(xObj, renderProperties){
     //
     // Origin
     //
-    xObj.origin = renderProperties.origin;
+    xObj['origin'] = renderProperties.origin;
 
     //
     // Upper threshold
     //
-    xObj.upperThreshold = renderProperties.upperThreshold;
+    xObj['upperThreshold'] = renderProperties.upperThreshold;
 
     //
     // Lower threshold
     //
-    xObj.lowerThreshold = renderProperties.lowerThreshold;
+    xObj['lowerThreshold'] = renderProperties.lowerThreshold;
 
     //
     // Volume Rendering
     //
-    xObj.volumeRendering = renderProperties.volumeRendering;
+    xObj['volumeRendering'] = renderProperties.volumeRendering;
 
 
     //
@@ -808,8 +821,8 @@ function(xObj, renderProperties){
 
 
     if (goog.isDefAndNotNull(renderProperties.labelMapFile)){
-	xObj.labelmap.file = renderProperties.labelMapFile;
-	xObj.labelmap.colortable.file = 
+	xObj['labelmap']['file'] = renderProperties.labelMapFile;
+	xObj['labelmap']['colortable']['file'] = 
 	    renderProperties.labelMapColorTableFile;
 	xObj[xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY] = true;
 	//window.console.log(renderProperties.labelMapColorTableFile);
@@ -861,6 +874,8 @@ xiv.vis.XtkEngine.prototype.onRenderEnd_ = function(e){
     //
     goog.events.unlistenByKey(this.renderKey_);
     this.renderEndCalled_ = true;
+
+ 
     this.dispatchEvent({
 	type: xiv.vis.RenderEngine.EventType.RENDER_END,
 	value: goog.isDefAndNotNull(e) ? e.value : 1
@@ -1068,8 +1083,9 @@ xiv.vis.XtkEngine.fiberExtensions_ = [
  *
  * @param {string} ext Extension of file, all lowercase
  * @return {Object} New X object
+ * @private
  */
-xiv.vis.XtkEngine.generateXtkObjectFromExtension = function(ext) {
+xiv.vis.XtkEngine.prototype.generateXtkObjectFromExtension_ = function(ext) {
     var obj = undefined;
     if (xiv.vis.XtkEngine.isMesh(ext)) { 
 	obj = new X.mesh();
@@ -1096,16 +1112,17 @@ xiv.vis.XtkEngine.generateXtkObjectFromExtension = function(ext) {
  * @param {!gxnat.slicerNode.Annotations} annotationsNode
  * @param {number=} opt_radius The optional radius.
  * @return {X.sphere}
+ * @private
  */
-xiv.vis.XtkEngine.createAnnotation = 
+xiv.vis.XtkEngine.prototype.createAnnotation_ = 
 function(annotationsNode, opt_radius) {
 
     var annotation = new X.sphere();
-    annotation.center = annotationsNode.position;
-    annotation.caption = annotationsNode.name;
-    annotation.name = annotationsNode.name;
-    annotation.radius = (opt_radius === undefined) ? 3 : opt_radius;
-    annotation.color = [.85,0,0];
+    annotation['center'] = annotationsNode.position;
+    annotation['caption'] = annotationsNode.name;
+    annotation['name'] = annotationsNode.name;
+    annotation['radius'] = (opt_radius === undefined) ? 3 : opt_radius;
+    annotation['color'] = [.85,0,0];
 
     //window.console.log(annotationObj['opacity'], annotationObj['visible']);
     //annotation.opacity = annotationObj['opacity'];
@@ -1225,16 +1242,18 @@ xiv.vis.XtkEngine.isFiber = function(ext) {
  *
  * @param {!string | !Array.<string>} fileCollection
  * @param {!string | !Array} opt_fileData
+ * @private
  * @return {X.object}
  */
-xiv.vis.XtkEngine.createXObject = function(fileCollection, opt_fileData) {
+xiv.vis.XtkEngine.prototype.createXObject_ = 
+function(fileCollection, opt_fileData) {
 
-    //window.console.log("FILE COLLECT", fileCollection);fileCollection[0]
+    window.console.log("FILE COLLECT", fileCollection);
     var ext = (goog.isArray(fileCollection)) ? 
 	nrg.string.getFileExtension(fileCollection[0]) : 
 	nrg.string.getFileExtension(fileCollection);
 
-    var obj = xiv.vis.XtkEngine.generateXtkObjectFromExtension(ext);  
+    var obj = this.generateXtkObjectFromExtension_(ext);  
     
     if (!goog.isDefAndNotNull(obj)){
 	var errorString = 'No renderable files in the set :(<br>';
@@ -1270,12 +1289,12 @@ xiv.vis.XtkEngine.createXObject = function(fileCollection, opt_fileData) {
 	fileCollection = urlEncode(fileCollection)
     }
 
-    //window.console.log("Fildedata", opt_fileData);
+    window.console.log("Fildedata", opt_fileData);
     if (goog.isDefAndNotNull(opt_fileData)){
-	obj.file = goog.object.getKeys(opt_fileData);
-	obj.filedata = goog.object.getValues(opt_fileData);
+	obj['file'] = goog.object.getKeys(opt_fileData);
+	obj['filedata'] = goog.object.getValues(opt_fileData);
     } else {
-	obj.file = fileCollection;
+	obj['file'] = fileCollection;
     }
 
 
@@ -1294,10 +1313,7 @@ goog.exportSymbol('xiv.vis.XtkEngine.SLICE_TO_RAS_KEY',
 	xiv.vis.XtkEngine.SLICE_TO_RAS_KEY);
 goog.exportSymbol('xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY',
 	xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY);
-goog.exportSymbol('xiv.vis.XtkEngine.generateXtkObjectFromExtension',
-	xiv.vis.XtkEngine.generateXtkObjectFromExtension);
-goog.exportSymbol('xiv.vis.XtkEngine.createAnnotation',
-	xiv.vis.XtkEngine.createAnnotation);
+
 goog.exportSymbol('xiv.vis.XtkEngine.isVolume', xiv.vis.XtkEngine.isVolume);
 goog.exportSymbol('xiv.vis.XtkEngine.isImage', xiv.vis.XtkEngine.isImage);
 goog.exportSymbol('xiv.vis.XtkEngine.isDicom', xiv.vis.XtkEngine.isDicom);
@@ -1305,8 +1321,7 @@ goog.exportSymbol('xiv.vis.XtkEngine.isAnalyze', xiv.vis.XtkEngine.isAnalyze);
 goog.exportSymbol('xiv.vis.XtkEngine.isNifti', xiv.vis.XtkEngine.isNifti);
 goog.exportSymbol('xiv.vis.XtkEngine.isMesh', xiv.vis.XtkEngine.isMesh);
 goog.exportSymbol('xiv.vis.XtkEngine.isFiber', xiv.vis.XtkEngine.isFiber);
-goog.exportSymbol('xiv.vis.XtkEngine.createXObject',
-	xiv.vis.XtkEngine.createXObject);
+
 
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.getCurrentMeshes',
 	xiv.vis.XtkEngine.prototype.getCurrentMeshes);

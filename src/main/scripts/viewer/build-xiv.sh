@@ -4,7 +4,6 @@ python ./closure-library/closure/bin/build/closurebuilder.py \
 --root ./nrg \
 --root ./X \
 --root ./_custom \
---root ./jszip \
 --root ./xiv \
 --namespace "xiv" \
 --namespace "xiv.start" \
@@ -12,5 +11,6 @@ python ./closure-library/closure/bin/build/closurebuilder.py \
 --output_mode=compiled \
 --compiler_jar=./compiler-latest/compiler.jar \
 --compiler_flags="--language_in=ECMASCRIPT5" \
---compiler_flags="--compilation_level=SIMPLE_OPTIMIZATIONS" \
+--compiler_flags="--compilation_level=ADVANCED_OPTIMIZATIONS" \
+--compiler_flags="--externs=./jszip/jszip.min.js" \
 > ./xiv-min.js

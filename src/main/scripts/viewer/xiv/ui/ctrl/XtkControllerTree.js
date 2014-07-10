@@ -44,7 +44,7 @@ goog.require('xiv.ui.ctrl.VolumeController');
 xiv.ui.ctrl.XtkControllerTree = function() {
     goog.base(this);
 
-    var propObj = this.constructor.getEmptyPropertiesObject();
+    var propObj = xiv.ui.ctrl.XtkControllerTree.getEmptyPropertiesObject();
     goog.object.forEach(propObj, function(property, key){
 	this[key] = null;
     })
@@ -305,10 +305,14 @@ function(xObj, renderProps) {
 	    //this.VolumeController2D_ = new xiv.ui.ctrl.VolumeController2D();
 	    this.VolumeController3D_ = new xiv.ui.ctrl.VolumeController3D();
 	}
+	window.console.log('a');
 	this.LevelsController_.add(xObj, renderProps);
+	window.console.log('b');
 	this.VolumeController_.add(xObj, renderProps);
+	window.console.log('c');
 	//this.VolumeController2D_.add(xObj, renderProps);
 	this.VolumeController3D_.add(xObj, renderProps);
+	window.console.log('d');
     }
 
     else if (xObj instanceof X.mesh) {

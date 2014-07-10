@@ -40,6 +40,7 @@ goog.exportSymbol('xiv.ui.layouts.TwoDRow', xiv.ui.layouts.TwoDRow);
 /**
  * @type {!string}
  * @public
+ * @expose
  */
 xiv.ui.layouts.TwoDRow.TITLE = 'TwoDRow';
 

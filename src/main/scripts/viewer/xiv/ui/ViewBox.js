@@ -515,7 +515,8 @@ function(opt_delay, opt_callback){
  * As stated.
  * @private
  */
-xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){    
+xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){  
+
     //
     // Untoggle wait for render errors
     //
@@ -529,10 +530,13 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 			   bar.visibility = 'hidden';
 		       });
 
+
+
     //
     // Create dialogs
     //
     this.Dialogs_.createDialogs(); 
+
 
     //
     // Set the layout based the orientation of the ViewableTree
@@ -540,6 +544,7 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     if (goog.isDefAndNotNull(this.ViewableTrees_[0].getOrientation())){
 	this.setLayout(this.ViewableTrees_[0].getOrientation());
     }
+
 
     //
     // Show load components (menu)
@@ -551,16 +556,17 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     this.InteractorHandler_.createInteractors();
 
+ 
     //
     // Apply auto-level
     //
     this.InteractorHandler_.applyAutoLevel();
 
-
     //
     // Hide progress bar
     //
     this.hideProgressBarPanel_(800, function(){
+	window.console.log('hereea');
 
 	//
 	// Set progress bar value to 0
@@ -690,6 +696,7 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 	//
 	// Otherwise just load the individual group
 	//
+	window.console.log('loadad');
 	this.load(viewGroups[0], false);
     }
 }
@@ -731,7 +738,9 @@ xiv.ui.ViewBox.prototype.checkInUseAndShowDialog = function(opt_onYes){
  * @public
  */
 xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
-    
+    window.console.log('load');
+
+    //if (this.loading_
     //
     // Dispatch preload
     //
@@ -867,7 +876,7 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
     //
     var firstFile = ViewableSet.getViewables()[0].getFiles()[0];
     var filesUrl = firstFile.split('/files/')[0] + '/files';
-    //window.console.log("XImgView Zip Downloading (XHR): " +  filesUrl);
+    window.console.log("XImgView Zip Downloading (XHR): " +  filesUrl);
 
     //
     // Get files as zip
@@ -875,7 +884,7 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
     gxnat.Zip.getFilesAsZip(
 	filesUrl, 
 	function(zip) { 
-	    //window.console.log('Downloaded: ' + filesUrl + '!');
+	    window.console.log('Downloaded: ' + filesUrl + '!');
 	    ViewableSet.getViewables()[0].setFileDataFromZip(zip);
 	    this.renderViewableSet_(ViewableSet);
 	}.bind(this), 

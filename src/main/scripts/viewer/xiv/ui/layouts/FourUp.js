@@ -37,7 +37,7 @@ goog.exportSymbol('xiv.ui.layouts.FourUp', xiv.ui.layouts.FourUp);
 
 /**
  * @type {!string}
- * @public
+ * @expose
  */
 xiv.ui.layouts.FourUp.TITLE = 'Four-Up';
 

@@ -40,6 +40,7 @@ goog.exportSymbol('xiv.ui.layouts.TwoDWidescreen',
 /**
  * @type {!string}
  * @public
+ * @expose
  */
 xiv.ui.layouts.TwoDWidescreen.TITLE = 'TwoDWidescreen';
 

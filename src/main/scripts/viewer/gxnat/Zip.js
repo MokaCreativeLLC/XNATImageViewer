@@ -7,7 +7,7 @@ goog.provide('gxnat.Zip');
 // goog
 goog.require('goog.Disposable');
 goog.require('goog.object');
-goog.require('JSZip');
+//goog.require('JSZip');
 
 // gxnat
 goog.require('gxnat');

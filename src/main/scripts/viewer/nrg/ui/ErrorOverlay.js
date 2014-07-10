@@ -69,6 +69,8 @@ nrg.ui.ErrorOverlay.prototype.disposeInternal = function() {
 
 goog.exportSymbol('nrg.ui.ErrorOverlay.ID_PREFIX',
 	nrg.ui.ErrorOverlay.ID_PREFIX);
+goog.exportSymbol('nrg.ui.ErrorOverlay.CSS',
+	nrg.ui.ErrorOverlay.CSS);
 goog.exportSymbol('nrg.ui.ErrorOverlay.prototype.addText',
 	nrg.ui.ErrorOverlay.prototype.addText);
 goog.exportSymbol('nrg.ui.ErrorOverlay.prototype.disposeInternal',

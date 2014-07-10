@@ -100,14 +100,17 @@ xiv.ui.ctrl.LevelsController.prototype.updateHistogram_ = function(hist){
  */
 xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
     goog.base(this, 'add', xObj);
-
+    window.console.log('a');
     var hist = this.add_histogram(xObj);
-
+    window.console.log('a1');
     var c1 = this.add_levelMin(xObj);
+    window.console.log('a2');
     var c2 = this.add_levelMax(xObj);
+    window.console.log('a3');
     var c3 = this.add_brightness(xObj, c1, c2);
+    window.console.log('a4');
     var c4 = this.add_contrast(xObj, c1, c2);
-
+    window.console.log('b');
 
 
     //
@@ -125,7 +128,7 @@ xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
 	}.bind(this))
 
 
-    //window.console.log('Auto-level images.');
+    window.console.log('Auto-level images.');
 }
  
 
@@ -137,21 +140,26 @@ xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
  */
 xiv.ui.ctrl.LevelsController.prototype.add_histogram = function(xObj) {
     // create
+
     var ctrl = this.createController( 
 	xiv.ui.ctrl.Histogram, 
 	null,//xiv.ui.ctrl.LevelsController.CONTROLLERS.HISTOGRAM, 
 	function(e){
 
-	    //xObj.windowLow = e.value;
+	    //xObj['windowLow'] = e.value;
 
 	}.bind(this));
+
+ 
     ctrl.setXObj(xObj);
 
     // set folder
     xiv.ui.ctrl.XtkController.setControllerFolders(xObj, ctrl);
+
     this.masterControllers.push(ctrl);
 
-    ctrl.update()
+    ctrl.update();
+
     return ctrl;
 }
 
@@ -168,7 +176,7 @@ xiv.ui.ctrl.LevelsController.prototype.add_levelMin = function(xObj) {
 	xiv.ui.ctrl.SliderController, 
 	xiv.ui.ctrl.LevelsController.CONTROLLERS.LEVEL_MIN, 
 	function(e){
-	    xObj.windowLow = e.value;
+	    xObj['windowLow'] = e.value;
 	}.bind(this));
     ctrl.setXObj(xObj);
 
@@ -216,7 +224,7 @@ xiv.ui.ctrl.LevelsController.prototype.add_levelMax = function(xObj) {
     goog.events.listen(ctrl, 
 	xiv.ui.ctrl.XtkController.EventType.CHANGE, 
 	function(e){
-	    xObj.windowHigh = e.value;
+	    xObj['windowHigh'] = e.value;
 	}.bind(this))
 
 
@@ -262,16 +270,16 @@ function(xObj, levelMin, levelMax) {
 	xiv.ui.ctrl.XtkController.EventType.CHANGE, 
 	function(e){	    
 	    var rate = (e.value - e.previous) / (e.maximum - e.minimum);
-	    var currDifference = xObj.windowHigh - xObj.windowLow;
+	    var currDifference = xObj['windowHigh'] - xObj['windowLow'];
 
-	    xObj.windowLow  = 
-		Math.round(parseInt(xObj.windowLow) - (currDifference * rate));
-	    xObj.windowHigh = 
-		Math.round(parseInt(xObj.windowHigh) - (currDifference * rate));
+	    xObj['windowLow']  = 
+		Math.round(parseInt(xObj['windowLow']) - (currDifference * rate));
+	    xObj['windowHigh'] = 
+		Math.round(parseInt(xObj['windowHigh']) - (currDifference * rate));
 
 
-	    levelMin.getComponent().setValue(xObj.windowLow);
-	    levelMax.getComponent().setValue(xObj.windowHigh);
+	    levelMin.getComponent().setValue(xObj['windowLow']);
+	    levelMax.getComponent().setValue(xObj['windowHigh']);
 
 
 	}.bind(this))
@@ -321,15 +329,15 @@ function(xObj, levelMin, levelMax) {
 	xiv.ui.ctrl.XtkController.EventType.CHANGE, 
 	function(e){	 
 	    var rate = (e.value - e.previous) / (e.maximum - e.minimum);
-	    var currDifference = parseInt(xObj.windowHigh) - 
-		parseInt(xObj.windowLow);
-	    var newLow = parseInt(xObj.windowLow) + (currDifference * rate);
-	    var newHigh = parseInt(xObj.windowHigh) - (currDifference * rate);
-	    xObj.windowLow = Math.round(newLow);
-	    xObj.windowHigh = Math.round(newHigh);
+	    var currDifference = parseInt(xObj['windowHigh']) - 
+		parseInt(xObj['windowLow']);
+	    var newLow = parseInt(xObj['windowLow']) + (currDifference * rate);
+	    var newHigh = parseInt(xObj['windowHigh']) - (currDifference * rate);
+	    xObj['windowLow'] = Math.round(newLow);
+	    xObj['windowHigh'] = Math.round(newHigh);
 	    
-	    levelMin.getComponent().setValue(xObj.windowLow);
-	    levelMax.getComponent().setValue(xObj.windowHigh);
+	    levelMin.getComponent().setValue(xObj['windowLow']);
+	    levelMax.getComponent().setValue(xObj['windowHigh']);
 	}.bind(this))
 
 

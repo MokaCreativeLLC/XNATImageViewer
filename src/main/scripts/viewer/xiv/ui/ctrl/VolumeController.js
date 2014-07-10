@@ -134,8 +134,8 @@ xiv.ui.ctrl.VolumeController.prototype.add_labelMapToggle = function(xObj) {
 xiv.ui.ctrl.VolumeController.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
     
-    window.console.log("need to implement dispose methods" + 
-		       " for VolumeController");
+    //window.console.log("need to implement dispose methods" + 
+    //" for VolumeController");
 }
 
 

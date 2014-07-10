@@ -37,6 +37,7 @@ goog.exportSymbol('xiv.ui.layouts.Transverse', xiv.ui.layouts.Transverse);
 /**
  * @type {!string}
  * @public
+ * @expose
  */
 xiv.ui.layouts.Transverse.TITLE = 'Transverse';
 

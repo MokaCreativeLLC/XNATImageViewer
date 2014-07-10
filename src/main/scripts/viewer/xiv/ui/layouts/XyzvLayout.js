@@ -60,6 +60,7 @@ goog.exportSymbol('xiv.ui.layouts.XyzvLayout', xiv.ui.layouts.XyzvLayout);
 /**
  * @type {!string}
  * @public
+ * @expose
  */
 xiv.ui.layouts.XyzvLayout.TITLE = 'XyzvLayout';
 

@@ -176,7 +176,7 @@ xiv.vis.XtkPlane.prototype.getOrientation = function(){
  * @private
  */
 xiv.vis.XtkPlane.prototype.storeCamera_ = function(){
-    this.camera_ = this.Renderer.camera;
+    this.camera_ = this.Renderer['camera'];
 }
 
 
@@ -195,26 +195,27 @@ xiv.vis.XtkPlane.prototype.storeBackground_ = function(){
 xiv.vis.XtkPlane.prototype.setCamera = function(opt_cameraNode){
     if (!goog.isDefAndNotNull(this.Renderer)) { return };
 
+    //window.console.log('pos', opt_cameraNode);
     if (goog.isDefAndNotNull(opt_cameraNode)){
 	this.camera_ = opt_cameraNode;
-
-	this.Renderer.camera.focus = opt_cameraNode.focus;
-	this.Renderer.camera.position = opt_cameraNode.position;
-	this.Renderer.camera.up = opt_cameraNode.up;
+	window.console.log('pos', opt_cameraNode.position);
+	this.Renderer['camera']['focus'] = opt_cameraNode.focus;
+	this.Renderer['camera']['position'] = opt_cameraNode.position;
+	this.Renderer['camera']['up'] = opt_cameraNode.up;
 
 	//
 	// IMPORTANT!
 	//
 	if (opt_cameraNode instanceof X.camera){
-	    this.Renderer.camera.view = opt_cameraNode.view;
+	    this.Renderer['camera']['view'] = opt_cameraNode.view;
 	}
 
 	//
 	// If no camera-like object, then set a default...
 	//
     } else {
-	this.Renderer.camera.position = 
-	    this.constructor.DEFAULT_CAMERA_POSITION;
+	this.Renderer['camera']['position'] = 
+	    xiv.vis.XtkPlane.DEFAULT_CAMERA_POSITION;
     }
 }
 
@@ -293,7 +294,7 @@ xiv.vis.XtkPlane.prototype.setContainer = function(containerElt) {
     //
     // Set the container
     //
-    this.Renderer.container = containerElt;
+    this.Renderer['container'] = containerElt;
 
     //window.console.log("SET CONTAINER BASE", this.container);
 }
@@ -342,7 +343,7 @@ xiv.vis.XtkPlane.prototype.init = function(containerElt) {
 			' property "XRenderer" defined.')
     }
     this.Renderer =  new this.XRenderer();
-    this.Renderer.orientation = this.orientation;
+    this.Renderer['orientation'] = this.orientation;
     this.setContainer(containerElt || this.container || document.body);
     this.Renderer.init();
 
@@ -586,7 +587,12 @@ xiv.vis.XtkPlane.prototype.render = function() {
 	window.console.log('Plane' + this.orientation + ' is switched off.');
 	return; 
     };
-    //window.console.log('Rendering');
+    window.console.log('Rendering ' + this.orientation + 'plane');
+    if (goog.isDefAndNotNull(this.Renderer.getVolume)){
+	window.console.log('Rendering this', 
+			   this.Renderer.getVolume(),
+			   this.Renderer.getVolume()['visible']);
+    }
     this.Renderer.render();  
 };
 

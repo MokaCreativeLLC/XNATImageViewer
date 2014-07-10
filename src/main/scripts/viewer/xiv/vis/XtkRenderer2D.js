@@ -13,6 +13,7 @@ goog.require('X.renderer');
 goog.require('X.renderer2D');
 goog.require('X.camera2D');
 goog.require('X.volume');
+goog.require('X.interactor');
 
 // xiv
 goog.require('xiv.vis.RenderEngine');
@@ -29,16 +30,6 @@ goog.require('xiv.vis.RenderEngine');
  */
 xiv.vis.XtkRenderer2D = function () {
     goog.base(this);
-
-    //
-    // This turns off the any stray progress bars
-    //
-    this.config['PROGRESSBAR_ENABLED'] =  false;
-
-    //
-    // This turns off the SHIFT drag feature
-    //
-    this.config['SLICENAVIGATORS'] = false;
 }
 goog.inherits(xiv.vis.XtkRenderer2D, X.renderer2D);
 goog.exportSymbol('xiv.vis.XtkRenderer2D', xiv.vis.XtkRenderer2D);
@@ -95,7 +86,7 @@ xiv.vis.XtkRenderer2D.prototype.onResize = function() {
  * @public
  */
 xiv.vis.XtkRenderer2D.prototype.onScroll = function() {
-    //window.console.log(this.interactor.config.MOUSEWHEEL_ENABLED);
+    //window.console.log(this._interactor.config.MOUSEWHEEL_ENABLED);
     this.onSliceNavigation();
     //window.console.log(this._topLevelObjects[0]);
 }
@@ -106,7 +97,7 @@ xiv.vis.XtkRenderer2D.prototype.onScroll = function() {
  * @inheritDoc
  */
 xiv.vis.XtkRenderer2D.prototype.onProgress = function(e) {
-    //window.console.log('2D', e._value);
+    window.console.log('onProg: 2D', e._value);
     goog.base(this, 'onProgress', e);
     this.dispatchEvent({
 	type: xiv.vis.RenderEngine.EventType.RENDERING,
@@ -123,8 +114,12 @@ xiv.vis.XtkRenderer2D.prototype.init = function() {
     //
     // Disable the native progress bar
     //
-    this.config['PROGRESSBAR_ENABLED'] = false;
+    this['config']['PROGRESSBAR_ENABLED'] = false;
 
+    //
+    // This turns off the SHIFT drag feature
+    //
+    this['config']['SLICENAVIGATORS'] = false;
     //
     // call superclass init
     //
@@ -133,7 +128,7 @@ xiv.vis.XtkRenderer2D.prototype.init = function() {
     //
     // track mousemove and keys
     //
-    this.interactor.onMouseMove = this.onInteractorMouseMove_.bind(this);
+    this._interactor['onMouseMove'] = this.onInteractorMouseMove_.bind(this);
 
 
     //
@@ -169,7 +164,7 @@ xiv.vis.XtkRenderer2D.prototype.getCamera = function() {
  * @return {!Array}
  */
 xiv.vis.XtkRenderer2D.prototype.getMousePosition = function() {
-    return this.interactor.mousePosition;
+    return this._interactor['mousePosition'];
 }
 
 
@@ -201,7 +196,7 @@ xiv.vis.XtkRenderer2D.prototype.onInteractorMouseMove_ = function(e){
 				      [0, 0, 1, 0],
 				      [0, 0, 0, 1]])
 
-    var _mult2 = new goog.math.Matrix([[-1, 0, 0, -10.4524],
+    var _mul.[t2 = new goog.math.Matrix([[-1, 0, 0, -10.4524],
 				       [0, 1, 0, 20.637],
 				       [0, 0, 1, -13.7861],
 				       [0, 0, 0, 1]])
@@ -213,8 +208,8 @@ xiv.vis.XtkRenderer2D.prototype.onInteractorMouseMove_ = function(e){
 
     this.dispatchEvent({
 	type: goog.events.EventType.MOUSEOVER,
-	mousePosition: this.interactor.mousePosition,
-	shiftDown: this.interactor._shiftDown
+	mousePosition: this._interactor.mousePosition,
+	shiftDown: this._interactor['shiftDown']
     })
 }
 
@@ -228,14 +223,14 @@ xiv.vis.XtkRenderer2D.prototype.disableMouseInteractions_ = function() {
     //
     // Disables unwanted scrolling
     //
-    this.interactor.config.MOUSEWHEEL_ENABLED = false;
-    this.interactor.config.MOUSECLICKS_ENABLED = false;
-    this.interactor.config.KEYBOARD_ENABLED = false;
+    this._interactor['config']['MOUSEWHEEL_ENABLED'] = false;
+    this._interactor['config']['MOUSECLICKS_ENABLED'] = false;
+    this._interactor['config']['KEYBOARD_ENABLED'] = false;
 
     //
     // Disables unwated brightness / contrast color correction
     //
-    this.interactor.init();
+    this._interactor.init();
 }
 
 
@@ -252,7 +247,7 @@ xiv.vis.XtkRenderer2D.prototype.onSliceNavigation = function() {
 	changeValue: this._topLevelObjects[0]
 	    ['index' + this._orientation],
 	changeOrientation: this._orientation,
-	shiftDown: this.interactor._shiftDown
+	shiftDown: this._interactor._shiftDown
     })
 }
 
@@ -263,10 +258,11 @@ xiv.vis.XtkRenderer2D.prototype.onSliceNavigation = function() {
  */
 xiv.vis.XtkRenderer2D.prototype.render = function() {
     if (!this._canvas || !this._context) {
+	window.console.log('init');
 	this.init();
-
+	window.console.log(this.getVolume()['visible']);
     } else {
-	//window.console.log(this.getVolume());
+	
 	goog.base(this, 'render');
 
 	//
@@ -275,6 +271,8 @@ xiv.vis.XtkRenderer2D.prototype.render = function() {
 	//
 	// Potential source of semantic confusion.
 	//
+
+	//window.console.log('end', xiv.vis.RenderEngine.EventType.RENDER_END);
 	this.dispatchEvent({
 	    type: xiv.vis.RenderEngine.EventType.RENDER_END,
 	})

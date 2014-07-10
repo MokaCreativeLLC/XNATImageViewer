@@ -37,6 +37,7 @@ goog.exportSymbol('xiv.ui.layouts.Sagittal', xiv.ui.layouts.Sagittal);
 /**
  * @type {!string}
  * @public
+ * @expose
  */
 xiv.ui.layouts.Sagittal.TITLE = 'Sagittal';
 

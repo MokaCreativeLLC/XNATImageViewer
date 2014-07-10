@@ -299,12 +299,10 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors = function() {
     //
     this.setVolumeSlidersHalfway_();
 
-
     //
     // Set volume sliders halfway
     //
     this.adjustToPredefinedSliceIndices_();
-
 
 
     //
@@ -1682,7 +1680,7 @@ function(){
 	    //
 	    // Params
 	    //
-	    var bbox = volume.bbox;
+	    var bbox = volume['bbox'];
 	    var sliceToRAS = volume[xiv.vis.XtkEngine.SLICE_TO_RAS_KEY];
 	    var range, slicePct;
 
@@ -1835,7 +1833,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.hideInteractors = function() {
  * @public
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.update = function() {
-     this.LayoutHandler_.updateInteractors();
+    this.LayoutHandler_.updateInteractors();
 }
 
 
@@ -2283,7 +2281,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
     goog.base(this, 'dispose');
     
     if (goog.isDefAndNotNull(this.keyHandler_)){
-	window.console.log('disposing key handler');
+	//window.console.log('disposing key handler');
 	this.keyHandler_.dispose();
 	delete this.keyHandler_;
     }

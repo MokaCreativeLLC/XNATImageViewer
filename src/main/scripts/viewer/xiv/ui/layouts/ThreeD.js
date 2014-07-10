@@ -37,6 +37,7 @@ goog.exportSymbol('xiv.ui.layouts.ThreeD', xiv.ui.layouts.ThreeD);
 /**
  * @type {!string}
  * @public
+ * @expose
  */
 xiv.ui.layouts.ThreeD.TITLE = 'ThreeD';
 

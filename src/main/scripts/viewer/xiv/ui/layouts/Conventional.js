@@ -39,6 +39,7 @@ goog.exportSymbol('xiv.ui.layouts.Conventional', xiv.ui.layouts.Conventional);
 /**
  * @type {!string}
  * @public
+ * @expose
  */
 xiv.ui.layouts.Conventional.TITLE = 'Conventional';
 

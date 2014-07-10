@@ -2,7 +2,7 @@
 // Please do not edit.
 goog.addDependency('../../../gxnat/Path.js', ['gxnat.Path'], ['goog.Disposable', 'goog.object', 'gxnat']);
 goog.addDependency('../../../gxnat/ProjectTree.js', ['gxnat.ProjectTree'], ['goog.Disposable', 'goog.array', 'goog.object', 'goog.string', 'gxnat', 'gxnat.Path']);
-goog.addDependency('../../../gxnat/Zip.js', ['gxnat.Zip'], ['JSZip', 'goog.Disposable', 'goog.object', 'gxnat']);
+goog.addDependency('../../../gxnat/Zip.js', ['gxnat.Zip'], ['goog.Disposable', 'goog.object', 'gxnat']);
 goog.addDependency('../../../gxnat/gxnat.js', ['gxnat'], ['goog.array', 'goog.net.XhrIo', 'goog.object', 'goog.string']);
 goog.addDependency('../../../gxnat/slicerNode/Annotations.js', ['gxnat.slicerNode.Annotations'], ['gxnat.slicerNode.Node']);
 goog.addDependency('../../../gxnat/slicerNode/BackgroundColor.js', ['gxnat.slicerNode.BackgroundColor'], ['gxnat.slicerNode.Node', 'nrg.string']);

@@ -37,6 +37,7 @@ goog.exportSymbol('xiv.ui.layouts.Coronal', xiv.ui.layouts.Coronal);
 /**
  * @type {!string}
  * @public
+ * @expose
  */
 xiv.ui.layouts.Coronal.TITLE = 'Coronal';
 

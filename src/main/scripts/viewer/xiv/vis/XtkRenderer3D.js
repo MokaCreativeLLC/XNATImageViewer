@@ -24,11 +24,6 @@ goog.require('xiv.vis.RenderEngine');
  */
 xiv.vis.XtkRenderer3D = function () {
     goog.base(this);
-
-    //
-    // This turns off the any stray progress bars
-    //
-    this.config['PROGRESSBAR_ENABLED'] =  false;
 }
 goog.inherits(xiv.vis.XtkRenderer3D, X.renderer3D);
 goog.exportSymbol('xiv.vis.XtkRenderer3D', xiv.vis.XtkRenderer3D);
@@ -62,8 +57,11 @@ xiv.vis.XtkRenderer3D.prototype.onProgress = function(e) {
  * @inheritDoc
  */
 xiv.vis.XtkRenderer3D.prototype.render = function() {
-
     if (!this._canvas || !this._context) {
+	//
+	// This turns off the any stray progress bars
+	//
+	this._config['PROGRESSBAR_ENABLED'] =  false;
 	this.init();
 	return;
     } else {

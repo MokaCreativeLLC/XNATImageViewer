@@ -537,7 +537,8 @@ nrg.ui.ZippyTree.prototype.indentNode_ = function(node, depth){
  */
 nrg.ui.ZippyTree.prototype.indentElement_ = 
 function(elt, depth, opt_applyWidth, opt_applyLeft){
-    //window.console.log('indent element_', elt, depth);
+    
+    if (!goog.isDefAndNotNull(elt)){return}
     
     if (elt[nrg.ui.ZippyTree.MAX_DEPTH_KEY] == this.maxDepth_) { 
 	//window.console.log(elt, ' is already indented.');

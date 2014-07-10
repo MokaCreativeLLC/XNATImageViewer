@@ -31,16 +31,18 @@ goog.require('xiv.ui.layouts.LayoutFrame');
  * @extends {nrg.ui.Component}
  */
 xiv.ui.layouts.Layout = function() {
-    if (!this.constructor.TITLE){
+    goog.base(this);
+    if (!goog.isDefAndNotNull(this.constructor.TITLE)){
 	window.console.log('\n\n\n\n' + 
 			   'This is the class attempting to inherit from it:');
-	window.console.log(this);
+	window.console.log(this,
+			   this.constructor, 
+			   this.constructor.TITLE, 
+			   this.constructor.ID_PREFIX);
 	throw new Error('Sublcasses of xiv.ui.layouts.Layout must have ' + 
 			' the TITLE defined as a constructor property!');
 
     }
-    goog.base(this);
-
 
     /**
      * @type {Object.<string, xiv.ui.layout.LayoutFrames>}
