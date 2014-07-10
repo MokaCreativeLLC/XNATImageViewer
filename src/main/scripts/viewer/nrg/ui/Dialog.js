@@ -293,18 +293,31 @@ nrg.ui.Dialog.prototype.applyFadeTransitions = function() {
 
 /**
  * @param {!string} cornerX
- * @param {1string} cornerY
+ * @param {!string} cornerY
+ * @param {number=} opt_adderX
+ * @param {number=} opt_adderY
  * @public
  */
-nrg.ui.Dialog.prototype.moveToCorner = function(cornerX, cornerY) {
+nrg.ui.Dialog.prototype.moveToCorner = 
+function(cornerX, cornerY, opt_adderX, opt_adderY) {
     var dialogElt = this.getElement();
-    
+    var parentSize = goog.style.getSize(dialogElt.parentNode);
+    var dialogSize = goog.style.getSize(dialogElt);
+
+    opt_adderX = goog.isDefAndNotNull(opt_adderX) ? opt_adderX : 0;
+    opt_adderY = goog.isDefAndNotNull(opt_adderY) ? opt_adderY : 0;
+
     if (cornerX == 'left'){
-	dialogElt.style.left = '0px';
+	dialogElt.style.left = 0 + opt_adderX + 'px';
+    }
+    else if (cornerX == 'right'){
+	//window.console.log(dialogElt.parentNode, parentSize);
+	dialogElt.style.left = parentSize.width - dialogSize.width +
+	    opt_adderX + 'px';
     }
 
     if (cornerY == 'top'){
-	dialogElt.style.top = '0px';
+	dialogElt.style.top = 0 + opt_adderY + 'px';
     }
 }
 

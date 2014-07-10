@@ -139,7 +139,7 @@ xiv.ui.ctrl.LevelsController.prototype.add_histogram = function(xObj) {
     // create
     var ctrl = this.createController( 
 	xiv.ui.ctrl.Histogram, 
-	xiv.ui.ctrl.LevelsController.CONTROLLERS.HISTOGRAM, 
+	null,//xiv.ui.ctrl.LevelsController.CONTROLLERS.HISTOGRAM, 
 	function(e){
 
 	    //xObj.windowLow = e.value;

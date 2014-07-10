@@ -185,6 +185,11 @@ xiv.ui.ViewBoxInteractorHandler.CSS = {
     GENERIC_DIALOG: 'xiv-ui-viewboxinteractorhandler-generic-dialog',
     GENERIC_ZIPPYTREE: 
     'xiv-ui-viewboxinteractorhandler-generic-zippytree',
+
+    LEVELS_DIALOG: 
+    'xiv-ui-viewboxinteractorhandler-levelsdialog',
+    LEVELS_DIALOG_HOVERED: 
+    'xiv-ui-viewboxinteractorhandler-levelsdialog-hovered',
 }
 
 
@@ -405,10 +410,12 @@ function(add, css, opt_customCss) {
  * @param {goog.events.Event} e
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.setCursorGrab_ = function(e) {
-    this.setCursorCss_(true, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRAB,
-		       xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRAB_CUSTOM);
-    this.setCursorCss_(false, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRABBING,
-		       xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRABBING_CUSTOM);
+    this.setCursorCss_(
+	true, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRAB,
+	xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRAB_CUSTOM);
+    this.setCursorCss_(
+	false, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRABBING,
+	xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRABBING_CUSTOM);
 }
 
 
@@ -420,8 +427,10 @@ xiv.ui.ViewBoxInteractorHandler.prototype.setCursorGrab_ = function(e) {
 xiv.ui.ViewBoxInteractorHandler.prototype.setCursorGrabbing_ = function(e) {
     this.setCursorCss_(false, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRAB,
 		       xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRAB_CUSTOM);
-    this.setCursorCss_(true, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRABBING,
-		       xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRABBING_CUSTOM);
+    this.setCursorCss_(
+	true, 
+	xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRABBING,
+	xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRABBING_CUSTOM);
 }
 
 
@@ -432,8 +441,10 @@ xiv.ui.ViewBoxInteractorHandler.prototype.setCursorGrabbing_ = function(e) {
  * @param {goog.events.Event} e
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.setCursorZoomIn_ = function(e) {
-    this.setCursorCss_(false, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_OUT);
-    this.setCursorCss_(true, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_IN);
+    this.setCursorCss_(false, 
+		       xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_OUT);
+    this.setCursorCss_(true, 
+		       xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_IN);
 }
 
 
@@ -443,8 +454,10 @@ xiv.ui.ViewBoxInteractorHandler.prototype.setCursorZoomIn_ = function(e) {
  * @param {goog.events.Event} e
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.setCursorZoomOut_ = function(e) {
-    this.setCursorCss_(true, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_OUT);
-    this.setCursorCss_(false, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_IN);
+    this.setCursorCss_(true, 
+		       xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_OUT);
+    this.setCursorCss_(false, 
+		       xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_IN);
 }
 
 
@@ -624,7 +637,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
 	    this.ViewBox_.fireToggleButton(
 		xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODZOOM);
 	}
-
+	    this.ViewBox_.fireToggleButton(
+		xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODPAN);
 	//window.console.log(pan.getAttribute('checked'), 
 	//		   twoDZoom.getAttribute('checked'), 
 	//		   pan.checked == 'true',
@@ -2168,7 +2182,7 @@ function() {
 	//
 	var ctrlTreeElt = this.zippyTrees_[key].getElement();
 	goog.dom.classes.add(ctrlTreeElt, 
-			     xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_ZIPPYTREE);
+	    xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_ZIPPYTREE);
 	this.Dialogs_.getDialogs()[this.dialogKeys_[key]].
 	    getElement().appendChild(ctrlTreeElt);
 
@@ -2182,6 +2196,44 @@ function() {
 	}
 	else {
 	    this.zippyTrees_[key].expandAll(); 
+	    //this.zippyTrees_[key].hideZippyHeaders();
+
+	    /*
+	    goog.array.forEach(
+		this.zippyTrees_[key].getZippyTree().getTopLevelNodes(), 
+		function(node){
+		    node.getHeader().style.visibility = 'hidden';
+		})
+	    this.zippyTrees_[key].getElement().style.top = '-1px';
+	    */
+	    this.zippyTrees_[key].mapSliderToContents();
+	}
+
+
+	if (key == 'levels'){
+	    var levelDia = this.Dialogs_.getDialogs()[this.dialogKeys_[key]];
+	    goog.dom.classes.add(levelDia.getElement(), 
+		xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_DIALOG);
+	    levelDia.setMouseoverClass(
+		xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_DIALOG_HOVERED);
+
+	    this.ViewBox_.fireToggleButton(this.dialogKeys_['levels']);
+
+	    goog.array.forEach(
+		this.viewableCtrls_['levels']['all'], 
+		function(ctrl, i){
+		    if (!(ctrl instanceof xiv.ui.ctrl.Histogram)){
+			ctrl.getLabel().style.fontSize = '9px';
+			ctrl.getElement().style.height = '45px';
+			ctrl.getComponent().getElement().style.top = '28px';
+			ctrl.getComponent().getElement().style.width = '115px';
+			ctrl.getComponent().updateStyle();
+		    }
+
+		}.bind(this))
+
+
+	    levelDia.moveToCorner('right', 'top', 4, 50);
 	}
     }.bind(this))
 }
@@ -2213,8 +2265,9 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createZoomFollower_ = function(){
     this.zoomFollower_ = goog.dom.createDom('div', {
 	id: 'mousefollower'
     })
-    goog.dom.classes.add(this.zoomFollower_, 
-			 xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_FOLLOWER);
+    goog.dom.classes.add(
+	this.zoomFollower_, 
+	xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_FOLLOWER);
     this.zoomFollower_.innerHTML  = 
 	'Zoom In (drag up)<br>' + 
 	'Zoom Out (drag down)<br>';

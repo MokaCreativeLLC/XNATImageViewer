@@ -393,21 +393,23 @@ xiv.ui.ctrl.XtkController.prototype.dispatchComponentEvent = goog.nullFunction;
 
 /**
  * @param {!Object} _XtkControllerSubClass The subclass of the XtkController.
- * @param {!string} label The controller label.
+ * @param {string=} opt_label The controller label.
  * @param {Function=} opt_changeCallback The event callback applied to the 
  *   controller.
  * @return {!xiv.ui.ctrl.XtkController}
  * @protected
  */
 xiv.ui.ctrl.XtkController.prototype.createController = 
-function(_XtkControllerSubClass, label, opt_changeCallback) {
+function(_XtkControllerSubClass, opt_label, opt_changeCallback) {
 
     // create
     var controller = new _XtkControllerSubClass();
     controller.render();
 
     // set label
-    controller.setLabel(label);
+    if (goog.isString(opt_label)){
+	controller.setLabel(opt_label);
+    }
 
     // add to DOM - TEMPORARY
     goog.dom.append(this.getElement(), controller.getElement());

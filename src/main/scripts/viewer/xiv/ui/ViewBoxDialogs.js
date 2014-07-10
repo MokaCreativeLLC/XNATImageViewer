@@ -497,8 +497,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
 	dialogKey])){
 	this.Dialogs_[dialogKey].dispose();
     }
-    this.Dialogs_[dialogKey] = 
-	new nrg.ui.Dialog();
+    currDialog = new nrg.ui.Dialog();
 
     //
     // Generate widget text
@@ -531,41 +530,30 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
     //
     // Add text and render
     //
-    this.Dialogs_[dialogKey].setModal(false);
-    this.Dialogs_[dialogKey].addText(infoText);
-    this.Dialogs_[dialogKey].setButtonSet(null);
-    this.Dialogs_[dialogKey].render(
-	this.ViewBox_.getViewFrame());
-    this.Dialogs_[dialogKey].setVisible(true);
-    this.Dialogs_[dialogKey].moveToCorner('left', 'top');
+    currDialog.setModal(false);
+    currDialog.addText(infoText);
+    currDialog.setButtonSet(null);
+    currDialog.render(this.ViewBox_.getViewFrame());
+    currDialog.setVisible(true);
+    currDialog.moveToCorner('left', 'top', 0, -15);
+    currDialog.setTitle('Info. Display');
 
     //
     // Set the mouseover
     //
-    this.Dialogs_[dialogKey].addContentClass(
-	'xiv-ui-viewboxdialogs-infodialog-content')
-    this.Dialogs_[dialogKey].setMouseoverClass(
+    currDialog.setMouseoverClass(
 	'xiv-ui-viewboxdialogs-infodialog-hovered')
 
 
     //
     // Classes
     //
-    goog.dom.classes.add(this.Dialogs_[dialogKey].
-			 getElement(), 
+    goog.dom.classes.add(currDialog.getElement(), 
 			 xiv.ui.ViewBoxDialogs.CSS.INFODIALOG);
-    goog.dom.classes.add(this.Dialogs_[dialogKey].
-			 getTextElements()[0], 
+    goog.dom.classes.add(currDialog.getTextElements()[0], 
 			 xiv.ui.ViewBoxDialogs.CSS.INFODIALOG_TEXT);
 
-    this.Dialogs_[dialogKey].addTitleClass(
-	'xiv-ui-viewboxdialogs-infodialog-title');
-    this.Dialogs_[dialogKey].addCloseButtonClass(
-	'xiv-ui-viewboxdialogs-infodialog-closebutton');
-    this.Dialogs_[dialogKey].
-	addCloseButtonImageClass(
-	'xiv-ui-viewboxdialogs-infodialog-closebutton-image');
-    
+
     //
     // Toggle button
     // 
@@ -578,11 +566,8 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
 	    function(button){
 
 		var opened = button.getAttribute('checked') == 'true';
-		this.Dialogs_[dialogKey].
-		    setVisible(opened);
-		this.Dialogs_[dialogKey]
-		    .moveToCorner
-		('left', 'top');
+		currDialog.setVisible(opened);
+		currDialog.moveToCorner('left', 'top', 0, -15);
 
 		var eventKey = opened ? 
 		    xiv.ui.ViewBoxDialogs.EventType.DIALOG_OPENED :
@@ -590,17 +575,20 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
 
 		this.dispatchEvent({
 		    type: eventKey,
-		    dialog: this.Dialogs_[dialogKey]
+		    dialog: currDialog
 		})
 		
 	    }.bind(this), serverRoot + 
 		'/images/viewer/xiv/ui/ViewBox/Toggle-Info.png');
   
 
-    goog.events.listen(this.Dialogs_[dialogKey], 
+    goog.events.listen(currDialog, 
 		      nrg.ui.Dialog.EventType.CLOSE_BUTTON_CLICKED, function(){
 			 this.ViewBox_.onToggleButtonClicked(infoToggle);
 		      }.bind(this))
+
+
+    this.Dialogs_[dialogKey] = currDialog;
 }
 
 
