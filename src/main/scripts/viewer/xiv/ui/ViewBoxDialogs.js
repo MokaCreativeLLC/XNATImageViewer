@@ -411,19 +411,29 @@ xiv.ui.ViewBoxDialogs.prototype.createHelpDialog_ = function(){
 	xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP])){
 	this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].dispose();
     }
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP] = 
-	new xiv.ui.HelpDialog();
 
-    
+    var volCount = this.ViewBox_.getRenderer().getCurrentVolumes().length;
+    var meshCount = this.ViewBox_.getRenderer().getCurrentMeshes().length;
+    var annotCount = this.ViewBox_.getRenderer().getCurrentAnnotations().length;
+    var helpDialog = 
+	new xiv.ui.HelpDialog(volCount > 0, meshCount > 0, annotCount > 0);
+
+    /**
+    window.console.log('\n\n\nVOLS', 
+		       this.ViewBox_.getRenderer().getCurrentVolumes(), 
+		       'MESHES', 
+		       this.ViewBox_.getRenderer().getCurrentMeshes(), 
+		      'ANNOT', 
+		       this.ViewBox_.getRenderer().getCurrentAnnotations());
+    */
     //
     // Add text and render
     //
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].setModal(false);
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].setButtonSet(null);
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].render(
-	this.ViewBox_.getViewFrame());
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].setVisible(false);
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].center();
+    helpDialog.setModal(false);
+    helpDialog.setButtonSet(null);
+    helpDialog.render(this.ViewBox_.getViewFrame());
+    helpDialog.setVisible(false);
+    helpDialog.center();
 
 
     //
@@ -437,10 +447,8 @@ xiv.ui.ViewBoxDialogs.prototype.createHelpDialog_ = function(){
 	   'Help', 
             function(button){
 		var opened = button.getAttribute('checked') == 'true';
-		this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].
-		    setVisible(opened);
-		this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].center();
-
+		helpDialog.setVisible(opened);
+		helpDialog.center();
 
 		var eventKey = opened ? 
 		    xiv.ui.ViewBoxDialogs.EventType.DIALOG_OPENED :
@@ -448,8 +456,7 @@ xiv.ui.ViewBoxDialogs.prototype.createHelpDialog_ = function(){
 
 		this.dispatchEvent({
 		    type: eventKey,
-		    dialog: this.Dialogs_[
-			xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP]
+		    dialog: helpDialog
 		})
             }.bind(this), 
             serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Help.png'
@@ -458,7 +465,7 @@ xiv.ui.ViewBoxDialogs.prototype.createHelpDialog_ = function(){
     //
     // Grey out button on close
     //
-    goog.events.listen(this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP], 
+    goog.events.listen(helpDialog, 
 		      nrg.ui.Dialog.EventType.CLOSE_BUTTON_CLICKED, function(){
 			 this.ViewBox_.onToggleButtonClicked(helpToggle);
 		      }.bind(this))
@@ -468,7 +475,11 @@ xiv.ui.ViewBoxDialogs.prototype.createHelpDialog_ = function(){
     // toggle off help
     //
    this.ViewBox_.onToggleButtonClicked(helpToggle);
-    //this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP].setVisible(false);
+    //helpDialog.setVisible(false);
+
+
+    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.HELP] = 
+	new xiv.ui.HelpDialog();
 }
 
 

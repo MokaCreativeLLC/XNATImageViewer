@@ -288,7 +288,7 @@ xiv.start.prototype.initSubjNode_;
 
 /** 
  * @type {gxnat.PrjectTree.TreeNode}
- * @private
+f * @private
  */
 xiv.start.prototype.initExptNode_;
 
@@ -1096,6 +1096,7 @@ function(ViewableTree, opt_folderList){
 		var folderNodes = ThumbGallery.getZippyTree().
 				   getFolderNodes(opt_folderList);
 		if (opt_folderList.length > 0 && folderNodes.length > 1){
+
 		    ThumbGallery.setExpanded(
 			opt_folderList[opt_folderList.length -1],  
 			folderNodes[folderNodes.length - 2]);

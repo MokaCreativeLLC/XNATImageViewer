@@ -452,6 +452,10 @@ nrg.ui.Dialog.prototype.updateLimits = function() {
 nrg.ui.Dialog.prototype.setDraggerLimits_ = function(e) {
     var doc = this.getDomHelper().getDocument();
     var win = goog.dom.getWindow(doc) || window;
+    if (!goog.isDefAndNotNull(this.getElement())){
+	return;
+    }
+
     var parentElt = this.getElement().parentNode;
     var parentSize = goog.style.getSize(parentElt);
 

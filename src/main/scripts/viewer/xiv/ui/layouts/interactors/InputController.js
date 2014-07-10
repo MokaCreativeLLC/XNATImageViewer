@@ -67,18 +67,18 @@ xiv.ui.layouts.interactors.InputController.CSS_SUFFIX = {
 
 /**
  * @type {?Element}
- * @private
+ * @protected
  */
-xiv.ui.layouts.interactors.InputController.prototype.displayElt_ = null;
+xiv.ui.layouts.interactors.InputController.prototype.displayElt = null;
 
 
 
 
 /**
  * @type {?Element}
- * @private
+ * @protected
  */
-xiv.ui.layouts.interactors.InputController.prototype.inputBox_ = null;
+xiv.ui.layouts.interactors.InputController.prototype.inputBox = null;
 
 
 
@@ -90,14 +90,15 @@ xiv.ui.layouts.interactors.InputController.prototype.inputHovered_ = false;
 
 
 
+
 /**
  * @return {!number}
  * @public
  */
 xiv.ui.layouts.interactors.InputController.prototype.getValue = 
 function() {
-    if (!goog.isDefAndNotNull(this.inputBox_)) { return };
-    return this.inputBox_.value;
+    if (!goog.isDefAndNotNull(this.inputBox)) { return };
+    return this.inputBox.value;
 }
 
 
@@ -108,8 +109,8 @@ function() {
  */
 xiv.ui.layouts.interactors.InputController.prototype.setValue = 
 function(num){
-    if (!goog.isDefAndNotNull(this.inputBox_)){return}
-    this.inputBox_.value = num;
+    if (!goog.isDefAndNotNull(this.inputBox)){return}
+    this.inputBox.value = num;
     this.updateValue();
 }
 
@@ -122,8 +123,8 @@ function(num){
  */
 xiv.ui.layouts.interactors.InputController.prototype.setMaximum = 
 function(num){
-    if (!goog.isDefAndNotNull(this.inputBox_)){return};
-    this.inputBox_.max = num;
+    if (!goog.isDefAndNotNull(this.inputBox)){return};
+    this.inputBox.max = num;
     this.updateValue();
 }
 
@@ -135,8 +136,8 @@ function(num){
  */
 xiv.ui.layouts.interactors.InputController.prototype.setMinimum = 
 function(num){
-    if (!goog.isDefAndNotNull(this.inputBox_)){return};
-    this.inputBox_.min = num;
+    if (!goog.isDefAndNotNull(this.inputBox)){return};
+    this.inputBox.min = num;
     this.updateValue();
 }
 
@@ -162,10 +163,10 @@ function(){
  */
 xiv.ui.layouts.interactors.InputController.prototype.onInput = function(e){
     var value = parseInt(e.target.value);
-    this.inputBox_.value = value;
+    this.inputBox.value = value;
     this.dispatchEvent({
 	type: xiv.ui.layouts.interactors.InputController.EventType.INPUT,
-	value: this.inputBox_.value
+	value: this.inputBox.value
     });
     this.updateValue();
 }
@@ -181,9 +182,9 @@ function(){
     //
     // Input box
     //
-    this.displayElt_ = goog.dom.createDom('div');
-    goog.dom.appendChild(this.getElement(), this.displayElt_);
-    goog.dom.classes.add(this.displayElt_,
+    this.displayElt = goog.dom.createDom('div');
+    goog.dom.appendChild(this.getElement(), this.displayElt);
+    goog.dom.classes.add(this.displayElt,
         xiv.ui.layouts.interactors.InputController.CSS.DISPLAY);
 }
 
@@ -197,13 +198,13 @@ function(){
     //
     // Input box
     //
-    this.inputBox_ = goog.dom.createDom('input');
-    this.inputBox_.type = 'number';  
-    this.inputBox_.step = 1;
-    this.inputBox_.min = 0;
-    this.inputBox_.value = 0;   
-    goog.dom.appendChild(this.getElement(), this.inputBox_);
-    goog.dom.classes.add(this.inputBox_,
+    this.inputBox = goog.dom.createDom('input');
+    this.inputBox.type = 'number';  
+    this.inputBox.step = 1;
+    this.inputBox.min = 0;
+    this.inputBox.value = 0;   
+    goog.dom.appendChild(this.getElement(), this.inputBox);
+    goog.dom.classes.add(this.inputBox,
         xiv.ui.layouts.interactors.InputController.CSS.INPUT_BOX);
 }
 
@@ -222,22 +223,22 @@ function(parentElement) {
     this.createInputElt_();
 
 
-    goog.events.listen(this.inputBox_, goog.events.EventType.MOUSEENTER, 
+    goog.events.listen(this.inputBox, goog.events.EventType.MOUSEENTER, 
     function(e){
 	e.stopPropagation();
-	this.inputBox_.style.opacity = 1;
-	this.displayElt_.style.opacity = 0;
+	this.inputBox.style.opacity = 1;
+	this.displayElt.style.opacity = 0;
     }.bind(this))
 
-    goog.events.listen(this.inputBox_, goog.events.EventType.MOUSELEAVE, 
+    goog.events.listen(this.inputBox, goog.events.EventType.MOUSELEAVE, 
     function(e){
 	e.stopPropagation();
-	this.inputBox_.style.opacity = 0;
-	this.displayElt_.style.opacity = 1;
+	this.inputBox.style.opacity = 0;
+	this.displayElt.style.opacity = 1;
     }.bind(this))
 
 
-    goog.events.listen(this.inputBox_, goog.events.EventType.INPUT, 
+    goog.events.listen(this.inputBox, goog.events.EventType.INPUT, 
 		      this.onInput.bind(this))
 
 
@@ -254,16 +255,16 @@ function(){
     goog.base(this, 'disposeInternal');
     delete this.inputHovered_;
   
-    if (this.inputBox_) {
-	goog.events.removeAll(this.inputBox_);
-	goog.dom.removeNode(this.inputBox_);
-	delete this.inputBox_;
+    if (this.inputBox) {
+	goog.events.removeAll(this.inputBox);
+	goog.dom.removeNode(this.inputBox);
+	delete this.inputBox;
     } 
 
-    if (this.displayElt_) {
-	goog.events.removeAll(this.displayElt_);
-	goog.dom.removeNode(this.displayElt_);
-	delete this.displayElt_;
+    if (this.displayElt) {
+	goog.events.removeAll(this.displayElt);
+	goog.dom.removeNode(this.displayElt);
+	delete this.displayElt;
     } 
 }
 
@@ -276,6 +277,12 @@ goog.exportSymbol('xiv.ui.layouts.interactors.InputController.ID_PREFIX',
 	xiv.ui.layouts.interactors.InputController.ID_PREFIX);
 goog.exportSymbol('xiv.ui.layouts.interactors.InputController.CSS_SUFFIX',
 	xiv.ui.layouts.interactors.InputController.CSS_SUFFIX);
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.InputController.prototype.displayElt',
+    xiv.ui.layouts.interactors.InputController.prototype.displayElt);
+goog.exportSymbol(
+    'xiv.ui.layouts.interactors.InputController.prototype.inputBox',
+    xiv.ui.layouts.interactors.InputController.prototype.inputBox);
 goog.exportSymbol(
     'xiv.ui.layouts.interactors.InputController.prototype.getValue',
     xiv.ui.layouts.interactors.InputController.prototype.getValue);

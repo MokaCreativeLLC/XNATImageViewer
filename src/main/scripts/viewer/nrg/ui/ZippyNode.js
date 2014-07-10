@@ -317,6 +317,7 @@ nrg.ui.ZippyNode.prototype.getZippy = function () {
  * @public
  */
 nrg.ui.ZippyNode.prototype.setExpanded = function (exp) { 
+    //window.console.log("ZIP", this.Zippy_, this.Zippy_.isExpanded(), exp);
     this.Zippy_.setExpanded(exp);
 };
 

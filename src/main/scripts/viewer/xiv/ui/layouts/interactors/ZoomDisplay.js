@@ -12,6 +12,7 @@ goog.require('nrg.ui.Component');
 
 // xiv
 goog.require('xiv.ui.layouts.interactors.InputController');
+goog.require('xiv.vis.XtkRenderer2D');
 
 //-----------
 
@@ -42,15 +43,29 @@ xiv.ui.layouts.interactors.ZoomDisplay.ID_PREFIX =
     'xiv.ui.layouts.interactors.ZoomDisplay';
 
 
+/**
+ * @inheritDoc
+ */
+xiv.ui.layouts.interactors.ZoomDisplay.prototype.render = 
+function(parentElement) {
+    goog.base(this, 'render', parentElement);
+
+    //
+    // Match the zoom minimum
+    //
+    this.inputBox.min = xiv.vis.XtkRenderer2D.ZOOM_MINIMUM * 100;
+}
+
+
 
 /**
  * @inheritDoc
  */
 xiv.ui.layouts.interactors.ZoomDisplay.prototype.updateValue = 
 function(){
-    //if (!goog.isDefAndNotNull(this.inputBox_)){return}
-    this.displayElt_.innerHTML = 'Zoom level:&nbsp' + 
-	this.inputBox_.value + '%';
+    //window.console.log(this.inputBox.min, this.inputBox.max);
+    this.displayElt.innerHTML = 'Zoom level:&nbsp' + 
+	this.inputBox.value + '%';
 }
 
 

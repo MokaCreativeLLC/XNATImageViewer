@@ -146,6 +146,7 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     VIEWFRAME: 'viewframe',
     COMPONENT_HIGHLIGHT: 'component-highlight',
     VIEWABLEGROUPMENU: 'viewablegroupmenu',
+    EMPTYMENUBUTTON: 'emptymenubutton',
 }
 
 
@@ -242,7 +243,7 @@ xiv.ui.ViewBox.prototype.LayoutMenu_ = null;
 
 
 /**
- * @type {?xiv.vis.XtkEngine}
+ * @type {?xiv.vis.RenderEngine}
  * @private
  */
 xiv.ui.ViewBox.prototype.Renderer_ = null;
@@ -290,7 +291,18 @@ xiv.ui.ViewBox.prototype.hasLoadComponents_ = false;
 
 
 /**
- * @return {!Object.<string, Element>}
+ * @return {?xiv.vis.RenderEngine}
+ * @public
+ */
+xiv.ui.ViewBox.prototype.getRenderer = function() {
+    return this.Renderer_;
+}
+
+
+
+
+/**
+ * @return {?Object.<string, Element>}
  * @public
  */
 xiv.ui.ViewBox.prototype.getMenus = function() {
@@ -518,17 +530,16 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 		       });
 
     //
+    // Create dialogs
+    //
+    this.Dialogs_.createDialogs(); 
+
+    //
     // Set the layout based the orientation of the ViewableTree
     //
     if (goog.isDefAndNotNull(this.ViewableTrees_[0].getOrientation())){
 	this.setLayout(this.ViewableTrees_[0].getOrientation());
     }
-    
-
-    //
-    // Create dialogs
-    //
-    this.Dialogs_.createDialogs(); 
 
     //
     // Show load components (menu)
@@ -1256,6 +1267,84 @@ xiv.ui.ViewBox.prototype.addMenu_left_ = function() {
 
 
 /**
+ * @type {!Array.<string>}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.toggleOrder_ = [
+    'Info. Display',
+    'Help',
+    'Settings',
+    'Levels',
+    '2D Pan',
+    '2D Zoom',
+    'Toggle Crosshairs',
+    'Volumes',
+    'Annotations',
+    'Meshes'
+]
+
+
+/**
+ * @param {!Element} currMenu
+ * @param {!Element} element
+ * @param {!number} toggleInd
+ * @private
+ */
+xiv.ui.ViewBox.prototype.insertButtonByToggleOrder_ = 
+function(currMenu, element, toggleInd){
+
+    var childNodes = goog.dom.getChildren(currMenu);
+    var newChildNodes = [];
+    var newToggleInd;
+
+    //window.console.log(this.toggleOrder_);
+    
+    //
+    // Create the new child set
+    //
+    goog.array.forEach(this.toggleOrder_, function(){
+	newChildNodes.push(null);
+    })
+    newChildNodes[toggleInd] = element;
+
+    //
+    // Populate the new child set
+    //
+    goog.array.forEach(childNodes, function(childNode, i){
+	newToggleInd = this.toggleOrder_.indexOf(childNode.title);
+	newChildNodes[newToggleInd] = childNode;
+    }.bind(this))
+
+    //
+    // Remove the children
+    //
+    goog.dom.removeChildren(currMenu);
+
+    //
+    // Repopulate
+    //
+    goog.array.forEach(newChildNodes, function(newChild){
+	if (goog.isDefAndNotNull(newChild)){
+	    goog.dom.appendChild(currMenu, newChild);
+	}
+    })
+}
+
+
+
+/**
+ * @private
+ * @return {!Element}
+ */
+xiv.ui.ViewBox.prototype.createEmptyMenuButton_ = function(){
+    return goog.dom.createDom('div', {
+	'id': 'EmptyMenuButton_' + goog.string.createUniqueString(),
+	'class': xiv.ui.ViewBox.CSS.EMPTYMENUBUTTON
+    })
+}
+
+
+/**
  * @param {!string} menuLoc
  * @param {!Element} element
  * @param {number=} opt_insertInd 
@@ -1293,13 +1382,20 @@ xiv.ui.ViewBox.prototype.addToMenu = function(menuLoc, element, opt_insertInd){
 	break;
     }
 
-    //window.console.log(this.menus_.LEFT);
+    //window.console.log(element);
     if (goog.isNumber(opt_insertInd)){
 	currMenu.insertBefore(element, 
-		currMenu.childNodes[opt_insertInd])
+		currMenu.childNodes[opt_insertInd]);
     } else {
-	goog.dom.append(currMenu, element);
+	var toggleInd = this.toggleOrder_.indexOf(element.title);
+	if (toggleInd > 0){
+	    this.insertButtonByToggleOrder_(currMenu, element, toggleInd);
+	} else {
+	    goog.dom.append(currMenu, element);
+	}
     }
+
+    this.updateStyle_menus_();
 }
 
 
@@ -1309,12 +1405,7 @@ xiv.ui.ViewBox.prototype.addToMenu = function(menuLoc, element, opt_insertInd){
  */
 xiv.ui.ViewBox.prototype.createLayoutMenu_ = function(){
     this.LayoutMenu_ = new nrg.ui.SlideInMenu();
-    
-    //
-    // Add to left menu.
-    //
-    this.addToMenu('LEFT', this.LayoutMenu_.getElement());
-
+    this.LayoutMenu_.setDefaultTitle('Select Layout');
     //
     // Class.
     //
@@ -1325,13 +1416,26 @@ xiv.ui.ViewBox.prototype.createLayoutMenu_ = function(){
     // Match settings
     //
     this.LayoutMenu_.matchMenuIconToSelected(true);
-    this.LayoutMenu_.matchMenuTitleToSelected(true);
+    //this.LayoutMenu_.getElement().title = 'Select Layout'
 
     //
     // Set opacities.
     //
     this.LayoutMenu_.getElement().style.opacity = 0;
     this.LayoutMenu_.getMenuHolder().style.opacity = 0;
+
+
+    //
+    // Add to left menu.
+    //
+    var layoutElt = this.LayoutMenu_.getElement();
+    goog.array.insertAt(this.toggleOrder_, layoutElt.title);
+
+    //
+    // make sure it's included in the toggle order    
+    //
+    this.addToMenu('LEFT', layoutElt);
+
     
     //
     // Append the holder to the view frame elt.
@@ -1613,6 +1717,34 @@ xiv.ui.ViewBox.prototype.initRenderer_ = function(){
 
 
 
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.updateStyle_menus_ = function () {
+
+    var topLeftTop, topLeftBottom;
+    var currMenu, menuSize;
+    if (goog.isDefAndNotNull(this.menus_.TOP_LEFT)){
+	currMenu = this.menus_.TOP_LEFT;
+	menuSize = goog.style.getSize(currMenu);
+	topLeftTop = 0;
+	topLeftBottom = menuSize.height;
+    }
+
+
+    if (goog.isDefAndNotNull(this.menus_.LEFT)){
+	currMenu = this.menus_.LEFT;
+	menuSize = goog.style.getSize(currMenu);
+	var leftTop = this.currSize.height/2 - menuSize.height/2;
+	if (goog.isDefAndNotNull(topLeftTop) && (leftTop < topLeftBottom)){
+	    var newTop = menuSize.height + 2;
+	    currMenu.style.top = 'calc(100% - ' + newTop  + 'px)';   
+	} else {
+	    currMenu.style.top = leftTop + 'px';
+	}
+    }
+}
+
 
 /**
  * @inheritDoc
@@ -1623,6 +1755,7 @@ xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
     this.updateStyle_LayoutHandler_();
     this.updateStyle_Renderer_();
     this.updateStyle_LayoutMenu_();
+    this.updateStyle_menus_();
 
     if (goog.isDefAndNotNull(this.Dialogs_)){
 	this.Dialogs_.update();
@@ -1640,9 +1773,13 @@ xiv.ui.ViewBox.prototype.updateStyle = function (opt_args) {
  */
 xiv.ui.ViewBox.prototype.updateStyle_LayoutMenu_ = function () {
     if (!goog.isDefAndNotNull(this.LayoutMenu_)) { return };
-    var frameSize = goog.style.getSize(this.viewFrameElt_);
-    this.LayoutMenu_.setHidePosition(-100, frameSize.height/2 - 130);
-    this.LayoutMenu_.setShowPosition(0, frameSize.height/2 - 130);
+
+    var menuPos = goog.style.getPosition(this.menus_.LEFT);
+    var layoutSize = goog.style.getSize(this.LayoutMenu_.getMenuHolder());
+    var top = menuPos.y - 130;
+
+    this.LayoutMenu_.setHidePosition(0, top);
+    this.LayoutMenu_.setShowPosition(0, top);
 }
 
 
@@ -1793,6 +1930,8 @@ goog.exportSymbol('xiv.ui.ViewBox.MIN_TAB_H_PCT',
 	xiv.ui.ViewBox.MIN_TAB_H_PCT);
 goog.exportSymbol('xiv.ui.ViewBox.ControllersSet',
 	xiv.ui.ViewBox.ControllersSet);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.getRenderer',
+	xiv.ui.ViewBox.prototype.getRenderer);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.getMenus',
 	xiv.ui.ViewBox.prototype.getMenus);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.getLoadState',

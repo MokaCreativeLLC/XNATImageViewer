@@ -206,7 +206,7 @@ gxnat.vis.Scan.prototype.getFileList = function(callback){
 	// Store the metadata
 	//
 	this.scanMetadata_ = scanMetadata['items'][0]['data_fields'];
-	window.console.log("SCAN JSON2", this.scanMetadata_);
+	//window.console.log("SCAN JSON2", this.scanMetadata_);
 	
 	//
 	// set the metadata

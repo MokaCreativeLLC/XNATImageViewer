@@ -174,7 +174,7 @@ nrg.ui.SlideInMenu.FADE_OUT_COUNTDOWN = 450;
  * @const
  * @type {number}
  */	
-nrg.ui.SlideInMenu.ANIM_LEN_IN = 500;
+nrg.ui.SlideInMenu.ANIM_LEN_IN = 200;
 
 
 
@@ -182,7 +182,7 @@ nrg.ui.SlideInMenu.ANIM_LEN_IN = 500;
  * @const
  * @type {number}
  */	
-nrg.ui.SlideInMenu.ANIM_LEN_OUT = 700;
+nrg.ui.SlideInMenu.ANIM_LEN_OUT = 200;
 
 
 
@@ -294,7 +294,7 @@ nrg.ui.SlideInMenu.prototype.matchMenuIconToSelected_ = true;
  * @param {!boolean} bool
  * @private
  */
-nrg.ui.SlideInMenu.prototype.matchMenuTitleToSelected_ = true;
+nrg.ui.SlideInMenu.prototype.matchMenuTitleToSelected_ = false;
 
 
 
@@ -521,11 +521,28 @@ nrg.ui.SlideInMenu.prototype.runAnimations_  = function (anims, opt_callback) {
 
 /**
  * @private
- * @type {!number}
+ * @type {?goog.Timer}
  */
 nrg.ui.SlideInMenu.prototype.fadeOutTimer_ = null;
 
 
+
+/**
+ * @private
+ * @type {?string}
+ */
+nrg.ui.SlideInMenu.prototype.defaultTitle_ = null;
+
+
+
+/**
+ * @public
+ * @param {!string} title
+ */
+nrg.ui.SlideInMenu.prototype.setDefaultTitle = function(title) {
+    this.defaultTitle_ = title;
+    this.getElement().title = title;
+}
 
 
 /**
@@ -603,9 +620,12 @@ nrg.ui.SlideInMenu.prototype.setHighlightedIndex = function(index) {
     if (this.matchMenuTitleToSelected_){
 	this.getElement().title  = 
 	    this.getItemCollectionFromIndex(index).ITEM.getContent();
+    } else if (goog.isDefAndNotNull(this.defaultTitle_)) {
+	this.getElement().title = this.defaultTitle_;
     }
-}
 
+    //window.console.log(this.getElement().title);
+}
 
 
 /**
@@ -914,6 +934,7 @@ nrg.ui.SlideInMenu.prototype.disposeInternal = function() {
     this.disposeAnimationQueue(this.animQueue_);
     delete this.animQueue_;
 
+    delete this.defaultTitle_;
     delete this.prevSelectedItem_;
     delete this.currSelectedItem_;
     delete this.menuVisible_;
@@ -985,5 +1006,7 @@ goog.exportSymbol('nrg.ui.SlideInMenu.prototype.showMenu',
 	nrg.ui.SlideInMenu.prototype.showMenu);
 goog.exportSymbol('nrg.ui.SlideInMenu.prototype.hideMenu',
 	nrg.ui.SlideInMenu.prototype.hideMenu);
+goog.exportSymbol('nrg.ui.SlideInMenu.prototype.setDefaultTitle',
+	nrg.ui.SlideInMenu.prototype.setDefaultTitle);
 goog.exportSymbol('nrg.ui.SlideInMenu.prototype.disposeInternal',
 	nrg.ui.SlideInMenu.prototype.disposeInternal);

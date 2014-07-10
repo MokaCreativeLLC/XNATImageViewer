@@ -218,15 +218,6 @@ xiv.ui.layouts.TwoDRow.prototype.onLayoutFrameResize_Y = function(e){
 	goog.style.setSize(this.LayoutFrames['Z'].getElement(), 
 			   this.currSize.width - xSize.width - ySize.width, 
 			   ySize.height);
-			   
-
-	//
-	// V LayoutFrame
-	//
-	goog.style.setSize(this.LayoutFrames['V'].getElement(), 
-			   this.currSize.width, 
-			   this.currSize.height - ySize.height);
-	
 
     }.bind(this))
 

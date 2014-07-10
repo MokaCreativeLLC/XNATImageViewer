@@ -17,11 +17,36 @@ goog.require('nrg.ui.Dialog');
 
 
 /**
+ * @param {boolean=} opt_showVolHelp Defaults to false.
+ * @param {boolean=} opt_showMeshHelp Defaults to false.
+ * @param {boolean=} opt_showAnnotHelp Defaults to false.
  * @constructor
  * @extends {nrg.ui.Dialog}
  */
-xiv.ui.HelpDialog = function () {
+xiv.ui.HelpDialog = 
+function (opt_showVolHelp, opt_showMeshHelp, opt_showAnnotHelp) {
     goog.base(this);
+
+    /**
+     * @type {!boolean}
+     * @private
+     */
+    this.showVolHelp_ = opt_showVolHelp === true;
+
+    /**
+     * @type {!boolean}
+     * @private
+     */
+    this.showMeshHelp_ = opt_showMeshHelp === true;
+
+    /**
+     * @type {!boolean}
+     * @private
+     */
+    this.showAnnotHelp_ = opt_showAnnotHelp === true;
+
+    //window.console.log(this.showVolHelp_, 
+    //this.showMeshHelp_, this.showAnnotHelp_)
 }
 goog.inherits(xiv.ui.HelpDialog, nrg.ui.Dialog);
 goog.exportSymbol('xiv.ui.HelpDialog', xiv.ui.HelpDialog);
@@ -89,15 +114,15 @@ xiv.ui.HelpDialog.prototype.render = function(opt_parentElement){
     this.ScrollableZippyTree_ = new nrg.ui.ScrollableZippyTree();
 
     goog.dom.classes.add(this.ScrollableZippyTree_.getElement(), 
-			 this.constructor.CSS.SCROLLABLEZIPPYTREE);
+			 xiv.ui.HelpDialog.CSS.SCROLLABLEZIPPYTREE);
 
     this.ScrollableZippyTree_.render(this.getElement());
 
     this.populateZippy_();
 
-    //window.console.log("HERE", this.constructor.CSS.TITLE);
-    this.addTitleClass(this.constructor.CSS.TITLE);
-    this.addCloseSpanClass(this.constructor.CSS.CLOSEBUTTON);
+    //window.console.log("HERE", xiv.ui.HelpDialog.CSS.TITLE);
+    this.addTitleClass(xiv.ui.HelpDialog.CSS.TITLE);
+    this.addCloseSpanClass(xiv.ui.HelpDialog.CSS.CLOSEBUTTON);
 
     //goog.dom.removeNode(this.ScrollableZippyTree_.getElement());
     //this.setContent(this.ScrollableZippyTree_.getElement());
@@ -137,23 +162,39 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
 	 '2D and 3D panels<br>2D panels<br>2D panels'],
 	['Contrast', 'left-click + drag vertically', '2D panels'],
 	['Brightness', 'left-click + drag horizontally', '2D panels'],
-	*/
 	['Slice-scroll', 'shift + mousemove', '2D panels'],
+	*/
 	['Resize', 'left-click + drag', 'panel borders'],
     ]
     
+    var viewboxManip = [
+	['Close ViewBox', 
+	 '<img style="height:10px;width:10px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/Modal/close.png'
+	 + '"></img>'
+	],
+	['Add ViewBox Column', 
+	 '<img style="height:12px;width:6px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/Modal/insertcolumn.png'
+	 + '"></img>'
+	],
+	['Add ViewBox Row', 
+	 '<img style="height:6px;width:12px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/Modal/insertrow.png'
+	 + '"></img>'
+	],
+	['Drag/Swap ViewBox', 
+	 '<img style="height:17px;width:7px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/ViewBoxManager/handle.png'
+	 + '"></img>'
+	],
+    ]
+
     var viewboxToggles = [
 	['Change Layouts', 
 	 '<img height=15 width=15 ' + 
 	 'id=' + xiv.ui.HelpDialog.LAYOUT_IMAGE_ID + 
 	 '></img>'],
-
-	['2D Crosshairs', 
-	 'keystroke: C',
-	 '<img style="height:15px;width:15px" src="' +
-	 serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Crosshairs.png'
-	 + '"></img>'],
-
 
 	['Help', 
 	 'keystroke: ?',
@@ -166,6 +207,23 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
 	 'keystroke: I',
 	 '<img style="height:15px;width:15px" src="' +
 	 serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Info.png'
+	 + '"></img>'	 
+	],
+
+
+	['Settings', 
+	 'keystroke: S',
+	 '<img style="height:15px;width:15px" src="' +
+	 serverRoot + 
+	 '/images/viewer/xiv/ui/ViewBox/Toggle-Settings.png'
+	 + '"></img>'	 
+	],
+
+	['Levels', 
+	 'keystroke: B or L',
+	 '<img style="height:15px;width:15px" src="' +
+	 serverRoot + 
+	 '/images/viewer/xiv/ui/ViewBox/Toggle-Levels.png'
 	 + '"></img>'	 
 	],
 
@@ -188,70 +246,50 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
 	],
 
 
-	['Levels', 
-	 'keystroke: B or L',
+	['2D Crosshairs', 
+	 'keystroke: C',
 	 '<img style="height:15px;width:15px" src="' +
-	 serverRoot + 
-	 '/images/viewer/xiv/ui/ViewBox/Toggle-Levels.png'
-	 + '"></img>'	 
-	],
+	 serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-Crosshairs.png'
+	 + '"></img>'],
+    ]
 
 
-	['Settings', 
-	 'keystroke: S',
-	 '<img style="height:15px;width:15px" src="' +
-	 serverRoot + 
-	 '/images/viewer/xiv/ui/ViewBox/Toggle-Settings.png'
-	 + '"></img>'	 
-	],
-
-
-	['Volumes', 
+    if (this.showVolHelp_){
+	viewboxToggles.push(['Volumes', 
 	 'keystroke: V',
 	 '<img style="height:15px;width:15px" src="' +
 	 serverRoot + 
 	 '/images/viewer/xiv/ui/ViewBox/Toggle-Volumes.png'
 	 + '"></img>'	 
-	],
+	])
+    }
 
-
-	['Meshes', 
+    if (this.showMeshHelp_){
+	viewboxToggles.push(['Meshes', 
 	 'keystroke: M',
 	 '<img style="height:15px;width:15px" src="' +
 	 serverRoot + 
 	 '/images/viewer/xiv/ui/ViewBox/Toggle-Meshes.png'
 	 + '"></img>'	 
-	],
+	])
+    }
 
-
-	['Annotations', 
+    if (this.showAnnotHelp_){
+	viewboxToggles.push(['Annotations', 
 	 'keystroke: A',
 	 '<img style="height:15px;width:15px" src="' +
 	 serverRoot + 
 	 '/images/viewer/xiv/ui/ViewBox/Toggle-Annotations.png'
 	 + '"></img>'	 
-	],
-    ]
+	])
+    }
+    
+
 
     var modalToggles = [
-	['Add ViewBox Row', 
-	 '<img style="height:6px;width:12px" src="' +
-	 serverRoot + '/images/viewer/xiv/ui/Modal/insertrow.png'
-	 + '"></img>'
-	],
-	['Remove ViewBox Row', 
-	 '<img style="height:6px;width:12px" src="' +
-	 serverRoot + '/images/viewer/xiv/ui/Modal/removerow.png'
-	 + '"></img>'
-	],
-	['Add ViewBox Column', 
-	 '<img style="height:12px;width:6px" src="' +
-	 serverRoot + '/images/viewer/xiv/ui/Modal/insertcolumn.png'
-	 + '"></img>'
-	],
-	['Remove ViewBox Column',
-	 '<img style="height:12px;width:6px" src="' +
-	 serverRoot + '/images/viewer/xiv/ui/Modal/removecolumn.png'
+	['Close XImgView', 
+	 '<img style="height:10px;width:10px" src="' +
+	 serverRoot + '/images/viewer/xiv/ui/Modal/close.png'
 	 + '"></img>'
 	],
 	['Full-screen view', 
@@ -272,7 +310,12 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
     this.setTitle('Help');
 
 
-    var allLines = [imageManipLines, viewboxToggles, modalToggles];
+    var allLines = [
+	imageManipLines, 
+	viewboxManip,
+	viewboxToggles, 
+	modalToggles
+    ];
     goog.array.forEach(allLines, function(lineArr, i){
 	
 	var currTable = '<table style="width:100%;' + 
@@ -307,18 +350,21 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
 	//var lastAddedText = this.getTextElements()[i+1];
 	//window.console.log(lastAddedText)
 	//goog.dom.classes.add(lastAddedText, 
-	//this.constructor.CSS.TEXT);
+	//xiv.ui.HelpDialog.CSS.TEXT);
 
 	var folderName;
 	currText = i+1;
 	switch(currText){
 	    case 1:
-	    folderName = 'Image Manipulation';
+	    folderName = 'Images';
 	    break;
 	    case 2:
-	    folderName = 'Toggles';
+	    folderName = 'ViewBox Manipulation';
 	    break;
 	    case 3:
+	    folderName = 'ViewBox Toggles';
+	    break;
+	    case 4:
 	    folderName = 'Modal';
 	    break;
 	}
@@ -341,6 +387,11 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
  */
 xiv.ui.HelpDialog.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
+
+    delete this.showVolHelp_;
+    delete this.showMeshHelp_;
+    delete this.showAnnotHelp_;
+
 
     //
     // Scrollable zippy tree

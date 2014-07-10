@@ -61,10 +61,10 @@ xiv.vis.XtkEngine = function () {
      * @private
      */
     this.currXObjects_ = {
-	volumes : [],
-	meshes : [],
-	fibers : [],
-	spheres : [],
+	'volumes' : [],
+	'meshes' : [],
+	'fibers' : [],
+	'spheres' : [],
     };
 
 
@@ -196,16 +196,46 @@ xiv.vis.XtkEngine.prototype.renderEndCalled_ = false;
 
 
 /**
- * @param {!gxnat.vis.ViewableGroup} ViewableGroup
+ * @return {!Array.<X.object>} 
  * @private
  */
-xiv.vis.XtkEngine.prototype.getAnnotations_ = function(ViewableGroup) {
+xiv.vis.XtkEngine.prototype.getCurrentVolumes = function() {
+    return this.currXObjects_['volumes'];
+}
+
+
+
+/**
+ * @return {!Array.<X.object>} 
+ * @private
+ */
+xiv.vis.XtkEngine.prototype.getCurrentMeshes = function() {
+    return this.currXObjects_['meshes'];
+}
+
+
+
+/**
+ * @return {!Array.<X.object>} 
+ * @private
+ */
+xiv.vis.XtkEngine.prototype.getCurrentAnnotations = function() {
+    return this.currXObjects_['spheres'];
+}
+
+
+
+/**
+ * @param {gxnat.vis.ViewableGroup} ViewableGroup
+ * @private
+ */
+xiv.vis.XtkEngine.prototype.extractAnnotations_ = function(ViewableGroup) {
     if (!goog.isDefAndNotNull(ViewableGroup.getRenderProperties().annotations))
 	{ return }
 
     goog.array.forEach(ViewableGroup.getRenderProperties().annotations,
 		       function(annotationsNode){
-			   this.currXObjects_.spheres.push(
+			   this.currXObjects_['spheres'].push(
 			       xiv.vis.XtkEngine.createAnnotation(
 				   annotationsNode))
 		       }.bind(this))
@@ -352,9 +382,9 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
     
     if (goog.isDefAndNotNull(ViewableGroup.getRenderProperties() &&
 	goog.isDefAndNotNull(ViewableGroup.getRenderProperties().annotations))){
-	this.getAnnotations_(ViewableGroup);
+	this.extractAnnotations_(ViewableGroup);
 	//window.console.log("\n\n\n\n\n************ANNOTATIONS!!!!");
-	goog.array.forEach(this.currXObjects_.spheres, function(annot){
+	goog.array.forEach(this.currXObjects_['spheres'], function(annot){
 
 	    //window.console.log("ANNOT", annot);
 	    this.ControllerTree_.createControllers(annot);
@@ -386,24 +416,24 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 
 	// Volumes
 	if (currXObj instanceof X.volume) {
-	    this.constructor.setRenderProperties_Volume_(
+	    xiv.vis.XtkEngine.setRenderProperties_Volume_(
 		currXObj, renderProps);
-	    this.currXObjects_.volumes.push(currXObj);
+	    this.currXObjects_['volumes'].push(currXObj);
 	    //window.console.log(currXObj, currXObj.dimensionsRAS);
 	}
 
 	// Meshes
 	else if (currXObj instanceof X.mesh){
-	    this.constructor.setRenderProperties_Mesh_(
+	    xiv.vis.XtkEngine.setRenderProperties_Mesh_(
 		currXObj, renderProps);
-	    this.currXObjects_.meshes.push(currXObj);
+	    this.currXObjects_['meshes'].push(currXObj);
 	}
 
 	// Fibers
 	else if (currXObj instanceof X.fibers){
-	    this.constructor.setRenderProperties_Fiber_(
+	    xiv.vis.XtkEngine.setRenderProperties_Fiber_(
 		currXObj, renderProps);
-	    this.currXObjects_.fibers.push(currXObj);
+	    this.currXObjects_['fibers'].push(currXObj);
 	}
     }.bind(this))
 }
@@ -596,7 +626,7 @@ xiv.vis.XtkEngine.prototype.render = function (ViewableGroup) {
     //  IF THERE ARE NO VOLUMES, we feed everthing into the 3D renderer.
     //
     //------------------------------------------
-    if (this.currXObjects_.volumes.length > 0) {
+    if (this.currXObjects_['volumes'].length > 0) {
 	
 	// Get the first ON plane.
 	var Planes = this.getPlanes();
@@ -675,15 +705,15 @@ xiv.vis.XtkEngine.prototype.getSelectedVolume = function(){
 
     //window.console.log("\n*\n*\n*\n*\n*\n*GET SELECTED VOLUME!");
 
-    if (this.currXObjects_.volumes.length == 0) {return};
+    if (this.currXObjects_['volumes'].length == 0) {return};
 
     //
     // First look for the selected volume
     //
     var i = 0;
-    var len = this.currXObjects_.volumes.length;
+    var len = this.currXObjects_['volumes'].length;
     for (; i<len; i++){
-	var vol = this.currXObjects_.volumes[i];
+	var vol = this.currXObjects_['volumes'][i];
 	if (vol[xiv.vis.RenderEngine.SELECTED_VOL_KEY]){
 	    //window.console.log("\n*\n*\n*\n*\n*\n*SELECTED VOLUME FOUND!");
 	    return vol;
@@ -694,8 +724,9 @@ xiv.vis.XtkEngine.prototype.getSelectedVolume = function(){
     // Default to the first volume if no selected volume
     //
     //window.console.log("\n*\n*\n*\n*\n*\n*SELECTED VOLUME NOT FOUND!");
-    this.currXObjects_.volumes[0][xiv.vis.RenderEngine.SELECTED_VOL_KEY] = true;
-    return this.currXObjects_.volumes[0];
+    this.currXObjects_['volumes'][0]
+    [xiv.vis.RenderEngine.SELECTED_VOL_KEY] = true;
+    return this.currXObjects_['volumes'][0];
     
 }
 
@@ -1188,109 +1219,6 @@ xiv.vis.XtkEngine.isFiber = function(ext) {
 
 
 /**
- * @return {Object.<string, Array>}
- */
-xiv.vis.XtkEngine.ViewablesObject = {
-    'fibers': [],
-    'volumes': [],
-    'dicoms': [],
-    'analyze': [],
-    'nifti': [],
-    'meshes':[],
-    'annotations': [],
-    'images':[]
-}
-
-
-
-/**
- * Returns the type of the object associated with the given file type. 
- * The object type will be either 'volume', 'mesh', or 'fiber'.
- *
- * @param {!string | !Array.<string>} fileCollection The files to 
- *    categorize based on X.objects.
- * @return {!string | !Array.<string>}
- */
-
-xiv.vis.XtkEngine.getViewables = function(fileCollection) {
-
-    //-------------------------	
-    // Get an empty viewables object for storage.
-    //-------------------------	    
-    var viewableTypes = 
-	goog.object.clone(xiv.vis.XtkEngine.ViewablesObject);
-    
-    
-
-    //-------------------------	
-    // Make 'fileCollection' an array if it's not.
-    //-------------------------	
-    if (!goog.isArray(fileCollection)) { fileCollection = [fileCollection] }
-
-
-
-    //-------------------------	
-    // Loop through fileCollection the first time
-    // for Slicer files and fiber bundles.  The mrmls, for instance
-    // take priority over the other node files.
-    //-------------------------	
-    var basename = '';
-    var ext = '';
-    for (var i = 0, len = fileCollection.length; i < len; i++) {
-	basename = goog.string.path.basename(fileCollection[i]).toLowerCase();
-	ext = goog.string.path.extension(basename);
-
-	//window.console.log("IS DICOM", ext, this.isDicom(ext));
-	//
-	// Skip if the filename starts with a period
-	//
-	if (goog.string.startsWith(basename, '.')) continue;
-	
-	if (ext === 'mrml') { 
-	    viewableTypes['slicer'].push(fileCollection[i]);
-	
-	} else if (xiv.vis.XtkEngine.isVolume(ext)) {
-	    viewableTypes['volumes'].push(fileCollection[i]);
-
-	} else if (xiv.vis.XtkEngine.isDicom(ext)) {
-	    viewableTypes['dicoms'].push(fileCollection[i]);
-
-	} else if (xiv.vis.XtkEngine.isMesh(ext)){
-	    viewableTypes['meshes'].push(fileCollection[i]);
-
-	} else if (xiv.vis.XtkEngine.isFiber(ext)){
-	    viewableTypes['fibers'].push(fileCollection[i]);
-
-	} else if (xiv.vis.XtkEngine.isImage(ext)){
-	    viewableTypes['images'].push(fileCollection[i]);
-
-	} 
-    }
-    
-
-
-    //-------------------------	
-    // Rerturn the constructed 'viewableTypes' object.
-    //-------------------------	
-    window.console.log("VIEWABLE TYPES", viewableTypes);
-
-
-    //----------------
-    // Cull Empty Viewables
-    //----------------
-    goog.object.forEach(viewableTypes, function(vbl, key){
-	if (!vbl.length){
-	    goog.object.remove(viewableTypes, key); 
-	}
-    })
-    //window.console.log("VIEWABLE TYPES - culled", viewableTypes);
-    return viewableTypes
-}
-
-
-
-
-/**
  * Creates and returns a new X object, generating
  * the type of X object by the extension provided in
  * the fileCollection.
@@ -1377,12 +1305,16 @@ goog.exportSymbol('xiv.vis.XtkEngine.isAnalyze', xiv.vis.XtkEngine.isAnalyze);
 goog.exportSymbol('xiv.vis.XtkEngine.isNifti', xiv.vis.XtkEngine.isNifti);
 goog.exportSymbol('xiv.vis.XtkEngine.isMesh', xiv.vis.XtkEngine.isMesh);
 goog.exportSymbol('xiv.vis.XtkEngine.isFiber', xiv.vis.XtkEngine.isFiber);
-goog.exportSymbol('xiv.vis.XtkEngine.ViewablesObject',
-	xiv.vis.XtkEngine.ViewablesObject);
-goog.exportSymbol('xiv.vis.XtkEngine.getViewables',
-	xiv.vis.XtkEngine.getViewables);
 goog.exportSymbol('xiv.vis.XtkEngine.createXObject',
 	xiv.vis.XtkEngine.createXObject);
+
+goog.exportSymbol('xiv.vis.XtkEngine.prototype.getCurrentMeshes',
+	xiv.vis.XtkEngine.prototype.getCurrentMeshes);
+goog.exportSymbol('xiv.vis.XtkEngine.prototype.getCurrentAnnotations',
+	xiv.vis.XtkEngine.prototype.getCurrentAnnotations);
+goog.exportSymbol('xiv.vis.XtkEngine.prototype.getCurrentVolumes',
+	xiv.vis.XtkEngine.prototype.getCurrentVolumes);
+
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.setPlaneEnabled',
 	xiv.vis.XtkEngine.prototype.setPlaneEnabled);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.setPrimaryRenderPlane',

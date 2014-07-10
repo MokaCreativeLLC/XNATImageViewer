@@ -673,7 +673,7 @@ xiv.ui.Modal.prototype.updateStyle_ViewBoxes_ = function(){
 	this.ViewBoxHandler_.loop( function(ViewBox, i, j) { 
 	    nrg.style.setStyle(ViewBox.getElement(), {
 		'height': this.dims_.viewboxes.H[i][j],
-		'width': this.dims_.viewboxes.W[i][j] ,
+		'width': this.dims_.viewboxes.W[i][j],
 		'left': this.dims_.viewboxes.X[i][j],
 		'top': this.dims_.viewboxes.Y[i][j]
 	    })	

@@ -68,7 +68,7 @@ xiv.ui.ctrl.Histogram.CSS_SUFFIX = {
  * @type {!number}
  * @const
  */
-xiv.ui.ctrl.Histogram.LEVEL_CUTOFF = .99;
+xiv.ui.ctrl.Histogram.LEVEL_CUTOFF = .999;
 
 
 

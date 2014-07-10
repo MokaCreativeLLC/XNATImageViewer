@@ -138,18 +138,11 @@ function (ViewBox, Renderer, LayoutHandler, Dialogs) {
     //
     this.listenForKeyboardEvents_();
 
+
     //
-    // Zoom follower
+    // Create the zoom follower
     //
-    this.zoomFollower_ = goog.dom.createDom('div', {
-	id: 'mousefollower'
-    })
-    goog.dom.classes.add(this.zoomFollower_, 
-			 this.constructor.CURSOR_CSS.ZOOM_FOLLOWER);
-    this.zoomFollower_.innerHTML  = 
-	'Zoom In (drag up)<br>' + 
-	'Zoom Out (drag down)<br>';
-    goog.dom.append(this.ViewBox_.getViewFrame(), this.zoomFollower_);
+    this.createZoomFollower_();
 }
 goog.inherits(xiv.ui.ViewBoxInteractorHandler, goog.events.EventTarget);
 goog.exportSymbol('xiv.ui.ViewBoxInteractorHandler', 
@@ -376,9 +369,10 @@ function() {
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.clearCursorStyle_ = function(e) {
     var viewFrame = this.ViewBox_.getViewFrame();
-    goog.object.forEach(this.constructor.CURSOR_CSS, function(css, key){
-	goog.dom.classes.remove(viewFrame, css);
-    })
+    goog.object.forEach(xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS, 
+			function(css, key){
+			    goog.dom.classes.remove(viewFrame, css);
+			})
 }
 
 
@@ -411,10 +405,10 @@ function(add, css, opt_customCss) {
  * @param {goog.events.Event} e
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.setCursorGrab_ = function(e) {
-    this.setCursorCss_(true, this.constructor.CURSOR_CSS.GRAB,
-		       this.constructor.CURSOR_CSS.GRAB_CUSTOM);
-    this.setCursorCss_(false, this.constructor.CURSOR_CSS.GRABBING,
-		       this.constructor.CURSOR_CSS.GRABBING_CUSTOM);
+    this.setCursorCss_(true, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRAB,
+		       xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRAB_CUSTOM);
+    this.setCursorCss_(false, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRABBING,
+		       xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRABBING_CUSTOM);
 }
 
 
@@ -424,10 +418,10 @@ xiv.ui.ViewBoxInteractorHandler.prototype.setCursorGrab_ = function(e) {
  * @param {goog.events.Event} e
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.setCursorGrabbing_ = function(e) {
-    this.setCursorCss_(false, this.constructor.CURSOR_CSS.GRAB,
-		       this.constructor.CURSOR_CSS.GRAB_CUSTOM);
-    this.setCursorCss_(true, this.constructor.CURSOR_CSS.GRABBING,
-		       this.constructor.CURSOR_CSS.GRABBING_CUSTOM);
+    this.setCursorCss_(false, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRAB,
+		       xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRAB_CUSTOM);
+    this.setCursorCss_(true, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRABBING,
+		       xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.GRABBING_CUSTOM);
 }
 
 
@@ -438,8 +432,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.setCursorGrabbing_ = function(e) {
  * @param {goog.events.Event} e
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.setCursorZoomIn_ = function(e) {
-    this.setCursorCss_(false, this.constructor.CURSOR_CSS.ZOOM_OUT);
-    this.setCursorCss_(true, this.constructor.CURSOR_CSS.ZOOM_IN);
+    this.setCursorCss_(false, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_OUT);
+    this.setCursorCss_(true, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_IN);
 }
 
 
@@ -449,8 +443,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.setCursorZoomIn_ = function(e) {
  * @param {goog.events.Event} e
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.setCursorZoomOut_ = function(e) {
-    this.setCursorCss_(true, this.constructor.CURSOR_CSS.ZOOM_OUT);
-    this.setCursorCss_(false, this.constructor.CURSOR_CSS.ZOOM_IN);
+    this.setCursorCss_(true, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_OUT);
+    this.setCursorCss_(false, xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_IN);
 }
 
 
@@ -524,15 +518,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
     // ZOOM
     //
     if (this.zooming_){
-	//window.console.log(e);
-	goog.dom.removeNode(this.zoomFollower_);
-	goog.dom.append(this.currMouseRenderer_.container,
-			this.zoomFollower_);
-	this.zoomFollower_.style.visibility = 'visible';
-	this.zoomFollower_.style.left = this.mouseXY_.curr[0] + 20 + 'px';
-	this.zoomFollower_.style.top = this.mouseXY_.curr[1]  + 'px';
-	//this.zoomFollower_.style.left = this.MouseX_ + 20 + 'px';
-	//this.zoomFollower_.style.top = this.MouseY_ + 20 + 'px';
+	this.updateZoomFollower_();
 	this.setCursorZoomIn_();	
 	if (this.mouseDown_.left){
 	    this.onRenderPlaneZoom_(xDist, yDist);
@@ -606,7 +592,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseUp_ = function(e) {
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
-    window.console.log('On key:', e.keyCode, this.dialogKeys_);
+    //window.console.log('On key:', e.keyCode, this.dialogKeys_);
 
     // Arrow keys
     if ((e.keyCode - 40 >= -3) && (e.keyCode - 40 <= 0)){
@@ -621,35 +607,40 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
 	// Toggle off hand
 	//
 	var pan = 
-	    this.ViewBox_.getToggleButton(this.constructor.TOGGLEABLE.TWODPAN);
+	    this.ViewBox_.getToggleButton(
+		xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODPAN);
 	if (pan.getAttribute('checked') == 'true'){
-	    this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE.TWODPAN);
+	    this.ViewBox_.fireToggleButton(
+		xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODPAN);
 	}
 
 	//
 	// Toggle off zoom
 	//
 	var twoDZoom = 
-	    this.ViewBox_.getToggleButton(this.constructor.TOGGLEABLE.TWODZOOM);
+	    this.ViewBox_.getToggleButton(
+		xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODZOOM);
 	if (twoDZoom.getAttribute('checked') == 'true'){
 	    this.ViewBox_.fireToggleButton(
-		this.constructor.TOGGLEABLE.TWODZOOM);
+		xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODZOOM);
 	}
 
-	window.console.log(pan.getAttribute('checked'), 
-			   twoDZoom.getAttribute('checked'), 
-			   pan.checked == 'true',
-			   twoDZoom.checked == 'true');
+	//window.console.log(pan.getAttribute('checked'), 
+	//		   twoDZoom.getAttribute('checked'), 
+	//		   pan.checked == 'true',
+	//		   twoDZoom.checked == 'true');
 	break;
 
 
     case 90:  // Z (Zoom)
-	this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE.TWODZOOM);	
+	this.ViewBox_.fireToggleButton(
+	    xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODZOOM);	
 	break;
 
     case 72: // H (hand)
     case 80: // P (pan)
-	this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE.TWODPAN);
+	this.ViewBox_.fireToggleButton(
+	    xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODPAN);
 	break;
 
     case 66: // L (levels)
@@ -672,12 +663,14 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
 	break;
 
     case 67: // C (Crosshairs)
-	this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE.CROSSHAIRS);
+	this.ViewBox_.fireToggleButton(
+	    xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.CROSSHAIRS);
 	break;
 
     case 83: // S (Settings)
 	this.ViewBox_.fireToggleButton(
-	    this.dialogKeys_[this.constructor.TOGGLEABLE.SETTINGS]);
+	    this.dialogKeys_[
+		xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.SETTINGS]);
 	break;
 
     case 191: // ? (help)
@@ -986,8 +979,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createTwoDZoomToggle =
 function(){    
     this.ViewBox_.createToggleButton(
 	'LEFT', 
-	this.constructor.CSS.GENERIC_TOGGLE, 
-	this.constructor.TOGGLEABLE.TWODZOOM,
+	xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_TOGGLE, 
+	xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODZOOM,
 	'2D Zoom', 
 	function(button, buttonChecked){
 	    this.clearCursorStyle_();
@@ -999,7 +992,7 @@ function(){
 	    //
 	    if (checked){
 		this.ViewBox_.untoggle(
-		    this.constructor.TOGGLEABLE.TWODPAN);
+		    xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODPAN);
 		this.setCursorZoomIn_();
 	    }
 
@@ -1008,7 +1001,7 @@ function(){
 	    '/images/viewer/xiv/ui/ViewBox/Toggle-2DZoom.png');
 
     this.ViewBox_.fireToggleButton(
-	this.constructor.TOGGLEABLE.TWODZOOM);
+	xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODZOOM);
 }
 
 
@@ -1020,8 +1013,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createTwoDPanToggle =
 function(){    
     this.ViewBox_.createToggleButton(
 	'LEFT', 
-	this.constructor.CSS.GENERIC_TOGGLE, 
-	this.constructor.TOGGLEABLE.TWODPAN,
+	xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_TOGGLE, 
+	xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODPAN,
 	'2D Pan', 
 	function(button){
 	    this.clearCursorStyle_();
@@ -1030,13 +1023,13 @@ function(){
 	    if (checked){
 		this.setCursorGrab_();
 		this.ViewBox_.untoggle(
-		    this.constructor.TOGGLEABLE.TWODZOOM);	
+		    xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODZOOM);	
 	    }
 	}.bind(this), 
 	serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-2DPan.png');
 
     //this.panning_ = true;
-    this.ViewBox_.fireToggleButton(this.constructor.TOGGLEABLE.TWODPAN);
+    this.ViewBox_.fireToggleButton(xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODPAN);
 }
 
 
@@ -1049,8 +1042,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createCrosshairToggle =
 function(opt_isOn){
     this.ViewBox_.createToggleButton(
 	'LEFT', 
-	this.constructor.CSS.GENERIC_TOGGLE, 
-	this.constructor.TOGGLEABLE.CROSSHAIRS,
+	xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_TOGGLE, 
+	xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.CROSSHAIRS,
 	'Toggle Crosshairs', 
 	function(button){
 	    this.toggleCrosshairsVisible(
@@ -1061,7 +1054,7 @@ function(opt_isOn){
 
     if (opt_isOn === false){
 	this.ViewBox_.fireToggleButton(
-	    this.constructor.TOGGLEABLE.CROSSHAIRS);
+	    xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.CROSSHAIRS);
     }
 }
 
@@ -1074,10 +1067,10 @@ function(opt_isOn){
 xiv.ui.ViewBoxInteractorHandler.prototype.createSettingsDialog = 
 function(){    
 
-    var key = this.constructor.TOGGLEABLE.SETTINGS;
+    var key = xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.SETTINGS;
 
     this.dialogKeys_[key]  = key + 
-	    this.constructor.DIALOG_SPLIT + goog.string.createUniqueString();
+	    xiv.ui.ViewBoxInteractorHandler.DIALOG_SPLIT + goog.string.createUniqueString();
 
 
     //
@@ -1085,8 +1078,8 @@ function(){
     //
     this.Dialogs_.createToggleableDialog(
 	this.dialogKeys_[key],
-	this.constructor.CSS.GENERIC_DIALOG,
-	this.constructor.CSS.GENERIC_TOGGLE,
+	xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_DIALOG,
+	xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_TOGGLE,
 	serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-' + 
 	    'Settings' + '.png',
 	'Settings',
@@ -1103,7 +1096,7 @@ function(){
     //
     var ctrlTreeElt = this.zippyTrees_[key].getElement();
     goog.dom.classes.add(ctrlTreeElt, 
-			 this.constructor.CSS.GENERIC_ZIPPYTREE);
+			 xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_ZIPPYTREE);
     this.Dialogs_.getDialogs()[this.dialogKeys_[key]].
 	getElement().appendChild(ctrlTreeElt);
 
@@ -1171,17 +1164,17 @@ function() {
 	//
 	// Set custom params
 	//
-	slider[this.constructor.ORIENTATION_KEY] = renderPlaneOr;
-	frameDisplay[this.constructor.ORIENTATION_KEY] = renderPlaneOr;
-	zoomDisplay[this.constructor.ORIENTATION_KEY] = renderPlaneOr;
-	crosshairs[this.constructor.ORIENTATION_KEY] = renderPlaneOr;
+	slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = renderPlaneOr;
+	frameDisplay[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = renderPlaneOr;
+	zoomDisplay[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = renderPlaneOr;
+	crosshairs[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = renderPlaneOr;
 
 	//
 	// Preliminary sync
 	//
 	this.syncSlidersToVolume_(true);
 	this.syncVolumeToSlider_(slider, volume);
-	this.syncCrosshairsToVolume_(slider[this.constructor.ORIENTATION_KEY],
+	this.syncCrosshairsToVolume_(slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY],
 				     volume);
 	this.syncFrameDisplayToSlider_(slider, volume);
 
@@ -1208,7 +1201,7 @@ function() {
 	    //window.console.log(volume);
 	    this.syncVolumeToSlider_(e.target, volume);
 	    this.syncCrosshairsToVolume_(
-		e.target[this.constructor.ORIENTATION_KEY],
+		e.target[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY],
 		volume);
 	    this.syncFrameDisplayToSlider_(e.target, volume);
 	}.bind(this))
@@ -1338,7 +1331,7 @@ function(ctrl, typeKey){
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.updateVolumeControllers_ = 
     function(ctrl, key){
-	var typeKey = key.split(this.constructor.DIALOG_SPLIT)[0];
+	var typeKey = key.split(xiv.ui.ViewBoxInteractorHandler.DIALOG_SPLIT)[0];
 	if (ctrl instanceof xiv.ui.ctrl.RadioButtonController){
 	    this.updateVolumeToggle_(ctrl, typeKey);
 	}
@@ -1356,7 +1349,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.updateVolumeControllers_ =
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.updateControllers_ = function(key){
     // Derive the type key
-    var typeKey = key.split(this.constructor.DIALOG_SPLIT)[0];
+    var typeKey = key.split(xiv.ui.ViewBoxInteractorHandler.DIALOG_SPLIT)[0];
 
     // Make sure zippy tree's slider is matched to the contents size    
     this.zippyTrees_[typeKey].mapSliderToContents();
@@ -1455,14 +1448,14 @@ function(slider, volume) {
     //
     // Invert the axial and coronal planes to match that of Slicer
     //
-    var orientation = slider[this.constructor.ORIENTATION_KEY];
+    var orientation = slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY];
     var adder = (orientation == 'Y' || orientation == 'Z') ? 
 	slider.getMaximum() - slider.getValue() - 1 : slider.getValue() - 1;
 
     //
     // Set the volume index
     // 
-    volume['index' + slider[this.constructor.ORIENTATION_KEY]] = adder;
+    volume['index' + slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY]] = adder;
 }
 
 
@@ -1585,7 +1578,7 @@ function(slider, volume) {
 	var slider = planeInteractors.SLIDER;
 	frameDisplay.setMaximum(slider.getMaximum());
 	frameDisplay.setValue(slider.getValue());  
-    }.bind(this), slider[this.constructor.ORIENTATION_KEY])
+    }.bind(this), slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY])
 }
 
 
@@ -1615,13 +1608,9 @@ function() {
 	var renderZoom = renderPlane.getRenderer().getZoom();
 	var displayZoom = planeInteractors.ZOOM_DISPLAY.getValue() / 100;
 
-	//if (renderZoom < displayZoom && !this.mouseDown_.right) {
-	    //renderPlane.getRenderer().setZoom(displayZoom);  
-	//} 
-	//else {
-	    planeInteractors.ZOOM_DISPLAY.setValue(
-		Math.round(renderZoom * 100));
-	//}
+	planeInteractors.ZOOM_DISPLAY.setValue(
+	    Math.round(renderZoom * 100));
+	
 	
     }.bind(this))
 }
@@ -1639,7 +1628,7 @@ function(frameDisplay, volume) {
     this.loopIR_(
     function(renderPlane, renderPlaneOr, planeInteractors, volume){
 	planeInteractors.SLIDER.setValue(frameDisplay.getValue()); 
-    }.bind(this), frameDisplay[this.constructor.ORIENTATION_KEY]) 
+    }.bind(this), frameDisplay[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY]) 
 }
 
 
@@ -1674,7 +1663,7 @@ function(){
 		return; 
 	    };
 	    slider = planeInteractors.SLIDER;
-	    orientation = slider[this.constructor.ORIENTATION_KEY];
+	    orientation = slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY];
 
 	    //
 	    // Params
@@ -1729,8 +1718,10 @@ function(opt_resetMaximum) {
 	if (!goog.isDefAndNotNull(planeInteractors.SLIDER)) { 
 	    return; 
 	};
+
+	
 	slider = planeInteractors.SLIDER;
-	orientation = slider[this.constructor.ORIENTATION_KEY];
+	orientation = slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY];
 
 	//
 	// Exit if no volume
@@ -1740,7 +1731,13 @@ function(opt_resetMaximum) {
 	    slider.setMaximum(renderPlane.getRenderer().getNumberSlices());
 	    slider.setMinimum(1);
 	}
-	slider.setValue(volume['index' + orientation] + 1);
+
+	//window.console.log(volume, orientation);
+	//window.console.log(orientation);
+	//window.console.log(volume['index' + orientation]);
+	if (goog.isDefAndNotNull(orientation)){
+	    slider.setValue(volume['index' + orientation] + 1);
+	}
     })
 }
 
@@ -1874,8 +1871,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.updateInteractorStyles = function() {
 	//
 	// Set custom params
 	//
-	slider[this.constructor.ORIENTATION_KEY] = renderPlaneOr;
-	frameDisplay[this.constructor.ORIENTATION_KEY] = renderPlaneOr;
+	slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = renderPlaneOr;
+	frameDisplay[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = renderPlaneOr;
 
 	//
 	// Exit if no volume
@@ -2017,7 +2014,7 @@ function(key) {
 xiv.ui.ViewBoxInteractorHandler.prototype.createDialogKey_ =
 function(key) {
     this.dialogKeys_[key] = key + 
-	this.constructor.DIALOG_SPLIT + goog.string.createUniqueString();
+	xiv.ui.ViewBoxInteractorHandler.DIALOG_SPLIT + goog.string.createUniqueString();
 }
 
 
@@ -2156,8 +2153,8 @@ function() {
 	//
 	this.Dialogs_.createToggleableDialog(
 	    this.dialogKeys_[key],
-	    this.constructor.CSS.GENERIC_DIALOG,
-	    this.constructor.CSS.GENERIC_TOGGLE,
+	    xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_DIALOG,
+	    xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_TOGGLE,
 	    serverRoot + '/images/viewer/xiv/ui/ViewBox/Toggle-' + 
 		goog.string.toTitleCase(key) + '.png',
 	    goog.string.toTitleCase(key),
@@ -2171,7 +2168,7 @@ function() {
 	//
 	var ctrlTreeElt = this.zippyTrees_[key].getElement();
 	goog.dom.classes.add(ctrlTreeElt, 
-			     this.constructor.CSS.GENERIC_ZIPPYTREE);
+			     xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_ZIPPYTREE);
 	this.Dialogs_.getDialogs()[this.dialogKeys_[key]].
 	    getElement().appendChild(ctrlTreeElt);
 
@@ -2190,6 +2187,39 @@ function() {
 }
 
 
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.updateZoomFollower_ = function(){
+    goog.dom.removeNode(this.zoomFollower_);
+    goog.dom.append(this.currMouseRenderer_.container,
+		    this.zoomFollower_);
+    this.zoomFollower_.style.visibility = 'visible';
+    this.zoomFollower_.style.left = this.mouseXY_.curr[0] + 20 + 'px';
+    this.zoomFollower_.style.top = this.mouseXY_.curr[1]  + 'px';
+}
+
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.createZoomFollower_ = function(){
+    //
+    // Zoom follower
+    //
+    this.zoomFollower_ = goog.dom.createDom('div', {
+	id: 'mousefollower'
+    })
+    goog.dom.classes.add(this.zoomFollower_, 
+			 xiv.ui.ViewBoxInteractorHandler.CURSOR_CSS.ZOOM_FOLLOWER);
+    this.zoomFollower_.innerHTML  = 
+	'Zoom In (drag up)<br>' + 
+	'Zoom Out (drag down)<br>';
+    goog.dom.append(this.ViewBox_.getViewFrame(), this.zoomFollower_);
+}
 
 
 

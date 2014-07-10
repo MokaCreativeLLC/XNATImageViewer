@@ -10,6 +10,9 @@
     width: 500px;
     height: 500px;
     position: absolute;
+box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -webkit-box-sizing:border-box;
 }
 
 
@@ -48,8 +51,8 @@
 
 
 .xiv-ui-viewbox-viewlayoutmenu {
-    height: 15px; 
-    width: 15px;
+    height: 14px; 
+    width: 14px;
     cursor: pointer;
     z-index: 1000002;
 }
@@ -62,7 +65,7 @@
     top: 0px;
     left: 22px;
     width: calc(100% - 22px);
-    height: 100%;
+    height: calc(100% - 2px);
     position: absolute;
   box-sizing:border-box;
   -moz-box-sizing:border-box;
@@ -195,6 +198,13 @@
     border-radius: 10px;
     outline: 0;
     z-index: 200;
+}
+
+
+
+.xiv-ui-viewbox-emptymenubutton {
+    width: 15px;
+    height: 15px;
 }
 
 

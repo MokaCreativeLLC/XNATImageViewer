@@ -24,6 +24,11 @@ goog.require('xiv.vis.RenderEngine');
  */
 xiv.vis.XtkRenderer3D = function () {
     goog.base(this);
+
+    //
+    // This turns off the any stray progress bars
+    //
+    this.config['PROGRESSBAR_ENABLED'] =  false;
 }
 goog.inherits(xiv.vis.XtkRenderer3D, X.renderer3D);
 goog.exportSymbol('xiv.vis.XtkRenderer3D', xiv.vis.XtkRenderer3D);

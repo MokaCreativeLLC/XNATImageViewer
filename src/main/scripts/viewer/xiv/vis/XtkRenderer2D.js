@@ -29,6 +29,16 @@ goog.require('xiv.vis.RenderEngine');
  */
 xiv.vis.XtkRenderer2D = function () {
     goog.base(this);
+
+    //
+    // This turns off the any stray progress bars
+    //
+    this.config['PROGRESSBAR_ENABLED'] =  false;
+
+    //
+    // This turns off the SHIFT drag feature
+    //
+    this.config['SLICENAVIGATORS'] = false;
 }
 goog.inherits(xiv.vis.XtkRenderer2D, X.renderer2D);
 goog.exportSymbol('xiv.vis.XtkRenderer2D', xiv.vis.XtkRenderer2D);
@@ -45,6 +55,14 @@ xiv.vis.XtkRenderer2D.EventType = {
     SLICE_NAVIGATED: goog.events.getUniqueId('slice-navigated')
 }
 
+
+
+/**
+ * @type {!number} 
+ * @const
+ * @public
+ */
+xiv.vis.XtkRenderer2D.ZOOM_MINIMUM = .01;
 
 
 
@@ -319,6 +337,15 @@ xiv.vis.XtkRenderer2D.prototype.setZoom = function(num){
 }
 
 
+/**
+ * @private
+ */
+xiv.vis.XtkRenderer2D.prototype.cropZoomToMinimum_ = function(){ 
+    if (this._camera._view[14] < xiv.vis.XtkRenderer2D.ZOOM_MINIMUM){
+	this._camera._view[14] = xiv.vis.XtkRenderer2D.ZOOM_MINIMUM;
+    }
+}
+
 
 
 /**
@@ -336,6 +363,11 @@ xiv.vis.XtkRenderer2D.prototype.zoom_ = function(opt_multiplier){
     //zoomStep = Math.min(Math.pow(this._camera._view[14] / 20, 2), 100);
     //window.console.log(zoomStep);
     this._camera._view[14] += zoomStep * opt_multiplier;
+
+    //
+    // Crop to min
+    //
+    this.cropZoomToMinimum_();
 }
 
 
@@ -526,6 +558,9 @@ xiv.vis.XtkRenderer2D.prototype.destroy = function() {
     goog.base(this, 'destroy');
 }
 
+
+goog.exportSymbol('xiv.vis.XtkRenderer2D.ZOOM_MINIMUM',
+	xiv.vis.XtkRenderer2D.ZOOM_MINIMUM);
 goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.onResize',
 	xiv.vis.XtkRenderer2D.prototype.onResize);
 goog.exportSymbol('xiv.vis.XtkRenderer2D.prototype.onScroll',

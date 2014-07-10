@@ -315,16 +315,43 @@ nrg.ui.ZippyTree.prototype.getElement = function() {
  * @return {nrg.ui.ZippyNode} The expanded zippy node.
  */
 nrg.ui.ZippyTree.prototype.setExpanded = function(folder, opt_startNode) {
+    return this.setNodeExpandCollapse_(folder, opt_startNode, true);
+}
+
+
+
+/**
+ * @param {!string} folder The zippy folder to collapse (id'ed by title)
+ * @param {nrg.ui.ZippyNode=} The opitional zippy node, defaults to 'this'.
+ * @param {!boolean} exp
+ * @return {nrg.ui.ZippyNode} The expanded zippy node.
+ * @private
+ */
+nrg.ui.ZippyTree.prototype.setNodeExpandCollapse_ = 
+function(folder, opt_startNode, exp) {
     //window.console.log("set EXPAND", folder, opt_startNode);
     opt_startNode = goog.isDefAndNotNull(opt_startNode) ? opt_startNode : this;
-    //window.console.log(opt_startNode.getNodes());
+    if (!goog.isDefAndNotNull(opt_startNode.getNodes()[folder])){ return }
 
-    if (goog.isDefAndNotNull(opt_startNode.getNodes()[folder])){
-	var currNode = opt_startNode.getNodes()[folder];
-	var currZippy = currNode.getZippy();
-	currZippy.setExpanded(true);
-	return currNode;
+    //window.console.log(opt_startNode.getNodes());
+    var currNode = opt_startNode.getNodes()[folder];
+    var event = exp ? nrg.ui.ZippyNode.EventType.EXPANDED :
+	nrg.ui.ZippyNode.EventType.COLLAPSED;
+    var currZippy = currNode.getZippy();
+
+
+    if (currZippy.isBusy()){
+	goog.events.listenOnce(currZippy,event, function(){
+	    if (currZippy.isExpanded() != exp){
+		currNode.setExpanded(exp);
+	    }})
+    } 
+    else {
+	currNode.setExpanded(exp);
     }
+
+    return currNode;
+    
 }
 
 
@@ -334,16 +361,7 @@ nrg.ui.ZippyTree.prototype.setExpanded = function(folder, opt_startNode) {
  * @return {nrg.ui.ZippyNode} The expanded zippy node.
  */
 nrg.ui.ZippyTree.prototype.setCollapsed = function(folder, opt_startNode) {
-    //window.console.log("set EXPAND", folder, opt_startNode);
-    opt_startNode = goog.isDefAndNotNull(opt_startNode) ? opt_startNode : this;
-    //window.console.log(opt_startNode.getNodes());
-
-    if (goog.isDefAndNotNull(opt_startNode.getNodes()[folder])){
-	var currNode = opt_startNode.getNodes()[folder];
-	var currZippy = currNode.getZippy();
-	currZippy.setExpanded(false);
-	return currNode;
-    }
+    return this.setNodeExpandCollapse_(folder, opt_startNode, false);
 }
 
 

@@ -48,9 +48,9 @@ xiv.ui.layouts.interactors.FrameDisplay.ID_PREFIX =
  */
 xiv.ui.layouts.interactors.FrameDisplay.prototype.updateValue = 
 function(){
-    //if (!goog.isDefAndNotNull(this.inputBox_)){return}
-    this.displayElt_.innerHTML = this.inputBox_.value + 
-	' / ' + this.inputBox_.max;
+    //if (!goog.isDefAndNotNull(this.inputBox)){return}
+    this.displayElt.innerHTML = this.inputBox.value + 
+	' / ' + this.inputBox.max;
 }
 
 
