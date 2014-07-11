@@ -48,11 +48,15 @@
 }
 
 
+
+.nrg-ui-dialog-subtext {
+    text-align: left;
+    font-size: 12px;
+}
+
+
+
 .nrg-ui-dialog-text {
-    position: absolute;
-    top: 50%;
-    left: 0px;
-    width: 100%;
     color: white;
     font-size: 15px;
     text-align: center;

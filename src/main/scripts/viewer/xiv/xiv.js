@@ -25,7 +25,7 @@ goog.require('X.parserIMA');
 
 // nrg
 goog.require('nrg.fx');
-goog.require('nrg.ui.ErrorOverlay');
+goog.require('nrg.ui.ErrorDialog');
 goog.require('nrg.ui.ZippyNode');
 
 // gxnat
@@ -1320,7 +1320,7 @@ xiv.start.onOutdatedBrowser_ = function(){
 
 
     //alert(errorString);    
-    var ErrorOverlay = new nrg.ui.ErrorOverlay(errorString);
+    var ErrorOverlay = new nrg.ui.ErrorDialog(errorString);
 
     //
     // Add bg and closebutton
@@ -1332,7 +1332,7 @@ xiv.start.onOutdatedBrowser_ = function(){
     // Add image
     //
     var errorImg = ErrorOverlay.addImage();
-    goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE);
+    goog.dom.classes.add(errorImg, nrg.ui.ErrorDialog.CSS.NO_WEBGL_IMAGE);
     errorImg.src = serverRoot + 
 	'/images/viewer/xiv/ui/Overlay/sadbrain-white.png';
 
@@ -1408,7 +1408,7 @@ xiv.start.onWebGLDisabled_ = function(){
     errorString += browserName + howToUrl;
 
     //alert(errorString);    
-    var ErrorOverlay = new nrg.ui.ErrorOverlay(errorString);
+    var ErrorOverlay = new nrg.ui.ErrorDialog(errorString);
 
     //
     // Add bg and closebutton
@@ -1420,7 +1420,7 @@ xiv.start.onWebGLDisabled_ = function(){
     // Add image
     //
     var errorImg = ErrorOverlay.addImage();
-    goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE); 
+    goog.dom.classes.add(errorImg, nrg.ui.ErrorDialog.CSS.NO_WEBGL_IMAGE); 
     errorImg.src = serverRoot + 
 	'/images/viewer/xiv/ui/Overlay/sadbrain-white.png';
 

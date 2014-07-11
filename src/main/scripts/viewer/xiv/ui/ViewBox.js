@@ -22,7 +22,7 @@ goog.require('nrg.style');
 goog.require('nrg.fx');
 goog.require('nrg.ui.Component');
 goog.require('nrg.ui.SlideInMenu');
-goog.require('nrg.ui.ErrorOverlay');
+goog.require('nrg.ui.ErrorDialog');
 
 // gxnat
 goog.require('gxnat');
@@ -273,6 +273,13 @@ xiv.ui.ViewBox.prototype.ViewableGroupMenu_ = null;
 xiv.ui.ViewBox.prototype.Dialogs_ = null;
 
 
+/**
+ * @type {?nrg.ui.ErrorDialog}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.ErrorDialog_ = null;
+
+
 
 /**
  * @type {?xiv.ui.ViewBoxInteractorHandler}
@@ -520,7 +527,7 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     // Untoggle wait for render errors
     //
-    this.toggleWaitForRenderErrors_(false);
+    this.toggleWaitForRenderErrors_(true);
 
     //
     // HACK: We want to get rid of xtk's progress bar.
@@ -827,10 +834,6 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 		       xiv.vis.RenderEngine.EventType.RENDERING, 
 		       this.onRendering_.bind(this));
 
-    //
-    // Wait for render errors
-    // 
-    this.toggleWaitForRenderErrors_(true);
 
     //
     // Do a zip download+render for scans (Viewer handles downloading)
@@ -899,6 +902,12 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
  * @private
  */
 xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
+
+    //
+    // Dispable render error wating
+    //
+    this.toggleWaitForRenderErrors_(true);
+
     //
     // Render!!!
     //
@@ -919,8 +928,28 @@ xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
  */
 xiv.ui.ViewBox.prototype.toggleWaitForRenderErrors_ = function(toggle) {
     if (toggle === true) {
-	window.onerror = function(message, url, lineNumber) {  
-	    this.onRenderError_(message);
+
+	//
+	// Track the log errors
+	//
+	this.consoleLog_ = [];
+	var that = this;
+	var oldLog = window.console.log;
+	var newLog = function(){
+	    oldLog.apply(this, arguments);
+	    
+	    var argText = '';
+	    goog.array.forEach(arguments, function(argument, i){
+		if (i > 0) { argText += ' ' };
+		argText += argument;
+	    })
+	    that.consoleLog_.push(argText);
+	}
+	window.console.log = newLog;
+
+	window.onerror = function(message, url, lineNumber) { 
+	    //window.console.log(message, url, lineNumber);
+	    this.onRenderError_(message, url, lineNumber);
 	}.bind(this);
     } else {
 	window.onerror = undefined;
@@ -929,10 +958,19 @@ xiv.ui.ViewBox.prototype.toggleWaitForRenderErrors_ = function(toggle) {
 
 
 /**
- * @param {string} opt_errorMsg
+ * @param {?string} opt_errorMsg
+ * @param {?string} opt_url
+ * @param {?number} opt_lineNumber
  * @private
  */
-xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_errorMsg){
+xiv.ui.ViewBox.prototype.onRenderError_ = 
+function(opt_errorMsg, opt_url, opt_lineNumber){
+    //window.console.log('ON RENDER ERROR');
+
+    if (goog.isDefAndNotNull(this.ErrorDialog_)){
+	return;
+    }
+
     //
     // unhighlight the ViewBox
     //
@@ -956,10 +994,45 @@ xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_errorMsg){
     //
     // Create the error message
     //
-    opt_errorMsg = opt_errorMsg.replace('Uncaught Error: ', '') 
-	|| 'A render error occured :(<br>'; 
-    //opt_errorMsg += '. Canceling render.';
+    var errorMessage = ''; 
+    var subMessage = '';
 
+
+    if (this.consoleLog_.indexOf(
+	'Unknown number of bits allocated - using default: 32 bits') > -1){
+
+	errorMessage += 'The render engine (' + 
+	    '<a target="_blank" style="color: #66CCFF" ' + 
+	    'href="https://github.com/xtk/X#readme">' + 
+	    'XTK</a>' + 
+	    ') does not yet support big-endian encoded DICOMs :(<br><br>';
+	subMessage += 
+	    '<a target="_blank" style="color: #66CCFF" ' + 
+	    'href="http://stackoverflow.com/questions/' + 
+	    '22356911/xtk-error-while-loading-dicom-files">For more ' + 
+	    'information click here.</a>';
+
+
+	subMessage += '<br><br>Console reference:<br>' + 
+	    '\'Unknown number of bits allocated - using default: 32 bits\'';
+
+
+    } else {
+	errorMessage = '<b>Render Error!</b><br><br>';
+	if (goog.isString(opt_errorMsg)){
+	    subMessage += opt_errorMsg + '<br>'; 
+	}
+	if (goog.isString(opt_url)){
+	    subMessage += 'src: ' + opt_url + '<br>';
+	    if (goog.isNumber(opt_lineNumber)){
+		subMessage += ' line: ' + opt_lineNumber + '<br>';
+	    }
+	}
+    }
+
+
+
+    window.console.log(errorMessage, subMessage);
     //
     // Dispatch the error
     //
@@ -971,35 +1044,32 @@ xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_errorMsg){
     //
     // Construct an error overlay
     //
-    var ErrorOverlay = new nrg.ui.ErrorOverlay();
-
-    //
-    // Add bg and closebutton
-    //
-    ErrorOverlay.addBackground();
-    ErrorOverlay.addCloseButton();
-
-    
-    //
-    // Add image
-    //
-    var errorImg = ErrorOverlay.addImage();
-    goog.dom.classes.add(errorImg, nrg.ui.ErrorOverlay.CSS.NO_WEBGL_IMAGE);
-    errorImg.src = serverRoot + 
-	'/images/viewer/xiv/ui/Overlay/sadbrain-white.png';
+    this.ErrorDialog_ = new nrg.ui.ErrorDialog();
+    this.ErrorDialog_.render(this.viewFrameElt_);
 
     //
     // Add above text and render
     //
-    ErrorOverlay.addText(opt_errorMsg || '');
-    ErrorOverlay.render(this.viewFrameElt_);
+    this.ErrorDialog_.setButtonSet(null);
+    this.ErrorDialog_.addText(errorMessage);
+    this.ErrorDialog_.addSubText(subMessage);
+    this.ErrorDialog_.setVisible(true);
+    this.ErrorDialog_.setModal(true);
+    //this.ErrorDialog_.resizeToContents();
+    this.ErrorDialog_.center();
+
 
     //
-    // Fade in the error overlay
+    // Delete the dialog on close
     //
-    ErrorOverlay.getElement().style.opacity = 0;
-    ErrorOverlay.getElement().style.zIndex = 1000;
-    nrg.fx.fadeInFromZero(ErrorOverlay.getElement(), xiv.ANIM_TIME);
+    goog.events.listenOnce(
+	this.ErrorDialog_, 
+	nrg.ui.Dialog.EventType.CLOSE_BUTTON_CLICKED, 
+	function(e){
+	    e.target.dispose();
+	    this.ErrorDialog_ = null;
+	    this.toggleWaitForRenderErrors_(true);
+	}.bind(this))
 }
 
 
@@ -1715,6 +1785,7 @@ xiv.ui.ViewBox.prototype.initRenderer_ = function(){
     //
     goog.events.listen(this.Renderer_, xiv.vis.XtkEngine.EventType.ERROR,
 	function(e){
+	    window.console.log(e);
 	    this.onRenderError_(e.message);
 	}.bind(this))
 }
