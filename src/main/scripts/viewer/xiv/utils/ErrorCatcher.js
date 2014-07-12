@@ -131,9 +131,7 @@ xiv.utils.ErrorCatcher.prototype.listenForConsoleOutput_ = function() {
 	})
 	that.consoleLog_.push(argText);
     }
-
     window.console.log = this.newConsoleLog_;
-    window.onerror = this.onError_.bind(this);
 }
 
 
@@ -157,6 +155,7 @@ xiv.utils.ErrorCatcher.prototype.unlistenForConsoleOutput_ = function() {
 xiv.utils.ErrorCatcher.prototype.waitForError = function(toggle) {
     if (toggle === true) {
 	this.listenForConsoleOutput_();
+	window.onerror = this.onError_.bind(this);
     } else {
 	window.onerror = undefined;
 	this.unlistenForConsoleOutput_();

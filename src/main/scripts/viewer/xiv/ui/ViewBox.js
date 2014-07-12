@@ -508,7 +508,7 @@ function(opt_delay, opt_callback, opt_fadeTime){
 	//window.console.log("CALLBACK 1");
 	this.hideSubComponent_(
 	    this.ProgressBarPanel_, 
-	    goog.isNumber(opt_fadeTme) ? opt_fadeTime : 500, 
+	    goog.isNumber(opt_fadeTime) ? opt_fadeTime : 500, 
 	    function(){
 		this.updateStyle();
 		if (goog.isDefAndNotNull(opt_callback)){
@@ -931,10 +931,12 @@ xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
 	this.ErrorCatcher_ = new xiv.utils.ErrorCatcher();
 	this.ErrorCatcher_.setDialogParent(this.viewFrameElt_);
 	this.ErrorCatcher_.setOnErrorCallback(this.onRenderError_.bind(this))
-    }	
+    }
+    else {
+	this.ErrorCatcher_.waitForError(false);
+    }
     this.ErrorCatcher_.waitForError(true);
     
-
     //
     // Render!!!
     //
