@@ -70,8 +70,9 @@
 <script src="src/main/scripts/viewer/gxnat/gxnat-deps.js"></script>
 <script src="src/main/scripts/viewer/xiv/xiv-deps.js"></script>
 <script>
-goog.require('xiv');
+goog.require('xiv.start');
 goog.require('xiv.ui.Modal');
+goog.require('xiv.utils.ErrorCatcher');
 </script>
 
 <!--
@@ -118,14 +119,6 @@ function launchXImgView(opt_dataPath, opt_modalState, opt_serverRoot) {
     //window.console.log('states', xiv.ui.Modal);
 
     //-------------------
-    // Verify compatibilities (browser, WebGL, etc.)
-    //-------------------
-    if (!xiv.start.isCompatible()){
-        return;
-    } 
-
-
-    //-------------------
     // We need to set the global serverRoot property if opt_serverRoot is 
     // argument is given.
     //
@@ -135,6 +128,14 @@ function launchXImgView(opt_dataPath, opt_modalState, opt_serverRoot) {
     if (opt_serverRoot){
         serverRoot = opt_serverRoot;
     }
+
+
+    //-------------------
+    // Verify compatibilities (browser, WebGL, etc.)
+    //-------------------
+    if (!xiv.utils.ErrorCatcher.isCompatible()){
+        return;
+    } 
 
 
     //-------------------
@@ -312,7 +313,7 @@ var printMethods = function (obj, objName) {
 
 
 var objs = {
-'nrg.ui.ZippyNode': nrg.ui.ZippyNode
+'xiv.utils.ErrorCatcher': xiv.utils.ErrorCatcher
 }
 
 

@@ -19,6 +19,7 @@ goog.require('goog.fx.dom.Resize');
 goog.require('goog.fx.dom.PredefinedEffect');
 goog.require('goog.events.Event');
 goog.require('goog.dom.classes');
+goog.require('goog.dom.fullscreen');
 
 
 // nrg

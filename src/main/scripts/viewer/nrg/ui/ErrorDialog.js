@@ -17,7 +17,8 @@ goog.require('nrg.ui.Dialog');
  * @extends {nrg.ui.Dialog}
  */
 nrg.ui.ErrorDialog = function () {
-    goog.base(this);   
+    goog.base(this); 
+    this.setButtonSet(null);
 }
 goog.inherits(nrg.ui.ErrorDialog, nrg.ui.Dialog);
 goog.exportSymbol('nrg.ui.ErrorDialog', nrg.ui.ErrorDialog);

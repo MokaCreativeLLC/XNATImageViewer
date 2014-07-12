@@ -629,13 +629,21 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
     switch(e.keyCode){
 
     case 27:  // Esc
+
 	//
 	// Toggle off hand
 	//
 	var pan = 
 	    this.ViewBox_.getToggleButton(
 		xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODPAN);
-	if (pan.getAttribute('checked') == 'true'){
+
+	window.console.log('escape', 
+			   'pan', 
+			   pan,
+			   pan.getAttribute('checked'));
+
+	
+	if (pan.getAttribute('checked').toString() == 'true'){
 	    this.ViewBox_.fireToggleButton(
 		xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODPAN);
 	}
@@ -646,16 +654,16 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
 	var twoDZoom = 
 	    this.ViewBox_.getToggleButton(
 		xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODZOOM);
-	if (twoDZoom.getAttribute('checked') == 'true'){
+	if (twoDZoom.getAttribute('checked').toString() == 'true'){
 	    this.ViewBox_.fireToggleButton(
 		xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODZOOM);
 	}
-	    this.ViewBox_.fireToggleButton(
-		xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODPAN);
 	//window.console.log(pan.getAttribute('checked'), 
 	//		   twoDZoom.getAttribute('checked'), 
 	//		   pan.checked == 'true',
 	//		   twoDZoom.checked == 'true');
+
+
 	break;
 
 
@@ -666,6 +674,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
 
     case 72: // H (hand)
     case 80: // P (pan)
+	window.console.log('\n\nfire pan');
 	this.ViewBox_.fireToggleButton(
 	    xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODPAN);
 	break;
@@ -1097,7 +1106,8 @@ function(){
     var key = xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.SETTINGS;
 
     this.dialogKeys_[key]  = key + 
-	    xiv.ui.ViewBoxInteractorHandler.DIALOG_SPLIT + goog.string.createUniqueString();
+	    xiv.ui.ViewBoxInteractorHandler.DIALOG_SPLIT + 
+	goog.string.createUniqueString();
 
 
     //
@@ -1117,6 +1127,7 @@ function(){
 
     this.zippyTrees_[key] = new nrg.ui.ScrollableZippyTree();
     this.zippyTrees_[key].render();
+    window.console.log(this.zippyTrees_[key].getElement());
 
     //
     // Zippy Trees
@@ -2032,6 +2043,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createZippyTree_ =
 function(key) {
     this.zippyTrees_[key] = new nrg.ui.ScrollableZippyTree();
     this.zippyTrees_[key].render();
+    //window.console.log(key, this.zippyTrees_[key].getElement());
 }
 
 
@@ -2115,10 +2127,41 @@ function() {
 	xiv.ui.ctrl.XtkControllerTree.getEmptyPropertiesObject();
     this.dialogKeys_ = goog.object.clone(this.zippyTrees_);
     
+    
+    
     //
     // Create zippy trees
     //
     goog.object.forEach(this.zippyTrees_, function(tree, key){
+
+	var zeroFound = false;
+
+	//
+	// Don't create trees if the relevant objects don't exist
+	//
+	switch (key){
+	case 'volumes':
+	    if (this.Renderer_.getCurrentVolumes().length == 0) {
+		zeroFound = true;
+	    }
+	    break;
+	case 'meshes':
+	    if (this.Renderer_.getCurrentMeshes().length == 0) {
+		zeroFound = true;
+	    }	  
+	    break;
+	case 'annotations':
+	    if (this.Renderer_.getCurrentAnnotations().length == 0) {
+		zeroFound = true;
+	    }
+	    break;
+	}
+
+	if (zeroFound){
+	    goog.object.remove(this.zippyTrees_, key);
+	    return;
+	}
+
 	this.createZippyTree_(key);
 	this.createDialogKey_(key);
 	this.addControlsToZippyTree_(key);

@@ -1466,11 +1466,11 @@ xiv.ui.ViewBox.prototype.getToggleButton = function(buttonKey){
  * @public
  */
 xiv.ui.ViewBox.prototype.fireToggleButton = function(buttonKey){
-    /**
+    
     window.console.log('fire toggle button', 
 		       'buttonKey:', buttonKey, 
 		       '\nbutton:', this.toggleButtons_[buttonKey]);
-    */
+    
     goog.testing.events.fireClickEvent(this.toggleButtons_[buttonKey]);
 }
 

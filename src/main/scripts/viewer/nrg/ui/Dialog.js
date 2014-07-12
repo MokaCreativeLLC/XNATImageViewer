@@ -679,8 +679,8 @@ nrg.ui.Dialog.prototype.render = function(opt_parentElement) {
  * @inheritDoc
  */
 nrg.ui.Dialog.prototype.setVisible = function(visible) {
-    window.console.log("SET VISIBLE", visible, this.getElement(),
-		       this.getTitle(), this.isVisible())
+    //window.console.log("SET VISIBLE", visible, this.getElement(),
+    //this.getTitle(), this.isVisible())
 	
     if (!goog.isDefAndNotNull(this.getElement())) { return }
 
@@ -708,7 +708,7 @@ nrg.ui.Dialog.prototype.setVisible = function(visible) {
  */
 nrg.ui.Dialog.prototype.resizeToContents = function() {
     var size = goog.style.getSize(this.getContentElement());
-    window.console.log(size);
+//    window.console.log(size);
     goog.style.setSize(this.getElement(), size.width + 20, size.height + 20);
 }
 
@@ -800,6 +800,8 @@ goog.exportSymbol('nrg.ui.Dialog.prototype.addImage',
 	nrg.ui.Dialog.prototype.addImage);
 goog.exportSymbol('nrg.ui.Dialog.prototype.addText',
 	nrg.ui.Dialog.prototype.addText);
+goog.exportSymbol('nrg.ui.Dialog.prototype.addSubText',
+	nrg.ui.Dialog.prototype.addSubText);
 goog.exportSymbol('nrg.ui.Dialog.prototype.getOverlay',
 	nrg.ui.Dialog.prototype.getOverlay);
 goog.exportSymbol('nrg.ui.Dialog.prototype.render',

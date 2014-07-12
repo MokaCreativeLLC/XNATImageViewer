@@ -250,6 +250,12 @@ function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
 	    // Do nothing for now...
 	}.bind(this))
     
+
+    this.Dialogs_[dialogKey].setVisible(true);
+    this.Dialogs_[dialogKey].center();
+    this.Dialogs_[dialogKey].center(false);
+
+
     //
     // Set off
     //

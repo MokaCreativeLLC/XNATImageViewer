@@ -32,21 +32,6 @@ xiv.ui.ctrl.ColorPaletteController = function(){
 
 
     /**
-     * @type {!Element}
-     * @private
-     */
-    this.colorSquare_ = goog.dom.createDom('div', {
-	'id': this.constructor.ID_PREFIX + 
-	    '_ColorSquare_' + goog.string.createUniqueString(),
-	'class': xiv.ui.ctrl.ColorPaletteController.CSS.COLORSQUARE
-    })
-    goog.dom.append(this.getElement(), this.colorSquare_);
-    goog.events.listen(this.colorSquare_, goog.events.EventType.CLICK, 
-    this.showColorPalette_.bind(this));
-
-
-
-    /**
      * @type {!goog.ui.HsvPalette}
      * @private
      */    
@@ -55,7 +40,6 @@ xiv.ui.ctrl.ColorPaletteController = function(){
     //goog.dom.append(this.getElement(), this.colorPalette_.getElement());
     goog.events.listen(this.colorPalette_, goog.ui.Component.EventType.ACTION, 
 		       this.dispatchComponentEvent.bind(this));
-    this.setComponent(this.colorPalette_);
     goog.dom.classes.add(this.colorPalette_.getElement(), 
 			 this.constructor.CSS.COLORPALETTE);
     
@@ -69,23 +53,27 @@ xiv.ui.ctrl.ColorPaletteController = function(){
 	    '_ColorPaletteHolder_' + goog.string.createUniqueString(),
 	'class': xiv.ui.ctrl.ColorPaletteController.CSS.COLORPALETTEHOLDER
     })
-    goog.dom.append(document.body, this.colorPaletteHolder_);
     goog.dom.append(this.colorPaletteHolder_, this.colorPalette_.getElement());
-    this.colorPaletteHolder_.style.visibility = 'hidden';
+
 
 
     /**
      * @type {!Element}
      * @private
      */
-    this.closeButton_ = goog.dom.createDom('div', {
+    this.mainElement_ = goog.dom.createDom('div', {
 	'id': this.constructor.ID_PREFIX + 
-	    '_CloseButton_' + goog.string.createUniqueString(),
-	'class': xiv.ui.ctrl.ColorPaletteController.CSS.CLOSEBUTTON
+	    '_ColorPalette_' + goog.string.createUniqueString(),
+	'class': xiv.ui.ctrl.ColorPaletteController.CSS.ELEMENT_PREFIX
     })
-    goog.dom.append(this.colorPaletteHolder_, this.closeButton_);
-    goog.events.listen(this.closeButton_, goog.events.EventType.CLICK, 
-		       this.showColorPalette_.bind(this))
+    
+    //goog.dom.appendChild(this.mainElement_, this.colorSquare_);
+    goog.dom.appendChild(this.getElement(), this.colorPaletteHolder_);
+    //goog.dom.appendChild(this.getElement(), this.mainElement_);
+
+    this.setComponent(this.colorPaletteHolder_);
+    //this.setFolder('color');
+
 }
 
 goog.inherits(xiv.ui.ctrl.ColorPaletteController, xiv.ui.ctrl.XtkController);
@@ -131,40 +119,6 @@ xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_Y = 20;
 
 
 /**
- * @private
- */
-xiv.ui.ctrl.ColorPaletteController.prototype.showColorPalette_ = function() {
-
-    this.colorPaletteHolder_.style.visibility =
-     (this.colorPaletteHolder_.style.visibility == 'hidden') ? 
-	'visible' : 'hidden';
-
-    var offset = goog.style.getPageOffset(this.colorSquare_);
-    var colorSquareSize = goog.style.getSize(this.colorSquare_);
-    var panelSize = goog.style.getSize(this.colorPaletteHolder_);
-
-    var prelimX = offset.x + colorSquareSize.width + 
-	xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_X;
-    var prelimY = offset.y - 
-	xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_Y;
-    
-    var screenH = parseInt(window.innerHeight);
-    var screenW = parseInt(window.innerWidth);
-    
-    //window.console.log(screenH, prelimY, panelSize.height);
-
-    if ((prelimY + panelSize.height) > screenH) {
-	prelimY -= (prelimY + panelSize.height) - screenH;
-    }
-
-    goog.style.setPosition(this.colorPaletteHolder_, 
-			   prelimX, prelimY);
-}
-
-
-
-
-/**
  * @inheritDoc
  */
 xiv.ui.ctrl.ColorPaletteController.prototype.update = function() {
@@ -177,7 +131,7 @@ xiv.ui.ctrl.ColorPaletteController.prototype.update = function() {
     g = Math.min(255, Math.max(0, g));
     b = Math.min(255, Math.max(0, b));
 
-    this.getComponent().setColor(goog.color.rgbArrayToHex([r,g,b]))
+    this.colorPalette_.setColor(goog.color.rgbArrayToHex([r,g,b]))
 }
 
 
@@ -189,7 +143,7 @@ xiv.ui.ctrl.ColorPaletteController.prototype.dispatchComponentEvent =
 function(e){
 
     // Set the colorSquare color
-    this.colorSquare_.style.backgroundColor = e.target.getColor();
+    //this.colorSquare_.style.backgroundColor = e.target.getColor();
 
     // Dispatch event
     this.dispatchEvent({
@@ -207,18 +161,6 @@ function(e){
  */
 xiv.ui.ctrl.ColorPaletteController.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
-
-    // Close button
-    goog.events.removeAll(this.closeButton_);
-    goog.dom.removeNode(this.closeButton_);
-    delete this.closeButton_;
-
-
-    // Color Square
-    goog.events.removeAll(this.colorSquare_);
-    goog.dom.removeNode(this.colorSquare_);
-    delete this.colorSquare_;
-
 
     // Color Palettte
     goog.events.removeAll(this.colorPalette_);
