@@ -679,9 +679,11 @@ nrg.ui.Dialog.prototype.render = function(opt_parentElement) {
  * @inheritDoc
  */
 nrg.ui.Dialog.prototype.setVisible = function(visible) {
-    //window.console.log("SET VISIBLE", visible, 
-    //this.getTitle(), this.isVisible())
+    window.console.log("SET VISIBLE", visible, this.getElement(),
+		       this.getTitle(), this.isVisible())
 	
+    if (!goog.isDefAndNotNull(this.getElement())) { return }
+
     if (!goog.isDefAndNotNull(this.posOnClose_)){
 	this.posOnClose_ = goog.style.getPosition(this.getElement());
     }

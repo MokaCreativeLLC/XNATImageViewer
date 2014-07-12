@@ -33,6 +33,7 @@ goog.require('nrg.ui.Thumbnail');
 goog.require('nrg.ui.ZipTabs');
 
 // xiv
+goog.require('xiv');
 goog.require('xiv.ui.ThumbnailGallery');
 goog.require('xiv.ui.ViewBoxHandler');
 goog.require('xiv.ui.ViewBox');
@@ -815,7 +816,7 @@ xiv.ui.Modal.prototype.onAddSubjectsClicked_ = function() {
     // dispatch the event
     //
     this.dispatchEvent({
-	type: xiv.EventType.ADD_SUBJECTS
+	type: xiv.start.EventType.ADD_SUBJECTS
     })
 
     //
@@ -961,11 +962,15 @@ xiv.ui.Modal.prototype.onViewBoxError_ = function(){
     //this.onViewBoxesChanged_();
     this.highlightInUseThumbnails();
 
-    //this.ThumbnailGallery_.thumbnailTargetGroup_.endDrag();
-    this.ThumbnailGallery_.thumbnailDragDropGroup_.endDrag({
-	dragCancelled : true
-    });
+    window.console.log(
+	this.ThumbnailGallery_.thumbnailTargetGroup_.getDragger());
 
+    if (goog.isDefAndNotNull(
+	this.ThumbnailGallery_.thumbnailTargetGroup_.getDragger())){
+	this.ThumbnailGallery_.thumbnailDragDropGroup_.endDrag({
+	    dragCancelled : true
+	});
+    }
 }
 
 
@@ -979,7 +984,7 @@ xiv.ui.Modal.prototype.initViewBoxHandler_ = function() {
     this.setViewBoxHandlerEvents_();
 
     goog.events.listen(this.ViewBoxHandler_, 
-		       xiv.ui.ViewBoxHandler.EventType.VIEWABLE_LOADERROR,
+		       xiv.ui.ViewBox.EventType.RENDER_ERROR,
 		       this.onViewBoxError_.bind(this))
 }
 

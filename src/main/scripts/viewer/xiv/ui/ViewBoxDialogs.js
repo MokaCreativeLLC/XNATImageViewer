@@ -589,6 +589,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
 		      }.bind(this))
 
 
+    currDialog.resizeToContents();
     this.Dialogs_[dialogKey] = currDialog;
 }
 

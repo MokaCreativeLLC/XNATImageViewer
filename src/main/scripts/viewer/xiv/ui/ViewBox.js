@@ -22,7 +22,6 @@ goog.require('nrg.style');
 goog.require('nrg.fx');
 goog.require('nrg.ui.Component');
 goog.require('nrg.ui.SlideInMenu');
-goog.require('nrg.ui.ErrorDialog');
 
 // gxnat
 goog.require('gxnat');
@@ -30,6 +29,7 @@ goog.require('gxnat.vis.ViewableTree');
 goog.require('gxnat.vis.ViewableGroup');
 
 // xiv
+goog.require('xiv.utils.ErrorCatcher');
 goog.require('xiv.vis.RenderEngine');
 goog.require('xiv.vis.XtkEngine');
 goog.require('xiv.ui.ProgressBarPanel');
@@ -115,7 +115,7 @@ goog.exportSymbol('xiv.ui.ViewBox', xiv.ui.ViewBox);
 xiv.ui.ViewBox.EventType = {
     VIEWABLE_PRELOAD: goog.events.getUniqueId('viewable_preload'),
     VIEWABLE_LOADED: goog.events.getUniqueId('viewable_load'),
-    VIEWABLE_LOADERROR: goog.events.getUniqueId('viewable_loaderror'),
+    RENDER_ERROR: goog.events.getUniqueId('rendererror'),
 }
 
 
@@ -274,10 +274,10 @@ xiv.ui.ViewBox.prototype.Dialogs_ = null;
 
 
 /**
- * @type {?nrg.ui.ErrorDialog}
+ * @type {?xiv.utils.ErrorCatcher}
  * @private
  */
-xiv.ui.ViewBox.prototype.ErrorDialog_ = null;
+xiv.ui.ViewBox.prototype.ErrorCatcher_ = null;
 
 
 
@@ -494,23 +494,27 @@ xiv.ui.ViewBox.ControllersSet = function(controller, folders){
  * Introduces a delay mechanism so we're not presented 
  * with awkward progress bar issues.
  *
- * @param {number=} opt_delay The optional delay time.  Defaults to 1000.
+ * @param {number=} opt_delay The optional delay time.  Defaults to 1000ms.
  * @param {Function=} callback The optional callback function.
+ * @param {number=} opt_fadeTime Defaults to 500ms.
  * @private
  */
 xiv.ui.ViewBox.prototype.hideProgressBarPanel_ = 
-function(opt_delay, opt_callback){
+function(opt_delay, opt_callback, opt_fadeTime){
 
     //window.console.log("HIDE PROG!");
     this.progTimer_ = goog.Timer.callOnce(function() {
 	this.progTimer_ = null;
 	//window.console.log("CALLBACK 1");
-	this.hideSubComponent_(this.ProgressBarPanel_, 500, function(){
-	    this.updateStyle();
-	    if (goog.isDefAndNotNull(opt_callback)){
-		//window.console.log("CALLBACK 2");
-		opt_callback();
-	    }
+	this.hideSubComponent_(
+	    this.ProgressBarPanel_, 
+	    goog.isNumber(opt_fadeTme) ? opt_fadeTime : 500, 
+	    function(){
+		this.updateStyle();
+		if (goog.isDefAndNotNull(opt_callback)){
+		    //window.console.log("CALLBACK 2");
+		    opt_callback();
+		}
 	}.bind(this));
     }.bind(this), goog.isNumber(opt_delay) ? opt_delay : 1000);
 }
@@ -527,7 +531,7 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     // Untoggle wait for render errors
     //
-    this.toggleWaitForRenderErrors_(true);
+    this.ErrorCatcher_.waitForError(false);
 
     //
     // HACK: We want to get rid of xtk's progress bar.
@@ -600,6 +604,24 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 
 
     }.bind(this));
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.onLayoutChangeStart_ = function(e){
+    goog.object.forEach(this.Renderer_.getPlanes(), 
+    function(renderPlane, planeOr) {
+	if (goog.isDefAndNotNull( e.transitionElements[planeOr])){
+	    //
+	    // Attach the render plane to the transition element
+	    //
+	    renderPlane.setContainer( e.transitionElements[planeOr]);	
+	    renderPlane.updateStyle();
+	}
+    })
 }
 
 
@@ -902,11 +924,16 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
  * @private
  */
 xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
-
     //
     // Dispable render error wating
     //
-    this.toggleWaitForRenderErrors_(true);
+    if (!goog.isDefAndNotNull(this.ErrorCatcher_)){
+	this.ErrorCatcher_ = new xiv.utils.ErrorCatcher();
+	this.ErrorCatcher_.setDialogParent(this.viewFrameElt_);
+	this.ErrorCatcher_.setOnErrorCallback(this.onRenderError_.bind(this))
+    }	
+    this.ErrorCatcher_.waitForError(true);
+    
 
     //
     // Render!!!
@@ -922,54 +949,14 @@ xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
 
 
 
-/**
- * @param {!boolean} toggle
- * @private
- */
-xiv.ui.ViewBox.prototype.toggleWaitForRenderErrors_ = function(toggle) {
-    if (toggle === true) {
 
-	//
-	// Track the log errors
-	//
-	this.consoleLog_ = [];
-	var that = this;
-	var oldLog = window.console.log;
-	var newLog = function(){
-	    oldLog.apply(this, arguments);
-	    
-	    var argText = '';
-	    goog.array.forEach(arguments, function(argument, i){
-		if (i > 0) { argText += ' ' };
-		argText += argument;
-	    })
-	    that.consoleLog_.push(argText);
-	}
-	window.console.log = newLog;
-
-	window.onerror = function(message, url, lineNumber) { 
-	    //window.console.log(message, url, lineNumber);
-	    this.onRenderError_(message, url, lineNumber);
-	}.bind(this);
-    } else {
-	window.onerror = undefined;
-    }
-}
 
 
 /**
- * @param {?string} opt_errorMsg
- * @param {?string} opt_url
- * @param {?number} opt_lineNumber
  * @private
  */
-xiv.ui.ViewBox.prototype.onRenderError_ = 
-function(opt_errorMsg, opt_url, opt_lineNumber){
+xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_msg){
     //window.console.log('ON RENDER ERROR');
-
-    if (goog.isDefAndNotNull(this.ErrorDialog_)){
-	return;
-    }
 
     //
     // unhighlight the ViewBox
@@ -979,114 +966,17 @@ function(opt_errorMsg, opt_url, opt_lineNumber){
     //
     // Hide the progress bar panels
     //
-    this.hideProgressBarPanel_();
-
-    //
-    // Dispable render error wating
-    //
-    this.toggleWaitForRenderErrors_(false);
-
+    this.hideSubComponent_(this.ProgressBarPanel_);
+    
     //
     // Dispose the load components
     //
     this.disposeLoadComponents_();
 
     //
-    // Create the error message
+    // Reset thumb load time
     //
-    var errorMessage = ''; 
-    var subMessage = '';
-
-
-    if (this.consoleLog_.indexOf(
-	'Unknown number of bits allocated - using default: 32 bits') > -1){
-
-	errorMessage += 'The render engine (' + 
-	    '<a target="_blank" style="color: #66CCFF" ' + 
-	    'href="https://github.com/xtk/X#readme">' + 
-	    'XTK</a>' + 
-	    ') does not yet support big-endian encoded DICOMs :(<br><br>';
-	subMessage += 
-	    '<a target="_blank" style="color: #66CCFF" ' + 
-	    'href="http://stackoverflow.com/questions/' + 
-	    '22356911/xtk-error-while-loading-dicom-files">For more ' + 
-	    'information click here.</a>';
-
-
-	subMessage += '<br><br>Console reference:<br>' + 
-	    '\'Unknown number of bits allocated - using default: 32 bits\'';
-
-
-    } else {
-	errorMessage = '<b>Render Error!</b><br><br>';
-	if (goog.isString(opt_errorMsg)){
-	    subMessage += opt_errorMsg + '<br>'; 
-	}
-	if (goog.isString(opt_url)){
-	    subMessage += 'src: ' + opt_url + '<br>';
-	    if (goog.isNumber(opt_lineNumber)){
-		subMessage += ' line: ' + opt_lineNumber + '<br>';
-	    }
-	}
-    }
-
-
-
-    window.console.log(errorMessage, subMessage);
-    //
-    // Dispatch the error
-    //
-    this.dispatchEvent({
-	type: xiv.ui.ViewBox.EventType.THUMBNAIL_LOADERROR,
-	message: opt_errorMsg
-    })
-
-    //
-    // Construct an error overlay
-    //
-    this.ErrorDialog_ = new nrg.ui.ErrorDialog();
-    this.ErrorDialog_.render(this.viewFrameElt_);
-
-    //
-    // Add above text and render
-    //
-    this.ErrorDialog_.setButtonSet(null);
-    this.ErrorDialog_.addText(errorMessage);
-    this.ErrorDialog_.addSubText(subMessage);
-    this.ErrorDialog_.setVisible(true);
-    this.ErrorDialog_.setModal(true);
-    //this.ErrorDialog_.resizeToContents();
-    this.ErrorDialog_.center();
-
-
-    //
-    // Delete the dialog on close
-    //
-    goog.events.listenOnce(
-	this.ErrorDialog_, 
-	nrg.ui.Dialog.EventType.CLOSE_BUTTON_CLICKED, 
-	function(e){
-	    e.target.dispose();
-	    this.ErrorDialog_ = null;
-	    this.toggleWaitForRenderErrors_(true);
-	}.bind(this))
-}
-
-
-/**
- * @private
- */
-xiv.ui.ViewBox.prototype.onLayoutChangeStart_ = function(e){
-    goog.object.forEach(this.Renderer_.getPlanes(), 
-    function(renderPlane, planeOr) {
-	if (goog.isDefAndNotNull( e.transitionElements[planeOr])){
-	    //
-	    // Attach the render plane to the transition element
-	    //
-	    renderPlane.setContainer( e.transitionElements[planeOr]);	
-	    renderPlane.updateStyle();
-	}
-    })
+    this.clearThumbnailLoadTime();
 }
 
 
@@ -1779,15 +1669,6 @@ xiv.ui.ViewBox.prototype.getToggleButtons = function(){
  */
 xiv.ui.ViewBox.prototype.initRenderer_ = function(){
     this.Renderer_ = new xiv.vis.XtkEngine();
-
-    //
-    // Listen for Errors!
-    //
-    goog.events.listen(this.Renderer_, xiv.vis.XtkEngine.EventType.ERROR,
-	function(e){
-	    window.console.log(e);
-	    this.onRenderError_(e.message);
-	}.bind(this))
 }
 
 

@@ -75,7 +75,6 @@ xiv.ui.ViewBoxHandler.CSS_SUFFIX = {
 xiv.ui.ViewBoxHandler.EventType = {
     VIEWABLE_PRELOAD: goog.events.getUniqueId('viewable_preload'),
     VIEWABLE_LOADED: goog.events.getUniqueId('viewable_load'),
-    VIEWABLE_LOADERROR: goog.events.getUniqueId('viewable_loaderror'),
     VIEWBOXES_CHANGED: goog.events.getUniqueId('viewboxes_changed')
 }
 
@@ -774,11 +773,8 @@ xiv.ui.ViewBoxHandler.prototype.onThumbnailPreload_ = function(e){
  * @param {Event} e
  * @private
  */
-xiv.ui.ViewBoxHandler.prototype.onThumbnailLoadError_ = function(e){
-    this.dispatchEvent({
-	type: xiv.ui.ViewBoxHandler.EventType.VIEWABLE_LOADERROR,
-	ViewBox: e.target
-    })
+xiv.ui.ViewBoxHandler.prototype.onRenderError_ = function(e){
+    this.dispatchEvent(e);
 }
 
 
@@ -798,8 +794,8 @@ xiv.ui.ViewBoxHandler.prototype.setViewBoxEvents_ = function(ViewBox) {
 	this.onThumbnailPreload_.bind(this))
 
     // Error
-    goog.events.listen(ViewBox, xiv.ui.ViewBox.EventType.VIEWABLE_LOADERROR, 
-	this.onThumbnailLoadError_.bind(this))
+    goog.events.listen(ViewBox, xiv.ui.ViewBox.EventType.RENDER_ERROR, 
+	this.onRenderError_.bind(this))
 }
 
 
@@ -862,7 +858,7 @@ xiv.ui.ViewBoxHandler.prototype.adjustToClose_ = function(ViewBox){
 	//
 	goog.array.forEach(ViewBoxCol, function(_ViewBox, j) {
 	    if (!_ViewBox.isDisposed()){
-		window.console.log(_ViewBox.getElement());
+		//window.console.log(_ViewBox.getElement());
 		newViewBoxRow.push(_ViewBox);	
 	    }
 	}.bind(this))

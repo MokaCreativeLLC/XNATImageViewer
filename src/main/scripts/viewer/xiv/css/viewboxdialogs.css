@@ -50,35 +50,24 @@
 
 
 .xiv-ui-viewboxdialogs-infodialog-content {    
-    padding-left: 5px;
-    padding-top: 0px;
-    white-space: nowrap;
+
 }
 
 
 .xiv-ui-viewboxdialogs-infodialog-closebutton {    
-    height: 7px;
-    top: -3px;
-    left: calc(100% - 10px);
-    width: 7px;
+
 }
 
 
 .xiv-ui-viewboxdialogs-infodialog-closebutton-image {    
-    height: 7px;
-    width: 7px;
+
 }
 
 
 .xiv-ui-viewboxdialogs-infodialog-text {
-    position: absolute;
-    font-size: 12px;		
-    font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
     white-space: nowrap;
-    top: 0px;
-    left: 0px;
-    height: 0px;
-    width: 0px;
+    text-align: left;
+    font-size: 12px;
 }
 
 
