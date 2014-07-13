@@ -1,4 +1,4 @@
-
+goog.provide('xiv.sampleData.SampleCollection');
 
 
 // goog
@@ -16,7 +16,6 @@ goog.require('xiv.sampleData.Sample');
  * @extends {goog.Disposable}
  * @constructor
  */
-goog.provide('xiv.sampleData.SampleCollection');
 xiv.sampleData.SampleCollection = function(){
     goog.base(this);
 

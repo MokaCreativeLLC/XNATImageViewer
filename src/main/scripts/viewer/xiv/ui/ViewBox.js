@@ -29,6 +29,7 @@ goog.require('gxnat.vis.ViewableTree');
 goog.require('gxnat.vis.ViewableGroup');
 
 // xiv
+goog.require('xiv');
 goog.require('xiv.utils.ErrorCatcher');
 goog.require('xiv.vis.RenderEngine');
 goog.require('xiv.vis.XtkEngine');
@@ -573,6 +574,7 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     this.InteractorHandler_.applyAutoLevel();
 
+
     //
     // Hide progress bar
     //
@@ -895,7 +897,22 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
     // Construct the zip url
     //
     var firstFile = ViewableSet.getViewables()[0].getFiles()[0];
-    var filesUrl = firstFile.split('/files/')[0] + '/files';
+    var filesUrl = '';
+
+    //
+    // For samples
+    //
+    if (goog.string.caseInsensitiveContains(firstFile, 
+					    xiv.SAMPLE_SCAN_PREFIX)){
+	var spl = firstFile.split(xiv.SAMPLE_SCAN_PREFIX);
+	var prefix = spl[0] + xiv.SAMPLE_SCAN_PREFIX;
+	var filename = spl[1].split('/')[0] + '.zip';
+	filesUrl = prefix + filename
+    } 
+
+    else {
+	filesUrl = firstFile.split('/files/')[0] + '/files';
+    }
     window.console.log("XImgView Zip Downloading (XHR): " +  filesUrl);
 
     //
@@ -1466,11 +1483,11 @@ xiv.ui.ViewBox.prototype.getToggleButton = function(buttonKey){
  * @public
  */
 xiv.ui.ViewBox.prototype.fireToggleButton = function(buttonKey){
-    
+    /*
     window.console.log('fire toggle button', 
 		       'buttonKey:', buttonKey, 
 		       '\nbutton:', this.toggleButtons_[buttonKey]);
-    
+    */
     goog.testing.events.fireClickEvent(this.toggleButtons_[buttonKey]);
 }
 

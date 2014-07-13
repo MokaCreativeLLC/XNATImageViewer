@@ -1,3 +1,5 @@
+goog.provide('xiv.sampleData.Scans');
+
 // xiv
 goog.require('xiv.sampleData.Sample');
 goog.require('xiv.sampleData.SampleCollection');
@@ -8,7 +10,6 @@ goog.require('xiv.sampleData.SampleCollection');
  * @extends {xiv.sampleData.SampleCollection}
  * @constructor
  */
-goog.provide('xiv.sampleData.Scans');
 xiv.sampleData.Scans = function() {
     goog.base(this);
 
@@ -214,7 +215,8 @@ xiv.sampleData.Scans.prototype.sample1_ = new xiv.sampleData.Sample ([
 'src/main/scripts/viewer/xiv/sample-data/scans/Sample1/Sample1.png',
 ['Test Project 1', 
  'Test Subject 1', 
- 'Test Experiment 1-1'])
+ 'Test Experiment 1-1'],
+'src/main/scripts/viewer/xiv/sample-data/scans/Sample1.zip')
 
 
 /**

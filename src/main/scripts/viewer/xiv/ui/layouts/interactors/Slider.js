@@ -65,7 +65,7 @@ xiv.ui.layouts.interactors.Slider.CSS_SUFFIX = {}
  */
 xiv.ui.layouts.interactors.Slider.prototype.render = 
 function(parentElement) {
-
+    goog.base(this, 'render');
 }
 
 

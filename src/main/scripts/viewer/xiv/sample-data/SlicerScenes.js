@@ -1,3 +1,5 @@
+goog.provide('xiv.sampleData.SlicerScenes');
+
 // xiv
 goog.require('xiv.sampleData.Sample');
 goog.require('xiv.sampleData.SampleCollection');
@@ -8,7 +10,6 @@ goog.require('xiv.sampleData.SampleCollection');
  * @extends {xiv.sampleData.SampleCollection}
  * @constructor
  */
-goog.provide('xiv.sampleData.SlicerScenes');
 xiv.sampleData.SlicerScenes = function() {
     goog.base(this);
     this.Samples.push(this.sample1_);

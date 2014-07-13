@@ -1127,7 +1127,7 @@ function(){
 
     this.zippyTrees_[key] = new nrg.ui.ScrollableZippyTree();
     this.zippyTrees_[key].render();
-    window.console.log(this.zippyTrees_[key].getElement());
+    //window.console.log(this.zippyTrees_[key].getElement());
 
     //
     // Zippy Trees

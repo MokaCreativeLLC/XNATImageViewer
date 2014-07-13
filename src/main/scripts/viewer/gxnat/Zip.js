@@ -40,17 +40,20 @@ goog.exportSymbol('gxnat.Zip', gxnat.Zip);
  */
 gxnat.Zip.getFilesAsZip = 
 function(filesUrl, onLoad, opt_onProgress, opt_onError){
-    //
-    // Check if filesURl ends in '/files'
-    //
-    if (!goog.string.caseInsensitiveEndsWith(filesUrl, '/files')){
-	throw new Error("filesUrl must end in '/files'!");
+
+    if (!goog.string.caseInsensitiveEndsWith(filesUrl, '.zip')){
+	//
+	// Check if filesURl ends in '/files'
+	//
+	if (!goog.string.caseInsensitiveEndsWith(filesUrl, '/files')){
+	    throw new Error("filesUrl must end in '/files'!");
+	}
+	
+	//
+	// Append the zipSuffix
+	//
+	filesUrl += gxnat.ZIP_SUFFIX;
     }
-									      
-    //
-    // Append the zipSuffix
-    //
-    filesUrl += gxnat.ZIP_SUFFIX;
     
     //
     // Construct the xhr request

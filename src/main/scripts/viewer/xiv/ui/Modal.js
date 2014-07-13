@@ -765,10 +765,10 @@ xiv.ui.Modal.prototype.initButtons_ = function() {
 
 
 /**
- * @private
+ * @public
  */
-xiv.ui.Modal.prototype.addAddSubjectsToProjectTab_ = function() {
-
+xiv.ui.Modal.prototype.addAddSubjectsToProjectTab = function() {
+    window.console.log('add add');
     //
     // Create button
     //
@@ -935,13 +935,7 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
     goog.events.listen(this.ProjectTab_, nrg.ui.Resizable.EventType.RESIZE,
 		       this.updateStyle.bind(this));
     goog.events.listen(this.ProjectTab_, nrg.ui.Resizable.EventType.RESIZE_END,
-		       this.updateStyle.bind(this));
-
-    //
-    // Add the 'Add Subjects' button to the gab
-    //
-    this.addAddSubjectsToProjectTab_();
- 
+		       this.updateStyle.bind(this)); 
 }
 
 
@@ -1391,6 +1385,8 @@ goog.exportSymbol('xiv.ui.Modal.prototype.updateStyle',
 	xiv.ui.Modal.prototype.updateStyle);
 goog.exportSymbol('xiv.ui.Modal.prototype.initSubComponents',
 	xiv.ui.Modal.prototype.initSubComponents);
+goog.exportSymbol('xiv.ui.Modal.prototype.addAddSubjectsToProjectTab',
+		  xiv.ui.Modal.prototype.addAddSubjectsToProjectTab);
 goog.exportSymbol('xiv.ui.Modal.prototype.disposeInternal',
 	xiv.ui.Modal.prototype.disposeInternal);
 

@@ -115,6 +115,9 @@ xiv.ui.ctrl.SliderController.prototype.createSlider_ = function() {
     // Events
     goog.events.listen(this.getComponent(), goog.events.EventType.CHANGE, 
     		       this.dispatchComponentEvent.bind(this))
+    
+    
+    slider.getElement().style.zIndex = 0;
 }
 
 

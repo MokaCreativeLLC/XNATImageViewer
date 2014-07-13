@@ -398,6 +398,8 @@ function(title, opt_animateSwitch) {
  */ 
 xiv.ui.layouts.LayoutHandler.prototype.bindLayoutToSliderMousewheels_ = 
 function() {
+
+    //window.console.log('\n\nBINDING LAYOUT');;
     //
     // Bind the slider mousewheel
     //
@@ -410,6 +412,9 @@ function() {
 	slider = this.getMasterInteractorByPlane(key, 
 		xiv.ui.layouts.Layout.INTERACTORS.SLIDER);
 
+	
+	//window.console.log(slider, 
+	//frame[xiv.ui.layouts.LayoutHandler.SLIDER_BOUND]);
 	if (goog.isDefAndNotNull(slider) && !goog.isDefAndNotNull(
 	    frame[xiv.ui.layouts.LayoutHandler.SLIDER_BOUND])) {
 
@@ -461,6 +466,7 @@ xiv.ui.layouts.LayoutHandler.prototype.switchLayout = function(opt_time) {
     // Do nothing if we're the previous layout is the same as the current one.
     //
     if (this.prevLayoutTitle_ == this.currLayoutTitle_){
+	this.bindLayoutToSliderMousewheels_();
 	return;
     }
 

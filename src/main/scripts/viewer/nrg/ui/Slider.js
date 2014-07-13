@@ -279,6 +279,11 @@ nrg.ui.Slider.prototype.getThumb = function(){
  * @public
  */
 nrg.ui.Slider.prototype.bindToMouseWheel = function (element) {
+    /*
+    window.console.log('\n\nbindToMouse', 
+		       this.getElement(), 
+		       element);
+    */
     if (!goog.isDefAndNotNull(this.MouseWheelHandlers_)) {
 	this.MouseWheelHandlers_ = {};
     }
