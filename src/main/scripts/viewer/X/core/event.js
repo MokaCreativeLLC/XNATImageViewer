@@ -51,6 +51,7 @@ goog.provide('X.event.ZoomEvent');
 goog.require('X');
 goog.require('X.object');
 goog.require('X.vector');
+goog.require('goog.string');
 goog.require('goog.events');
 goog.require('goog.events.Event');
 
@@ -93,7 +94,7 @@ goog.inherits(X.event, goog.events.Event);
  */
 X.event.uniqueId = function(id) {
 
-  return goog.events.getUniqueId(id);
+  return id + goog.string.createUniqueString();
   
 };
 
