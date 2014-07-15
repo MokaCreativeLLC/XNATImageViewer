@@ -939,32 +939,51 @@ xiv.ui.ViewBoxHandler.prototype.isMatch = function(ViewBox, matchObj) {
  *     xiv.ui.ViewBox.getElement(), or xiv.ui.ViewBox ID
  * @param {xiv.ui.ViewBox|Element|string, swapee xiv.ui.ViewBox Class, 
  *     xiv.ui.ViewBox.getElement(), or xiv.ui.ViewBox ID
- * @public
+ * @private
  */
-xiv.ui.ViewBoxHandler.prototype.swap = function(swapper, swapee) {
-    //window.console.log('\n\nSWAP', swapper, swapee);
+xiv.ui.ViewBoxHandler.prototype.swapIndices_ = function(swapper, swapee) {
+    window.console.log('\n\nSWAPPER', swapper);
+    window.console.log('SWAPPEE', swapee);
+
     var swapper_i, swapper_j, swapee_i, swapee_j;
+
     var i = 0, j = 0;
     var len = this.ViewBoxes_.length;
+    var ViewBoxRow, len2, ViewBox;
 
-    for (i=0; i < len; i++){
-	var ViewBoxRow = this.ViewBoxes_[i];
-	var len2 = ViewBoxRow.length;
-	for (j=0; j < len2; j++){
-	    var ViewBox = this.ViewBoxes_[i][j];
+    window.console.log('I', i, len);
+    for (; i < len; i++){
+	
+	ViewBoxRow = this.ViewBoxes_[i];
+	len2 = ViewBoxRow.length;
+	window.console.log('J', j, len2);
+	//j = 0;
+	for (j = 0; j < len2; j++){
+	    ViewBox = this.ViewBoxes_[i][j];
+
+	    window.console.log(ViewBox.getElement());
+
 	    if (this.isMatch(ViewBox, swapper)){
 		swapper_i = i;
 		swapper_j = j;	
-		break;
+		//break;
 	    }
-
+	    
+	    
 	    if (this.isMatch(ViewBox, swapee)){
 		swapee_i = i;
 		swapee_j = j;
-		break;
+		//break;
+	    }
+
+	    if (goog.isDefAndNotNull(swapper_i) && 
+		goog.isDefAndNotNull(swapee_i)){
+		//break;
 	    }
 	}
     }
+
+    window.console.log(swapper_i, swapper_j, swapee_i, swapee_j);
 
     //
     // If both viewBoxes are found, swap them...
@@ -989,11 +1008,6 @@ xiv.ui.ViewBoxHandler.prototype.swap = function(swapper, swapee) {
 			   swapperSize);
 	goog.style.setSize(this.ViewBoxes_[swapper_i][swapper_j].getElement(), 
 			   swapeeSize);
-
-	//
-	// then dispatch change event.
-	//
-	this.onViewBoxesChanged_();
     }
 }	
 
@@ -1123,9 +1137,9 @@ xiv.ui.ViewBoxHandler.prototype.generateSlide_ = function (el, a, b, duration) {
 /**
  * Animates a position swap between two view boxes.
  *
- * @param {!xiv.ui.ViewBox} ViewBoxElementA The first xiv.ui.ViewBox element 
+ * @param {!Element} ViewBoxElementA The first xiv.ui.ViewBox element 
  *     to swap.
- * @param {!xiv.ui.ViewBox} ViewBoxElementB The second xiv.ui.ViewBox element 
+ * @param {!Element} ViewBoxElementB The second xiv.ui.ViewBox element 
  *     to swap.
  * @param {!Object.<string, string>} ViewBoxPositions The ViewBox positions to 
  *     reference.
@@ -1141,23 +1155,60 @@ function(ViewBoxElementA, ViewBoxElementB, ViewBoxPositions, opt_animated) {
     var ViewBoxADims =  ViewBoxPositions[ViewBoxElementA.id]['relative'];
     var ViewBoxBDims = ViewBoxPositions[ViewBoxElementB.id]['relative'];
 
+    ViewBoxElementA[xiv.ui.ViewBoxHandler.IS_SWAPPING] = true;
+    ViewBoxElementB[xiv.ui.ViewBoxHandler.IS_SWAPPING] = true;
+
+    window.console.log(ViewBoxElementA, ViewBoxADims);
+    window.console.log(ViewBoxElementB, ViewBoxBDims);
     //
     // Add animations to queue.
     //
-    animQueue.add(this.generateSlide_(ViewBoxElementA, ViewBoxBDims['left'], 
-			ViewBoxBDims['top'], 
-			nrg.ui.Component.animationLengths.MEDIUM));
-    animQueue.add(this.generateSlide_(ViewBoxElementB, ViewBoxADims['left'], 
-			ViewBoxADims['top'], 
-                        nrg.ui.Component.animationLengths.MEDIUM));
+    animQueue.add(this.generateSlide_(
+	ViewBoxElementA, 
+	ViewBoxBDims['left'], 
+	ViewBoxBDims['top'], 
+	300));
+    
+    animQueue.add(this.generateSlide_(
+	ViewBoxElementB, 
+	ViewBoxADims['left'], 
+	ViewBoxADims['top'], 
+        300));
+    
 
-    //goog.events.listen(animQueue, 'end', function() {
-    //}.bind(this))
+    goog.events.listenOnce(animQueue, 'end', function() {
+	window.console.log("SWAP END");
+	this.onSwapAnimationEnd_(ViewBoxElementA, ViewBoxElementB);
+    }.bind(this))
 
     //
     // Play animation
     //
     animQueue.play();
+}
+
+
+
+
+/**
+ * @param {!Element} ViewBoxElementA The first xiv.ui.ViewBox element 
+ *     to swap.
+ * @param {!Element} ViewBoxElementB The second xiv.ui.ViewBox element 
+ *     to swap.
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.onSwapAnimationEnd_ = 
+function(ViewBoxElementA, ViewBoxElementB){
+    ViewBoxElementA[xiv.ui.ViewBoxHandler.IS_SWAPPING] = false;
+    ViewBoxElementB[xiv.ui.ViewBoxHandler.IS_SWAPPING] = false;
+
+    //
+    // then dispatch change event.
+    //
+    this.updatePositionsFromSwap_();
+    this.swapIndices_(ViewBoxElementA, ViewBoxElementB);
+    window.console.log(this.ViewBoxes_);
+    //this.onViewBoxesChanged_();
 }
 
 
@@ -1303,6 +1354,12 @@ function(ViewBoxElement, opt_parent) {
 
 
 
+/**
+ * @private
+ */
+xiv.ui.ViewBoxHandler.IS_SWAPPING = goog.string.createUniqueString();
+
+
 
 /**
  * Define DRAG OVER function.
@@ -1322,11 +1379,15 @@ xiv.ui.ViewBoxHandler.prototype.onDragOver_ = function(event) {
 	var ViewBoxElementB = 
 	    goog.dom.getElement(event.dropTargetItem.element.id);
 
-	// Swap internally, then animate it.
-	this.swap(ViewBoxElementA, ViewBoxElementB);
-	this.animateSwap_(ViewBoxElementA, ViewBoxElementB, 
-			  this.ViewBoxPositions_);
-	this.updatePositionsFromSwap_(ViewBoxElementA, ViewBoxElementB);
+
+	if (!ViewBoxElementA[xiv.ui.ViewBoxHandler.IS_SWAPPING] &&
+	    !ViewBoxElementB[xiv.ui.ViewBoxHandler.IS_SWAPPING]){
+	    // Swap internally, then animate it.
+	    
+	    this.animateSwap_(ViewBoxElementA, ViewBoxElementB, 
+			      this.ViewBoxPositions_);
+
+	}
     }
 }
 
@@ -1338,13 +1399,14 @@ xiv.ui.ViewBoxHandler.prototype.onDragOver_ = function(event) {
  * @param {!Element} ViewBoxElementB The second ViewBox element.
  * @private
  */
-xiv.ui.ViewBoxHandler.prototype.updatePositionsFromSwap_ = 
-    function(ViewBoxElementA, ViewBoxElementB){
-	var valA = this.ViewBoxPositions_[ViewBoxElementA.id];
-	var valB = this.ViewBoxPositions_[ViewBoxElementB.id];
-	this.ViewBoxPositions_[ViewBoxElementA.id] = valB;
-	this.ViewBoxPositions_[ViewBoxElementB.id] = valA;
-    }
+xiv.ui.ViewBoxHandler.prototype.updatePositionsFromSwap_ = function(){
+    this.loop(function(ViewBox){
+	this.ViewBoxPositions_[ViewBox.getElement().id] = {
+	    'absolute': nrg.style.absolutePosition(ViewBox.getElement()),
+	    'relative': nrg.style.dims(ViewBox.getElement())
+	}
+    }.bind(this))
+}
 
 
 
@@ -1370,6 +1432,8 @@ xiv.ui.ViewBoxHandler.prototype.onDragEnd_ = function(event) {
     this.repositionDraggerClone_(dragger, draggerClone);
     this.createDragEndAnim_(draggerClone, srcViewBoxDims).play();
     this.showDragDropHandles_();
+
+    this.onViewBoxesChanged_();
 }
 
 
@@ -1572,8 +1636,6 @@ goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.ViewBoxFromVisNode',
 	xiv.ui.ViewBoxHandler.prototype.ViewBoxFromVisNode);
 goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.isMatch',
 	xiv.ui.ViewBoxHandler.prototype.isMatch);
-goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.swap',
-	xiv.ui.ViewBoxHandler.prototype.swap);
 goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.numViewBoxes',
 	xiv.ui.ViewBoxHandler.prototype.numViewBoxes);
 goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBoxAfter',

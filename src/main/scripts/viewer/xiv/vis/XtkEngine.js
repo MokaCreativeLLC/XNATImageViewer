@@ -377,7 +377,6 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
     }
     this.ControllerTree_ = new xiv.ui.ctrl.XtkControllerTree();
 
-    
     //
     // Annotations
     //
@@ -418,10 +417,14 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 	//window.console.log('here12');
 	// Volumes
 	if (currXObj instanceof X.volume) {
+
+	    if (ViewableGroup.getCategory().toLowerCase() == 'scans'){
+		window.console.log('Turning off reslicing for scan');
+		currXObj['reslicing'] = false;
+	    }
 	    xiv.vis.XtkEngine.setRenderProperties_Volume_(
 		currXObj, renderProps);
 	    this.currXObjects_['volumes'].push(currXObj);
-	    currXObj['reslicing'] = false;
 	    //window.console.log('\n\nreslicing', currXObj['reslicing']);
 	    //window.console.log('\n\nreslicing', currXObj['transform']);
 	    //window.console.log(currXObj, currXObj['dimensionsRAS']);
