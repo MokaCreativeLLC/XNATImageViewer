@@ -3,7 +3,7 @@
 goog.addDependency('../../../X/X.js', ['X', 'X.counter'], []);
 goog.addDependency('../../../X/core/base.js', ['X.base'], ['X', 'goog.events', 'goog.events.EventTarget']);
 goog.addDependency('../../../X/core/colortable.js', ['X.colortable'], ['X.base', 'X.loadable', 'goog.structs.Map']);
-goog.addDependency('../../../X/core/event.js', ['X.event', 'X.event.ComputingEndEvent', 'X.event.ComputingEvent', 'X.event.ComputingProgressEvent', 'X.event.HoverEndEvent', 'X.event.HoverEvent', 'X.event.ModifiedEvent', 'X.event.PanEvent', 'X.event.ProgressEvent', 'X.event.RenderEvent', 'X.event.ResetViewEvent', 'X.event.RotateEvent', 'X.event.ScrollEvent', 'X.event.WindowLevelEvent', 'X.event.ZoomEvent', 'X.event.events'], ['X', 'X.object', 'X.vector', 'goog.events', 'goog.events.Event']);
+goog.addDependency('../../../X/core/event.js', ['X.event', 'X.event.ComputingEndEvent', 'X.event.ComputingEvent', 'X.event.ComputingProgressEvent', 'X.event.HoverEndEvent', 'X.event.HoverEvent', 'X.event.ModifiedEvent', 'X.event.PanEvent', 'X.event.ProgressEvent', 'X.event.RenderEvent', 'X.event.ResetViewEvent', 'X.event.RotateEvent', 'X.event.ScrollEvent', 'X.event.WindowLevelEvent', 'X.event.ZoomEvent', 'X.event.events'], ['X', 'X.object', 'X.vector', 'goog.events', 'goog.events.Event', 'goog.string']);
 goog.addDependency('../../../X/core/file.js', ['X.file'], ['X.base']);
 goog.addDependency('../../../X/core/scalars.js', ['X.scalars'], ['X.base', 'X.loadable', 'X.thresholdable']);
 goog.addDependency('../../../X/core/texture.js', ['X.texture'], ['X.base', 'X.loadable']);
