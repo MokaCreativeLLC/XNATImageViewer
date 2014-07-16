@@ -212,6 +212,15 @@ xiv.ui.ctrl.Histogram.prototype.startMax_;
 
 
 /**
+ * @type {!boolean}
+ * @private
+ */
+xiv.ui.ctrl.Histogram.prototype.drawn_ = false;
+
+
+
+
+/**
  * @inheritDoc
  */
 xiv.ui.ctrl.Histogram.prototype.render = function(opt_parent){
@@ -372,10 +381,11 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
     if (!goog.isDefAndNotNull(this.levels_)){
 	return;
     }
+    
 
- 
+    
     //var cutoffThreshold = .99
-    var cutoffLevel = this.getXObj().windowHigh;
+    var cutoffLevel = this.getXObj()['windowHigh'];
     var barWidth = Math.round(canvasWidth/cutoffLevel);
     barWidth = barWidth > 0 ? barWidth: 1;
  
@@ -392,8 +402,10 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
 	//barWidth * i
 	this.context_.fillRect(	barWidth * i, canvasHeight, 
 			       barWidth, -Math.round(pct));
+	if (pct > 0 && this.drawn_ == false){
+	    this.drawn_ = true;
+	}
     }
-
 }
 
 
@@ -421,9 +433,9 @@ xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold = function(thresh) {
 
 
 /**
- * @public
+ * @private
  */
-xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
+xiv.ui.ctrl.Histogram.prototype.drawLine_ = function() {
 
     //
     // Do nothing if no volume
@@ -475,6 +487,7 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
     //
     // Draw the sloped line
     //
+    this.lineContext_.beginPath();
     this.lineContext_.strokeStyle = "gray";
     this.lineContext_.moveTo(startX, canvasHeight);
     this.lineContext_.lineTo(endX, 0);
@@ -497,9 +510,13 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
  * @public
  */
 xiv.ui.ctrl.Histogram.prototype.update = function(){
-    this.draw();
+    if (!this.drawn_) {
+	this.draw();
+    }
+    //window.console.log("UPDATE!");
+    //this.getXObj()['windowHigh'] = 
     this.updateMaxMin();
-    this.drawLine();
+    this.drawLine_();
 }
 
 
@@ -514,8 +531,8 @@ xiv.ui.ctrl.Histogram.prototype.updateMaxMin = function(){
     if (!goog.isDefAndNotNull(this.getXObj())) { return };
 
     if (!goog.isDefAndNotNull(this.startMin_)){
-	this.startMin_ = parseInt(this.getXObj().windowLow);
-	this.startMax_ = parseInt(this.getXObj().windowHigh);
+	this.startMin_ = parseInt(this.getXObj()['windowLow']);
+	this.startMax_ = parseInt(this.getXObj()['windowHigh']);
 	this.startMin_ = isNaN(this.startMin_) ? null : this.startMin_;
 	this.startMax_ = isNaN(this.startMax_) ? null : this.startMax_;
 	this.windowLow_ = this.startMin_;
@@ -529,8 +546,8 @@ xiv.ui.ctrl.Histogram.prototype.updateMaxMin = function(){
 		       */
 
 
-    this.windowLow_ = parseInt(this.getXObj().windowLow);
-    this.windowHigh_ = parseInt(this.getXObj().windowHigh);
+    this.windowLow_ = parseInt(this.getXObj()['windowLow']);
+    this.windowHigh_ = parseInt(this.getXObj()['windowHigh']);
 
 
     this.minDiv_.innerHTML = this.windowLow_;
@@ -583,7 +600,8 @@ xiv.ui.ctrl.Histogram.prototype.disposeInternal = function() {
 	goog.array.clear(this.percentages_);
 	delete this.percentages_;
     }
-
+    
+    delete this.drawn_;
     delete this.totalPixels_;
     delete this.maxPct_;
     delete this.context_;
@@ -609,8 +627,6 @@ goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.draw',
 	xiv.ui.ctrl.Histogram.prototype.draw);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold',
 	xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.drawLine',
-	xiv.ui.ctrl.Histogram.prototype.drawLine);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.update',
 	xiv.ui.ctrl.Histogram.prototype.update);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.updateMaxMin',

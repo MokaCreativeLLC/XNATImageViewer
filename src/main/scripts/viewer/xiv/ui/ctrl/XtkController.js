@@ -126,7 +126,8 @@ xiv.ui.ctrl.XtkController.createLabel = function(){
  */
 xiv.ui.ctrl.XtkController.getXObjLabel = function(xObj){
     
-    var folder = goog.isArray(xObj.file)? xObj.file[0] : xObj.file || xObj.name;
+    var folder = goog.isArray(xObj['file'])? 
+	xObj['file'][0] : xObj['file'] || xObj['name'];
     return goog.string.path.basename(folder);
 }
 
@@ -465,7 +466,7 @@ xiv.ui.ctrl.XtkController.prototype.add_colorPalette = function(xObj, ctrl) {
     var color = this.createController(
 	ctrl, 'Color', 
 	function(e){
-	    xObj.color = e.color;
+	    xObj['color'] = e.color;
 	}.bind(this));
 
     // set folder
@@ -493,7 +494,7 @@ xiv.ui.ctrl.XtkController.prototype.add_opacity = function(xObj, ctrl) {
     var opacity = this.createController( 
 	ctrl, 'Opacity', 
 	function(e){
-	    xObj.opacity = parseFloat(e.value);
+	    xObj['opacity'] = parseFloat(e.value);
 	});
 
 
@@ -526,7 +527,7 @@ xiv.ui.ctrl.XtkController.prototype.add_visible = function(xObj, ctrl) {
     var visibleCheckBox = this.createController(
 	 ctrl, 'Visible', 
 	 function(e){
-	     xObj.visible = e.checked;
+	     xObj['visible'] = e.checked;
 	 });
 
 
@@ -538,7 +539,7 @@ xiv.ui.ctrl.XtkController.prototype.add_visible = function(xObj, ctrl) {
     this.subControllers.push(visibleCheckBox);
 
     // set defaults
-    visibleCheckBox.getComponent().setChecked(xObj.visible);
+    visibleCheckBox.getComponent().setChecked(xObj['visible']);
 } 
 
 

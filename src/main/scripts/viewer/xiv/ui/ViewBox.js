@@ -768,6 +768,20 @@ xiv.ui.ViewBox.prototype.checkInUseAndShowDialog = function(opt_onYes){
 xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 
     //
+    // Dispable render error wating
+    //
+    if (!goog.isDefAndNotNull(this.ErrorCatcher_)){
+	this.ErrorCatcher_ = new xiv.utils.ErrorCatcher();
+	this.ErrorCatcher_.setDialogParent(this.viewFrameElt_);
+	this.ErrorCatcher_.setOnErrorCallback(this.onRenderError_.bind(this))
+    }
+    else {
+	this.ErrorCatcher_.clear();
+	this.ErrorCatcher_.waitForError(false);
+    }
+
+
+    //
     // Dispatch preload
     //
     this.dispatchEvent(xiv.ui.ViewBox.EventType.VIEWABLE_PRELOAD);
@@ -941,17 +955,7 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
  * @private
  */
 xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
-    //
-    // Dispable render error wating
-    //
-    if (!goog.isDefAndNotNull(this.ErrorCatcher_)){
-	this.ErrorCatcher_ = new xiv.utils.ErrorCatcher();
-	this.ErrorCatcher_.setDialogParent(this.viewFrameElt_);
-	this.ErrorCatcher_.setOnErrorCallback(this.onRenderError_.bind(this))
-    }
-    else {
-	this.ErrorCatcher_.waitForError(false);
-    }
+
     this.ErrorCatcher_.waitForError(true);
     
     //
@@ -975,7 +979,7 @@ xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_msg){
-    //window.console.log('ON RENDER ERROR');
+    //window.console.log('ON RENDER ERROR in view box');
 
     //
     // unhighlight the ViewBox
@@ -996,6 +1000,13 @@ xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_msg){
     // Reset thumb load time
     //
     this.clearThumbnailLoadTime();
+
+    //
+    // Dispatch render error event
+    //
+    this.dispatchEvent({
+	type: xiv.ui.ViewBox.EventType.RENDER_ERROR
+    })
 }
 
 

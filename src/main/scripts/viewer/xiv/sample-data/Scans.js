@@ -213,9 +213,9 @@ xiv.sampleData.Scans.prototype.sample1_ = new xiv.sampleData.Sample ([
     'Type': "t1_mpr_1mm_p2_pos50",
 }, 
 'src/main/scripts/viewer/xiv/sample-data/scans/Sample1/Sample1.png',
-['Test Project 1', 
- 'Test Subject 1', 
- 'Test Experiment 1-1'],
+['Test Project 1-P', 
+ 'Test Subject 1-S', 
+ 'Test Experiment 1-E'],
 'src/main/scripts/viewer/xiv/sample-data/scans/Sample1.zip')
 
 
@@ -408,9 +408,9 @@ xiv.sampleData.Scans.prototype.sample2_ = new xiv.sampleData.Sample ([
     'Type': "t1_mpr_1mm_p2_pos50"
 }, 
 'src/main/scripts/viewer/xiv/sample-data/scans/Sample2/Sample2.png',
-['Test Project 1', 
- 'Test Subject 1', 
- 'Test Experiment 1-1'])
+['Test Project 1-P', 
+ 'Test Subject 1-S', 
+ 'Test Experiment 1-E'])
 
 /**
  * @const
@@ -601,6 +601,6 @@ xiv.sampleData.Scans.prototype.sample3_ = new xiv.sampleData.Sample ([
     'Type': "t2_spc_1mm_p2"
 }, 
 'src/main/scripts/viewer/xiv/sample-data/scans/Sample3/Sample3.png',
-['Test Project 1', 
- 'Test Subject 2', 
- 'Test Experiment 2-1'])
+['Test Project 1-P', 
+ 'Test Subject 1-S', 
+ 'Test Experiment 1-E'])

@@ -421,6 +421,10 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 	    if (ViewableGroup.getCategory().toLowerCase() == 'scans'){
 		window.console.log('Turning off reslicing for scan');
 		currXObj['reslicing'] = false;
+		//currXObj['transform'].rotateX(45);
+		//currXObj['transform'].rotateY(45);
+		//currXObj['transform'].rotateZ(45);
+		window.console.log(currXObj['transform']);
 	    }
 	    xiv.vis.XtkEngine.setRenderProperties_Volume_(
 		currXObj, renderProps);
@@ -771,8 +775,8 @@ xiv.vis.XtkEngine.prototype.updateStyle = function(){
 xiv.vis.XtkEngine.setRenderProperties_Mesh_ = 
 function(xObj, renderProperties){
     //window.console.log('here1');
-    xObj.color = renderProperties.color || [.5,.5,.5];
-    xObj.opacity = renderProperties.opacity || 1;
+    xObj['color'] = renderProperties.color || [.5,.5,.5];
+    xObj['opacity'] = renderProperties.opacity || 1;
 }
 
 

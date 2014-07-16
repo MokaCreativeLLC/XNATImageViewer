@@ -944,6 +944,7 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
  * @private
  */
 xiv.ui.Modal.prototype.onViewBoxError_ = function(){
+
     var draggers = 
 	goog.dom.getElementsByClass(
 	    'xiv-ui-thumbnailgallery-thumbnail-dragging');

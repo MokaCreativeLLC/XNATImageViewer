@@ -63,7 +63,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
   // X.TIMER(this._classname + '.parse');
   // needed, for renderer2d and 3d legacy...
 
-  window.console.log(object);
+    //window.console.log(object);
 
   object.MRI = {};
   object.MRI.loaded_files = 0;

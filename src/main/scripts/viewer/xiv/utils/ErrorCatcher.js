@@ -501,14 +501,24 @@ function(opt_errorMsg, opt_url, opt_lineNumber){
 
 
 /**
- * @inheritDoc
+ * @public
  */
-xiv.utils.ErrorCatcher.prototype.dispose = function(){
-    goog.base(this, 'dispose');
+xiv.utils.ErrorCatcher.prototype.clear = function(){
     if (goog.isDefAndNotNull(this.ErrorDialog_)){
 	this.ErrorDialog_.dispose();
 	delete this.ErrorDialog_;
     }
+}
+
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.utils.ErrorCatcher.prototype.dispose = function(){
+    goog.base(this, 'dispose');
+    this.clear();
     delete this.windowConsoleLog_;
     delete this.newConsoleLog_;
     delete this.dialogParent_;
@@ -529,5 +539,7 @@ goog.exportSymbol('xiv.utils.ErrorCatcher.prototype.setDialogParent',
 	xiv.utils.ErrorCatcher.prototype.setDialogParent);
 goog.exportSymbol('xiv.utils.ErrorCatcher.prototype.waitForError',
 	xiv.utils.ErrorCatcher.prototype.waitForError);
+goog.exportSymbol('xiv.utils.ErrorCatcher.prototype.clear',
+	xiv.utils.ErrorCatcher.prototype.clear);
 goog.exportSymbol('xiv.utils.ErrorCatcher.prototype.dispose',
 	xiv.utils.ErrorCatcher.prototype.dispose);

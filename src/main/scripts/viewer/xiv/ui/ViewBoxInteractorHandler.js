@@ -13,6 +13,7 @@ goog.require('goog.events');
 goog.require('goog.string');
 goog.require('goog.events.KeyHandler');
 goog.require('goog.events.Event');
+goog.require('goog.events.EventType');
 goog.require('goog.object');
 goog.require('goog.array');
 
@@ -101,8 +102,18 @@ function (ViewBox, Renderer, LayoutHandler, Dialogs) {
      * @type {Object.<string, ?Array.<number>>}
      */
     this.mouseXY_ = {
-	prev: null,
-	curr: null,
+	'p': null,
+	'c': null,
+    } 
+
+
+    /**
+     * @private
+     * @type {Object.<string, number>}
+     */
+    this.currMouse_ = {
+	x: null,
+	y: null,
     } 
 
 
@@ -111,9 +122,9 @@ function (ViewBox, Renderer, LayoutHandler, Dialogs) {
      * @type {Object.<string, ?boolean>}
      */
     this.mouseDown_ = {
-	left: false,
-	middle: false,
-	right: false
+	'l': false,
+	'm': false,
+	'r': false
     } 
 
 
@@ -122,10 +133,10 @@ function (ViewBox, Renderer, LayoutHandler, Dialogs) {
      * @type {Object.<string, Object.<string, goog.events.Key>>}
      */
     this.mouseEvents_ = {
-	up: {},
-	down: {},
-	out: {},
-	over: {}
+	'up': {},
+	'dn': {},
+	'ot': {},
+	'ov': {}
     } 	
 
     //
@@ -151,6 +162,13 @@ function (ViewBox, Renderer, LayoutHandler, Dialogs) {
     if (this.useZoomFollower_){
 	this.createZoomFollower_();
     }
+
+
+    //
+    // Sadly, we have to globaly listen for this.
+    //
+    document.addEventListener('mousemove', 
+			      this.storeCurrentMouse_.bind(this), false);
 }
 goog.inherits(xiv.ui.ViewBoxInteractorHandler, goog.events.EventTarget);
 goog.exportSymbol('xiv.ui.ViewBoxInteractorHandler', 
@@ -289,6 +307,16 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dialogKeys_ = {};
  * @type {Array.<xiv.ui.ctrl.XtkController>}
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.volumeToggles_;
+
+
+
+
+/**
+ * @private
+ * @type {!boolean}
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.isMouseOverViewBox_ = false;
+
 
 
 
@@ -472,70 +500,85 @@ xiv.ui.ViewBoxInteractorHandler.prototype.setCursorZoomOut_ = function(e) {
  * @private
  * @param {goog.events.Event} e
  */
+xiv.ui.ViewBoxInteractorHandler.prototype.onViewBoxMouseOver_ = function(e) {
+    this.isMouseOverViewBox_ = true;
+}
+
+
+
+/**
+ * @private
+ * @param {goog.events.Event} e
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.onViewBoxMouseOut_ = function(e) {
+    this.isMouseOverViewBox_ = false;
+}
+
+
+
+/**
+ * @private
+ * @param {goog.events.Event} e
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.storeCurrentMouse_ = function(e){
+    this.currMouse_.x = e.clientX || e.pageX; 
+    this.currMouse_.y = e.clientY || e.pageY 
+    //window.console.log('curr mouse', this.currMouse_);
+};
+
+
+
+/**
+ * @private
+ * @param {goog.events.Event} e
+ */
 xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
 
     //
     // Store the plane being hovered over
     //
     this.currMouseRenderer_ = e.target;
-    //window.console.log(this.currMouseRenderer_.getOrientation());
-
+    /*
+    window.console.log('onMouseOver_', 
+		       this.currMouseRenderer_.getOrientation(), 
+		       e);
+		       */
     //
     // Store the mouse positions
     //
-    this.mouseXY_.prev = this.mouseXY_.curr;
-    this.mouseXY_.curr = e.mousePosition;
-
-
-
+    this.mouseXY_['p'] = this.mouseXY_['c'];
+    this.mouseXY_['c'] = [this.currMouse_.x, this.currMouse_.y];
 
 
     //
     // Do nothing if no previous mouse position
     //
-    if (this.mouseXY_.prev == null) {return}
-
-    //
-    // Shift down means slice navigation --> hide interactors
-    //
-    if (e.shiftDown){
-	if (!this.shiftDown_){
-	    this.shiftDown_ = true;
-	    this.onRenderPlaneShiftDown_();
-	    return;
-	}
-    } 
-    else {
-	if (this.shiftDown_){
-	    this.showInteractors();
-	    this.syncSlidersToVolume_();
-	    this.syncAllCrosshairs();
-	    this.shiftDown_ = false;
-	}
-    }
+    if (this.mouseXY_['p'] == null) {return}
 
     //
     // run calculations
     //
     var mouseVec = 
-	(new goog.math.Vec2(this.mouseXY_.curr[0], 
-			    this.mouseXY_.curr[1])).add(
-				new goog.math.Vec2(this.mouseXY_.prev[0], 
-						   this.mouseXY_.prev[1]));
+	(new goog.math.Vec2(this.mouseXY_['c'][0], 
+			    this.mouseXY_['c'][1])).add(
+				new goog.math.Vec2(this.mouseXY_['p'][0], 
+						   this.mouseXY_['p'][1]));
     var mouseDist = Math.sqrt(
-	Math.pow(this.mouseXY_.curr[0] - this.mouseXY_.prev[0], 2) + 
-	    Math.pow(this.mouseXY_.curr[1] - this.mouseXY_.prev[1], 2)); 
+	Math.pow(this.mouseXY_['c'][0] - this.mouseXY_['p'][0], 2) + 
+	    Math.pow(this.mouseXY_['c'][1] - this.mouseXY_['p'][1], 2)); 
 
-    var xDist = this.mouseXY_.curr[0] - this.mouseXY_.prev[0];
-    var yDist = this.mouseXY_.curr[1] - this.mouseXY_.prev[1];
+    var xDist = this.mouseXY_['c'][0] - this.mouseXY_['p'][0];
+    var yDist = this.mouseXY_['c'][1] - this.mouseXY_['p'][1];
 
-    //window.console.log("MOUSEMOVE", this.ctrlDown_, this.mouseDown_.right);
+    //window.console.log("vbih zooming?", this.zooming_);
+    //window.console.log("vbih mousedown-right", this.mouseDown_['r']);
+    //window.console.log("vbih mousedown-left", this.mouseDown_['l']);
 
     if (this.useZoomFollower_){
 	this.zoomFollower_.style.visibility = 'hidden';
     }
 
-
+    //window.console.log('vbih: Zooming?', this.zooming_);
     //
     // ZOOM
     //
@@ -544,7 +587,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
 	    this.updateZoomFollower_();
 	}
 	this.setCursorZoomIn_();	
-	if (this.mouseDown_.left){
+	if (this.mouseDown_['l']){
 	    this.onRenderPlaneZoom_(xDist, yDist);
 	}
     }
@@ -554,7 +597,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
     //
     else if (this.panning_) {
 	this.setCursorGrab_();
-	if (this.mouseDown_.left) {	
+	if (this.mouseDown_['l']) {	
 	    this.onRenderPlanePan_(xDist, yDist);
 	}
     }
@@ -582,15 +625,15 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOut_ = function(e) {
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onMouseDown_ = function(e) {
     if (e.button == 0) {
-	this.mouseDown_.left = true;
+	this.mouseDown_['l'] = true;
     } 
     else if (e.button == 1){
-	this.this.mouseDown_.middle = true;
+	this.this.mouseDown_['m'] = true;
     }
     else if (e.button == 2){
-	this.mouseDown_.right = true;
+	this.mouseDown_['r'] = true;
     }
-    //window.console.log("DOWN", e, this.mouseDown_.left, this.mouseDown_.right);
+    //window.console.log("DOWN", e, this.mouseDown_['l'], this.mouseDown_['r']);
 }
 
 
@@ -601,13 +644,13 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseDown_ = function(e) {
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onMouseUp_ = function(e) {
     if (e.button == 0) {
-	this.mouseDown_.left = false;
+	this.mouseDown_['l'] = false;
     } 
     else if (e.button == 1){
-	this.this.mouseDown_.middle = false;
+	this.this.mouseDown_['m'] = false;
     }
     else if (e.button == 2){
-	this.mouseDown_.right = false;
+	this.mouseDown_['r'] = false;
     }
 }
 
@@ -615,10 +658,13 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseUp_ = function(e) {
 
 
 /**
+ * @param {Event} event
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
-    //window.console.log('On key:', e.keyCode, this.dialogKeys_);
+    window.console.log('On key:', e.keyCode, this.dialogKeys_);
+    //window.console.log("IS MOUSE OVER", this.isMouseOverViewBox_);
+    if (!this.isMouseOverViewBox_) { return }
 
     // Arrow keys
     if ((e.keyCode - 40 >= -3) && (e.keyCode - 40 <= 0)){
@@ -674,7 +720,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
 
     case 72: // H (hand)
     case 80: // P (pan)
-	window.console.log('\n\nfire pan');
+	//window.console.log('\n\nfire pan');
 	this.ViewBox_.fireToggleButton(
 	    xiv.ui.ViewBoxInteractorHandler.TOGGLEABLE.TWODPAN);
 	break;
@@ -686,6 +732,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
 
 
     case 86: // V (Volumes)
+	//window.console.log("VOLUME FIRE", e.keyCode);
 	this.ViewBox_.fireToggleButton(this.dialogKeys_['volumes']);
 	break;
 
@@ -851,16 +898,32 @@ xiv.ui.ViewBoxInteractorHandler.prototype.storeMouseCoords_ = function(e){
 xiv.ui.ViewBoxInteractorHandler.prototype.listenForMouseEvents_ = 
 function() {
 
+    this.mouseEvents_['ov']['ViewBox'] = 
+	goog.events.listen(
+	    this.ViewBox_.getViewFrame(), 
+	    goog.events.EventType.MOUSEENTER, 
+	    this.onViewBoxMouseOver_.bind(this))
+
+    this.mouseEvents_['ov']['ViewBox'] = 
+	goog.events.listen(
+	    this.ViewBox_.getViewFrame(), 
+	    goog.events.EventType.MOUSELEAVE, 
+	    this.onViewBoxMouseOut_.bind(this))
+
+
     //
     // Mouseover for every render plane
     //
     this.loopIR_(
     function(renderPlane, renderPlaneOr, planeInteractors, volume){
+
+	window.console.log("MOUSEOVER LISTEN", 
+			   goog.events.EventType.MOUSEOVER);
 	//
 	// MOUSEOVER -- (this one is a little different: we attach it to the 
 	//               renderer instead of the canvas)
 	//
-	this.mouseEvents_.over[renderPlaneOr] = 
+	this.mouseEvents_['ov'][renderPlaneOr] = 
 	    goog.events.listen(
 		renderPlane.getRenderer(), 
 		goog.events.EventType.MOUSEOVER, 
@@ -886,7 +949,7 @@ function() {
 	//
 	// MOUSEOUT
 	//
-	this.mouseEvents_.out[renderPlaneOr] = 
+	this.mouseEvents_['ot'][renderPlaneOr] = 
 	    goog.events.listen(renderCanv,  
 			       goog.events.EventType.MOUSEOUT, 
 			       this.onMouseOut_.bind(this))
@@ -895,7 +958,7 @@ function() {
 	//
 	// MOUSEDOWN
 	//
-	this.mouseEvents_.down[renderPlaneOr] = 
+	this.mouseEvents_['dn'][renderPlaneOr] = 
 	    goog.events.listen(
 		renderCanv, 
 		goog.events.EventType.MOUSEDOWN, 
@@ -904,7 +967,7 @@ function() {
 	//
 	// MOUSEUP
 	//
-	this.mouseEvents_.up[renderPlaneOr] = 
+	this.mouseEvents_['up'][renderPlaneOr] = 
 	    goog.events.listen(
 		renderCanv,  
 		goog.events.EventType.MOUSEUP, 
@@ -1348,10 +1411,11 @@ function(ctrl, typeKey){
 
     if (!ctrl.getXObj()[xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY]){
 	goog.dom.removeNode(ctrl.getElement());
+	
 	ctrl.getElement().style.visibility = 'hidden';
 	ctrl.getElement().style.height = '0px';
     } 
-    else if (ctrl.getXObj().labelmap.visible &&
+    else if (ctrl.getXObj()['labelmap']['visible'] &&
 	     !ctrl.getComponent().isChecked()){
 	ctrl.getComponent().setChecked(true);
     }
@@ -1468,7 +1532,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
 	var levelMaxVal = set.hist.getLevelByPixelThreshold(
 	    xiv.ui.ctrl.Histogram.LEVEL_CUTOFF);
 	//window.console.log("AUTO LEVEL", hist, levelMax, levelMaxVal);
-	set.levelMax.getComponent().setValue(levelMaxVal)
+	set.levelMax.getComponent().setValue(levelMaxVal);
+	set.hist.update();
     })
 }
 
@@ -2331,8 +2396,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.updateZoomFollower_ = function(){
 	goog.dom.append(this.currMouseRenderer_.container,
 			this.zoomFollower_);
 	this.zoomFollower_.style.visibility = 'visible';
-	this.zoomFollower_.style.left = this.mouseXY_.curr[0] + 20 + 'px';
-	this.zoomFollower_.style.top = this.mouseXY_.curr[1]  + 'px';
+	this.zoomFollower_.style.left = this.mouseXY_['c'][0] + 20 + 'px';
+	this.zoomFollower_.style.top = this.mouseXY_['c'][1]  + 'px';
     }
 }
 
@@ -2366,6 +2431,15 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createZoomFollower_ = function(){
 xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
     goog.base(this, 'dispose');
     
+    //
+    // Sadly, we have to globaly listen for this.
+    //
+    document.removeEventListener('mousemove', 
+				 this.storeCurrentMouse_.bind(this));
+    document.removeEventListener('mousemove', 
+				 this.storeCurrentMouse_);
+
+
     if (goog.isDefAndNotNull(this.keyHandler_)){
 	//window.console.log('disposing key handler');
 	this.keyHandler_.dispose();
@@ -2423,7 +2497,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
     delete this.zooming_;
     delete this.panning_;
 
-
+    delete this.isMouseOverViewBox_;
     delete this.ViewBox_;
     delete this.Renderer_;
     delete this.LayoutHandler_;

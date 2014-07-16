@@ -539,6 +539,18 @@ X.volume.prototype.slicing_ = function() {
       // GO reslice!
       var _sliceOrigin = goog.vec.Vec3.createFloat32();
 
+	/**
+	window.console.log('X', this._childrenInfo[xyz]._solutionsLine[0][0][0], 
+			   this._childrenInfo[xyz]._sliceDirection[0]);
+	window.console.log('Y', this._childrenInfo[xyz]._solutionsLine[0][0][1], 
+			   this._childrenInfo[xyz]._sliceDirection[1]);
+	window.console.log('Z', this._childrenInfo[xyz]._solutionsLine[0][0][2], 
+			   this._childrenInfo[xyz]._sliceDirection[2]);
+	*/
+	window.console.log(xyz, ' plane ' , this._childrenInfo[xyz]._sliceNormal, 
+			   this._childrenInfo[xyz], this._IJKVolume, this._BBox);
+			   
+
       _sliceOrigin[0] = this._childrenInfo[xyz]._solutionsLine[0][0][0] + this._childrenInfo[xyz]._sliceDirection[0]*parseInt(currentIndex, 10);
       _sliceOrigin[1] = this._childrenInfo[xyz]._solutionsLine[0][0][1] + this._childrenInfo[xyz]._sliceDirection[1]*parseInt(currentIndex, 10);
       _sliceOrigin[2] = this._childrenInfo[xyz]._solutionsLine[0][0][2] + this._childrenInfo[xyz]._sliceDirection[2]*parseInt(currentIndex, 10);
@@ -551,7 +563,12 @@ X.volume.prototype.slicing_ = function() {
         this._labelmap._children[xyz].modified(true);
       }
 
-      var _slice = X.parser.reslice2(_sliceOrigin, this._childrenInfo[xyz]._sliceXYSpacing, this._childrenInfo[xyz]._sliceNormal, this._childrenInfo[xyz]._color, this._BBox, this._IJKVolume, this, true, null);
+      var _slice = X.parser.reslice2(_sliceOrigin, 
+				     this._childrenInfo[xyz]._sliceXYSpacing, 
+				     this._childrenInfo[xyz]._sliceNormal, 
+				     this._childrenInfo[xyz]._color, 
+				     this._BBox, 
+				     this._IJKVolume, this, true, null);
 
       if(this.hasLabelMap){
         _slice._labelmap = _slice._texture;
