@@ -420,7 +420,7 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 
 	    if (ViewableGroup.getCategory().toLowerCase() == 'scans'){
 		window.console.log('Turning off reslicing for scan');
-		currXObj['reslicing'] = false;
+		//currXObj['reslicing'] = false;
 		//currXObj['transform'].rotateX(45);
 		//currXObj['transform'].rotateY(45);
 		//currXObj['transform'].rotateZ(45);
