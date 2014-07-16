@@ -295,7 +295,7 @@ xiv.ui.ctrl.Histogram.prototype.tallyLevels_ = function() {
     //
     // Increment the value counts and the total pixels
     //
-    var xObj = this.getXObj(), i = 0, len = xObj['max'];
+    var xObj = this.getXObj(), len = xObj['max'];
 
 
     //window.console.log('he', xObj['image'], xObj['image']);
@@ -314,9 +314,10 @@ xiv.ui.ctrl.Histogram.prototype.tallyLevels_ = function() {
 
 		//window.console.log('pixelData', pixelData);
 
-		if (!goog.isDefAndNotNull(this.levels_)){
+		if (this.levels_ == null){
 		    this.levels_ = [];
-		    for(; i <= len; i++) { this.levels_.push(0) };
+		    var i = 0;
+		    for(i=0; i <= len; i++) { this.levels_.push(0) };
 		}
 
 		this.levels_[parseInt(pixelData)]++;
