@@ -452,7 +452,7 @@ xiv.start.prototype.onModalAddSubjectsClicked_ = function() {
 	// Expand the init Subject's zippy and store that zippy 
 	// to expand the experiment after
 	//
-	//window.console.log("SUBN JH", subjNode);
+	window.console.log("SUBN JH", subjNodes);
 	goog.array.forEach(subjNodes, function(subjNode){
 	    this.createFoldersFromTreeNode_(subjNode);
 	    //

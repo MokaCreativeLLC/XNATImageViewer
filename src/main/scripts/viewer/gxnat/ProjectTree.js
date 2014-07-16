@@ -622,15 +622,29 @@ function(opt_onNodeAdded, opt_onDone) {
     //
     // Query strings for getting the subject list
     //
-    //var subjectsUri = this.Proj_[gxnat.ProjectTree.PATH_KEY]
-    //['originalUrl'] + '/subjects';
-
+    //
+    // IMPORTANT PLEASE READ!!!
+    //
+    // This method of querying doesn not retrieve subjects that are shared
+    // by the project, rather subjects only 'owned' by the given project.
+    // We will not use this method for that reason.
+    //
+    /**
     var subjectsUri = this.Proj_[gxnat.ProjectTree.PATH_KEY]['prefix'] +
-	'/subjects';
+    '/subjects';
     var subjUriSuffix = '&project=' +
 	this.Proj_[gxnat.ProjectTree.PATH_KEY]['projects'] + 
 	gxnat.ProjectTree.getColumnQuery(gxnat.ProjectTree.SUBJECT_METADATA);
-    //window.console.log(subjectsUri, subjUriSuffix);
+    */
+
+
+    var subjectsUri = this.Proj_[gxnat.ProjectTree.PATH_KEY]
+    ['originalUrl'] + '/subjects';
+    var subjUriSuffix = 
+	gxnat.ProjectTree.getColumnQuery(gxnat.ProjectTree.SUBJECT_METADATA);
+
+
+    window.console.log('load subjects', subjectsUri, subjUriSuffix);
 
 
     //
@@ -644,7 +658,7 @@ function(opt_onNodeAdded, opt_onDone) {
 	//
 	goog.array.forEach(subjJsons, function(subjJson){
 
-
+	    window.console.log(subjJson);
 	    //
 	    // load subject
 	    //

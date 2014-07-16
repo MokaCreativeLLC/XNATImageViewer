@@ -768,7 +768,7 @@ xiv.ui.Modal.prototype.initButtons_ = function() {
  * @public
  */
 xiv.ui.Modal.prototype.addAddSubjectsToProjectTab = function() {
-    window.console.log('add add');
+    //window.console.log('add add');
     //
     // Create button
     //
