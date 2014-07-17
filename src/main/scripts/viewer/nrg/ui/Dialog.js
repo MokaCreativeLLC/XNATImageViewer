@@ -149,7 +149,8 @@ function(opt_eltMouseover) {
     this.closeButton_.style.visibility = 'hidden';
 
     if (goog.isDefAndNotNull(opt_eltMouseover)){
-	nrg.style.setHoverClass(this.getElement(), opt_eltMouseover,
+	nrg.style.setHoverClass(this.getElement(), 
+				opt_eltMouseover,
 				null, null,
         function(){
 	    this.titleElt_.style.visibility = 'visible';

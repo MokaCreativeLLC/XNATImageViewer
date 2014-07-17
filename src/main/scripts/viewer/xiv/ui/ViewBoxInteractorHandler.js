@@ -311,13 +311,6 @@ xiv.ui.ViewBoxInteractorHandler.prototype.volumeToggles_;
 
 
 
-/**
- * @private
- * @type {!boolean}
- */
-xiv.ui.ViewBoxInteractorHandler.prototype.isMouseOverViewBox_ = false;
-
-
 
 
 /**
@@ -500,26 +493,6 @@ xiv.ui.ViewBoxInteractorHandler.prototype.setCursorZoomOut_ = function(e) {
  * @private
  * @param {goog.events.Event} e
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.onViewBoxMouseOver_ = function(e) {
-    this.isMouseOverViewBox_ = true;
-}
-
-
-
-/**
- * @private
- * @param {goog.events.Event} e
- */
-xiv.ui.ViewBoxInteractorHandler.prototype.onViewBoxMouseOut_ = function(e) {
-    this.isMouseOverViewBox_ = false;
-}
-
-
-
-/**
- * @private
- * @param {goog.events.Event} e
- */
 xiv.ui.ViewBoxInteractorHandler.prototype.storeCurrentMouse_ = function(e){
     this.currMouse_.x = e.clientX || e.pageX; 
     this.currMouse_.y = e.clientY || e.pageY 
@@ -539,7 +512,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
     //
     this.currMouseRenderer_ = e.target;
     /*
-    window.console.log('onMouseOver_', 
+    window.console.log('onMouseEnter_', 
 		       this.currMouseRenderer_.getOrientation(), 
 		       e);
 		       */
@@ -597,6 +570,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
     //
     else if (this.panning_) {
 	this.setCursorGrab_();
+
+	window.console.log(this.mouseDown_);
 	if (this.mouseDown_['l']) {	
 	    this.onRenderPlanePan_(xDist, yDist);
 	}
@@ -609,7 +584,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
  * @private
  * @param {goog.events.Event} e
  */
-xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOut_ = function(e) {
+xiv.ui.ViewBoxInteractorHandler.prototype.onMouseLeave_ = function(e) {
     this.clearCursorStyle_();
     this.currMouseRenderer_ = null;
     if (this.useZoomFollower_){
@@ -664,7 +639,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseUp_ = function(e) {
 xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
     window.console.log('On key:', e.keyCode, this.dialogKeys_);
     //window.console.log("IS MOUSE OVER", this.isMouseOverViewBox_);
-    if (!this.isMouseOverViewBox_) { return }
+    if (!this.ViewBox_.isMouseOver()) { return }
 
     // Arrow keys
     if ((e.keyCode - 40 >= -3) && (e.keyCode - 40 <= 0)){
@@ -898,18 +873,6 @@ xiv.ui.ViewBoxInteractorHandler.prototype.storeMouseCoords_ = function(e){
 xiv.ui.ViewBoxInteractorHandler.prototype.listenForMouseEvents_ = 
 function() {
 
-    this.mouseEvents_['ov']['ViewBox'] = 
-	goog.events.listen(
-	    this.ViewBox_.getViewFrame(), 
-	    goog.events.EventType.MOUSEENTER, 
-	    this.onViewBoxMouseOver_.bind(this))
-
-    this.mouseEvents_['ov']['ViewBox'] = 
-	goog.events.listen(
-	    this.ViewBox_.getViewFrame(), 
-	    goog.events.EventType.MOUSELEAVE, 
-	    this.onViewBoxMouseOut_.bind(this))
-
 
     //
     // Mouseover for every render plane
@@ -947,12 +910,12 @@ function() {
 
 
 	//
-	// MOUSEOUT
+	// MOUSELEAVE
 	//
 	this.mouseEvents_['ot'][renderPlaneOr] = 
 	    goog.events.listen(renderCanv,  
-			       goog.events.EventType.MOUSEOUT, 
-			       this.onMouseOut_.bind(this))
+			       goog.events.EventType.MOUSELEAVE, 
+			       this.onMouseLeave_.bind(this))
 
 
 	//
@@ -1563,7 +1526,13 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
 	//
 	goog.object.forEach(set, function(ctrl, key){
 	    if ((ctrl != set.hist) && (ctrl != set.reset)){
-		ctrl[defaultTag] = ctrl.getComponent().getValue();
+		if (ctrl.getLabel().innerHTML.indexOf('Window Min') > -1){
+		    //window.console.log("SETTING MIN");
+		    ctrl[defaultTag] = 0;
+		} 
+		else {
+		    ctrl[defaultTag] = ctrl.getComponent().getValue();
+		}
 	    }
 	})
     })
@@ -1580,7 +1549,9 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
 	    function(){
 		goog.object.forEach(set, function(ctrl, key){
 		    if ((ctrl != set.hist) && (ctrl != set.reset)){
+			 ctrl.getValueInput().value = ctrl[defaultTag];
 			 ctrl.getComponent().setValue(ctrl[defaultTag]);
+
 		    }
 		})
 	    })
@@ -2391,8 +2362,7 @@ function() {
 */
 xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
 
-    var levelDia = this.Dialogs_.getDialogs()[
-	this.dialogKeys_['levels']];
+    var levelDia = this.Dialogs_.getDialogs()[this.dialogKeys_['levels']];
 
     //
     // Add the new class
@@ -2574,7 +2544,6 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
     delete this.zooming_;
     delete this.panning_;
 
-    delete this.isMouseOverViewBox_;
     delete this.ViewBox_;
     delete this.Renderer_;
     delete this.LayoutHandler_;

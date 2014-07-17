@@ -19,7 +19,7 @@
 .xiv-ui-viewboxinteractorhandler-generic-zippytree {
     top: 30px;
     width: calc(100% - 20px);
-    height: calc(100% - 50px);
+    height: calc(100% - 30px);
 }
 
 
@@ -92,7 +92,7 @@
     top: 0px;
     left: 0px;
     width: 150px;
-    height: 400px;
+    height: 390px;
     z-index: 10;
     border: none;
     cursor: default;

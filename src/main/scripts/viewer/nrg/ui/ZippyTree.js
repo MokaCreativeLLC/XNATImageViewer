@@ -653,7 +653,7 @@ nrg.ui.ZippyTree.prototype.createNode_ = function(title, parent, pNode) {
     //
     if (pNode.getHeader().parentNode == this.rootElt_ &&
 	this.rootElt_.childNodes.length == 2){
-	node.getHeader().style.marginTop = '0px';
+	node.getHeader().style.marginTop = '5px';
     }
 
     //

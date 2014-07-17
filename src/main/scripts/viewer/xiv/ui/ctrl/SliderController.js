@@ -159,7 +159,7 @@ xiv.ui.ctrl.SliderController.prototype.createValueInput_ = function() {
  */
 xiv.ui.ctrl.SliderController.prototype.onValueInput_ = function(e){
 
-    window.console.log("on value input");
+    //window.console.log("on value input");
     var slider = this.getComponent();
     var val = parseFloat(this.valueInput_.value);
     val = goog.math.clamp(val, slider.getMinimum(),

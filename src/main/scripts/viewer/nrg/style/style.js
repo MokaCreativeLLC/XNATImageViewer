@@ -465,8 +465,8 @@ nrg.style.setHoverClass = function(elt, className,
 	    opt_onMouseout();
 	}
     }
-    goog.events.listen(elt, goog.events.EventType.MOUSEOVER, applyHover);
-    goog.events.listen(elt, goog.events.EventType.MOUSEOUT, removeHover);
+    goog.events.listen(elt, goog.events.EventType.MOUSEENTER, applyHover);
+    goog.events.listen(elt, goog.events.EventType.MOUSELEAVE, removeHover);
 
 
     if (opt_eventFindTuneMethod) {

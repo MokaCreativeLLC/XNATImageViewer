@@ -102,6 +102,9 @@ xiv.ui.ViewBox = function () {
     // update style
     //
     this.updateStyle();
+
+
+    this.listenForMouseEvents_();
 }
 goog.inherits(xiv.ui.ViewBox, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.ViewBox', xiv.ui.ViewBox);
@@ -1908,6 +1911,42 @@ xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
 }
 
 
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.isMouseOver_ = false;
+
+
+
+/**
+ * @return {!boolean}
+ * @public
+ */
+xiv.ui.ViewBox.prototype.isMouseOver = function(){
+    return this.isMouseOver_;
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.listenForMouseEvents_ = function(){
+    goog.events.listen(
+	this.getElement(), 
+	goog.events.EventType.MOUSEENTER, 
+	function(){
+	    this.isMouseOver_ = true;
+	}.bind(this))
+    
+    goog.events.listen(
+	this.getElement(), 
+	goog.events.EventType.MOUSELEAVE, 
+	function(){
+	    this.isMouseOver_ = false;
+	}.bind(this))
+}
+
 
 
 /**
@@ -1949,6 +1988,7 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     delete this.Viewables_;
     delete this.hasLoadComponents_;
     delete this.zipDownloading_;
+    delete this.isMouseOver_;
 }
 
 
@@ -2017,6 +2057,8 @@ goog.exportSymbol('xiv.ui.ViewBox.prototype.createToggleButton',
 	xiv.ui.ViewBox.prototype.createToggleButton);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.getToggleButtons',
 	xiv.ui.ViewBox.prototype.getToggleButtons);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.isMouseOver',
+	xiv.ui.ViewBox.prototype.isMouseOver);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.updateStyle',
 	xiv.ui.ViewBox.prototype.updateStyle);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.disposeInternal',

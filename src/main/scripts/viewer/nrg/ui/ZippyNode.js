@@ -85,7 +85,7 @@ function (title, parentElement, opt_expanded, opt_insertMethod) {
      */
     this.contentHolder_ = nrg.ui.ZippyNode.createZippyContentHolder_(title);
     parentElement.appendChild(this.contentHolder_); // IMPORTANT!!!!
-
+    //this.contentHolder_.style.marginTop = '20px';
 
     /**
      * @type {!goog.ui.AnimatedZippy | !goog.ui.Zippy}
