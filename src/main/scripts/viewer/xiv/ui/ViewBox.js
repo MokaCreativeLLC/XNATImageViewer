@@ -484,6 +484,9 @@ xiv.ui.ViewBox.prototype.setProgressBarPct_ = function(value){
  */
 xiv.ui.ViewBox.prototype.onRendering_ = function(e){
     this.highlight();
+    window.console.log('zip downloading', this.zipDownloading_,
+		       xiv.ui.ViewBox.ZIP_MED * e.value + 
+		       xiv.ui.ViewBox.ZIP_MED);
     if (this.zipDownloading_){
 	this.setProgressBarPct_(xiv.ui.ViewBox.ZIP_MED * e.value + 
 				xiv.ui.ViewBox.ZIP_MED);
@@ -907,6 +910,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 
 
 /**
+ * @type {!boolean}
  * @private
  */
 xiv.ui.ViewBox.prototype.zipDownloading_ = false;
