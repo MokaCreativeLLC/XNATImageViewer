@@ -360,6 +360,16 @@ xiv.ui.ViewBox.prototype.getLayoutHandler =  function() {
 
 
 /**
+ * @return {!nrg.ui.SlideInMenu} 
+ * @public
+ */
+xiv.ui.ViewBox.prototype.getLayoutMenu =  function() {
+    return this.LayoutMenu_;
+}
+
+
+
+/**
  * Get the associated ViewableGroupMenu for this object.
  * @return {!xiv.ui.ViewableGroupMenu} The ViewableGroupMenu object of the 
  *    ViewBox.
@@ -474,7 +484,13 @@ xiv.ui.ViewBox.prototype.setProgressBarPct_ = function(value){
  */
 xiv.ui.ViewBox.prototype.onRendering_ = function(e){
     this.highlight();
-    this.setProgressBarPct_(e.value);
+    if (this.zipDownloading_){
+	this.setProgressBarPct_(xiv.ui.ViewBox.ZIP_MED * e.value + 
+				xiv.ui.ViewBox.ZIP_MED);
+    }
+    else {
+	this.setProgressBarPct_(e.value);
+    }
 }
 
 
@@ -893,12 +909,29 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 /**
  * @private
  */
+xiv.ui.ViewBox.prototype.zipDownloading_ = false;
+
+
+
+/**
+ * @const
+ * @private
+ */
+xiv.ui.ViewBox.ZIP_MED = .5;
+
+
+
+/**
+ * @private
+ */
 xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
     //
     // Show a downloading state in the progress bar...
     //
     this.showSubComponent_(this.ProgressBarPanel_, 0);
     this.setProgressBarPct_(0);
+    this.zipDownloading_ = true;
+
 
     //
     // NOTE: this is in uncompressed format, so the download will be less
@@ -938,11 +971,24 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
 	    //window.console.log('Downloaded: ' + filesUrl + '!');
 	    ViewableSet.getViewables()[0].setFileDataFromZip(zip);
 	    this.renderViewableSet_(ViewableSet);
+	    this.zipDownloading_ = false;
 	}.bind(this), 
 
 	function(event) {
+	    //window.console.log(event, event['totalSize']);
 	    this.highlight();
-	    this.setProgressBarPct_(event.loaded/totalFileSize);
+
+	    if (event['totalSize'] > 0){
+		var val = event.loaded/event['totalSize'] * 
+					xiv.ui.ViewBox.ZIP_MED
+		//window.console.log("PROG", val);
+		this.setProgressBarPct_(event.loaded/event['totalSize'] * 
+					xiv.ui.ViewBox.ZIP_MED);
+	    }
+	    else if (totalFileSize > 0){
+		this.setProgressBarPct_(event.loaded/totalFileSize * 
+					xiv.ui.ViewBox.ZIP_MED);
+	    }
 	}.bind(this)
     );
 }
@@ -1898,6 +1944,7 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     // Primitive types
     delete this.Viewables_;
     delete this.hasLoadComponents_;
+    delete this.zipDownloading_;
 }
 
 
@@ -1928,6 +1975,8 @@ goog.exportSymbol('xiv.ui.ViewBox.prototype.getViewFrame',
 	xiv.ui.ViewBox.prototype.getViewFrame);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.getLayoutHandler',
 	xiv.ui.ViewBox.prototype.getLayoutHandler);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.getLayoutMenu',
+	xiv.ui.ViewBox.prototype.getLayoutMenu);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.getViewableGroupMenu',
 	xiv.ui.ViewBox.prototype.getViewableGroupMenu);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.highlight',

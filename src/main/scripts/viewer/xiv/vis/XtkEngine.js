@@ -424,7 +424,7 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 		//currXObj['transform'].rotateX(45);
 		//currXObj['transform'].rotateY(45);
 		//currXObj['transform'].rotateZ(45);
-		window.console.log(currXObj['transform']);
+		//window.console.log(currXObj['transform']);
 	    }
 	    xiv.vis.XtkEngine.setRenderProperties_Volume_(
 		currXObj, renderProps);

@@ -1,5 +1,5 @@
 /**
- * @preserve Copyright 2014 Washington Universityf
+ * @preserve Copyright 2014 Washington University
  * @author sunilk@mokacreativellc.com (Sunil Kumar)
  */
 goog.provide('xiv.ui.Modal');

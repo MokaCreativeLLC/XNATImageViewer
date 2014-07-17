@@ -371,15 +371,8 @@ xiv.start.prototype.begin = function() {
 	goog.dom.removeNode(this.Modal_.getPopupButton());
 	goog.dom.removeNode(this.Modal_.getCloseButton());
 
-	//
-	// Load the tree only when the tab is done with its init move
-	//
-	var timer = goog.Timer.callOnce(function(){
-	    delete timer;
-	    this.startDemoLoadChain_();
-	}.bind(this), this.introTabSlideTime_);
+	this.startDemoLoadChain_();
 	return;
-
     } 
 
     //
@@ -523,6 +516,7 @@ xiv.start.prototype.startDemoLoadChain_ = function(){
 	'scan' : (new xiv.sampleData.Scans()).getSamples()
     }    
     var viewable;
+    var allFolders = null;
 
     goog.object.forEach(sampleDatasets, function(sampleData, key){
 	goog.array.forEach(sampleData, function(sample){
@@ -534,19 +528,25 @@ xiv.start.prototype.startDemoLoadChain_ = function(){
 	    viewable.setSessionInfo(sample.metadata);
 	    viewable.setThumbnailUrl(sample.thumbnail);
 	    this.addViewableTreeToModal_(viewable, sample.folders);
+
+	    if (allFolders == null){
+		allFolders = sample.folders;
+	    }
+	    goog.array.forEach(sample.folders, function(folder){
+		if (!goog.array.contains(allFolders, folder)){
+		    allFolders.push(folder);
+		}
+	    })
+	    
 	}.bind(this))
     }.bind(this))
 
-    ThumbGallery.getZippyTree().expandAll();
-    /**
-    var thumb = ThumbGallery.createAndAddThumbnail(
-	ViewableTree, // The viewable
-	folderPath
-    );
-    ThumbGallery.setHoverParent(this.Modal_.getElement());
-    thumb.setImage(ViewableTree.getThumbnailUrl());
-    thumb.updateHoverable();
-    */
+
+    //
+    // Serially expand the nodes
+    //
+    nrg.ui.ZippyNode.serialExpand(allFolders, 
+				  ThumbGallery.getZippyTree());    
 }
 
 
@@ -584,7 +584,9 @@ xiv.start.prototype.startLiveLoadChain_ = function(){
 	//
 	if (nodeCount == 0){
 	    this.initProjNode_ = node;
-	    this.initProjFolderNode_ = zippyTree.setExpanded(folders[0])
+	    //this.initProjFolderNode_ = zippyTree.setExpanded(folders[0]);
+	    this.initProjFolderNode_ = zippyTree.getNodes()[folders[0]];
+	    zippyTree.setCollapsed(folders[0]);
 	}
 
 	//
@@ -593,8 +595,12 @@ xiv.start.prototype.startLiveLoadChain_ = function(){
 	if (nodeCount == 1){
 	    this.initSubjExpanding_ = true;
 	    this.initSubjNode_ = node;
+	    /**
 	    this.initSubjFolderNode_ = zippyTree.setExpanded(folders[1], 
-						this.initProjFolderNode_)
+	    this.initProjFolderNode_)
+	    */
+	    this.initSubjFolderNode_ = 
+		this.initProjFolderNode_.getNodes()[folders[1]];
 	}
 
 	//
@@ -603,9 +609,22 @@ xiv.start.prototype.startLiveLoadChain_ = function(){
 	if (nodeCount == 2){
 	    this.initExptExpanding_ = true;
 	    this.initExptNode_ = node;
+	    /**
 	    this.initExptFolderNode_ = 
 		zippyTree.setExpanded(folders[2], 
-				      this.initSubjFolderNode_)
+				      this.initSubjFolderNode_);
+	    */
+	    this.initExptFolderNode_ =  
+		this.initSubjFolderNode_.getNodes()[folders[2]];
+
+	    //
+	    // Expand the folders serially (makes for better UX).
+	    //
+	    nrg.ui.ZippyNode.serialExpand([ 
+		this.initProjFolderNode_,
+		this.initSubjFolderNode_,
+		this.initExptFolderNode_]);
+
 	}
 	nodeCount++;
     }.bind(this))

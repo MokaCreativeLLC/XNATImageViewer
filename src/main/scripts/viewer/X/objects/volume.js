@@ -547,9 +547,11 @@ X.volume.prototype.slicing_ = function() {
 	window.console.log('Z', this._childrenInfo[xyz]._solutionsLine[0][0][2], 
 			   this._childrenInfo[xyz]._sliceDirection[2]);
 	*/
+
+/*
 	window.console.log(xyz, ' plane ' , this._childrenInfo[xyz]._sliceNormal, 
 			   this._childrenInfo[xyz], this._IJKVolume, this._BBox);
-			   
+*/			   
 
       _sliceOrigin[0] = this._childrenInfo[xyz]._solutionsLine[0][0][0] + this._childrenInfo[xyz]._sliceDirection[0]*parseInt(currentIndex, 10);
       _sliceOrigin[1] = this._childrenInfo[xyz]._solutionsLine[0][0][1] + this._childrenInfo[xyz]._sliceDirection[1]*parseInt(currentIndex, 10);

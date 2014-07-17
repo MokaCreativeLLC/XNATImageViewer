@@ -309,6 +309,7 @@ nrg.ui.ZippyTree.prototype.getElement = function() {
 
 
 
+
 /**
  * @param {!string} folder The zippy folder to expand (id'd by title)
  * @param {nrg.ui.ZippyNode=} The opitional zippy node, defaults to 'this'.
@@ -317,6 +318,7 @@ nrg.ui.ZippyTree.prototype.getElement = function() {
 nrg.ui.ZippyTree.prototype.setExpanded = function(folder, opt_startNode) {
     return this.setNodeExpandCollapse_(folder, opt_startNode, true);
 }
+
 
 
 

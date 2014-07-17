@@ -917,8 +917,8 @@ function() {
     this.loopIR_(
     function(renderPlane, renderPlaneOr, planeInteractors, volume){
 
-	window.console.log("MOUSEOVER LISTEN", 
-			   goog.events.EventType.MOUSEOVER);
+	//window.console.log("MOUSEOVER LISTEN", 
+	//goog.events.EventType.MOUSEOVER);
 	//
 	// MOUSEOVER -- (this one is a little different: we attach it to the 
 	//               renderer instead of the canvas)
@@ -2446,8 +2446,23 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
 	    node.truncateHeaderLabel(10);
 	})
 
-
+    //
+    // Turn the dialog off for non-one plane views
+    //
+    var layout = this.ViewBox_.getLayoutMenu().getSelectedMenuItem();
+    switch (layout){
+    case 'Four-Up':
+    case 'Conventional':
+    case '2D Row':
+    case '2D Widescreen':
+	this.ViewBox_.fireToggleButton(this.dialogKeys_['levels'])
+	break;
+    }
+    
 }
+
+
+
 
 /**
  * @private

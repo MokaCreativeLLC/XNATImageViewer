@@ -220,6 +220,33 @@ nrg.ui.ZippyNode.createZippyHeader_ = function(title) {
 
 
 /**
+ * @param {!Array.<nrg.ui.ZippyNode> | !Array.<string>} nodes
+ * @param {?nrg.ui.ZippyNode} opt_startNode
+ * @private
+ */
+nrg.ui.ZippyNode.serialExpand = function(nodes, opt_startNode) {
+    var node = nodes[0];
+    if (goog.isString(node) && goog.isDefAndNotNull(opt_startNode)){
+	//window.console.log(node, opt_startNode.getNodes());
+	node = opt_startNode.getNodes()[node];
+    }
+    //window.console.log(node);
+
+    if (nodes.length > 1 && !node.getZippy().isExpanded()){
+	goog.events.listenOnce(
+	    node, 
+	    nrg.ui.ZippyNode.EventType.EXPANDED, function(){
+		nrg.ui.ZippyNode.serialExpand(goog.array.slice(nodes, 1), node);
+	    })
+    }
+    node.setExpanded(true);
+}
+
+
+
+
+
+/**
  * @const
  */
 nrg.ui.ZippyNode.NODE_STORT_TAG = goog.string.createUniqueString();
@@ -505,6 +532,8 @@ goog.exportSymbol('nrg.ui.ZippyNode.EventType', nrg.ui.ZippyNode.EventType);
 goog.exportSymbol('nrg.ui.ZippyNode.CSS_SUFFIX', nrg.ui.ZippyNode.CSS_SUFFIX);
 goog.exportSymbol('nrg.ui.ZippyNode.NODE_STORT_TAG',
 	nrg.ui.ZippyNode.NODE_STORT_TAG);
+goog.exportSymbol('nrg.ui.ZippyNode.serialExpand',
+	nrg.ui.ZippyNode.serialExpand);
 goog.exportSymbol('nrg.ui.ZippyNode.prototype.truncateHeaderLabel',
 	nrg.ui.ZippyNode.prototype.truncateHeaderLabel);
 goog.exportSymbol('nrg.ui.ZippyNode.prototype.getTitle',
