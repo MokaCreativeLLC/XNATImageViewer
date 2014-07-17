@@ -957,6 +957,11 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
     //
     // For samples
     //
+    if (!goog.isDefAndNotNull(firstFile)){
+	this.ErrorCatcher_.onError('No readable files in the data set!');
+	return;
+	
+    }
     if (goog.string.caseInsensitiveContains(firstFile, 
 					    xiv.SAMPLE_SCAN_PREFIX)){
 	var spl = firstFile.split(xiv.SAMPLE_SCAN_PREFIX);

@@ -113,8 +113,14 @@ xiv.ui.Thumbnail.prototype.createText_ = function(){
     // Checking the sessionInfo property (most ideal option) to make header.
     //
     var treeSessionInfo = this.ViewableTree_.getSessionInfo();
+
+    //window.console.log("TREE", treeSessionInfo);
+
     if (goog.isDefAndNotNull(treeSessionInfo['Scan ID'])){
 	headerText += treeSessionInfo['Scan ID'];
+    } 
+    else if (goog.isDefAndNotNull(treeSessionInfo['Name'])){
+	headerText = treeSessionInfo['Name'];
     }
 
     //

@@ -386,7 +386,7 @@ xiv.utils.ErrorCatcher.prototype.unlistenForConsoleOutput_ = function() {
 xiv.utils.ErrorCatcher.prototype.waitForError = function(toggle) {
     if (toggle === true) {
 	this.listenForConsoleOutput_();
-	window.onerror = this.onError_.bind(this);
+	window.onerror = this.onError.bind(this);
     } else {
 	window.onerror = undefined;
 	this.unlistenForConsoleOutput_();
@@ -401,12 +401,12 @@ xiv.utils.ErrorCatcher.prototype.waitForError = function(toggle) {
  * @param {?string} opt_errorMsg
  * @param {?string} opt_url
  * @param {?number} opt_lineNumber
- * @private
+ * @public
  */
-xiv.utils.ErrorCatcher.prototype.onError_ = 
+xiv.utils.ErrorCatcher.prototype.onError = 
 function(opt_errorMsg, opt_url, opt_lineNumber){
     
-    window.console.log('ON ERROR');
+    //window.console.log('ON ERROR');
 
     if (goog.isDefAndNotNull(this.ErrorDialog_)){
 	return;
@@ -541,5 +541,7 @@ goog.exportSymbol('xiv.utils.ErrorCatcher.prototype.waitForError',
 	xiv.utils.ErrorCatcher.prototype.waitForError);
 goog.exportSymbol('xiv.utils.ErrorCatcher.prototype.clear',
 	xiv.utils.ErrorCatcher.prototype.clear);
+goog.exportSymbol('xiv.utils.ErrorCatcher.prototype.onError',
+	xiv.utils.ErrorCatcher.prototype.onError);
 goog.exportSymbol('xiv.utils.ErrorCatcher.prototype.dispose',
 	xiv.utils.ErrorCatcher.prototype.dispose);
