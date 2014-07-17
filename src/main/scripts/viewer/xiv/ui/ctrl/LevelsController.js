@@ -19,6 +19,7 @@ goog.require('xiv.ui.ctrl.XtkController');
 goog.require('xiv.ui.ctrl.SliderController');
 goog.require('xiv.ui.ctrl.Histogram');
 goog.require('xiv.ui.ctrl.MasterController');
+goog.require('xiv.ui.ctrl.ButtonController');
 
 //-----------
 
@@ -106,7 +107,7 @@ xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
     var c2 = this.add_levelMax(xObj);
     var c3 = this.add_brightness(xObj, c1, c2);
     var c4 = this.add_contrast(xObj, c1, c2);
- 
+    var c5 = this.add_reset(xObj, c1, c2, c3, c4);
 
 
     //
@@ -127,6 +128,36 @@ xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
     //window.console.log('Auto-level images.');
 }
  
+
+
+
+/**
+ * @param {!X.object} xObj
+ * @return {xiv.ui.ctrl.XtkController}
+ * @protected
+ */
+xiv.ui.ctrl.LevelsController.prototype.add_reset = function(xObj) {
+    // create
+
+    
+    var ctrl = this.createController( 
+	xiv.ui.ctrl.ButtonController, 
+	null,
+	function(e){
+	    
+
+	}.bind(this));
+
+    // set folder
+    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, ctrl);
+
+    this.masterControllers.push(ctrl);
+    ctrl.setXObj(xObj);
+
+    return ctrl;
+}
+
+
 
 
 /**
@@ -381,6 +412,8 @@ goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.add',
 	xiv.ui.ctrl.LevelsController.prototype.add);
 goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.add_histogram',
 	xiv.ui.ctrl.LevelsController.prototype.add_histogram);
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.add_reset',
+	xiv.ui.ctrl.LevelsController.prototype.add_reset);
 goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.add_levelMin',
 	xiv.ui.ctrl.LevelsController.prototype.add_levelMin);
 goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.add_levelMax',

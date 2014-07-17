@@ -1365,7 +1365,9 @@ function(ctrl){
     // because LEVEL_MIN and LEVEL_MAX are often set to values 
     // that go beyond the slider values.
     //----------------------------------------
-    if (!(ctrl instanceof xiv.ui.ctrl.Histogram)){
+    if (!(ctrl instanceof xiv.ui.ctrl.Histogram) && 
+	  goog.isDefAndNotNull(ctrl.getComponent().updateStyle)){
+
 	ctrl.getComponent().updateStyle();
     } 
     else {
@@ -1504,6 +1506,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
 
     var ctrl, currFolders;
     var folderSet = [], ctrlSet = {};
+    var defaultTag = 'DEFAULT_' + goog.string.createUniqueString();
 
     goog.array.forEach(this.viewableCtrls_['levels']['all'], function(ctrl, i){
 	hist = null;
@@ -1518,23 +1521,73 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
 	    ctrlSet[folderStr] = {};	    
 	}
 
-	if (ctrl instanceof xiv.ui.ctrl.Histogram){
+	//
+	// Histogram
+	//
+	if (ctrl instanceof xiv.ui.ctrl.Histogram ){
 	    ctrlSet[folderStr].hist = ctrl;
 	} 
-	else if (ctrl.getLabel().innerHTML.indexOf('Window Max') > -1){
-	    ctrlSet[folderStr].levelMax = ctrl;
+
+	//
+	// Non-buttons
+	//
+	else if (!(ctrl instanceof xiv.ui.ctrl.ButtonController)){
+	    if (ctrl.getLabel().innerHTML.indexOf('Window Max') > -1){
+		ctrlSet[folderStr].windowMax = ctrl;
+	    } else {
+		ctrlSet[folderStr][goog.getUid(ctrl)] = ctrl;
+	    }
+	} 
+	
+	//
+	// Store the reset button
+	//
+	else {
+	    ctrlSet[folderStr].reset = ctrl;
 	}
+    }.bind(this))    
 
-    }.bind(this))
 
 
+    //
+    // Performs the initial auto-level
+    //
     goog.object.forEach(ctrlSet, function(set){
 	var levelMaxVal = set.hist.getLevelByPixelThreshold(
 	    xiv.ui.ctrl.Histogram.LEVEL_CUTOFF);
-	//window.console.log("AUTO LEVEL", hist, levelMax, levelMaxVal);
-	set.levelMax.getComponent().setValue(levelMaxVal);
+	set.windowMax.getComponent().setValue(levelMaxVal);
 	set.hist.update();
+
+	//
+	// Store the levels as defaults
+	//
+	goog.object.forEach(set, function(ctrl, key){
+	    if ((ctrl != set.hist) && (ctrl != set.reset)){
+		ctrl[defaultTag] = ctrl.getComponent().getValue();
+	    }
+	})
     })
+
+
+    
+    //
+    // When reset buttons are pressed, restore the defaults
+    //
+    goog.object.forEach(ctrlSet, function(set){
+	goog.events.listen(
+	    set.reset, 
+	    xiv.ui.ctrl.XtkController.EventType.CHANGE, 
+	    function(){
+		goog.object.forEach(set, function(ctrl, key){
+		    if ((ctrl != set.hist) && (ctrl != set.reset)){
+			 ctrl.getComponent().setValue(ctrl[defaultTag]);
+		    }
+		})
+	    })
+    })
+
+
+
 }
 
 
@@ -2361,12 +2414,21 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
     goog.array.forEach(
 	this.viewableCtrls_['levels']['all'], 
 	function(ctrl, i){
-	    if (!(ctrl instanceof xiv.ui.ctrl.Histogram)){
-		ctrl.getLabel().style.fontSize = '9px';
+	    if (!(ctrl instanceof xiv.ui.ctrl.Histogram) &&
+		!(ctrl instanceof xiv.ui.ctrl.ButtonController)){
+
+		var label = ctrl.getLabel()
+		if (goog.isDefAndNotNull(label)){
+		    label.style.fontSize = '9px';
+		}
+
 		ctrl.getElement().style.height = '45px';
 		ctrl.getComponent().getElement().style.top = '28px';
 		ctrl.getComponent().getElement().style.width = '115px';
-		ctrl.getComponent().updateStyle();
+		
+		if (goog.isDefAndNotNull(ctrl.getComponent().updateStyle)){
+		    ctrl.getComponent().updateStyle();
+		}
 	    }
 
 	}.bind(this))
