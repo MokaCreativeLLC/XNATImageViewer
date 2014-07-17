@@ -1,0 +1,14 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+.xiv-ui-layouts-interactors-zoomdisplay {
+    position: absolute;
+    top: 34px;
+    height: 20px;
+    width: 200px;
+    left: calc(100% - 210px);
+    text-align: right;
+    text-wrap: none;
+}
