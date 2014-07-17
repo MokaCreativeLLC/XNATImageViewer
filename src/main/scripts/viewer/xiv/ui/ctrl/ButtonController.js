@@ -100,8 +100,6 @@ goog.exportSymbol('xiv.ui.ctrl.ButtonController.ID_PREFIX',
 	xiv.ui.ctrl.ButtonController.ID_PREFIX);
 goog.exportSymbol('xiv.ui.ctrl.ButtonController.CSS_SUFFIX',
 	xiv.ui.ctrl.ButtonController.CSS_SUFFIX);
-goog.exportSymbol('xiv.ui.ctrl.ButtonController.prototype.setChecked',
-	xiv.ui.ctrl.ButtonController.prototype.setChecked);
 goog.exportSymbol(
     'xiv.ui.ctrl.ButtonController.prototype.dispatchComponentEvent',
     xiv.ui.ctrl.ButtonController.prototype.dispatchComponentEvent);
