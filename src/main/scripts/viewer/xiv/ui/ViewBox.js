@@ -567,6 +567,11 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 
 
     //
+    // Set zip downloading to false
+    //
+    this.zipDownloading_ = false;
+
+    //
     // Set the layout based the orientation of the ViewableTree
     //
     if (goog.isDefAndNotNull(this.ViewableTrees_[0].getOrientation())){
@@ -971,7 +976,6 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
 	    //window.console.log('Downloaded: ' + filesUrl + '!');
 	    ViewableSet.getViewables()[0].setFileDataFromZip(zip);
 	    this.renderViewableSet_(ViewableSet);
-	    this.zipDownloading_ = false;
 	}.bind(this), 
 
 	function(event) {
