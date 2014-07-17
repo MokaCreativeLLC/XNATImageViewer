@@ -1,0 +1,97 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.nrg-ui-thumbnail {
+    position: absolute;
+    width: 87px;
+    height: 87px;
+    top: 0px;
+    left: 0px;
+    cursor: pointer;
+    background-color: rgb(0,0,0);
+}
+
+
+.nrg-ui-thumbnail-selected {
+    border: solid 1px rgb(220,220,220);
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+
+}
+
+.nrg-ui-thumbnail-mouseover, .nrg-ui-thumbnail-highlight {
+    background-color: rgba(50,50,50, 1);
+    opacity: 1;
+    z-index: 10000;
+    overflow: visible;
+    color: rgb(255,255,255);
+}
+
+
+.nrg-ui-thumbnail-image, .nrg-ui-thumbnail-canvas {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    top: 8px;
+    left: 0px;	
+    overflow-y: hidden;
+    overflow-x: hidden;
+    border : solid;
+    border-color: rgb(100,100,100);
+    border-width : 1px;
+    border-radius: 0px;	 
+    cursor: pointer;
+}
+
+.nrg-ui-thumbnail-image-mouseover {
+    border: solid 1px white;
+}
+
+
+.nrg-ui-thumbnail-text {
+    position: absolute;
+    height: 70px;
+    top: 8px;
+    left: 86px;
+    font-size: 9;		
+    font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
+    white-space: nowrap;  
+    color : rgb(100,100,100);  
+    line-height: 17px;
+	
+}
+
+
+.nrg-ui-thumbnail-text-mouseover {
+    color : rgb(255,255,255);
+}
+
+
+.nrg-ui-thumbnail-canvas {
+    top: 8px;
+    left: 8px;
+}
+
+
+
+/*******
+* Active state
+********/
+
+.nrg-ui-thumbnail-text-active {
+    color : rgb(230,230,230);
+}
+
+.nrg-ui-thumbnail-active {
+    opacity: 1;
+}
+
+
+.nrg-ui-thumbnail-image-active {
+    border-color : rgb(230,230,230);
+}

@@ -1,0 +1,209 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+
+
+/*-----------
+*
+* Sagittal, Coronal and Transverse (One plane visible)
+*
+-------------/
+
+
+/* Hidden planes */
+.xiv-ui-viewlayout-sagittal-y, .xiv-ui-viewlayout-sagittal-z, .xiv-ui-viewlayout-sagittal-v,  .xiv-ui-viewlayout-coronal-x, .xiv-ui-viewlayout-coronal-z, .xiv-ui-viewlayout-coronal-v, .xiv-ui-viewlayout-transverse-x, .xiv-ui-viewlayout-transverse-y, .xiv-ui-viewlayout-transverse-v, .xiv-ui-viewlayout-3d-x, .xiv-ui-viewlayout-3d-y, .xiv-ui-viewlayout-3d-z{
+    visibility: hidden;
+    border: solid 1px rgb(120,120,120);
+    width: 50%;
+    height: 50%;
+    z-index: 0;
+}
+
+
+/* Visible Planes */
+.xiv-ui-viewlayout-sagittal-x, .xiv-ui-viewlayout-coronal-y, .xiv-ui-viewlayout-transverse-z, .xiv-ui-viewlayout-3d-v  {
+    width: 100%; 
+    height: 100%; 
+    top: 0%;
+    left: 0%;
+    visibility: visible;
+    margin-top: -1px;
+    margin-left: -1px;
+    border: solid 1px rgb(120,120,120);
+    z-Index: 1000 !important;
+}
+
+/** 3D can be 100% because there
+are no interactors*/
+.xiv-ui-viewlayout-3d-v  {
+    height: 100%; 
+}
+
+
+
+.xiv-ui-viewlayout-interactor-sagittal-x, .xiv-ui-viewlayout-interactor-coronal-y, .xiv-ui-viewlayout-interactor-transverse-z  {
+    position: absolute;
+    left: 5%;
+    width: 90%;
+    top: 100%;
+    margin-top: -30px; 
+    z-index: 1001 !important;
+    visibility: visible;
+}
+
+
+
+
+/*********************************
+* Conventional
+**********************************/
+
+.xiv-ui-viewlayout-conventional-x, .xiv-ui-viewlayout-conventional-y, .xiv-ui-viewlayout-conventional-z {
+    width: 33.33%; 
+    height: 43%; 
+    top: 57%;
+    position: absolute;
+    border: solid 1px rgb(120,120,120);
+    visibility: visible;
+    z-index: 0;
+
+}
+.xiv-ui-viewlayout-conventional-x {
+    margin-left: -2px;
+    left: 0%; 
+}
+.xiv-ui-viewlayout-conventional-y {
+    margin-left: -1px;
+    left: 33.33%; 
+}
+.xiv-ui-viewlayout-conventional-z {
+    left: 66.66%; 
+    margin-left: -1px;
+}
+.xiv-ui-viewlayout-conventional-v {
+    margin-top: -1px;
+    width: 100%; 
+    height: 57%; 
+    margin-left: -2px;
+    left: 0px;
+    top: 0px;
+    position: absolute;
+    border: solid 1px rgb(120,120,120);
+    z-index: 0;
+}
+
+
+.xiv-ui-viewlayout-interactor-conventional-x, .xiv-ui-viewlayout-interactor-conventional-y, .xiv-ui-viewlayout-interactor-conventional-z  {
+    position: absolute;
+    top: 100%;
+    width: 30%;
+    margin-top: -30px;
+    visibility: visible;
+    z-index: 1;
+}
+
+
+.xiv-ui-viewlayout-interactor-conventional-x {
+    left: 2%;
+}
+
+.xiv-ui-viewlayout-interactor-conventional-y {
+    left: 35.55%;
+}
+
+.xiv-ui-viewlayout-interactor-conventional-z {
+    left: 68.66%;
+}
+
+
+/*********************************
+* Four-Up
+**********************************/
+.xiv-ui-viewlayout-fourup-x, .xiv-ui-viewlayout-fourup-y, .xiv-ui-viewlayout-fourup-z, .xiv-ui-viewlayout-fourup-v {
+    width: 50%; 
+    height: 50%; 
+    position: absolute;
+    border: solid 1px rgb(120,120,120);
+    visibility: visible;
+    z-index: 0;
+}
+/** top-left */
+.xiv-ui-viewlayout-fourup-z {
+    top: 0%;
+    left: 0%; 
+
+    border: solid 1px rgb(120,120,120); 
+    margin-left: -1px;
+    margin-top: -1px;
+}
+
+/** top-right */
+.xiv-ui-viewlayout-fourup-v {
+    top: 0%;
+    left: 50%;
+
+    border: solid 1px rgb(120,120,120);  
+    margin-left: -1px;
+    margin-top: -1px;
+}
+/** bottom-left */
+.xiv-ui-viewlayout-fourup-x {
+    top: 50%;
+    left: 0%; 
+
+    border: solid 1px rgb(120,120,120);  
+    margin-top: -1px;
+    margin-left: -1px;
+}
+
+/** bottom-right */
+.xiv-ui-viewlayout-fourup-y {
+    top: 50%;
+    left: 50%; 
+    border: solid 1px rgb(120,120,120);  
+    margin-top: 0px;
+    margin-left: 0px;
+}
+
+
+
+
+
+
+.xiv-ui-viewlayout-interactor-fourup-x, .xiv-ui-viewlayout-interactor-fourup-y, .xiv-ui-viewlayout-interactor-fourup-z {
+    position: absolute;
+    top: 100%;
+    margin-top: -30px; 
+    width: 46%;
+    z-index: 1;
+}
+
+
+.xiv-ui-viewlayout-interactor-fourup-x {
+    left: 2%;
+}
+
+.xiv-ui-viewlayout-interactor-fourup-y {
+    left: 52%;
+}
+
+.xiv-ui-viewlayout-interactor-fourup-z {
+    top: 50%;
+    left: 2%;
+}
+
+
+
+
+/*********************************
+* None
+**********************************/
+.xiv-ui-viewlayout-none-x, .xiv-ui-viewlayout-none-y, .xiv-ui-viewlayout-none-z, .xiv-ui-viewlayout-none-v, .xiv-ui-viewlayout-interactor-none-x, .xiv-ui-viewlayout-interactor-none-y, .xiv-ui-viewlayout-interactor-none-z {
+    width: 0%;
+    height: 0%;
+    visibility: visible;
+}
+
