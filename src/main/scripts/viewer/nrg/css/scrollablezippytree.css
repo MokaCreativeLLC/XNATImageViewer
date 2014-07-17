@@ -1,0 +1,20 @@
+/**
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+
+.nrg-ui-scrollablezippytree {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+
+.nrg-ui-scrollablezippytree-zippytree {
+    top: 0px;
+    left: 0px;
+    width: 100%;
+}
