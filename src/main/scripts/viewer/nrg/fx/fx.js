@@ -159,6 +159,52 @@ nrg.fx.fadeTo = function (element, opt_time, opt_opacity, callback,
 
 
 
+/**
+ * @param {!Array.<Element>} eltArr 
+ * @param {!number} opt_fadeTime Defaults to 500.
+ * @param {!number} opt_delay Defaults to 250.
+ * @public
+ */
+nrg.fx.sequentialFadeIn = function (eltArr, opt_fadeTime, opt_delay) {
+    //
+    // Make sure all element opacities are 0
+    //
+    goog.array.forEach(eltArr, function(elt){
+	elt.style.opacity = 0;
+    })
+
+
+    //
+    // Set up delays and fade times
+    //
+    opt_fadeTime = goog.isNumber(opt_fadeTime) ? opt_fadeTime : 500;
+    opt_delay = goog.isNumber(opt_delay) ? opt_delay : 250;
+
+    //
+    //
+    //
+    var timer = new goog.Timer(0);
+    
+
+    //window.console.log(childElts, childElts.length);
+
+    //return;
+    timer.addEventListener(goog.Timer.TICK, function(e) {
+	elt = eltArr[0];
+	nrg.fx.fadeIn(elt, opt_fadeTime);
+	if (eltArr.length == 1){
+	    timer.stop();
+	    timer.dispose();
+	    return;
+	}
+	eltArr = goog.array.slice(eltArr, 1);
+	timer.setInterval(opt_delay);
+    });
+    timer.start();
+}
+
+
+
 
 /**
  * @const
@@ -649,3 +695,4 @@ goog.exportSymbol('nrg.fx.generateAnimations', nrg.fx.generateAnimations);
 goog.exportSymbol('nrg.fx.parallelAnimate', nrg.fx.parallelAnimate);
 goog.exportSymbol('nrg.fx.serialAnimate', nrg.fx.serialAnimate);
 goog.exportSymbol('nrg.fx.setBasicHoverStates', nrg.fx.setBasicHoverStates);
+goog.exportSymbol('nrg.fx.sequentialFadeIn', nrg.fx.sequentialFadeIn);
