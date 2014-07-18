@@ -9,7 +9,7 @@
     position: absolute;
     top: calc(50% - 3px);
     left: 25%;
-    width: calc(70% - 160px);
+    width: calc(70% - 140px);
     outline: 0;
 }
 
@@ -81,10 +81,10 @@
 
 
 .xiv-ui-ctrl-twothumbslidercontroller-value-input {
-    left: calc(100% - 148px);
+    left: calc(100% - 130px);
 }
 
 
 .xiv-ui-ctrl-twothumbslidercontroller-extent-input {
-    left: calc(100% - 69px);
+    left: calc(100% - 61px);
 }
