@@ -62,12 +62,28 @@
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/framedisplay.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/xiv/css/zoomdisplay.css">
 
+
+<script src="src/main/scripts/viewer/closure-library/closure/goog/base.js"></script>
+<script src="src/main/scripts/viewer/X/xtk-deps.js"></script>
+<script src="src/main/scripts/viewer/_custom/X/xtk-custom-deps.js"></script>
+<script src="src/main/scripts/viewer/jszip/jszip.js"></script>
+<script src="src/main/scripts/viewer/nrg/nrg-deps.js"></script>
+<script src="src/main/scripts/viewer/gxnat/gxnat-deps.js"></script>
+<script src="src/main/scripts/viewer/xiv/xiv-deps.js"></script>
+<script>
+goog.require('xiv.start');
+goog.require('xiv.ui.Modal');
+goog.require('xiv.utils.ErrorCatcher');
+goog.require('xiv.utils.objectAnalyzer');
+</script>
+
+<!--
 <script>
   window.console.log('using xiv-min.js')
 </script>
 <script src="src/main/scripts/viewer/jszip/jszip.min.js"></script>
 <script src="src/main/scripts/viewer/xiv-min.js"></script>
-
+-->
 
 
 </head>
