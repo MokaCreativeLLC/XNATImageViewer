@@ -168,33 +168,10 @@ xiv.ui.ViewBox.defaultLayout = {
 
 
 /**
- * @type {number} 
  * @const
+ * @private
  */
-xiv.ui.ViewBox.MIN_HOLDER_HEIGHT = 200;
-
-
-
-/**
- * @type {number} 
- * @const
- */
-xiv.ui.ViewBox.SCAN_TAB_LABEL_HEIGHT =  15;
-
-
-/**
- * @type {number} 
- * @const
- */
-xiv.ui.ViewBox.SCAN_TAB_LABEL_WIDTH = 50;
-
-
-
-/**
- * @type {number} 
- * @const
- */
-xiv.ui.ViewBox.MIN_TAB_H_PCT = .2;
+xiv.ui.ViewBox.ZIP_MED = .5;
 
 
 
@@ -299,6 +276,55 @@ xiv.ui.ViewBox.prototype.InteractorHandler_ = null;
  */
 xiv.ui.ViewBox.prototype.hasLoadComponents_ = false;
 
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.zipDownloading_ = false;
+
+
+
+
+
+/**
+ * @private
+ * @type {?number}
+ */
+xiv.ui.ViewBox.prototype.totalRenderedObjects_ = null;
+
+
+/**
+ * @private
+ * @type {?number}
+ */
+xiv.ui.ViewBox.prototype.previousProgressBarValue_ = null;
+
+
+/**
+ * @private
+ * @type {?number}
+ */
+xiv.ui.ViewBox.prototype.totalViewables_ = null;
+
+
+
+
+/**
+ * @private
+ * @type {!boolean}
+ */
+xiv.ui.ViewBox.prototype.isRendering_ = false;
+
+
+
+/**
+ * @return {!boolean}
+ * @public
+ */
+xiv.ui.ViewBox.prototype.isRendering = function() {
+    return this.isRendering_;
+}
 
 
 /**
@@ -486,10 +512,42 @@ xiv.ui.ViewBox.prototype.setProgressBarPct_ = function(value){
  * @private
  */
 xiv.ui.ViewBox.prototype.onRendering_ = function(e){
-    this.highlight();
+    //this.highlight();
+    //window.console.log(e.value);
     if (this.zipDownloading_){
 	this.setProgressBarPct_(xiv.ui.ViewBox.ZIP_MED * e.value + 
 				xiv.ui.ViewBox.ZIP_MED);
+    }
+    else if (this.totalViewables_ > 1){
+	var incr = 1/this.totalViewables_;
+	
+	if (e.value > .96 
+	    && this.previousProgressBarValue_ != e.value 
+	    && this.previousProgressBarValue_ < .96 
+	    && this.previousProgressBarValue_ < e.value){
+	    this.totalRenderedObjects_++;
+	    this.setProgressBarPct_(incr * this.totalRenderedObjects_);
+	}
+	 else {
+	     this.previousProgressBarValue_ = e.value;
+	     var incr = 1/this.totalViewables_;
+	     var done = incr * this.totalRenderedObjects_ + e.value * incr;
+
+	   	if (this.previousProgressBarValue_ < e.value){  
+		    this.setProgressBarPct_(done + e.value * incr);
+		}
+	 }
+
+	if (done){
+	    /**
+	    window.console.log("\n\nPrev value:", 
+			       this.previousProgressBarValue_);
+	    window.console.log("Total rendered:", this.totalRenderedObjects_);
+	    window.console.log("Total viewables:", this.totalViewables_);
+	    window.console.log("Incr:", incr);
+	    window.console.log("Done:", done);
+	    */
+	}
     }
     else {
 	this.setProgressBarPct_(e.value);
@@ -573,6 +631,11 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     // Set zip downloading to false
     //
     this.zipDownloading_ = false;
+
+    //
+    // Set rendering flag to false
+    //
+    this.isRendering_ = false;
 
     //
     // Set the layout based the orientation of the ViewableTree
@@ -790,6 +853,12 @@ xiv.ui.ViewBox.prototype.checkInUseAndShowDialog = function(opt_onYes){
  * @public
  */
 xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
+    
+    //
+    // Set rendering flag
+    //
+    this.isRendering_ = true;
+
 
     //
     // Dispable render error wating
@@ -897,35 +966,54 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 		       this.onRendering_.bind(this));
 
 
+    this.totalRenderedObjects_ = null;
+
     //
     // Do a zip download+render for scans (Viewer handles downloading)
     //
     if (ViewableSet.getCategory().toLowerCase() == 'scans') {
 	this.renderScanViaZipDownload_(ViewableSet);
 	return;
-    } 
+    } else {
 
-    //
-    // Otherwise, do a standard render (XTK handles downloading).
-    //
-    this.renderViewableSet_(ViewableSet);
+	//
+	// Do a standard render (XTK handles downloading), factoring 
+	// in the progress bar to increment based on the viewables.
+	//
+	// Otherwise we have multiple instances of the progress bar going
+	// too 100, which is bad UX
+	//
+
+	this.highlight();
+	this.inventoryViewables_(ViewableSet);
+	this.renderViewableSet_(ViewableSet);
+    }
+
 }
- 
+
 
 
 
 /**
  * @private
+ * @param {gxnat.vis.ViewableGroups} ViewableSet
  */
-xiv.ui.ViewBox.prototype.zipDownloading_ = false;
+xiv.ui.ViewBox.prototype.inventoryViewables_ = function(ViewableSet){
+	this.totalRenderedObjects_ = 0;
+	this.previousProgressBarValue_ = 0;
+	this.totalViewables_ = ViewableSet.getViewables().length + 8;
+	//
+	// Label maps are counted in the total...
+	//
+	var viewables = ViewableSet.getViewables();
+	goog.array.forEach(viewables, function(viewable){
+	    if (goog.isDefAndNotNull(
+		viewable.getRenderProperties()['labelMapFile'])){
+		this.totalViewables_++;
+	    }
+	}.bind(this))
+} 
 
-
-
-/**
- * @const
- * @private
- */
-xiv.ui.ViewBox.ZIP_MED = .5;
 
 
 
@@ -1011,11 +1099,10 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
 
 /**
  * @private
+ * @param {gxnat.vis.ViewableGroups} ViewableSet
  */
 xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
-
     this.ErrorCatcher_.waitForError(true);
-    
     //
     // Render!!!
     //
@@ -1030,13 +1117,14 @@ xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
 
 
 
-
-
-
 /**
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_msg){
+    //
+    // Set rendering flag to false
+    //
+    this.isRendering_ = false;
     //window.console.log('ON RENDER ERROR in view box');
 
     //
@@ -1994,6 +2082,9 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     delete this.hasLoadComponents_;
     delete this.zipDownloading_;
     delete this.isMouseOver_;
+    delete this.totalRenderedObjects_;
+    delete this.previousProgressBarValue_;
+    delete this.totalViewables_;
 }
 
 
@@ -2002,14 +2093,7 @@ goog.exportSymbol('xiv.ui.ViewBox.ID_PREFIX', xiv.ui.ViewBox.ID_PREFIX);
 goog.exportSymbol('xiv.ui.ViewBox.CSS_SUFFIX', xiv.ui.ViewBox.CSS_SUFFIX);
 goog.exportSymbol('xiv.ui.ViewBox.defaultLayout',
 	xiv.ui.ViewBox.defaultLayout);
-goog.exportSymbol('xiv.ui.ViewBox.MIN_HOLDER_HEIGHT',
-	xiv.ui.ViewBox.MIN_HOLDER_HEIGHT);
-goog.exportSymbol('xiv.ui.ViewBox.SCAN_TAB_LABEL_HEIGHT',
-	xiv.ui.ViewBox.SCAN_TAB_LABEL_HEIGHT);
-goog.exportSymbol('xiv.ui.ViewBox.SCAN_TAB_LABEL_WIDTH',
-	xiv.ui.ViewBox.SCAN_TAB_LABEL_WIDTH);
-goog.exportSymbol('xiv.ui.ViewBox.MIN_TAB_H_PCT',
-	xiv.ui.ViewBox.MIN_TAB_H_PCT);
+
 goog.exportSymbol('xiv.ui.ViewBox.ControllersSet',
 	xiv.ui.ViewBox.ControllersSet);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.getRenderer',
@@ -2064,6 +2148,8 @@ goog.exportSymbol('xiv.ui.ViewBox.prototype.getToggleButtons',
 	xiv.ui.ViewBox.prototype.getToggleButtons);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.isMouseOver',
 	xiv.ui.ViewBox.prototype.isMouseOver);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.isRendering',
+	xiv.ui.ViewBox.prototype.isRendering);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.updateStyle',
 	xiv.ui.ViewBox.prototype.updateStyle);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.disposeInternal',

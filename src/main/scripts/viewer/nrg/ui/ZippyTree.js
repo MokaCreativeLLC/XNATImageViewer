@@ -376,6 +376,7 @@ nrg.ui.ZippyTree.prototype.getFolderNodes = function(folders) {
     var currNode = this;
     var zippyNodes = [];
     goog.array.forEach(folders, function(folder){
+	//window.console.log(folder, currNode.getNodes());
 	zippyNodes.push(currNode.getNodes()[folder]);
 	currNode = currNode.getNodes()[folder];
     }.bind(this))
@@ -416,7 +417,7 @@ nrg.ui.ZippyTree.prototype.addContents = function(elements, opt_folders) {
  * @private
  */
 nrg.ui.ZippyTree.prototype.addContent_ = function(element, opt_folders) {
-    
+     
     if (!opt_folders){
 	goog.dom.append(this.rootElt_, element);
     } else {
@@ -854,12 +855,14 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
     //
     // Add the contentElt to the given node , if it exists.
     //
-    if (opt_elt) {
+    if (goog.isDefAndNotNull(opt_elt)) {
 	//
 	// IMPORTANT!
 	//
 	nrg.style.setStyle(opt_elt, {'position': 'relative'});
-	opt_elt.style.opacity = this.initOp_;
+	//opt_elt.style.opacity = this.initOp_;
+	opt_elt.style.opacity = 0;
+	nrg.fx.fadeIn(opt_elt, 400);
 
 	//
 	// This is where you sort the nodes!!

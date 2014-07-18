@@ -11,6 +11,7 @@ goog.require('goog.ui.AnimatedZippy');
 goog.require('goog.ui.Zippy.Events');
 goog.require('goog.ui.Zippy');
 goog.require('goog.dom.classes');
+goog.require('goog.Timer');
 
 // nrg
 goog.require('nrg.string');
@@ -95,6 +96,10 @@ function (title, parentElement, opt_expanded, opt_insertMethod) {
 		      goog.isDefAndNotNull(opt_expanded) ? 
 				      opt_expanded : false);
 
+    if (this.Zippy_ instanceof goog.ui.AnimatedZippy){
+	this.Zippy_.animationDuration = 500;
+    }
+
 
     /**
      * @type {!string}
@@ -153,6 +158,14 @@ nrg.ui.ZippyNode.CSS_SUFFIX = {
     CONTENT: 'content-sub'
 }
 
+
+
+
+/**
+ * @type {!number} 
+ * @const
+ */ 
+nrg.ui.ZippyNode.ANIMATION_DURATION = 500;
 
 
 /**
@@ -222,24 +235,35 @@ nrg.ui.ZippyNode.createZippyHeader_ = function(title) {
 /**
  * @param {!Array.<nrg.ui.ZippyNode> | !Array.<string>} nodes
  * @param {?nrg.ui.ZippyNode} opt_startNode
+ * @param {?Function} opt_expandCallback
  * @private
  */
-nrg.ui.ZippyNode.serialExpand = function(nodes, opt_startNode) {
+nrg.ui.ZippyNode.serialExpand = 
+function(nodes, opt_startNode, opt_expandCallback) {
+    //window.console.log(nodes);
     var node = nodes[0];
     if (goog.isString(node) && goog.isDefAndNotNull(opt_startNode)){
 	//window.console.log(node, opt_startNode.getNodes());
 	node = opt_startNode.getNodes()[node];
     }
-    //window.console.log(node);
 
+    node.getZippy().animationDuration = 200;
+    var content = node.getContentHolder();
     if (nodes.length > 1 && !node.getZippy().isExpanded()){
 	goog.events.listenOnce(
 	    node, 
 	    nrg.ui.ZippyNode.EventType.EXPANDED, function(){
-		nrg.ui.ZippyNode.serialExpand(goog.array.slice(nodes, 1), node);
+		node.getZippy().animationDuration = 
+		    nrg.ui.ZippyNode.ANIMATION_DURATION;
+		nrg.ui.ZippyNode.serialExpand(
+		    goog.array.slice(nodes, 1), node, opt_expandCallback);
 	    })
-    }
+    } 
     node.setExpanded(true);
+
+    if (goog.isDefAndNotNull(opt_expandCallback)){
+	opt_expandCallback(node, nodes);
+    }
 }
 
 

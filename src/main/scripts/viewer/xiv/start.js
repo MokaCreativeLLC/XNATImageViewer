@@ -540,13 +540,59 @@ xiv.start.prototype.startDemoLoadChain_ = function(){
 	    
 	}.bind(this))
     }.bind(this))
+    
+
+    var fnodes = ThumbGallery.getZippyTree().getFolderNodes(allFolders);
+    var childElts = goog.dom.getChildren(fnodes[2].getContentHolder());
+    goog.array.forEach(childElts, function(elt){
+	elt.style.visiblity = 'hidden';
+    })
 
 
     //
-    // Serially expand the nodes
+    // Demo animation sequence
     //
-    nrg.ui.ZippyNode.serialExpand(allFolders, 
-				  ThumbGallery.getZippyTree());    
+    nrg.ui.ZippyNode.serialExpand(
+	allFolders, ThumbGallery.getZippyTree(), 
+	function(currNode, remainingNodes){
+	    
+	    var content = currNode.getContentHolder();
+
+	    if (remainingNodes.length > 2){
+		content.style.opacity = 0;
+		nrg.fx.fadeIn(content, 200);
+	    }
+	    
+	    if (remainingNodes.length == 2){
+
+		//currNode.getZippy().animationDuration = 150;
+		var childElts = goog.dom.getChildren(content);
+		goog.array.forEach(childElts, function(childElt){
+		    childElt.style.opacity = 0;
+		})
+		
+
+		var delay = 0;
+		var timer = new goog.Timer(0);
+		var childElts = childElts;
+		//window.console.log(childElts, childElts.length);
+
+		//return;
+		timer.addEventListener(goog.Timer.TICK, function(e) {
+		    childElt = childElts[0];
+		    nrg.fx.fadeIn(childElt, 300);
+		    if (childElts.length == 1){
+			timer.stop();
+			timer.dispose();
+			return;
+		    }
+		    childElts = goog.array.slice(childElts, 1);
+		    timer.setInterval(100);
+		});
+		timer.start();
+
+	    }	     
+	});    
 }
 
 

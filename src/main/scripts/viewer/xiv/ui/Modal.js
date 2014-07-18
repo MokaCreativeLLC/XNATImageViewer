@@ -1158,10 +1158,11 @@ xiv.ui.Modal.prototype.setThumbnailGalleryEvents_ = function(opt_listenMethod){
  * @private
  */
 xiv.ui.Modal.prototype.onThumbnailMouseOver_ = function(e) {
-    this.ViewBoxHandler_.ViewBoxFromVisNode(e.Thumbnail.getViewable(), 
-					    function(ViewBox){  
-						ViewBox.highlight();
-					    })
+    this.ViewBoxHandler_.ViewBoxFromVisNode(
+	e.Thumbnail.getViewable(), 
+	function(ViewBox){  
+	    ViewBox.highlight();
+	})
 }
 
 
@@ -1172,10 +1173,13 @@ xiv.ui.Modal.prototype.onThumbnailMouseOver_ = function(e) {
  * @private
  */
 xiv.ui.Modal.prototype.onThumbnailMouseOut_ = function(e){
-    this.ViewBoxHandler_.ViewBoxFromVisNode(e.Thumbnail.getViewable(), 
-					    function(ViewBox){  
-						ViewBox.unhighlight();
-					    })
+    this.ViewBoxHandler_.ViewBoxFromVisNode(
+	e.Thumbnail.getViewable(), 
+	function(ViewBox){  
+	    if (!ViewBox.isRendering()){
+		ViewBox.unhighlight();
+	    }
+	})
 }
 
 
