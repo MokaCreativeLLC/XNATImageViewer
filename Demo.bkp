@@ -4,7 +4,7 @@
 
 <!-- BEGIN /xnat-templates/screens/XIViewer.vm -->
 
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/menu.css">
+
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/menuitem.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/menuseparator.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/menubutton.css">
@@ -76,14 +76,6 @@ goog.require('xiv.ui.Modal');
 goog.require('xiv.utils.ErrorCatcher');
 goog.require('xiv.utils.objectAnalyzer');
 </script>
-
-<!--
-<script>
-  window.console.log('using xiv-min.js')
-</script>
-<script src="src/main/scripts/viewer/jszip/jszip.min.js"></script>
-<script src="src/main/scripts/viewer/xiv-min.js"></script>
--->
 
 
 </head>
