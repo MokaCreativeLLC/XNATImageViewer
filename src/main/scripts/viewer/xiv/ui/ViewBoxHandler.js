@@ -347,6 +347,29 @@ xiv.ui.ViewBoxHandler.prototype.getViewBoxIndices_ = function(ViewBox){
 
 
 
+/**
+ * @return {!boolean}
+ * @private
+ */
+xiv.ui.ViewBoxHandler.prototype.ViewBoxesRendering = function(){
+    //window.console.log("VIR RENDER");
+    var i = 0;
+    var j = 0;
+    var len = this.ViewBoxes_.length;
+    var len2 = 0;
+    for (i=0; i < len; i++) {
+	for (j=0, len2 = this.ViewBoxes_[i].length; j < len2; j++) {
+	    //window.console.log(i, j, this.ViewBoxes_[i][j].isRendering());
+	    if (this.ViewBoxes_[i][j].isRendering()) {
+		return true;
+	    }
+	}
+    }
+    return false;
+}
+
+
+
 
 /**
  * Inserts a xiv.ui.ViewBox row into the xiv.ui.Modal, matching
@@ -1643,5 +1666,7 @@ goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getViewBoxAfter',
 	xiv.ui.ViewBoxHandler.prototype.getViewBoxAfter);
 goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.getFirstEmpty',
 	xiv.ui.ViewBoxHandler.prototype.getFirstEmpty);
+goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.ViewBoxesRendering',
+	xiv.ui.ViewBoxHandler.prototype.ViewBoxesRendering);
 goog.exportSymbol('xiv.ui.ViewBoxHandler.prototype.disposeInternal',
 	xiv.ui.ViewBoxHandler.prototype.disposeInternal);
