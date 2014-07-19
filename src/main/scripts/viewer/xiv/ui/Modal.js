@@ -1232,15 +1232,21 @@ xiv.ui.Modal.prototype.onThumbnailClicked_ = function(e){
  * @private
  */
 xiv.ui.Modal.prototype.onThumbnailDroppedIntoViewBox_ = function(e) {
+
+    var ViewBox =  
+	this.ViewBoxHandler_.getViewBoxByElement(e.targetElement);
+
+
     //
     // Only allow load if ViewBox isn't rendering
     //
     if (!this.ViewBoxHandler_.ViewBoxesRendering()){
-	var ViewBox =  
-	    this.ViewBoxHandler_.getViewBoxByElement(e.targetElement);
 	//window.console.log("LOAD", e.Thumbnail);
 	ViewBox.load(e.Thumbnail.getViewable());
 	this.highlightInUseThumbnails();
+    }
+    else {
+	ViewBox.unhighlight();
     }
 }
 
