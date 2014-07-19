@@ -780,7 +780,7 @@ xiv.ui.Modal.prototype.addAddSubjectsToProjectTab = function() {
     //
     // Add the add subjects button to the tab tab pages
     //
-    goog.dom.appendChild(this.getProjectTab().getTabPages()[0], 
+    goog.dom.appendChild(this.ProjectTab_.getTabPages()[0], 
 			 this.addSubjects_);
 
     //
@@ -792,7 +792,7 @@ xiv.ui.Modal.prototype.addAddSubjectsToProjectTab = function() {
     //
     // Resize the page contents to make up for the button
     //
-    var tabPage = this.getProjectTab().getTabPages()[0];
+    var tabPage = this.ProjectTab_.getTabPages()[0];
     var tabPageContents = goog.dom.getChildren(tabPage)[0];
     var pageSize = goog.style.getSize(tabPage);
     var childSize = goog.style.getSize(tabPageContents);

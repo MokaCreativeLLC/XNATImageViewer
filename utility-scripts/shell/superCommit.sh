@@ -62,7 +62,7 @@ cp -r $TMP/* $XNATIMAGEVIEWER_HOME
 mv $XNATIMAGEVIEWER_HOME/Demo.html $XNATIMAGEVIEWER_HOME/Demo.bkp
 mv $XNATIMAGEVIEWER_HOME/Demo-min.html $XNATIMAGEVIEWER_HOME/Demo.html
 git add -A
-git commit -m "Updating from master."
+git commit -m "\"$MASTER_COMMIT\""
 git push
 ls -la $XNATIMAGEVIEWER_HOME
 echo "-----------"

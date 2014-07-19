@@ -92,6 +92,15 @@ nrg.ui.ZipTabs.prototype.render = function(opt_parentElement) {
     this.Resizable_ = new nrg.ui.Resizable(this.getElement(),
 					    this.orientation); 
     this.setResizeEvents_();
+
+    //
+    // Hide all goog tabs (for aesthetic reasons)
+    //
+    var googTabs = goog.dom.getElementsByClass('goog-tabpane-tabs', 
+					       this.getElement());
+    goog.array.forEach(googTabs, function(tabElt){
+	tabElt.style.visibility = 'hidden';
+    })
 }
 
 
@@ -176,13 +185,33 @@ nrg.ui.ZipTabs.prototype.onResizeVert_ = function() {
 
 
 
+/**
+ * @private
+ * @type {!boolean}
+ */
+nrg.ui.ZipTabs.prototype.contracting_ = false;
+
+
 
 /**
  * @private
  */
 nrg.ui.ZipTabs.prototype.onResizeHoriz_ = function() {
-    if (Math.abs(this.tabSize.width - this.currSize.width) <= 
-	nrg.ui.ZipTabs.BOUND_THRESHOLD_HORIZ){
+    var contractingThresh = 
+	(Math.abs(this.tabSize.width - this.currSize.width) <= 
+	(nrg.ui.ZipTabs.BOUND_THRESHOLD_HORIZ * 9)) && this.contracting_;
+    var minThresh = Math.abs(this.tabSize.width - this.currSize.width) <= 
+	nrg.ui.ZipTabs.BOUND_THRESHOLD_HORIZ;
+
+    /**
+    window.console.log('\n\n');
+    window.console.log(Math.abs(this.tabSize.width - this.currSize.width));
+    window.console.log(nrg.ui.ZipTabs.BOUND_THRESHOLD_HORIZ);
+    window.console.log('contractingThresh', contractingThresh);
+    window.console.log('minThresh', minThresh);
+    */
+
+    if (minThresh || contractingThresh){
 	this.deactivateAll();
     } 
     else {
@@ -193,7 +222,8 @@ nrg.ui.ZipTabs.prototype.onResizeHoriz_ = function() {
 
 
 /**
- * @param {!Event} event The click event.
+ * @param {!expanded} Whether to expand or contract the tab
+ * @param {number=} The index to expand or contract
  * @param {number=} opt_dur The optional duration of the slide animation.
  * @public
  */
@@ -203,7 +233,9 @@ nrg.ui.ZipTabs.prototype.setExpanded = function(expanded, opt_index, opt_dur) {
 	this.setActive(opt_index || 0);
 	//window.console.log("\n\n\n\nSET EXPANDED!!!!", this.getElement())
 	this.Resizable_.slideToLimits(this.orientation, 'MAX', null, opt_dur);
-    } else {
+    } 
+
+    else {
 	this.deactivateAll();
 	this.Resizable_.slideToLimits(this.orientation, 'MIN', null, opt_dur);
     }
@@ -298,10 +330,12 @@ nrg.ui.ZipTabs.prototype.onTabClickedRight_ = function(event, opt_dur) {
 
     if (Math.abs(this.currSize.width - this.tabSize.width) <= 
 	nrg.ui.ZipTabs.BOUND_THRESHOLD_HORIZ) {
+	this.contracting_ = false;
 	this.setActive(this.lastActiveTab_);
 	this.Resizable_.slideToLimits('RIGHT', 'MAX', opt_dur);
 
     } else if (this.getLastActiveTab() == this.getPreviousActiveTab()) {
+	this.contracting_ = true;
 	this.Resizable_.slideToLimits('RIGHT', 'MIN', opt_dur);
     }
 }
@@ -396,6 +430,7 @@ nrg.ui.ZipTabs.prototype.disposeInternal = function() {
     goog.events.removeAll(this.Resizable_);
     this.Resizable_.dispose(); 
     delete this.Resizable_;
+    delete this.contracting_;
 }
 
 
