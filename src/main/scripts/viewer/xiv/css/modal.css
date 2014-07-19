@@ -170,6 +170,7 @@
     background-color: rgba(45,45,45,1);
     top: 29px;
     height: calc(100% - 58px);
+    z-index: 10;
 }
 
 
