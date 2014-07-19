@@ -57,7 +57,6 @@ xiv.ui.Modal = function () {
      * @private
      */
     this.currState_ = xiv.ui.Modal.ModalStates.DEMO;
-    //window.console.log('currState', this.currState_);
 }
 goog.inherits(xiv.ui.Modal, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.Modal', xiv.ui.Modal);
