@@ -209,7 +209,7 @@ xiv.sampleData.Scans.prototype.sample1_ = new xiv.sampleData.Sample ([
     'Acq. Type': "3D",
     'Orientation': "Sagittal",
     'Scan ID': "Sample Scan 1",
-    'Total Frames': 176,
+    'Total Frames': 182,
     'Type': "t1_mpr_1mm_p2_pos50",
 }, 
 'src/main/scripts/viewer/xiv/sample-data/scans/Sample1/Sample1.png',
@@ -404,7 +404,7 @@ xiv.sampleData.Scans.prototype.sample2_ = new xiv.sampleData.Sample ([
     'Acq. Type': "3D",
     'Orientation': "Sagittal",
     'Scan ID': "Sample Scan 2",
-    'Total Frames': 176,
+    'Total Frames': 182,
     'Type': "t1_mpr_1mm_p2_pos50"
 }, 
 'src/main/scripts/viewer/xiv/sample-data/scans/Sample2/Sample2.png',
@@ -597,7 +597,7 @@ xiv.sampleData.Scans.prototype.sample3_ = new xiv.sampleData.Sample ([
     'Acq. Type': "3D",
     'Orientation': "Sagittal",
     'Scan ID': "Sample Scan 3",
-    'Total Frames': 176,
+    'Total Frames': 182,
     'Type': "t2_spc_1mm_p2"
 }, 
 'src/main/scripts/viewer/xiv/sample-data/scans/Sample3/Sample3.png',
