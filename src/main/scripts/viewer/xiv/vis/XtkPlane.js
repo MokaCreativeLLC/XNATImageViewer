@@ -661,7 +661,7 @@ xiv.vis.XtkPlane.prototype.dispose = function() {
     delete this.XRenderer;
     delete this.container;
     delete this.orientation;
-    delete this.xObjs_;
+    goog.object.clear(this.xObjs_);
     delete this.currVolume_;
     delete this.renderProgress_;
 };

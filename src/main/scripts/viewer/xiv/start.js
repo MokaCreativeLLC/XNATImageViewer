@@ -819,6 +819,7 @@ xiv.start.prototype.addDataPath_ = function(path) {
  * @public
  */
 xiv.start.prototype.dispose = function() {
+    //window.console.log("disposing");
     this.hide(this.dispose_.bind(this));
 }
 

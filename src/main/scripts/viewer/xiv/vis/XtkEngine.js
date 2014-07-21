@@ -377,6 +377,8 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
     }
     this.ControllerTree_ = new xiv.ui.ctrl.XtkControllerTree();
 
+
+
     //
     // Annotations
     //
@@ -419,7 +421,7 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 	if (currXObj instanceof X.volume) {
 
 	    if (ViewableGroup.getCategory().toLowerCase() == 'scans'){
-		window.console.log('Turning off reslicing for scan');
+		//window.console.log('Turning off reslicing for scan');
 		//currXObj['reslicing'] = false;
 		//currXObj['transform'].rotateX(45);
 		//currXObj['transform'].rotateY(45);
@@ -947,46 +949,6 @@ xiv.vis.XtkEngine.prototype.getPlanes = function () {
 
 
 
-/**
- * @inheritDoc
- */
-xiv.vis.XtkEngine.prototype.dispose = function () {
-    goog.base(this, 'dispose');
-    
-    if (goog.isDefAndNotNull(this.ControllerTree_)){
- 	this.ControllerTree_.dispose();
-	delete this.ControllerTree_;
-    }
-
-
-    goog.events.removeAll(this.PlaneX_);
-    goog.events.removeAll(this.PlaneY_);
-    goog.events.removeAll(this.PlaneZ_);
-    goog.events.removeAll(this.PlaneV_);
-
-
-    delete this.primaryRenderPlane_;
-
-    goog.object.clear(this.Planes_);
-    delete this.Planes_;
-
-
-    this.PlaneX_.dispose();
-    delete this.PlaneX_;
-
-    this.PlaneY_.dispose();
-    delete this.PlaneY_;
-
-    this.PlaneZ_.dispose();
-    delete this.PlaneZ_;
-
-    this.PlaneV_.dispose();
-    delete this.PlaneV_;
-
-    delete this.renderEndCalled_;
-}
-
-
 
 /**
  * @const
@@ -1313,6 +1275,62 @@ function(fileCollection, opt_fileData) {
     //return
     return obj;
 }
+
+
+
+
+/**
+ * @inheritDoc
+ */
+xiv.vis.XtkEngine.prototype.dispose = function () {
+    goog.base(this, 'dispose');
+    //window.console.log("ENGINE DISPOSE");
+    if (goog.isDefAndNotNull(this.ControllerTree_)){
+ 	this.ControllerTree_.dispose();
+	delete this.ControllerTree_;
+    }
+
+
+    goog.events.removeAll(this.PlaneX_);
+    goog.events.removeAll(this.PlaneY_);
+    goog.events.removeAll(this.PlaneZ_);
+    goog.events.removeAll(this.PlaneV_);
+  
+
+
+    delete this.primaryRenderPlane_;
+
+    goog.object.clear(this.Planes_);
+    delete this.Planes_;
+
+
+    this.PlaneX_.dispose();
+    delete this.PlaneX_;
+
+    this.PlaneY_.dispose();
+    delete this.PlaneY_;
+
+    this.PlaneZ_.dispose();
+    delete this.PlaneZ_;
+
+    this.PlaneV_.dispose();
+    delete this.PlaneV_;
+
+
+    goog.object.forEach(this.currXObjects_, function(objArr){
+	goog.object.forEach(objArr, function(obj){
+	    goog.events.removeAll(obj)
+	    //obj.destroy();
+	    goog.object.clear(obj);
+	})	
+    })
+    goog.object.clear(this.currXObjects_);
+    //window.console.log(this.currXObjects_);
+    delete this.currXObjects_;
+
+    delete this.renderEndCalled_;
+}
+
 
 
 

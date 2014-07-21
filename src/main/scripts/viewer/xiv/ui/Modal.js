@@ -1334,7 +1334,7 @@ xiv.ui.Modal.prototype.onViewBoxesChanged_ = function(e) {
  */
 xiv.ui.Modal.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
-
+    //window.console.log("MODAL DISPOSE!");
     // dims
     goog.object.clear(this.dims_);
     delete this.dims_;

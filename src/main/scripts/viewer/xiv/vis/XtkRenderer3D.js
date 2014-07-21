@@ -74,6 +74,17 @@ xiv.vis.XtkRenderer3D.prototype.render = function() {
 }
 
 
+
+/**
+ * @inheritDoc
+ */
+xiv.vis.XtkRenderer3D.prototype.destroy = function() {
+    goog.base(this, 'destroy');
+    //window.console.log("Destroying renderer 3D");
+}
+
+
+
 /**
  * @inheritDoc
  */
