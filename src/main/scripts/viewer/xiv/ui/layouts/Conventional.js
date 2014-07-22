@@ -175,8 +175,7 @@ xiv.ui.layouts.Conventional.prototype.onZXLayoutFrameResize_ =
         var xSize = goog.style.getSize(this.LayoutFrames['X'].getElement());
         var ySize = goog.style.getSize(this.LayoutFrames['Y'].getElement());
         var zSize = goog.style.getSize(this.LayoutFrames['Z'].getElement());
-        var vSize = goog.style.getSize(this.LayoutFrames['V'].getElement());
-        callback(xSize, ySize, zSize, vSize);
+        callback(xSize, ySize, zSize);
     }
 
 
@@ -186,7 +185,7 @@ xiv.ui.layouts.Conventional.prototype.onZXLayoutFrameResize_ =
  * @param {!Event} e
  */
 xiv.ui.layouts.Conventional.prototype.onLayoutFrameResize_X = function(e){
-    this.onZXLayoutFrameResize_(function(xSize, ySize, zSize, vSize){
+    this.onZXLayoutFrameResize_(function(xSize, ySize, zSize){
         var yWidth = Math.max(this.currSize.width - xSize.width - zSize.width,
             this.minLayoutFrameWidth_);
         var zWidth = zSize.width;
@@ -235,7 +234,7 @@ xiv.ui.layouts.Conventional.prototype.onLayoutFrameResize_X = function(e){
  * @param {!Event} e
  */
 xiv.ui.layouts.Conventional.prototype.onLayoutFrameResize_Z = function(e){
-    this.onZXLayoutFrameResize_(function(xSize, ySize, zSize, vSize){
+    this.onZXLayoutFrameResize_(function(xSize, ySize, zSize){
         var xWidth = Math.max(this.currSize.width - zSize.width - ySize.width,
             this.minLayoutFrameWidth_);
         var yWidth = ySize.width;
