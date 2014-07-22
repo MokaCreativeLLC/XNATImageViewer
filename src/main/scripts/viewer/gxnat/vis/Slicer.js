@@ -218,6 +218,17 @@ function(sceneViewNodes, mrmlNodes, opt_initComplete) {
 	ViewableGroup = new gxnat.vis.ViewableGroup(ViewablesPerGroup);
 
 	// Set the thumbnail url of the ViewableGroup
+	/**
+	window.console.log(sceneView.element);
+	window.console.log(gxnat.slicerUtils.
+			   getThumbnail(sceneView.element, 
+					this.mrml[0].document));
+	window.console.log(this.mrbFiles_);
+	window.console.log("MATCHED", 	    gxnat.slicerUtils.matchFileToSet(
+		gxnat.slicerUtils.getThumbnail(sceneView.element, 
+			this.mrml[0].document), this.mrbFiles_))
+	*/
+
 	ViewableGroup.setThumbnailUrl(
 	    gxnat.slicerUtils.matchFileToSet(
 		gxnat.slicerUtils.getThumbnail(sceneView.element, 
