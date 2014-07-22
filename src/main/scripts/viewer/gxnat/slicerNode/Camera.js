@@ -19,7 +19,7 @@ gxnat.slicerNode.Camera = function(position, up, focus){
     this.up = up;
     this.focus = focus
 
-    window.console.log("CAMERA", this.position, this.up, this.focus);
+    //window.console.log("CAMERA", this.position, this.up, this.focus);
 }
 goog.inherits(gxnat.slicerNode.Camera, gxnat.slicerNode.Node);
 goog.exportSymbol('gxnat.slicerNode.Camera', gxnat.slicerNode.Camera);

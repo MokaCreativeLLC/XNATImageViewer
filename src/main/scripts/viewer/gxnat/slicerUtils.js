@@ -229,7 +229,7 @@ gxnat.slicerUtils.getSceneViewsFromMrml = function(mrml) {
  */
 gxnat.slicerUtils.getCameraFromSceneView = function(sceneViewElt) {
 
-    window.console.log("\n\nSCENE VIEW ELT", sceneViewElt);
+    //window.console.log("\n\nSCENE VIEW ELT", sceneViewElt);
 
     var cameras =  sceneViewElt.getElementsByTagName('Camera');
     var len = cameras.length - 1;
@@ -243,8 +243,8 @@ gxnat.slicerUtils.getCameraFromSceneView = function(sceneViewElt) {
     var focalPt = sceneViewElt.getElementsByTagName('Camera')[len].
 		getAttribute('focalPoint');
 
-    window.console.log("CAMERAS", cameras);
-    window.console.log(pos, viewUp, focalPt);
+    //window.console.log("CAMERAS", cameras);
+    //window.console.log(pos, viewUp, focalPt);
 
     return new gxnat.slicerNode.Camera(
 	gxnat.slicerNode.toFloatArray(pos),
