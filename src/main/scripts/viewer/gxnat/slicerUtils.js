@@ -228,19 +228,28 @@ gxnat.slicerUtils.getSceneViewsFromMrml = function(mrml) {
  *    1) the position, 2) the up vector of the camera. 3) The focal point.
  */
 gxnat.slicerUtils.getCameraFromSceneView = function(sceneViewElt) {
+
+    window.console.log("\n\nSCENE VIEW ELT", sceneViewElt);
+
+    var cameras =  sceneViewElt.getElementsByTagName('Camera');
+    var len = cameras.length - 1;
+
+    var pos = sceneViewElt.getElementsByTagName('Camera')[len].
+		getAttribute('position');
+
+    var viewUp = sceneViewElt.getElementsByTagName('Camera')[len].
+		getAttribute('viewUp');
+
+    var focalPt = sceneViewElt.getElementsByTagName('Camera')[len].
+		getAttribute('focalPoint');
+
+    window.console.log("CAMERAS", cameras);
+    window.console.log(pos, viewUp, focalPt);
+
     return new gxnat.slicerNode.Camera(
-	gxnat.slicerNode.toFloatArray(
-	    sceneViewElt.getElementsByTagName('Camera')[0].
-		getAttribute('position')
-	),
-	gxnat.slicerNode.toFloatArray(
-	    sceneViewElt.getElementsByTagName('Camera')[0].
-		getAttribute('viewUp')
-	),
-	gxnat.slicerNode.toFloatArray(
-	    sceneViewElt.getElementsByTagName('Camera')[0].
-		getAttribute('focalPoint')
-	)
+	gxnat.slicerNode.toFloatArray(pos),
+	gxnat.slicerNode.toFloatArray(viewUp),
+	gxnat.slicerNode.toFloatArray(focalPt)
     )
 }
 

@@ -793,6 +793,8 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 	// Add a thumbnail to the ViewableGroup Menu based on the ViewGroup
 	//
 	goog.array.forEach(viewGroups, function(viewGroup, i){
+
+	    //window.console.log("VG", viewGroup.getThumbnailUrl());
 	    thumb = this.ViewableGroupMenu_.createAndAddThumbnail(
 		viewGroup.getThumbnailUrl(), viewGroup.getTitle() || i);
 
