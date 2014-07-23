@@ -147,7 +147,20 @@ xiv.ui.ProgressBarPanel.prototype.showValue = function(opt_showValue) {
  */
 xiv.ui.ProgressBarPanel.prototype.setValue = function(val) {
     this.ProgressBar_.setValue(val);
-    this.ProgressBar_.getElement().backgroundColor = 'rgb(100,149,237)';
+    
+    //
+    // Safety - to make sure that the progress bar is always the blue
+    //
+    this.ProgressBar_.getElement().childNodes[0].
+	style.background = 'rgb(100,149,237)';
+    /**
+    var progs = goog.dom.getElementsByClass('xiv-ui-progressbarpanel-thumb');
+    goog.array.forEach(progs, function(prog){
+	window.console.log(prog);
+	//prog.style.background = 'rgb(100,149,237)';
+    })
+    */
+    
     this.labelHolder_.innerHTML = this.labelText_;
     if (this.showValue_){
 	if (this.labelText_.length > 0){
