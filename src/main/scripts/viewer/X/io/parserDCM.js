@@ -62,9 +62,6 @@ goog.inherits(X.parserDCM, X.parser);
 X.parserDCM.prototype.parse = function(container, object, data, flag) {
   // X.TIMER(this._classname + '.parse');
   // needed, for renderer2d and 3d legacy...
-
-    //window.console.log(object);
-
   object.MRI = {};
   object.MRI.loaded_files = 0;
 
@@ -425,6 +422,15 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     //
     ////////////////////////////////////////////////////////////////////////
     
+    ////////////////////////////////////////////////////////////////////////
+    //
+    // IMPORTANT NOTE:
+    //
+    // '-' added for LPS to RAS conversion
+    // IJKToRAS is Identity if we have a time series
+    //
+    ////////////////////////////////////////////////////////////////////////
+    
     if(object['reslicing'] == 'false' || object['reslicing'] == false){
 	/**
         goog.vec.Mat4.setRowValues(IJKToRAS,
@@ -455,7 +461,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           // + first_image[0]['pixel_spacing'][2]/2);
         goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);
 	*/
-
+	//alert("RESLICNG");
 	window.console.log("Running and NRG-modified XTK transform when reslicing is disabled.");
           var _x_cosine = new goog.math.Vec3(first_image[0]['image_orientation_patient'][0],
             first_image[ 0 ]['image_orientation_patient'][1], first_image[ 0 ]['image_orientation_patient'][2]);
