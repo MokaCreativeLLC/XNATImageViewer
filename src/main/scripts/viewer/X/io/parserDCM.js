@@ -462,7 +462,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
         goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);
 	*/
 	//alert("RESLICNG");
-	window.console.log("Running and NRG-modified XTK transform when reslicing is disabled.");
+	window.console.log("Running an NRG-modified XTK transform when reslicing is disabled.");
           var _x_cosine = new goog.math.Vec3(first_image[0]['image_orientation_patient'][0],
             first_image[ 0 ]['image_orientation_patient'][1], first_image[ 0 ]['image_orientation_patient'][2]);
 
