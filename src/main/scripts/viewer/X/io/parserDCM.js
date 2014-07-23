@@ -426,12 +426,15 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     ////////////////////////////////////////////////////////////////////////
     
     if(object['reslicing'] == 'false' || object['reslicing'] == false){
+	/**
         goog.vec.Mat4.setRowValues(IJKToRAS,
           0,
           first_image[0]['pixel_spacing'][0],
           0,
           0,
           0);
+
+
           // - first_image[0]['pixel_spacing'][0]/2);
         goog.vec.Mat4.setRowValues(IJKToRAS,
           1,
@@ -439,6 +442,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           first_image[0]['pixel_spacing'][1],
           0,
           0);
+
+
           // - first_image[0]['pixel_spacing'][1]/2);
         goog.vec.Mat4.setRowValues(IJKToRAS,
           2,
@@ -446,9 +451,57 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           0,
           first_image[0]['pixel_spacing'][2],
           0);
+
           // + first_image[0]['pixel_spacing'][2]/2);
-        goog.vec.Mat4.setRowValues(IJKToRAS,
-          3,0,0,0,1);
+        goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);
+	*/
+
+	window.console.log("Running and NRG-modified XTK transform when reslicing is disabled.");
+          var _x_cosine = new goog.math.Vec3(first_image[0]['image_orientation_patient'][0],
+            first_image[ 0 ]['image_orientation_patient'][1], first_image[ 0 ]['image_orientation_patient'][2]);
+
+          var _y_cosine = new goog.math.Vec3(first_image[ 0 ]['image_orientation_patient'][3],
+            first_image[ 0 ]['image_orientation_patient'][4], first_image[ 0 ]['image_orientation_patient'][5]);
+
+
+	_x_cosine.x = Math.round(_x_cosine.x);
+	_x_cosine.y = Math.round(_x_cosine.y);
+	_x_cosine.z = Math.round(_x_cosine.z);
+
+	_y_cosine.x = Math.round(_y_cosine.x);
+	_y_cosine.y = Math.round(_y_cosine.y);
+	_y_cosine.z = Math.round(_y_cosine.z);
+
+          var _z_cosine = goog.math.Vec3.cross(_x_cosine, _y_cosine);
+
+	//window.console.log("\n\nPARSER DCM", _x_cosine, _y_cosine, _z_cosine);
+
+          goog.vec.Mat4.setRowValues(IJKToRAS,
+            0,
+            -Math.round(first_image[ 0 ]['image_orientation_patient'][0])*first_image[0]['pixel_spacing'][0],
+            -Math.round(first_image[ 0 ]['image_orientation_patient'][3])*first_image[0]['pixel_spacing'][1],
+            -_z_cosine.x*first_image[0]['pixel_spacing'][2],
+            -_origin[0]);
+            // - first_image[0]['pixel_spacing'][0]/2);
+          goog.vec.Mat4.setRowValues(IJKToRAS,
+            1,
+            -Math.round(first_image[ 0 ]['image_orientation_patient'][1])*first_image[0]['pixel_spacing'][0],
+            -Math.round(first_image[ 0 ]['image_orientation_patient'][4])*first_image[0]['pixel_spacing'][1],
+            -_z_cosine.y*first_image[0]['pixel_spacing'][2],
+            -_origin[1]);
+            // - first_image[0]['pixel_spacing'][1]/2);
+          goog.vec.Mat4.setRowValues(IJKToRAS,
+            2,
+            Math.round(first_image[ 0 ]['image_orientation_patient'][2])*first_image[0]['pixel_spacing'][0],
+            Math.round(first_image[ 0 ]['image_orientation_patient'][5])*first_image[0]['pixel_spacing'][1],
+            _z_cosine.z*first_image[0]['pixel_spacing'][2],
+            _origin[2]);
+            // + first_image[0]['pixel_spacing'][2]/2);
+          goog.vec.Mat4.setRowValues(IJKToRAS,
+            3,0,0,0,1);
+          //break;
+
+
     }
     else{
       switch(_ordering){
