@@ -450,7 +450,7 @@ xiv.ui.ctrl.XtkController.prototype.update = function() {
  */
 xiv.ui.ctrl.XtkController.prototype.updateStyle = function() {
     if (this.component_.updateStyle && this.component_ != this){
-	window.console.log("UPDATE STYLE", this.component_);
+	//window.console.log("UPDATE STYLE", this.component_);
 	this.component_.updateStyle();
     }
 }
