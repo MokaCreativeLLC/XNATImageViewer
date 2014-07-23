@@ -1421,7 +1421,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.updateAnnotationsControllers_ =
     function(ctrl, key){
 	//window.console.log("\n\nUPDATE ANNOT");
 	if (ctrl instanceof xiv.ui.ctrl.SliderController){
-	    //window.console.log("ANNOT", ctrl)
+	    window.console.log("ANNOT", ctrl)
 	    ctrl.updateStyle();
 	}
     }
@@ -1437,7 +1437,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.updateMeshControllers_ =
     function(ctrl, key){
 	//window.console.log("\n\nUPDATE MESH");
 	if (ctrl instanceof xiv.ui.ctrl.SliderController){
-	    //window.console.log("MESG", ctrl)
+	    window.console.log("MESH", ctrl)
 	    ctrl.updateStyle();
 	}
     }
