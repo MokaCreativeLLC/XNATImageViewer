@@ -61,7 +61,7 @@ xiv.ui.ProgressBarPanel = function() {
 
 
     goog.dom.classes.add(goog.dom.getElementByClass('progress-bar-thumb', 
-				    this.progBarHolder_), 
+						    this.progBarHolder_), 
 			 xiv.ui.ProgressBarPanel.CSS.THUMB)
     /**
      * @type {?Element}
@@ -147,6 +147,7 @@ xiv.ui.ProgressBarPanel.prototype.showValue = function(opt_showValue) {
  */
 xiv.ui.ProgressBarPanel.prototype.setValue = function(val) {
     this.ProgressBar_.setValue(val);
+    this.ProgressBar_.getElement().backgroundColor = 'rgb(100,149,237)';
     this.labelHolder_.innerHTML = this.labelText_;
     if (this.showValue_){
 	if (this.labelText_.length > 0){
