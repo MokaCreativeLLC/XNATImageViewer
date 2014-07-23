@@ -1364,6 +1364,8 @@ function(ctrl, typeKey){
 
 
 
+
+
 /**
  * @param {!xiv.ui.ctrl.XtkController} ctrl
  * @param {!string} typeKey
@@ -1409,6 +1411,38 @@ xiv.ui.ViewBoxInteractorHandler.prototype.updateVolumeControllers_ =
     }
 
 
+
+/**
+ * @param {!xiv.ui.ctrl.XtkController} ctrl
+ * @param {!string} key
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.updateAnnotationsControllers_ = 
+    function(ctrl, key){
+	//window.console.log("\n\nUPDATE ANNOT");
+	if (ctrl instanceof xiv.ui.ctrl.SliderController){
+	    //window.console.log("ANNOT", ctrl)
+	    ctrl.updateStyle();
+	}
+    }
+
+
+
+/**
+ * @param {!xiv.ui.ctrl.XtkController} ctrl
+ * @param {!string} key
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.updateMeshControllers_ = 
+    function(ctrl, key){
+	//window.console.log("\n\nUPDATE MESH");
+	if (ctrl instanceof xiv.ui.ctrl.SliderController){
+	    //window.console.log("MESG", ctrl)
+	    ctrl.updateStyle();
+	}
+    }
+
+
 /**
  * @param {!string} key
  * @param {!string} typeKey
@@ -1425,13 +1459,19 @@ xiv.ui.ViewBoxInteractorHandler.prototype.updateControllers_ = function(key){
     goog.object.forEach(this.viewableCtrls_[typeKey], function(ctrls, setKey){
 	if (!goog.isDefAndNotNull(ctrls)) { return }
 	goog.array.forEach(ctrls, function(ctrl){
-
-	    switch(typeKey){
+	    //window.console.log("TYPE KEY", typeKey);
+	    switch(typeKey.toLowerCase()){
 	    case 'levels':
 		this.updateLevelControllers_(ctrl, key);
 		break;
 	    case 'volumes':
 		this.updateVolumeControllers_(ctrl, key);
+		break;
+	    case 'meshes':
+		this.updateMeshControllers_(ctrl, key);
+		break;
+	    case 'annotations':
+		this.updateAnnotationsControllers_(ctrl, key);
 		break;
 	    } 
 
