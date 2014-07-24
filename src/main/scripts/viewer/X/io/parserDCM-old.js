@@ -109,9 +109,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     // pointer to first image
     var seriesInstanceUID = Object.keys(series)[0];
     var first_image = series[seriesInstanceUID];
-
-
-
     // number of unique slices available
     var first_image_stacks = first_image.length;
     // container for volume specific information
@@ -155,8 +152,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
         // set distance to 0
         series[seriesInstanceUID][0]['dist'] = 0;
 
-		//window.console.log("ORDERING 0");
-
     }
     else if(first_image[0]['image_position_patient'][0] != first_image[1]['image_position_patient'][0] ||
       first_image[0]['image_position_patient'][1] != first_image[1]['image_position_patient'][1] ||
@@ -185,7 +180,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       // order by dist
       first_image.sort(function(a,b){return a["dist"]-b["dist"]});
     
-	//window.console.log("ORDERING 1");
     }
     else if(first_image[0]['instance_number'] != first_image[1]['instance_number']){
     
@@ -193,7 +187,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       _ordering = 'instance_number';
       first_image.sort(function(a,b){return a["instance_number"]-b["instance_number"]});
     
-	window.console.log("ORDERING 2");
     }
     else{
 
@@ -227,29 +220,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 
     }
 
-
-
-      //************************************
-      //
-      // MOKA / NRG MOD END
-      // 
-      //************************************
-      //
-      // Occasionally there are ordering errors based on image_position_patient (the first
-      // else-if statement) approach, so we have to catch for that
-      //
-      if(Math.abs(first_image[0]['instance_number'] - first_image[1]['instance_number']) != 1){
-	  _ordering = 'instance_number';
-	  first_image.sort(function(a,b){return a["instance_number"]-b["instance_number"]});
-	  window.console.log("parserDCM: Reordering the slices by instance number after errors the first pass.");
-      }
-      //************************************
-      //
-      // MOKA / NRG MOD END
-      // 
-      //************************************
-
-
     if( first_image_stacks > 1) {
 
       switch(_ordering){
@@ -261,21 +231,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           var _y = _second_image_position[1] - _first_position[1];
           var _z = _second_image_position[2] - _first_position[2];
           first_image[0]['pixel_spacing'][2] = Math.sqrt(_x*_x + _y*_y  + _z*_z);
-
-	  window.console.log("PIXEL SPACING", 
-			     first_image[0] == first_image[1],
-			     _first_position, _second_image_position,
-			     first_image[0]['pixel_spacing'][2],
-			     first_image[ 0 ],
-			     first_image[ 1 ],
-			     first_image[first_image.length - 1]
-			    );
-
-	  var i = 0;
-	  var len = first_image.length;
-	  for (; i<len; i++){
-	      window.console.log("INSTANCES: ", first_image[i]['instance_number']);
-	  }
           break;
         case 'instance_number':
           first_image[0]['pixel_spacing'][2] = 1.0;
@@ -291,26 +246,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       first_image[0]['pixel_spacing'][2] = 1.0;
 
     }
-
-	//****************************
-	//
-	//  MOKA / NRG MOD
-	//
-	//*****************************
-      if (first_image[0]['pixel_spacing'][2] == 0){
-	  window.console.log("\n\n\nCHANGING PIXEL SPACING\n\n");
-	  first_image[0]['pixel_spacing'][2] = 1;
-      }
-      
-
-	//****************************
-	//
-	//  MOKA / NRG MOD
-	//
-	//*****************************
-
-
-
 
     ////////////////////////////////////////////////////////////////////////
     // At this point:
@@ -337,23 +272,10 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
         var _z = _last_image_position[2] - _first_position[2];
         var _distance_position = Math.sqrt(_x*_x + _y*_y  + _z*_z);
         //normalize by z spacing
-
-
-        first_image_expected_nb_slices 
-	    += Math.round(_distance_position/first_image[0]['pixel_spacing'][2]);
-
-
-
+        first_image_expected_nb_slices += Math.round(_distance_position/first_image[0]['pixel_spacing'][2]);
         break;
       case 'instance_number':
-
-	//window.console.log("instance number",
-	//first_image[ first_image_stacks - 1]['instance_number'] , first_image[0]['instance_number']);
-
-        first_image_expected_nb_slices += 
-	Math.abs(first_image[ first_image_stacks - 1]['instance_number'] - first_image[0]['instance_number']);
-
-
+        first_image_expected_nb_slices += Math.abs(first_image[ first_image_stacks - 1]['instance_number'] - first_image[0]['instance_number']);
         break;
       default:
         window.console.log("Unkown ordering mode - returning: " + _ordering);
@@ -380,14 +302,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 
     var first_image_data = null;
 
-
-      //window.console.log('BITS ALLOCATED', first_image[0].bits_allocated);
-      //window.console.log("FIRST IMAGE", first_image);
-      //window.console.log("FIRST IMAGE 0", first_image[1]);
-
     // create data container
-
-      //window.console.log("\n\nFIRST IMAGE SIZE", first_image_size);
     switch (first_image[0].bits_allocated) {
       case 8:
         first_image_data = new Uint8Array(first_image_size);
@@ -434,10 +349,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           var _x = first_image[_i]['image_position_patient'][0] - first_image[0]['image_position_patient'][0];
           var _y = first_image[_i]['image_position_patient'][1] - first_image[0]['image_position_patient'][1];
           var _z = first_image[_i]['image_position_patient'][2] - first_image[0]['image_position_patient'][2];
-
-	  
-	  _distance_position = Math.sqrt(_x*_x + _y*_y  + _z*_z)/first_image[0]['pixel_spacing'][2]
-
+          _distance_position = Math.sqrt(_x*_x + _y*_y  + _z*_z)/first_image[0]['pixel_spacing'][2];
           break;
         case 'instance_number':
           _distance_position = first_image[_i]['instance_number'] - first_image[0]['instance_number'];
@@ -446,7 +358,9 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           window.console.log("Unkown ordering mode - returning: " + _ordering);
           break;
       }
-	first_image_data.set(_data, _distance_position * first_slice_size);
+
+      first_image_data.set(_data, _distance_position * first_slice_size);
+
     }
 
     volumeAttributes.data = first_image_data;
@@ -690,9 +604,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     object.create_(volumeAttributes);
 
     // re-slice the data in SAGITTAL, CORONAL and AXIAL directions
+    object._image = this.reslice(object);
 
-      object._image = this.reslice(object);
-      
   }
 
   // the object should be set up here, so let's fire a modified event
@@ -808,29 +721,6 @@ X.parserDCM.prototype.parseStream = function(data, object) {
   var _VR = null;
   var _VL = null;
 
-
-
-    //****************************************************
-    //
-    // MOKA / NRG MOD 
-    //
-    //****************************************************
-    var _skipCurrent = false;
-    var _dicomTypeLogged = false;
-    var _dicomType;
-
-    var _skippables = {};
-    _skippables.LEI = [[0x0012, 0x0064], [0x0008, 0x1110],[0x0008, 0x1120]];
-  
-    //var _skippables = [[0x0008, 0x1110],[0x0008, 0x1120]];
-    var i, len;
-
-    //****************************************************
-    //
-    // MOKA / NRG MOD END
-    //
-    //****************************************************
-
   while (_bytePointer <  _bytes.length) {
 
     _tagGroup = _bytes[_bytePointer++];
@@ -839,224 +729,19 @@ X.parserDCM.prototype.parseStream = function(data, object) {
     _VR = _bytes[_bytePointer++];
     _VL = _bytes[_bytePointer++];
 
+    // window.console.log('(' + _tagGroup.toString(16) + ',' + _tagElement.toString(16) +')');
 
-      // Implicit VR Little Endian case
-      if((slice['transfer_syntax_uid'] == '1.2.840.10008.1.2') && (_VL == 0)){
-	  _VL = _VR;
-      }
+    // var _b0 = _VR & 0x00FF;
+    // var _b1 = (_VR & 0xFF00) >> 8;
+    // window.console.log('_VR: '+_VR+' - ' + String.fromCharCode( _b0 ) + String.fromCharCode( _b1 ));
+    // window.console.log('_VL: ' + _VL);
 
-
-      //****************************************************
-      //
-      // NRG / MOKA CREATIVE ADD
-      //
-      //****************************************************
-      /**
-	 Certain memory pointers of DICOMS throw a wrench the parsing mechanism.
-	 As a result, we have to skip them.  Prelimiary tests show that this does not
-	 affect the rendering.
-
-	 Bad (at least within the context of XTK) memory addresses include:
-	 
-	 0x0012, 0x0064
-
-(0008, 0008) Image Type                          CS: ['ORIGINAL', 'PRIMARY', 'M', 'ND', 'NORM']
-(0008, 0012) Instance Creation Date              DA: '20120831'
-(0008, 0013) Instance Creation Time              TM: '125310.281000'
-(0008, 0016) SOP Class UID                       UI: MR Image Storage
-(0008, 0018) SOP Instance UID                    UI: 1.2.840.113654.2.45.5943.211300177154514993689921060436559942663
-(0008, 0020) Study Date                          DA: '20120831'
-(0008, 0021) Series Date                         DA: '20120831'
-(0008, 0022) Acquisition Date                    DA: '20120831'
-(0008, 0023) Content Date                        DA: '20120831'
-(0008, 0030) Study Time                          TM: '125001.000'
-(0008, 0031) Series Time                         TM: '125310.000'
-(0008, 0032) Acquisition Time                    TM: '125224.100000'
-(0008, 0033) Content Time                        TM: '125310.281000'
-(0008, 0040) Data Set Type                       US: 0
-(0008, 0041) Data Set Subtype                    LO: 'IMA NONE'
-(0008, 0060) Modality                            CS: 'MR'
-(0008, 0070) Manufacturer                        LO: 'SIEMENS'
-(0008, 0080) Institution Name                    LO: ''
-(0008, 1010) Station Name                        SH: 'SMRC'
-(0008, 1030) Study Description                   LO: '3'
-(0008, 103e) Series Description                  LO: 'T1 BLADE SAG'
-(0008, 1070) Operators' Name                     PN: ' '
-(0008, 1090) Manufacturer's Model Name           LO: 'SymphonyTim'
-(0010, 0010) Patient's Name                      PN: 'MW009R'
-(0010, 0020) Patient ID                          LO: 'MW009R_MR1'
-(0010, 0040) Patient's Sex                       CS: 'F'
-(0010, 1030) Patient's Weight                    DS: '52.1631291855'
-(0012, 0062) Patient Identity Removed            CS: 'YES'
-(0012, 0063) De-identification Method            LO: 'Test common deidentification v001'
-(0012, 0064)  De-identification Method Code Sequence   11 item(s) ---- 
-   (0008, 0100) Code Value                          SH: '113100'
-   (0008, 0102) Coding Scheme Designator            SH: 'DCM'
-   (0008, 0104) Code Meaning                        LO: 'Basic Application Confidentiality Profile'
-   ---------
-   (0008, 0100) Code Value                          SH: '113101'
-   (0008, 0102) Coding Scheme Designator            SH: 'DCM'
-   (0008, 0104) Code Meaning                        LO: 'Clean Pixel Data Option'
-   ---------
-   (0008, 0100) Code Value                          SH: '113103'
-   (0008, 0102) Coding Scheme Designator            SH: 'DCM'
-   (0008, 0104) Code Meaning                        LO: 'Clean Graphics Option'
-   ---------
-   (0008, 0100) Code Value                          SH: '113104'
-   (0008, 0102) Coding Scheme Designator            SH: 'DCM'
-   (0008, 0104) Code Meaning                        LO: 'Clean Structured Content Option'
-   ---------
-   (0008, 0100) Code Value                          SH: '113105'
-   (0008, 0102) Coding Scheme Designator            SH: 'DCM'
-   (0008, 0104) Code Meaning                        LO: 'Clean Descriptors Option'
-   ---------
-   (0008, 0100) Code Value                          SH: '113106'
-   (0008, 0102) Coding Scheme Designator            SH: 'DCM'
-   (0008, 0104) Code Meaning                        LO: 'Retain Longitudinal With Full Dates Option'
-   ---------
-   (0008, 0100) Code Value                          SH: '113108'
-   (0008, 0102) Coding Scheme Designator            SH: 'DCM'
-   (0008, 0104) Code Meaning                        LO: 'Retain Patient Characteristics Option'
-   ---------
-   (0008, 0100) Code Value                          SH: '113109'
-   (0008, 0102) Coding Scheme Designator            SH: 'DCM'
-   (0008, 0104) Code Meaning                        LO: 'Retain Device Identity Option'
-   ---------
-   (0008, 0100) Code Value                          SH: '625500'
-   (0008, 0102) Coding Scheme Designator            SH: 'XNAT'
-   (0008, 0103) Coding Scheme Version               SH: '0.1'
-   (0008, 0104) Code Meaning                        LO: 'XNAT Edit Script'
-   ---------
-   (0008, 0100) Code Value                          SH: '35081'
-   (0008, 0102) Coding Scheme Designator            SH: 'XNAT'
-   (0008, 0103) Coding Scheme Version               SH: '0.1'
-   (0008, 0104) Code Meaning                        LO: 'XNAT Edit Script'
-   ---------
-   (0008, 0100) Code Value                          SH: '6'
-   (0008, 0102) Coding Scheme Designator            SH: 'XNAT'
-   (0008, 0103) Coding Scheme Version               SH: '0.1'
-   (0008, 0104) Code Meaning                        LO: 'XNAT Edit Script'
-   ---------
-(0018, 0020) Scanning Sequence                   CS: ['SE', 'IR']
-(0018, 0021) Sequence Variant                    CS: ['SK', 'SP', 'MP', 'OSP']
-(0018, 0022) Scan Options                        CS: 'IR'
-(0018, 0023) MR Acquisition Type                 CS: '2D'
-(0018, 0024) Sequence Name                       SH: '*tirB2d1_19'
-(0018, 0025) Angio Flag                          CS: 'N'
-(0018, 0050) Slice Thickness                     DS: '5'
-(0018, 0080) Repetition Time                     DS: '2000'
-(0018, 0081) Echo Time                           DS: '59'
-(0018, 0082) Inversion Time                      DS: '859.8'
-(0018, 0083) Number of Averages                  DS: '1'
-(0018, 0084) Imaging Frequency                   DS: '63.573217'
-(0018, 0085) Imaged Nucleus                      SH: '1H'
-(0018, 0086) Echo Number(s)                      IS: '1'
-(0018, 0087) Magnetic Field Strength             DS: '1.5'
-(0018, 0088) Spacing Between Slices              DS: '6'
-(0018, 0089) Number of Phase Encoding Steps      IS: '256'
-(0018, 0091) Echo Train Length                   IS: '19'
-(0018, 0093) Percent Sampling                    DS: '100'
-(0018, 0094) Percent Phase Field of View         DS: '100'
-(0018, 0095) Pixel Bandwidth                     DS: '360'
-(0018, 1000) Device Serial Number                LO: '37019'
-(0018, 1020) Software Version(s)                 LO: 'syngo MR B15'
-(0018, 1030) Protocol Name                       LO: ''
-(0018, 1251) Transmit Coil Name                  SH: 'Body'
-(0018, 1310) Acquisition Matrix                  US: [0, 256, 256, 0]
-(0018, 1312) In-plane Phase Encoding Direction   CS: 'ROW'
-(0018, 1314) Flip Angle                          DS: '150'
-(0018, 1315) Variable Flip Angle Flag            CS: 'N'
-(0018, 1316) SAR                                 DS: '0.69060883169056'
-(0018, 1318) dB/dt                               DS: '0'
-(0018, 5100) Patient Position                    CS: 'HFS'
-(0020, 000d) Study Instance UID                  UI: 1.2.840.113654.2.45.5943.122980150668789253093962596101153207919
-(0020, 000e) Series Instance UID                 UI: 1.2.840.113654.2.45.5943.202009576256284981709391709024242379991
-(0020, 0010) Study ID                            SH: ''
-(0020, 0011) Series Number                       IS: '2'
-(0020, 0012) Acquisition Number                  IS: '1'
-(0020, 0013) Instance Number                     IS: '1'
-(0020, 0032) Image Position (Patient)            DS: ['-63.492519034562', '-142.14062462095', '120.68211518741']
-(0020, 0037) Image Orientation (Patient)         DS: ['-0.0453630169093', '0.99897056848382', '3.1037018e-008', '0.01917770454847', '0.00087088608459', '-0.9998157116217']
-(0020, 0052) Frame of Reference UID              UI: 1.2.840.113654.2.45.5943.294296683094707850775096290142582472153
-(0020, 1040) Position Reference Indicator        LO: ''
-(0020, 1041) Slice Location                      DS: '-67.545417046544'
-(0028, 0002) Samples per Pixel                   US: 1
-(0028, 0004) Photometric Interpretation          CS: 'MONOCHROME2'
-(0028, 0010) Rows                                US: 256
-(0028, 0011) Columns                             US: 256
-(0028, 0030) Pixel Spacing                       DS: ['0.8984375', '0.8984375']
-(0028, 0100) Bits Allocated                      US: 16
-(0028, 0101) Bits Stored                         US: 12
-(0028, 0102) High Bit                            US: 11
-(0028, 0103) Pixel Representation                US: 0
-(0028, 0106) Smallest Image Pixel Value          US or SS: '\x00\x00'
-(0028, 0107) Largest Image Pixel Value           US or SS: '\xcb\x01'
-(0028, 1050) Window Center                       DS: '211'
-(0028, 1051) Window Width                        DS: '477'
-(0028, 1055) Window Center & Width Explanation   LO: 'Algo1'
-(0032, 1064)  Requested Procedure Code Sequence   1 item(s) ---- 
-   (0008, 0100) Code Value                          SH: 'BMR70553'
-   (0008, 0102) Coding Scheme Designator            SH: 'DTL_SVC_CD'
-   (0008, 0104) Code Meaning                        LO: '70553 MRI Brain wo&with contrast'
-   ---------
-(0040, 0002) Scheduled Procedure Step Start Date DA: '20120831'
-(0040, 0003) Scheduled Procedure Step Start Time TM: '1322\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-(0040, 0244) Performed Procedure Step Start Date DA: '20120831'
-(0040, 0245) Performed Procedure Step Start Time TM: '125001.000'
-(7fe0, 0010) Pixel Data                          OW or OB: Array of 131072 bytes	 
-
+    // Implicit VR Little Endian case
+    if((slice['transfer_syntax_uid'] == '1.2.840.10008.1.2') && (_VL == 0)){
       
-      */
+      _VL = _VR;
 
-      _skipCurrent = false;
-      if (_tagGroup !== undefined && _tagElement !== undefined){
-
-	  //window.console.log("Current memory address ", '(0x' + _tagGroup.toString(16) + ', 0x' 
-	      //+ _tagElement.toString(16) +')');
-
-	  switch(slice['transfer_syntax_uid']){
-	      
-	  case '1.2.840.10008.1.2.1':
-	      _dicomType = "Little Endian Explicit";
-	      break;
-	      
-	  case '1.2.840.10008.1.2.2':
-	      _dicomType = "Big Endian Explicit";
-	      break;
-	      
-	  case '1.2.840.10008.1.2':
-	      _dicomType = "Little Endian Implicit";
-	      if (slice['transfer_syntax_uid'] == '1.2.840.10008.1.2'){
-		  i = 0;
-		  len = _skippables.LEI.length;
-		  for (; i < len; i++){
-		      if ((_tagGroup === _skippables.LEI[i][0]) && 
-			  (_tagElement === _skippables.LEI[i][1])){
-			  _skipCurrent = true;
-			  break;
-		      }
-		  }
-	      }
-	      break;
-	  }
-	  
-	  if (!_dicomTypeLogged && _dicomType !== undefined){
-	      window.console.log("\n\nparserDCM: Identified " + _dicomType);
-	      _dicomTypeLogged = true;
-	  }
-
-	  if (_skipCurrent){
-	      window.console.log("\t\tSkipping ", '(0x' + _tagGroup.toString(16) + ', 0x' 
-				 + _tagElement.toString(16) +')');
-	      continue;
-	  }
-      }
-      //****************************************************
-      //
-      // MOKA CREATIVE LLC ADD 
-      //
-      //****************************************************
-
+    }
 
     switch (_tagGroup) {
       case 0x0002:
@@ -1075,7 +760,6 @@ X.parserDCM.prototype.parseStream = function(data, object) {
               _transfer_syntax_uid += String.fromCharCode(_b1);
             }
             slice['transfer_syntax_uid'] = _transfer_syntax_uid.replace(/\0/g,'');
-	    window.console.log("UD", slice['transfer_syntax_uid']);
             break;
           default:
             _bytePointer = X.parserDCM.prototype.handleDefaults(_bytes, _bytePointer, _VR, _VL);
@@ -1083,7 +767,6 @@ X.parserDCM.prototype.parseStream = function(data, object) {
           }
 
         break;
-
 
       case 0x0028:
       // Group of IMAGE INFO
@@ -1184,12 +867,8 @@ X.parserDCM.prototype.parseStream = function(data, object) {
               _image_position += String.fromCharCode(_b1);
             }
             _image_position = _image_position.split("\\");
-	    window.console.log('IMAGE POSITION', _image_position);
-
             slice['image_position_patient'] = [ parseFloat(_image_position[0]), parseFloat(_image_position[1]),
                 parseFloat(_image_position[2]) ];
-
-	    window.console.log('IMAGE POSITION2', slice['image_position_patient']);
             // _tagCount--;
             break;
           case 0x0037:
@@ -1289,31 +968,28 @@ X.parserDCM.prototype.parseStream = function(data, object) {
 
         break;
           // We should parse the data like that...
+            // case 0x7fe0:
+    //     // Group of SLICE INFO
+    //     // here we are only interested in the InstanceNumber
+    //     switch (_tagElement) {
+    //       case 0x0010:
+    //         var _data = null;
+    //         switch (slice.bits_allocated) {
+    //           case 8:
+    //             slice.data = new Uint8Array(slice.columns * slice.rows);
+    //             slice.data = this.scan('uchar', slice.columns * slice.rows);
+    //             break;
+    //           case 16:
+    //             slice.data = new Uint16Array(slice.columns * slice.rows);
+    //             slice.data = this.scan('ushort', slice.columns * slice.rows);
+    //             break;
+    //           case 32:
+    //             slice.data = new Uint32Array(slice.columns * slice.rows);
+    //             slice.data = this.scan('uint', slice.columns * slice.rows);
+    //             break;
+    //         }
 
-/**
-    case 0x7fe0:
-	//     // Group of SLICE INFO
-	//     // here we are only interested in the InstanceNumber
-        switch (_tagElement) {
-        case 0x0010:
-            var _data = null;
-            switch (slice.bits_allocated) {
-            case 8:
-                slice.data = new Uint8Array(slice.columns * slice.rows);
-                slice.data = this.scan('uchar', slice.columns * slice.rows);
-                break;
-            case 16:
-                slice.data = new Uint16Array(slice.columns * slice.rows);
-                slice.data = this.scan('ushort', slice.columns * slice.rows);
-                break;
-            case 32:
-                slice.data = new Uint32Array(slice.columns * slice.rows);
-                slice.data = this.scan('uint', slice.columns * slice.rows);
-                break;
-            }
-	}
-*/
-        break;
+    //         break;
 
     //       default:
     //         _bytePointer = X.parserDCM.prototype.handleDefaults(_bytes, _bytePointer, _VR, _VL);
