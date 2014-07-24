@@ -168,8 +168,10 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
         // set distances
         var _x_cosine = new goog.math.Vec3(first_image[0]['image_orientation_patient'][0],
           first_image[0]['image_orientation_patient'][1], first_image[ 0 ]['image_orientation_patient'][2]);
+
         var _y_cosine = new goog.math.Vec3(first_image[ 0 ]['image_orientation_patient'][3],
           first_image[ 0 ]['image_orientation_patient'][4], first_image[ 0 ]['image_orientation_patient'][5]);
+
         var _z_cosine = goog.math.Vec3.cross(_x_cosine, _y_cosine);
 
         function computeDistance(flag, arrelem)
@@ -185,7 +187,15 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       // order by dist
       first_image.sort(function(a,b){return a["dist"]-b["dist"]});
     
+	//
+	// MOKA / NRG MOD START
+	//
+	//window.console.log("\n\n\nNRG: It's here where it creates errors!! We want to use the instance below.");
 	//window.console.log("ORDERING 1");
+	//
+	// MOKA / NRG MOD END
+	//
+	
     }
     else if(first_image[0]['instance_number'] != first_image[1]['instance_number']){
     
@@ -231,17 +241,32 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 
       //************************************
       //
-      // MOKA / NRG MOD END
+      // MOKA / NRG MOD START
       // 
       //************************************
       //
       // Occasionally there are ordering errors based on image_position_patient (the first
-      // else-if statement) approach, so we have to catch for that
+      // else-if statement) approach, so we have to catch for that.
       //
-      if(Math.abs(first_image[0]['instance_number'] - first_image[1]['instance_number']) != 1){
+      // It's also important to set the _ordering to "instance_number" because that translates
+      // into various calculations below.  
+
+      // NOTE: This has only pertained to either Little Endian Implicit Dicoms, or DICOM sets where the 
+      // ordering is not consistent with the 'instance_number' property.
+      //
+      var _isLittleEndianImplicit = first_image[0]['transfer_syntax_uid'] == '1.2.840.10008.1.2';
+      var _isUnorderedByInstanceNumber = Math.abs(first_image[0]['instance_number'] - first_image[1]['instance_number']) != 1;
+
+      if(_isLittleEndianImplicit || _isUnorderedByInstanceNumber){
 	  _ordering = 'instance_number';
 	  first_image.sort(function(a,b){return a["instance_number"]-b["instance_number"]});
-	  window.console.log("parserDCM: Reordering the slices by instance number after errors the first pass.");
+	  window.console.log("\n\nNRG WARNING:");
+	  window.console.log("A message from the NRG modified version of XTK's parserDCM.js: \n" 
+			     +"Reordering the slices by the 'instance_number' property for one of the following reasons: ");
+	  window.console.log("\t1) DICOMs are Little Endian Implicit format.");
+	  window.console.log("\t2) DICOMS are unordered after geometric sorting (e.g. " +
+			     "sorting slices by 'image_position_patient' did not provide correct ordering).");
+	  window.console.log("\n\n");
       }
       //************************************
       //
@@ -262,6 +287,11 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           var _z = _second_image_position[2] - _first_position[2];
           first_image[0]['pixel_spacing'][2] = Math.sqrt(_x*_x + _y*_y  + _z*_z);
 
+	  //
+	  //
+	  // MOKA / NRG MOD START
+	  //
+	  //
 	  window.console.log("PIXEL SPACING", 
 			     first_image[0] == first_image[1],
 			     _first_position, _second_image_position,
@@ -277,6 +307,11 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      window.console.log("INSTANCES: ", first_image[i]['instance_number']);
 	  }
           break;
+	  //
+	  //
+	  // MOKA / NRG MOD END
+	  //
+	  //
         case 'instance_number':
           first_image[0]['pixel_spacing'][2] = 1.0;
           break;
@@ -291,25 +326,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       first_image[0]['pixel_spacing'][2] = 1.0;
 
     }
-
-	//****************************
-	//
-	//  MOKA / NRG MOD
-	//
-	//*****************************
-      if (first_image[0]['pixel_spacing'][2] == 0){
-	  window.console.log("\n\n\nCHANGING PIXEL SPACING\n\n");
-	  first_image[0]['pixel_spacing'][2] = 1;
-      }
-      
-
-	//****************************
-	//
-	//  MOKA / NRG MOD
-	//
-	//*****************************
-
-
 
 
     ////////////////////////////////////////////////////////////////////////
@@ -435,8 +451,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           var _y = first_image[_i]['image_position_patient'][1] - first_image[0]['image_position_patient'][1];
           var _z = first_image[_i]['image_position_patient'][2] - first_image[0]['image_position_patient'][2];
 
-	  
 	  _distance_position = Math.sqrt(_x*_x + _y*_y  + _z*_z)/first_image[0]['pixel_spacing'][2]
+
 
           break;
         case 'instance_number':
@@ -446,6 +462,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           window.console.log("Unkown ordering mode - returning: " + _ordering);
           break;
       }
+	//window.console.log(_distance_position, first_slice_size);
+	//window.console.log(_data);
 	first_image_data.set(_data, _distance_position * first_slice_size);
     }
 
@@ -812,7 +830,7 @@ X.parserDCM.prototype.parseStream = function(data, object) {
 
     //****************************************************
     //
-    // MOKA / NRG MOD 
+    // MOKA / NRG MOD START
     //
     //****************************************************
     var _skipCurrent = false;
@@ -848,7 +866,7 @@ X.parserDCM.prototype.parseStream = function(data, object) {
 
       //****************************************************
       //
-      // NRG / MOKA CREATIVE ADD
+      // MOKA / NRG MOD START
       //
       //****************************************************
       /**
@@ -1053,7 +1071,7 @@ X.parserDCM.prototype.parseStream = function(data, object) {
       }
       //****************************************************
       //
-      // MOKA CREATIVE LLC ADD 
+      // MOKA / NRG MOD END
       //
       //****************************************************
 
@@ -1075,7 +1093,6 @@ X.parserDCM.prototype.parseStream = function(data, object) {
               _transfer_syntax_uid += String.fromCharCode(_b1);
             }
             slice['transfer_syntax_uid'] = _transfer_syntax_uid.replace(/\0/g,'');
-	    window.console.log("UD", slice['transfer_syntax_uid']);
             break;
           default:
             _bytePointer = X.parserDCM.prototype.handleDefaults(_bytes, _bytePointer, _VR, _VL);
@@ -1184,12 +1201,8 @@ X.parserDCM.prototype.parseStream = function(data, object) {
               _image_position += String.fromCharCode(_b1);
             }
             _image_position = _image_position.split("\\");
-	    window.console.log('IMAGE POSITION', _image_position);
-
             slice['image_position_patient'] = [ parseFloat(_image_position[0]), parseFloat(_image_position[1]),
                 parseFloat(_image_position[2]) ];
-
-	    window.console.log('IMAGE POSITION2', slice['image_position_patient']);
             // _tagCount--;
             break;
           case 0x0037:
