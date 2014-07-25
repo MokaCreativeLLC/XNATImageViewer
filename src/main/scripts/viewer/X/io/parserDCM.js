@@ -56,6 +56,9 @@ X.parserDCM = function() {
 };
 // inherit from X.parser
 goog.inherits(X.parserDCM, X.parser);
+
+
+
 /**
  * @inheritDoc
  */
@@ -64,7 +67,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
   // needed, for renderer2d and 3d legacy...
   object.MRI = {};
   object.MRI.loaded_files = 0;
-
+//window.console.log("\n\nBegin parse");
   // parse the byte stream
   this.parseStream(data, object);
 
@@ -254,19 +257,39 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       // NOTE: This has only pertained to either Little Endian Implicit Dicoms, or DICOM sets where the 
       // ordering is not consistent with the 'instance_number' property.
       //
-      var _isLittleEndianImplicit = first_image[0]['transfer_syntax_uid'] == '1.2.840.10008.1.2';
-      var _isUnorderedByInstanceNumber = Math.abs(first_image[0]['instance_number'] - first_image[1]['instance_number']) != 1;
+      //window.console.log('First image', first_image[0]);
+      if (first_image.length > 1){
+	  var _isLittleEndianImplicit = first_image[0]['transfer_syntax_uid'] == '1.2.840.10008.1.2';
+	  var _isUnorderedByInstanceNumber = true;
+	  var _forceInstanceSort = false;
+	  var j = 0;
+	  var len = first_image.length-1;
 
-      if(_isLittleEndianImplicit || _isUnorderedByInstanceNumber){
-	  _ordering = 'instance_number';
-	  first_image.sort(function(a,b){return a["instance_number"]-b["instance_number"]});
-	  window.console.log("\n\nNRG WARNING:");
-	  window.console.log("A message from the NRG modified version of XTK's parserDCM.js: \n" 
-			     +"Reordering the slices by the 'instance_number' property for one of the following reasons: ");
-	  window.console.log("\t1) DICOMs are Little Endian Implicit format.");
-	  window.console.log("\t2) DICOMS are unordered after geometric sorting (e.g. " +
-			     "sorting slices by 'image_position_patient' did not provide correct ordering).");
-	  window.console.log("\n\n");
+	  function forceInstanceNumberOrdering(){
+	      _ordering = 'instance_number';
+	      first_image.sort(function(a,b){return a["instance_number"]-b["instance_number"]});
+	      var warningStr = 
+		  "\n\nNRG-modified parserDCM.js: " +
+		  "Forcing 'instance_number' slice reordering."
+	      /**
+		 for one of the following reasons: \n" + 
+		 "\t1) DICOMs are Little Endian Implicit format.\n" + 
+		 "\t2) DICOMS are unordered after geometric sorting (e.g. " +
+		  "sorting slices by 'image_position_patient' did not provide correct ordering).\n" + 
+		  "\n\n";
+	      */
+	      window.console.log(warningStr);
+	  }
+
+	  for (; j<len; j++){
+	      if (Math.abs(first_image[j]['instance_number'] - first_image[j+1]['instance_number']) != 1){
+		  _isUnorderedByInstanceNumber = true;
+		  break;
+	      }
+	  }
+	  if(_isLittleEndianImplicit || _isUnorderedByInstanceNumber || _forceInstanceSort){
+	      forceInstanceNumberOrdering();
+	  }
       }
       //************************************
       //
@@ -287,11 +310,14 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           var _z = _second_image_position[2] - _first_position[2];
           first_image[0]['pixel_spacing'][2] = Math.sqrt(_x*_x + _y*_y  + _z*_z);
 
-	  //
+
+
+
+	  //************************************
 	  //
 	  // MOKA / NRG MOD START
 	  //
-	  //
+	  //************************************
 	  window.console.log("PIXEL SPACING", 
 			     first_image[0] == first_image[1],
 			     _first_position, _second_image_position,
@@ -307,11 +333,15 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      window.console.log("INSTANCES: ", first_image[i]['instance_number']);
 	  }
           break;
-	  //
+	  //************************************
 	  //
 	  // MOKA / NRG MOD END
 	  //
-	  //
+	  //************************************
+
+
+
+
         case 'instance_number':
           first_image[0]['pixel_spacing'][2] = 1.0;
           break;
@@ -465,6 +495,36 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	//window.console.log(_distance_position, first_slice_size);
 	//window.console.log(_data);
 	first_image_data.set(_data, _distance_position * first_slice_size);
+
+	/**
+	//************************************
+	//
+	// MOKA / NRG MOD START
+	//
+	//************************************
+	try {
+	    first_image_data.set(_data, _distance_position * first_slice_size);
+	}
+	catch(error){
+	    switch(error.message){
+	    case 'Source is too large':
+	      var warningStr = 
+		  "\n\nWARNING in NRG-modified parserDCM.js: \n" +
+		  "Error caught in setting data.  Re-calling 'parse' method of parserDCM.js and forcing the "  + 
+		    " 'instance_number' property slice reordering";
+		window.console.log(warningStr);
+		this.parse(container, object, data, flag, true);
+		break;
+	    default:
+		throw(error);
+	    }
+	}
+	//************************************
+	//
+	// MOKA / NRG MOD END
+	//
+	//************************************
+	*/
     }
 
     volumeAttributes.data = first_image_data;
@@ -566,7 +626,15 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
         goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);
 	*/
 	//alert("RESLICNG");
-	window.console.log("Running an NRG-modified XTK transform when reslicing is disabled.");
+
+
+	//************************************
+	//
+	// MOKA / NRG MOD START
+	//
+	//************************************
+	window.console.log("NRG-modified parserDCM.js: Running an orthogonal transform because the volume's" +
+			   " \"reslicing\" property is set to false.");
           var _x_cosine = new goog.math.Vec3(first_image[0]['image_orientation_patient'][0],
             first_image[ 0 ]['image_orientation_patient'][1], first_image[ 0 ]['image_orientation_patient'][2]);
 
@@ -610,6 +678,12 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           goog.vec.Mat4.setRowValues(IJKToRAS,
             3,0,0,0,1);
           //break;
+	//************************************
+	//
+	// MOKA / NRG MOD END
+	//
+	//************************************
+
 
 
     }
