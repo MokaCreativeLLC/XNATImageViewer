@@ -1042,25 +1042,6 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
      _xySpacing[1] =  0.5;
    }
 
-
-    /**
-    //**********************************
-    //
-    // MOKA / NRG MOD
-    //
-    //**********************************
-    window.console.log('\n\nXY SPACING - before', _xySpacing);
-    if (_xySpacing[2] == 0) {
-	_xySpacing[2] = 1;
-    }
-    window.console.log('XY SPACING - after', _xySpacing);
-    //**********************************
-    //
-    // MOKA / NRG MOD
-    //
-    //**********************************
-*/
-
   object._childrenInfo[_index]._sliceXYSpacing = [Math.abs(_xySpacing[0]), Math.abs(_xySpacing[1])];
   object._childrenInfo[_index]._sliceSpacing = _xySpacing[2];
   object._childrenInfo[_index]._sliceDirection = _sliceDirection;
