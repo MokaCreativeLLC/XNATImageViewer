@@ -399,25 +399,27 @@ function(title, opt_animateSwitch) {
 xiv.ui.layouts.LayoutHandler.prototype.bindLayoutToSliderMousewheels_ = 
 function() {
 
-    //window.console.log('\n\nBINDING LAYOUT');;
+    window.console.log('\n\nBINDING LAYOUT');;
     //
     // Bind the slider mousewheel
     //
     var slider;
     var currFrames = this.Layouts_[this.currLayoutTitle_].getLayoutFrames();
+
+    window.console.log('curr frames', currFrames);
     goog.object.forEach(currFrames, function(frame, key){
 	//
 	// Get the slider associated with the frame
 	//
 	slider = this.getMasterInteractorByPlane(key, 
 		xiv.ui.layouts.Layout.INTERACTORS.SLIDER);
-
 	
-	//window.console.log(slider, 
-	//frame[xiv.ui.layouts.LayoutHandler.SLIDER_BOUND]);
+	window.console.log('\n\n',slider, 
+			   frame[xiv.ui.layouts.LayoutHandler.SLIDER_BOUND]);
+
 	if (goog.isDefAndNotNull(slider) && !goog.isDefAndNotNull(
 	    frame[xiv.ui.layouts.LayoutHandler.SLIDER_BOUND])) {
-
+	    window.console.log(frame.getTitle());
 	    //
 	    // Make sure the slider changes on the mousewheel
 	    // whenever it is moved over the frame
@@ -455,7 +457,9 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutResize_ = function(e) {
  * @private
  */ 
 xiv.ui.layouts.LayoutHandler.prototype.switchLayout = function(opt_time) {
-    //window.console.log("SWITCH LAYOUT", opt_time, this.prevLayoutTitle_);
+    window.console.log("SWITCH LAYOUT", opt_time, 
+		       this.prevLayoutTitle_,
+		       this.currLayoutTitle_);
     //
     // Set opt_time
     //

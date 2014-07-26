@@ -149,6 +149,10 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 
     var _ordering = 'image_position_patient';
 
+      window.console.log(
+	  first_image[0]['image_position_patient'][0], first_image[1]['image_position_patient'][0], '\n',
+	  first_image[0]['image_position_patient'][1], first_image[1]['image_position_patient'][1], '\n',
+	  first_image[0]['image_position_patient'][2], first_image[1]['image_position_patient'][2])
 
     if(first_image_stacks == 1){
         
@@ -162,8 +166,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 
     }
     else if(first_image[0]['image_position_patient'][0] != first_image[1]['image_position_patient'][0] ||
-      first_image[0]['image_position_patient'][1] != first_image[1]['image_position_patient'][1] ||
-      first_image[0]['image_position_patient'][2] != first_image[1]['image_position_patient'][2]){
+	    first_image[0]['image_position_patient'][1] != first_image[1]['image_position_patient'][1] ||
+	    first_image[0]['image_position_patient'][2] != first_image[1]['image_position_patient'][2]){
 
         // ORDERING BASED ON IMAGE POSITION
         _ordering = 'image_position_patient';
@@ -188,31 +192,45 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       // compute dist in this series
       first_image.map(computeDistance.bind(null, _z_cosine));
       // order by dist
-      first_image.sort(function(a,b){return a["dist"]-b["dist"]});
-    
-	//
-	// MOKA / NRG MOD START
-	//
-	//window.console.log("\n\n\nNRG: It's here where it creates errors!! We want to use the instance below.");
-	//window.console.log("ORDERING 1");
-	//
-	// MOKA / NRG MOD END
-	//
-	
+      first_image.sort(function(a,b){return a["dist"]-b["dist"]});	
     }
     else if(first_image[0]['instance_number'] != first_image[1]['instance_number']){
-    
       // ORDERING BASED ON instance number
       _ordering = 'instance_number';
       first_image.sort(function(a,b){return a["instance_number"]-b["instance_number"]});
-    
-	window.console.log("ORDERING 2");
     }
     else{
 
       window.console.log("Could not resolve the ordering mode");
 
     }
+
+
+      //************************************
+      //
+      // Moka/NRG addition (start)
+      // 
+      //------------------------------------
+      // Explanation of addition:
+      //
+      // For debugging purposes.
+      //
+      //************************************
+      var _deb = true;
+      if (_deb){
+	  var i = 0;
+	  var len = first_image.length;
+	  for (; i<len; i++){
+	      window.console.log("Image Position Patient: (Image ",
+				 i, ")",
+				 first_image[i]['image_position_patient']);
+	  }
+      }
+      //************************************
+      //
+      // Moka/NRG addition (end)
+      // 
+      //************************************
 
 
     ////////////////////////////////////////////////////////////////////////
@@ -244,56 +262,69 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 
       //************************************
       //
-      // MOKA / NRG MOD START
+      // Moka/NRG addition (start)
       // 
+      //------------------------------------
+      // Explanation of addition:
+      //
+      // Occasionally there are ordering errors when "image_position_patient" 
+      // approach above (the first else-if statement) is applied to certain DICOMs;
+      // we have to catch for that. Errors generally appear along the lines of:
+      //
+      // "Uncaught RangeError: Source is too large" 
+      //
+      // To avoid such errors, we occasionally have to force "instance_number" 
+      // ordering when the "image_position_patient" yields unsorted
+      // "instance_number" slices.
+      //
       //************************************
-      //
-      // Occasionally there are ordering errors based on image_position_patient (the first
-      // else-if statement) approach, so we have to catch for that.
-      //
-      // It's also important to set the _ordering to "instance_number" because that translates
-      // into various calculations below.  
-
-      // NOTE: This has only pertained to either Little Endian Implicit Dicoms, or DICOM sets where the 
-      // ordering is not consistent with the 'instance_number' property.
-      //
-      //window.console.log('First image', first_image[0]);
       if (first_image.length > 1){
-	  var _isLittleEndianImplicit = first_image[0]['transfer_syntax_uid'] == '1.2.840.10008.1.2';
-	  var _isUnorderedByInstanceNumber = true;
-	  var _forceInstanceSort = false;
+
 	  var j = 0;
 	  var len = first_image.length-1;
+	  var _isUnorderedByInstanceNumber = false;
 
+	  //
+	  // Instance ordering function
+	  //
 	  function forceInstanceNumberOrdering(){
+	      //
+	      // Set the _ordering variable accordingly.
+	      //
+	      // WARNING: this is has consequences in the rest of the function.
+	      //
 	      _ordering = 'instance_number';
+
+	      //
+	      // Conduct the sort
+	      //
 	      first_image.sort(function(a,b){return a["instance_number"]-b["instance_number"]});
+
+	      //
+	      // Output warning
+	      //
 	      var warningStr = 
-		  "\n\nNRG-modified parserDCM.js: " +
-		  "Forcing 'instance_number' slice reordering."
-	      /**
-		 for one of the following reasons: \n" + 
-		 "\t1) DICOMs are Little Endian Implicit format.\n" + 
-		 "\t2) DICOMS are unordered after geometric sorting (e.g. " +
-		  "sorting slices by 'image_position_patient' did not provide correct ordering).\n" + 
-		  "\n\n";
-	      */
+		  "\n\nNRG WARNING: Slices were found unordered after XTK \"image_position_patient\" sorting. " +
+		  "Forcing \"instance_number\" reordering.";
 	      window.console.log(warningStr);
 	  }
 
+	  //
+	  // Determine if the 'instance_number's are out of order.
+	  // If it is, proceed to force instance ordering.
+	  //
 	  for (; j<len; j++){
 	      if (Math.abs(first_image[j]['instance_number'] - first_image[j+1]['instance_number']) != 1){
-		  _isUnorderedByInstanceNumber = true;
+		  forceInstanceNumberOrdering(_isUnorderedByInstanceNumber);
 		  break;
 	      }
 	  }
-	  if(_isLittleEndianImplicit || _isUnorderedByInstanceNumber || _forceInstanceSort){
-	      forceInstanceNumberOrdering();
-	  }
+	  //window.console.log("FORCING!!!");
+	  //forceInstanceNumberOrdering(_isUnorderedByInstanceNumber);
       }
       //************************************
       //
-      // MOKA / NRG MOD END
+      // Moka/NRG addition (end)
       // 
       //************************************
 
@@ -311,37 +342,41 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           first_image[0]['pixel_spacing'][2] = Math.sqrt(_x*_x + _y*_y  + _z*_z);
 
 
-
-
 	  //************************************
 	  //
-	  // MOKA / NRG MOD START
+	  // Moka/NRG addition (start)
+	  // 
+	  //------------------------------------
+	  // Explanation of addition:
+	  //
+	  // For debugging purposes.
 	  //
 	  //************************************
-	  window.console.log("PIXEL SPACING", 
-			     first_image[0] == first_image[1],
-			     _first_position, _second_image_position,
-			     first_image[0]['pixel_spacing'][2],
-			     first_image[ 0 ],
-			     first_image[ 1 ],
-			     first_image[first_image.length - 1]
-			    );
-
-	  var i = 0;
-	  var len = first_image.length;
-	  for (; i<len; i++){
-	      window.console.log("INSTANCES: ", first_image[i]['instance_number']);
+	  var _deb = true;
+	  if (_deb){
+	      window.console.log("PIXEL SPACING", 
+				 first_image[0] == first_image[1],
+				 _first_position, _second_image_position,
+				 first_image[0]['pixel_spacing'][2],
+				 first_image[ 0 ],
+				 first_image[ 1 ],
+				 first_image[first_image.length - 1]
+				);
+	      var i = 0;
+	      var len = first_image.length;
+	      for (; i<len; i++){
+		  window.console.log("INSTANCES: ", 
+				     first_image[i]['instance_number'], 
+				     first_image[i]);
+	      }
 	  }
-          break;
 	  //************************************
 	  //
-	  // MOKA / NRG MOD END
-	  //
+	  // Moka/NRG addition (end)
+	  // 
 	  //************************************
-
-
-
-
+	  
+	  break;
         case 'instance_number':
           first_image[0]['pixel_spacing'][2] = 1.0;
           break;
@@ -383,23 +418,12 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
         var _z = _last_image_position[2] - _first_position[2];
         var _distance_position = Math.sqrt(_x*_x + _y*_y  + _z*_z);
         //normalize by z spacing
-
-
         first_image_expected_nb_slices 
 	    += Math.round(_distance_position/first_image[0]['pixel_spacing'][2]);
-
-
-
         break;
       case 'instance_number':
-
-	//window.console.log("instance number",
-	//first_image[ first_image_stacks - 1]['instance_number'] , first_image[0]['instance_number']);
-
         first_image_expected_nb_slices += 
 	Math.abs(first_image[ first_image_stacks - 1]['instance_number'] - first_image[0]['instance_number']);
-
-
         break;
       default:
         window.console.log("Unkown ordering mode - returning: " + _ordering);
@@ -426,14 +450,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 
     var first_image_data = null;
 
-
-      //window.console.log('BITS ALLOCATED', first_image[0].bits_allocated);
-      //window.console.log("FIRST IMAGE", first_image);
-      //window.console.log("FIRST IMAGE 0", first_image[1]);
-
-    // create data container
-
-      //window.console.log("\n\nFIRST IMAGE SIZE", first_image_size);
+      // create data container
     switch (first_image[0].bits_allocated) {
       case 8:
         first_image_data = new Uint8Array(first_image_size);
@@ -492,39 +509,42 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           window.console.log("Unkown ordering mode - returning: " + _ordering);
           break;
       }
-	//window.console.log(_distance_position, first_slice_size);
-	//window.console.log(_data);
-	first_image_data.set(_data, _distance_position * first_slice_size);
 
-	/**
 	//************************************
 	//
-	// MOKA / NRG MOD START
+	// Moka/NRG change (start)
+	//
+	//------------------------------------
+	// Previous parserDCM.js:
+	//
+	// first_image_data.set(_data, Math.round(_distance_position) * first_slice_size);
+	//------------------------------------
+	//
+	// Explanation of changes: 
+	//
+	// For some strange reason, the call doesn't like it when distance_position has a super-long
+	// decimal trail.  The least error-prone amount of decmals is 2  For example:
+	//
+	// 28.000823915786 <-- Bad, errors
+	// 28.001 <-- Okay, occasional errors
+	// 28.00 <-- Good, no errors
 	//
 	//************************************
-	try {
-	    first_image_data.set(_data, _distance_position * first_slice_size);
+	window.console.log('\n\nordering:', _ordering, '\nPRE  _distance_position:', _distance_position);
+	var _threshold = 0.09;
+	var _rounded = Math.round(_distance_position);
+	//window.console.log(_distance_position - _rounded);
+	if (Math.abs(_distance_position - _rounded) < _threshold){
+	    _distance_position = _rounded;
+	//_distance_position = _distance_position.toFixed(1);
 	}
-	catch(error){
-	    switch(error.message){
-	    case 'Source is too large':
-	      var warningStr = 
-		  "\n\nWARNING in NRG-modified parserDCM.js: \n" +
-		  "Error caught in setting data.  Re-calling 'parse' method of parserDCM.js and forcing the "  + 
-		    " 'instance_number' property slice reordering";
-		window.console.log(warningStr);
-		this.parse(container, object, data, flag, true);
-		break;
-	    default:
-		throw(error);
-	    }
-	}
+	window.console.log('POST _distance_position:', _distance_position, first_slice_size);
+	first_image_data.set(_data, _distance_position * first_slice_size);
 	//************************************
 	//
-	// MOKA / NRG MOD END
+	// Moka/NRG change (end)
 	//
 	//************************************
-	*/
     }
 
     volumeAttributes.data = first_image_data;
@@ -596,91 +616,104 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     ////////////////////////////////////////////////////////////////////////
     
     if(object['reslicing'] == 'false' || object['reslicing'] == false){
+
+
+
+	//************************************
+	//
+	// Moka/NRG change (start)
+	//
+	//------------------------------------
+	// Previous parserDCM.js:
+	//
+	// NOTE: this loads non-resliced scans, but the anatomical 
+	// planes are incorrect and the images are rotated.  
+	// 
 	/**
-        goog.vec.Mat4.setRowValues(IJKToRAS,
-          0,
-          first_image[0]['pixel_spacing'][0],
-          0,
-          0,
-          0);
-
-
+        goog.vec.Mat4.setRowValues(IJKToRAS, 0, first_image[0]['pixel_spacing'][0],
+          0,0,0);
           // - first_image[0]['pixel_spacing'][0]/2);
-        goog.vec.Mat4.setRowValues(IJKToRAS,
-          1,
-          0,
-          first_image[0]['pixel_spacing'][1],
-          0,
-          0);
-
-
+        goog.vec.Mat4.setRowValues(IJKToRAS, 1, 0, first_image[0]['pixel_spacing'][1], 0,0);
           // - first_image[0]['pixel_spacing'][1]/2);
-        goog.vec.Mat4.setRowValues(IJKToRAS,
-          2,
-          0,
-          0,
-          first_image[0]['pixel_spacing'][2],
-          0);
-
+        goog.vec.Mat4.setRowValues(IJKToRAS, 2, 0, 0, first_image[0]['pixel_spacing'][2],0);
           // + first_image[0]['pixel_spacing'][2]/2);
         goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);
 	*/
-	//alert("RESLICNG");
-
-
-	//************************************
+	//------------------------------------
 	//
-	// MOKA / NRG MOD START
+	// Explanation of changes: 
+	//
+	// While the previous code loads the non-resliced scan, it loads the scan
+	// where the anatomical planes are incorrect, and the images are rotated.
+	// The solution is to apply an orthogonal transform to the scan
+	// using the code of the ['reslicing'] property of the volume 
+	// being set to 'true' (below), but we round the numbers so that they are
+	// either 1 or 0, yielding purely orthogonal transform.
 	//
 	//************************************
-	window.console.log("NRG-modified parserDCM.js: Running an orthogonal transform because the volume's" +
+	window.console.log("NRG WARNING: Running an orthogonal transform because the volume's" +
 			   " \"reslicing\" property is set to false.");
-          var _x_cosine = new goog.math.Vec3(first_image[0]['image_orientation_patient'][0],
-            first_image[ 0 ]['image_orientation_patient'][1], first_image[ 0 ]['image_orientation_patient'][2]);
 
-          var _y_cosine = new goog.math.Vec3(first_image[ 0 ]['image_orientation_patient'][3],
-            first_image[ 0 ]['image_orientation_patient'][4], first_image[ 0 ]['image_orientation_patient'][5]);
+	//
+	// Acquire the x and y consines of the patient orientation
+	//
+        var _x_cosine = new goog.math.Vec3(
+	    first_image[0]['image_orientation_patient'][0],
+	    first_image[ 0 ]['image_orientation_patient'][1], 
+	    first_image[ 0 ]['image_orientation_patient'][2]);
+        var _y_cosine = new goog.math.Vec3(
+	    first_image[ 0 ]['image_orientation_patient'][3],
+            first_image[ 0 ]['image_orientation_patient'][4], 
+	    first_image[ 0 ]['image_orientation_patient'][5]);
 
-
+	//
+	// Round all of the values in both vectors
+	//
 	_x_cosine.x = Math.round(_x_cosine.x);
 	_x_cosine.y = Math.round(_x_cosine.y);
 	_x_cosine.z = Math.round(_x_cosine.z);
-
 	_y_cosine.x = Math.round(_y_cosine.x);
 	_y_cosine.y = Math.round(_y_cosine.y);
 	_y_cosine.z = Math.round(_y_cosine.z);
 
-          var _z_cosine = goog.math.Vec3.cross(_x_cosine, _y_cosine);
+	//
+	// Derive the z cosine from the x and y above.
+	//
+        var _z_cosine = goog.math.Vec3.cross(_x_cosine, _y_cosine);
+	
+	//
+	// Set the transformation matrix, rounding the matrix colums 1 and 2
+	//
+        goog.vec.Mat4.setRowValues(
+	    IJKToRAS, 0,
+		-Math.round(first_image[ 0 ]['image_orientation_patient'][0])*first_image[0]['pixel_spacing'][0],
+		-Math.round(first_image[ 0 ]['image_orientation_patient'][3])*first_image[0]['pixel_spacing'][1],
+		-_z_cosine.x*first_image[0]['pixel_spacing'][2],
+		-_origin[0]);
+
+        // - first_image[0]['pixel_spacing'][0]/2);
+        goog.vec.Mat4.setRowValues(
+	    IJKToRAS,1,
+		-Math.round(first_image[ 0 ]['image_orientation_patient'][1])*first_image[0]['pixel_spacing'][0],
+		-Math.round(first_image[ 0 ]['image_orientation_patient'][4])*first_image[0]['pixel_spacing'][1],
+		-_z_cosine.y*first_image[0]['pixel_spacing'][2],
+		-_origin[1]);
+
+        // - first_image[0]['pixel_spacing'][1]/2);
+          goog.vec.Mat4.setRowValues(
+	      IJKToRAS, 2,
+              Math.round(first_image[ 0 ]['image_orientation_patient'][2])*first_image[0]['pixel_spacing'][0],
+              Math.round(first_image[ 0 ]['image_orientation_patient'][5])*first_image[0]['pixel_spacing'][1],
+              _z_cosine.z*first_image[0]['pixel_spacing'][2],
+              _origin[2]);
+        // + first_image[0]['pixel_spacing'][2]/2);
+          goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);
+        
 
 	//window.console.log("\n\nPARSER DCM", _x_cosine, _y_cosine, _z_cosine);
-
-          goog.vec.Mat4.setRowValues(IJKToRAS,
-            0,
-            -Math.round(first_image[ 0 ]['image_orientation_patient'][0])*first_image[0]['pixel_spacing'][0],
-            -Math.round(first_image[ 0 ]['image_orientation_patient'][3])*first_image[0]['pixel_spacing'][1],
-            -_z_cosine.x*first_image[0]['pixel_spacing'][2],
-            -_origin[0]);
-            // - first_image[0]['pixel_spacing'][0]/2);
-          goog.vec.Mat4.setRowValues(IJKToRAS,
-            1,
-            -Math.round(first_image[ 0 ]['image_orientation_patient'][1])*first_image[0]['pixel_spacing'][0],
-            -Math.round(first_image[ 0 ]['image_orientation_patient'][4])*first_image[0]['pixel_spacing'][1],
-            -_z_cosine.y*first_image[0]['pixel_spacing'][2],
-            -_origin[1]);
-            // - first_image[0]['pixel_spacing'][1]/2);
-          goog.vec.Mat4.setRowValues(IJKToRAS,
-            2,
-            Math.round(first_image[ 0 ]['image_orientation_patient'][2])*first_image[0]['pixel_spacing'][0],
-            Math.round(first_image[ 0 ]['image_orientation_patient'][5])*first_image[0]['pixel_spacing'][1],
-            _z_cosine.z*first_image[0]['pixel_spacing'][2],
-            _origin[2]);
-            // + first_image[0]['pixel_spacing'][2]/2);
-          goog.vec.Mat4.setRowValues(IJKToRAS,
-            3,0,0,0,1);
-          //break;
 	//************************************
 	//
-	// MOKA / NRG MOD END
+	// Moka/NRG change (start)
 	//
 	//************************************
 
@@ -901,27 +934,57 @@ X.parserDCM.prototype.parseStream = function(data, object) {
   var _VL = null;
 
 
-
-    //****************************************************
+    //************************************
     //
-    // MOKA / NRG MOD START
+    // Moka/NRG addition (start)
     //
-    //****************************************************
+    //------------------------------------
+    // Explanation of addition:
+    //
+    // Depending on the type of DICOM, there are certain metadata 
+    // memory address pairs that cause X.parserDCM.prototype.parseStream 
+    // to fail for either Little Endian Implicit, Little Endian Explicit,
+    // or Big Endian Explicit types.  Consequently, we need to skip these 
+    // addresses when we hit them.
+    // 
+    // The easiest way to determine a bad address:
+    //
+    // 1) As this function is parsing, output the addresses to the console
+    //
+    //    Example:
+    //    window.console.log("Current memory address ", '(0x' + _tagGroup.toString(16) + ', 0x' 
+    //	         + _tagElement.toString(16) +')');
+    //
+    // 2) Use pydicom to print the the attributes of the dicom and verify 
+    //    the bad address.
+    //
+    //    Example:
+    //    import dicom
+    //    f = "path/to/dicom/file1.dcm"
+    //    dcmRead = dicom.read_file(f);
+    //    print dcmRead
+    //
+    //
+    // The skip pairs are as follows:
+    // (NOTE: This is likely an ongoing list)
+    //
+    //  Little Endian Implicit:
+    //       [0x0012, 0x0064], [0x0008, 0x1110],[0x0008, 0x1120]
+    //
+    //
+    //************************************
     var _skipCurrent = false;
     var _dicomTypeLogged = false;
     var _dicomType;
-
     var _skippables = {};
     _skippables.LEI = [[0x0012, 0x0064], [0x0008, 0x1110],[0x0008, 0x1120]];
-  
-    //var _skippables = [[0x0008, 0x1110],[0x0008, 0x1120]];
     var i, len;
+    //************************************
+    //
+    // Moka/NRG addition (end)
+    //
+    //************************************
 
-    //****************************************************
-    //
-    // MOKA / NRG MOD END
-    //
-    //****************************************************
 
   while (_bytePointer <  _bytes.length) {
 
@@ -938,19 +1001,19 @@ X.parserDCM.prototype.parseStream = function(data, object) {
       }
 
 
-      //****************************************************
+      //************************************
       //
-      // MOKA / NRG MOD START
+      // Moka/NRG addition (start)
       //
-      //****************************************************
+      //------------------------------------
+      // Explanation of addition:
+      //
+      // Certain memory pointers of DICOMS throw a wrench the parsing mechanism.
+      // As a result, we have to skip them.  Skipping said addresses does not
+      // usually affect the rendering.
+      //
+      // Example (print from pydicom):
       /**
-	 Certain memory pointers of DICOMS throw a wrench the parsing mechanism.
-	 As a result, we have to skip them.  Prelimiary tests show that this does not
-	 affect the rendering.
-
-	 Bad (at least within the context of XTK) memory addresses include:
-	 
-	 0x0012, 0x0064
 
 (0008, 0008) Image Type                          CS: ['ORIGINAL', 'PRIMARY', 'M', 'ND', 'NORM']
 (0008, 0012) Instance Creation Date              DA: '20120831'
@@ -981,6 +1044,14 @@ X.parserDCM.prototype.parseStream = function(data, object) {
 (0010, 1030) Patient's Weight                    DS: '52.1631291855'
 (0012, 0062) Patient Identity Removed            CS: 'YES'
 (0012, 0063) De-identification Method            LO: 'Test common deidentification v001'
+
+
+
+We would want to skip these (0012, 0064)
+    | 
+    |
+    V
+
 (0012, 0064)  De-identification Method Code Sequence   11 item(s) ---- 
    (0008, 0100) Code Value                          SH: '113100'
    (0008, 0102) Coding Scheme Designator            SH: 'DCM'
@@ -994,120 +1065,16 @@ X.parserDCM.prototype.parseStream = function(data, object) {
    (0008, 0102) Coding Scheme Designator            SH: 'DCM'
    (0008, 0104) Code Meaning                        LO: 'Clean Graphics Option'
    ---------
-   (0008, 0100) Code Value                          SH: '113104'
-   (0008, 0102) Coding Scheme Designator            SH: 'DCM'
-   (0008, 0104) Code Meaning                        LO: 'Clean Structured Content Option'
-   ---------
-   (0008, 0100) Code Value                          SH: '113105'
-   (0008, 0102) Coding Scheme Designator            SH: 'DCM'
-   (0008, 0104) Code Meaning                        LO: 'Clean Descriptors Option'
-   ---------
-   (0008, 0100) Code Value                          SH: '113106'
-   (0008, 0102) Coding Scheme Designator            SH: 'DCM'
-   (0008, 0104) Code Meaning                        LO: 'Retain Longitudinal With Full Dates Option'
-   ---------
-   (0008, 0100) Code Value                          SH: '113108'
-   (0008, 0102) Coding Scheme Designator            SH: 'DCM'
-   (0008, 0104) Code Meaning                        LO: 'Retain Patient Characteristics Option'
-   ---------
-   (0008, 0100) Code Value                          SH: '113109'
-   (0008, 0102) Coding Scheme Designator            SH: 'DCM'
-   (0008, 0104) Code Meaning                        LO: 'Retain Device Identity Option'
-   ---------
-   (0008, 0100) Code Value                          SH: '625500'
-   (0008, 0102) Coding Scheme Designator            SH: 'XNAT'
-   (0008, 0103) Coding Scheme Version               SH: '0.1'
-   (0008, 0104) Code Meaning                        LO: 'XNAT Edit Script'
-   ---------
-   (0008, 0100) Code Value                          SH: '35081'
-   (0008, 0102) Coding Scheme Designator            SH: 'XNAT'
-   (0008, 0103) Coding Scheme Version               SH: '0.1'
-   (0008, 0104) Code Meaning                        LO: 'XNAT Edit Script'
-   ---------
-   (0008, 0100) Code Value                          SH: '6'
-   (0008, 0102) Coding Scheme Designator            SH: 'XNAT'
-   (0008, 0103) Coding Scheme Version               SH: '0.1'
-   (0008, 0104) Code Meaning                        LO: 'XNAT Edit Script'
-   ---------
-(0018, 0020) Scanning Sequence                   CS: ['SE', 'IR']
-(0018, 0021) Sequence Variant                    CS: ['SK', 'SP', 'MP', 'OSP']
-(0018, 0022) Scan Options                        CS: 'IR'
-(0018, 0023) MR Acquisition Type                 CS: '2D'
-(0018, 0024) Sequence Name                       SH: '*tirB2d1_19'
-(0018, 0025) Angio Flag                          CS: 'N'
-(0018, 0050) Slice Thickness                     DS: '5'
-(0018, 0080) Repetition Time                     DS: '2000'
-(0018, 0081) Echo Time                           DS: '59'
-(0018, 0082) Inversion Time                      DS: '859.8'
-(0018, 0083) Number of Averages                  DS: '1'
-(0018, 0084) Imaging Frequency                   DS: '63.573217'
-(0018, 0085) Imaged Nucleus                      SH: '1H'
-(0018, 0086) Echo Number(s)                      IS: '1'
-(0018, 0087) Magnetic Field Strength             DS: '1.5'
-(0018, 0088) Spacing Between Slices              DS: '6'
-(0018, 0089) Number of Phase Encoding Steps      IS: '256'
-(0018, 0091) Echo Train Length                   IS: '19'
-(0018, 0093) Percent Sampling                    DS: '100'
-(0018, 0094) Percent Phase Field of View         DS: '100'
-(0018, 0095) Pixel Bandwidth                     DS: '360'
-(0018, 1000) Device Serial Number                LO: '37019'
-(0018, 1020) Software Version(s)                 LO: 'syngo MR B15'
-(0018, 1030) Protocol Name                       LO: ''
-(0018, 1251) Transmit Coil Name                  SH: 'Body'
-(0018, 1310) Acquisition Matrix                  US: [0, 256, 256, 0]
-(0018, 1312) In-plane Phase Encoding Direction   CS: 'ROW'
-(0018, 1314) Flip Angle                          DS: '150'
-(0018, 1315) Variable Flip Angle Flag            CS: 'N'
-(0018, 1316) SAR                                 DS: '0.69060883169056'
-(0018, 1318) dB/dt                               DS: '0'
-(0018, 5100) Patient Position                    CS: 'HFS'
-(0020, 000d) Study Instance UID                  UI: 1.2.840.113654.2.45.5943.122980150668789253093962596101153207919
-(0020, 000e) Series Instance UID                 UI: 1.2.840.113654.2.45.5943.202009576256284981709391709024242379991
-(0020, 0010) Study ID                            SH: ''
-(0020, 0011) Series Number                       IS: '2'
-(0020, 0012) Acquisition Number                  IS: '1'
-(0020, 0013) Instance Number                     IS: '1'
-(0020, 0032) Image Position (Patient)            DS: ['-63.492519034562', '-142.14062462095', '120.68211518741']
-(0020, 0037) Image Orientation (Patient)         DS: ['-0.0453630169093', '0.99897056848382', '3.1037018e-008', '0.01917770454847', '0.00087088608459', '-0.9998157116217']
-(0020, 0052) Frame of Reference UID              UI: 1.2.840.113654.2.45.5943.294296683094707850775096290142582472153
-(0020, 1040) Position Reference Indicator        LO: ''
-(0020, 1041) Slice Location                      DS: '-67.545417046544'
-(0028, 0002) Samples per Pixel                   US: 1
-(0028, 0004) Photometric Interpretation          CS: 'MONOCHROME2'
-(0028, 0010) Rows                                US: 256
-(0028, 0011) Columns                             US: 256
-(0028, 0030) Pixel Spacing                       DS: ['0.8984375', '0.8984375']
-(0028, 0100) Bits Allocated                      US: 16
-(0028, 0101) Bits Stored                         US: 12
-(0028, 0102) High Bit                            US: 11
-(0028, 0103) Pixel Representation                US: 0
-(0028, 0106) Smallest Image Pixel Value          US or SS: '\x00\x00'
-(0028, 0107) Largest Image Pixel Value           US or SS: '\xcb\x01'
-(0028, 1050) Window Center                       DS: '211'
-(0028, 1051) Window Width                        DS: '477'
-(0028, 1055) Window Center & Width Explanation   LO: 'Algo1'
-(0032, 1064)  Requested Procedure Code Sequence   1 item(s) ---- 
-   (0008, 0100) Code Value                          SH: 'BMR70553'
-   (0008, 0102) Coding Scheme Designator            SH: 'DTL_SVC_CD'
-   (0008, 0104) Code Meaning                        LO: '70553 MRI Brain wo&with contrast'
-   ---------
-(0040, 0002) Scheduled Procedure Step Start Date DA: '20120831'
-(0040, 0003) Scheduled Procedure Step Start Time TM: '1322\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-(0040, 0244) Performed Procedure Step Start Date DA: '20120831'
-(0040, 0245) Performed Procedure Step Start Time TM: '125001.000'
-(7fe0, 0010) Pixel Data                          OW or OB: Array of 131072 bytes	 
-
-      
+   ---
       */
-
+     //************************************
       _skipCurrent = false;
       if (_tagGroup !== undefined && _tagElement !== undefined){
-
 	  //window.console.log("Current memory address ", '(0x' + _tagGroup.toString(16) + ', 0x' 
 	      //+ _tagElement.toString(16) +')');
 
 	  switch(slice['transfer_syntax_uid']){
-	      
+
 	  case '1.2.840.10008.1.2.1':
 	      _dicomType = "Little Endian Explicit";
 	      break;
@@ -1143,11 +1110,11 @@ X.parserDCM.prototype.parseStream = function(data, object) {
 	      continue;
 	  }
       }
-      //****************************************************
+      //************************************
       //
-      // MOKA / NRG MOD END
+      // Moka/NRG addition (end)
       //
-      //****************************************************
+      //------------------------------------
 
 
     switch (_tagGroup) {
