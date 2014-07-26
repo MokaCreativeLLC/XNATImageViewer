@@ -1,0 +1,148 @@
+(0008, 0005) Specific Character Set              CS: 'ISO_IR 100'
+(0008, 0008) Image Type                          CS: ['ORIGINAL', 'PRIMARY', 'M', 'ND']
+(0008, 0012) Instance Creation Date              DA: '20140513'
+(0008, 0013) Instance Creation Time              TM: '130919.343000'
+(0008, 0016) SOP Class UID                       UI: MR Image Storage
+(0008, 0018) SOP Instance UID                    UI: 1.3.12.2.1107.5.2.32.35248.2014051313090227907693725
+(0008, 0020) Study Date                          DA: '20140513'
+(0008, 0021) Series Date                         DA: '20140513'
+(0008, 0022) Acquisition Date                    DA: '20140513'
+(0008, 0023) Content Date                        DA: '20140513'
+(0008, 0030) Study Time                          TM: '130744.421000'
+(0008, 0031) Series Time                         TM: '130919.140000'
+(0008, 0032) Acquisition Time                    TM: '130839.152500'
+(0008, 0033) Content Time                        TM: '130919.343000'
+(0008, 0050) Accession Number                    SH: ''
+(0008, 0060) Modality                            CS: 'MR'
+(0008, 0070) Manufacturer                        LO: 'SIEMENS'
+(0008, 0080) Institution Name                    LO: 'CCIR-WP-MR30A'
+(0008, 0081) Institution Address                 ST: 'South Kingshighway 510,Saint Louis,MO,US,63110'
+(0008, 0090) Referring Physician's Name          PN: 'ANCES'
+(0008, 1010) Station Name                        SH: 'CCIRWP-MR30A'
+(0008, 1030) Study Description                   LO: 'CCIR00400^CCIR-00477 Ances'
+(0008, 103e) Series Description                  LO: 'AAScout'
+(0008, 1040) Institutional Department Name       LO: 'WP-MR30A'
+(0008, 1050) Performing Physician's Name         PN: 'ANCES'
+(0008, 1070) Operators' Name                     PN: 'SML'
+(0008, 1090) Manufacturer's Model Name           LO: 'TrioTim'
+(0008, 1140)  Referenced Image Sequence   3 item(s) ---- 
+   (0008, 1150) Referenced SOP Class UID            UI: MR Image Storage
+   (0008, 1155) Referenced SOP Instance UID         UI: 1.3.12.2.1107.5.2.32.35248.2014051313082914155693358
+   ---------
+   (0008, 1150) Referenced SOP Class UID            UI: MR Image Storage
+   (0008, 1155) Referenced SOP Instance UID         UI: 1.3.12.2.1107.5.2.32.35248.201405131308322095193362
+   ---------
+   (0008, 1150) Referenced SOP Class UID            UI: MR Image Storage
+   (0008, 1155) Referenced SOP Instance UID         UI: 1.3.12.2.1107.5.2.32.35248.2014051313083490149693366
+   ---------
+(0010, 0010) Patient's Name                      PN: 'ADOL_0097'
+(0010, 0020) Patient ID                          LO: 'ADOL_0097'
+(0010, 0030) Patient's Birth Date                DA: '19890804'
+(0010, 0040) Patient's Sex                       CS: 'F'
+(0010, 1010) Patient's Age                       AS: '024Y'
+(0010, 1030) Patient's Weight                    DS: '86.6361536907'
+(0012, 0064)  De-identification Method Code Sequence   1 item(s) ---- 
+   (0008, 0100) Code Value                          SH: '625500'
+   (0008, 0102) Coding Scheme Designator            SH: 'XNAT'
+   (0008, 0103) Coding Scheme Version               SH: '0.1'
+   (0008, 0104) Code Meaning                        LO: 'XNAT Edit Script'
+   ---------
+(0018, 0020) Scanning Sequence                   CS: 'GR'
+(0018, 0021) Sequence Variant                    CS: 'SP'
+(0018, 0022) Scan Options                        CS: ''
+(0018, 0023) MR Acquisition Type                 CS: '3D'
+(0018, 0024) Sequence Name                       SH: '*fl3d1_ns'
+(0018, 0025) Angio Flag                          CS: 'N'
+(0018, 0050) Slice Thickness                     DS: '2.5'
+(0018, 0080) Repetition Time                     DS: '2.4'
+(0018, 0081) Echo Time                           DS: '1.13'
+(0018, 0083) Number of Averages                  DS: '1'
+(0018, 0084) Imaging Frequency                   DS: '123.249621'
+(0018, 0085) Imaged Nucleus                      SH: '1H'
+(0018, 0086) Echo Number(s)                      IS: '1'
+(0018, 0087) Magnetic Field Strength             DS: '3'
+(0018, 0089) Number of Phase Encoding Steps      IS: '96'
+(0018, 0091) Echo Train Length                   IS: '1'
+(0018, 0093) Percent Sampling                    DS: '75'
+(0018, 0094) Percent Phase Field of View         DS: '100'
+(0018, 0095) Pixel Bandwidth                     DS: '1085'
+(0018, 1000) Device Serial Number                LO: '35248'
+(0018, 1020) Software Version(s)                 LO: 'syngo MR B17'
+(0018, 1030) Protocol Name                       LO: 'AAScout'
+(0018, 1251) Transmit Coil Name                  SH: 'Body'
+(0018, 1310) Acquisition Matrix                  US: [0, 128, 96, 0]
+(0018, 1312) In-plane Phase Encoding Direction   CS: 'ROW'
+(0018, 1314) Flip Angle                          DS: '0'
+(0018, 1315) Variable Flip Angle Flag            CS: 'N'
+(0018, 1316) SAR                                 DS: '0.04794102420365'
+(0018, 1318) dB/dt                               DS: '0'
+(0018, 5100) Patient Position                    CS: 'HFS'
+(0019, 0010) Private Creator                     LO: 'SIEMENS MR HEADER'
+(0019, 1008) [CSA Image Header Type]             CS: 'IMAGE NUM 4'
+(0019, 1009) [CSA Image Header Version ??]       LO: '1.0'
+(0019, 100b) [SliceMeasurementDuration]          DS: '22205'
+(0019, 100f) [GradientMode]                      SH: 'Normal'
+(0019, 1011) [FlowCompensation]                  SH: 'No'
+(0019, 1012) [TablePositionOrigin]               SL: [0, 0, -1267]
+(0019, 1013) [ImaAbsTablePosition]               SL: [0, 0, -1267]
+(0019, 1014) [ImaRelTablePosition]               IS: ['0', '0', '0']
+(0019, 1015) [SlicePosition_PCS]                 FD: [86.25, -160.0, 160.0]
+(0019, 1017) [SliceResolution]                   DS: '0.75'
+(0019, 1018) [RealDwellTime]                     IS: '3600'
+(0020, 000d) Study Instance UID                  UI: 1.3.12.2.1107.5.2.32.35248.30000014050515440701500000100
+(0020, 000e) Series Instance UID                 UI: 1.3.12.2.1107.5.2.32.35248.2014051313083794213093369.0.0.0
+(0020, 0010) Study ID                            SH: '1'
+(0020, 0011) Series Number                       IS: '2'
+(0020, 0012) Acquisition Number                  IS: '1'
+(0020, 0013) Instance Number                     IS: '99'
+(0020, 0032) Image Position (Patient)            DS: ['86.25', '-160', '160']
+(0020, 0037) Image Orientation (Patient)         DS: ['0', '1', '0', '0', '0', '-1']
+(0020, 0052) Frame of Reference UID              UI: 1.3.12.2.1107.5.2.32.35248.1.20140513130744531.0.0.0
+(0020, 1040) Position Reference Indicator        LO: ''
+(0020, 1041) Slice Location                      DS: '86.25'
+(0020, 4000) Image Comments                      LT: 'ADOL_0097'
+(0028, 0002) Samples per Pixel                   US: 1
+(0028, 0004) Photometric Interpretation          CS: 'MONOCHROME2'
+(0028, 0010) Rows                                US: 128
+(0028, 0011) Columns                             US: 128
+(0028, 0030) Pixel Spacing                       DS: ['2.5', '2.5']
+(0028, 0100) Bits Allocated                      US: 16
+(0028, 0101) Bits Stored                         US: 12
+(0028, 0102) High Bit                            US: 11
+(0028, 0103) Pixel Representation                US: 0
+(0028, 0106) Smallest Image Pixel Value          US: 0
+(0028, 0107) Largest Image Pixel Value           US: 552
+(0028, 1050) Window Center                       DS: '95'
+(0028, 1051) Window Width                        DS: '301'
+(0028, 1055) Window Center & Width Explanation   LO: 'Algo1'
+(0029, 0010) Private Creator                     LO: 'SIEMENS CSA HEADER'
+(0029, 0011) Private Creator                     LO: 'SIEMENS MEDCOM HEADER2'
+(0029, 1008) [CSA Image Header Type]             CS: 'IMAGE NUM 4'
+(0029, 1009) [CSA Image Header Version]          LO: '20140513'
+(0029, 1010) [CSA Image Header Info]             OB: Array of 9356 bytes
+(0029, 1018) [CSA Series Header Type]            CS: 'MR'
+(0029, 1019) [CSA Series Header Version]         LO: '20140513'
+(0029, 1020) [CSA Series Header Info]            OB: Array of 48816 bytes
+(0029, 1160) [Series Workflow Status]            LO: 'com'
+(0032, 1032) Requesting Physician                PN: 'ANCES'
+(0032, 1060) Requested Procedure Description     LO: 'CCIR00400 CCIR-00477 Ances'
+(0032, 4000) Study Comments                      LT: 'ADOL_0097'
+(0040, 0244) Performed Procedure Step Start Date DA: '20140513'
+(0040, 0245) Performed Procedure Step Start Time TM: '130744.468000'
+(0040, 0253) Performed Procedure Step ID         SH: 'MR20140513130744'
+(0040, 0254) Performed Procedure Step Descriptio LO: 'CCIR00400^CCIR-00477 Ances'
+(0051, 0010) Private Creator                     LO: 'SIEMENS MR HEADER'
+(0051, 1008) [CSA Image Header Type]             CS: 'IMAGE NUM 4'
+(0051, 1009) [CSA Image Header Version ??]       LO: '1.0'
+(0051, 100a) [Unknown]                           LO: 'TA 22.20'
+(0051, 100b) [AcquisitionMatrixText]             LO: '96*128'
+(0051, 100c) [Unknown]                           LO: 'FoV 320*320'
+(0051, 100d) [Unknown]                           SH: 'SP L86.3'
+(0051, 100e) [Unknown]                           LO: 'Sag'
+(0051, 100f) [CoilString]                        LO: 'C:BC'
+(0051, 1012) [Unknown]                           SH: 'TP 0'
+(0051, 1013) [PositivePCSDirections]             SH: '+LPH'
+(0051, 1016) [Unknown]                           LO: 'M/ND'
+(0051, 1017) [Unknown]                           SH: 'SL 2.5i'
+(0051, 1019) [Unknown]                           LO: 'A1'
+(7fe0, 0010) Pixel Data                          OW: Array of 32768 bytes

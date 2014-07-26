@@ -1,0 +1,51 @@
+/*
+ * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ */
+
+
+.xiv-ui-helpdialog {
+    position: absolute;
+    background-color: rgba(0,0,0,.9);
+    border-radius: 5px;
+    border: solid 1px white;
+    font-size: 8px;
+    color: white;
+    text-align: left;
+    top: 10%;
+    left: 10%;
+    height: 300px;
+    width: 400px;
+    z-index: 20000;
+}
+
+
+.xiv-ui-helpdialog-title {
+    height: 15px;
+}
+
+.xiv-ui-helpdialog-closebutton {
+   top: 2px;
+   left: calc(100% - 12px);
+}
+
+
+.xiv-ui-helpdialog-scrollablezippytree {
+    position : absolute;
+    top : 25px;
+    left : 0px;
+    width : calc(100% - 14px);
+    height : calc(100% - 40px);
+}
+
+
+
+.xiv-ui-helpdialog-text {
+    position: absolute;
+    text-align: left;
+    font-size: 12px;		
+    font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
+    white-space: normal;
+    padding: 8px;
+    top: 20px;
+    left: 20px;
+}
