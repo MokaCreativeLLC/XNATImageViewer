@@ -1505,7 +1505,7 @@ function(e, opt_dialogKey){
  * @public
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
-    window.console.log("Applying auto window/level");
+    //window.console.log("Applying auto window/level");
 
     var ctrl, currFolders;
     var folderSet = [], ctrlSet = {};
