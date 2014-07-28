@@ -11,13 +11,13 @@ echo 'SUCCESS!'
 
 echo "\n\nGIT: Committing NRG-fork of XTK."
 echo "-----------"
-cd $XNATIMAGEVIEWER_HOME/src/main/scripts/X
-git add -A
+cd $XNATIMAGEVIEWER_HOME/src/main/scripts/viewer/X
+git add --all .
 git commit -m "\"$MASTER_COMMIT\""
 git push
 echo "-----------"
 echo 'SUCCESS!'
-exit 0
+#exit 0
 
 echo "\n\nMIN: Creating new css min."
 echo "-----------"
@@ -42,7 +42,7 @@ git commit -m "\"$MASTER_COMMIT\""
 git push
 echo "-----------"
 echo 'SUCCESS!'
-#exit 0
+exit 0
 
 TMP="$XNATIMAGEVIEWER_HOME/../tmp"`date +%Y-%m-%d-%H-%M-%S`; 
 echo 'Making temp dir: ' $TMP
