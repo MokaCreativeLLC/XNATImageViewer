@@ -149,11 +149,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 
     var _ordering = 'image_position_patient';
 
-      window.console.log(
-	  first_image[0]['image_position_patient'][0], first_image[1]['image_position_patient'][0], '\n',
-	  first_image[0]['image_position_patient'][1], first_image[1]['image_position_patient'][1], '\n',
-	  first_image[0]['image_position_patient'][2], first_image[1]['image_position_patient'][2])
-
     if(first_image_stacks == 1){
         
         // ORDERING BASED ON IMAGE POSITION
@@ -161,14 +156,12 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 
         // set distance to 0
         series[seriesInstanceUID][0]['dist'] = 0;
-
-		//window.console.log("ORDERING 0");
+	//window.console.log("ORDERING 0");
 
     }
     else if(first_image[0]['image_position_patient'][0] != first_image[1]['image_position_patient'][0] ||
 	    first_image[0]['image_position_patient'][1] != first_image[1]['image_position_patient'][1] ||
-	    first_image[0]['image_position_patient'][2] != first_image[1]['image_position_patient'][2]){
-
+	    first_image[0]['image_position_patient'][2] != first_image[1]['image_position_patient'][2]) {
         // ORDERING BASED ON IMAGE POSITION
         _ordering = 'image_position_patient';
 
@@ -223,7 +216,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	  for (; i<len; i++){
 	      window.console.log("Image Position Patient: (Image ",
 				 i, ")",
-				 first_image[i]['image_position_patient']);
+				 first_image[i]['image_position_patient'], ' Pixel Spacing:' , 
+				 first_image[i]['pixel_spacing']);
 	  }
       }
       //************************************
@@ -268,8 +262,9 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       // Explanation of addition:
       //
       // Occasionally there are ordering errors when "image_position_patient" 
-      // approach above (the first else-if statement) is applied to certain DICOMs;
-      // we have to catch for that. Errors generally appear along the lines of:
+      // approach above (the first else-if statement) is applied to certain 
+      // DICOMs; we have to catch for that. Errors generally appear along the 
+      // lines of:
       //
       // "Uncaught RangeError: Source is too large" 
       //
@@ -281,11 +276,11 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       if (first_image.length > 1){
 
 	  var j = 0;
-	  var len = first_image.length-1;
+	  var len = first_image.length;
 	  var _isUnorderedByInstanceNumber = false;
 
 	  //
-	  // Instance ordering function
+	  // Instance ordering function, taken from above
 	  //
 	  function forceInstanceNumberOrdering(){
 	      //
@@ -298,13 +293,21 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      //
 	      // Conduct the sort
 	      //
-	      first_image.sort(function(a,b){return a["instance_number"]-b["instance_number"]});
+	      first_image.sort(function(a,b){
+		  return a["instance_number"]-b["instance_number"]});
+
+
+	      //
+	      // Custom tag
+	      //
+	      first_image["forced_instance_ordering"] = true;
 
 	      //
 	      // Output warning
 	      //
 	      var warningStr = 
-		  "\n\nNRG WARNING: Slices were found unordered after XTK \"image_position_patient\" sorting. " +
+		  "\n\nNRG WARNING: Slices were found unordered after " + 
+		  "XTK \"image_position_patient\" sorting. " +
 		  "Forcing \"instance_number\" reordering.";
 	      window.console.log(warningStr);
 	  }
@@ -313,8 +316,10 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	  // Determine if the 'instance_number's are out of order.
 	  // If it is, proceed to force instance ordering.
 	  //
-	  for (; j<len; j++){
-	      if (Math.abs(first_image[j]['instance_number'] - first_image[j+1]['instance_number']) != 1){
+	  for (; j<len-1; j++){
+	      if (Math.abs(first_image[j]['instance_number'] - 
+			   first_image[j+1]['instance_number']) != 1){
+		  //alert("FORCE!");
 		  forceInstanceNumberOrdering(_isUnorderedByInstanceNumber);
 		  break;
 	      }
@@ -378,7 +383,79 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	  
 	  break;
         case 'instance_number':
-          first_image[0]['pixel_spacing'][2] = 1.0;
+
+
+
+	  //************************************
+	  //
+	  // Moka/NRG addition (start)
+	  //
+	  //------------------------------------
+	  // Previous code:
+	  // 
+	  // first_image[0]['pixel_spacing'][2] = 1.0;
+	  //
+	  //------------------------------------
+	  // Explanation of changes:
+	  //
+	  //
+	  //************************************
+
+	  //
+	  // Default value of spacing
+	  //
+	  var _spacing = 1.0;
+
+	  //
+	  // Special case for forced_instance_ordering
+	  //
+	  if (first_image['forced_instance_ordering'] === true){
+	      //
+	      // Check for the first inequality in position
+	      //
+	      var i = 1;
+	      var len = first_image.length;
+              var _firstPos = first_image[ 0 ]['image_position_patient'];
+	      var _positionInequalityFound = false;
+	      var _secondPos;
+	      for (; i<len; i++){
+		  _secondPos = first_image[ i ]['image_position_patient'];
+		  if (_firstPos[0] != _secondPos[0] ||
+		      _firstPos[1] != _secondPos[1] ||
+		      _firstPos[2] != _secondPos[2]){	
+		      _positionInequalityFound = true;
+		      break;
+		  }	  
+	      }
+
+	      //
+	      // Only proceed if the positions are different, otherwise
+	      // rely on the default above
+	      //
+	      if (_positionInequalityFound){
+		  //window.console.log(_firstPos, _secondPos);
+		  window.console.log("\n\nNRG WARNING: Setting pixel_spacing " + 
+				     "according to image_position_patient even though " + 
+				     "we're using forced_instance_ordering.");
+
+		  //var _secondPos = first_image[ 0 ]['image_position_patient'];
+		  var _x = _secondPos[0] - _firstPos[0];
+		  var _y = _secondPos[1] - _firstPos[1];
+		  var _z = _secondPos[2] - _firstPos[2];
+		  _spacing = Math.sqrt(_x*_x + _y*_y  + _z*_z);
+	      }
+	  }
+	  
+	  //
+	  // Set the spacing
+	  //
+          first_image[0]['pixel_spacing'][2] = _spacing;
+	  
+	  //************************************
+	  //
+	  // Moka/NRG addition (end)
+	  // 
+	  //************************************
           break;
         default:
           window.console.log("Unkown ordering mode - returning: " + _ordering);
@@ -517,28 +594,33 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	//------------------------------------
 	// Previous parserDCM.js:
 	//
-	// first_image_data.set(_data, Math.round(_distance_position) * first_slice_size);
+	// first_image_data.set(_data, Math.round(_distance_position) * 
+	//      first_slice_size);
 	//------------------------------------
 	//
 	// Explanation of changes: 
 	//
-	// For some strange reason, the call doesn't like it when distance_position has a super-long
-	// decimal trail.  The least error-prone amount of decmals is 2  For example:
+	// The call creates errors when distance_position has a very long
+	// decimal trail.  The least error-prone amount of decmals is 2.  
+	// For example:
 	//
 	// 28.000823915786 <-- Bad, errors
 	// 28.001 <-- Okay, occasional errors
 	// 28.00 <-- Good, no errors
 	//
 	//************************************
-	window.console.log('\n\nordering:', _ordering, '\nPRE  _distance_position:', _distance_position);
-	var _threshold = 0.09;
+	window.console.log('\n\nordering:', _ordering, 
+			   '\nPRE  _distance_position:', _distance_position);
+	var _threshold = 0.20;
 	var _rounded = Math.round(_distance_position);
 	//window.console.log(_distance_position - _rounded);
 	if (Math.abs(_distance_position - _rounded) < _threshold){
+	    //window.console.log("\n\nSKIPPNG ROUNDING FOR NOW");
 	    _distance_position = _rounded;
 	//_distance_position = _distance_position.toFixed(1);
 	}
-	window.console.log('POST _distance_position:', _distance_position, first_slice_size);
+	window.console.log('POST _distance_position:', 
+			   _distance_position, first_slice_size);
 	first_image_data.set(_data, _distance_position * first_slice_size);
 	//************************************
 	//
@@ -615,111 +697,140 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     //
     ////////////////////////////////////////////////////////////////////////
     
-    if(object['reslicing'] == 'false' || object['reslicing'] == false){
 
 
-
-	//************************************
-	//
-	// Moka/NRG change (start)
-	//
-	//------------------------------------
-	// Previous parserDCM.js:
-	//
-	// NOTE: this loads non-resliced scans, but the anatomical 
-	// planes are incorrect and the images are rotated.  
-	// 
-	/**
-        goog.vec.Mat4.setRowValues(IJKToRAS, 0, first_image[0]['pixel_spacing'][0],
-          0,0,0);
-          // - first_image[0]['pixel_spacing'][0]/2);
-        goog.vec.Mat4.setRowValues(IJKToRAS, 1, 0, first_image[0]['pixel_spacing'][1], 0,0);
-          // - first_image[0]['pixel_spacing'][1]/2);
-        goog.vec.Mat4.setRowValues(IJKToRAS, 2, 0, 0, first_image[0]['pixel_spacing'][2],0);
-          // + first_image[0]['pixel_spacing'][2]/2);
-        goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);
-	*/
-	//------------------------------------
-	//
-	// Explanation of changes: 
-	//
-	// While the previous code loads the non-resliced scan, it loads the scan
-	// where the anatomical planes are incorrect, and the images are rotated.
-	// The solution is to apply an orthogonal transform to the scan
-	// using the code of the ['reslicing'] property of the volume 
-	// being set to 'true' (below), but we round the numbers so that they are
-	// either 1 or 0, yielding purely orthogonal transform.
-	//
-	//************************************
-	window.console.log("NRG WARNING: Running an orthogonal transform because the volume's" +
-			   " \"reslicing\" property is set to false.");
-
-	//
-	// Acquire the x and y consines of the patient orientation
-	//
-        var _x_cosine = new goog.math.Vec3(
-	    first_image[0]['image_orientation_patient'][0],
-	    first_image[ 0 ]['image_orientation_patient'][1], 
-	    first_image[ 0 ]['image_orientation_patient'][2]);
-        var _y_cosine = new goog.math.Vec3(
-	    first_image[ 0 ]['image_orientation_patient'][3],
-            first_image[ 0 ]['image_orientation_patient'][4], 
-	    first_image[ 0 ]['image_orientation_patient'][5]);
-
-	//
-	// Round all of the values in both vectors
-	//
-	_x_cosine.x = Math.round(_x_cosine.x);
-	_x_cosine.y = Math.round(_x_cosine.y);
-	_x_cosine.z = Math.round(_x_cosine.z);
-	_y_cosine.x = Math.round(_y_cosine.x);
-	_y_cosine.y = Math.round(_y_cosine.y);
-	_y_cosine.z = Math.round(_y_cosine.z);
-
-	//
-	// Derive the z cosine from the x and y above.
-	//
-        var _z_cosine = goog.math.Vec3.cross(_x_cosine, _y_cosine);
-	
-	//
-	// Set the transformation matrix, rounding the matrix colums 1 and 2
-	//
-        goog.vec.Mat4.setRowValues(
-	    IJKToRAS, 0,
-		-Math.round(first_image[ 0 ]['image_orientation_patient'][0])*first_image[0]['pixel_spacing'][0],
-		-Math.round(first_image[ 0 ]['image_orientation_patient'][3])*first_image[0]['pixel_spacing'][1],
-		-_z_cosine.x*first_image[0]['pixel_spacing'][2],
-		-_origin[0]);
-
-        // - first_image[0]['pixel_spacing'][0]/2);
-        goog.vec.Mat4.setRowValues(
-	    IJKToRAS,1,
-		-Math.round(first_image[ 0 ]['image_orientation_patient'][1])*first_image[0]['pixel_spacing'][0],
-		-Math.round(first_image[ 0 ]['image_orientation_patient'][4])*first_image[0]['pixel_spacing'][1],
-		-_z_cosine.y*first_image[0]['pixel_spacing'][2],
-		-_origin[1]);
-
-        // - first_image[0]['pixel_spacing'][1]/2);
-          goog.vec.Mat4.setRowValues(
-	      IJKToRAS, 2,
-              Math.round(first_image[ 0 ]['image_orientation_patient'][2])*first_image[0]['pixel_spacing'][0],
-              Math.round(first_image[ 0 ]['image_orientation_patient'][5])*first_image[0]['pixel_spacing'][1],
-              _z_cosine.z*first_image[0]['pixel_spacing'][2],
-              _origin[2]);
-        // + first_image[0]['pixel_spacing'][2]/2);
-          goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);
-        
-
-	//window.console.log("\n\nPARSER DCM", _x_cosine, _y_cosine, _z_cosine);
-	//************************************
-	//
-	// Moka/NRG change (start)
-	//
-	//************************************
+      //************************************
+      //
+      // Moka/NRG change (start)
+      //
+      //------------------------------------
+      // Previous parserDCM.js:
+      //
+      // NOTE: this loads non-resliced scans, but the anatomical 
+      // planes are incorrect and the images are rotated.  
+      // 
+      /**
+         goog.vec.Mat4.setRowValues(IJKToRAS, 0, 
+	 first_image[0]['pixel_spacing'][0],
+         0,0,0);
+         // - first_image[0]['pixel_spacing'][0]/2);
+         goog.vec.Mat4.setRowValues(IJKToRAS, 1, 0, 
+	 first_image[0]['pixel_spacing'][1], 0,0);
+         // - first_image[0]['pixel_spacing'][1]/2);
+         goog.vec.Mat4.setRowValues(IJKToRAS, 2, 0, 0, 
+	 first_image[0]['pixel_spacing'][2],0);
+         // + first_image[0]['pixel_spacing'][2]/2);
+         goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);
+      */
+      //------------------------------------
+      //
+      // Explanation of changes: 
+      //
+      //
+      // If we set the 'reslicing' property of the volume to false,
+      // the previous code loads the non-resliced scan without issue, 
+      // but the rendered slice is rotated and oriented incorrectly. 
+      // The chosen solution is to apply an orthogonal 
+      // transform to the scan, leveraging the above code, however 
+      // we round the numbers so that they are either 1 or 0, yielding 
+      // purely orthogonal transform.
+      //
+      //************************************
+      if(object['reslicing'].toString() == 'false'){
 
 
+	  //
+	  // IMAGE_POSITION_PATIENT or FORCED_INSTANCE
+	  //
+	  if (_ordering == 'image_position_patient' || 
+	      first_image['forced_instance_ordering']){
+	      //
+	      // Output warning
+	      //
+	      window.console.log("NRG WARNING: " + 
+				 "Running an orthogonal transform because the " + 
+				 "volume's" +
+				 " \"reslicing\" property is set to false.");
 
-    }
+	      //
+	      // Acquire the x and y consines of the patient orientation
+	      //
+              var _x_cosine = new goog.math.Vec3(
+		  first_image[0]['image_orientation_patient'][0],
+		  first_image[ 0 ]['image_orientation_patient'][1], 
+		  first_image[ 0 ]['image_orientation_patient'][2]);
+              var _y_cosine = new goog.math.Vec3(
+		  first_image[ 0 ]['image_orientation_patient'][3],
+		  first_image[ 0 ]['image_orientation_patient'][4], 
+		  first_image[ 0 ]['image_orientation_patient'][5]);
+
+	      //
+	      // Round all of the values in both vectors
+	      //
+	      _x_cosine.x = Math.round(_x_cosine.x);
+	      _x_cosine.y = Math.round(_x_cosine.y);
+	      _x_cosine.z = Math.round(_x_cosine.z);
+	      _y_cosine.x = Math.round(_y_cosine.x);
+	      _y_cosine.y = Math.round(_y_cosine.y);
+	      _y_cosine.z = Math.round(_y_cosine.z);
+	      
+
+	      //
+	      // Derive the z cosine from the x and y above.
+	      //
+              var _z_cosine = goog.math.Vec3.cross(_x_cosine, _y_cosine);
+
+	      //
+	      // Set the transformation matrix, rounding the matrix colums 1 and 2
+	      //
+              goog.vec.Mat4.setRowValues(
+		  IJKToRAS, 0,
+		      -Math.round(first_image[0]['image_orientation_patient'][0])
+		      *first_image[0]['pixel_spacing'][0],
+		      -Math.round(first_image[0]['image_orientation_patient'][3])
+		      *first_image[0]['pixel_spacing'][1],
+		      -_z_cosine.x*first_image[0]['pixel_spacing'][2],
+		      -_origin[0]);
+
+              // - first_image[0]['pixel_spacing'][0]/2);
+              goog.vec.Mat4.setRowValues(
+		  IJKToRAS,1,
+		      -Math.round(first_image[ 0 ]['image_orientation_patient'][1])
+		      *first_image[0]['pixel_spacing'][0],
+		      -Math.round(first_image[ 0 ]['image_orientation_patient'][4])
+		      *first_image[0]['pixel_spacing'][1],
+		      -_z_cosine.y*first_image[0]['pixel_spacing'][2],
+		      -_origin[1]);
+
+              // - first_image[0]['pixel_spacing'][1]/2);
+              goog.vec.Mat4.setRowValues(
+		  IJKToRAS, 2,
+		  Math.round(first_image[ 0 ]['image_orientation_patient'][2])
+		      *first_image[0]['pixel_spacing'][0],
+		  Math.round(first_image[ 0 ]['image_orientation_patient'][5])
+		      *first_image[0]['pixel_spacing'][1],
+		  _z_cosine.z*first_image[0]['pixel_spacing'][2],
+		  _origin[2]);
+              // + first_image[0]['pixel_spacing'][2]/2);
+              goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);
+	  }
+	  else if (_ordering == 'instance_number'){
+              goog.vec.Mat4.setRowValues(IJKToRAS, 0,-1,0,0,-_origin[0]);
+              goog.vec.Mat4.setRowValues(IJKToRAS, 1,-0,-1,-0,-_origin[1]);
+              goog.vec.Mat4.setRowValues(IJKToRAS, 2,0,0,1,_origin[2]);
+              goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);   
+          }
+          else {
+              window.console.log("Unkown ordering mode - returning: " + _ordering);
+	  }
+      }
+      //************************************
+      //
+      // Moka/NRG change (end)
+      //
+      //************************************
+
+
     else{
       switch(_ordering){
         case 'image_position_patient':
@@ -763,6 +874,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
             2,0,0,1,_origin[2]);
           goog.vec.Mat4.setRowValues(IJKToRAS,
             3,0,0,0,1);
+
+	  
           break;
         default:
           window.console.log("Unkown ordering mode - returning: " + _ordering);
@@ -942,9 +1055,8 @@ X.parserDCM.prototype.parseStream = function(data, object) {
     // Explanation of addition:
     //
     // Depending on the type of DICOM, there are certain metadata 
-    // memory address pairs that cause X.parserDCM.prototype.parseStream 
-    // to fail for either Little Endian Implicit, Little Endian Explicit,
-    // or Big Endian Explicit types.  Consequently, we need to skip these 
+    // memory-address pairs that cause X.parserDCM.prototype.parseStream 
+    // to fail.  Consequently, we need to skip these 
     // addresses when we hit them.
     // 
     // The easiest way to determine a bad address:
@@ -952,10 +1064,11 @@ X.parserDCM.prototype.parseStream = function(data, object) {
     // 1) As this function is parsing, output the addresses to the console
     //
     //    Example:
-    //    window.console.log("Current memory address ", '(0x' + _tagGroup.toString(16) + ', 0x' 
+    //    window.console.log("Current memory address ", 
+    //    '(0x' + _tagGroup.toString(16) + ', 0x' 
     //	         + _tagElement.toString(16) +')');
     //
-    // 2) Use pydicom to print the the attributes of the dicom and verify 
+    // 2) Use pydicom to print the the attributes of said DICOM and verify 
     //    the bad address.
     //
     //    Example:
@@ -1016,52 +1129,52 @@ X.parserDCM.prototype.parseStream = function(data, object) {
       /**
 
 (0008, 0008) Image Type                          CS: ['ORIGINAL', 'PRIMARY', 'M', 'ND', 'NORM']
-(0008, 0012) Instance Creation Date              DA: '20120831'
-(0008, 0013) Instance Creation Time              TM: '125310.281000'
+(0008, 0012) Instance Creation Date              DA: '*******'
+(0008, 0013) Instance Creation Time              TM: '*******'
 (0008, 0016) SOP Class UID                       UI: MR Image Storage
-(0008, 0018) SOP Instance UID                    UI: 1.2.840.113654.2.45.5943.211300177154514993689921060436559942663
-(0008, 0020) Study Date                          DA: '20120831'
-(0008, 0021) Series Date                         DA: '20120831'
-(0008, 0022) Acquisition Date                    DA: '20120831'
-(0008, 0023) Content Date                        DA: '20120831'
-(0008, 0030) Study Time                          TM: '125001.000'
-(0008, 0031) Series Time                         TM: '125310.000'
-(0008, 0032) Acquisition Time                    TM: '125224.100000'
-(0008, 0033) Content Time                        TM: '125310.281000'
+(0008, 0018) SOP Instance UID                    UI: *****************************************************
+(0008, 0020) Study Date                          DA: '********'
+(0008, 0021) Series Date                         DA: '********'
+(0008, 0022) Acquisition Date                    DA: '********'
+(0008, 0023) Content Date                        DA: '********'
+(0008, 0030) Study Time                          TM: '******.***'
+(0008, 0031) Series Time                         TM: '******.***'
+(0008, 0032) Acquisition Time                    TM: '******.******'
+(0008, 0033) Content Time                        TM: '******.******'
 (0008, 0040) Data Set Type                       US: 0
 (0008, 0041) Data Set Subtype                    LO: 'IMA NONE'
 (0008, 0060) Modality                            CS: 'MR'
 (0008, 0070) Manufacturer                        LO: 'SIEMENS'
-(0008, 0080) Institution Name                    LO: ''
-(0008, 1010) Station Name                        SH: 'SMRC'
-(0008, 1030) Study Description                   LO: '3'
+(0008, 0080) Institution Name                    LO: '*'
+(0008, 1010) Station Name                        SH: '*'
+(0008, 1030) Study Description                   LO: '*'
 (0008, 103e) Series Description                  LO: 'T1 BLADE SAG'
 (0008, 1070) Operators' Name                     PN: ' '
 (0008, 1090) Manufacturer's Model Name           LO: 'SymphonyTim'
-(0010, 0010) Patient's Name                      PN: 'MW009R'
-(0010, 0020) Patient ID                          LO: 'MW009R_MR1'
-(0010, 0040) Patient's Sex                       CS: 'F'
-(0010, 1030) Patient's Weight                    DS: '52.1631291855'
-(0012, 0062) Patient Identity Removed            CS: 'YES'
-(0012, 0063) De-identification Method            LO: 'Test common deidentification v001'
+(0010, 0010) Patient's Name                      PN: '******'
+(0010, 0020) Patient ID                          LO: '******'
+(0010, 0040) Patient's Sex                       CS: '******'
+(0010, 1030) Patient's Weight                    DS: '******'
+(0012, 0062) Patient Identity Removed            CS: '***'
+(0012, 0063) De-identification Method            LO: '******'
 
 
 
-We would want to skip these (0012, 0064)
+We would want to skip this (0012, 0064)
     | 
     |
     V
 
 (0012, 0064)  De-identification Method Code Sequence   11 item(s) ---- 
-   (0008, 0100) Code Value                          SH: '113100'
+   (0008, 0100) Code Value                          SH: '******'
    (0008, 0102) Coding Scheme Designator            SH: 'DCM'
    (0008, 0104) Code Meaning                        LO: 'Basic Application Confidentiality Profile'
    ---------
-   (0008, 0100) Code Value                          SH: '113101'
+   (0008, 0100) Code Value                          SH: '******'
    (0008, 0102) Coding Scheme Designator            SH: 'DCM'
    (0008, 0104) Code Meaning                        LO: 'Clean Pixel Data Option'
    ---------
-   (0008, 0100) Code Value                          SH: '113103'
+   (0008, 0100) Code Value                          SH: '******'
    (0008, 0102) Coding Scheme Designator            SH: 'DCM'
    (0008, 0104) Code Meaning                        LO: 'Clean Graphics Option'
    ---------
@@ -1091,6 +1204,7 @@ We would want to skip these (0012, 0064)
 		  for (; i < len; i++){
 		      if ((_tagGroup === _skippables.LEI[i][0]) && 
 			  (_tagElement === _skippables.LEI[i][1])){
+			  //window.console.log("\n\nPREVENING SKIP FOR NOW\n\n");
 			  _skipCurrent = true;
 			  break;
 		      }
@@ -1114,7 +1228,7 @@ We would want to skip these (0012, 0064)
       //
       // Moka/NRG addition (end)
       //
-      //------------------------------------
+      //************************************
 
 
     switch (_tagGroup) {

@@ -9,6 +9,16 @@ git checkout master
 echo "-----------"
 echo 'SUCCESS!'
 
+echo "\n\nGIT: Committing NRG-fork of XTK."
+echo "-----------"
+cd $XNATIMAGEVIEWER_HOME/src/main/scripts/X
+git add -A
+git commit -m "\"$MASTER_COMMIT\""
+git push
+echo "-----------"
+echo 'SUCCESS!'
+exit 0
+
 echo "\n\nMIN: Creating new css min."
 echo "-----------"
 cd $XNATIMAGEVIEWER_HOME/utility-scripts/python
