@@ -857,12 +857,6 @@ xiv.ui.ViewBox.prototype.checkInUseAndShowDialog = function(opt_onYes){
 xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     
     //
-    // Set rendering flag
-    //
-    this.isRendering_ = true;
-
-
-    //
     // Dispable render error wating
     //
     if (!goog.isDefAndNotNull(this.ErrorCatcher_)){
@@ -891,6 +885,11 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 	}.bind(this))){
 	return;
     }
+
+    //
+    // Set rendering flag
+    //
+    this.isRendering_ = true;
 
 
     //
