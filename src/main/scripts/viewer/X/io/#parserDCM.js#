@@ -324,7 +324,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		  break;
 	      }
 	  }
-	  window.console.log("FORCING!!!");
+	  /window.console.log("FORCING!!!");
 	  //forceInstanceNumberOrdering(_isUnorderedByInstanceNumber);
       }
       //************************************
