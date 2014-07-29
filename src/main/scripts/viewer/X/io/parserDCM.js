@@ -324,7 +324,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		  break;
 	      }
 	  }
-	  window.console.log("FORCING!!!");
+	  //window.console.log("FORCING!!!");
 	  //forceInstanceNumberOrdering(_isUnorderedByInstanceNumber);
       }
       //************************************
@@ -344,9 +344,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           var _x = _second_image_position[0] - _first_position[0];
           var _y = _second_image_position[1] - _first_position[1];
           var _z = _second_image_position[2] - _first_position[2];
+
           first_image[0]['pixel_spacing'][2] = Math.sqrt(_x*_x + _y*_y  + _z*_z);
-
-
 	  //************************************
 	  //
 	  // Moka/NRG addition (start)
@@ -354,10 +353,19 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	  //------------------------------------
 	  // Explanation of addition:
 	  //
-	  // For debugging purposes.
+	  // A lot of rounding happens in the orthogonal transform below.  Unless
+	  // we round the pixel spacing, it'll throw the Z dimenions off.
 	  //
 	  //************************************
-	  var _deb = true;
+	  window.console.log('\n\nRounding z pixel_spacing from: ', first_image[0]['pixel_spacing'][2]);
+	  // Round the number
+	  first_image[0]['pixel_spacing'][2] = Math.round(first_image[0]['pixel_spacing'][2]);
+	  window.console.log('to:                              ', first_image[0]['pixel_spacing'][2]); 
+
+	  //
+	  // For debugging
+	  //
+	  var _deb = false;
 	  if (_deb){
 	      window.console.log("PIXEL SPACING", 
 				 first_image[0] == first_image[1],
@@ -442,7 +450,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		  var _x = _secondPos[0] - _firstPos[0];
 		  var _y = _secondPos[1] - _firstPos[1];
 		  var _z = _secondPos[2] - _firstPos[2];
-		  _spacing = Math.sqrt(_x*_x + _y*_y  + _z*_z);
+		  _spacing = Math.round(Math.sqrt(_x*_x + _y*_y  + _z*_z));
 	      }
 	  }
 	  
@@ -493,10 +501,12 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
         var _x = _last_image_position[0] - _first_position[0];
         var _y = _last_image_position[1] - _first_position[1];
         var _z = _last_image_position[2] - _first_position[2];
-        var _distance_position = Math.sqrt(_x*_x + _y*_y  + _z*_z);
-        //normalize by z spacing
+ 	var _distance_position = Math.sqrt(_x*_x + _y*_y  + _z*_z);
+
+
         first_image_expected_nb_slices 
 	    += Math.round(_distance_position/first_image[0]['pixel_spacing'][2]);
+
         break;
       case 'instance_number':
         first_image_expected_nb_slices += 
@@ -507,8 +517,17 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
         break;
     }
 
+      window.console.log("EXPECTED SLICES", first_image_expected_nb_slices);
+
+      //
+      // Moka ??
+      //
+      first_image_expected_nb_slices = Math.round(first_image_expected_nb_slices);
+
     var first_slice_size = first_image[0]['columns'] * first_image[0]['rows'];
     var first_image_size = first_slice_size * (first_image_expected_nb_slices);
+
+
 
     ////////////////////////////////////////////////////////////////////////
     // At this point:
@@ -577,6 +596,34 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 
 	  _distance_position = Math.sqrt(_x*_x + _y*_y  + _z*_z)/first_image[0]['pixel_spacing'][2]
 
+	//************************************
+	//
+	// Moka/NRG addition (start)
+	//
+	//------------------------------------
+	//
+	// Explanation of addition: 
+	//
+	// Not rounding distance_position creates erros in the following:
+	// 1) When setting the array data below (eg. first_image_data.set( ... )
+	// 2) When spacing the volume in RAS 
+	//
+	// EXAMPLE:
+	//
+	// 28.000823915786 <-- Bad, errors
+	// 28 <-- Good, no errors
+	//
+	//************************************
+	window.console.log('\n\nRounding _distance_position from: ', _distance_position);
+	// Round the number
+	  //window.console.log("TESTING CEILING");
+	_distance_position = Math.round(_distance_position);
+	window.console.log('to:                               ', _distance_position); 
+	//************************************
+	//
+	// Moka/NRG addition (end)
+	//
+	//************************************
 
           break;
         case 'instance_number':
@@ -587,46 +634,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           break;
       }
 
-	//************************************
-	//
-	// Moka/NRG change (start)
-	//
-	//------------------------------------
-	// Previous parserDCM.js:
-	//
-	// first_image_data.set(_data, Math.round(_distance_position) * 
-	//      first_slice_size);
-	//------------------------------------
-	//
-	// Explanation of changes: 
-	//
-	// The call creates errors when distance_position has a very long
-	// decimal trail.  The least error-prone amount of decmals is 2.  
-	// For example:
-	//
-	// 28.000823915786 <-- Bad, errors
-	// 28.001 <-- Okay, occasional errors
-	// 28.00 <-- Good, no errors
-	//
-	//************************************
-	window.console.log('\n\nordering:', _ordering, 
-			   '\nPRE  _distance_position:', _distance_position);
-	var _threshold = 0.20;
-	var _rounded = Math.round(_distance_position);
-	//window.console.log(_distance_position - _rounded);
-	if (Math.abs(_distance_position - _rounded) < _threshold){
-	    //window.console.log("\n\nSKIPPNG ROUNDING FOR NOW");
-	    _distance_position = _rounded;
-	//_distance_position = _distance_position.toFixed(1);
-	}
-	window.console.log('POST _distance_position:', 
-			   _distance_position, first_slice_size);
 	first_image_data.set(_data, _distance_position * first_slice_size);
-	//************************************
-	//
-	// Moka/NRG change (end)
-	//
-	//************************************
     }
 
     volumeAttributes.data = first_image_data;
@@ -647,6 +655,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     // rows is index 1
     object._dimensions = [first_image[0]['columns'], first_image[0]['rows'], first_image_expected_nb_slices];
     volumeAttributes.dimensions = object._dimensions;
+      window.console.log("OBJ", volumeAttributes.dimensions);
 
     // get the min and max intensities
     var min_max = this.arrayMinMax(first_image_data);
@@ -709,19 +718,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       // NOTE: this loads non-resliced scans, but the anatomical 
       // planes are incorrect and the images are rotated.  
       // 
-      /**
-         goog.vec.Mat4.setRowValues(IJKToRAS, 0, 
-	 first_image[0]['pixel_spacing'][0],
-         0,0,0);
-         // - first_image[0]['pixel_spacing'][0]/2);
-         goog.vec.Mat4.setRowValues(IJKToRAS, 1, 0, 
-	 first_image[0]['pixel_spacing'][1], 0,0);
-         // - first_image[0]['pixel_spacing'][1]/2);
-         goog.vec.Mat4.setRowValues(IJKToRAS, 2, 0, 0, 
-	 first_image[0]['pixel_spacing'][2],0);
-         // + first_image[0]['pixel_spacing'][2]/2);
-         goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);
-      */
       //------------------------------------
       //
       // Explanation of changes: 
@@ -738,7 +734,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       //************************************
       if(object['reslicing'].toString() == 'false'){
 
-
 	  //
 	  // IMAGE_POSITION_PATIENT or FORCED_INSTANCE
 	  //
@@ -747,7 +742,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      //
 	      // Output warning
 	      //
-	      window.console.log("NRG WARNING: " + 
+	      window.console.log("NRG modification: " + 
 				 "Running an orthogonal transform because the " + 
 				 "volume's" +
 				 " \"reslicing\" property is set to false.");
@@ -765,21 +760,29 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		  first_image[ 0 ]['image_orientation_patient'][5]);
 
 	      //
-	      // Round all of the values in both vectors
-	      //
-	      _x_cosine.x = Math.round(_x_cosine.x);
-	      _x_cosine.y = Math.round(_x_cosine.y);
-	      _x_cosine.z = Math.round(_x_cosine.z);
-	      _y_cosine.x = Math.round(_y_cosine.x);
-	      _y_cosine.y = Math.round(_y_cosine.y);
-	      _y_cosine.z = Math.round(_y_cosine.z);
-	      
-
-	      //
 	      // Derive the z cosine from the x and y above.
 	      //
               var _z_cosine = goog.math.Vec3.cross(_x_cosine, _y_cosine);
 
+	      //-------------------------------------
+	      //  IMPORTANT!!!!!!!
+	      //  NEED TO DETERMINE WHY THIS WORKS!!!!
+	      //
+	      //-------------------------------------
+	      window.console.log("HACKING THE ORIGIN before:", _origin);
+	      //_origin[0] = 0;
+	      //_origin[1] = 0;
+	      _origin[2] = 0;
+	      window.console.log("HACKING THE ORIGIN after:", _origin);
+
+	      //
+	      // NECESSARY: otherwise the z-axis is angled according to the
+	      // perscribed plane, which defeats the purpose of an ortho-transform
+	      //
+	      _z_cosine.x = Math.round(_z_cosine.x);
+	      _z_cosine.y = Math.round(_z_cosine.y);
+	      _z_cosine.z = Math.round(_z_cosine.z);
+	 
 	      //
 	      // Set the transformation matrix, rounding the matrix colums 1 and 2
 	      //
@@ -792,7 +795,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		      -_z_cosine.x*first_image[0]['pixel_spacing'][2],
 		      -_origin[0]);
 
-              // - first_image[0]['pixel_spacing'][0]/2);
               goog.vec.Mat4.setRowValues(
 		  IJKToRAS,1,
 		      -Math.round(first_image[ 0 ]['image_orientation_patient'][1])
@@ -802,7 +804,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		      -_z_cosine.y*first_image[0]['pixel_spacing'][2],
 		      -_origin[1]);
 
-              // - first_image[0]['pixel_spacing'][1]/2);
               goog.vec.Mat4.setRowValues(
 		  IJKToRAS, 2,
 		  Math.round(first_image[ 0 ]['image_orientation_patient'][2])
@@ -811,7 +812,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		      *first_image[0]['pixel_spacing'][1],
 		  _z_cosine.z*first_image[0]['pixel_spacing'][2],
 		  _origin[2]);
-              // + first_image[0]['pixel_spacing'][2]/2);
+
               goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);
 	  }
 	  else if (_ordering == 'instance_number'){

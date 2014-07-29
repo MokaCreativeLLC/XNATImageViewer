@@ -309,6 +309,9 @@ xiv.vis.XtkRenderer2D.prototype.getVolume = function() {
  */
 xiv.vis.XtkRenderer2D.prototype.getNumberSlices = function() {
     if (!goog.isDefAndNotNull(this._slices)) { return }
+    window.console.log("VOLUME", 
+		       this._slices.length,
+		       this._topLevelObjects[0]);
     return this._slices.length;
 }
 

@@ -43,7 +43,7 @@ git commit -m "$MASTER_COMMIT"
 git push
 echo "-----------"
 echo 'SUCCESS!'
-exit 0
+#exit 0
 
 TMP="$XNATIMAGEVIEWER_HOME/../tmp"`date +%Y-%m-%d-%H-%M-%S`; 
 echo 'Making temp dir: ' $TMP
