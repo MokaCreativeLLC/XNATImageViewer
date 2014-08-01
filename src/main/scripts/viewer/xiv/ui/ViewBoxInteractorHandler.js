@@ -1237,6 +1237,7 @@ function() {
 	// Preliminary sync
 	//
 	this.syncSlidersToVolume_(true);
+	this.syncPlayButtonsToSlider_(true);
 	this.syncVolumeToSlider_(slider, volume);
 	this.syncCrosshairsToVolume_(slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY],
 				     volume);
@@ -1623,18 +1624,16 @@ function(slider, volume) {
 	if (volume[X.volume.ORIENTATION_KEY] == 'transverse' &&
 	    orientation == 'Z'){
 	    adder += 2;
-	    window.console.log('adder', adder);
 	}
-	if (volume[X.volume.ORIENTATION_KEY] == 'coronal' &&
+	else if (volume[X.volume.ORIENTATION_KEY] == 'coronal' &&
 	    orientation == 'Y'){
 	    adder += 2;
-	    window.console.log('adder', adder);
 	}
-	if (volume[X.volume.ORIENTATION_KEY] == 'sagittal' &&
+	else if (volume[X.volume.ORIENTATION_KEY] == 'sagittal' &&
 	    orientation == 'X'){
 	    adder += 1;
-	    window.console.log('adder', adder);
 	}
+	//window.console.log('adder', adder);
     }
     //
     // Set the volume index
@@ -1762,6 +1761,7 @@ function(slider, volume) {
 	var frameDisplay = planeInteractors.FRAME_DISPLAY;
 	var slider = planeInteractors.SLIDER;
 	frameDisplay.setMaximum(slider.getMaximum());
+	frameDisplay.setMinimum(1);
 	frameDisplay.setValue(slider.getValue());  
     }.bind(this), slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY])
 }
@@ -1929,6 +1929,37 @@ function(opt_resetMaximum) {
 }
 
 
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.syncPlayButtonsToSlider_ = 
+function() {
+
+    var orientation;
+    var currVol;
+    var slider;
+
+    this.loopIR_(
+    function(renderPlane, renderPlaneOr, planeInteractors, volume){
+	if (!goog.isDefAndNotNull(planeInteractors.SLIDER)) { 
+	    return; 
+	};
+
+	
+	slider = planeInteractors.SLIDER;
+	playbutton = planeInteractors.PLAY_BUTTON;
+	window.console.log("PLAY BUTTON", playbutton);
+
+	//
+	// Exit if no volume
+	//
+	if (!goog.isDefAndNotNull(volume)) { return };
+
+	playbutton.setSlider(slider);
+    })
+}
 
 
 /**

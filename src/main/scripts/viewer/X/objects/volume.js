@@ -368,15 +368,6 @@ X.volume.prototype.create_ = function(_info) {
   this._data = _info.data;
   this._dirty = true;
 
-    /*
-    window.console.log("SLICES create 1: ",
-		       this._slicesX._children.length, 
-		       this._slicesY._children.length, 
-		       this._slicesZ._children.length);
-		       */
-
-    window.console.log('Z', this._slicesZ, this._children[2]._children.length);
-
 };
 
 /**
@@ -1845,16 +1836,26 @@ X.volume.prototype.onComputingEnd = function(direction) {
 //
 // For use in parserDCM.js
 //***************************************************************************
+
+/**
+ * @expose
+ */
 X.volume.REORIENT_TRANSFORM_KEY = 'ot_' + 
     goog.string.createUniqueString();
 goog.exportSymbol('X.volume.REORIENT_TRANSFORM_KEY', 
 		  X.volume.REORIENT_TRANSFORM_KEY);
 
+/**
+ * @expose
+ */
 X.volume.REORIENTED_DIMENSIONS_KEY = 'otd_' + 
     goog.string.createUniqueString();
 goog.exportSymbol('X.volume.REORIENTED_DIMENSIONS_KEY', 
 		  X.volume.REORIENTED_DIMENSIONS_KEY);
 
+/**
+ * @expose
+ */
 X.volume.ORIENTATION_KEY = 'or_' + 
     goog.string.createUniqueString();
 goog.exportSymbol('X.volume.ORIENTATION_KEY', 
