@@ -1127,8 +1127,8 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
 	    window.console.log("Applying a slight modification to " + 
 			       object[X.volume.ORIENTATION_KEY] + 
 			       "-oriented volume")
-	    object._range[_index]+=1;
-	    object._childrenInfo[_index]._nb+=1;
+	    //object._range[_index]+=1;
+	    //object._childrenInfo[_index]._nb+=1;
 	}
     }
     //

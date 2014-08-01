@@ -739,9 +739,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	  if (_ordering == 'image_position_patient' || 
 	      first_image['forced_instance_ordering']){
 
-	      _origin[0] = 0;
-	      _origin[1] = 0;
-	      _origin[2] = 0;
 
 	      //
 	      // Output warning
@@ -810,7 +807,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 
               goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);
 
-	      window.console.log(IJKToRAS);
+	      window.console.log('IJKToRAS', IJKToRAS);
 
 	      var _pureOrthoTransform = goog.vec.Mat4.createFloat32();
               goog.vec.Mat4.setRowValues(
@@ -818,25 +815,25 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		      -Math.round(first_image[0]['image_orientation_patient'][0]),
 		      -Math.round(first_image[0]['image_orientation_patient'][3]),
 		      -_z_cosine.x,
-		      -_origin[0]);
+		      0);
 
               goog.vec.Mat4.setRowValues(
 		  _pureOrthoTransform,1,
 		      -Math.round(first_image[ 0 ]['image_orientation_patient'][1]),
 		      -Math.round(first_image[ 0 ]['image_orientation_patient'][4]),
 		      -_z_cosine.y,
-		      -_origin[1]);
+		      0);
 
               goog.vec.Mat4.setRowValues(
 		  _pureOrthoTransform, 2,
 		  Math.round(first_image[ 0 ]['image_orientation_patient'][2]),
 		  Math.round(first_image[ 0 ]['image_orientation_patient'][5]),
 		  _z_cosine.z,
-		  _origin[2]);
+		  0);
 
               goog.vec.Mat4.setRowValues(_pureOrthoTransform, 3,0,0,0,1);
 
-	      window.console.log('Pure ortho', _pureOrthoTransform);
+	      window.console.log('Pure ortho: ', _pureOrthoTransform);
 	      object[X.volume.REORIENT_TRANSFORM_KEY] = _pureOrthoTransform;
 
 
@@ -1033,12 +1030,15 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	  }
 	  else if (_transformedDims[1] == object._dimensions[2]){
 	      object[X.volume.ORIENTATION_KEY] = 'coronal';
-	      volumeAttributes.RASDimensions[1] += first_image[0]['pixel_spacing'][2];
-	      volumeAttributes.RASOrigin[1] -= first_image[0]['pixel_spacing'][2];
+	      volumeAttributes.RASDimensions[1] += 1 * first_image[0]['pixel_spacing'][2];
+	      volumeAttributes.RASOrigin[1] -= 1 * first_image[0]['pixel_spacing'][2];
 	  }
 	  else {
 	      object[X.volume.ORIENTATION_KEY] = 'transverse';
-	      volumeAttributes.RASDimensions[2] += first_image[0]['pixel_spacing'][2];
+	      volumeAttributes.RASDimensions[2] += 2*first_image[0]['pixel_spacing'][2];
+	      volumeAttributes.RASSpacing[2] = volumeAttributes.RASDimensions[2] / 
+		  (first_image.length + 1);
+	      volumeAttributes.RASOrigin[2] -= first_image[0]['pixel_spacing'][2];
 	  }
 	  window.console.log("\n\nCalculated volume orientation: ", 
 			     object[X.volume.ORIENTATION_KEY]);

@@ -320,13 +320,14 @@ xiv.vis.XtkRenderer2D.prototype.getNumberSlices = function() {
        vol['reslicing'].toString() == 'false'){
 
 	window.console.log('GET NUM SLICES', 
-			   vol[X.volume.REORIENTED_DIMENSIONS_KEY])
-	switch (vol[X.volume.ORIENTATION_KEY]){
-	case 'sagittal':
+			   vol[X.volume.REORIENTED_DIMENSIONS_KEY],
+			  this.getOrientation())
+	switch (this.getOrientation()){
+	case 'X':
 	    return vol[X.volume.REORIENTED_DIMENSIONS_KEY][0];
-	case 'coronal':
+	case 'Y':
 	    return vol[X.volume.REORIENTED_DIMENSIONS_KEY][1];
-	case 'transverse':
+	case 'Z':
 	    return vol[X.volume.REORIENTED_DIMENSIONS_KEY][2];
 	}
 
