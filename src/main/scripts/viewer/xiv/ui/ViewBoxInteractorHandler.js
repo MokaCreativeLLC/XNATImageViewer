@@ -1630,6 +1630,11 @@ function(slider, volume) {
 	    adder += 2;
 	    window.console.log('adder', adder);
 	}
+	if (volume[X.volume.ORIENTATION_KEY] == 'sagittal' &&
+	    orientation == 'X'){
+	    adder += 1;
+	    window.console.log('adder', adder);
+	}
     }
     //
     // Set the volume index

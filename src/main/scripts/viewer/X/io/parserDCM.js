@@ -1027,6 +1027,10 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	  //
 	  if (_transformedDims[0] == object._dimensions[2]){
 	      object[X.volume.ORIENTATION_KEY] = 'sagittal';
+	      volumeAttributes.RASDimensions[0] += 1 * first_image[0]['pixel_spacing'][2];
+	      volumeAttributes.RASSpacing[0] = volumeAttributes.RASDimensions[0] / 
+		  (first_image.length + 1);
+	      //volumeAttributes.RASOrigin[0] -= first_image[0]['pixel_spacing'][2];
 	  }
 	  else if (_transformedDims[1] == object._dimensions[2]){
 	      object[X.volume.ORIENTATION_KEY] = 'coronal';
