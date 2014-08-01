@@ -49,7 +49,7 @@ goog.addDependency('../../../xiv/ui/layouts/XyzvLayout.js', ['xiv.ui.layouts.Xyz
 goog.addDependency('../../../xiv/ui/layouts/interactors/Crosshairs.js', ['xiv.ui.layouts.interactors.Crosshairs'], ['goog.dom', 'goog.object', 'goog.string', 'nrg.ui.Component']);
 goog.addDependency('../../../xiv/ui/layouts/interactors/FrameDisplay.js', ['xiv.ui.layouts.interactors.FrameDisplay'], ['goog.dom', 'nrg.ui.Component', 'xiv.ui.layouts.interactors.InputController']);
 goog.addDependency('../../../xiv/ui/layouts/interactors/InputController.js', ['xiv.ui.layouts.interactors.InputController'], ['goog.dom', 'goog.dom.classes', 'goog.events', 'nrg.ui.Component']);
-goog.addDependency('../../../xiv/ui/layouts/interactors/PlayButton.js', ['xiv.ui.layouts.interactors.PlayButton'], ['goog.string', 'nrg.ui.Component']);
+goog.addDependency('../../../xiv/ui/layouts/interactors/PlayButton.js', ['xiv.ui.layouts.interactors.PlayButton'], ['goog.Timer', 'goog.string', 'goog.ui.Slider', 'nrg.ui.Component']);
 goog.addDependency('../../../xiv/ui/layouts/interactors/Slider.js', ['xiv.ui.layouts.interactors.Slider'], ['goog.dom', 'nrg.ui.Slider']);
 goog.addDependency('../../../xiv/ui/layouts/interactors/ZoomDisplay.js', ['xiv.ui.layouts.interactors.ZoomDisplay'], ['goog.cssom', 'goog.dom', 'nrg.ui.Component', 'xiv.ui.layouts.interactors.InputController', 'xiv.vis.XtkRenderer2D']);
 goog.addDependency('../../../xiv/ui/ui.js', ['xiv.ui'], []);
