@@ -5,25 +5,25 @@ goog.provide('xiv.ui.layouts.XyzvLayout');
 
 
 // goog
-goog.require('goog.style')
-goog.require('goog.string')
-goog.require('goog.object')
-goog.require('goog.dom')
-goog.require('goog.dom.classes')
-goog.require('goog.array')
+goog.require('goog.style');
+goog.require('goog.string');
+goog.require('goog.object');
+goog.require('goog.dom');
+goog.require('goog.dom.classes');
+goog.require('goog.array');
 
 // nrg
-goog.require('nrg.ui.Slider')
-goog.require('nrg.string')
+goog.require('nrg.ui.Slider');
+goog.require('nrg.string');
 
 // xiv
-goog.require('xiv.ui.layouts.Layout')
-goog.require('xiv.ui.layouts.LayoutFrame')
-goog.require('xiv.ui.layouts.interactors.FrameDisplay')
-goog.require('xiv.ui.layouts.interactors.Slider')
-goog.require('xiv.ui.layouts.interactors.Crosshairs')
-goog.require('xiv.ui.layouts.interactors.ZoomDisplay')
-
+goog.require('xiv.ui.layouts.Layout');
+goog.require('xiv.ui.layouts.LayoutFrame');
+goog.require('xiv.ui.layouts.interactors.FrameDisplay');
+goog.require('xiv.ui.layouts.interactors.Slider');
+goog.require('xiv.ui.layouts.interactors.Crosshairs');
+goog.require('xiv.ui.layouts.interactors.ZoomDisplay');
+goog.require('xiv.ui.layouts.interactors.PlayButton');
 //-----------
 
 
@@ -123,11 +123,12 @@ xiv.ui.layouts.XyzvLayout.CSS_SUFFIX = {
  * @constructor
  */
 xiv.ui.layouts.XyzvLayout.InteractorSet = 
-function(slider, display, crosshairs, zoom) {
+function(slider, display, crosshairs, zoom, play) {
     this.SLIDER = slider;
     this.FRAME_DISPLAY = display;
     this.CROSSHAIRS = crosshairs;   
     this.ZOOM_DISPLAY = zoom;   
+    this.PLAY_BUTTON = play;  
 }
 
 
@@ -299,6 +300,7 @@ xiv.ui.layouts.XyzvLayout.prototype.addInteractors = function() {
     this.addFrameDisplays_();
     this.addZoomDisplays_();
     this.addCrosshairs_();
+    this.addPlayButtons_();
 };
 
 
@@ -315,7 +317,9 @@ xiv.ui.layouts.XyzvLayout.prototype.getInteractors = function() {
 	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.SLIDER], 
 	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.FRAME_DISPLAY],
 	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS],
-	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.ZOOM_DISPLAY])
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.ZOOM_DISPLAY],
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.PLAY_BUTTON]
+	)
     }) 
     return interactors
 };
@@ -329,10 +333,12 @@ xiv.ui.layouts.XyzvLayout.prototype.getInteractors = function() {
 xiv.ui.layouts.XyzvLayout.prototype.getInteractorsByPlane = function(plane) {
     var LayoutFrame = this.LayoutFrames[plane];
     return new xiv.ui.layouts.XyzvLayout.InteractorSet(
-	LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.SLIDER], 
-	LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.FRAME_DISPLAY],
-	LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS])
-
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.SLIDER], 
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.FRAME_DISPLAY],
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS],
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.ZOOM_DISPLAY],
+	    LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.PLAY_BUTTON]
+	)
 };
 
 
@@ -429,6 +435,23 @@ xiv.ui.layouts.XyzvLayout.prototype.addZoomDisplays_ = function(){
 
 	LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.ZOOM_DISPLAY] = 
 	    zoomDisplay; 
+    }.bind(this));
+};
+
+
+
+/**
+ * @private
+ */
+xiv.ui.layouts.XyzvLayout.prototype.addPlayButtons_ = function(){
+    var playButton;
+    this.loopXyz(function(LayoutFrame, key) {	
+	playButton = new xiv.ui.layouts.interactors.PlayButton();
+
+	playButton.render(LayoutFrame.getElement());
+
+	LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.PLAY_BUTTON] = 
+	    playButton; 
     }.bind(this));
 };
 

@@ -1307,4 +1307,3 @@ X.parser.prototype.reslice = function(object) {
   
   return object._IJKVolume;
 };
-

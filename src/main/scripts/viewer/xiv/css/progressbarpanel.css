@@ -15,14 +15,16 @@
     height: 100%;
     top: 0%;
     background-color: rgb(100, 149, 237);
+    border-radius: 1px;
 }
 
 .xiv-ui-progressbarpanel-progbarholder  {
     position: absolute;
-    height: 10px; 
+    height: 3px; 
     width: 95%;
-    top: calc(50% - 5px);
-    background-color: rgba(0,0,0,0);
+    top: calc(50% - 1.5px);
+    background-color: rgba(50,50,50,1);
+    border-radius: 1px;
     border: none;
     left: 2.5%;
 }

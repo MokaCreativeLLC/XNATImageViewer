@@ -1,0 +1,20 @@
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+
+
+.xiv-ui-layouts-interactors-playbutton {
+    position: absolute;
+    top: calc(100% - 17px);
+    left: 9px;
+    height: 9px;
+    width: 9px;
+    cursor: pointer;
+}
+
+
+
+.xiv-ui-layouts-interactors-playbutton-image {
+    height: 9px;
+    width: 9px;
+}

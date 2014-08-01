@@ -36,6 +36,9 @@ goog.require('X.slice');
 goog.require('X.parser');
 goog.require('X.thresholdable');
 
+// goog
+goog.require('goog.string');
+
 
 /**
  * Create a displayable volume which consists of X.slices in X,Y and Z direction
@@ -312,6 +315,8 @@ X.volume.prototype.copy_ = function(volume) {
   this._slicesY = new X.object(volume._slicesY);
   this._slicesZ = new X.object(volume._slicesZ);
 
+  //window.console.log("SLICES: ", this._slicesX, this._slicesY, this._slicesZ);
+
   this._max = volume._max;
   this._data = volume._data;
 
@@ -335,7 +340,13 @@ X.volume.prototype.copy_ = function(volume) {
  * @private
  */
 X.volume.prototype.create_ = function(_info) {
-
+    /*
+    window.console.log('INFO:', _info)
+    window.console.log("SLICES create 0: ",
+		       this._slicesX._children.length, 
+		       this._slicesY._children.length, 
+		       this._slicesZ._children);
+		       */
   // remove all old children
   this._children.length = 0;
   this._slicesX._children.length = 0;
@@ -356,6 +367,7 @@ X.volume.prototype.create_ = function(_info) {
   this._max = _info.max;
   this._data = _info.data;
   this._dirty = true;
+
 };
 
 /**
@@ -814,6 +826,9 @@ X.volume.prototype.__defineSetter__('indexX', function(indexX) {
 
   }
 
+    //window.console.log("SLICES X: ", this._slicesX);
+
+
 });
 
 
@@ -848,6 +863,7 @@ X.volume.prototype.__defineSetter__('indexY', function(indexY) {
     this.modified(false);
 
   }
+    //window.console.log("SLICES: Y", this._slicesY);
 
 });
 
@@ -883,6 +899,9 @@ X.volume.prototype.__defineSetter__('indexZ', function(indexZ) {
     this.modified(false);
 
   }
+
+    //window.console.log("SLICES Z: ", this._slicesZ);
+
 
 });
 
@@ -1349,6 +1368,8 @@ X.volume.prototype.sliceInfoChanged = function(index){
   X.parser.prototype.updateSliceInfo(index, this._childrenInfo[index]._sliceOrigin, this._childrenInfo[index]._sliceNormal, this);
   // Create empty array for all slices in this direction
   this._children[index]._children = [];
+
+    alert('#VOLUME#', this._childrenInfo[index]._nb);
   this._children[index]._children = new Array(this._childrenInfo[index]._nb);
 
   //attach labelmap
@@ -1808,6 +1829,42 @@ X.volume.prototype.onComputingEnd = function(direction) {
   // should be overloaded
 
 }
+
+
+//***************************************************************************
+// Moka / NRG Addition (start)
+//
+// For use in parserDCM.js
+//***************************************************************************
+
+/**
+ * @expose
+ */
+X.volume.REORIENT_TRANSFORM_KEY = 'ot_' + 
+    goog.string.createUniqueString();
+goog.exportSymbol('X.volume.REORIENT_TRANSFORM_KEY', 
+		  X.volume.REORIENT_TRANSFORM_KEY);
+
+/**
+ * @expose
+ */
+X.volume.REORIENTED_DIMENSIONS_KEY = 'otd_' + 
+    goog.string.createUniqueString();
+goog.exportSymbol('X.volume.REORIENTED_DIMENSIONS_KEY', 
+		  X.volume.REORIENTED_DIMENSIONS_KEY);
+
+/**
+ * @expose
+ */
+X.volume.ORIENTATION_KEY = 'or_' + 
+    goog.string.createUniqueString();
+goog.exportSymbol('X.volume.ORIENTATION_KEY', 
+		  X.volume.ORIENTATION_KEY);
+
+//***************************************************************************
+// Moka / NRG Addition (end)
+//***************************************************************************
+
 
 
 // export symbols (required for advanced compilation)

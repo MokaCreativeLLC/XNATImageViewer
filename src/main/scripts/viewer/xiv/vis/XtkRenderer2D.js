@@ -309,10 +309,40 @@ xiv.vis.XtkRenderer2D.prototype.getVolume = function() {
  */
 xiv.vis.XtkRenderer2D.prototype.getNumberSlices = function() {
     if (!goog.isDefAndNotNull(this._slices)) { return }
+
+    /*
     window.console.log("VOLUME", 
 		       this._slices.length,
 		       this._topLevelObjects[0]);
+		       */
+
+    var vol = this._topLevelObjects[0];
+
+    
+    if (goog.isDefAndNotNull(vol[X.volume.REORIENTED_DIMENSIONS_KEY]) && 
+       vol['reslicing'].toString() == 'false'){
+
+	/*
+	window.console.log('GET NUM SLICES', 
+			   vol[X.volume.REORIENTED_DIMENSIONS_KEY],
+			  this.getOrientation())
+			  */
+
+	switch (this.getOrientation()){
+	case 'X':
+	    return vol[X.volume.REORIENTED_DIMENSIONS_KEY][0];
+	case 'Y':
+	    return vol[X.volume.REORIENTED_DIMENSIONS_KEY][1];
+	case 'Z':
+	    return vol[X.volume.REORIENTED_DIMENSIONS_KEY][2];
+	}
+
+
+    }
+    
+
     return this._slices.length;
+    
 }
 
 
