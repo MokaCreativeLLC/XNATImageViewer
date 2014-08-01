@@ -36,6 +36,8 @@ goog.require('X.object');
 goog.require('X.parser');
 goog.require('X.triplets');
 goog.require('goog.math.Vec3');
+goog.require('X.volume');
+
 /**
  * Create a parser for DICOM files.
  * 
@@ -345,50 +347,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           var _y = _second_image_position[1] - _first_position[1];
           var _z = _second_image_position[2] - _first_position[2];
 
-          first_image[0]['pixel_spacing'][2] = Math.sqrt(_x*_x + _y*_y  + _z*_z);
-	  //************************************
-	  //
-	  // Moka/NRG addition (start)
-	  // 
-	  //------------------------------------
-	  // Explanation of addition:
-	  //
-	  // A lot of rounding happens in the orthogonal transform below.  Unless
-	  // we round the pixel spacing, it'll throw the Z dimenions off.
-	  //
-	  //************************************
-	  window.console.log('\n\nRounding z pixel_spacing from: ', first_image[0]['pixel_spacing'][2]);
-	  // Round the number
-	  first_image[0]['pixel_spacing'][2] = Math.round(first_image[0]['pixel_spacing'][2]);
-	  window.console.log('to:                              ', first_image[0]['pixel_spacing'][2]); 
-
-	  //
-	  // For debugging
-	  //
-	  var _deb = false;
-	  if (_deb){
-	      window.console.log("PIXEL SPACING", 
-				 first_image[0] == first_image[1],
-				 _first_position, _second_image_position,
-				 first_image[0]['pixel_spacing'][2],
-				 first_image[ 0 ],
-				 first_image[ 1 ],
-				 first_image[first_image.length - 1]
-				);
-	      var i = 0;
-	      var len = first_image.length;
-	      for (; i<len; i++){
-		  window.console.log("INSTANCES: ", 
-				     first_image[i]['instance_number'], 
-				     first_image[i]);
-	      }
-	  }
-	  //************************************
-	  //
-	  // Moka/NRG addition (end)
-	  // 
-	  //************************************
-	  
+          first_image[0]['pixel_spacing'][2] = Math.sqrt(_x*_x + _y*_y  + _z*_z);	  
 	  break;
         case 'instance_number':
 
@@ -450,7 +409,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		  var _x = _secondPos[0] - _firstPos[0];
 		  var _y = _secondPos[1] - _firstPos[1];
 		  var _z = _secondPos[2] - _firstPos[2];
-		  _spacing = Math.round(Math.sqrt(_x*_x + _y*_y  + _z*_z));
+		  _spacing = (Math.sqrt(_x*_x + _y*_y  + _z*_z));
 	      }
 	  }
 	  
@@ -502,11 +461,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
         var _y = _last_image_position[1] - _first_position[1];
         var _z = _last_image_position[2] - _first_position[2];
  	var _distance_position = Math.sqrt(_x*_x + _y*_y  + _z*_z);
-
-
         first_image_expected_nb_slices 
 	    += Math.round(_distance_position/first_image[0]['pixel_spacing'][2]);
-
         break;
       case 'instance_number':
         first_image_expected_nb_slices += 
@@ -517,16 +473,31 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
         break;
     }
 
-      window.console.log("EXPECTED SLICES", first_image_expected_nb_slices);
+      //************************************
+      //
+      // Moka/NRG addition (start)
+      //
+      //------------------------------------
+      //
+      //************************************
+      if (object['reslicing'].toString() == 'false'){
+	  window.console.log("Forcing expexted slices to length of files because" + 
+			     "volume's \"reslicing\" property is set to false.");
+	  first_image_expected_nb_slices = first_image_stacks;
+      }
+      //************************************
+      //
+      // Moka/NRG addition (end)
+      //
+      //************************************
+   window.console.log("EXPECTED SLICES", first_image_expected_nb_slices);
 
-      //
-      // Moka ??
-      //
-      first_image_expected_nb_slices = Math.round(first_image_expected_nb_slices);
 
     var first_slice_size = first_image[0]['columns'] * first_image[0]['rows'];
-    var first_image_size = first_slice_size * (first_image_expected_nb_slices);
+    var first_image_size = first_slice_size * first_image_expected_nb_slices;
 
+    //window.console.log("\n\n\nTEMPORARY DANGEROUS OPERATION 1");
+    //var first_image_size = first_slice_size * (19.0547);
 
 
     ////////////////////////////////////////////////////////////////////////
@@ -550,16 +521,21 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     switch (first_image[0].bits_allocated) {
       case 8:
         first_image_data = new Uint8Array(first_image_size);
+	window.console.log("\n\n8-bit array");
         break;
       case 16:
         first_image_data = new Uint16Array(first_image_size);
+	window.console.log("\n\n16-bit array");
         break;
       case 32:
         first_image_data = new Uint32Array(first_image_size);
+	window.console.log("\n\n32-bit array");
       default:
         window.console.log("Unknown number of bits allocated - using default: 32 bits");
         break;
     }
+
+
 
     object._spacing = first_image[0]['pixel_spacing'];
 
@@ -582,6 +558,12 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     // 1234211 -> second slice
     // 0000000
     // 1232414 -> third slice
+
+
+      //
+      // Moka ??
+      //
+      var addedOne = false;
 
     for (var _i = 0; _i < first_image_stacks; _i++) {
       // get data
@@ -616,8 +598,12 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	//************************************
 	window.console.log('\n\nRounding _distance_position from: ', _distance_position);
 	// Round the number
-	  //window.console.log("TESTING CEILING");
-	_distance_position = Math.round(_distance_position);
+	  window.console.log("(adding one)");
+	  if (_distance_position == 0 || addedOne){
+	      //_distance_position += 1;
+	      if (addedOne == false) { addedOne = true; }
+	  }
+	  //_distance_position = Math.round(_distance_position);
 	window.console.log('to:                               ', _distance_position); 
 	//************************************
 	//
@@ -634,7 +620,17 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
           break;
       }
 
-	first_image_data.set(_data, _distance_position * first_slice_size);
+	window.console.log("_distance_position: ", _distance_position);
+	window.console.log("first_slice_size: ", first_slice_size);
+
+	//
+	// Moka
+	//
+	window.console.log("MOKA ROUND IN DATA SET")
+	first_image_data.set(_data, Math.round(_distance_position) * first_slice_size);
+	//
+	// Moka
+	//
     }
 
     volumeAttributes.data = first_image_data;
@@ -652,10 +648,13 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     // IJK image dimensions
     // NOTE:
     // colums is index 0
-    // rows is index 1
+      // rows is index 1
+      //alert(first_image_expected_nb_slices)
     object._dimensions = [first_image[0]['columns'], first_image[0]['rows'], first_image_expected_nb_slices];
     volumeAttributes.dimensions = object._dimensions;
       window.console.log("OBJ", volumeAttributes.dimensions);
+
+      
 
     // get the min and max intensities
     var min_max = this.arrayMinMax(first_image_data);
@@ -739,6 +738,11 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	  //
 	  if (_ordering == 'image_position_patient' || 
 	      first_image['forced_instance_ordering']){
+
+	      _origin[0] = 0;
+	      _origin[1] = 0;
+	      _origin[2] = 0;
+
 	      //
 	      // Output warning
 	      //
@@ -764,17 +768,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      //
               var _z_cosine = goog.math.Vec3.cross(_x_cosine, _y_cosine);
 
-	      //-------------------------------------
-	      //  IMPORTANT!!!!!!!
-	      //  NEED TO DETERMINE WHY THIS WORKS!!!!
-	      //
-	      //-------------------------------------
-	      window.console.log("HACKING THE ORIGIN before:", _origin);
-	      //_origin[0] = 0;
-	      //_origin[1] = 0;
-	      _origin[2] = 0;
-	      window.console.log("HACKING THE ORIGIN after:", _origin);
-
 	      //
 	      // NECESSARY: otherwise the z-axis is angled according to the
 	      // perscribed plane, which defeats the purpose of an ortho-transform
@@ -782,6 +775,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      _z_cosine.x = Math.round(_z_cosine.x);
 	      _z_cosine.y = Math.round(_z_cosine.y);
 	      _z_cosine.z = Math.round(_z_cosine.z);
+
+	      
 	 
 	      //
 	      // Set the transformation matrix, rounding the matrix colums 1 and 2
@@ -814,12 +809,80 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		  _origin[2]);
 
               goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);
+
+	      window.console.log(IJKToRAS);
+
+	      var _pureOrthoTransform = goog.vec.Mat4.createFloat32();
+              goog.vec.Mat4.setRowValues(
+		  _pureOrthoTransform, 0,
+		      -Math.round(first_image[0]['image_orientation_patient'][0]),
+		      -Math.round(first_image[0]['image_orientation_patient'][3]),
+		      -_z_cosine.x,
+		      -_origin[0]);
+
+              goog.vec.Mat4.setRowValues(
+		  _pureOrthoTransform,1,
+		      -Math.round(first_image[ 0 ]['image_orientation_patient'][1]),
+		      -Math.round(first_image[ 0 ]['image_orientation_patient'][4]),
+		      -_z_cosine.y,
+		      -_origin[1]);
+
+              goog.vec.Mat4.setRowValues(
+		  _pureOrthoTransform, 2,
+		  Math.round(first_image[ 0 ]['image_orientation_patient'][2]),
+		  Math.round(first_image[ 0 ]['image_orientation_patient'][5]),
+		  _z_cosine.z,
+		  _origin[2]);
+
+              goog.vec.Mat4.setRowValues(_pureOrthoTransform, 3,0,0,0,1);
+
+	      window.console.log('Pure ortho', _pureOrthoTransform);
+	      object[X.volume.REORIENT_TRANSFORM_KEY] = _pureOrthoTransform;
+
+
+	      /*
+              goog.vec.Mat4.setRowValues(IJKToRAS,
+					 0,
+					 first_image[0]['pixel_spacing'][0],
+					 0,
+					 0,
+					 0);
+              // - first_image[0]['pixel_spacing'][0]/2);
+              goog.vec.Mat4.setRowValues(IJKToRAS,
+					 1,
+					 0,
+					 first_image[0]['pixel_spacing'][1],
+					 0,
+					 0);
+              // - first_image[0]['pixel_spacing'][1]/2);
+              goog.vec.Mat4.setRowValues(IJKToRAS,
+					 2,
+					 0,
+					 0,
+					 first_image[0]['pixel_spacing'][2],
+					 0);
+              // + first_image[0]['pixel_spacing'][2]/2);
+              goog.vec.Mat4.setRowValues(IJKToRAS,
+					 3,0,0,0,1);
+	      */
+					 
 	  }
 	  else if (_ordering == 'instance_number'){
               goog.vec.Mat4.setRowValues(IJKToRAS, 0,-1,0,0,-_origin[0]);
               goog.vec.Mat4.setRowValues(IJKToRAS, 1,-0,-1,-0,-_origin[1]);
               goog.vec.Mat4.setRowValues(IJKToRAS, 2,0,0,1,_origin[2]);
               goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);   
+
+
+	      if(object['reslicing'].toString() == 'false'){
+		  var _pureOrthoTransform = goog.vec.Mat4.createFloat32();
+		  goog.vec.Mat4.setRowValues(_pureOrthoTransform, 0,-1,0,0,0);
+		  goog.vec.Mat4.setRowValues(_pureOrthoTransform, 1,-0,-1,-0,0);
+		  goog.vec.Mat4.setRowValues(_pureOrthoTransform, 2,0,0,1,0);
+		  goog.vec.Mat4.setRowValues(_pureOrthoTransform, 3,0,0,0,1);   
+		  goog.vec.Mat4.setRowValues(_pureOrthoTransform, 3,0,0,0,1);
+		  object[X.volume.REORIENT_TRANSFORM_KEY] = _pureOrthoTransform;
+	      }
           }
           else {
               window.console.log("Unkown ordering mode - returning: " + _ordering);
@@ -912,18 +975,86 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     var res2 = goog.vec.Vec4.createFloat32();
     goog.vec.Mat4.multVec4(IJKToRAS, tar2, res2);
 
-    volumeAttributes.RASSpacing = [res2[0] - res[0], res2[1] - res[1], res2[2] - res[2]];
+      volumeAttributes.RASSpacing = [res2[0] - res[0], res2[1] - res[1], res2[2] - res[2]];
   
-    // get RAS Boundung Box
-    //
-    var _rasBB = X.parser.computeRASBBox(IJKToRAS, [object._dimensions[0], object._dimensions[1], object._dimensions[2]]);
-    // grab the RAS Dimensions
-    volumeAttributes.RASDimensions = [_rasBB[1] - _rasBB[0] + 1, _rasBB[3] - _rasBB[2] + 1, _rasBB[5] - _rasBB[4] + 1];
-  
-    // get RAS Origin
-    // (it is actually RAS min x, min y and min z)
-    //
-    volumeAttributes.RASOrigin = [_rasBB[0], _rasBB[2], _rasBB[4]];
+      // get RAS Boundung Box
+      //
+      var _rasBB = X.parser.computeRASBBox(IJKToRAS, [object._dimensions[0], object._dimensions[1], object._dimensions[2]]);
+      // grab the RAS Dimensions
+      volumeAttributes.RASDimensions = [_rasBB[1] - _rasBB[0] + 1, _rasBB[3] - _rasBB[2] + 1, _rasBB[5] - _rasBB[4] + 1];
+      
+      // get RAS Origin
+      // (it is actually RAS min x, min y and min z)
+      //
+      volumeAttributes.RASOrigin = [_rasBB[0], _rasBB[2], _rasBB[4]];
+
+      //******************************
+      //
+      // Moka start
+      //
+      //******************************
+      if (object['reslicing'].toString() == 'false'){
+
+	  window.console.log("\n\nOBJ DIM:", object._dimensions);
+	  window.console.log('_rasBB (before)', _rasBB);
+  	  window.console.log("RASSpacing", volumeAttributes.RASSpacing);
+	  window.console.log("RASDimensions", volumeAttributes.RASDimensions);
+	  window.console.log("RASOrigin", volumeAttributes.RASOrigin);
+	  
+	  var _untransformedDims = goog.vec.Vec4.createFloat32FromValues(
+	      object._dimensions[0], 
+	      object._dimensions[1], 
+	      object._dimensions[2], 1);
+
+	  //
+	  // Re-orient the dimensions of the volume
+	  //
+	  var _transformedDims = goog.vec.Vec4.createFloat32();
+	  goog.vec.Mat4.multVec4(object[X.volume.REORIENT_TRANSFORM_KEY], 
+	      _untransformedDims, 
+	      _transformedDims);
+	  _transformedDims[0] = Math.abs(_transformedDims[0]);
+	  _transformedDims[1] = Math.abs(_transformedDims[1]);
+	  _transformedDims[2] = Math.abs(_transformedDims[2]);
+	  //
+	  // Store the orthogonal transformed dimensions
+	  // as a property within the volume
+	  //
+	  object[X.volume.REORIENTED_DIMENSIONS_KEY] = 
+	      _transformedDims;
+	  //
+	  // Determine the anatomical orientation of the 
+	  // volume based on the _transformedDims array.
+	  //
+	  // Apply the appropriate 'hacks'
+	  //
+	  if (_transformedDims[0] == object._dimensions[2]){
+	      object[X.volume.ORIENTATION_KEY] = 'sagittal';
+	  }
+	  else if (_transformedDims[1] == object._dimensions[2]){
+	      object[X.volume.ORIENTATION_KEY] = 'coronal';
+	      volumeAttributes.RASDimensions[1] += first_image[0]['pixel_spacing'][2];
+	      volumeAttributes.RASOrigin[1] -= first_image[0]['pixel_spacing'][2];
+	  }
+	  else {
+	      object[X.volume.ORIENTATION_KEY] = 'transverse';
+	      volumeAttributes.RASDimensions[2] += first_image[0]['pixel_spacing'][2];
+	  }
+	  window.console.log("\n\nCalculated volume orientation: ", 
+			     object[X.volume.ORIENTATION_KEY]);
+	  window.console.log("NRG modifications applied.");
+
+
+	  window.console.log("_transformedDims", _transformedDims);
+ 	  window.console.log("RASSpacing", volumeAttributes.RASSpacing);
+	  window.console.log("RASDimensions", volumeAttributes.RASDimensions);
+	  window.console.log("RASOrigin", volumeAttributes.RASOrigin);
+      }
+      //******************************
+      //
+      // Moka end
+      //
+      //******************************
 
     // create the volume object
     object.create_(volumeAttributes);

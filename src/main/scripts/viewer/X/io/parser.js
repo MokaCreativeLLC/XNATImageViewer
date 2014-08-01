@@ -976,6 +976,8 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
   
   // create slice
   sliceXY.create_();
+
+    //window.console.log("\n\nSLICE XY:", sliceXY);
   
   // update visibility (has to be done after slice creation)
   sliceXY._visible = false;
@@ -993,6 +995,13 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
  */
 X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal, object){
 
+
+    window.console.log('UPDS 1', 
+		       object, 
+		       object._childrenInfo[2]._nb,
+		       object._children[2]._children.length);
+
+
   // ------------------------------------------
   // GET INTERSECTION BOUNDING BOX/LINE
   // ------------------------------------------
@@ -1001,7 +1010,19 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
   var _solutionsInLine = _solutionsLine[0];
   var _solutionsOutLine = _solutionsLine[1];
 
+    window.console.log('UPDS 2', 
+		       object, 
+		       object._childrenInfo[2]._nb,
+		       object._children[2]._children.length);
+
+
   object._childrenInfo[_index]._solutionsLine = _solutionsLine;
+
+    window.console.log('UPDS 3', 
+		       object, 
+		       object._childrenInfo[2]._nb,
+		       object._children[2]._children.length);
+
 
   // ------------------------------------------
   // GET DISTANCE BETWEEN 2 POINTS
@@ -1012,6 +1033,12 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
   
   object._childrenInfo[_index]._dist = _dist;
 
+    window.console.log('UPDS 4', 
+		       object, 
+		       object._childrenInfo[2]._nb,
+		       object._children[2]._children.length);
+
+
   // ------------------------------------------
   // GET CENTER OF 2 POINTS
   // ------------------------------------------
@@ -1020,6 +1047,10 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
   // GET SPACING IN SLICE SPACE
   // ------------------------------------------
 
+    window.console.log('UPDS 5', 
+		       object, 
+		       object._childrenInfo[2]._nb,
+		       object._children[2]._children.length);
   var _XYNormal = goog.vec.Vec3.createFloat32FromValues(0, 0, 1);
   
   var _XYRASTransform = X.parser.xyrasTransform(_sliceNormal, _XYNormal);
@@ -1041,6 +1072,10 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
    if(Math.abs(_xySpacing[1]) < 0.5){
      _xySpacing[1] =  0.5;
    }
+    window.console.log('UPDS 6', 
+		       object, 
+		       object._childrenInfo[2]._nb,
+		       object._children[2]._children.length);
 
   object._childrenInfo[_index]._sliceXYSpacing = [Math.abs(_xySpacing[0]), Math.abs(_xySpacing[1])];
   object._childrenInfo[_index]._sliceSpacing = _xySpacing[2];
@@ -1050,9 +1085,57 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
   // GET NUMBER OF SLICES
   // ------------------------------------------
   
+    window.console.log("\n\n" + 
+        "NRG: potentially faulty reslice mechanism is here");
+
+    window.console.log('UPDS 7', 
+		       object, 
+		       object._childrenInfo[2]._nb,
+		       object._children[2]._children.length);
+
+
   var _nb = Math.floor(Math.abs(_dist/_xySpacing[2]));
-  object._range[_index] = _nb + 1;
-  object._childrenInfo[_index]._nb = _nb + 1;
+
+    object._range[_index] = _nb + 1;
+    object._childrenInfo[_index]._nb = _nb + 1;
+
+    //
+    // Moka
+    //
+    if (object['reslicing'].toString() == 'false'){
+
+	/*
+	window.console.log("\n\nYou would NB Change here", 
+			   _nb, 
+			   _dist, 
+			   _xySpacing[2],
+			   Math.abs(_dist/_xySpacing[2]));
+	window.console.log(object._range[_index], object._childrenInfo[_index]);
+	window.console.log("\n\n\nCHANGING NB - TEST!!!!");
+	_nb = Math.floor(Math.abs(_dist/_xySpacing[2]));
+	window.console.log("\n\n\nCHANGING NB - TEST!!!!", _nb);
+	object._range[_index] = _nb + 1;
+	object._childrenInfo[_index]._nb = _nb + 1;	
+
+
+	object._range[_index]+=1;
+	object._childrenInfo[_index]._nb+=1;
+	*/
+
+	if (object[X.volume.ORIENTATION_KEY].toLowerCase() == 'transverse' ||
+	    object[X.volume.ORIENTATION_KEY].toLowerCase() == 'coronal'){
+	    window.console.log("Applying a slight modification to " + 
+			       object[X.volume.ORIENTATION_KEY] + 
+			       "-oriented volume")
+	    object._range[_index]+=1;
+	    object._childrenInfo[_index]._nb+=1;
+	}
+    }
+    //
+    // Moka
+    //
+
+
 
   // order solutionsIn in _sliceDirection
   if(object._childrenInfo[_index]._solutionsLine [0][0][0] > object._childrenInfo[_index]._solutionsLine [0][1][0]){
@@ -1062,6 +1145,8 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
       object._childrenInfo[_index]._solutionsLine [0][0] = object._childrenInfo[_index]._solutionsLine [0][1];
       object._childrenInfo[_index]._solutionsLine [0][1] = _tmp;
     }
+
+      window.console.log("here1");
   }
   else  if(object._childrenInfo[_index]._solutionsLine [0][0][0] < object._childrenInfo[_index]._solutionsLine [0][1][0]){
     if(_sliceDirection[0] < 0){
@@ -1069,6 +1154,7 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
       var _tmp = object._childrenInfo[_index]._solutionsLine [0][0];
       object._childrenInfo[_index]._solutionsLine [0][0] = object._childrenInfo[_index]._solutionsLine [0][1];
       object._childrenInfo[_index]._solutionsLine [0][1] = _tmp;
+      window.console.log("here2");
     }
   }
   else if(object._childrenInfo[_index]._solutionsLine [0][0][1] > object._childrenInfo[_index]._solutionsLine [0][1][1]){
@@ -1078,6 +1164,7 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
       object._childrenInfo[_index]._solutionsLine [0][0] = object._childrenInfo[_index]._solutionsLine [0][1];
       object._childrenInfo[_index]._solutionsLine [0][1] = _tmp;
     }
+      window.console.log("here3");
   }
     else if(object._childrenInfo[_index]._solutionsLine [0][0][1] < object._childrenInfo[_index]._solutionsLine [0][1][1]){
     if(_sliceDirection[1] < 0){
@@ -1085,6 +1172,7 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
       var _tmp = object._childrenInfo[_index]._solutionsLine [0][0];
       object._childrenInfo[_index]._solutionsLine [0][0] = object._childrenInfo[_index]._solutionsLine [0][1];
       object._childrenInfo[_index]._solutionsLine [0][1] = _tmp;
+      window.console.log("here4");
     }
   }
   else if(object._childrenInfo[_index]._solutionsLine [0][0][2] > object._childrenInfo[_index]._solutionsLine [0][1][2]){
@@ -1094,17 +1182,33 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
       object._childrenInfo[_index]._solutionsLine [0][0] = object._childrenInfo[_index]._solutionsLine [0][1];
       object._childrenInfo[_index]._solutionsLine [0][1] = _tmp;
     }
+      window.console.log("here4");
   }
-    else if(object._childrenInfo[_index]._solutionsLine [0][0][2] < object._childrenInfo[_index]._solutionsLine [0][1][2]){
+    else if(object._childrenInfo[_index]._solutionsLine [0][0][2] < 
+	    object._childrenInfo[_index]._solutionsLine [0][1][2]){
     if(_sliceDirection[2] < 0){
       // invert
       var _tmp = object._childrenInfo[_index]._solutionsLine [0][0];
       object._childrenInfo[_index]._solutionsLine [0][0] = object._childrenInfo[_index]._solutionsLine [0][1];
       object._childrenInfo[_index]._solutionsLine [0][1] = _tmp;
+      window.console.log("here5a");
     }
+      window.console.log("here5");
   }
 
+    window.console.log('UPDS 8', 
+		       object, 
+		       object._childrenInfo[2]._nb,
+		       object._children[2]._children.length);
+
+
     object._childrenInfo[_index]._originD = -(_sliceNormal[0]*_solutionsInLine[0][0] + _sliceNormal[1]*_solutionsInLine[0][1] + _sliceNormal[2]*_solutionsInLine[0][2]);
+
+
+    window.console.log('UPDS 9', 
+		       object, 
+		       object._childrenInfo[2]._nb,
+		       object._children[2]._children.length);
 
 };
 
@@ -1128,10 +1232,20 @@ X.parser.prototype.reslice = function(object) {
   // 1 full res, 1 normalized [0-255]
   
   var _IJKVolumes = X.parser.createIJKVolume(object._data, object._dimensions, object._max);
+
+    window.console.log("\n\n\nIJKVolumes", _IJKVolumes);
   // real volume
   object._IJKVolume = _IJKVolumes[0];
   // normalized volume
   object._IJKVolumeN = _IJKVolumes[1];
+
+    window.console.log('PRETRANSFORM', 
+		       object, 
+		       object._children[2],
+		       object._children[2]._children,
+		       object._children[2]._children.length);
+
+
   X.TIMER(this._classname + '.reslice');
   
   // ------------------------------------------
@@ -1159,6 +1273,12 @@ X.parser.prototype.reslice = function(object) {
                       Math.max(object._RASOrigin[2],object._RASOrigin[2] + object._RASDimensions[2] - 1)
                       ];
   object._childrenInfo = [{}, {}, {}];
+
+    window.console.log('POSTRANSFORM', 
+		       object, 
+		       object._children[2],
+		       object._children[2]._children,
+		       object._children[2]._children.length);
 
   // ------------------------------------------
   // GO RESLICE!
@@ -1280,15 +1400,36 @@ X.parser.prototype.reslice = function(object) {
   _color = [ 0, 0.392, 0.804 ];
   object._childrenInfo[2]._color = _color;
   
+    window.console.log('POSTRANSFORM 8', 
+		       object, 
+		       object._childrenInfo[2]._nb,
+		       object._children[2]._children.length);
+
+
   // UPDATE SLICE INFO
   this.updateSliceInfo(2, _sliceOrigin, _sliceNormal, object);
   // Create empty array for all slices in this direction
+
+    window.console.log('POSTRANSFORM 8a', 
+		       object, 
+		       object._childrenInfo[2]._nb,
+		       object._children[2]._children.length);
+
+
   object._children[2]._children = new Array(object._childrenInfo[2]._nb);
+
+    window.console.log('POSTRANSFORM 8b', 
+		       object, 
+		       object._childrenInfo[2]._nb,
+		       object._children[2]._children.length);
+
 
   _sliceOrigin[0] = object._childrenInfo[2]._solutionsLine[0][0][0] + object._childrenInfo[2]._sliceDirection[0]*Math.floor(object._childrenInfo[2]._nb/2);
   _sliceOrigin[1] = object._childrenInfo[2]._solutionsLine[0][0][1] + object._childrenInfo[2]._sliceDirection[1]*Math.floor(object._childrenInfo[2]._nb/2);
   _sliceOrigin[2] = object._childrenInfo[2]._solutionsLine[0][0][2] + object._childrenInfo[2]._sliceDirection[2]*Math.floor(object._childrenInfo[2]._nb/2);
-    
+
+
+
   _slice = X.parser.reslice2(_sliceOrigin, object._childrenInfo[2]._sliceXYSpacing, object._childrenInfo[2]._sliceNormal, object._childrenInfo[2]._color, object._BBox, object._IJKVolume, object, object.hasLabelMap, object._colorTable);
     
   if (object.hasLabelMap) {
@@ -1298,6 +1439,8 @@ X.parser.prototype.reslice = function(object) {
     _slice._labelmap = object._labelmap._children[2]._children[Math.floor(object._childrenInfo[2]._nb/2)]._texture;
   }
     
+
+
   object._children[2]._children[Math.floor(object._childrenInfo[2]._nb/2)] = _slice;
   
   object._indexZ = Math.floor(object._childrenInfo[2]._nb/2);
@@ -1305,6 +1448,7 @@ X.parser.prototype.reslice = function(object) {
 
   X.TIMERSTOP(this._classname + '.reslice');
   
+
   return object._IJKVolume;
 };
 

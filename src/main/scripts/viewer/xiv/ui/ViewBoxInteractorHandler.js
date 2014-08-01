@@ -1619,10 +1619,17 @@ function(slider, volume) {
     var adder = (orientation == 'Y' || orientation == 'Z') ? 
 	slider.getMaximum() - slider.getValue() - 1 : slider.getValue() - 1;
 
+    if (volume['reslicing'].toString() == 'false' && 
+	(volume[X.volume.ORIENTATION_KEY] == 'transverse' ||
+	 volume[X.volume.ORIENTATION_KEY] == 'coronal')){
+	adder += 1;
+	window.console.log('adder', adder);
+    }
     //
     // Set the volume index
     // 
-    volume['index' + slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY]] = adder;
+    volume['index' + 
+	   slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY]] = adder;
 }
 
 

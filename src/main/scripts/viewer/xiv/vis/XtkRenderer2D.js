@@ -312,7 +312,30 @@ xiv.vis.XtkRenderer2D.prototype.getNumberSlices = function() {
     window.console.log("VOLUME", 
 		       this._slices.length,
 		       this._topLevelObjects[0]);
+
+    var vol = this._topLevelObjects[0];
+
+    
+    if (goog.isDefAndNotNull(vol[X.volume.REORIENTED_DIMENSIONS_KEY]) && 
+       vol['reslicing'].toString() == 'false'){
+
+	window.console.log('GET NUM SLICES', 
+			   vol[X.volume.REORIENTED_DIMENSIONS_KEY])
+	switch (vol[X.volume.ORIENTATION_KEY]){
+	case 'sagittal':
+	    return vol[X.volume.REORIENTED_DIMENSIONS_KEY][0];
+	case 'coronal':
+	    return vol[X.volume.REORIENTED_DIMENSIONS_KEY][1];
+	case 'transverse':
+	    return vol[X.volume.REORIENTED_DIMENSIONS_KEY][2];
+	}
+
+
+    }
+    
+
     return this._slices.length;
+    
 }
 
 
