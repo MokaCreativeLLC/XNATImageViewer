@@ -102,15 +102,19 @@ xiv.ui.ViewableGroupMenu.prototype.headerText_ = null;
 /**
  * @inheritDoc
  */
-xiv.ui.ViewableGroupMenu.prototype.render = function() {
-    goog.base(this, 'render');
+xiv.ui.ViewableGroupMenu.prototype.render = function(parentElement) {
+    goog.base(this, 'render', parentElement);
 
     this.background_ = goog.dom.createDom('div', {
 	'id': this.constructor.ID_PREFIX + '_Background_' + 
 	    goog.string.createUniqueString(),
     });
     goog.dom.classes.add(this.background_, this.constructor.CSS.BACKGROUND);
-    goog.dom.append(this.getElement(), this.background_);
+    if (goog.isDefAndNotNull(this.getElement().parentNode)){
+	goog.dom.append(this.getElement().parentNode, this.background_);
+    } else {
+	goog.dom.append(this.getElement(), this.background_);
+    }
 
     this.headerText_ = goog.dom.createDom('div', {
 	'id': this.constructor.ID_PREFIX + '_HeaderText_' + 

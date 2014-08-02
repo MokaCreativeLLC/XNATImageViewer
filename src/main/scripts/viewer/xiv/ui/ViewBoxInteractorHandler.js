@@ -1950,7 +1950,7 @@ function() {
 	
 	slider = planeInteractors.SLIDER;
 	playbutton = planeInteractors.PLAY_BUTTON;
-	window.console.log("PLAY BUTTON", playbutton);
+	//window.console.log("PLAY BUTTON", playbutton);
 
 	//
 	// Exit if no volume

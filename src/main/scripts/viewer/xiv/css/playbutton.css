@@ -5,7 +5,7 @@
 
 .xiv-ui-layouts-interactors-playbutton {
     position: absolute;
-    top: calc(100% - 17px);
+    top: calc(100% - 15px);
     left: 9px;
     height: 9px;
     width: 9px;

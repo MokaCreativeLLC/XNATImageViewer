@@ -627,7 +627,7 @@ function(opt_duration) {
 	    }.bind(this))
 
 	    
-	    window.console.log(newLayoutFrames);
+	    //window.console.log(newLayoutFrames);
 	    //
 	    // If the new layout has the same panels (idenfified by key)
 	    // then we construct some animations.
@@ -638,7 +638,7 @@ function(opt_duration) {
 			plane.getElement(), newLayoutFrames[key].getElement());
 		this.asIsDims_[key] = transitionDims.asIs;
 		this.toBeDims_[key] = transitionDims.toBe;
-		window.console.log("TRANS", key, this.toBeDims_[key]);
+		//window.console.log("TRANS", key, this.toBeDims_[key]);
 
 
 	    //
@@ -656,7 +656,7 @@ function(opt_duration) {
     //
     this.setTransitionElementChildren_();
 
-    window.console.log('TO BE DIMS:', this.toBeDims_);
+    //window.console.log('TO BE DIMS:', this.toBeDims_);
     //
     // run animation
     //
@@ -734,7 +734,7 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
     }.bind(this));
 
 
-    window.console.log("\n\nTO BE", this.toBeDims_['X']);
+    //window.console.log("\n\nTO BE", this.toBeDims_['X']);
 
 
     //-------------------------------
