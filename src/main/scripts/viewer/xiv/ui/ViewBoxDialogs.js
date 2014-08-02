@@ -356,7 +356,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInUseDialog_ = function(){
  * @public
  */
 xiv.ui.ViewBoxDialogs.prototype.showInUseDialog = function(){ 
-    window.console.log("SHOW IN USE");
+    //window.console.log("SHOW IN USE");
     //
     // Add the class.
     //
