@@ -81,6 +81,9 @@ gxnat.vis.Viewable.prototype.setFileData = function(fileData) {
  */
 gxnat.vis.Viewable.prototype.setFileDataFromZip = 
 function(gxnatZip, opt_callback) {
+
+    //window.console.log("SET FILE", opt_callback);
+
     //
     // Clear the fileData_ property
     //
@@ -113,7 +116,7 @@ function(gxnatZip, opt_callback) {
 	    //window.console.log('\n\n', splitPath);
 	    if(fileNameOnly[0] == '.') { continue }
 	    currFile = allFiles[i];
-	    fragment = '/files/' + fileName.split('/files/')[1];
+	    //fragment = '/files/' + fileName.split('/files/')[1];
 
 
 	    //window.console.log('File name only: ', fileNameOnly);
@@ -136,7 +139,7 @@ function(gxnatZip, opt_callback) {
 	    if (
 		goog.string.caseInsensitiveEndsWith(currFile, fileNameOnly)){
 
-		//window.console.log('\nFile name only2: ', fileNameOnly);
+		//window.console.log('\nFile name only (a): ', fileNameOnly);
 		//window.console.log('Buffer: ', fileDataArrayBuffer);
 		//window.console.log('currFile:', currFile);
 		this.fileData_[currFile] = fileDataArrayBuffer;
