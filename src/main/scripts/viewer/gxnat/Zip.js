@@ -114,12 +114,20 @@ gxnat.Zip.prototype.getFiles = function(url) {
 
 /**
  * @param {!Function} callback
+ * @param {Function=} opt_endCallback
  * @public
  */
-gxnat.Zip.prototype.loopFiles = function(callback) {
-    goog.object.forEach(this.getFiles(), function(file, fileKey){
+gxnat.Zip.prototype.loopFiles = function(callback, opt_endCallback) {
+
+    var counter = 0;
+    var files = this.getFiles();
+    var len = goog.object.getCount(files);
+    goog.object.forEach(files, function(file, fileKey){
 	//window.console.log(file);
 	callback(file.name, file.asArrayBuffer());
+	if ((counter == len-1) && goog.isDefAndNotNull(opt_endCallback)){
+	    opt_endCallback();
+	}
     }.bind(this))
 }
 

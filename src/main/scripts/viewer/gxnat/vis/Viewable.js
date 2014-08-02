@@ -76,9 +76,11 @@ gxnat.vis.Viewable.prototype.setFileData = function(fileData) {
 
 /**
  * @param {!gxnat.Zip} gxnatZip
+ * @param {?Function} opt_callback
  * @public
  */
-gxnat.vis.Viewable.prototype.setFileDataFromZip = function(gxnatZip) {
+gxnat.vis.Viewable.prototype.setFileDataFromZip = 
+function(gxnatZip, opt_callback) {
     //
     // Clear the fileData_ property
     //
@@ -134,13 +136,13 @@ gxnat.vis.Viewable.prototype.setFileDataFromZip = function(gxnatZip) {
 	    if (
 		goog.string.caseInsensitiveEndsWith(currFile, fileNameOnly)){
 
-		//window.console.log('File name only: ', fileNameOnly);
+		window.console.log('File name only: ', fileNameOnly);
 		//window.console.log('currFile:', currFile);
 		this.fileData_[currFile] = fileDataArrayBuffer;
 		break;
 	    }
 	}
-    }.bind(this))
+    }.bind(this), opt_callback)
 
     gxnatZip.dispose();
 }
