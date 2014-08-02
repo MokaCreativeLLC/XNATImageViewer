@@ -123,8 +123,8 @@ gxnat.Zip.prototype.loopFiles = function(callback, opt_endCallback) {
     var files = this.getFiles();
     var len = goog.object.getCount(files);
     goog.object.forEach(files, function(file, fileKey){
-	//window.console.log(file);
-	callback(file.name, file.asArrayBuffer());
+	//window.console.log('b', file, file['asArrayBuffer']());
+	callback(file.name, file['asArrayBuffer']);
 	if ((counter == len-1) && goog.isDefAndNotNull(opt_endCallback)){
 	    opt_endCallback();
 	}
