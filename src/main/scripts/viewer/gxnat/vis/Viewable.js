@@ -99,15 +99,43 @@ gxnat.vis.Viewable.prototype.setFileDataFromZip = function(gxnatZip) {
     // Match the fileData to the stored files, popuplating the fileData_
     // object as needed.
     //
-    var i, len, currFile, fragment;
+    var i, len, currFile, fragment, fileNameOnly, splitPath;
     
     gxnatZip.loopFiles(function(fileName, fileDataArrayBuffer){
 	i = 0;
 	len = allFiles.length;
+	//window.console.log("FILE NAME", fileName);
 	for (; i<len; i++){
+	    splitPath = fileName.split('/');
+	    fileNameOnly = splitPath[splitPath.length -1];
+	    //window.console.log('\n\n', splitPath);
+	    if(fileNameOnly[0] == '.') { continue }
 	    currFile = allFiles[i];
 	    fragment = '/files/' + fileName.split('/files/')[1];
+
+
+	    //window.console.log('File name only: ', fileNameOnly);
+	    //window.console.log('Fragment:', fragment);
+	    //window.console.log('currFile:', currFile);
+	    
+	    //
+	    // 1st Pass: An XNAT-origin scan
+	    //
+	    /*
 	    if (goog.string.caseInsensitiveEndsWith(currFile, fragment)){
+		this.fileData_[currFile] = fileDataArrayBuffer;
+		break;
+	    } 
+	    */
+
+	    //
+	    // 2nd Pass: A non-XNAT-origin scan
+	    //
+	    if (
+		goog.string.caseInsensitiveEndsWith(currFile, fileNameOnly)){
+
+		//window.console.log('File name only: ', fileNameOnly);
+		//window.console.log('currFile:', currFile);
 		this.fileData_[currFile] = fileDataArrayBuffer;
 		break;
 	    }

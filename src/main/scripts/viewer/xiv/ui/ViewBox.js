@@ -1080,7 +1080,7 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
     gxnat.Zip.getFilesAsZip(
 	filesUrl, 
 	function(zip) { 
-	    //window.console.log('Downloaded: ' + filesUrl + '!');
+	    window.console.log('Downloaded: ' + filesUrl + '!');
 	    ViewableSet.getViewables()[0].setFileDataFromZip(zip);
 	    this.renderViewableSet_(ViewableSet);
 	}.bind(this), 
