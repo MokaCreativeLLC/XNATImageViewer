@@ -136,7 +136,8 @@ function(gxnatZip, opt_callback) {
 	    if (
 		goog.string.caseInsensitiveEndsWith(currFile, fileNameOnly)){
 
-		window.console.log('File name only: ', fileNameOnly);
+		//window.console.log('\nFile name only2: ', fileNameOnly);
+		//window.console.log('Buffer: ', fileDataArrayBuffer);
 		//window.console.log('currFile:', currFile);
 		this.fileData_[currFile] = fileDataArrayBuffer;
 		break;
