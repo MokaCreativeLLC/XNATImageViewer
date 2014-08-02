@@ -1081,8 +1081,11 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
 	filesUrl, 
 	function(zip) { 
 	    window.console.log('Downloaded: ' + filesUrl + '!');
-	    ViewableSet.getViewables()[0].setFileDataFromZip(zip,
-				this.renderViewableSet_(ViewableSet));
+	    ViewableSet.getViewables()[0].setFileDataFromZip(
+		zip,
+		function(){
+		    this.renderViewableSet_(ViewableSet)
+		}.bind(this));
 	}.bind(this), 
 
 	function(event) {
@@ -1114,9 +1117,9 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
  */
 xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
     
-    //window.console.log("TURNING OFF ERROR CATCHER WAIT FOR ERROR");
+    window.console.log("Temporarily turning the error catcher off.");
 
-    this.ErrorCatcher_.waitForError(true);
+    //this.ErrorCatcher_.waitForError(true);
     //
     // Render!!!
     //
