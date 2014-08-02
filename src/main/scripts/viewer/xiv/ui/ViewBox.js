@@ -803,6 +803,10 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 	    //
 	    this.ViewableGroups_[goog.getUid(thumb)] = viewGroup;	
 	}.bind(this))
+	//
+	// Hide the progress bar
+	//
+	this.hideSubComponent_(this.ProgressBarPanel_, 0);
 
 	//
 	// Show the Viewable group menu
@@ -856,6 +860,12 @@ xiv.ui.ViewBox.prototype.checkInUseAndShowDialog = function(opt_onYes){
  */
 xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     
+    //
+    // Hide the progress bar
+    //
+    this.hideSubComponent_(this.ProgressBarPanel_, 0);
+
+
     //
     // Dispable render error wating
     //
@@ -1104,9 +1114,9 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
  */
 xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
     
-    window.console.log("TURNING OFF ERROR CATCHER WAIT FOR ERROR");
+    //window.console.log("TURNING OFF ERROR CATCHER WAIT FOR ERROR");
 
-    //this.ErrorCatcher_.waitForError(true);
+    this.ErrorCatcher_.waitForError(true);
     //
     // Render!!!
     //
@@ -1295,7 +1305,12 @@ function(subComponent, opt_fadeTime, opt_callback) {
 
     var onOut = function(){
 	subComponent.getElement().style.visibility = 'hidden';
-	subComponent.getElement().style.zIndex = '-1';
+	goog.dom.removeNode(subComponent.getElement());
+
+	if (goog.isDefAndNotNull(subComponent.getBackground)){
+	   goog.dom.removeNode(subComponent.getBackground());
+	}
+	//subComponent.getElement().style.zIndex = '-1';
 	if (opt_callback) { opt_callback() };
     }
 
@@ -1305,6 +1320,10 @@ function(subComponent, opt_fadeTime, opt_callback) {
 	return;
     } 
     nrg.fx.fadeOut(subComponent.getElement(), opt_fadeTime, onOut);
+
+    if (goog.isDefAndNotNull(subComponent.getBackground)){
+	nrg.fx.fadeOut(subComponent.getBackground(), opt_fadeTime, onOut);
+    }
   
 }
 
@@ -1324,8 +1343,9 @@ xiv.ui.ViewBox.prototype.showSubComponent_ = function(subComponent,
 	opt_fadeTime : 0;
 
     subComponent.getElement().style.opacity = '0';
-    subComponent.getElement().style.zIndex = '1000';	
     subComponent.getElement().style.visibility = 'visible';
+
+    goog.dom.append(this.viewFrameElt_, subComponent.getElement());
 
     if (opt_fadeTime == 0) { 
 	subComponent.getElement().style.opacity = '1';
@@ -1336,6 +1356,13 @@ xiv.ui.ViewBox.prototype.showSubComponent_ = function(subComponent,
     nrg.fx.fadeIn(subComponent.getElement(), opt_fadeTime, function(){
 	if (opt_callback) { opt_callback() };
     });
+
+    if (goog.isDefAndNotNull(subComponent.getBackground)){
+	goog.dom.append(this.viewFrameElt_, subComponent.getBackground());
+	nrg.fx.fadeIn(subComponent.getBackground(), opt_fadeTime, function(){
+	    if (opt_callback) { opt_callback() };
+	});
+    }
 }
 
 
@@ -1348,7 +1375,6 @@ xiv.ui.ViewBox.prototype.initProgressBarPanel_ = function(){
     this.ProgressBarPanel_ = new xiv.ui.ProgressBarPanel(); 
     goog.dom.append(this.viewFrameElt_, this.ProgressBarPanel_.getElement());
     this.ProgressBarPanel_.getElement().style.opacity = 0;
-    this.ProgressBarPanel_.getElement().style.zIndex = 100000;
     this.hideSubComponent_(this.ProgressBarPanel_);
 }
 

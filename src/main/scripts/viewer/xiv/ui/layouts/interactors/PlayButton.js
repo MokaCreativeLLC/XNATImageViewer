@@ -118,8 +118,8 @@ function(parentElement) {
     this.image_.src = serverRoot + 
 	'/images/viewer/xiv/ui/other/play.png';
 
-    window.console.log(this.getElement().parentNode);
-    this.getElement().style.zIndex = 5000;
+    //window.console.log(this.getElement().parentNode);
+    //this.getElement().style.zIndex = 5000;
 
 
     goog.events.listen(this.image_, goog.events.EventType.CLICK, function(e){
@@ -140,7 +140,7 @@ function(parentElement) {
  * @public
  */
 xiv.ui.layouts.interactors.PlayButton.prototype.pause = function(){
-    window.console.log("PAUSE!");
+    //window.console.log("PAUSE!");
     this.image_.src = serverRoot + 
 	'/images/viewer/xiv/ui/other/play.png';
 
@@ -158,7 +158,7 @@ xiv.ui.layouts.interactors.PlayButton.prototype.pause = function(){
  * @public
  */
 xiv.ui.layouts.interactors.PlayButton.prototype.play = function(){
-    window.console.log("PLAY!");
+    //window.console.log("PLAY!");
     this.image_.src = serverRoot + 
 	'/images/viewer/xiv/ui/other/pause.png';
 
