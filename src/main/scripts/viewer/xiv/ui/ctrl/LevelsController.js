@@ -85,13 +85,44 @@ xiv.ui.ctrl.LevelsController.LEVEL_MIN = 0;
 
 
 /**
+ * @type {?xiv.ui.ctrl.XtkController} 
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.levelMin_ = null;
+
+
+
+/**
+ * @type {?xiv.ui.ctrl.XtkController} 
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.levelMax_ = null;
+
+
+
+/**
  * @param {!xiv.ui.ctrl.Histogram} hist
  * @private
  */
 xiv.ui.ctrl.LevelsController.prototype.updateHistogram_ = function(hist){
-    //window.console.log('update histogram');
+    window.console.log('update histogram');
+
+
+
+    if((this.xObjs[0].max > xiv.ui.ctrl.LevelsController.LEVEL_MAX) &&
+       (this.levelMax_.getComponent().getMaximum() != this.xObjs[0].max)){
+	var max = this.xObjs[0].max;
+	// Level max
+	this.levelMax_.getComponent().setMaximum(max);
+	this.levelMax_.getComponent().setValue(max);
+	// Level min
+	this.levelMin_.getComponent().setMaximum(max);
+    }
+
+
     hist.update();
 }
+
 
 
 
@@ -103,18 +134,18 @@ xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
     goog.base(this, 'add', xObj);
 
     var hist = this.add_histogram(xObj);
-    var c1 = this.add_levelMin(xObj);
-    var c2 = this.add_levelMax(xObj);
-    var c3 = this.add_brightness(xObj, c1, c2);
-    var c4 = this.add_contrast(xObj, c1, c2);
-    var c5 = this.add_reset(xObj, c1, c2, c3, c4);
+    this.levelMin_ = this.add_levelMin(xObj);
+    this.levelMax_ = this.add_levelMax(xObj);
+    var c3 = this.add_brightness(xObj, this.levelMin_, this.levelMax_);
+    var c4 = this.add_contrast(xObj, this.levelMin_, this.levelMax_);
+    var c5 = this.add_reset(xObj, this.levelMin_, this.levelMax_, c3, c4);
 
 
     //
     // Update the histogram when the sliders move
     //
     goog.array.forEach(
-	[c1, c2, c3, c4], 
+	[this.levelMin_, this.levelMax_, c3, c4], 
 	function(levelCtrl){
 	    goog.events.listen(levelCtrl.getComponent(), 
 			       nrg.ui.Slider.EventType.SLIDE,
@@ -355,11 +386,13 @@ function(xObj, levelMin, levelMax) {
     goog.events.listen(ctrl, 
 	xiv.ui.ctrl.XtkController.EventType.CHANGE, 
 	function(e){	 
+
 	    var rate = (e.value - e.previous) / (e.maximum - e.minimum);
 	    var currDifference = parseInt(xObj['windowHigh']) - 
 		parseInt(xObj['windowLow']);
 	    var newLow = parseInt(xObj['windowLow']) + (currDifference * rate);
-	    var newHigh = parseInt(xObj['windowHigh']) - (currDifference * rate);
+	    var newHigh = parseInt(xObj['windowHigh']) - 
+		(currDifference * rate);
 	    xObj['windowLow'] = Math.round(newLow);
 	    xObj['windowHigh'] = Math.round(newHigh);
 	    
@@ -393,6 +426,8 @@ function(xObj, levelMin, levelMax) {
  * @public
  */
 xiv.ui.ctrl.LevelsController.prototype.disposeInternal = function() {
+    delete this.levelMin_;
+    delete this.levelMax_;
     goog.base(this, 'disposeInternal');
 }
 
