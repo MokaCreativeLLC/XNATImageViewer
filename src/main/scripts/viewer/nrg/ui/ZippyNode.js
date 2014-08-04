@@ -341,7 +341,7 @@ function() {
     loadingImg.src =  serverRoot + 
 	'/images/viewer/xiv/ui/other/loading.gif';
 
-    window.console.log(loadingHolder);
+    //window.console.log(loadingHolder);
     goog.dom.append(loadingHolder, loadingText);
     goog.dom.append(loadingHolder, loadingImg);
     goog.dom.append(this.getContentHolder(), loadingHolder);

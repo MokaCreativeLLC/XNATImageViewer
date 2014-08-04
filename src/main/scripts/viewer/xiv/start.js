@@ -1025,7 +1025,7 @@ function(exptUri, opt_doneCallback, opt_metadata){
 xiv.start.prototype.addFoldersToGallery_ = 
 function(folders, opt_correspondingData){
     
-    window.console.log("ADD FOLDERS", folders);
+    //window.console.log("ADD FOLDERS", folders);
     var thumbGalZippy = this.Modal_.getThumbnailGallery().getZippyTree();
 
     //

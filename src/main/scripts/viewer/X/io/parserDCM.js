@@ -537,6 +537,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       default:
         window.console.log("Unknown number of bits allocated " + 
 			   "- using default: 32 bits");
+        first_image_data = new Uint32Array(first_image_size);
         break;
     }
 
@@ -1299,7 +1300,10 @@ X.parserDCM.prototype.parseStream = function(data, object) {
     var _dicomTypeLogged = false;
     var _dicomType;
     var _skippables = {};
-    _skippables.LEI = [[0x0012, 0x0064], [0x0008, 0x1110],[0x0008, 0x1120]];
+    _skippables.LEI = [[0x0012, 0x0064], 
+		       [0x0023, 0x1080],
+		       [0x0040, 0x0275],
+		       [0x0008, 0x1110],[0x0008, 0x1120]];
     var i, len;
     //************************************
     //
@@ -1394,7 +1398,7 @@ We would want to skip this (0012, 0064)
       if (_tagGroup !== undefined && _tagElement !== undefined){
 	  //window.console.log("Current memory address ", '(0x' + _tagGroup.toString(16) + ', 0x' 
 	      //+ _tagElement.toString(16) +')');
-
+	  //window.console.log(slice['transfer_syntax_uid']);
 	  switch(slice['transfer_syntax_uid']){
 
 	  case '1.2.840.10008.1.2.1':
