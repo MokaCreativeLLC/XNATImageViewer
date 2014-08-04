@@ -1,5 +1,5 @@
 /**
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
 goog.provide('xiv.ui.ViewBoxInteractorHandler');
 
@@ -1951,7 +1951,6 @@ function() {
 	slider = planeInteractors.SLIDER;
 	playbutton = planeInteractors.PLAY_BUTTON;
 	//window.console.log("PLAY BUTTON", playbutton);
-
 	//
 	// Exit if no volume
 	//

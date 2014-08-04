@@ -1,5 +1,5 @@
 /**
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
 goog.provide('nrg.ui.ZippyNode');
 
@@ -17,7 +17,7 @@ goog.require('goog.Timer');
 goog.require('nrg.string');
 goog.require('nrg.ui.Component');
 goog.require('nrg.style');
-
+goog.require('nrg.fx');
 
 
 /**
@@ -155,7 +155,10 @@ nrg.ui.ZippyNode.CSS_SUFFIX = {
     EXPAND_ICON: 'expandicon',
     EXPAND_ICON_MOUSEOVER: 'expandicon-mouseover',
     CONTENT: 'content',
-    CONTENT: 'content-sub'
+    CONTENT: 'content-sub',
+    LOADING_HOLDER: 'loading-holder',
+    LOADING_TEXT: 'loading-text',
+    LOADING_IMAGE: 'loading-image',
 }
 
 
@@ -316,6 +319,33 @@ nrg.ui.ZippyNode.prototype.truncateHeaderLabel = function(opt_max){
     return label;
 }
 
+
+
+/**
+ * @public
+ */
+nrg.ui.ZippyNode.prototype.addLoadingImage = 
+function() {
+    var loadingHolder = goog.dom.createDom('div');
+    goog.dom.classes.add(loadingHolder, 
+			nrg.ui.ZippyNode.CSS.LOADING_HOLDER);
+
+    var loadingText = goog.dom.createDom('div');
+    goog.dom.classes.add(loadingText, 
+			nrg.ui.ZippyNode.CSS.LOADING_TEXT);
+    loadingText.innerHTML = 'Loading...';
+
+    var loadingImg = goog.dom.createDom('img');
+    goog.dom.classes.add(loadingImg, 
+			nrg.ui.ZippyNode.CSS.LOADING_IMAGE);
+    loadingImg.src =  serverRoot + 
+	'/images/viewer/xiv/ui/other/loading.gif';
+
+    window.console.log(loadingHolder);
+    goog.dom.append(loadingHolder, loadingText);
+    goog.dom.append(loadingHolder, loadingImg);
+    goog.dom.append(this.getContentHolder(), loadingHolder);
+}
 
 
 
@@ -562,6 +592,8 @@ goog.exportSymbol('nrg.ui.ZippyNode.prototype.truncateHeaderLabel',
 	nrg.ui.ZippyNode.prototype.truncateHeaderLabel);
 goog.exportSymbol('nrg.ui.ZippyNode.prototype.getTitle',
 	nrg.ui.ZippyNode.prototype.getTitle);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.addLoadingImage',
+	nrg.ui.ZippyNode.prototype.addLoadingImage);
 goog.exportSymbol('nrg.ui.ZippyNode.prototype.getNodes',
 	nrg.ui.ZippyNode.prototype.getNodes);
 goog.exportSymbol('nrg.ui.ZippyNode.prototype.getHeader',

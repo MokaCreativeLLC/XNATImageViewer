@@ -1,5 +1,5 @@
 /**
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  * @author amh1646@rih.edu (Amanda Hartung)
  */
 goog.provide('xiv.vis.XtkPlane');

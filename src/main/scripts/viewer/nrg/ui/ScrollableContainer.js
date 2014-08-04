@@ -1,5 +1,5 @@
 /**
- * @author sunilk@mokacreativellc.com
+ * @author kumar.sunil.p@gmail.com
  */
 goog.provide('nrg.ui.ScrollableContainer');
 

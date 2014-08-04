@@ -1,6 +1,6 @@
  /**
  * @preserve Copyright 2014 Washington University
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  * @author herrickr@mir.wustl.edu (Rick Herrick)
  */
 goog.provide('gxnat');
@@ -80,7 +80,7 @@ gxnat.jsonGet = function(url, callback, opt_suffix){
 	}
 	queryUrl += opt_suffix;
     }
-    window.console.log('\n\nGetting XNAT json: \'' +  queryUrl + '\'');
+    //window.console.log('Getting XNAT json: \'' +  queryUrl + '\'');
     gxnat.get(queryUrl, callback, 'json');
 }
 

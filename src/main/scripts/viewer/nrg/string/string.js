@@ -1,5 +1,5 @@
 /**
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
 goog.provide('nrg.string');
 

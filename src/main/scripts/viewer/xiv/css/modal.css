@@ -161,6 +161,7 @@
     left: 0px;
     height: calc(100% - 58px);
     top: 29px;
+    border-radius: 0px;
 }
 
 
@@ -171,6 +172,7 @@
     top: 29px;
     height: calc(100% - 58px);
     z-index: 10;
+    border-radius: 0px 4px 4px 0px;
 }
 
 

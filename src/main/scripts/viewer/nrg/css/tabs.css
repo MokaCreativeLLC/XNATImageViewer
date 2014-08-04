@@ -74,7 +74,8 @@
 .nrg-ui-tabs-tab-right {
     width: 22px;
     left: calc(100% - 22px);
-    border-radius: 0px 4px 4px 0px;
+    /*border-radius: 0px 4px 4px 0px;*/
+    border-radius:  none;
     border-left: none;
 }
 
@@ -82,19 +83,21 @@
 .nrg-ui-tabs-tab-left {
     width: 18px;
     left: 0px;
-    border-radius: 4px 0px 0px 4px;
+    /*border-radius: 4px 0px 0px 4px;*/
+    border-radius:  none;
     border-right: none;
 }
 
 
 .nrg-ui-tabs-tab-active {
     border: solid 1px rgb(220, 220, 220);
+    border-radius: 0px;
 }
 
 
 .nrg-ui-tabs-tab-active-right {
     border-left: none;
-    border-radius: 0px 4px 4px 0px;
+    border-radius: 0px;
 }
 
 
