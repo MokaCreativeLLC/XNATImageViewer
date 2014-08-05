@@ -192,6 +192,7 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
 
     var viewboxToggles = [
 	['Change Layouts', 
+	 ' ',
 	 '<img height=15 width=15 ' + 
 	 'id=' + xiv.ui.HelpDialog.LAYOUT_IMAGE_ID + 
 	 '></img>'],

@@ -1046,7 +1046,8 @@ function(folders, opt_correspondingData){
 	//
 	// Add loading icon
 	//
-	if (node.getTitle().toLowerCase().indexOf('experiments') > -1){
+	if (node.getTitle().toLowerCase().indexOf('experiments') > -1 && 
+	    !node.loadImageAdded()){
 	    node.addLoadingImage();
 	}
 
