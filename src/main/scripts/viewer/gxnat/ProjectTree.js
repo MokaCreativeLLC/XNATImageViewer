@@ -658,7 +658,7 @@ function(opt_onNodeAdded, opt_onDone) {
 	//
 	goog.array.forEach(subjJsons, function(subjJson){
 
-	    window.console.log(subjJson);
+	    //window.console.log(subjJson);
 	    //
 	    // load subject
 	    //

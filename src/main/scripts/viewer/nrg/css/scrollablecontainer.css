@@ -82,7 +82,7 @@
 .nrg-ui-scrollablecontainer-slider {
     position: absolute;
     width: 8px;
-    left: 1px;
+    left: 0px;
     top: 0px;
     height: 100%;
 }
@@ -99,7 +99,7 @@
 
 .nrg-ui-scrollablecontainer-slider-thumb-hovered {
     background-color: rgb(120,120,120);
-    width: 10px;
+    width: 8px;
     border-radius: 5px;
     left: 0px;
 }

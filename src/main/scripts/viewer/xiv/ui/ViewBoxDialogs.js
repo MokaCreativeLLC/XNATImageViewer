@@ -14,6 +14,7 @@ goog.require('goog.testing.events');
 goog.require('goog.ui.Dialog.ButtonSet');
 goog.require('goog.object');
 goog.require('goog.string.path');
+goog.require('goog.style');
 
 // nrg
 goog.require('nrg.ui.Component');
@@ -164,8 +165,9 @@ function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
 	title, 
 	function(button){
 
+	    var currDialog = this.Dialogs_[dialogKey];
 	    var opened = button.getAttribute('checked') == 'true';
-	    this.Dialogs_[dialogKey].setVisible(opened);
+	    currDialog.setVisible(opened);
 	    //this.Dialogs_[dialogKey].center();
 	    
 	    var eventKey = opened ? 
@@ -178,6 +180,10 @@ function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
 		dialogKey: dialogKey
 	    }) 
 
+	    //
+	    // Update the position
+	    //
+	    this.updatePositions_(currDialog);
 	}.bind(this), 
 	toggleButtonSrc);
 
@@ -372,13 +378,82 @@ xiv.ui.ViewBoxDialogs.prototype.showInUseDialog = function(){
 }
 
 
+
+/**
+ * @param {nrg.ui.Dialog}
+ * @private
+ */
+xiv.ui.ViewBoxDialogs.prototype.updatePositions_ = function(opt_dialog){
+    
+    //window.console.log('\n\nUPDATE POSITONS');
+    var dialogs = goog.isDefAndNotNull(opt_dialog) ? [opt_dialog] : 
+	this.Dialogs_
+    
+    //
+    // If we're out of bounds, we want to move the dialog 
+    // back to the limits.
+    //
+    goog.object.forEach(dialogs, function(currDialog){
+
+	var limits = currDialog.getDraggerLimits();
+	//window.console.log('limits', limits);		
+	var key;
+
+	//
+	// Exit out if: 
+	// 1) No limits are defined OR
+	// 2) The limits have NaN values
+	//
+	if (!goog.isDefAndNotNull(limits)){return}
+	for (key in limits){
+	    if (isNaN(limits[key]) && !goog.isFunction(limits[key])){
+		return;
+	    }
+	}
+
+	//window.console.log(limits);
+	var currSize = goog.style.getSize(currDialog.getElement());
+	var currPos = goog.style.getPosition(currDialog.getElement());
+	//window.console.log('before', currPos);
+	var dialogRight = currPos.x + currSize.width;
+	var dialogBottom = currPos.y + currSize.height;
+	var limitsRight = limits.left + limits.width;
+	var limitsBottom = limits.top + limits.height;
+
+	//window.console.log('dial', dialogRight, dialogBottom);
+	//window.console.log('imits', limitsRight, limitsBottom);
+
+	var newX = currPos.x;
+	var newY = currPos.y;
+
+	if (dialogRight > limitsRight){
+	    newX = (limits.left + limits.width) - currSize.width; 
+	} 
+	else if (currPos.x < 0){
+	    newX = 0;
+	}
+
+	if (dialogBottom > limitsBottom){
+	    newY = (limits.top + limits.height) - currSize.height; 
+	} 
+	else if (currPos.y < -15){
+	    newY = -15;
+	}
+	//window.console.log('after', newX, newY);
+	goog.style.setPosition(currDialog.getElement(), newX, newY);
+    })
+}
+
+
+
 /**
  * @public
  */
 xiv.ui.ViewBoxDialogs.prototype.update = function(){
     goog.object.forEach(this.Dialogs_, function(Dialog){
 	Dialog.updateLimits();
-    })
+	this.updatePositions_(Dialog);
+    }.bind(this))
 }
 
 
@@ -543,7 +618,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
     currDialog.setButtonSet(null);
     currDialog.render(this.ViewBox_.getViewFrame());
     currDialog.setVisible(true);
-    currDialog.moveToCorner('left', 'top', 0, -15);
+    currDialog.moveToCorner('left', 'top', 0, -12);
     currDialog.setTitle('Info. Display');
 
     //
