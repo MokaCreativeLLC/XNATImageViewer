@@ -1,6 +1,6 @@
 /**
  * @preserve Copyright 2014 Washington University
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  * @author herrickr@mir.wustl.edu (Rick Herrick)
  */
 goog.provide('xiv.start');
@@ -445,7 +445,7 @@ xiv.start.prototype.onModalAddSubjectsClicked_ = function() {
 	// Expand the init Subject's zippy and store that zippy 
 	// to expand the experiment after
 	//
-	window.console.log("SUBN JH", subjNodes);
+	//window.console.log("SUBN JH", subjNodes);
 	goog.array.forEach(subjNodes, function(subjNode){
 	    this.createFoldersFromTreeNode_(subjNode);
 	    //
@@ -1042,6 +1042,18 @@ function(folders, opt_correspondingData){
     // Loop through the newly added folders and add their corresponding data
     //
     goog.array.forEach(zippyNodes, function(node, i){
+
+	//
+	// Add loading icon
+	//
+	if (node.getTitle().toLowerCase().indexOf('experiments') > -1){
+	    node.addLoadingImage();
+	}
+
+	//
+	// Attach the "metadata" to the node, so that when we click on
+	// a zippy node (i.e. folder) it knows the relevant URL to query.
+	//
 	if (goog.isDefAndNotNull(opt_correspondingData) && 
 	    goog.isDefAndNotNull(opt_correspondingData[i])){
 

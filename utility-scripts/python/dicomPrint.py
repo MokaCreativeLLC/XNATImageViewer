@@ -1,7 +1,7 @@
 import dicom
 import os
 
-DICOM_FILE_PATH = "/Users/sunilkumar/Downloads/scans 3/2_AAScout/DICOM"
+DICOM_FILE_PATH = "/Users/sunilkumar/Downloads/scans 15/3_SAG T1 FLAIR/DICOM"
 
 
 
@@ -22,7 +22,7 @@ def main():
     for f in files:
         dicomFiles.append(dicom.read_file(f))
 
-    print dicomFiles[255]
+    print dicomFiles[len(dicomFiles) -1]
 
 
 

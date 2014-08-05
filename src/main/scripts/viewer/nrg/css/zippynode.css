@@ -60,6 +60,33 @@
 }
 
 
+
+.nrg-ui-zippynode-loading-holder {
+    position: relative;
+    height: 100px;
+    color: white;
+    font-size: 12px;
+    font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+.nrg-ui-zippynode-loading-text {
+    position: absolute;
+    top: calc(50% - 12px);
+    left: calc(50% - 23px);
+}
+
+
+.nrg-ui-zippynode-loading-image {
+    position: absolute;
+    width: 150px;
+    height: 20px;
+    top: calc(50%);
+    left: calc(50% - 75px);
+    opacity: .50;
+}
+
+
+
 .nrg-ui-zippynode-content-sub {
 
 }

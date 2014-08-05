@@ -13,7 +13,7 @@
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/hsvpalette.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/closure-library/closure/goog/css/dialog.css">
 
-<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/nrg/css/genericslider.css">
+<link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/nrg/css/slider.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/nrg/css/scrollablecontainer.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/nrg/css/scrollablezippytree.css">
 <link type="text/css" rel="stylesheet" href="src/main/scripts/viewer/nrg/css/zippynode.css">

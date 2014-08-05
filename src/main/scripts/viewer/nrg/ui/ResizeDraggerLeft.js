@@ -1,5 +1,5 @@
 /**
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  * @author unkown email (uchida)
  */
 goog.provide('nrg.ui.ResizeDraggerLeft');

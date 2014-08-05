@@ -82,7 +82,7 @@
 .nrg-ui-scrollablecontainer-slider {
     position: absolute;
     width: 8px;
-    left: 0px;
+    left: 1px;
     top: 0px;
     height: 100%;
 }
@@ -90,14 +90,18 @@
 
 
 .nrg-ui-scrollablecontainer-slider-thumb {
-    background-color: rgb(100,100,100);
+    background-color: rgb(80,80,80);
+    width: 4px;
+    left: calc(50% - 2px);
+    border-radius: 5px;
 }
 
 
 .nrg-ui-scrollablecontainer-slider-thumb-hovered {
-    box-sizing: border-box;
-    background-color: rgb(140,140,140);
-    border: solid 1px rgb(100,100,100);
+    background-color: rgb(120,120,120);
+    width: 10px;
+    border-radius: 5px;
+    left: 0px;
 }
 
 
@@ -107,11 +111,12 @@
 
 
 .nrg-ui-scrollablecontainer-slider-track-hovered {
+    /*
     box-sizing: border-box;
     background-color: rgb(50,50,50);
     border-right: solid 1px rgb(100,100,100);
     border-left: none;
     border-top: none;
-    border-bottom: none;
+    border-bottom: none;*/
 }
 

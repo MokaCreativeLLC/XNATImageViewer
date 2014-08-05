@@ -1,5 +1,5 @@
 /**
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
 goog.provide('nrg.ui.Slider');
 
@@ -129,6 +129,14 @@ nrg.ui.Slider.prototype.isSliding_ = false;
 
 
 /**
+ * @param {!boolean}
+ * @private
+ */
+nrg.ui.Slider.prototype.isMouseOver_ = false;
+
+
+
+/**
  * @param {Array.<string>}
  * @private
  */
@@ -172,6 +180,65 @@ nrg.ui.Slider.prototype.thumb_;
  * @private
  */
 nrg.ui.Slider.prototype.suspendSlideEvent_ = false;
+
+
+
+/**
+ * @type {!boolean}
+ * @private
+ */
+nrg.ui.Slider.prototype.animateOnHover_ = false;
+
+
+
+/**
+ * @return {!boolean}
+ * @public
+ */
+nrg.ui.Slider.prototype.animatesOnHover = function(){
+    return this.animateOnHover_;
+}
+
+
+
+/**
+ * @type {?string}
+ * @private
+ */
+nrg.ui.Slider.prototype.thumbAnimTargetCSS_ = null;
+
+
+
+/**
+ * @type {?Object}
+ * @private
+ */
+nrg.ui.Slider.prototype.baseHoverStartDims_ = null;
+
+
+
+/**
+ * @type {?Object}
+ * @private
+ */
+nrg.ui.Slider.prototype.baseHoverEndDims_ = null;
+
+
+
+/**
+ * @type {?Array.<goog.fx.Animation>}
+ * @private
+ */
+nrg.ui.Slider.prototype.anims_ = null;
+
+
+
+/**
+ * @type {?goog.fx.AnimationParallelQueue}
+ * @private
+ */
+nrg.ui.Slider.prototype.animQueue_ = null;
+
 
 
 
@@ -328,7 +395,7 @@ nrg.ui.Slider.prototype.bindToArrowKeys = function (element) {
  * @private
  */
 nrg.ui.Slider.prototype.onKey_ = function (e) {
-    window.console.log("KEY", e);
+    //window.console.log("KEY", e);
 }
 
 
@@ -479,6 +546,98 @@ nrg.ui.Slider.prototype.addTrackHoverClass = function(trackClass) {
 
 
 
+
+/**
+ * @param {!string} targetCSS The targetCSS class.
+ * @public
+ */
+nrg.ui.Slider.prototype.animateOnHover = function(targetCSS) {
+
+    this.animateOnHover_ = true;
+    this.thumbAnimTargetCSS_ = targetCSS;
+
+
+    //
+    // Get the start and end dimensions
+    //
+    var thumb = this.getThumb();
+
+
+
+    this.baseHoverStartDims_ = nrg.fx.getAnimationDims(thumb);
+    goog.dom.classes.add(thumb, this.thumbAnimTargetCSS_);
+
+    this.baseHoverEndDims_ = nrg.fx.getAnimationDims(thumb);
+    goog.dom.classes.remove(thumb, this.thumbAnimTargetCSS_);
+
+    //window.console.log("BASE", this.baseHoverStartDims_, 
+    //this.baseHoverEndDims_);
+
+}
+
+
+
+/**
+* @private
+*/
+nrg.ui.Slider.prototype.clearAnims_ = function(){
+    if (goog.isDefAndNotNull(this.anims_)){
+	goog.array.forEach(this.anims_, function(anim){
+	    anim.dispose();
+	})
+	goog.array.clear(this.anims_);
+	delete this.anims_;
+    }
+}
+
+
+
+
+/**
+ * @private
+ * @param {!Object} startDims
+ * @param {!Object} endDims
+ */
+nrg.ui.Slider.prototype.animateHover_ = function(endDims) {
+    if (!this.animateOnHover_) { return }
+
+    //
+    // Get the start and end dimensions
+    //
+    var thumb = this.getThumb();
+    var startDims = nrg.fx.getAnimationDims(thumb);
+    var size = goog.style.getSize(thumb);
+    var pos = goog.style.getPosition(thumb);
+
+    if (this.getOrientation() == 'vertical'){
+	startDims['top'] = pos.y;
+	startDims['height'] = size.height;
+	endDims['top'] = pos.y;
+	endDims['height'] = size.height;
+    }
+
+    //window.console.log('START', startDims, '\nEND', endDims);
+
+    if (goog.isDefAndNotNull(this.animQueue_)){
+	this.animQueue_.stop();
+	this.animQueue_.dispose();
+	delete this.animQueue_;
+	this.clearAnims_();
+    }
+    this.animQueue_ = new goog.fx.AnimationParallelQueue();  
+
+    this.anims_ = nrg.fx.generateAnimations(thumb, startDims, endDims, 200);
+
+    goog.array.forEach(this.anims_, function(anim){
+	this.animQueue_.add(anim);
+    }.bind(this));
+
+    this.animQueue_.play();
+}
+
+
+
+
 /**
  * Initializes the change event to the custom 'SLIDE' event.
  */
@@ -487,21 +646,29 @@ nrg.ui.Slider.prototype.initEvents_ = function() {
     goog.events.listen(this, goog.ui.Component.EventType.CHANGE, 
 		       this.onChange_.bind(this));
 
+    goog.events.listen(this.getElement(), goog.events.EventType.MOUSEENTER, 
+		       this.onMouseEnter_.bind(this));
+
+    goog.events.listen(this.getElement(), goog.events.EventType.MOUSELEAVE, 
+		       this.onMouseLeave_.bind(this));
+
+    /*
     // MouseOver - thumb 
-    goog.events.listen(this.thumb_, goog.events.EventType.MOUSEOVER, 
+    goog.events.listen(this.thumb_, goog.events.EventType.MOUSEENTER, 
 		       this.onThumbMouseOver_.bind(this));
 
     // MouseOut - thumb 
-    goog.events.listen(this.thumb_, goog.events.EventType.MOUSEOUT, 
+    goog.events.listen(this.thumb_, goog.events.EventType.MOUSELEAVE, 
 		       this.onThumbMouseOut_.bind(this));
 
     // MouseOver - track
-    goog.events.listen(this.track_, goog.events.EventType.MOUSEOVER, 
+    goog.events.listen(this.track_, goog.events.EventType.MOUSEENTER, 
 		       this.onTrackMouseOver_.bind(this));
 
     // MouseOut - track 
-    goog.events.listen(this.track_, goog.events.EventType.MOUSEOUT, 
+    goog.events.listen(this.track_, goog.events.EventType.MOUSELEAVE, 
 		       this.onTrackMouseOut_.bind(this));
+		       */
 
     // DragStart set... 
     goog.events.listen(this, goog.ui.SliderBase.EventType.DRAG_START, 
@@ -525,8 +692,8 @@ nrg.ui.Slider.prototype.onChange_ =  function (e) {
     // Add the hover classes
     //
     if (this.isSliding_) {
-	this.addThumbHoverClasses_();
-	this.addTrackHoverClasses_();
+	this.applyThumbHoverCSS_();
+	this.applyTrackHoverCSS_();
     }
 
     //
@@ -558,7 +725,8 @@ nrg.ui.Slider.prototype.onChange_ =  function (e) {
  * @param {Event}
  * @private
  */
-nrg.ui.Slider.prototype.addThumbHoverClasses_ =  function(e){
+nrg.ui.Slider.prototype.applyThumbHoverCSS_ =  function(e){
+
     goog.dom.classes.add(this.thumb_, 
 			 nrg.ui.Slider.CSS.THUMB_HOVERED);
 
@@ -576,7 +744,7 @@ nrg.ui.Slider.prototype.addThumbHoverClasses_ =  function(e){
  * @param {Event}
  * @private
  */
-nrg.ui.Slider.prototype.addTrackHoverClasses_ =  function(e){
+nrg.ui.Slider.prototype.applyTrackHoverCSS_ =  function(e){
     goog.dom.classes.add(this.track_, 
 			 nrg.ui.Slider.CSS.TRACK_HOVERED);
     if (!goog.isDefAndNotNull(this.trackHoverClasses_)){
@@ -626,8 +794,10 @@ nrg.ui.Slider.prototype.removeTrackHoverClasses_ =  function(e){
 nrg.ui.Slider.prototype.onThumbMouseOver_ =  function(e){
     //window.console.log("THUMB MOUSE OVER!!");
     e.stopPropagation();
-    this.addThumbHoverClasses_();
-    this.addTrackHoverClasses_();
+
+    this.applyThumbHoverCSS_();
+    this.applyTrackHoverCSS_();
+    
 }
 
 
@@ -636,8 +806,49 @@ nrg.ui.Slider.prototype.onThumbMouseOver_ =  function(e){
  * @param {Event}
  * @private
  */
+nrg.ui.Slider.prototype.onMouseEnter_ =  function(e){
+    //window.console.log("mouseEnter");
+    this.isMouseOver_ = true;
+
+    if (!this.animateOnHover_){
+	this.applyTrackHoverCSS_();
+	this.applyThumbHoverCSS_();
+    }
+    else{
+	this.animateHover_(this.baseHoverEndDims_);
+    }
+}
+
+
+
+/**
+ * @param {Event}
+ * @private
+ */
+nrg.ui.Slider.prototype.onMouseLeave_ =  function(e){
+    //window.console.log("\n\nmouseLeave");
+    this.isMouseOver_ = false;
+
+    if (this.animateOnHover_ && !this.isSliding_) {
+	//window.console.log('not sliding', this.baseHoverStartDims_);
+	this.animateHover_(this.baseHoverStartDims_);  
+    } 
+    else if (!this.isSliding_){
+	this.removeThumbHoverClasses_();
+	this.removeTrackHoverClasses_(); 
+    }
+}
+
+
+
+
+/**
+ * @param {Event}
+ * @private
+ */
 nrg.ui.Slider.prototype.onTrackMouseOver_ =  function(e){
-    this.addTrackHoverClasses_();
+    this.applyTrackHoverCSS_();
+    this.applyThumbHoverCSS_();
 }
 
 
@@ -662,6 +873,7 @@ nrg.ui.Slider.prototype.onThumbMouseOut_ =  function(e){
 nrg.ui.Slider.prototype.onTrackMouseOut_ =  function(e){
     if (!this.isSliding_) {
 	this.removeTrackHoverClasses_();
+	this.removeThumbHoverClasses_();
     }
 }
 
@@ -686,8 +898,16 @@ nrg.ui.Slider.prototype.onThumbnailDragStart_ = function (e) {
  */
 nrg.ui.Slider.prototype.onThumbnailDragEnd_ = function (e) {
     this.isSliding_ = false;
-    this.removeThumbHoverClasses_();
-    this.removeTrackHoverClasses_();  
+
+    if (!this.isMouseOver_){
+	if (this.animateOnHover_) {
+	    this.animateHover_(this.baseHoverStartDims_);  
+	} 
+	else {
+	    this.removeThumbHoverClasses_();
+	    this.removeTrackHoverClasses_();  
+	}
+    }
 }
 
 
@@ -747,9 +967,22 @@ nrg.ui.Slider.prototype.disposeInternal = function() {
 	delete this.trackHoverClasses_;
     }
 
+
+    this.clearAnims_();
+
     delete this.useDeltaToScroll_;
     delete this.deltaMultiplyer_;
     delete this.isSliding_;
+
+
+    delete this.animateOnHover_;
+    delete this.thumbAnimTargetCSS_;
+    delete this.anims_;
+    delete this.animQueue_;
+    delete this.isHoverAnimating_;
+    delete this.baseHoverStartDims_;
+    delete this.baseHoverEndDims_;
+    delete this.isMouseOver_;
 };
 
 
@@ -783,5 +1016,9 @@ goog.exportSymbol('nrg.ui.Slider.prototype.addThumbHoverClass',
 	nrg.ui.Slider.prototype.addThumbHoverClass);
 goog.exportSymbol('nrg.ui.Slider.prototype.addTrackHoverClass',
 	nrg.ui.Slider.prototype.addTrackHoverClass);
+goog.exportSymbol('nrg.ui.Slider.prototype.animateOnHover',
+	nrg.ui.Slider.prototype.animateOnHover);
+goog.exportSymbol('nrg.ui.Slider.prototype.animatesOnHover',
+	nrg.ui.Slider.prototype.animatesOnHover);
 goog.exportSymbol('nrg.ui.Slider.prototype.disposeInternal',
 	nrg.ui.Slider.prototype.disposeInternal);

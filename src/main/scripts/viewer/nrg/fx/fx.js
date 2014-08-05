@@ -1,5 +1,5 @@
 /**
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
 goog.provide('nrg.fx');
 
@@ -242,7 +242,8 @@ nrg.fx.generateAnim_Slide = function(elt, startDim, endDim, duration){
 	// Filter out Nan values.
 	if (!isNaN(startDim['top']) && !isNaN(endDim['top']) 
 	    && !isNaN(startDim['left']) && !isNaN(endDim['left'])) {
-	    //console.log("SLIDE", elt, [startDim['left'], startDim['top']],  
+	    //window.console.log("SLIDE", elt, 
+	    //[startDim['left'], startDim['top']],  
 	    //[endDim['left'], endDim['top']]);
 	    return new goog.fx.dom.Slide(elt, 
 		[startDim['left'], startDim['top']],  
@@ -296,7 +297,7 @@ nrg.fx.generateAnim_Resize = function(elt, startDim, endDim, duration){
  *    dimensions.
  * @param {!Object.<string, string|number>} endDims The end dimensions.
  * @param {!number} duration The animation durations.
- * @return {goog.fx.dom.Animation}
+ * @return {goog.fx.Animation}
  */
 nrg.fx.generateAnim_Fade = function(elt, startDim, endDim, duration){
     if (goog.object.containsKey(startDim, 'opacity') || 
@@ -375,15 +376,18 @@ nrg.fx.generateAnim_BgColorTrans = function(elt, startDim, endDim, duration) {
 	})
 
 	try {
+
+	    //window.console.log(startDim, endDim);
 	    var startColor = goog.color.parse(startDim['background-color']);
 	    var endColor = goog.color.parse(endDim['background-color']);    
-
+	    
+	    //window.console.log(startColor, endColor);
 	    // Only return animation if there's a change.
 	    if (startColor.hex !== endColor.hex) {
 		return new goog.fx.dom.BgColorTransform(
 		    elt, 
-		    goog.color.hexToRgb(startColor), 
-		    goog.color.hexToRgb(endColor), 
+		    goog.color.hexToRgb(startColor.hex), 
+		    goog.color.hexToRgb(endColor.hex), 
 		    duration, goog.fx.easing.easeOut);
 	    }
 	}
@@ -393,6 +397,31 @@ nrg.fx.generateAnim_BgColorTrans = function(elt, startDim, endDim, duration) {
 	}
     }
 }
+
+
+
+/**
+ * @public
+ * @param {!Element}
+ * @return {Object}
+ */
+nrg.fx.getAnimationDims = function(element){
+
+    var _Size = goog.style.getSize(element);
+    var _Pos = goog.style.getPosition(element);
+
+    //window.console.log('height', element.style.height);
+    var _Dims = {
+	'background-color': goog.style.getBackgroundColor(element),
+	'width': _Size.width,
+	'left': _Pos.x,
+	'top': _Pos.y,
+	'height': _Size.height
+    }
+
+    return _Dims;
+}
+
 
 
 
@@ -691,6 +720,7 @@ goog.exportSymbol('nrg.fx.filterTransitionStyles',
 goog.exportSymbol('nrg.fx.getTransitionStyles', nrg.fx.getTransitionStyles);
 goog.exportSymbol('nrg.fx.generateTransitionDims',
 	nrg.fx.generateTransitionDims);
+goog.exportSymbol('nrg.fx.getAnimationDims', nrg.fx.getAnimationDims);
 goog.exportSymbol('nrg.fx.generateAnimations', nrg.fx.generateAnimations);
 goog.exportSymbol('nrg.fx.parallelAnimate', nrg.fx.parallelAnimate);
 goog.exportSymbol('nrg.fx.serialAnimate', nrg.fx.serialAnimate);

@@ -1,5 +1,5 @@
 /**
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
 goog.provide('nrg.ui.ZippyTree');
 
@@ -52,6 +52,7 @@ nrg.ui.ZippyTree = function () {
     goog.base(this, '', this.rootElt_, true); 
     // Hide the header because it inherits from ZippyNode -- we don't need it.
     goog.dom.classes.add(this.getHeader(), nrg.ui.ZippyTree.CSS.ROOT_NODE);
+    this.getContentHolder().style.marginTop = '-4px';
     //---------------------------------------------
 
 
@@ -855,7 +856,9 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
     //
     // Add the contentElt to the given node , if it exists.
     //
-    if (goog.isDefAndNotNull(opt_elt)) {
+    if (!goog.isDefAndNotNull(opt_elt)) { return }
+
+    var addElement = function () {
 	//
 	// IMPORTANT!
 	//
@@ -878,11 +881,11 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
 	// of the contHold
 	//
 	/**
-	window.console.log("\n\nEND OF BRANCH", 
-			   contHold, 
-			   contHold.parentNode, 
-			   opt_elt);
-			   */
+	   window.console.log("\n\nEND OF BRANCH", 
+	   contHold, 
+	   contHold.parentNode, 
+	   opt_elt);
+	*/
 	this.putFoldersAtEnd_(contHold)
 
 	//
@@ -903,7 +906,28 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
 	this.dispatchEvent({
 	    type: nrg.ui.ZippyTree.EventType.CONTENTADDED
 	});
-    }
+
+    }.bind(this)
+
+    //
+    // Remove any loading images, if they exist
+    //
+    var loading = 
+    goog.dom.getElementByClass(
+	nrg.ui.ZippyNode.CSS.LOADING_HOLDER,contHold);
+    if (goog.isDefAndNotNull(loading)){
+	nrg.fx.fadeOut(loading, 500, function(){
+	    goog.dom.removeNode(loading);
+	    delete loading;
+	    addElement();
+	}.bind(this))
+	return;
+    } 
+
+    //
+    // Otherwise add the element
+    //
+    addElement();
 }
 
 

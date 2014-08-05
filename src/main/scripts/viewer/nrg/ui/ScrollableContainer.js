@@ -1,5 +1,5 @@
 /**
- * @author sunilk@mokacreativellc.com
+ * @author kumar.sunil.p@gmail.com
  */
 goog.provide('nrg.ui.ScrollableContainer');
 
@@ -204,11 +204,23 @@ nrg.ui.ScrollableContainer.prototype.setSliderStyles_ = function(){
     goog.dom.classes.add(this.Slider.getTrack(), 
 			 nrg.ui.ScrollableContainer.CSS.SLIDER_TRACK);
 
-    this.Slider.addThumbHoverClass(
-	nrg.ui.ScrollableContainer.CSS.SLIDER_THUMB_HOVERED)
+    //this.Slider.addThumbHoverClass(
+    //nrg.ui.ScrollableContainer.CSS.SLIDER_THUMB_HOVERED);
+    
+    
+    this.Slider.animateOnHover(
+	nrg.ui.ScrollableContainer.CSS.SLIDER_THUMB_HOVERED);
 
-    this.Slider.addTrackHoverClass(
-	nrg.ui.ScrollableContainer.CSS.SLIDER_TRACK_HOVERED);
+    /**
+       {
+	'background-color': 'rgb(240,240,240)',
+	'width': 10,
+	'border-radius': 5,
+	'left': 0
+    }
+    */
+    //this.Slider.addTrackHoverClass(
+    //nrg.ui.ScrollableContainer.CSS.SLIDER_TRACK_HOVERED);
 }
 
 
@@ -245,11 +257,21 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 	//
 	this.Slider.getElement().style.opacity = 1;
 
+	var height = Math.round(
+	    widgetHeight * (widgetHeight / scrollAreaHeight));
+	var thumbHeight = goog.style.getSize(this.Slider.getThumb()).height;
+
+	if (this.Slider.animatesOnHover() && (height != thumbHeight)){
+	    this.Slider.animateOnHover(
+		nrg.ui.ScrollableContainer.CSS.SLIDER_THUMB_HOVERED);
+	}
+
+
 	// The slider thumbnail's height is a function of
 	// how much scroll area is hidden.  Want to make sure the height
 	// is proportional to the contents.
 	nrg.style.setStyle(this.Slider.getThumb(), {
-	    'height': widgetHeight * (widgetHeight / scrollAreaHeight)
+	    'height': height
 	});
 
 	//window.console.log("\n\nmapslider", widgetHeight, scrollAreaHeight);
@@ -269,7 +291,8 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 
 	nrg.style.setStyle( this.scrollArea_, {'top': -t});	
 
-
+	//this.Slider.resetHoverAnims();
+	
 
     //------------------
     // Otherwise we hide and disable the slider.

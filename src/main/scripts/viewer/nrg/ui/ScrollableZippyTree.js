@@ -1,5 +1,5 @@
 /**
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
 goog.provide('nrg.ui.ScrollableZippyTree');
 
@@ -102,6 +102,7 @@ nrg.ui.ScrollableZippyTree.prototype.render = function(opt_parentElement) {
 
 
 
+
 /**
  * @param {!Element | !Array.Elements} elements The elements to add.
  * @param {string= | Array.string=} opt_folders The folders where the elements
@@ -114,9 +115,6 @@ function(elements, opt_folders) {
     //var slider = this.getSlider();
     elements = !goog.isArray(elements) ? [elements] : elements;
     
-    goog.array.forEach(elements, function(element){
-	//this.Slider.bindToMouseWheel(element);
-    }.bind(this))
     //
     // Bind to mousewheel
     //

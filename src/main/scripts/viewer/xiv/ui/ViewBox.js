@@ -1,5 +1,5 @@
 /**
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  * @author amh1646@rit.edu (Amanda Hartung)
  */
 goog.provide('xiv.ui.ViewBox');
@@ -1116,10 +1116,11 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
  * @param {gxnat.vis.ViewableGroups} ViewableSet
  */
 xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
-    
-    window.console.log("Temporarily turning the error catcher off.");
-
-    //this.ErrorCatcher_.waitForError(true);
+    var waitForError = false;
+    if (!waitForError){
+	window.console.log("\n\nTurning the error catcher off!\n\n");
+    }
+    this.ErrorCatcher_.waitForError(waitForError);
     //
     // Render!!!
     //
