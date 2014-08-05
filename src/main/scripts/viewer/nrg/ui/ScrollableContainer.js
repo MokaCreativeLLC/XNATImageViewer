@@ -261,7 +261,9 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 	    widgetHeight * (widgetHeight / scrollAreaHeight));
 	var thumbHeight = goog.style.getSize(this.Slider.getThumb()).height;
 
+	//window.console.log(height, thumbHeight);
 	if (this.Slider.animatesOnHover() && (height != thumbHeight)){
+	    //window.console.log("\n\nhere");
 	    this.Slider.animateOnHover(
 		nrg.ui.ScrollableContainer.CSS.SLIDER_THUMB_HOVERED);
 	}
