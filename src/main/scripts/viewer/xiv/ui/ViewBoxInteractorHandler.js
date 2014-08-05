@@ -571,7 +571,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseOver_ = function(e) {
     else if (this.panning_) {
 	this.setCursorGrab_();
 
-	window.console.log(this.mouseDown_);
+	//window.console.log(this.mouseDown_);
 	if (this.mouseDown_['l']) {	
 	    this.onRenderPlanePan_(xDist, yDist);
 	}
@@ -1438,7 +1438,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.updateMeshControllers_ =
     function(ctrl, key){
 	//window.console.log("\n\nUPDATE MESH");
 	if (ctrl instanceof xiv.ui.ctrl.SliderController){
-	    window.console.log("MESH", ctrl)
+	    //window.console.log("MESH", ctrl)
 	    ctrl.updateStyle();
 	}
     }
@@ -1453,7 +1453,10 @@ xiv.ui.ViewBoxInteractorHandler.prototype.updateControllers_ = function(key){
     // Derive the type key
     var typeKey = key.split(xiv.ui.ViewBoxInteractorHandler.DIALOG_SPLIT)[0];
 
-    // Make sure zippy tree's slider is matched to the contents size    
+    // Exit out if we don't have a valid key
+    //window.console.log(typeKey, key);
+    if (!goog.isDefAndNotNull(this.zippyTrees_[typeKey])){ return }
+
     this.zippyTrees_[typeKey].mapSliderToContents();
 
     // Update the controls

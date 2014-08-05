@@ -467,6 +467,17 @@ nrg.ui.Dialog.prototype.updateLimits = function() {
 
 
 
+/**
+ * @public
+ * @return {?goog.math.Rect}
+ */
+nrg.ui.Dialog.prototype.getDraggerLimits = function() {
+    return goog.isDefAndNotNull(this.dragger_) ? this.dragger_.limits :
+	null;
+}
+
+
+
 
 /**
  * Sets dragger limits when dragging is started.
@@ -813,5 +824,7 @@ goog.exportSymbol('nrg.ui.Dialog.prototype.getTextElements',
 	nrg.ui.Dialog.prototype.getTextElements);
 goog.exportSymbol('nrg.ui.Dialog.prototype.resizeToContents',
 	nrg.ui.Dialog.prototype.resizeToContents);
+goog.exportSymbol('nrg.ui.Dialog.prototype.getDraggerLimits',
+	nrg.ui.Dialog.prototype.getDraggerLimits);
 goog.exportSymbol('nrg.ui.Dialog.prototype.disposeInternal',
 	nrg.ui.Dialog.prototype.disposeInternal);

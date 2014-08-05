@@ -717,6 +717,28 @@ X.renderer2D.prototype.autoScale_ = function() {
   var _autoScale = Math.min(_wScale, _hScale);
 
   // propagate scale (zoom) to the camera
+
+    //*******************************************
+    //
+    // Moka / NRG addition (start)
+    //
+    //----------------
+    // Explanation of addition:
+    //
+    // This kicks back errors when you resize, as 
+    // 'this._camera' is null
+    //-----------------
+    //window.console.log(this._canvas);
+    if (!goog.isDefAndNotNull(this._camera)){
+	return;
+    }
+    //*******************************************
+    //
+    // Moka / NRG addition (end)
+    //
+    //*******************************************
+
+
   var _view = this._camera._view;
   _view[14] = _autoScale;
 

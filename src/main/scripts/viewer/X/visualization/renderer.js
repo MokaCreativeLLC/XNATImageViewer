@@ -414,6 +414,27 @@ X.renderer.prototype.onResize_ = function() {
 
   // propagate it to the canvas
   var canvas = goog.dom.getElement(this._canvas);
+
+    //*******************************************
+    //
+    // Moka / NRG addition (start)
+    //
+    //----------------
+    // Explanation of addition:
+    //
+    // This kicks back errors when you resize, as 
+    // 'this._canvas' is null
+    //-----------------
+    //window.console.log(this._canvas);
+    if (!goog.isDefAndNotNull(canvas)){
+	return;
+    }
+    //*******************************************
+    //
+    // Moka / NRG addition (end)
+    //
+    //*******************************************
+
   canvas.width = this._width;
   canvas.height = this._height;
 

@@ -984,7 +984,7 @@ xiv.ui.ViewBoxHandler.prototype.swapIndices_ = function(swapper, swapee) {
 	for (j = 0; j < len2; j++){
 	    ViewBox = this.ViewBoxes_[i][j];
 
-	    window.console.log(ViewBox.getElement());
+	    //window.console.log(ViewBox.getElement());
 
 	    if (this.isMatch(ViewBox, swapper)){
 		swapper_i = i;
@@ -1006,7 +1006,7 @@ xiv.ui.ViewBoxHandler.prototype.swapIndices_ = function(swapper, swapee) {
 	}
     }
 
-    window.console.log(swapper_i, swapper_j, swapee_i, swapee_j);
+    //window.console.log(swapper_i, swapper_j, swapee_i, swapee_j);
 
     //
     // If both viewBoxes are found, swap them...
@@ -1198,7 +1198,7 @@ function(ViewBoxElementA, ViewBoxElementB, opt_animated) {
     
 
     goog.events.listenOnce(animQueue, 'end', function() {
-	window.console.log("SWAP END");
+	//window.console.log("SWAP END");
 	this.onSwapAnimationEnd_(ViewBoxElementA, ViewBoxElementB);
     }.bind(this))
 
@@ -1228,7 +1228,7 @@ function(ViewBoxElementA, ViewBoxElementB){
     //
     this.recordPositions_();
     this.swapIndices_(ViewBoxElementA, ViewBoxElementB);
-    window.console.log(this.ViewBoxes_);
+    //window.console.log(this.ViewBoxes_);
     //this.onViewBoxesChanged_();
 }
 
