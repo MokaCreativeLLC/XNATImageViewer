@@ -52,6 +52,7 @@ nrg.ui.ZippyTree = function () {
     goog.base(this, '', this.rootElt_, true); 
     // Hide the header because it inherits from ZippyNode -- we don't need it.
     goog.dom.classes.add(this.getHeader(), nrg.ui.ZippyTree.CSS.ROOT_NODE);
+    this.getContentHolder().style.marginTop = '-4px';
     //---------------------------------------------
 
 

@@ -425,7 +425,7 @@ function(opt_errorMsg, opt_url, opt_lineNumber){
     var errorMessage = ''; 
     var subMessage = '';
 
-
+    /*
     if (this.consoleLog_.indexOf(
 	'Unknown number of bits allocated - using default: 32 bits') > -1){
 
@@ -448,17 +448,18 @@ function(opt_errorMsg, opt_url, opt_lineNumber){
 
 
     } else {
-	errorMessage = '<b>Render Error!</b><br><br>';
-	if (goog.isString(opt_errorMsg)){
-	    subMessage += opt_errorMsg + '<br>'; 
-	}
-	if (goog.isString(opt_url)){
-	    subMessage += 'src: ' + opt_url + '<br>';
-	    if (goog.isNumber(opt_lineNumber)){
-		subMessage += ' line: ' + opt_lineNumber + '<br>';
-	    }
+	*/
+    errorMessage = '<b>Render Error!</b><br><br>';
+    if (goog.isString(opt_errorMsg)){
+	subMessage += opt_errorMsg + '<br>'; 
+    }
+    if (goog.isString(opt_url)){
+	subMessage += 'src: ' + opt_url + '<br>';
+	if (goog.isNumber(opt_lineNumber)){
+	    subMessage += ' line: ' + opt_lineNumber + '<br>';
 	}
     }
+    //}
 
     //window.console.log(errorMessage, subMessage);
 

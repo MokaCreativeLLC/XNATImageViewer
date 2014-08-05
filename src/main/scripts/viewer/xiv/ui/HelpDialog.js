@@ -320,7 +320,7 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
 	
 	var currTable = '<table style="width:100%;' + 
 	    'color:white;" RULES=ROWS FRAME=HSIDES ' + 
-	    ' BORDERCOLOR="gray">';
+	    ' BORDERCOLOR="black">';
 
 	goog.array.forEach(lineArr, function(line){
 	    currTable += '<tr>'

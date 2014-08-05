@@ -105,9 +105,7 @@ xiv.ui.ctrl.LevelsController.prototype.levelMax_ = null;
  * @private
  */
 xiv.ui.ctrl.LevelsController.prototype.updateHistogram_ = function(hist){
-    window.console.log('update histogram');
-
-
+    //window.console.log('update histogram');
 
     if((this.xObjs[0].max > xiv.ui.ctrl.LevelsController.LEVEL_MAX) &&
        (this.levelMax_.getComponent().getMaximum() != this.xObjs[0].max)){
