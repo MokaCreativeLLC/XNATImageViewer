@@ -429,14 +429,16 @@ xiv.ui.ViewBoxDialogs.prototype.updatePositions_ = function(opt_dialog){
 	if (dialogRight > limitsRight){
 	    newX = (limits.left + limits.width) - currSize.width; 
 	} 
-	else if (currPos.x < 0){
+	
+	if (newX < 0){
 	    newX = 0;
 	}
 
 	if (dialogBottom > limitsBottom){
 	    newY = (limits.top + limits.height) - currSize.height; 
 	} 
-	else if (currPos.y < -15){
+	
+	if (newY < -15){
 	    newY = -15;
 	}
 	//window.console.log('after', newX, newY);
