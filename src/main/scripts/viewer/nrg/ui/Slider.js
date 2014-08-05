@@ -567,10 +567,23 @@ nrg.ui.Slider.prototype.animateOnHover = function(targetCSS) {
     this.baseHoverStartDims_ = nrg.fx.getAnimationDims(thumb);
     goog.dom.classes.add(thumb, this.thumbAnimTargetCSS_);
 
-    this.baseHoverEndDims_ = nrg.fx.getAnimationDims(thumb);
+    var newEnd = nrg.fx.getAnimationDims(thumb);
     goog.dom.classes.remove(thumb, this.thumbAnimTargetCSS_);
 
-    //window.console.log("BASE", this.baseHoverStartDims_, 
+    
+    if (goog.isDefAndNotNull(this.baseHoverEndDims_)){
+	var key;
+	for(key in newEnd){
+	    if (newEnd[key] != this.baseHoverStartDims_[key]){
+		this.baseHoverEndDims_ = newEnd;
+		break;
+	    }
+	}
+    } else {
+	this.baseHoverEndDims_ = newEnd;
+    }
+    
+    //window.console.log("\n\nBASE", this.baseHoverStartDims_, 
     //this.baseHoverEndDims_);
 
 }
