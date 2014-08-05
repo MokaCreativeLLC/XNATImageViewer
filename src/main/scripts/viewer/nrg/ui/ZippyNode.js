@@ -321,11 +321,31 @@ nrg.ui.ZippyNode.prototype.truncateHeaderLabel = function(opt_max){
 
 
 
+
+/**
+ * @type {!boolean}
+ * @public
+ */
+nrg.ui.ZippyNode.prototype.loadImageAdded_ = false;
+
+
+
+/**
+ * @return {!boolean}
+ * @public
+ */
+nrg.ui.ZippyNode.prototype.loadImageAdded = function(){
+    return this.loadImageAdded_;
+}
+
+
+
 /**
  * @public
  */
 nrg.ui.ZippyNode.prototype.addLoadingImage = 
 function() {
+    this.loadImageAdded_ = true;
     var loadingHolder = goog.dom.createDom('div');
     goog.dom.classes.add(loadingHolder, 
 			nrg.ui.ZippyNode.CSS.LOADING_HOLDER);
@@ -577,6 +597,7 @@ nrg.ui.ZippyNode.prototype.disposeInternal = function(){
     // Storage Key
     delete this.storageKey_;
     delete this.title_;
+    delete this.loadImageAdded_;
 }
 
 
@@ -608,5 +629,7 @@ goog.exportSymbol('nrg.ui.ZippyNode.prototype.setExpanded',
 	nrg.ui.ZippyNode.prototype.setExpanded);
 goog.exportSymbol('nrg.ui.ZippyNode.prototype.setAnimated',
 	nrg.ui.ZippyNode.prototype.setAnimated);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.loadImageAdded',
+	nrg.ui.ZippyNode.prototype.loadImageAdded);
 goog.exportSymbol('nrg.ui.ZippyNode.prototype.disposeInternal',
 	nrg.ui.ZippyNode.prototype.disposeInternal);

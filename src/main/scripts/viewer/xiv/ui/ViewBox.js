@@ -626,6 +626,12 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     this.Dialogs_.createDialogs(); 
 
+    //
+    // Set the layout button in the help menu
+    //
+    this.Dialogs_.getHelpDialog().setLayoutButton(
+	this.LayoutMenu_.getMenuIcon().src);
+
 
     //
     // Set zip downloading to false
@@ -775,6 +781,7 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
     if (this.ViewableTrees_.length == 1) {
 	this.setLayout(
 	    xiv.ui.ViewBox.defaultLayout[ViewableTree.getCategory()]);
+
     }
 
 
