@@ -541,7 +541,6 @@ xiv.start.prototype.startDemoLoadChain_ = function(){
 	}.bind(this))
     }.bind(this))
     
-
     
     var fnodes = ThumbGallery.getZippyTree().getFolderNodes(allFolders);
     var holders = [];
@@ -553,10 +552,10 @@ xiv.start.prototype.startDemoLoadChain_ = function(){
 	holder.style.opacity = 0;
 	holders.push(holder);
     })
-    //ThumbGallery.getZippyTree().getElement().style.opacity = 1;
+    ThumbGallery.getZippyTree().getElement().style.opacity = 1;
 
     goog.array.insertAt(holders, 
-		    ThumbGallery.getZippyTree().getElement())
+			ThumbGallery.getZippyTree().getElement())
     nrg.fx.sequentialFadeIn(holders, 400, 200);
 
 }
@@ -1044,11 +1043,16 @@ function(folders, opt_correspondingData){
     goog.array.forEach(zippyNodes, function(node, i){
 
 	//
-	// Add loading icon
+	// Add loading icon once the node is expanded, if it isn't there.
 	//
 	if (node.getTitle().toLowerCase().indexOf('experiments') > -1 && 
-	    !node.loadImageAdded()){
-	    node.addLoadingImage();
+	    !node.hasLoadingIndicator()){
+	    goog.events.listenOnce(
+		node, 
+		nrg.ui.ZippyNode.EventType.EXPANDED, 
+		function(){
+		    node.addLoadingIndicator();
+		})
 	}
 
 	//

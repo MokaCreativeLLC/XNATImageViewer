@@ -323,10 +323,10 @@ nrg.ui.ZippyNode.prototype.truncateHeaderLabel = function(opt_max){
 
 
 /**
- * @type {!boolean}
+ * @type {!Element}
  * @public
  */
-nrg.ui.ZippyNode.prototype.loadImageAdded_ = false;
+nrg.ui.ZippyNode.prototype.loadingIndicator_ = null;
 
 
 
@@ -334,8 +334,55 @@ nrg.ui.ZippyNode.prototype.loadImageAdded_ = false;
  * @return {!boolean}
  * @public
  */
-nrg.ui.ZippyNode.prototype.loadImageAdded = function(){
-    return this.loadImageAdded_;
+nrg.ui.ZippyNode.prototype.hasLoadingIndicator = function(){
+    return goog.isDefAndNotNull(this.loadingIndicator_);
+}
+
+
+
+/**
+ * @type {!boolean}
+ * @private
+ */
+nrg.ui.ZippyNode.prototype.loadingIndicatorRemoving_ = false;
+
+
+
+/**
+ * @return {!boolean}
+ * @public
+ */
+nrg.ui.ZippyNode.prototype.loadingIndicatorRemoving = function(){
+    return this.loadingIndicatorRemoving_;
+}
+
+
+/**
+ * @param {boolean=} opt_fadeOut
+ * @param {Function=} opt_onFadeOutEnd
+ * @public
+ */
+nrg.ui.ZippyNode.prototype.removeLoadingIndicator = 
+function(opt_fadeOut, opt_onFadeOutEnd){
+
+    var removeLI = function(){
+	goog.dom.removeNode(this.loadingIndicator_);
+	this.loadingIndicator_ = null;
+    }.bind(this);
+
+    if (opt_fadeOut){
+	this.loadingIndicatorRemoving_ = true;
+	nrg.fx.fadeTo(this.loadingIndicator_, 500, 0, function(){
+	    removeLI();
+	    if (goog.isDefAndNotNull(opt_onFadeOutEnd)){
+		opt_onFadeOutEnd();
+	    }
+	}, 1)
+
+	return;
+    }
+
+    removeLI();
 }
 
 
@@ -343,11 +390,15 @@ nrg.ui.ZippyNode.prototype.loadImageAdded = function(){
 /**
  * @public
  */
-nrg.ui.ZippyNode.prototype.addLoadingImage = 
+nrg.ui.ZippyNode.prototype.addLoadingIndicator = 
 function() {
-    this.loadImageAdded_ = true;
-    var loadingHolder = goog.dom.createDom('div');
-    goog.dom.classes.add(loadingHolder, 
+    // We don't need to create a new one if it's already there
+    if (goog.isDefAndNotNull(this.loadingIndicator_)) return;
+
+    this.loadingIndicator_ = goog.dom.createDom('div', {
+	'id': 'LoadingHolder_' + goog.string.createUniqueString()
+    });
+    goog.dom.classes.add(this.loadingIndicator_, 
 			nrg.ui.ZippyNode.CSS.LOADING_HOLDER);
 
     var loadingText = goog.dom.createDom('div');
@@ -361,10 +412,14 @@ function() {
     loadingImg.src =  serverRoot + 
 	'/images/viewer/xiv/ui/other/loading.gif';
 
-    //window.console.log(loadingHolder);
-    goog.dom.append(loadingHolder, loadingText);
-    goog.dom.append(loadingHolder, loadingImg);
-    goog.dom.append(this.getContentHolder(), loadingHolder);
+    //window.console.log(this.loadingIndicator_);
+    goog.dom.append(this.loadingIndicator_, loadingText);
+    goog.dom.append(this.loadingIndicator_, loadingImg);
+    goog.dom.append(this.getContentHolder(), this.loadingIndicator_);
+
+    this.loadingIndicator_.style.opacity = 0;
+    nrg.fx.fadeIn(this.loadingIndicator_, 300);
+    this.loadingIndicatorRemoving_ = false;
 }
 
 
@@ -589,6 +644,10 @@ nrg.ui.ZippyNode.prototype.disposeInternal = function(){
 	delete this.Zippy_;
     }
 
+    if (goog.isDefAndNotNull(this.loadingIndicator_)){
+	this.removeLoadingIndicator();
+	delete this.loadingIndicator_;
+    }
     // Sub-Nodes
     this.disposeComponentMap(this.Nodes_);
     delete this.Nodes_;
@@ -597,7 +656,6 @@ nrg.ui.ZippyNode.prototype.disposeInternal = function(){
     // Storage Key
     delete this.storageKey_;
     delete this.title_;
-    delete this.loadImageAdded_;
 }
 
 
@@ -629,7 +687,13 @@ goog.exportSymbol('nrg.ui.ZippyNode.prototype.setExpanded',
 	nrg.ui.ZippyNode.prototype.setExpanded);
 goog.exportSymbol('nrg.ui.ZippyNode.prototype.setAnimated',
 	nrg.ui.ZippyNode.prototype.setAnimated);
-goog.exportSymbol('nrg.ui.ZippyNode.prototype.loadImageAdded',
-	nrg.ui.ZippyNode.prototype.loadImageAdded);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.hasLoadingIndicator',
+	nrg.ui.ZippyNode.prototype.hasLoadingIndicator);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.addLoadingIndicator',
+	nrg.ui.ZippyNode.prototype.addLoadingIndicator);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.removeLoadingIndicator',
+	nrg.ui.ZippyNode.prototype.removeLoadingIndicator);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.loadingIndicatorRemoving',
+	nrg.ui.ZippyNode.prototype.loadingIndicatorRemoving);
 goog.exportSymbol('nrg.ui.ZippyNode.prototype.disposeInternal',
 	nrg.ui.ZippyNode.prototype.disposeInternal);

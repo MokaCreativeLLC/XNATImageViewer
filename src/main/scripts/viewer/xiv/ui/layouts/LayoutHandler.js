@@ -269,6 +269,23 @@ xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractors = function() {
 
 /**
  * @public
+ * @return {Array.<Element>}
+ */
+xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractorElements = 
+    function() {
+	var elts = [];
+	var ints = this.masterLayout_.getInteractors();
+	goog.object.forEach(ints, function(planeInteractors){
+	    goog.object.forEach(planeInteractors, function(inters){
+		elts.push(inters.getElement());
+	    })
+	})
+	return elts;
+    }
+
+
+/**
+ * @public
  * @param {!string} plane The plane to retrieve the interactors from.
  * @return {xiv.ui.layouts.XyzvLayout.InteractorSet}
  */
@@ -1012,6 +1029,9 @@ goog.exportSymbol(
 goog.exportSymbol(
     'xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractors',
     xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractors);
+goog.exportSymbol(
+    'xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractorsElements',
+    xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractorsElements);
 goog.exportSymbol(
     'xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractorsByPlane',
     xiv.ui.layouts.LayoutHandler.prototype.getMasterInteractorsByPlane);

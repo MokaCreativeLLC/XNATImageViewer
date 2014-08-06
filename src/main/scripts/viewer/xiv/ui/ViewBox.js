@@ -318,6 +318,15 @@ xiv.ui.ViewBox.prototype.isRendering_ = false;
 
 
 
+
+/**
+ * @private
+ * @type {!boolean}
+ */
+xiv.ui.ViewBox.prototype.suspendHighFrameCountCheck_ = false;
+
+
+
 /**
  * @return {!boolean}
  * @public
@@ -446,6 +455,15 @@ xiv.ui.ViewBox.prototype.getThumbnailLoadTime =  function() {
 }
 
 
+/**
+ * @return {number} The date (in millseconds) when the last thumbnail was 
+ *     loaded into the ViewBox.
+ * @public
+ */
+xiv.ui.ViewBox.prototype.isInUse =  function() {
+    return goog.isDefAndNotNull(this.thumbLoadTime_);
+}
+
 
 /**
  * @public
@@ -538,7 +556,7 @@ xiv.ui.ViewBox.prototype.onRendering_ = function(e){
 		}
 	 }
 
-	if (done){
+	//if (done){
 	    /**
 	    window.console.log("\n\nPrev value:", 
 			       this.previousProgressBarValue_);
@@ -547,7 +565,7 @@ xiv.ui.ViewBox.prototype.onRendering_ = function(e){
 	    window.console.log("Incr:", incr);
 	    window.console.log("Done:", done);
 	    */
-	}
+	//}
     }
     else {
 	this.setProgressBarPct_(e.value);
@@ -619,20 +637,6 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 			   bar.visibility = 'hidden';
 		       });
 
-
-
-    //
-    // Create dialogs
-    //
-    this.Dialogs_.createDialogs(); 
-
-    //
-    // Set the layout button in the help menu
-    //
-    this.Dialogs_.getHelpDialog().setLayoutButton(
-	this.LayoutMenu_.getMenuIcon().src);
-
-
     //
     // Set zip downloading to false
     //
@@ -652,40 +656,78 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 
 
     //
-    // Show load components (menu)
+    // Create dialogs
     //
-    this.fadeInLoadComponents_(0, null, null);
+    this.Dialogs_.createPostRenderDialogs(); 
+
+    //
+    // Set the layout button in the help menu
+    //
+    this.Dialogs_.getHelpDialog().setLayoutButton(
+	this.LayoutMenu_.getMenuIcon().src);
 
     //
     // Create interactors
     //
     this.InteractorHandler_.createInteractors();
 
- 
     //
     // Apply auto-level
     //
     this.InteractorHandler_.applyAutoLevel();
 
+    var fadeIns = [
+	this.menus_.LEFT,
+	this.LayoutMenu_.getElement(), 
+	this.LayoutHandler_.getElement()];
 
+    fadeIns = goog.array.concat(
+	fadeIns, 
+	this.Dialogs_.getVisibleDialogElements(),
+	this.LayoutHandler_.getMasterInteractorElements()
+    );
+
+    //var fadeOuts = [];
+    var fadeOuts = [this.ProgressBarPanel_.getElement()];
+   
+    var fadeInsStartOps = [];
+    var fadeInsEndOps = [];
+    var fadeOutsStartOps = [];
+    var fadeOutsEndOps = [];
+
+    goog.array.forEach(fadeIns, function(fadeInElt, i){
+	fadeInsStartOps.push(0);
+	fadeInsEndOps.push(1);
+    })
+
+    goog.array.forEach(fadeOuts, function(fadeOutElt, i){
+	fadeOutsStartOps.push(1);
+	fadeOutsEndOps.push(0);
+    })
+
+    var fadeElts = goog.array.concat(fadeIns, fadeOuts);
+
+    var startOps = goog.array.concat(fadeInsStartOps, 
+				     fadeOutsStartOps);
+    var endOps = goog.array.concat(fadeInsEndOps, 
+				   fadeOutsEndOps);
+    
     //
-    // Hide progress bar
+    // Show load components (menu)
     //
-    this.hideProgressBarPanel_(800, function(){
+    nrg.fx.parallelFade(
+	fadeElts,
+	startOps, endOps, 400,  null, null, function(){
+
 	//
 	// Set progress bar value to 0
 	//
 	this.ProgressBarPanel_.setValue(0);
 
-	//
-	// Update style
-	//
-	this.updateStyle();
-
-	//
-	// Run resize callback to be safe.
-	//
-	this.onLayoutResize_();
+	    //
+	    // Show the progress bar
+	    //
+	    this.hideSubComponent_(this.ProgressBarPanel_, 0);
 
 	//
 	// Dispatch loaded
@@ -696,6 +738,21 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 	// unhighlight
 	//
 	this.unhighlight();
+
+	//
+	// Unsuspend
+	//
+	this.suspendHighFrameCountCheck_ = false;
+
+	//
+	// Update style
+	//
+	this.updateStyle();
+
+	//
+	// Run resize callback to be safe.
+	//
+	this.onLayoutResize_();
 
 
     }.bind(this));
@@ -834,34 +891,101 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 /**
  * @public
  */
-xiv.ui.ViewBox.prototype.showInUseDialog = function(){
-    this.Dialogs_.showInUseDialog();
+xiv.ui.ViewBox.prototype.getHighFrameCountThreshold = function(){
+    return 300;
 }
+
 
 
 
 /**
  * @param {Function=} opt_onYes
  * @return {!boolean} Whether dialog was shown 
+ * @private
+ */
+xiv.ui.ViewBox.prototype.showHighFrameCountDialog_ = 
+function(opt_onYes){
+    xiv.ui.ViewBoxDialogs.createModalYesNoDialog(
+	'Scans with frame counts greater than ' + 
+	    this.getHighFrameCountThreshold() + 
+	    ' may crash the Viewer.' +
+	'&nbspProceed anyway?',
+	this.viewFrameElt_,
+	opt_onYes);
+}
+
+
+
+/**
+ * @param {Function=} opt_onYes
  * @public
  */
-xiv.ui.ViewBox.prototype.checkInUseAndShowDialog = function(opt_onYes){
-    //
-    // Prompt user to load if something is already loaded
-    //
-    if (goog.isDefAndNotNull(this.thumbLoadTime_)){
-	this.showInUseDialog();
-	this.Dialogs_.setInUseSelect(opt_onYes);
-	return true;
-    } 
-    return false;
+xiv.ui.ViewBox.prototype.showInUseDialog = function(opt_onYes){
+    xiv.ui.ViewBoxDialogs.createModalYesNoDialog(
+	'ViewBox in use.&nbspProceed anyway?',
+	this.viewFrameElt_,
+	opt_onYes);
 }
+
+
+
+/**
+ * @param {!gxnat.vis.ViewableTree} ViewableTree.
+ * @param {!boolean} opt_initLoadComponents
+ * @return {!boolean}
+ * @private
+ */
+xiv.ui.ViewBox.prototype.preLoadValidate_ = 
+function(ViewableSet, opt_initLoadComponents) {
+
+
+    var reload = function(){
+	this.load(ViewableSet, opt_initLoadComponents);
+    }.bind(this);
+
+
+    //
+    // Check file count, prompt user if the frame count is too large
+    //
+    var ViewableGroup = ViewableSet.getViewableGroups()[0];
+    if (goog.isDefAndNotNull(ViewableGroup.getViewables)){
+	var isScan = ViewableGroup.getCategory().toLowerCase() == 'scans';
+	var isHighFrameCount = 
+	    ViewableGroup.getViewables()[0].getFiles().length >
+	    this.getHighFrameCountThreshold();
+
+
+	if (isScan && isHighFrameCount && !this.suspendHighFrameCountCheck_) {
+	    this.showHighFrameCountDialog_(function(){
+		this.suspendHighFrameCountCheck_ = true;
+		reload();
+	    }.bind(this))
+	    return false;
+	}
+    }
+
+
+    //
+    // Prompt user if the ViewBox is In Use
+    //
+    if (this.isInUse()){
+	this.showInUseDialog(function(){
+	    this.clearThumbnailLoadTime();	    
+	    reload();
+	}.bind(this))
+	return false;
+    }
+
+    return true;
+}
+
+
 
 
 /**
  * Loads a gxnat.vis.ViewableTree object into the appropriate renderers.
  *
- * @param {!gxnat.vis.ViewableTree | !gxnat.vis.ViewableGroup} ViewableTree.
+ * @param {!gxnat.vis.ViewableTree | !gxnat.vis.ViewableGroup} ViewableSet.
  * @param {!boolean} opt_initLoadComponents
  * @public
  */
@@ -892,16 +1016,15 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     //
     this.dispatchEvent(xiv.ui.ViewBox.EventType.VIEWABLE_PRELOAD);
 
-    
     //
-    // Prompt user if something is already loaded
+    // Run pre-load validation
     //
-    if (this.checkInUseAndShowDialog(function(){
-	    this.thumbLoadTime_ = undefined;
-	    this.load(ViewableSet, opt_initLoadComponents);
-	}.bind(this))){
-	return;
-    }
+    if (ViewableSet instanceof gxnat.vis.ViewableTree){
+	if (!this.preLoadValidate_(ViewableSet, opt_initLoadComponents)){
+	    return;
+	}
+    } 
+
 
     //
     // Set rendering flag
@@ -989,7 +1112,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     //
     // Do a zip download+render for scans (Viewer handles downloading)
     //
-    if (ViewableSet.getCategory().toLowerCase() == 'scans') {
+    if (ViewableSet.getCategory().toLowerCase() == 'scans') {	
 	this.renderScanViaZipDownload_(ViewableSet);
 	return;
     } else {
@@ -1141,11 +1264,10 @@ xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
 
 
 
-
 /**
  * @private
  */
-xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_msg){
+xiv.ui.ViewBox.prototype.clear_ = function(){
     //
     // Set rendering flag to false
     //
@@ -1171,6 +1293,16 @@ xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_msg){
     // Reset thumb load time
     //
     this.clearThumbnailLoadTime();
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.onRenderError_ = function(opt_msg){
+
+    this.clear_();
 
     //
     // Dispatch render error event
@@ -1239,12 +1371,12 @@ xiv.ui.ViewBox.prototype.initLoadComponents_ = function() {
     // Toggle menu
     //
     this.initToggleMenu_();
-
+    
     //
     // Dialogs
     //
     this.initDialogs_();
-    
+
     //
     // Layout Handler
     //
@@ -1274,29 +1406,6 @@ xiv.ui.ViewBox.prototype.initLoadComponents_ = function() {
     // Register that components have been loaded
     //
     this.hasLoadComponents_ = true;
-}
-
-
-
-/**
- * @param {number=} opt_fadeTime
- * @param {Function=} opt_onBegin Callback when animation starts.
- * @param {Function=} opt_onAnimate Callback when animation is running.
- * @param {Function=} opt_onEnd Callback when animation ends.
- * @private
- */
-xiv.ui.ViewBox.prototype.fadeInLoadComponents_ = 
-function(opt_fadeTime, opt_onBegin, opt_onAnimate, opt_onEnd) {
-    opt_fadeTime = goog.isNumber(opt_fadeTime) ? opt_fadeTime : 500;
-    var anims = [];
-    var fadeables = [this.menus_.LEFT,
-		     this.LayoutMenu_.getElement(), 
-		     this.LayoutHandler_.getElement()];
-    goog.array.forEach(fadeables, function(fadeable){
-	anims.push(nrg.fx.generateAnim_Fade(fadeable, {'opacity':0}, 
-					    {'opacity':1}, opt_fadeTime)); 
-    })   
-    nrg.fx.parallelAnimate(anims, opt_onBegin, opt_onAnimate, opt_onEnd);
 }
 
 
@@ -1997,6 +2106,9 @@ xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
 	delete this.LayoutHandler_;
     }
 
+    if (goog.isDefAndNotNull(this.Dialogs_)){
+	this.Dialogs_.dispose(); 
+    }
 
     // LayoutMenu
     if (goog.isDefAndNotNull(this.LayoutMenu_)){
@@ -2019,12 +2131,7 @@ xiv.ui.ViewBox.prototype.disposeLoadComponents_ = function () {
 	delete this.ViewableGroupMenu_;
     }
 
-   
-    // Dialogs
-    if (goog.isDefAndNotNull(this.Dialogs_)){
-	this.Dialogs_.disposeInternal();
-    } 
-
+  
     // Controller handler
     if (goog.isDefAndNotNull(this.InteractorHandler_)){
 	this.InteractorHandler_.dispose()
@@ -2094,6 +2201,7 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     //
     this.disposeLoadComponents_();
 
+
     //
     // Progress Bar Panel
     //
@@ -2126,6 +2234,7 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     delete this.totalRenderedObjects_;
     delete this.previousProgressBarValue_;
     delete this.totalViewables_;
+    delete this.suspendHighFrameCountCheck_;
 }
 
 
@@ -2165,10 +2274,7 @@ goog.exportSymbol('xiv.ui.ViewBox.prototype.doNotHide',
 	xiv.ui.ViewBox.prototype.doNotHide);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.setLayout',
 	xiv.ui.ViewBox.prototype.setLayout);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.showInUseDialog',
-	xiv.ui.ViewBox.prototype.showInUseDialog);
-goog.exportSymbol('xiv.ui.ViewBox.prototype.checkInUseAndShowDialog',
-	xiv.ui.ViewBox.prototype.checkInUseAndShowDialog);
+
 goog.exportSymbol('xiv.ui.ViewBox.prototype.load',
 	xiv.ui.ViewBox.prototype.load);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.addToMenu',
@@ -2179,6 +2285,8 @@ goog.exportSymbol('xiv.ui.ViewBox.prototype.toggleButtonChecked',
 	xiv.ui.ViewBox.prototype.toggleButtonChecked);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.getToggleButton',
 	xiv.ui.ViewBox.prototype.getToggleButton);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.getHighFrameCountThreshold',
+	xiv.ui.ViewBox.prototype.getHighFrameCountThreshold);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.fireToggleButton',
 	xiv.ui.ViewBox.prototype.fireToggleButton);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.untoggle',
@@ -2191,6 +2299,10 @@ goog.exportSymbol('xiv.ui.ViewBox.prototype.isMouseOver',
 	xiv.ui.ViewBox.prototype.isMouseOver);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.isRendering',
 	xiv.ui.ViewBox.prototype.isRendering);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.isInUse',
+	xiv.ui.ViewBox.prototype.isInUse);
+goog.exportSymbol('xiv.ui.ViewBox.prototype.showInUseDialog',
+	xiv.ui.ViewBox.prototype.showInUseDialiog);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.updateStyle',
 	xiv.ui.ViewBox.prototype.updateStyle);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.disposeInternal',
