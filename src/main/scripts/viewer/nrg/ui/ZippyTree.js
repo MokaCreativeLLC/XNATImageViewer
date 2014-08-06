@@ -463,7 +463,7 @@ function(fldrs, opt_pNode, opt_elt, opt_currDepth) {
     // If at end of branch
     //
     if (fldrs.length == 0){
-	this.onEndOfBranch_(contHold, opt_elt);
+	this.onEndOfBranch_(opt_pNode, opt_elt);
 	
 	//
 	// Indent the end element
@@ -847,16 +847,18 @@ nrg.ui.ZippyTree.folderSorter = function(holderElt, insertElt){
 
 /**
  * Method for when an end of branch is reached.  Called from 'createBranch'.
- * @param {!Element} contHold The contentHolder element.
+ * @param {!nrg.ui.ZippyNode} parentNode The parent node of the element.
  * @param {Element=} opt_elt The optional element to add at the end of the 
  *    branch.
  * @private
  */
-nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
+nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(parentNode, opt_elt) {
     //
     // Add the contentElt to the given node , if it exists.
     //
     if (!goog.isDefAndNotNull(opt_elt)) { return }
+
+    var contHold = parentNode.getContentHolder();
 
     var addElement = function () {
 	//
@@ -864,8 +866,9 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
 	//
 	nrg.style.setStyle(opt_elt, {'position': 'relative'});
 	//opt_elt.style.opacity = this.initOp_;
+	
 	opt_elt.style.opacity = 0;
-	nrg.fx.fadeIn(opt_elt, 400);
+	nrg.fx.fadeIn(opt_elt, 300);
 
 	//
 	// This is where you sort the nodes!!
@@ -910,18 +913,12 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(contHold, opt_elt) {
     }.bind(this)
 
     //
-    // Remove any loading images, if they exist
+    // Remove loadingImage, if it exists.
     //
-    var loading = 
-    goog.dom.getElementByClass(
-	nrg.ui.ZippyNode.CSS.LOADING_HOLDER,contHold);
-    if (goog.isDefAndNotNull(loading)){
-	nrg.fx.fadeOut(loading, 500, function(){
-	    goog.dom.removeNode(loading);
-	    delete loading;
-	    addElement();
-	}.bind(this))
-	return;
+    if (parentNode.hasLoadingIndicator() && 
+	!parentNode.loadingIndicatorRemoving()){
+	parentNode.removeLoadingIndicator(true);
+	//return;
     } 
 
     //

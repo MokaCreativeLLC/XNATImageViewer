@@ -924,12 +924,13 @@ xiv.ui.ViewBoxHandler.prototype.onViewBoxClosed_ = function(ViewBox){
     //
     if (this.numViewBoxes() == 1) { return };
 
-    var inUse = ViewBox.checkInUseAndShowDialog(function(){
-	this.adjustToClose_(ViewBox);
-    }.bind(this))
-    if (!inUse){
-	this.adjustToClose_(ViewBox);
+    if (!ViewBox.isInUse()){
+	ViewBox.showInUseDialog(function(){
+	    this.adjustToClose_(ViewBox);
+	}.bind(this))
+	return;
     }
+    this.adjustToClose_(ViewBox);
 }
 
 

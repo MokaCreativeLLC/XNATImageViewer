@@ -140,7 +140,7 @@ nrg.fx.fadeTo = function (element, opt_time, opt_opacity, callback,
 	    opt_startOp = element.style.opacity ? 
 		parseInt(element.style.opacity, 10) : 1;
 	} else {
-	    window.console.log(element);
+	    //window.console.log(element);
 	    element.style.opacity = 1;
 	}
     }
@@ -701,6 +701,53 @@ nrg.fx.setBasicHoverStates = function(elt, overOp, outOp){
 
 
 
+/**
+ * Creates a parallel animation set based on the arguments.
+ * 
+ * @param {!Array.<Element>} The elements to fade.
+ * @param {!number | !Array.<number>} startOpacities The starting opacities
+ * @param {!number | !Array.<number>} endOpacities The ending opacities
+ * @param {Function=} opt_onBegin Callback when animation starts.
+ * @param {Function=} opt_onAnimate Callback when animation is running.
+ * @param {Function=} opt_onEnd Callback when animation ends.
+ * @public
+ */
+nrg.fx.parallelFade = 
+function (elements, startOpacities, endOpacities, opt_fadeTime, 
+	  opt_onBegin, opt_onAnimate, opt_onEnd) {
+
+    if (!goog.isArray(startOpacities)){
+	var ops = [];
+	goog.array.forEach(elements, function(elt, i){
+	    ops.push(startOpacities);
+	})
+	startOpacities = ops;
+    }
+
+    if (!goog.isArray(endOpacities)){
+	var ops = [];
+	goog.array.forEach(elements, function(elt, i){
+	    ops.push(endOpacities);
+	})
+	endOpacities = ops;
+    }
+    opt_fadeTime = goog.isNumber(opt_fadeTime) ? opt_fadeTime : 500;
+
+
+    var anims = [];;
+    goog.array.forEach(elements, function(fadeable, i){
+	
+	anims.push(nrg.fx.generateAnim_Fade(
+	    fadeable, 
+	    {'opacity': startOpacities[i]}, 
+	    {'opacity': endOpacities[i]}, 
+	    opt_fadeTime)); 
+    })   
+    nrg.fx.parallelAnimate(anims, opt_onBegin, opt_onAnimate, opt_onEnd);
+}
+
+
+
 goog.exportSymbol('nrg.fx.fadeIn', nrg.fx.fadeIn);
 goog.exportSymbol('nrg.fx.fadeInFromZero', nrg.fx.fadeInFromZero);
 goog.exportSymbol('nrg.fx.fadeOut', nrg.fx.fadeOut);
@@ -726,3 +773,4 @@ goog.exportSymbol('nrg.fx.parallelAnimate', nrg.fx.parallelAnimate);
 goog.exportSymbol('nrg.fx.serialAnimate', nrg.fx.serialAnimate);
 goog.exportSymbol('nrg.fx.setBasicHoverStates', nrg.fx.setBasicHoverStates);
 goog.exportSymbol('nrg.fx.sequentialFadeIn', nrg.fx.sequentialFadeIn);
+goog.exportSymbol('nrg.fx.parallelFade', nrg.fx.parallelFade);

@@ -52,6 +52,7 @@ xiv.ui.ViewBoxDialogs = function (ViewBox) {
      * @type {xiv.ui.ViewBox}
      */
     this.ViewBox_ = ViewBox;
+
 }
 goog.inherits(xiv.ui.ViewBoxDialogs, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.ViewBoxDialogs', xiv.ui.ViewBoxDialogs);
@@ -88,17 +89,17 @@ xiv.ui.ViewBoxDialogs.CSS_SUFFIX = {
     GENERIC_TOGGLE: 'generic-toggle',
     INFODIALOG: 'infodialog',
     INFODIALOG_TEXT: 'infodialog-text',
-    INUSEDIALOG: 'inusedialog',
+    MODALDIALOG: 'modaldialog',
 }
 
 
 /**
  * @enum {string}
+ * @public
  */
 xiv.ui.ViewBoxDialogs.DIALOG_KEYS = {
     INFO: 'Info_' + goog.string.createUniqueString(),
     HELP: 'Help_' + goog.string.createUniqueString(),
-    INUSE: 'InUse_' + goog.string.createUniqueString(),
 }
 
 
@@ -312,71 +313,138 @@ xiv.ui.ViewBoxDialogs.prototype.createVolumesDialog = function(){
 /**
  * @public
  */
-xiv.ui.ViewBoxDialogs.prototype.createDialogs = function(){
-    this.createInUseDialog_();
+xiv.ui.ViewBoxDialogs.prototype.createPostRenderDialogs = function(){
     this.createHelpDialog_();
     this.createInfoDialog_();
 }
 
 
 
-/**
- * @param {Function=} opt_onYes
- * @param {Function=} opt_onNo
- * @public
- */
-xiv.ui.ViewBoxDialogs.prototype.setInUseSelect =
- function(opt_onYes, opt_onNo){
-    goog.events.listenOnce(this.Dialogs_
-			   [xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE], 
-    goog.ui.Dialog.EventType.SELECT, 
-    function(e) {
-	if (e.key === 'yes' && goog.isDefAndNotNull(opt_onYes)){
-	    opt_onYes(this);
-	}
-	if (e.key === 'no' && goog.isDefAndNotNull(opt_onNo)){
-	    opt_onNo(this);
-	}
-    }.bind(this));
-}
-
-
 
 /**
+ * @param {!String} dialogKey
+ * @throws Error if dialogKey is invalid.
  * @private
  */
-xiv.ui.ViewBoxDialogs.prototype.createInUseDialog_ = function(){
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE] = 
-	new nrg.ui.Dialog();
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].setButtonSet(
-	goog.ui.Dialog.ButtonSet.YES_NO);
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].render(
-	this.ViewBox_.getViewFrame());
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].setContent(
-	'ViewBox in use.&nbspProceed anyway?');
+xiv.ui.ViewBoxDialogs.prototype.validateDialogExists_ = function(dialogKey){
+    if (!goog.isDefAndNotNull(this.Dialogs_[dialogKey])){
+	throw new Error('Invalid dialog key: ', dialogKey);
+    }
 }
 
 
-
 /**
+ * @param {!string} content
+ * @param {Element=} opt_parent
+ * @param {Element=} opt_parent
  * @public
  */
-xiv.ui.ViewBoxDialogs.prototype.showInUseDialog = function(){ 
-    //window.console.log("SHOW IN USE");
+xiv.ui.ViewBoxDialogs.createModalYesNoDialog = 
+function(content, opt_parent, opt_onYes, opt_onNo){
+
+    var dialog = new nrg.ui.Dialog();
+    dialog.setButtonSet(goog.ui.Dialog.ButtonSet.YES_NO);
+    dialog.render(goog.isDefAndNotNull(opt_parent) ? 
+		  opt_parent : document.body);
+    dialog.setContent(content);
+
     //
     // Add the class.
     //
-    goog.dom.classes.add(this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].
-			 getElement(), 
-			 xiv.ui.ViewBoxDialogs.CSS.INUSEDIALOG);
+    goog.dom.classes.add(
+	dialog.getElement(), 
+	'nrg-ui-dialogs-yesnomodal');
+
     //
     // Config
     //
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].setModal(true);
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].setVisible(true);
-    this.Dialogs_[xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INUSE].center()
+    dialog.setModal(true);
+
+
+    var dialogElt = dialog.getElement();
+    var dialogBG = dialog.getBackgroundElement();
+    var fadeTime = 150;
+
+
+    goog.events.listenOnce(
+	dialog, 
+	goog.ui.Dialog.EventType.SELECT, 
+	function(e) {
+
+	    var dialogClone = dialogElt.cloneNode(true);
+	    dialogClone.style.opacity = 1;
+	    dialogClone.style.display = 'inline';
+	    goog.dom.append(dialogElt.parentNode, dialogClone);
+
+	    var dialogBGClone = dialogBG.cloneNode(true);
+	    dialogBGClone.style.opacity = .7;
+	    dialogBGClone.style.display = 'inline';
+	    goog.dom.append(dialogElt.parentNode, dialogBGClone);
+
+	    dialogClone.style.zIndex = 2000000000;
+	    dialogBGClone.style.zIndex = 2000000000;
+
+
+	    nrg.fx.parallelFade(
+		[dialogClone, dialogBGClone], 1, 0, null, null, 
+		function(){
+		    goog.dom.removeNode(dialogClone);
+		    delete dialogClone;
+		    goog.dom.removeNode(dialogBGClone);
+		    delete dialogBGClone;
+		});
+				 
+
+	    var key = e.key.toLowerCase();
+	    if (key === 'yes' && goog.isDefAndNotNull(opt_onYes)){
+		opt_onYes();
+	    }
+	    else if (key === 'no' && goog.isDefAndNotNull(opt_onNo)){
+		opt_onNo();
+	    }
+
+	    dialog.setDisposeOnHide(true);
+	    dialog.onHide();
+	});
+
+    dialog.setVisible(true);
+    dialog.center(true);
+    dialog.setDisposeOnHide(false);
+
+    dialogElt.style.opacity = 0;
+    dialogElt.style.zIndex = 2000000000;
+    dialogBG.style.opacity = 0;
+    dialogBG.style.zIndex = 2000000000;
+    nrg.fx.fadeIn(dialogElt, fadeTime);
+    nrg.fx.fadeTo(dialogBG, fadeTime, .7);
 }
 
+
+
+/**
+ * @return {Array.<Element>}
+ * @public
+ */
+xiv.ui.ViewBoxDialogs.prototype.getVisibleDialogElements = function(){
+    var elts = [];
+    goog.object.forEach(this.Dialogs_, function(dialog){
+	if (dialog.isVisible()){
+	    elts.push(dialog.getElement());
+	}
+    })
+    return elts;
+} 
+
+
+
+/**
+ * @public
+ */
+xiv.ui.ViewBoxDialogs.prototype.showModalDialog = function(dialogKey){
+    this.validateDialogExists_(dialogKey);
+    this.Dialogs_[dialogKey].setVisible(true);
+    this.Dialogs_[dialogKey].center()
+} 
 
 
 /**
@@ -395,6 +463,9 @@ xiv.ui.ViewBoxDialogs.prototype.updatePositions_ = function(opt_dialog){
     //
     goog.object.forEach(dialogs, function(currDialog){
 
+	if (!goog.isDefAndNotNull(currDialog) || goog.isFunction(currDialog)){
+	    return}
+	//window.console.log(currDialog);
 	var limits = currDialog.getDraggerLimits();
 	//window.console.log('limits', limits);		
 	var key;
@@ -711,6 +782,8 @@ goog.exportSymbol('xiv.ui.ViewBoxDialogs.DIALOG_KEYS',
 	xiv.ui.ViewBoxDialogs.DIALOG_KEYS);
 goog.exportSymbol('xiv.ui.ViewBoxDialogs.TOGGLED_CLASS',
 	xiv.ui.ViewBoxDialogs.TOGGLED_CLASS);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.createModalDialog',
+	xiv.ui.ViewBoxDialogs.createModalDialog);
 goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.getDialogs',
 	xiv.ui.ViewBoxDialogs.prototype.getDialogs);
 goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.getDialog',
@@ -722,12 +795,18 @@ goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.createMeshesDialog',
 	xiv.ui.ViewBoxDialogs.prototype.createMeshesDialog);
 goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.createVolumesDialog',
 	xiv.ui.ViewBoxDialogs.prototype.createVolumesDialog);
-goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.createDialogs',
-	xiv.ui.ViewBoxDialogs.prototype.createDialogs);
-goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.setInUseSelect',
-	xiv.ui.ViewBoxDialogs.prototype.setInUseSelect);
-goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.showInUseDialog',
-	xiv.ui.ViewBoxDialogs.prototype.showInUseDialog);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.createPostRenderDialogs',
+	xiv.ui.ViewBoxDialogs.prototype.createPostRenderDialogs);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.dispsePostRenderDialogs',
+	xiv.ui.ViewBoxDialogs.prototype.disposePostRenderDialogs);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.setModalDialogOnYes',
+	xiv.ui.ViewBoxDialogs.prototype.setModalDialogOnYes);
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.showModalDialog',
+	xiv.ui.ViewBoxDialogs.prototype.showModalDialog);
+
+goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.getVisibleDialogElements',
+	xiv.ui.ViewBoxDialogs.prototype.getVisibleDialogElements);
+
 goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.update',
 	xiv.ui.ViewBoxDialogs.prototype.update);
 goog.exportSymbol('xiv.ui.ViewBoxDialogs.prototype.toggleVisible',
