@@ -163,26 +163,32 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	//window.console.log("ORDERING 0");
 
     }
-    else if(first_image[0]['image_position_patient'][0] != first_image[1]['image_position_patient'][0] ||
-	    first_image[0]['image_position_patient'][1] != first_image[1]['image_position_patient'][1] ||
-	    first_image[0]['image_position_patient'][2] != first_image[1]['image_position_patient'][2]) {
+    else if(first_image[0]['image_position_patient'][0] 
+	    != first_image[1]['image_position_patient'][0] ||
+	    first_image[0]['image_position_patient'][1] 
+	    != first_image[1]['image_position_patient'][1] ||
+	    first_image[0]['image_position_patient'][2] 
+	    != first_image[1]['image_position_patient'][2]) {
         // ORDERING BASED ON IMAGE POSITION
         _ordering = 'image_position_patient';
 
         // set distances
-        var _x_cosine = new goog.math.Vec3(first_image[0]['image_orientation_patient'][0],
-          first_image[0]['image_orientation_patient'][1], first_image[ 0 ]['image_orientation_patient'][2]);
+        var _x_cosine = new goog.math.Vec3(
+	    first_image[0]['image_orientation_patient'][0],
+            first_image[0]['image_orientation_patient'][1], 
+	    first_image[ 0 ]['image_orientation_patient'][2]);
 
-        var _y_cosine = new goog.math.Vec3(first_image[ 0 ]['image_orientation_patient'][3],
-          first_image[ 0 ]['image_orientation_patient'][4], first_image[ 0 ]['image_orientation_patient'][5]);
+        var _y_cosine = new goog.math.Vec3(
+	    first_image[ 0 ]['image_orientation_patient'][3],
+            first_image[ 0 ]['image_orientation_patient'][4], 
+	    first_image[ 0 ]['image_orientation_patient'][5]);
 
         var _z_cosine = goog.math.Vec3.cross(_x_cosine, _y_cosine);
 
-        function computeDistance(flag, arrelem)
-          {
+        function computeDistance(flag, arrelem){
             arrelem['dist'] = arrelem['image_position_patient'][0]*flag.x +
-              arrelem['image_position_patient'][1]*flag.y +
-              arrelem['image_position_patient'][2]*flag.z;
+		arrelem['image_position_patient'][1]*flag.y +
+		arrelem['image_position_patient'][2]*flag.z;
             return arrelem;
           }
 
@@ -191,17 +197,57 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       // order by dist
       first_image.sort(function(a,b){return a["dist"]-b["dist"]});
     }
-    else if(first_image[0]['instance_number'] != first_image[1]['instance_number']){
-      // ORDERING BASED ON instance number
+    else if(first_image[0]['instance_number'] != 
+	    first_image[1]['instance_number']){
+	// ORDERING BASED ON instance number
 	window.console.log('Ordering by instance number');
-      _ordering = 'instance_number';
-      first_image.sort(function(a,b){return a["instance_number"]-b["instance_number"]});
+	_ordering = 'instance_number';
+	first_image.sort(function(a,b){
+	    return a["instance_number"]-b["instance_number"]});
     }
     else{
 
       window.console.log("Could not resolve the ordering mode");
 
     }
+
+
+      //************************************
+      //
+      // Moka/NRG addition (start)
+      // 
+      //------------------------------------
+      // Explanation of addition:
+      //
+      // If we find a distance equality we need to
+      // put the order back to instance_number. 
+      // We reserve this only for smaller stacks, 
+      // like localizer stacks.
+      //
+      //************************************
+      if (_ordering == 'image_position_patient' && first_image_stacks < 5){
+	  var i = 0;
+	  for(; i<first_image_stacks-1; i++){
+	      window.console.log(
+		  first_image[i]['dist'], first_image[i+1]['dist'])
+	      if ((first_image[i]['dist'] - first_image[i+1]['dist']) < 0.01){
+		  
+		  window.console.log('Warning: Although series was initially' +
+				     ' ordered by "image_position_patient",' + 
+				     ' positional overlaps were found.' + 
+				     '\nSwitching to "instance_number"' + 
+				     ' ordering as a result.');
+		  _ordering = 'instance_number';
+		  first_image.sort(function(a,b){
+		      return a["instance_number"]-b["instance_number"]});
+	      }
+	  }
+      }
+      //************************************
+      //
+      // Moka/NRG addition (end)
+      // 
+      //************************************
 
 
 
@@ -499,6 +545,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	  window.console.log("Expected slices:", 
 			     first_image_expected_nb_slices);
 	  first_image_expected_nb_slices = first_image_stacks;
+
+	  window.console.log('Ordering:', _ordering);
       }
       //************************************
       //
@@ -1185,6 +1233,13 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      volumeAttributes.RASSpacing[0] = 
 		  volumeAttributes.RASDimensions[0] / 
 		  (first_image.length + 1);
+
+
+	      //
+	      // Adjust the RASSpacing
+	      //
+	      //volumeAttributes.RASOrigin[0] -= 
+	      //first_image[0]['pixel_spacing'][2];
 	  }
 	  else if (_transformedDims[1] == object._dimensions[2]){
 
@@ -1243,11 +1298,12 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      "acquired properties."
 	  window.console.log(_msg);
 
-	  /*
+
 	  window.console.log("_transformedDims", _transformedDims);
  	  window.console.log("RASSpacing", volumeAttributes.RASSpacing);
 	  window.console.log("RASDimensions", volumeAttributes.RASDimensions);
 	  window.console.log("RASOrigin", volumeAttributes.RASOrigin);
+	  /*
 	  */
       }
       //******************************
@@ -1422,10 +1478,21 @@ X.parserDCM.prototype.parseStream = function(data, object) {
     var _dicomTypeLogged = false;
     var _dicomType;
     var _skippables = {};
-    _skippables.LEI = [[0x0012, 0x0064], 
-		       [0x0023, 0x1080],
-		       [0x0040, 0x0275],
-		       [0x0008, 0x1110],[0x0008, 0x1120]];
+
+    _skippables.LEE = [
+	[0x0088, 0x0200],
+	//[0x0012, 0x0064],
+	//[0x0023, 0x1080],
+	//[0x0040, 0x0275],	
+    ]
+    _skippables.LEI = [
+	[0x0012, 0x0064], 
+	[0x0023, 0x1080],
+	[0x0040, 0x0275],
+	[0x0008, 0x1110],
+	[0x0008, 0x1120],
+	[0x0088, 0x0200],
+    ];
     var i, len;
     //************************************
     //
@@ -1525,6 +1592,18 @@ We would want to skip this (0012, 0064)
 
 	  case '1.2.840.10008.1.2.1':
 	      _dicomType = "Little Endian Explicit";
+
+	      i = 0;
+	      len = _skippables.LEE.length;
+	      for (; i < len; i++){
+		  if ((_tagGroup === _skippables.LEE[i][0]) && 
+		      (_tagElement === _skippables.LEE[i][1])){
+		      _skipCurrent = true;
+		      break;
+		  }
+	      }
+
+
 	      break;
 	      
 	  case '1.2.840.10008.1.2.2':
@@ -1533,17 +1612,17 @@ We would want to skip this (0012, 0064)
 	      
 	  case '1.2.840.10008.1.2':
 	      _dicomType = "Little Endian Implicit";
-	      if (slice['transfer_syntax_uid'] == '1.2.840.10008.1.2'){
-		  i = 0;
-		  len = _skippables.LEI.length;
-		  for (; i < len; i++){
-		      if ((_tagGroup === _skippables.LEI[i][0]) && 
-			  (_tagElement === _skippables.LEI[i][1])){
-			  _skipCurrent = true;
-			  break;
-		      }
+
+	      i = 0;
+	      len = _skippables.LEI.length;
+	      for (; i < len; i++){
+		  if ((_tagGroup === _skippables.LEI[i][0]) && 
+		      (_tagElement === _skippables.LEI[i][1])){
+		      _skipCurrent = true;
+		      break;
 		  }
 	      }
+	      
 	      break;
 	  }
 
@@ -1605,7 +1684,10 @@ We would want to skip this (0012, 0064)
             break;
           case 0x0100:
             // bits allocated
+	    //window.console.log('\nprev:', slice.bits_allocated)
             slice.bits_allocated = _bytes[_bytePointer];
+	    //window.console.log('Raw bits allocated:', 
+	    //_bytes[_bytePointer]);
             _bytePointer+=_VL/2;
             break;
           case 0x0101:
@@ -1822,13 +1904,13 @@ We would want to skip this (0012, 0064)
     //       }
 
       default:
-        _bytePointer = X.parserDCM.prototype.handleDefaults(_bytes, _bytePointer, _VR, _VL);
+        _bytePointer = X.parserDCM.prototype.handleDefaults(
+	    _bytes, _bytePointer, _VR, _VL);
         break;
       }
 
     }
-
-
+    //window.console.log('Slice bits', slice.bits_allocated);
 
     switch (slice.bits_allocated) {
       case 8:
