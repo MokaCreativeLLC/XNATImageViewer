@@ -17,6 +17,9 @@ goog.require('goog.testing');
 goog.require('goog.dom.classes');
 goog.require('goog.testing.events');
 
+// xtk
+goog.require('X.volume');
+
 // nrg
 goog.require('nrg.style');
 goog.require('nrg.fx');
@@ -285,8 +288,6 @@ xiv.ui.ViewBox.prototype.zipDownloading_ = false;
 
 
 
-
-
 /**
  * @private
  * @type {?number}
@@ -318,7 +319,6 @@ xiv.ui.ViewBox.prototype.isRendering_ = false;
 
 
 
-
 /**
  * @private
  * @type {!boolean}
@@ -336,6 +336,7 @@ xiv.ui.ViewBox.prototype.isRendering = function() {
 }
 
 
+
 /**
  * @return {?xiv.vis.RenderEngine}
  * @public
@@ -343,7 +344,6 @@ xiv.ui.ViewBox.prototype.isRendering = function() {
 xiv.ui.ViewBox.prototype.getRenderer = function() {
     return this.Renderer_;
 }
-
 
 
 
@@ -647,13 +647,6 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     //
     this.isRendering_ = false;
 
-    //
-    // Set the layout based the orientation of the ViewableTree
-    //
-    if (goog.isDefAndNotNull(this.ViewableTrees_[0].getOrientation())){
-	this.setLayout(this.ViewableTrees_[0].getOrientation());
-    }
-
 
     //
     // Create dialogs
@@ -675,6 +668,27 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     // Apply auto-level
     //
     this.InteractorHandler_.applyAutoLevel();
+
+    
+    //
+    // Set the layout based the orientation of the Volume
+    //
+    if (xiv.MODE != 'demo'){
+	// 
+	// Prioritize the volume's assessed orientation first
+	//
+	if (goog.isDefAndNotNull(this.Renderer_.
+		getSelectedVolume()[X.volume.ORIENTATION_KEY])){
+	    this.setLayout(goog.string.toTitleCase(
+		this.Renderer_.getSelectedVolume()[X.volume.ORIENTATION_KEY]));
+	} 
+	//
+	// Otherwise, refer to the stored orientation via XNAT
+	//
+	else if (goog.isDefAndNotNull(this.ViewableTrees_[0].getOrientation())){
+	    this.setLayout(this.ViewableTrees_[0].getOrientation());
+	}
+    }
 
     var fadeIns = [
 	this.menus_.LEFT,

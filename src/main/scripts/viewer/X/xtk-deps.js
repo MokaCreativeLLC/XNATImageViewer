@@ -19,7 +19,7 @@ goog.addDependency('../../../X/io/interactor3D.js', ['X.interactor3D'], ['X.inte
 goog.addDependency('../../../X/io/loader.js', ['X.loader'], ['X.base', 'X.event', 'X.object', 'X.parserCRV', 'X.parserDCM', 'X.parserFSM', 'X.parserIMAGE', 'X.parserLBL', 'X.parserLUT', 'X.parserMGZ', 'X.parserMRC', 'X.parserNII', 'X.parserNRRD', 'X.parserOBJ', 'X.parserOFF', 'X.parserRAW', 'X.parserSTL', 'X.parserTRK', 'X.parserVTK', 'goog.structs.Map']);
 goog.addDependency('../../../X/io/parser.js', ['X.parser'], ['X.base', 'X.event', 'X.texture', 'X.triplets', 'goog.vec.Mat4', 'goog.vec.Vec3', 'goog.vec.Vec4']);
 goog.addDependency('../../../X/io/parserCRV.js', ['X.parserCRV'], ['X.event', 'X.parser', 'X.triplets']);
-goog.addDependency('../../../X/io/parserDCM.js', ['X.parserDCM'], ['X.event', 'X.object', 'X.parser', 'X.triplets', 'X.volume', 'goog.math.Vec3']);
+goog.addDependency('../../../X/io/parserDCM.js', ['X.parserDCM'], ['X.event', 'X.object', 'X.parser', 'X.triplets', 'X.volume', 'goog.array', 'goog.math.Vec3']);
 goog.addDependency('../../../X/io/parserFSM.js', ['X.parserFSM'], ['X.event', 'X.object', 'X.parser', 'X.triplets', 'goog.math.Vec3']);
 goog.addDependency('../../../X/io/parserIMAGE.js', ['X.parserIMAGE'], ['X.event', 'X.parser']);
 goog.addDependency('../../../X/io/parserLBL.js', ['X.parserLBL'], ['X.event', 'X.parser', 'X.triplets']);

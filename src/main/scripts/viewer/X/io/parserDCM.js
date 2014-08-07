@@ -37,6 +37,8 @@ goog.require('X.parser');
 goog.require('X.triplets');
 goog.require('goog.math.Vec3');
 goog.require('X.volume');
+goog.require('goog.array');
+
 
 /**
  * Create a parser for DICOM files.
@@ -187,10 +189,11 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       // compute dist in this series
       first_image.map(computeDistance.bind(null, _z_cosine));
       // order by dist
-      first_image.sort(function(a,b){return a["dist"]-b["dist"]});	
+      first_image.sort(function(a,b){return a["dist"]-b["dist"]});
     }
     else if(first_image[0]['instance_number'] != first_image[1]['instance_number']){
       // ORDERING BASED ON instance number
+	window.console.log('Ordering by instance number');
       _ordering = 'instance_number';
       first_image.sort(function(a,b){return a["instance_number"]-b["instance_number"]});
     }
@@ -199,6 +202,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       window.console.log("Could not resolve the ordering mode");
 
     }
+
 
 
       //************************************
@@ -211,7 +215,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       // For debugging purposes.
       //
       //************************************
-      var _deb = false;
+      var _deb = true;
       if (_deb){
 	  var i = 0;
 	  var len = first_image.length;
@@ -220,7 +224,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		  "Image Position Patient: (Image ",
 		  i, ")",
 		  first_image[i]['image_position_patient'], ' Pixel Spacing:' , 
-		  first_image[i]['pixel_spacing']);
+		  first_image[i]['pixel_spacing'], 
+	      'Initial Ordering:', _ordering);
 	  }
       }
       //************************************
@@ -309,7 +314,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      // Output warning
 	      //
 	      var warningStr = 
-		  "\n\nNRG WARNING: Slices were found unordered after " + 
+		  "Warning: Slices were found unordered after " + 
 		  "XTK \"image_position_patient\" sorting. " +
 		  "Forcing \"instance_number\" reordering.";
 	      window.console.log(warningStr);
@@ -342,13 +347,16 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       switch(_ordering){
         case 'image_position_patient':
           // We work only on 2 first slices
-          var _first_position = first_image[ 0 ]['image_position_patient'];
-          var _second_image_position = first_image[ 1 ]['image_position_patient'];
+          var _first_position = first_image[ 0 ]
+	  ['image_position_patient'];
+          var _second_image_position = first_image[ 1 ]
+	  ['image_position_patient'];
           var _x = _second_image_position[0] - _first_position[0];
           var _y = _second_image_position[1] - _first_position[1];
           var _z = _second_image_position[2] - _first_position[2];
 
-          first_image[0]['pixel_spacing'][2] = Math.sqrt(_x*_x + _y*_y  + _z*_z);	  
+          first_image[0]['pixel_spacing'][2] = 
+	      Math.sqrt(_x*_x + _y*_y  + _z*_z);	  
 	  break;
         case 'instance_number':
 
@@ -402,9 +410,10 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      //
 	      if (_positionInequalityFound){
 		  //window.console.log(_firstPos, _secondPos);
-		  window.console.log("\n\nNRG WARNING: Setting pixel_spacing " + 
-				     "according to image_position_patient even though " + 
-				     "we're using forced_instance_ordering.");
+		  window.console.log(
+		      "Warning: Setting pixel_spacing " + 
+			  "according to image_position_patient even though " + 
+			  "we're using forced_instance_ordering.");
 
 		  //var _secondPos = first_image[ 0 ]['image_position_patient'];
 		  var _x = _secondPos[0] - _firstPos[0];
@@ -467,7 +476,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
         break;
       case 'instance_number':
         first_image_expected_nb_slices += 
-	Math.abs(first_image[ first_image_stacks - 1]['instance_number'] - first_image[0]['instance_number']);
+	Math.abs(first_image[ first_image_stacks - 1]['instance_number'] - 
+		 first_image[0]['instance_number']);
         break;
       default:
         window.console.log("Unkown ordering mode - returning: " + _ordering);
@@ -500,8 +510,48 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     var first_slice_size = first_image[0]['columns'] * first_image[0]['rows'];
     var first_image_size = first_slice_size * first_image_expected_nb_slices;
 
-    //window.console.log("\n\n\nTEMPORARY DANGEROUS OPERATION 1");
-    //var first_image_size = first_slice_size * (19.0547);
+
+
+      //************************************
+      //
+      // Moka/NRG addition (start)
+      // 
+      //------------------------------------
+      // Explanation of addition:
+      //
+      // There are instances where images in a series are of varying
+      // dimensions.  This tracks to see if there were dimensional
+      // inequalities found.
+      //
+      //************************************
+      var _dimInequalities = false;
+      var i = 0;
+      var len = first_image.length;
+      var _maxRows = 0;
+      var _maxCols = 0;
+      for (; i<len; i++){
+	  if (first_image[i]['columns'] > _maxCols){
+	      _maxCols = first_image[i]['columns'];
+	  }
+	  if (first_image[i]['rows'] > _maxRows){
+	      _maxRows = first_image[i]['rows'];
+	  }
+      }
+
+      if ((_maxCols * _maxRows) > first_slice_size){
+	  first_slice_size = _maxCols * _maxRows;
+	  first_image_size = first_slice_size * first_image_expected_nb_slices;
+	  _dimInequalities = true;
+	  window.console.log("Warning: Dimensional inequalities found " + 
+			     "in image sizes.");
+      }
+
+      //************************************
+      //
+      // Moka/NRG addition (end)
+      //
+      //************************************
+
 
 
     ////////////////////////////////////////////////////////////////////////
@@ -566,10 +616,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     // 1232414 -> third slice
 
 
-      //
-      // Moka ??
-      //
-      var addedOne = false;
 
     for (var _i = 0; _i < first_image_stacks; _i++) {
       // get data
@@ -578,15 +624,20 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 
       switch(_ordering){
         case 'image_position_patient':
-          var _x = first_image[_i]['image_position_patient'][0] - first_image[0]['image_position_patient'][0];
-          var _y = first_image[_i]['image_position_patient'][1] - first_image[0]['image_position_patient'][1];
-          var _z = first_image[_i]['image_position_patient'][2] - first_image[0]['image_position_patient'][2];
+          var _x = first_image[_i]['image_position_patient'][0] - 
+	      first_image[0]['image_position_patient'][0];
+          var _y = first_image[_i]['image_position_patient'][1] - 
+	      first_image[0]['image_position_patient'][1];
+          var _z = first_image[_i]['image_position_patient'][2] - 
+	      first_image[0]['image_position_patient'][2];
 
-	  _distance_position = Math.sqrt(_x*_x + _y*_y  + _z*_z)/first_image[0]['pixel_spacing'][2]
+	  _distance_position = Math.sqrt(_x*_x + _y*_y  + _z*_z)/
+	      first_image[0]['pixel_spacing'][2]
 
           break;
         case 'instance_number':
-          _distance_position = first_image[_i]['instance_number'] - first_image[0]['instance_number'];
+          _distance_position = first_image[_i]['instance_number'] - 
+	      first_image[0]['instance_number'];
           break;
         default:
           window.console.log("Unkown ordering mode - returning: " + _ordering);
@@ -608,7 +659,13 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	//------------------------------------
 	// Explanation of change: 
 	//
-	// Not rounding distance_position creates errors 
+	// 1) We need to account for series with dimensional inequalities
+	// in their images.  In order to do this, we basically create new
+	// image data that is maxColumnsInSeries * maxRowsInSeries.  If the
+	// image data is too small for this dmension, we 'fill' the empty
+	// array indices with the value 0, or black.
+	//
+	// 2) Not rounding distance_position creates errors 
 	// when setting the array data (eg. first_image_data.set( ... ))
 	// because it's expecting rounded numbers.  Therefore, while
 	// we want to maintain '_distance_position' for geometric
@@ -623,8 +680,36 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	//************************************
 	//window.console.log("_distance_position: ", _distance_position);
 	//window.console.log("first_slice_size: ", first_slice_size);
-	first_image_data.set(_data, 
-			     Math.round(_distance_position) * first_slice_size);
+	if (_dimInequalities){
+	    var oldCols = first_image[_i]['columns'];
+	    var oldRows = first_image[_i]['rows'];
+	    var counter = 0;
+	    // Create the new image buffer with the max dimensions,
+	    // 'filling' each value with 0
+	    var newData = goog.array.repeat(0, _maxRows * _maxCols); 
+	    // Allows for centering of the image vertically and horizontally
+	    var startColumn = Math.round((_maxCols - oldCols)/2);
+	    var endColumn = oldCols + startColumn;
+	    var startRow = Math.round((_maxRows - oldRows)/2);
+	    var endRow = oldRows + startRow;
+	    //
+	    // Fill the the center of the empty data witht the image
+	    //
+	    var i, j;
+	    for (i = startRow; i < endRow; i++){
+		for (j = startColumn; j < endColumn; j++){
+		    newData[_maxCols * i + j] = _data[counter];
+		    counter++;
+		}
+	    }
+	    _data = newData;
+	}
+	
+	//
+	// We can't have decimals with allocating the buffer array.
+	//
+	first_image_data.set(
+	    _data, Math.round(_distance_position) * first_slice_size);
 
 	//************************************
 	//
@@ -650,10 +735,40 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     // colums is index 0
       // rows is index 1
       //alert(first_image_expected_nb_slices)
-    object._dimensions = [first_image[0]['columns'], 
-	first_image[0]['rows'], first_image_expected_nb_slices];
-    volumeAttributes.dimensions = object._dimensions;
 
+    object._dimensions = [
+	first_image[0]['columns'], 
+	first_image[0]['rows'], 
+	first_image_expected_nb_slices];
+
+
+      //************************************
+      //
+      // Moka/NRG addition (start)
+      //
+      //------------------------------------
+      // Explanation of addition: 
+      //
+      // If there are dimensional inequalities, we have to 
+      // adjust the volume's dimenensions as well to fit the maximums.
+      //************************************
+      if (_dimInequalities){
+	  //window.console.log('Changing image dimensions from:\n', 
+	  //object._dimensions);
+	  object._dimensions = [
+	      _maxCols, 
+	      _maxRows,
+	      first_image_expected_nb_slices];
+	  //window.console.log('to:\n', object._dimensions)
+      }
+      //************************************
+      //
+      // Moka/NRG change (end)
+      //
+      //************************************
+
+
+    volumeAttributes.dimensions = object._dimensions;
       
 
     // get the min and max intensities
@@ -871,8 +986,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
               goog.vec.Mat4.setRowValues(IJKToRAS, 2,0,0,1,_origin[2]);
               goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);   
 
-
 	      if(object['reslicing'].toString() == 'false'){
+
 		  var _pureOrthoTransform = goog.vec.Mat4.createFloat32();
 		  goog.vec.Mat4.setRowValues(_pureOrthoTransform, 0,-1,0,0,0);
 		  goog.vec.Mat4.setRowValues(_pureOrthoTransform, 1,-0,-1,-0,0);
@@ -880,10 +995,12 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		  goog.vec.Mat4.setRowValues(_pureOrthoTransform, 3,0,0,0,1);   
 		  goog.vec.Mat4.setRowValues(_pureOrthoTransform, 3,0,0,0,1);
 		  object[X.volume.REORIENT_TRANSFORM_KEY] = _pureOrthoTransform;
+		  
 	      }
           }
           else {
-              window.console.log("Unkown ordering mode - returning: " + _ordering);
+              window.console.log("Unkown ordering mode - returning: " 
+				 + _ordering);
 	  }
       }
       //************************************
@@ -1070,6 +1187,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		  (first_image.length + 1);
 	  }
 	  else if (_transformedDims[1] == object._dimensions[2]){
+
 	      //
 	      // Store orientation
 	      //
@@ -1102,7 +1220,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      //
 	      // Adjust the RASSpacing
 	      //
-	      volumeAttributes.RASSpacing[2] = volumeAttributes.RASDimensions[2] / 
+	      volumeAttributes.RASSpacing[2] = 
+		  volumeAttributes.RASDimensions[2] / 
 		  (first_image.length + 1);
 
 	      //
@@ -1110,12 +1229,15 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      //
 	      volumeAttributes.RASOrigin[2] -= 
 		  first_image[0]['pixel_spacing'][2];
-	  }
+	  } 
+
+
+
 	  //
 	  // Output messages as necessary
 	  //
 	  var _msg = 
-	      "\n\nAssessed volume orientation: " + 
+	      "Assessed volume orientation: " + 
 	      object[X.volume.ORIENTATION_KEY] + '\n' +
 	      "XTK Modifications may be applied to restore " + 
 	      "acquired properties."
@@ -1417,7 +1539,6 @@ We would want to skip this (0012, 0064)
 		  for (; i < len; i++){
 		      if ((_tagGroup === _skippables.LEI[i][0]) && 
 			  (_tagElement === _skippables.LEI[i][1])){
-			  //window.console.log("\n\nPREVENING SKIP FOR NOW\n\n");
 			  _skipCurrent = true;
 			  break;
 		      }
@@ -1732,8 +1853,7 @@ We would want to skip this (0012, 0064)
     _data = this.scan('uchar', slice['columns'] * slice['rows']);
     break;
   case 16:
-    _data = this.scan('ushort', slice['columns'] * slice['rows']);
-
+     _data = this.scan('ushort', slice['columns'] * slice['rows']);
     break;
   case 32:
     _data = this.scan('uint', slice['columns'] * slice['rows']);
