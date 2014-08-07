@@ -365,6 +365,7 @@ xiv.start.prototype.begin = function() {
     // Demo load chain
     //
     if (this.currState_ == xiv.start.States.DEMO){
+	xiv.MODE = 'demo';
 	//
 	// Remove the popup (we don't need it)
 	//
