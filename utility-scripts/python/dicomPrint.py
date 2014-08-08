@@ -2,7 +2,7 @@ import dicom
 import os
 
 DICOM_FILE_PATH = \
-   "/Users/sunilkumar/Downloads/scans 11/8_T1 SPIN ECHO/DICOM"
+   "/Users/sunilkumar/Downloads/scans 20/1_3 Plane Localizer/DICOM"
 
 
 
@@ -23,7 +23,9 @@ def main():
     for f in files:
         dicomFiles.append(dicom.read_file(f))
 
-    print dicomFiles[len(dicomFiles) -1]
+    for d in dicomFiles:
+        print d
+        print "<<End>>\n\n"
 
 
 

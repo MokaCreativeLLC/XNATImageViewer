@@ -1861,6 +1861,16 @@ X.volume.ORIENTATION_KEY = 'or_' +
 goog.exportSymbol('X.volume.ORIENTATION_KEY', 
 		  X.volume.ORIENTATION_KEY);
 
+
+
+/**
+ * @expose
+ */
+X.volume.SINGLE_FRAME_SCAN = 'sf_' + 
+    goog.string.createUniqueString();
+goog.exportSymbol('X.volume.SINGLE_FRAME_SCAN', 
+		  X.volume.SINGLE_FRAME_SCAN);
+
 //***************************************************************************
 // Moka / NRG Addition (end)
 //***************************************************************************
