@@ -670,26 +670,6 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     this.InteractorHandler_.applyAutoLevel();
 
     
-    //
-    // Set the layout based the orientation of the Volume
-    //
-    if (xiv.MODE != 'demo'){
-	// 
-	// Prioritize the volume's assessed orientation first
-	//
-	if (goog.isDefAndNotNull(this.Renderer_.
-		getSelectedVolume()[X.volume.ORIENTATION_KEY])){
-	    this.setLayout(goog.string.toTitleCase(
-		this.Renderer_.getSelectedVolume()[X.volume.ORIENTATION_KEY]));
-	} 
-	//
-	// Otherwise, refer to the stored orientation via XNAT
-	//
-	else if (goog.isDefAndNotNull(this.ViewableTrees_[0].getOrientation())){
-	    this.setLayout(this.ViewableTrees_[0].getOrientation());
-	}
-    }
-
     var fadeIns = [
 	this.menus_.LEFT,
 	this.LayoutMenu_.getElement(), 
@@ -697,12 +677,62 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 
     fadeIns = goog.array.concat(
 	fadeIns, 
-	this.Dialogs_.getVisibleDialogElements(),
-	this.LayoutHandler_.getMasterInteractorElements()
+	this.Dialogs_.getVisibleDialogElements()
     );
 
     //var fadeOuts = [];
     var fadeOuts = [this.ProgressBarPanel_.getElement()];
+
+
+    //
+    // Set the layout based the orientation of the Volume
+    //
+    if (xiv.MODE != 'demo'){
+
+	var vol = this.Renderer_.getSelectedVolume();
+
+	//
+	// Single frame scans always default to transverse
+	//
+	if (vol[X.volume.SINGLE_FRAME_SCAN] == true){
+	    this.setLayout('Transverse');
+
+	    //
+	    // remove all interactors except zoom
+	    //
+	    var inters = this.LayoutHandler_.getMasterInteractorElements()
+	    goog.array.forEach(inters, function(inter){
+		if (inter.id.indexOf('ZoomDisplay') == -1){
+		    inter.style.visibility = 'hidden';
+		}
+	    })
+	    
+	    //
+	    // Hide layout menu
+	    //
+	    goog.dom.removeNode(this.LayoutMenu_.getElement());
+	    
+	} 
+
+	//
+	//  Prioritize the layout to the stored orientation via XNAT
+	//
+	else if (goog.isDefAndNotNull(this.ViewableTrees_[0].getOrientation())){
+	    this.setLayout(this.ViewableTrees_[0].getOrientation());
+	}
+	// 
+	// Otherwise, refer to the volume's assessed orientation
+	//
+	else if (goog.isDefAndNotNull(vol[X.volume.ORIENTATION_KEY])){
+	    this.setLayout(goog.string.toTitleCase(
+		this.Renderer_.getSelectedVolume()[X.volume.ORIENTATION_KEY]));
+	} 
+
+	if (!vol[X.volume.SINGLE_FRAME_SCAN]){
+	    fadeIns.push(
+		this.LayoutHandler_.getMasterInteractorElements());
+	}
+    }
    
     var fadeInsStartOps = [];
     var fadeInsEndOps = [];

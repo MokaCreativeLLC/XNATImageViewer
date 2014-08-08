@@ -210,7 +210,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       window.console.log("Could not resolve the ordering mode");
 
     }
-
+ 
 
       //************************************
       //
@@ -227,19 +227,28 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       //************************************
       if (_ordering == 'image_position_patient' && first_image_stacks < 5){
 	  var i = 0;
-	  for(; i<first_image_stacks-1; i++){
-	      window.console.log(
-		  first_image[i]['dist'], first_image[i+1]['dist'])
-	      if ((first_image[i]['dist'] - first_image[i+1]['dist']) < 0.01){
-		  
-		  window.console.log('Warning: Although series was initially' +
-				     ' ordered by "image_position_patient",' + 
-				     ' positional overlaps were found.' + 
-				     '\nSwitching to "instance_number"' + 
-				     ' ordering as a result.');
-		  _ordering = 'instance_number';
-		  first_image.sort(function(a,b){
-		      return a["instance_number"]-b["instance_number"]});
+	  var _switchToInstanceNumberOrdering = function(){
+	      window.console.log('Warning: Although series was initially' +
+				 ' ordered by "image_position_patient",' + 
+				 ' positional overlaps were found.' + 
+				 '\nSwitching to "instance_number"' + 
+				 ' ordering as a result.');
+	      _ordering = 'instance_number';
+	  }
+	  if (first_image_stacks == 1){
+	      _switchToInstanceNumberOrdering();
+	      object[X.volume.SINGLE_FRAME_SCAN] = true;
+	  }
+	  else {
+	      for(; i<first_image_stacks-1; i++){
+		  //window.console.log(
+		  //first_image[i]['dist'], first_image[i+1]['dist'])
+		  if ((first_image[i]['dist'] - first_image[i+1]['dist']) 
+		      < 0.01){
+		      _switchToInstanceNumberOrdering();
+		      first_image.sort(function(a,b){
+			  return a["instance_number"]-b["instance_number"]});
+		  }
 	      }
 	  }
       }
@@ -261,7 +270,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       // For debugging purposes.
       //
       //************************************
-      var _deb = true;
+      var _deb = false;
       if (_deb){
 	  var i = 0;
 	  var len = first_image.length;
@@ -619,6 +628,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 
     var first_image_data = null;
 
+      window.console.log(first_image[0].bits_allocated);
       // create data container
     switch (first_image[0].bits_allocated) {
       case 8:
@@ -899,8 +909,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	  //
 	  // IMAGE_POSITION_PATIENT or FORCED_INSTANCE
 	  //
-	  if (_ordering == 'image_position_patient' || 
-	      first_image['forced_instance_ordering']){
+	  if ((_ordering == 'image_position_patient' || 
+	       first_image['forced_instance_ordering'])){
 
 
 	      //
@@ -1481,6 +1491,8 @@ X.parserDCM.prototype.parseStream = function(data, object) {
     var _skippables = {};
     // For DICOMs w/ Little Endian Explicit
     _skippables.LEE = [
+	[0x0008, 0x1140],
+	[0x0009, 0x7770],
 	[0x0088, 0x0200],	
     ]
     // For DIOCMs w/ Little Endian Implcit
@@ -1502,11 +1514,11 @@ X.parserDCM.prototype.parseStream = function(data, object) {
 
   while (_bytePointer <  _bytes.length) {
 
-    _tagGroup = _bytes[_bytePointer++];
-    _tagElement = _bytes[_bytePointer++];
+      _tagGroup = _bytes[_bytePointer++];
+      _tagElement = _bytes[_bytePointer++];
 
-    _VR = _bytes[_bytePointer++];
-    _VL = _bytes[_bytePointer++];
+      _VR = _bytes[_bytePointer++];
+      _VL = _bytes[_bytePointer++];
 
 
       // Implicit VR Little Endian case
@@ -1584,8 +1596,9 @@ We would want to skip this (0012, 0064)
      //************************************
       _skipCurrent = false;
       if (_tagGroup !== undefined && _tagElement !== undefined){
-	  //window.console.log("Current memory address ", '(0x' + _tagGroup.toString(16) + ', 0x' 
-	      //+ _tagElement.toString(16) +')');
+
+	  /*
+	   */
 	  //window.console.log(slice['transfer_syntax_uid']);
 	  switch(slice['transfer_syntax_uid']){
 
@@ -1601,8 +1614,6 @@ We would want to skip this (0012, 0064)
 		      break;
 		  }
 	      }
-
-
 	      break;
 	      
 	  case '1.2.840.10008.1.2.2':
@@ -1625,13 +1636,63 @@ We would want to skip this (0012, 0064)
 	      break;
 	  }
 
+	  /*
+	  window.console.log(
+	      "Current memory address ", _dicomType, '(0x' 
+		  + _tagGroup.toString(16) + ', 0x' 
+		  + _tagElement.toString(16) +')');
+		  */
+	  //window.console.log('DICOM type:', _dicomType);
 	  
 	  if (_skipCurrent){
 	      var _msg = "parserDCM.js: Identified " + _dicomType + 
 		  ". Skipping DICOM adddress " +  '(0x' +
 		  _tagGroup.toString(16) + ', 0x' +
-		  _tagElement.toString(16) +')';
+		  _tagElement.toString(16) +')' + 
+		  _tagGroup + ' ' +  _tagElement;
 	      window.console.log(_msg);
+
+	      if ((_tagGroup == 0x0008 && _tagElement == 0x1140) || 
+		  (_tagGroup == 0x0009 && _tagElement == 0x7770)){
+		  var c = 0;
+		  while (1) {
+		      _newTagGroup = _bytes[_bytePointer++];
+		      //_newTagElement = _bytes[_bytePointer++];
+		      var _msg = "\t" + c + ": " + 
+			  "Skipping DICOM adddress " +  '(0x' +
+			  _newTagGroup.toString(16) + ')' + 
+			  _newTagGroup;
+		      //window.console.log(_msg);
+
+		      var _diff = parseInt(_newTagGroup.toString(16), 10) - 
+			  parseInt(_tagGroup.toString(16), 10);
+		      
+		      if (_diff < 3 && _diff > 0){
+
+			  _newTagElement = _bytes[_bytePointer++]
+			  var _msg = "\t\tPossibleBreak?: \n" +
+			      "\t\t" +
+			      "Skipping DICOM adddress " +  '(0x' +
+			      _newTagGroup.toString(16) + ', 0x' +
+			      _newTagElement.toString(16) +')' + 
+			      _newTagGroup + ' ' +  _newTagElement;
+			  //window.console.log(_msg);
+
+			  if (parseInt(_newTagElement.toString(16), 10) == 10){
+			      _bytePointer--;
+			      _bytePointer--;
+			      break;
+			  }
+			  else {
+			      _bytePointer--;
+			  }
+			  //_bytePointer--;
+			  //_bytePointer--;
+			  //c = -1;
+		      }
+		      c++;
+		  }
+	      }
 	      continue;
 	  }
       }
@@ -1940,7 +2001,8 @@ We would want to skip this (0012, 0064)
     _data = this.scan('uint', slice['columns'] * slice['rows']);
     break;
   }
-
+    
+    //window.console.log("END\n\n");
   slice['data'] = _data;
 
   object.slices.push(slice);
