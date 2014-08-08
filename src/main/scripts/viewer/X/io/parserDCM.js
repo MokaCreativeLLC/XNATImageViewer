@@ -1477,14 +1477,13 @@ X.parserDCM.prototype.parseStream = function(data, object) {
     var _skipCurrent = false;
     var _dicomTypeLogged = false;
     var _dicomType;
-    var _skippables = {};
 
+    var _skippables = {};
+    // For DICOMs w/ Little Endian Explicit
     _skippables.LEE = [
-	[0x0088, 0x0200],
-	//[0x0012, 0x0064],
-	//[0x0023, 0x1080],
-	//[0x0040, 0x0275],	
+	[0x0088, 0x0200],	
     ]
+    // For DIOCMs w/ Little Endian Implcit
     _skippables.LEI = [
 	[0x0012, 0x0064], 
 	[0x0023, 0x1080],

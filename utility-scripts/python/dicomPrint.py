@@ -2,7 +2,7 @@ import dicom
 import os
 
 DICOM_FILE_PATH = \
-   "/Users/sunilkumar/Downloads/scans 18/12_ep2d_diff_mddw_4mm_ColFA/secondary"
+   "/Users/sunilkumar/Downloads/scans 11/8_T1 SPIN ECHO/DICOM"
 
 
 
