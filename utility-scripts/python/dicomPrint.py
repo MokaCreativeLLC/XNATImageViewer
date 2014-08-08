@@ -1,7 +1,8 @@
 import dicom
 import os
 
-DICOM_FILE_PATH = "/Users/sunilkumar/Downloads/scans 15/3_SAG T1 FLAIR/DICOM"
+DICOM_FILE_PATH = \
+   "/Users/sunilkumar/Downloads/scans 11/8_T1 SPIN ECHO/DICOM"
 
 
 
