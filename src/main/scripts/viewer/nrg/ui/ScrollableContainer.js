@@ -206,21 +206,9 @@ nrg.ui.ScrollableContainer.prototype.setSliderStyles_ = function(){
 
     //this.Slider.addThumbHoverClass(
     //nrg.ui.ScrollableContainer.CSS.SLIDER_THUMB_HOVERED);
-    
-    
+   
     this.Slider.animateOnHover(
 	nrg.ui.ScrollableContainer.CSS.SLIDER_THUMB_HOVERED);
-
-    /**
-       {
-	'background-color': 'rgb(240,240,240)',
-	'width': 10,
-	'border-radius': 5,
-	'left': 0
-    }
-    */
-    //this.Slider.addTrackHoverClass(
-    //nrg.ui.ScrollableContainer.CSS.SLIDER_TRACK_HOVERED);
 }
 
 
@@ -238,6 +226,7 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
     var scrollAreaHeight = goog.style.getSize(this.scrollArea_).height
     var beforeRange = [this.Slider.getMinimum(), this.Slider.getMaximum()];
     var afterRange = [0, scrollAreaHeight - widgetHeight];
+    var sliderThumb = this.Slider.getThumb()
 
 
     //window.console.log("MAP SLIDER TO CONTENTS!", widgetHeight, 
@@ -256,25 +245,12 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 	// Show the slider
 	//
 	this.Slider.getElement().style.opacity = 1;
-
-	var height = Math.round(
+ 
+	var newThumbHeight = Math.round(
 	    widgetHeight * (widgetHeight / scrollAreaHeight));
-	var thumbHeight = goog.style.getSize(this.Slider.getThumb()).height;
 
-	//window.console.log(height, thumbHeight);
-	if (this.Slider.animatesOnHover() && (height != thumbHeight)){
-	    //window.console.log("\n\nhere");
-	    this.Slider.animateOnHover(
-		nrg.ui.ScrollableContainer.CSS.SLIDER_THUMB_HOVERED);
-	}
+	sliderThumb.style.height = newThumbHeight.toString() + 'px';
 
-
-	// The slider thumbnail's height is a function of
-	// how much scroll area is hidden.  Want to make sure the height
-	// is proportional to the contents.
-	nrg.style.setStyle(this.Slider.getThumb(), {
-	    'height': height
-	});
 
 	//window.console.log("\n\nmapslider", widgetHeight, scrollAreaHeight);
 	//window.console.log("Range", beforeRange, afterRange);
@@ -291,9 +267,9 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 	var remap = nrg.convert.remap1D(sendVal, beforeRange, afterRange);
 	var t = remap['remappedVal'];
 
-	nrg.style.setStyle( this.scrollArea_, {'top': -t});	
-
-	//this.Slider.resetHoverAnims();
+	//nrg.style.setStyle( this.scrollArea_, {'top': -t});
+	this.scrollArea_.style.top = (-t).toString() + 'px';
+	//window.console.log(this.Slider.getThumb().style.top);
 	
 
     //------------------
@@ -319,7 +295,7 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
  */
 nrg.ui.ScrollableContainer.prototype.setSliderEvents_ = function() {
     goog.events.listen(this.Slider, nrg.ui.Slider.EventType.SLIDE,
-				   this.mapSliderToContents.bind(this));  
+		       this.mapSliderToContents.bind(this));  
     this.Slider.bindToMouseWheel(this.getElement());
 }
 

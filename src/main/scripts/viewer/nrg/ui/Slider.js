@@ -76,6 +76,8 @@ goog.exportSymbol('nrg.ui.Slider', nrg.ui.Slider);
  */
 nrg.ui.Slider.EventType = {
   SLIDE: goog.events.getUniqueId('slide'),
+  START_SLIDE: goog.events.getUniqueId('start-slide'),
+  END_SLIDE: goog.events.getUniqueId('end-slide'),
   MOUSEWHEEL: goog.events.getUniqueId('mousewheel'),
 };
 
@@ -555,13 +557,13 @@ nrg.ui.Slider.prototype.animateOnHover = function(targetCSS) {
 
     this.animateOnHover_ = true;
     this.thumbAnimTargetCSS_ = targetCSS;
+    //window.console.log("THUMB ANIM", this.thumbAnimTargetCSS_);
 
 
     //
     // Get the start and end dimensions
     //
     var thumb = this.getThumb();
-
 
 
     this.baseHoverStartDims_ = nrg.fx.getAnimationDims(thumb);
@@ -699,6 +701,7 @@ nrg.ui.Slider.prototype.initEvents_ = function() {
  */
 nrg.ui.Slider.prototype.onChange_ =  function (e) {
     // stop propataion
+    //window.console.log(e);
     e.stopPropagation();
 
     //
@@ -823,12 +826,14 @@ nrg.ui.Slider.prototype.onMouseEnter_ =  function(e){
     //window.console.log("mouseEnter");
     this.isMouseOver_ = true;
 
-    if (!this.animateOnHover_){
-	this.applyTrackHoverCSS_();
-	this.applyThumbHoverCSS_();
-    }
-    else{
-	this.animateHover_(this.baseHoverEndDims_);
+    if (!this.isSliding_){
+	if (this.animateOnHover_){
+	    this.animateHover_(this.baseHoverEndDims_);
+	}
+	else {
+	    this.applyTrackHoverCSS_();
+	    this.applyThumbHoverCSS_();
+	}
     }
 }
 
@@ -841,14 +846,17 @@ nrg.ui.Slider.prototype.onMouseEnter_ =  function(e){
 nrg.ui.Slider.prototype.onMouseLeave_ =  function(e){
     //window.console.log("\n\nmouseLeave");
     this.isMouseOver_ = false;
+    //window.console.log(this.animateOnHover_, this.isSliding_);
 
-    if (this.animateOnHover_ && !this.isSliding_) {
-	//window.console.log('not sliding', this.baseHoverStartDims_);
-	this.animateHover_(this.baseHoverStartDims_);  
-    } 
-    else if (!this.isSliding_){
-	this.removeThumbHoverClasses_();
-	this.removeTrackHoverClasses_(); 
+    if (!this.isSliding_){
+	if (this.animateOnHover_) {
+	    //window.console.log('not sliding', this.baseHoverStartDims_);
+	    this.animateHover_(this.baseHoverStartDims_);  
+	} 
+	else {
+	    this.removeThumbHoverClasses_();
+	    this.removeTrackHoverClasses_(); 
+	}
     }
 }
 
@@ -907,19 +915,14 @@ nrg.ui.Slider.prototype.onThumbnailDragStart_ = function (e) {
 /**
  * Event as described.
  * @param {!goog.events.EventType} e The event.
+
  * @private
  */
 nrg.ui.Slider.prototype.onThumbnailDragEnd_ = function (e) {
     this.isSliding_ = false;
-
+    //window.console.log("DRAG END", this.isMouseOver_);
     if (!this.isMouseOver_){
-	if (this.animateOnHover_) {
-	    this.animateHover_(this.baseHoverStartDims_);  
-	} 
-	else {
-	    this.removeThumbHoverClasses_();
-	    this.removeTrackHoverClasses_();  
-	}
+	this.onMouseLeave_();
     }
 }
 

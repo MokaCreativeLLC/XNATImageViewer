@@ -58,7 +58,7 @@ nrg.ui.Thumbnail = function () {
     this.setEvents_();
     this.setClasses_();
     this.setHoverListeners_(true);
-    this.onMouseOut();    
+    this.onMouseLeave();    
 }
 goog.inherits(nrg.ui.Thumbnail, nrg.ui.Component);
 goog.exportSymbol('nrg.ui.Thumbnail', nrg.ui.Thumbnail);
@@ -71,8 +71,6 @@ goog.exportSymbol('nrg.ui.Thumbnail', nrg.ui.Thumbnail);
  * @enum {string}
  */
 nrg.ui.Thumbnail.EventType = {
-  MOUSEOVER: goog.events.getUniqueId('mouseover'),
-  MOUSEOUT: goog.events.getUniqueId('mouseout'),
   CLICK: goog.events.getUniqueId('click'),
 };
 
@@ -395,7 +393,7 @@ nrg.ui.Thumbnail.prototype.repositionHoverable = function(){
  * hovers over the nrg.ui.Thumbnail.
  * @private
  */
-nrg.ui.Thumbnail.prototype.onMouseOver = function() {
+nrg.ui.Thumbnail.prototype.onMouseEnter = function() {
 
     var hoverNode = this.getHoverable();
     goog.dom.classes.add(hoverNode, 
@@ -407,11 +405,6 @@ nrg.ui.Thumbnail.prototype.onMouseOver = function() {
     if (hoverNode !== this.getElement()) {
 	this.repositionHoverable();
     }
-
-    //
-    // Dispatch event
-    //
-    this.dispatchEvent(nrg.ui.Thumbnail.EventType.MOUSEOVER);
 }
 
 
@@ -420,7 +413,7 @@ nrg.ui.Thumbnail.prototype.onMouseOver = function() {
  * nrg.ui.Thumbnail.
  * @public
  */
-nrg.ui.Thumbnail.prototype.onMouseOut = function() {
+nrg.ui.Thumbnail.prototype.onMouseLeave = function() {
     //window.console.log("MOUSEPUT");
     var hoverNode =  this.getHoverable();
     if (hoverNode && hoverNode.childNodes.length > 1) { 
@@ -437,11 +430,6 @@ nrg.ui.Thumbnail.prototype.onMouseOut = function() {
 	    'hidden' : 'visible';
 	
     }
-
-    //
-    // Dispatch event
-    //
-    this.dispatchEvent(nrg.ui.Thumbnail.EventType.MOUSEOUT);
 }
 
 
@@ -456,18 +444,18 @@ nrg.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
     var hoverNode =  this.getHoverable();
     if (set) {
 	goog.events.listen(hoverNode, 
-			   goog.events.EventType.MOUSEOVER, 
-			   this.onMouseOver.bind(this));
+			   goog.events.EventType.MOUSEENTER, 
+			   this.onMouseEnter.bind(this));
 	goog.events.listen(hoverNode, 
-			   goog.events.EventType.MOUSEOUT, 
-			   this.onMouseOut.bind(this));
+			   goog.events.EventType.MOUSELEAVE, 
+			   this.onMouseLeave.bind(this));
     } else {
 	goog.events.unlisten(hoverNode, 
-			     goog.events.EventType.MOUSEOVER, 
-			     this.onMouseOver.bind(this));
+			     goog.events.EventType.MOUSEENTER, 
+			     this.onMouseEnter.bind(this));
 	goog.events.unlisten(hoverNode, 
-			     goog.events.EventType.MOUSEOUT, 
-			     this.onMouseOut.bind(this));
+			     goog.events.EventType.MOUSELEAVE, 
+			     this.onMouseLeave.bind(this));
     }
 }
 
@@ -572,9 +560,9 @@ goog.exportSymbol('nrg.ui.Thumbnail.prototype.updateStyle',
 	nrg.ui.Thumbnail.prototype.updateStyle);
 goog.exportSymbol('nrg.ui.Thumbnail.prototype.repositionHoverable',
 	nrg.ui.Thumbnail.prototype.repositionHoverable);
-goog.exportSymbol('nrg.ui.Thumbnail.prototype.onMouseOver',
-	nrg.ui.Thumbnail.prototype.onMouseOver);
-goog.exportSymbol('nrg.ui.Thumbnail.prototype.onMouseOut',
-	nrg.ui.Thumbnail.prototype.onMouseOut);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.onMouseEnter',
+	nrg.ui.Thumbnail.prototype.onMouseEnter);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.onMouseLeave',
+	nrg.ui.Thumbnail.prototype.onMouseLeave);
 goog.exportSymbol('nrg.ui.Thumbnail.prototype.disposeInternal',
 	nrg.ui.Thumbnail.prototype.disposeInternal);
