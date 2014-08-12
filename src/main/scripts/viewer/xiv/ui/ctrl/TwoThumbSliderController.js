@@ -169,6 +169,20 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.update = function() {
  */
 xiv.ui.ctrl.TwoThumbSliderController.prototype.updateSliderThumbPositions_ = 
 function() {
+
+
+    var xObj = this.getXObj();
+
+    if (xObj['min'] != this.slider_.getMinimum()){
+	this.slider_.setMinimum(-1);
+	this.slider_.setValue(this.slider_.getMinimum());
+    }
+    if (xObj['max'] != this.slider_.getMaximum()){
+	this.slider_.setMaximum(xObj['max']);
+	this.slider_.setExtent(this.slider_.getMaximum());
+    }
+
+    
     //
     // IMPORTANT!!!  This exists because the slider's render function doesn't
     // change the position of the thumbs!!
@@ -298,7 +312,7 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.createExtentInput_ = function() {
  * @private
  */
 xiv.ui.ctrl.TwoThumbSliderController.prototype.onValueInput_ = function(e){
-    window.console.log(e, this.valueInput_);
+    //window.console.log(e, this.valueInput_);
     var val = parseInt(this.valueInput_.value);
     this.slider_.setValue(val);
 }

@@ -21,7 +21,7 @@
 
 .xiv-ui-progressbarpanel-progbarholder  {
     position: absolute;
-    height: 3px; 
+    height: 1px; 
     width: 95%;
     top: calc(50% - 1.5px);
     background-color: rgba(50,50,50,1);

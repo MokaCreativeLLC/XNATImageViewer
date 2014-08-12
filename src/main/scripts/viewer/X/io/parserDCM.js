@@ -674,7 +674,10 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     // 1232414 -> third slice
 
 
-
+      //
+      // Moka
+      //
+      var _maxVal = 0;
     for (var _i = 0; _i < first_image_stacks; _i++) {
       // get data
       var _data = first_image[_i].data;
@@ -834,21 +837,33 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     var min = min_max[0];
     var max = min_max[1];
 
+
+      
     // attach the scalar range to the volume
     volumeAttributes.min = object._min = object._windowLow = min;
     volumeAttributes.max = object._max = object._windowHigh = max;
     // .. and set the default threshold
     // only if the threshold was not already set
-    if (object._lowerThreshold == -Infinity) {
 
-      object._lowerThreshold = min;
+      //
+      // Moka / NRG Change (start)
+      //
+      /*
+	if (object._lowerThreshold == -Infinity) {
+	object._lowerThreshold = min;
+	}
+	if (object._upperThreshold == Infinity) {
+	object._upperThreshold = max;
+	}
+      */
+      if (object._lowerThreshold != min) {
+	  object._lowerThreshold = min;
+      }
+      if (object._upperThreshold != max) {
+	  object._upperThreshold = max;	  
+      }
 
-    }
-    if (object._upperThreshold == Infinity) {
-
-      object._upperThreshold = max;
-
-    }
+      //window.console.log('THRESH', object._upperThreshold);
 
     // Slices are ordered so
     // volume origin is the first slice position

@@ -71,7 +71,7 @@
     position: absolute;
     top: 0px;
     border: solid 1px rgb(100,100,100);
-    width: 60px;
+    width: 55px;
     font-size: 10px;
     background-color: rgba(0,0,0,0);
     color: white;
@@ -81,10 +81,10 @@
 
 
 .xiv-ui-ctrl-twothumbslidercontroller-value-input {
-    left: calc(100% - 130px);
+    left: calc(100% - 140px);
 }
 
 
 .xiv-ui-ctrl-twothumbslidercontroller-extent-input {
-    left: calc(100% - 61px);
+    left: calc(100% - 68px);
 }
