@@ -172,17 +172,32 @@ function() {
 
 
     var xObj = this.getXObj();
+    if (xObj['min'] != this.slider_.getMinimum() || 
+	xObj['max'] != this.slider_.getMaximum()){
 
-    if (xObj['min'] != this.slider_.getMinimum()){
-	//this.slider_.setMinimum(-1);
-	//this.slider_.setValue(this.slider_.getMinimum());
-    }
-    if (xObj['max'] != this.slider_.getMaximum()){
-	//this.slider_.setMaximum(xObj['max']);
-	//this.slider_.setExtent(this.slider_.getMaximum());
+	/*
+	this.slider_.setMinimum(-1);
+	this.slider_.setValue(0);
+  
+	window.console.log("HERE 2");
+	this.slider_.setMaximum(xObj['max']);
+	this.slider_.setExtent(this.slider_.getMaximum());
+	*/
+
+	this.slider_.setMinimum(xObj['min']);
+	this.slider_.setMaximum(xObj['max']);
+	this.slider_.setValueAndExtent(xObj['max'] - xObj['min']);
+	this.slider_.setValue(xObj['min']);
+	this.slider_.setStep(1);
+
     }
 
-    
+    /*
+    window.console.log("MIN MAZX", xObj['min'], xObj['max'], 
+		      this.slider_.getMinimum(), this.slider_.getMaximum(),
+		      this.slider_.getValue(), this.slider_.getExtent());
+		    */
+		      
     //
     // IMPORTANT!!!  This exists because the slider's render function doesn't
     // change the position of the thumbs!!
