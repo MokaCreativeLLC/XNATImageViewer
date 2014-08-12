@@ -46,7 +46,7 @@ xiv.ui.ctrl.VolumeController3D.ID_PREFIX =  'xiv.ui.ctrl.VolumeController3D';
 /**
  * @const
  */
-xiv.ui.ctrl.VolumeController3D.DEFAULT_THRESHOLD = 1000;
+xiv.ui.ctrl.VolumeController3D.DEFAULT_THRESHOLD = 10000;
 
 
 
