@@ -174,12 +174,12 @@ function() {
     var xObj = this.getXObj();
 
     if (xObj['min'] != this.slider_.getMinimum()){
-	this.slider_.setMinimum(-1);
-	this.slider_.setValue(this.slider_.getMinimum());
+	//this.slider_.setMinimum(-1);
+	//this.slider_.setValue(this.slider_.getMinimum());
     }
     if (xObj['max'] != this.slider_.getMaximum()){
-	this.slider_.setMaximum(xObj['max']);
-	this.slider_.setExtent(this.slider_.getMaximum());
+	//this.slider_.setMaximum(xObj['max']);
+	//this.slider_.setExtent(this.slider_.getMaximum());
     }
 
     
