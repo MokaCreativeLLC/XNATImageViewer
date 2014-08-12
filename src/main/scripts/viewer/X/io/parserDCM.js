@@ -836,7 +836,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     var min_max = this.arrayMinMax(first_image_data);
     var min = min_max[0];
     var max = min_max[1];
-
+      window.console.log("MIN MAZX", min, max);
 
       
     // attach the scalar range to the volume

@@ -162,7 +162,7 @@ xiv.ui.ctrl.VolumeController3D.prototype.add_threshold = function(xObj) {
     thresholdSlider.setMaximum(upperThresh);
     thresholdSlider.setValueAndExtent(upperThresh - lowerThresh);
     thresholdSlider.setValue(lowerThresh);
-    thresholdSlider.setStep(10);
+    thresholdSlider.setStep(1);
 
     //
     // IMPORTANT!!!!! DO NOT ERASE!!
