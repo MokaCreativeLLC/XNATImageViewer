@@ -58,6 +58,17 @@ nrg.ui.ThumbnailGallery.CSS_SUFFIX = {
 
 
 /**
+ * Event types.
+ * @enum {string}
+ */
+nrg.ui.ThumbnailGallery.EventType = {
+  THUMBENTER: goog.events.getUniqueId('thumbenter'),
+  THUMBLEAVE: goog.events.getUniqueId('thumbleave'),
+};
+
+
+
+/**
  * @const
  */
 nrg.ui.ThumbnailGallery.THUMB_SORT_TAG = goog.string.createUniqueString();
@@ -336,29 +347,32 @@ function(thumbnail, opt_folders) {
     this.mapSliderToContents();
 
 
+    var thumbElt = thumbnail.getHoverable();
     //
     // Dispatch mouseover
     //
-    goog.events.listen(thumbnail, 
-		       nrg.ui.Thumbnail.EventType.MOUSEOVER, 
-		       function(e){
-			   this.dispatchEvent({
-			       type: nrg.ui.Thumbnail.EventType.MOUSEOVER,
-			       Thumbnail: e.target
-			   });
-		       }.bind(this))
+    goog.events.listen(
+	thumbElt, 
+	goog.events.EventType.MOUSEENTER, 
+	function(e){
+	    this.dispatchEvent({
+		type: nrg.ui.ThumbnailGallery.EventType.THUMBENTER,
+		Thumbnail: thumbnail
+	    });
+	}.bind(this))
 
     //
     // Dispatch mouseout
     //
-    goog.events.listen(thumbnail, 
-		       nrg.ui.Thumbnail.EventType.MOUSEOUT, 
-		       function(e){
-			   this.dispatchEvent({
-			       type: nrg.ui.Thumbnail.EventType.MOUSEOUT,
-			       Thumbnail: e.target
-			   });
-		       }.bind(this))
+    goog.events.listen(
+	thumbElt, 
+	goog.events.EventType.MOUSELEAVE, 
+	function(e){
+	    this.dispatchEvent({
+		type: nrg.ui.ThumbnailGallery.EventType.THUMBLEAVE,
+		Thumbnail: thumbnail
+	    });
+	}.bind(this))
 }
 
 
@@ -414,11 +428,26 @@ nrg.ui.ThumbnailGallery.prototype.storeMouseCoords_ = function(e){
  */
 nrg.ui.ThumbnailGallery.prototype.clearHoverThumb_ = function(){ 
     goog.object.forEach(this.Thumbs_, function(thumb){
-	thumb.onMouseOut();
+	thumb.onMouseLeave();
     })
     this.storedHoverThumbId_ = null;
 }
 
+
+
+/**
+ * @param {!Element}
+ * @return {Element}
+ * @private
+ */
+nrg.ui.ThumbnailGallery.prototype.getThumbFromElement_ = function(elt){ 
+    var key = '';
+    for (key in this.Thumbs_){
+	if (this.Thumbs_[key].getElement() == elt){
+	    return this.Thumbs_[key];
+	}
+    }
+}
 
 
 /**
@@ -454,7 +483,7 @@ nrg.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(event){
 	//window.console.log(this.Thumbs_);
 	//window.console.log(
 	//this.Thumbs_[this.storedHoverThumbId_].getHoverable())
-	this.Thumbs_[this.storedHoverThumbId_].onMouseOver();
+	this.Thumbs_[this.storedHoverThumbId_].onMouseEnter();
 
     }
     this.Thumbs_[this.storedHoverThumbId_].repositionHoverable();

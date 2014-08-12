@@ -729,8 +729,9 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 	} 
 
 	if (!vol[X.volume.SINGLE_FRAME_SCAN]){
-	    fadeIns.push(
-		this.LayoutHandler_.getMasterInteractorElements());
+
+	    fadeIns = goog.array.concat(fadeIns, 
+		this.LayoutHandler_.getMasterInteractorElements())
 	}
     }
    
@@ -755,6 +756,9 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 				     fadeOutsStartOps);
     var endOps = goog.array.concat(fadeInsEndOps, 
 				   fadeOutsEndOps);
+
+    //window.console.log(fadeElts);
+    //window.console.log(startOps, endOps);
     
     //
     // Show load components (menu)

@@ -1125,12 +1125,12 @@ xiv.ui.Modal.prototype.setThumbnailGalleryEvents_ = function(opt_listenMethod){
     opt_listenMethod = opt_listenMethod || goog.events.listen;
 
     opt_listenMethod(this.ThumbnailGallery_, 
-		     nrg.ui.Thumbnail.EventType.MOUSEOVER,
-		     this.onThumbnailMouseOver_.bind(this));
+		     nrg.ui.ThumbnailGallery.EventType.THUMBENTER,
+		     this.onThumbnailMouseEnter_.bind(this));
 
     opt_listenMethod(this.ThumbnailGallery_, 
-		     nrg.ui.Thumbnail.EventType.MOUSEOUT, 
-		     this.onThumbnailMouseOut_.bind(this));
+		     nrg.ui.ThumbnailGallery.EventType.THUMBLEAVE, 
+		     this.onThumbnailMouseLeave_.bind(this));
 
     opt_listenMethod(this.ThumbnailGallery_, 
 		       xiv.ui.ThumbnailGallery.EventType.THUMBNAIL_CLICK, 
@@ -1156,7 +1156,7 @@ xiv.ui.Modal.prototype.setThumbnailGalleryEvents_ = function(opt_listenMethod){
  * @param {goog.events.Event} e
  * @private
  */
-xiv.ui.Modal.prototype.onThumbnailMouseOver_ = function(e) {
+xiv.ui.Modal.prototype.onThumbnailMouseEnter_ = function(e) {
     this.ViewBoxHandler_.ViewBoxFromVisNode(
 	e.Thumbnail.getViewable(), 
 	function(ViewBox){  
@@ -1171,7 +1171,7 @@ xiv.ui.Modal.prototype.onThumbnailMouseOver_ = function(e) {
  * @param {goog.events.Event} e
  * @private
  */
-xiv.ui.Modal.prototype.onThumbnailMouseOut_ = function(e){
+xiv.ui.Modal.prototype.onThumbnailMouseLeave_ = function(e){
     this.ViewBoxHandler_.ViewBoxFromVisNode(
 	e.Thumbnail.getViewable(), 
 	function(ViewBox){  
