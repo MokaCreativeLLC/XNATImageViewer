@@ -270,17 +270,22 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
       // For debugging purposes.
       //
       //************************************
-      var _deb = false;
+      var _deb = true;
       if (_deb){
 	  var i = 0;
 	  var len = first_image.length;
 	  for (; i<len; i++){
 	      window.console.log(
-		  "Image Position Patient: (Image ",
-		  i, ")",
-		  first_image[i]['image_position_patient'], ' Pixel Spacing:' , 
+		  '\n',
+		  i,
+		  '\nInstance number:',
+		  first_image[i]['instance_number'], 
+		  '\nImage Position Patient:',
+		  first_image[i]['image_position_patient'], 
+		  '\nPixel Spacing:' , 
 		  first_image[i]['pixel_spacing'], 
-	      'Initial Ordering:', _ordering);
+		  '\nInitial Ordering:', 
+		  _ordering);
 	  }
       }
       //************************************
@@ -359,7 +364,6 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      first_image.sort(function(a,b){
 		  return a["instance_number"]-b["instance_number"]});
 
-
 	      //
 	      // Custom tag
 	      //
@@ -373,7 +377,41 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		  "XTK \"image_position_patient\" sorting. " +
 		  "Forcing \"instance_number\" reordering.";
 	      window.console.log(warningStr);
+
+	      //
+	      // Check for overlaps in the instance ordering scheme
+	      //
+	      var j = 0;
+	      var instanceOverlapsFound = false;
+	      for (; j<len-1; j++){
+		  if (Math.abs(first_image[j]['instance_number'] - 
+			       first_image[j+1]['instance_number']) == 0){
+		      instanceOverlapsFound = true;
+		      break;
+		  }
+	      }
+	      
+	      //
+	      // Re-input in the instance data if there were overlaps
+	      //
+	      if (instanceOverlapsFound){
+		  //
+		  // Output warning
+		  //
+		  var warningStr = 
+		      "Warning: After forcing \"instance_number\" ordering " + 
+		      "overlaps were found. " +
+		      "Rewriting \"instance_number\" data for every slice.";
+		  window.console.log(warningStr);
+
+		  for (j=0; j<len; j++){
+		      first_image[j]['instance_number'] = j;
+		  }
+
+	      }
 	  }
+	      
+	  
 
 	  //
 	  // Determine if the 'instance_number's are out of order.
@@ -467,8 +505,8 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		  //window.console.log(_firstPos, _secondPos);
 		  window.console.log(
 		      "Warning: Setting pixel_spacing " + 
-			  "according to image_position_patient even though " + 
-			  "we're using forced_instance_ordering.");
+			  "according to \"image_position_patient\" even " + 
+			  "though \"forced_instance_ordering\" is used.");
 
 		  //var _secondPos = first_image[ 0 ]['image_position_patient'];
 		  var _x = _secondPos[0] - _firstPos[0];
@@ -836,7 +874,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
     var min_max = this.arrayMinMax(first_image_data);
     var min = min_max[0];
     var max = min_max[1];
-      window.console.log("MIN MAZX", min, max);
+      //window.console.log("MIN MAZX", min, max);
 
       
     // attach the scalar range to the volume

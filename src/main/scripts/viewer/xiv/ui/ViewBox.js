@@ -1294,7 +1294,7 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
  * @param {gxnat.vis.ViewableGroups} ViewableSet
  */
 xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
-    var waitForError = true;
+    var waitForError = false;
     if (!waitForError){
 	window.console.log("\n\nTurning the error catcher off!\n\n");
     }
