@@ -12,6 +12,7 @@ goog.require('goog.string');
 goog.require('gxnat.slicerNode.Node');
 goog.require('gxnat.vis.Renderable');
 goog.require('gxnat.Zip');
+
 //-----------
 
 
@@ -76,11 +77,12 @@ gxnat.vis.Viewable.prototype.setFileData = function(fileData) {
 
 /**
  * @param {!gxnat.Zip} gxnatZip
- * @param {?Function} opt_callback
+ * @param {Function=} opt_callback
+ * @param {Array.<string>=} opt_fileExtensions
  * @public
  */
 gxnat.vis.Viewable.prototype.setFileDataFromZip = 
-function(gxnatZip, opt_callback) {
+function(gxnatZip, opt_callback, opt_fileExtensions) {
 
     //window.console.log("SET FILE", opt_callback);
 
@@ -118,7 +120,6 @@ function(gxnatZip, opt_callback) {
 	    currFile = allFiles[i];
 	    //fragment = '/files/' + fileName.split('/files/')[1];
 
-
 	    //window.console.log('File name only: ', fileNameOnly);
 	    //window.console.log('Fragment:', fragment);
 	    //window.console.log('currFile:', currFile);
@@ -142,8 +143,31 @@ function(gxnatZip, opt_callback) {
 		//window.console.log('\nFile name only (a): ', fileNameOnly);
 		//window.console.log('Buffer: ', fileDataArrayBuffer);
 		//window.console.log('currFile:', currFile);
-		this.fileData_[currFile] = fileDataArrayBuffer;
-		break;
+
+		//
+		// If the file extensions are specified, filter 
+		// the ones that fit the criteria
+		//
+		if (goog.isDefAndNotNull(opt_fileExtensions)){
+		    var i = 0;
+		    var len = opt_fileExtensions.length;
+		    for (; i<len; i++){
+			if (goog.string.caseInsensitiveEndsWith(
+			    currFile, opt_fileExtensions[i])){
+
+			    //window.console.log("\nFOUND!", currFile);
+			    this.fileData_[currFile] = fileDataArrayBuffer;
+			    i = len;			    
+			}
+		    }
+		}
+		//
+		// Otherwise, simply store the file
+		//
+		else {
+		    this.fileData_[currFile] = fileDataArrayBuffer;
+		    break;
+		}
 	    }
 	}
     }.bind(this), opt_callback)
