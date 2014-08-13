@@ -1002,12 +1002,28 @@ xiv.ui.Modal.prototype.onCloseButtonClicked_ = function() {
  * @private
  */ 
 xiv.ui.Modal.prototype.onFullScreenButtonClicked_ = function() {
-    goog.dom.fullscreen.requestFullScreen(this.getElement().parentNode); 
+    //goog.dom.fullscreen.requestFullScreen(this.getElement().parentNode); 
+
+    var elem = this.getElement();
+    //alert(elem.id);
+    if (elem.requestFullscreen) {
+	elem.requestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+	elem.msRequestFullscreen();
+    } else if (elem.mozRequestFullScreen) {
+	elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) {
+	elem.webkitRequestFullscreen();
+    }
+
+
     if (this.currState_ === xiv.ui.Modal.ModalStates.POPUP){
 	this.setState(xiv.ui.Modal.ModalStates.FULLSCREEN_POPUP);
+	this.updateStyle();
     }
     else {
 	this.setState(xiv.ui.Modal.ModalStates.FULLSCREEN);
+	this.updateStyle();
     }
 }
 
@@ -1080,7 +1096,7 @@ xiv.ui.Modal.prototype.adaptToState_ = function(){
 			     this.currState_))
 
     if (this.currState_ == xiv.ui.Modal.ModalStates.DEMO) {
-	this.buttons_.FULLSCREEN.style.visibility = 'visible';
+	this.buttons_.FULLSCREEN.style.visibility = 'hidden';
 	this.buttons_.WINDOWED.style.visibility = 'hidden';
     } 
     else if (this.currState_ == xiv.ui.Modal.ModalStates.WINDOWED) {

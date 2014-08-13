@@ -30,6 +30,7 @@ goog.require('nrg.ui.SlideInMenu');
 goog.require('gxnat');
 goog.require('gxnat.vis.ViewableTree');
 goog.require('gxnat.vis.ViewableGroup');
+goog.require('gxnat.vis.Scan');
 
 // xiv
 goog.require('xiv');
@@ -1263,7 +1264,7 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
 		zip,
 		function(){
 		    this.renderViewableSet_(ViewableSet)
-		}.bind(this));
+		}.bind(this), gxnat.vis.Scan.acceptableFileTypes);
 	}.bind(this), 
 
 	function(event) {
@@ -1294,7 +1295,7 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
  * @param {gxnat.vis.ViewableGroups} ViewableSet
  */
 xiv.ui.ViewBox.prototype.renderViewableSet_ = function(ViewableSet){
-    var waitForError = false;
+    var waitForError = true;
     if (!waitForError){
 	window.console.log("\n\nTurning the error catcher off!\n\n");
     }

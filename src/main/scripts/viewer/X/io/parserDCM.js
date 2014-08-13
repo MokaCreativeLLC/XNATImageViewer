@@ -792,7 +792,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	    var startRow = Math.round((_maxRows - oldRows)/2);
 	    var endRow = oldRows + startRow;
 	    //
-	    // Fill the the center of the empty data witht the image
+	    // Fill the the center of the empty data with the image
 	    //
 	    var i, j;
 	    for (i = startRow; i < endRow; i++){
@@ -975,7 +975,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 				 " \"reslicing\" property is set to false.");
 
 	      //
-	      // Acquire the x and y consines of the patient orientation
+	      // Acquire the x and y cosines of the patient orientation
 	      //
               var _x_cosine = new goog.math.Vec3(
 		  first_image[0]['image_orientation_patient'][0],
@@ -1000,10 +1000,13 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      _z_cosine.z = Math.round(_z_cosine.z);
 
 	      
-	 
+	      //-------------------------------
+	      // IMPORTANT. PLEASE READ!
 	      //
-	      // Set the transformation matrix, rounding the matrix colums 1 and 2
-	      //
+	      // This sets the transformation matrix as it pertains to RAS space.
+	      // The pixel_spacing values are necessary so that slices are appropriately
+	      // distanced from one another.
+	      //-------------------------------
               goog.vec.Mat4.setRowValues(
 		  IJKToRAS, 0,
 		      -Math.round(first_image[0]['image_orientation_patient'][0])
@@ -1035,6 +1038,14 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	      
 	      window.console.log('IJKToRAS transform:\n', IJKToRAS);
 
+	      //-------------------------------
+	      // IMPORTANT. PLEASE READ!
+	      //
+	      // We also want to save the pure ortho transform matrix (without
+	      // the pixel sapacing information) for later use.  We have to apply
+	      // this matrix on the assessed dimensions of the volume, which
+	      // occurs below.
+	      //-------------------------------
 	      var _pureOrthoTransform = goog.vec.Mat4.createFloat32();
               goog.vec.Mat4.setRowValues(
 		  _pureOrthoTransform, 0,
@@ -1042,72 +1053,48 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		      -Math.round(first_image[0]['image_orientation_patient'][3]),
 		      -_z_cosine.x,
 		      0);
-
               goog.vec.Mat4.setRowValues(
 		  _pureOrthoTransform,1,
 		      -Math.round(first_image[ 0 ]['image_orientation_patient'][1]),
 		      -Math.round(first_image[ 0 ]['image_orientation_patient'][4]),
 		      -_z_cosine.y,
 		      0);
-
               goog.vec.Mat4.setRowValues(
 		  _pureOrthoTransform, 2,
 		  Math.round(first_image[ 0 ]['image_orientation_patient'][2]),
 		  Math.round(first_image[ 0 ]['image_orientation_patient'][5]),
 		  _z_cosine.z,
 		  0);
-
               goog.vec.Mat4.setRowValues(_pureOrthoTransform, 3,0,0,0,1);
-
+	      object[X.volume.REORIENT_TRANSFORM_KEY] = _pureOrthoTransform;
 	      window.console.log('Orthogonal Transform:\n', 
 				 _pureOrthoTransform);
-	      object[X.volume.REORIENT_TRANSFORM_KEY] = _pureOrthoTransform;
-
-
-	      /*
-              goog.vec.Mat4.setRowValues(IJKToRAS,
-					 0,
-					 first_image[0]['pixel_spacing'][0],
-					 0,
-					 0,
-					 0);
-              // - first_image[0]['pixel_spacing'][0]/2);
-              goog.vec.Mat4.setRowValues(IJKToRAS,
-					 1,
-					 0,
-					 first_image[0]['pixel_spacing'][1],
-					 0,
-					 0);
-              // - first_image[0]['pixel_spacing'][1]/2);
-              goog.vec.Mat4.setRowValues(IJKToRAS,
-					 2,
-					 0,
-					 0,
-					 first_image[0]['pixel_spacing'][2],
-					 0);
-              // + first_image[0]['pixel_spacing'][2]/2);
-              goog.vec.Mat4.setRowValues(IJKToRAS,
-					 3,0,0,0,1);
-	      */
 					 
 	  }
 	  else if (_ordering == 'instance_number'){
+
+	      //
+	      // Apply the base transform to the object 
+	      // (see above for explanation)
+	      //
               goog.vec.Mat4.setRowValues(IJKToRAS, 0,-1,0,0,-_origin[0]);
               goog.vec.Mat4.setRowValues(IJKToRAS, 1,-0,-1,-0,-_origin[1]);
               goog.vec.Mat4.setRowValues(IJKToRAS, 2,0,0,1,_origin[2]);
               goog.vec.Mat4.setRowValues(IJKToRAS, 3,0,0,0,1);   
 
-	      if(object['reslicing'].toString() == 'false'){
-
-		  var _pureOrthoTransform = goog.vec.Mat4.createFloat32();
-		  goog.vec.Mat4.setRowValues(_pureOrthoTransform, 0,-1,0,0,0);
-		  goog.vec.Mat4.setRowValues(_pureOrthoTransform, 1,-0,-1,-0,0);
-		  goog.vec.Mat4.setRowValues(_pureOrthoTransform, 2,0,0,1,0);
-		  goog.vec.Mat4.setRowValues(_pureOrthoTransform, 3,0,0,0,1);   
-		  goog.vec.Mat4.setRowValues(_pureOrthoTransform, 3,0,0,0,1);
-		  object[X.volume.REORIENT_TRANSFORM_KEY] = _pureOrthoTransform;
+	      //
+	      // Also save the pure ortho transform to the object
+	      // (see above for explanation)
+	      //
+	      var _pureOrthoTransform = goog.vec.Mat4.createFloat32();
+	      goog.vec.Mat4.setRowValues(_pureOrthoTransform, 0,-1,0,0,0);
+	      goog.vec.Mat4.setRowValues(_pureOrthoTransform, 1,-0,-1,-0,0);
+	      goog.vec.Mat4.setRowValues(_pureOrthoTransform, 2,0,0,1,0);
+	      goog.vec.Mat4.setRowValues(_pureOrthoTransform, 3,0,0,0,1);   
+	      goog.vec.Mat4.setRowValues(_pureOrthoTransform, 3,0,0,0,1);
+	      object[X.volume.REORIENT_TRANSFORM_KEY] = _pureOrthoTransform;
 		  
-	      }
+	      
           }
           else {
               window.console.log("Unkown ordering mode - returning: " 
