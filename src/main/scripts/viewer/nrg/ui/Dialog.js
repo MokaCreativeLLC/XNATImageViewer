@@ -719,9 +719,47 @@ nrg.ui.Dialog.prototype.setVisible = function(visible) {
  * @public
  */
 nrg.ui.Dialog.prototype.resizeToContents = function() {
-    var size = goog.style.getSize(this.getContentElement());
+
+  var dialogElt = this.getElement();
+  var contentElt = this.getContentElement();
+  var maxWidth = 0;
+  var maxHeight = 0;
+  var scrollWidth = 0;
+  var scrollHeight = 0;
+  //
+  // Temporarily set the overflow of the dialog to 'visible'
+  //
+  var oldOverflow = dialogElt.style.overflow;
+  dialogElt.style.overflow = 'visible';
+  //
+  // Loop through all of the text elements
+  //
+  if (goog.isDefAndNotNull(this.texts_)){
+    goog.array.forEach(this.texts_, function(textElt){
+      // Get the scrollWidth and scrollHeight of the textElt 
+      scrollWidth = textElt.scrollWidth;
+      scrollHeight = textElt.scrollHeight;
+      // Adjust maxWidth and maxHeight
+      maxWidth = (scrollWidth > maxWidth) ? scrollWidth : maxWidth;
+      maxHeight = (scrollHeight > maxHeight) ? scrollHeight : maxHeight;
+      // Set the text width to the scroll dimensions 
+      goog.style.setSize(textElt, scrollWidth, scrollHeight);
+    });
+  }
+
+  // Re-apply the oldOverflow if needed, otherwise, remove the property.
+  if (!goog.isDefAndNotNull(oldOverflow)){
+    dialogElt.style.removeProperty('overflow');
+  } else {
+    dialogElt.style.overflow = oldOverflow;
+  }
+
+  // IMPORTANT! Set the size of the contentElt.
+  goog.style.setSize(contentElt, maxWidth, maxHeight);
+
+  var size = goog.style.getSize(this.getContentElement());
 //    window.console.log(size);
-    goog.style.setSize(this.getElement(), size.width + 20, size.height + 20);
+  goog.style.setSize(this.getElement(), size.width + 20, size.height + 20);
 }
 
 
