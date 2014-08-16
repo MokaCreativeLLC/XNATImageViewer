@@ -13,4 +13,7 @@ python ./closure-library/closure/bin/build/closurebuilder.py \
 --compiler_flags="--language_in=ECMASCRIPT5" \
 --compiler_flags="--compilation_level=ADVANCED_OPTIMIZATIONS" \
 --compiler_flags="--externs=./jszip/jszip.min.js" \
-> ./xiv-min.js
+--compiler_flags="--create_source_map=./xiv-min.js.map" \
+--compiler_flags="--js_output_file=xiv-min.js"
+python ../../../../utility-scripts/python/addSourceMapLine.py -j ./xiv-min.js -s ./xiv-min.js.map
+

@@ -20,6 +20,7 @@ goog.require('xiv.ui.ctrl.SliderController');
 goog.require('xiv.ui.ctrl.Histogram');
 goog.require('xiv.ui.ctrl.MasterController');
 goog.require('xiv.ui.ctrl.ButtonController');
+goog.require('xiv.ui.ctrl.CheckboxController');
 
 //-----------
 
@@ -63,7 +64,8 @@ xiv.ui.ctrl.LevelsController.CONTROLLERS = {
     CONTRAST: 'Contrast',
     LEVEL_MIN: 'Window Min.',
     LEVEL_MAX: 'Window Max.',
-    HISTOGRAM: 'Histogram'
+    HISTOGRAM: 'Histogram',
+    SCALEHISTOGRAM: 'Scale Histogram'
 };
 
 
@@ -101,10 +103,25 @@ xiv.ui.ctrl.LevelsController.prototype.levelMax_ = null;
 
 
 /**
- * @param {!xiv.ui.ctrl.Histogram} hist
+ * @type {xiv.ui.ctrl.Histogram}
  * @private
  */
-xiv.ui.ctrl.LevelsController.prototype.updateHistogram_ = function(hist){
+xiv.ui.ctrl.LevelsController.prototype.Histogram_ = null;
+
+
+
+/**
+ * @type {xiv.ui.ctrl.CheckboxController}
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.ScaleHistogramCheckbox_ = null;
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.updateHistogram_ = function(){
     //window.console.log('update histogram');
 
     if((this.xObjs[0].max > xiv.ui.ctrl.LevelsController.LEVEL_MAX) &&
@@ -118,9 +135,8 @@ xiv.ui.ctrl.LevelsController.prototype.updateHistogram_ = function(hist){
     }
 
 
-    hist.update();
+    this.Histogram_.update();
 }
-
 
 
 
@@ -131,11 +147,16 @@ xiv.ui.ctrl.LevelsController.prototype.updateHistogram_ = function(hist){
 xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
     goog.base(this, 'add', xObj);
 
-    var hist = this.add_histogram(xObj);
+
+    
+    this.Histogram_ = this.add_histogram(xObj);
+
+
     this.levelMin_ = this.add_levelMin(xObj);
     this.levelMax_ = this.add_levelMax(xObj);
     var c3 = this.add_brightness(xObj, this.levelMin_, this.levelMax_);
     var c4 = this.add_contrast(xObj, this.levelMin_, this.levelMax_);
+    this.ScaleHistogramCheckbox_ = this.add_scaleHistogramCheckbox(xObj);
     var c5 = this.add_reset(xObj, this.levelMin_, this.levelMax_, c3, c4);
 
 
@@ -149,7 +170,7 @@ xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
 			       nrg.ui.Slider.EventType.SLIDE,
 			       function(e){
 				   //window.console.log(e.target);
-				   this.updateHistogram_(hist);
+				   this.updateHistogram_();
 			       }.bind(this))
 	}.bind(this))
 
@@ -157,6 +178,38 @@ xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
     //window.console.log('Auto-level images.');
 }
  
+
+
+/**
+ * @param {!X.object} xObj
+ * @return {xiv.ui.ctrl.XtkController}
+ * @protected
+ */
+xiv.ui.ctrl.LevelsController.prototype.add_scaleHistogramCheckbox = 
+function(xObj) {
+    // create
+    var scaleHistogramCheckBox = this.createController( 
+	xiv.ui.ctrl.CheckboxController, 
+	xiv.ui.ctrl.LevelsController.CONTROLLERS.SCALEHISTOGRAM, 
+	function(e){
+	    this.Histogram_.scaleOnChange(e.checked);
+	    this.updateHistogram_();
+	}.bind(this));
+
+    // set folder
+    xiv.ui.ctrl.XtkController.setControllerFolders(
+	xObj, 
+	scaleHistogramCheckBox);
+
+
+    // set defaults
+    this.Histogram_.scaleOnChange(true);
+    scaleHistogramCheckBox.getComponent().setChecked(true);
+   
+    this.masterControllers.push(scaleHistogramCheckBox);
+ 
+    return scaleHistogramCheckBox;
+}
 
 
 
@@ -329,9 +382,11 @@ function(xObj, levelMin, levelMax) {
 	    var currDifference = xObj['windowHigh'] - xObj['windowLow'];
 
 	    xObj['windowLow']  = 
-		Math.round(parseInt(xObj['windowLow']) - (currDifference * rate));
+		Math.round(parseInt(xObj['windowLow']) - 
+			   (currDifference * rate));
 	    xObj['windowHigh'] = 
-		Math.round(parseInt(xObj['windowHigh']) - (currDifference * rate));
+		Math.round(parseInt(xObj['windowHigh']) - 
+			   (currDifference * rate));
 
 
 	    levelMin.getComponent().setValue(xObj['windowLow']);
@@ -385,12 +440,14 @@ function(xObj, levelMin, levelMax) {
 	xiv.ui.ctrl.XtkController.EventType.CHANGE, 
 	function(e){	 
 
-	    var rate = (e.value - e.previous) / (e.maximum - e.minimum);
+	    var rate = 3 * (e.value - e.previous) / (e.maximum - e.minimum);
 	    var currDifference = parseInt(xObj['windowHigh']) - 
 		parseInt(xObj['windowLow']);
 	    var newLow = parseInt(xObj['windowLow']) + (currDifference * rate);
 	    var newHigh = parseInt(xObj['windowHigh']) - 
 		(currDifference * rate);
+
+
 	    xObj['windowLow'] = Math.round(newLow);
 	    xObj['windowHigh'] = Math.round(newHigh);
 	    
@@ -426,6 +483,8 @@ function(xObj, levelMin, levelMax) {
 xiv.ui.ctrl.LevelsController.prototype.disposeInternal = function() {
     delete this.levelMin_;
     delete this.levelMax_;
+    delete this.Histogram_;
+    delete this.ScaleHistogramCheckbox_;
     goog.base(this, 'disposeInternal');
 }
 

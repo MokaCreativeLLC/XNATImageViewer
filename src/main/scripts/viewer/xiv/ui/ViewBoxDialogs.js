@@ -743,7 +743,6 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
 			 this.ViewBox_.onToggleButtonClicked(infoToggle);
 		      }.bind(this))
 
-
     currDialog.resizeToContents();
     this.Dialogs_[dialogKey] = currDialog;
 }
