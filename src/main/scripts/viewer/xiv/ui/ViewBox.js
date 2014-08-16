@@ -941,7 +941,7 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
  * @public
  */
 xiv.ui.ViewBox.prototype.getHighFrameCountThreshold = function(){
-    return 300;
+    return 700;
 }
 
 
@@ -958,7 +958,7 @@ function(opt_onYes){
 	'Scans with frame counts greater than ' + 
 	    this.getHighFrameCountThreshold() + 
 	    ' may crash the Viewer.' +
-	'&nbspProceed anyway?',
+	'&nbspAre you sure you want to continue?',
 	this.viewFrameElt_,
 	opt_onYes);
 }

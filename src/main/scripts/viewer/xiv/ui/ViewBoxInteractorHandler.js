@@ -1534,15 +1534,33 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
 	if (ctrl instanceof xiv.ui.ctrl.Histogram ){
 	    ctrlSet[folderStr].hist = ctrl;
 	} 
+	//
+	// Checkbox
+	//
+	else if (ctrl instanceof xiv.ui.ctrl.CheckboxController ){
+	    ctrlSet[folderStr].checkbox = ctrl;
+	} 
 
 	//
 	// Non-buttons
 	//
-	else if (!(ctrl instanceof xiv.ui.ctrl.ButtonController)){
-	    if (ctrl.getLabel().innerHTML.indexOf('Window Max') > -1){
+	else if (ctrl instanceof xiv.ui.ctrl.SliderController){
+
+	    var label = ctrl.getLabel().innerHTML;
+	    if (label.indexOf('Window Max') > -1){
 		ctrlSet[folderStr].windowMax = ctrl;
-	    } else {
-		ctrlSet[folderStr][goog.getUid(ctrl)] = ctrl;
+	    } 
+
+	    else if (label.indexOf('Window Min') > -1){
+		ctrlSet[folderStr].windowMin = ctrl;
+	    }
+
+	    else if (label.indexOf('Brightness') > -1){
+		ctrlSet[folderStr].brightness = ctrl;
+	    }
+
+	    else if (label.indexOf('Contrast') > -1){
+		ctrlSet[folderStr].contrast = ctrl;
 	    }
 	} 
 	
@@ -1569,16 +1587,21 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
 	// Store the levels as defaults
 	//
 	goog.object.forEach(set, function(ctrl, key){
-	    if ((ctrl != set.hist) && (ctrl != set.reset)){
-		if (ctrl.getLabel().innerHTML.indexOf('Window Min') > -1){
-		    //window.console.log("SETTING MIN");
-		    ctrl[defaultTag] = 0;
-		} 
-		else {
-		    ctrl[defaultTag] = ctrl.getComponent().getValue();
-		}
+
+	    if ((ctrl == set.windowMin) ||
+	        (ctrl == set.windowMax) ||
+	        (ctrl == set.brightness) ||
+	        (ctrl == set.contrast)) {
+		ctrl[defaultTag] = ctrl.getComponent().getValue();
+	    } 
+	    else if (ctrl == set.checkbox){
+		ctrl[defaultTag] = ctrl.getComponent().isChecked();
 	    }
+
+	    window.console.log(ctrl, ctrl[defaultTag]);
 	})
+
+
     })
 
 
@@ -1591,13 +1614,28 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
 	    set.reset, 
 	    xiv.ui.ctrl.XtkController.EventType.CHANGE, 
 	    function(){
-		goog.object.forEach(set, function(ctrl, key){
-		    if ((ctrl != set.hist) && (ctrl != set.reset)){
-			 ctrl.getValueInput().value = ctrl[defaultTag];
-			 ctrl.getComponent().setValue(ctrl[defaultTag]);
 
+		// Update the sliders
+		goog.object.forEach(set, function(ctrl, key){
+		    if (ctrl instanceof xiv.ui.ctrl.SliderController) {
+			ctrl.getValueInput().value = ctrl[defaultTag];
+			ctrl.getComponent().setValue(ctrl[defaultTag]);
 		    }
 		})
+
+		// Not setting this causes errors
+		set.windowMin.getXObj()['windowLow'] = 0;
+		
+		// Update the checkbox
+		set.checkbox.getComponent().setChecked(
+		    set.checkbox[defaultTag]);
+		set.hist.scaleOnChange(set.checkbox[defaultTag]);
+		
+
+		window.console.log("\n\n", set.hist.scaleOnChange_);
+
+		// Update the histogram
+		set.hist.update();
 	    })
     })
 
@@ -2489,6 +2527,16 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
 		
 		if (goog.isDefAndNotNull(ctrl.getComponent().updateStyle)){
 		    ctrl.getComponent().updateStyle();
+		}
+
+		if (ctrl instanceof xiv.ui.ctrl.CheckboxController){
+		    var cbHolder = ctrl.getCheckboxHolder();
+		    ctrl.getElement().style.height = 15;
+		    ctrl.getElement().style.outline = 'none';
+		    cbHolder.style.top = 0;
+		    cbHolder.style.width = 11;
+		    cbHolder.style.outline = 'none';
+		    cbHolder.style.left = 'calc(100% - 15px)';
 		}
 	    }
 
