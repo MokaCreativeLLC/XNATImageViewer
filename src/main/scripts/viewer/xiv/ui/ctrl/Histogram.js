@@ -672,7 +672,7 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
  */
 xiv.ui.ctrl.Histogram.prototype.update = function(){
     
-    window.console.log("UPDATE!");
+    //window.console.log("UPDATE!");
     //this.getXObj()['windowHigh'] = 
     this.updateMaxMin();
     this.draw();
@@ -699,10 +699,11 @@ xiv.ui.ctrl.Histogram.prototype.updateMaxMin = function(){
 	this.windowHigh_ = this.startMax_;
     }
     
-    
+    /*
     window.console.log('\nupdate max min', 
 		       this.getXObj().windowLow,
 		       this.getXObj().windowHigh);
+		       */
 		       
 
 
@@ -713,10 +714,11 @@ xiv.ui.ctrl.Histogram.prototype.updateMaxMin = function(){
     this.minDiv_.innerHTML = this.windowLow_;
     this.maxDiv_.innerHTML = this.windowHigh_;
 
-    
+    /*
     window.console.log('UPDATE MAX MIN', 
 		       this.startMax_, this.startMin_,
 		       this.windowHigh_, this.windowLow_);
+		       */
     
 }
 
