@@ -1598,7 +1598,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
 		ctrl[defaultTag] = ctrl.getComponent().isChecked();
 	    }
 
-	    window.console.log(ctrl, ctrl[defaultTag]);
+	    //window.console.log(ctrl, ctrl[defaultTag]);
 	})
 
 
