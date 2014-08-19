@@ -214,6 +214,14 @@ xiv.ui.ctrl.XtkController.prototype.xObj_;
 
 
 /**
+ * @protected
+ * @type {number | String | boolean}
+ */
+xiv.ui.ctrl.XtkController.prototype.defaultValue;
+
+
+
+/**
  * @inheritDoc
  */
 xiv.ui.ctrl.XtkController.prototype.render = function(opt_parentElement) {
@@ -246,6 +254,23 @@ xiv.ui.ctrl.XtkController.prototype.getLabel = function() {
 }
 
 
+/**
+ * @param {!string | !number | !boolean}
+ * @public
+ */
+xiv.ui.ctrl.XtkController.prototype.setDefaultValue = function(val) {
+    this.defaultValue = val;
+}
+
+
+
+/**
+ * @return {string | number | boolean}
+ * @public
+ */
+xiv.ui.ctrl.XtkController.prototype.getDefaultValue = function() {
+    return this.defaultValue;
+}
 
 
 /**
@@ -601,6 +626,8 @@ xiv.ui.ctrl.XtkController.prototype.disposeInternal = function() {
 	goog.dom.removeNode(this.label_);
 	delete this.label_;
     }
+
+    delete this.defaultValue;
 }
 
 
@@ -628,6 +655,10 @@ goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.setLabel',
 	xiv.ui.ctrl.XtkController.prototype.setLabel);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.getLabel',
 	xiv.ui.ctrl.XtkController.prototype.getLabel);
+goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.setDefaultValue',
+	xiv.ui.ctrl.XtkController.prototype.setDefaultValue);
+goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.getDefaultValue',
+	xiv.ui.ctrl.XtkController.prototype.getDefaultValue);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.setFolders',
 	xiv.ui.ctrl.XtkController.prototype.setFolders);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.getFolders',

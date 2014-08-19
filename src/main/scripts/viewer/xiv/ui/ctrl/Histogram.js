@@ -432,23 +432,30 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
  */
 xiv.ui.ctrl.Histogram.prototype.drawWithHorizScaling_ = 
 function(canvasWidth, canvasHeight) {
+  
+    var skipZeroes = false;
+    var startInd = skipZeroes ? 1 : 0;
+  
+
     //
     // Determine the new max, for scaling purposes.
     //
-    var i = 1;
+    var i = startInd;
     var cutoffInd = this.getXObj()['windowHigh'];
     var newMax = 0;
     for (; i < cutoffInd + 1; i++){
 	if (this.percentages_[i] > newMax) {
 	    newMax = this.percentages_[i];
 	}
+
+	//window.console.log(i, newMax, this.percentages_[i]);
     }
 
     //
     // Construct the new percentages
     //
     var newPcts = [];
-    var j = 1;
+    var j = startInd;
     for(; j < (cutoffInd + 1); j++){
 	newPcts.push(this.percentages_[j]/newMax);
 	if (j == cutoffInd){ break }
@@ -473,7 +480,7 @@ function(canvasWidth, canvasHeight) {
 
 	if (i < 0) { continue } 
 	
-	indPct =  (i + 1) / this.windowHigh_;
+	indPct =  i / this.windowHigh_;
 	
 	newPctInd =  Math.round(indPct * this.windowHigh_);
 
@@ -528,7 +535,7 @@ xiv.ui.ctrl.Histogram.prototype.draw_ = function(canvasWidth, canvasHeight) {
     //
     for (i=0; i < canvasWidth; i++){
 
-	indPct = (i+1)/canvasWidth;
+	indPct = i/canvasWidth;
 	pctInd = Math.round(this.percentages_.length * indPct) -1;
 	pctInd = (pctInd < 0) ? 0 : pctInd;
 	height = Math.round(canvasHeight * this.percentages_[pctInd]);
@@ -697,6 +704,9 @@ xiv.ui.ctrl.Histogram.prototype.updateMaxMin = function(){
 	this.startMax_ = isNaN(this.startMax_) ? null : this.startMax_;
 	this.windowLow_ = this.startMin_;
 	this.windowHigh_ = this.startMax_;
+
+
+	window.console.log("\n\n", this.startMin_, this.startMax_);
     }
     
     /*

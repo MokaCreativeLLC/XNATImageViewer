@@ -92,7 +92,7 @@
     top: 0px;
     left: 0px;
     width: 150px;
-    height: 415px;
+    height: 370px;
     z-index: 10;
     border: none;
     cursor: default;
@@ -103,5 +103,5 @@
     border: solid 1px;
     border-radius: 5px;
     border-color: white;
-    background-color: rgba(60,60,60,.5);
+    background-color: rgba(0,0,0,.9);
 }

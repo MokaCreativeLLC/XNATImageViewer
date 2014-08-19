@@ -1587,21 +1587,16 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
 	// Store the levels as defaults
 	//
 	goog.object.forEach(set, function(ctrl, key){
-
 	    if ((ctrl == set.windowMin) ||
 	        (ctrl == set.windowMax) ||
 	        (ctrl == set.brightness) ||
 	        (ctrl == set.contrast)) {
-		ctrl[defaultTag] = ctrl.getComponent().getValue();
+		ctrl.setDefaultValue(ctrl.getComponent().getValue())
 	    } 
 	    else if (ctrl == set.checkbox){
-		ctrl[defaultTag] = ctrl.getComponent().isChecked();
+		ctrl.setDefaultValue(ctrl.getComponent().isChecked());
 	    }
-
-	    //window.console.log(ctrl, ctrl[defaultTag]);
 	})
-
-
     })
 
 
@@ -1615,25 +1610,18 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
 	    xiv.ui.ctrl.XtkController.EventType.CHANGE, 
 	    function(){
 
-		// Update the sliders
-		goog.object.forEach(set, function(ctrl, key){
-		    if (ctrl instanceof xiv.ui.ctrl.SliderController) {
-			ctrl.getValueInput().value = ctrl[defaultTag];
-			ctrl.getComponent().setValue(ctrl[defaultTag]);
-		    }
-		})
-
-		// Not setting this causes errors
-		set.windowMin.getXObj()['windowLow'] = 0;
+		goog.array.forEach(
+		    [set.windowMin, set.windowMax],
+		    function(ctrl){
+			ctrl.getValueInput().value = ctrl.getDefaultValue();
+			ctrl.getComponent().setValue(ctrl.getDefaultValue());
+		    })
 		
 		// Update the checkbox
 		set.checkbox.getComponent().setChecked(
-		    set.checkbox[defaultTag]);
-		set.hist.scaleOnChange(set.checkbox[defaultTag]);
+		    set.checkbox.getDefaultValue());
+		set.hist.scaleOnChange(set.checkbox.getDefaultValue());
 		
-
-		window.console.log("\n\n", set.hist.scaleOnChange_);
-
 		// Update the histogram
 		set.hist.update();
 	    })
@@ -2521,7 +2509,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
 		    label.style.fontSize = '9px';
 		}
 
-		ctrl.getElement().style.height = '45px';
+		ctrl.getElement().style.height = '35px';
 		ctrl.getComponent().getElement().style.top = '28px';
 		ctrl.getComponent().getElement().style.width = '115px';
 		
@@ -2531,10 +2519,10 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
 
 		if (ctrl instanceof xiv.ui.ctrl.CheckboxController){
 		    var cbHolder = ctrl.getCheckboxHolder();
-		    ctrl.getElement().style.height = 15;
+		    ctrl.getElement().style.height = '15px';
 		    ctrl.getElement().style.outline = 'none';
-		    cbHolder.style.top = 0;
-		    cbHolder.style.width = 11;
+		    cbHolder.style.top = '0px';
+		    cbHolder.style.width = '10px';
 		    cbHolder.style.outline = 'none';
 		    cbHolder.style.left = 'calc(100% - 15px)';
 		}

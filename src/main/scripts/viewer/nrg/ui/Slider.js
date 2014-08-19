@@ -76,8 +76,6 @@ goog.exportSymbol('nrg.ui.Slider', nrg.ui.Slider);
  */
 nrg.ui.Slider.EventType = {
   SLIDE: goog.events.getUniqueId('slide'),
-  START_SLIDE: goog.events.getUniqueId('start-slide'),
-  END_SLIDE: goog.events.getUniqueId('end-slide'),
   MOUSEWHEEL: goog.events.getUniqueId('mousewheel'),
 };
 
