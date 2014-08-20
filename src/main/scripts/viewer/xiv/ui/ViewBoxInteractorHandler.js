@@ -327,6 +327,16 @@ xiv.ui.ViewBoxInteractorHandler.prototype.volumeToggles_;
 
 
 
+/**
+ * @param {!string} key
+ * @return {string}
+ * @public
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.getDialogKey = function(key){
+    return this.dialogKeys_[key];
+};
+
+
 
 
 /**
@@ -2413,11 +2423,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
     levelDia.setMouseoverClass(
 	xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_DIALOG_HOVERED);
 
-    //
-    // Keep it open
-    //
-    this.ViewBox_.fireToggleButton(this.dialogKeys_['levels']);
 
+    this.ViewBox_.fireToggleButton(this.dialogKeys_['levels']);
 
     //
     // Adjust slider styles;
@@ -2601,6 +2608,9 @@ goog.exportSymbol('xiv.ui.ViewBoxInteractorHandler.DIALOG_SPLIT',
 goog.exportSymbol(
     'xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors',
     xiv.ui.ViewBoxInteractorHandler.prototype.createInteractors);
+goog.exportSymbol(
+    'xiv.ui.ViewBoxInteractorHandler.prototype.getDialogKey',
+    xiv.ui.ViewBoxInteractorHandler.prototype.getDialogKey);
 goog.exportSymbol(
     'xiv.ui.ViewBoxInteractorHandler.prototype.createTwoDZoomToggle',
     xiv.ui.ViewBoxInteractorHandler.prototype.createTwoDZoomToggle);

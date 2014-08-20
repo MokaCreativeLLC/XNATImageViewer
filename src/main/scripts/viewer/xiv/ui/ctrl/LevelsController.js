@@ -150,6 +150,7 @@ xiv.ui.ctrl.LevelsController.prototype.xObj_ = null;
 
 
 /**
+ * @constructor
  * @param {!xiv.ui.ctrl.XtkController} min
  * @param {!xiv.ui.ctrl.XtkController} max
  * @param {!xiv.ui.ctrl.XtkController} brightness
