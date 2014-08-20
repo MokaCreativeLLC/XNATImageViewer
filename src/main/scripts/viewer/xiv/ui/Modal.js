@@ -20,6 +20,7 @@ goog.require('goog.fx.dom.PredefinedEffect');
 goog.require('goog.events.Event');
 goog.require('goog.dom.classes');
 goog.require('goog.dom.fullscreen');
+goog.require('goog.labs.dom.PageVisibilityMonitor');
 
 
 // nrg
@@ -273,6 +274,13 @@ xiv.ui.Modal.prototype.anims_;
  * @type {Object}
  */
 xiv.ui.Modal.prototype.dims_;
+
+
+
+/**
+ * @type {?goog.labs.dom.PageVisibilityMonitor}
+ */
+xiv.ui.Modal.prototype.pageMonitor_ = null;
 
 
 
@@ -931,12 +939,29 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
 
 
     // Event listener
+    this.pageMonitor_ = new goog.labs.dom.PageVisibilityMonitor();
+    goog.events.listen(this.ProjectTab_, nrg.ui.Resizable.EventType.RESIZE,
+		       this.tabResizing_.bind(this));
     goog.events.listen(this.ProjectTab_, nrg.ui.Resizable.EventType.RESIZE,
 		       this.updateStyle.bind(this));
     goog.events.listen(this.ProjectTab_, nrg.ui.Resizable.EventType.RESIZE_END,
 		       this.updateStyle.bind(this)); 
 }
 
+
+/**
+ * @private
+ */
+xiv.ui.Modal.prototype.tabResizing_ = function(){
+    if (this.pageMonitor_.isHidden()){
+
+	window.console.log("\n\nSTOPPING");
+	var dragger = 
+	    this.ProjectTab_.getResizable().getResizeDragger('RIGHT');
+	dragger.stopSlideAnimation();
+	dragger.slideToLimits('MAX', null, 0);	   
+    }
+}
 
 
 /**
@@ -1386,6 +1411,13 @@ xiv.ui.Modal.prototype.disposeInternal = function() {
 
     // Add subjects button
     this.disposeAddSubjects_();
+
+    // page monitor
+    if (goog.isDefAndNotNull(this.pageMonitor_)){
+	this.pageMonitor_.dispose();
+	delete this.pageMonitor_;
+    }
+
 
     // others
     delete this.currState_

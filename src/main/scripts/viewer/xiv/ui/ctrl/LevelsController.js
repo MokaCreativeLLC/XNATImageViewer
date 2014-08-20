@@ -1,5 +1,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ * 
+ * CREDITS: Thank you to ImageJ for brightness contrast algorithms.
  */
 goog.provide('xiv.ui.ctrl.LevelsController');
 
@@ -59,9 +61,9 @@ xiv.ui.ctrl.LevelsController.CSS_SUFFIX = {};
 
 /**
  * @enum {string}
- * @dict
+ * @private
  */
-xiv.ui.ctrl.LevelsController.CONTROLLERS = {
+xiv.ui.ctrl.LevelsController.titles_ = {
     BRIGHTNESS: 'Brightness',
     CONTRAST: 'Contrast',
     LEVEL_MIN: 'Window Min.',
@@ -133,10 +135,62 @@ xiv.ui.ctrl.LevelsController.prototype.reset_ = null;
 
 
 /**
- * @type {xiv.ui.ctrl.CheckboxController}
+ * @type {?xiv.ui.ctrl.CheckboxController}
  * @private
  */
 xiv.ui.ctrl.LevelsController.prototype.scaleCB_ = null;
+
+
+/**
+ * @type {?X.Object}
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.xObj_ = null;
+
+
+
+/**
+ * @param {!xiv.ui.ctrl.XtkController} min
+ * @param {!xiv.ui.ctrl.XtkController} max
+ * @param {!xiv.ui.ctrl.XtkController} brightness
+ * @param {!xiv.ui.ctrl.XtkController} contrast
+ * @param {!xiv.ui.ctrl.XtkController} hist
+ * @param {!xiv.ui.ctrl.XtkController} scaleCB
+ * @param {!xiv.ui.ctrl.XtkController} resest
+ * @param {!X.object} xObj
+ * @struct
+ */
+xiv.ui.ctrl.LevelsController.ControllerSet = 
+function(min, max, brightness, contrast, hist, scaleCB, reset, xObj){
+    this.min = min;
+    this.max = max;
+    this.brightness = brightness;
+    this.contrast = contrast;
+    this.histogram = hist;
+    this.scaleCB = scaleCB;
+    this.reset = reset;
+    this.xObj = xObj;
+    this.sliders = [
+	this.min, 
+	this.max, 
+	this.brightness, 
+	this.contrast
+    ]
+}
+
+
+
+
+/**
+ * @return {Object.<string, xiv.ui.ctrl.XtkController>}
+ * @public
+ */
+xiv.ui.ctrl.LevelsController.prototype.getControllerSet = function() {
+    return new xiv.ui.ctrl.LevelsController.ControllerSet(
+	this.min_, this.max_, this.brightness_, this.contrast_, this.hist_, 
+	this.scaleCB_, this.reset_, this.xObj_)
+}
+
 
 
 
@@ -147,92 +201,90 @@ xiv.ui.ctrl.LevelsController.prototype.scaleCB_ = null;
 xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
     goog.base(this, 'add', xObj);
 
+    this.xObj_ = xObj;
+
     //
     // Create the components
     //
-    this.createHistogram(xObj);
-    this.createLevelMin(xObj);
-    this.createLevelMax(xObj);
-    this.createBrightness(xObj);
-    this.createBontrast(xObj);
-    this.createscaleHistogramCheckbox(xObj);
-    this.createResetButton(xObj);
-
-
-    //
-    // Update the histogram when the sliders move
-    //
-    goog.array.forEach(
-	[this.min_, this.max_, this.brightness_, this.contrast_], 
-	function(levelCtrl){
-	    goog.events.listen(levelCtrl.getComponent(), 
-			       nrg.ui.Slider.EventType.SLIDE,
-			       function(e){
-				   //window.console.log(e.target);
-				   this.updateHist_();
-			       }.bind(this))
-	}.bind(this))
-
-
-    //window.console.log('Auto-level images.');
+    this.createHistogram_();
+    this.createLevelMin_();
+    this.createLevelMax_();
+    this.createBrightness_();
+    this.createContrast_();
+    this.createScaleHistogramCheckbox_();
+    this.createResetButton_();
 }
  
 
 
 /**
- * @param {!X.object} xObj
- * @return {xiv.ui.ctrl.XtkController}
- * @protected
+ * @private
  */
-xiv.ui.ctrl.LevelsController.prototype.createscaleHistogramCheckbox = 
-function(xObj) {
+xiv.ui.ctrl.LevelsController.prototype.createScaleHistogramCheckbox_ = 
+function() {
     // create
     var scaleHistogramCheckBox = this.createController( 
 	xiv.ui.ctrl.CheckboxController, 
-	xiv.ui.ctrl.LevelsController.CONTROLLERS.SCALEHISTOGRAM, 
+	xiv.ui.ctrl.LevelsController.titles_.SCALEHISTOGRAM, 
 	function(e){
 	    this.hist_.scaleOnChange(e.checked);
 	    this.updateHist_();
 	}.bind(this));
 
     // set folder
-    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, 
+    xiv.ui.ctrl.XtkController.setControllerFolders(this.xObj_, 
 						   scaleHistogramCheckBox);
 
 
     // set defaults
     this.hist_.scaleOnChange(true);
     scaleHistogramCheckBox.getComponent().setChecked(true);
-   
     this.masterControllers.push(scaleHistogramCheckBox);
- 
-    return scaleHistogramCheckBox;
+    this.scaleCB_ = scaleHistogramCheckBox;
+}
+
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.onResetButtonClicked_ =
+function(){
+    goog.array.forEach(
+	[this.min_, this.max_],
+	function(ctrl){
+	    ctrl.getValueInput().value = ctrl.getDefaultValue();
+	    ctrl.getComponent().setValue(ctrl.getDefaultValue());
+	    ctrl.update();
+	})
+    
+    // Update the checkbox
+    this.scaleCB_.getComponent().setChecked(this.scaleCB_.getDefaultValue());
+    this.hist_.scaleOnChange(this.scaleCB_.getDefaultValue());
+    this.hist_.update();
+
 }
 
 
 
 /**
- * @param {!X.object} xObj
- * @return {xiv.ui.ctrl.XtkController}
- * @protected
+ * @private
  */
-xiv.ui.ctrl.LevelsController.prototype.createReset = function(xObj) {
+xiv.ui.ctrl.LevelsController.prototype.createResetButton_ = function() {
     // create
 
     
     var resetButton = this.createController( 
 	xiv.ui.ctrl.ButtonController, 
 	null,
-	function(e){
-	    
-
-	}.bind(this));
+	this.onResetButtonClicked_.bind(this));
 
     // set folder
-    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, resetButton);
+    xiv.ui.ctrl.XtkController.setControllerFolders(this.xObj_, resetButton);
 
     this.masterControllers.push(resetButton);
-    resetButton.setXObj(xObj);
+    resetButton.setXObj(this.xObj_);
 
     this.reset_ = resetButton;
 }
@@ -241,15 +293,14 @@ xiv.ui.ctrl.LevelsController.prototype.createReset = function(xObj) {
 
 
 /**
- * @param {!X.object} xObj
- * @protected
+ * @private
  */
-xiv.ui.ctrl.LevelsController.prototype.createHistogram = function(xObj) {
+xiv.ui.ctrl.LevelsController.prototype.createHistogram_ = function() {
     // create
 
     var histogram = this.createController( 
 	xiv.ui.ctrl.Histogram, 
-	null,//xiv.ui.ctrl.LevelsController.CONTROLLERS.HISTOGRAM, 
+	null,//xiv.ui.ctrl.LevelsController.titles_.HISTOGRAM, 
 	function(e){
 
 	    //xObj['windowLow'] = e.value;
@@ -257,10 +308,10 @@ xiv.ui.ctrl.LevelsController.prototype.createHistogram = function(xObj) {
 	}.bind(this));
 
  
-    histogram.setXObj(xObj);
+    histogram.setXObj(this.xObj_);
 
     // set folder
-    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, histogram);
+    xiv.ui.ctrl.XtkController.setControllerFolders(this.xObj_, histogram);
 
     this.masterControllers.push(histogram);
 
@@ -272,29 +323,28 @@ xiv.ui.ctrl.LevelsController.prototype.createHistogram = function(xObj) {
 
 
 /**
- * @param {!X.object} xObj
- * @protected
+ * @private
  */
-xiv.ui.ctrl.LevelsController.prototype.createLevelMin = function(xObj) {
+xiv.ui.ctrl.LevelsController.prototype.createLevelMin_ = function() {
     // create
-    var min = this.createController( 
+    this.min_ = this.createController( 
 	xiv.ui.ctrl.SliderController, 
-	xiv.ui.ctrl.LevelsController.CONTROLLERS.LEVEL_MIN, 
-	function(e){
-	    xObj['windowLow'] = e.value;
-	}.bind(this));
-    min.setXObj(xObj);
+	xiv.ui.ctrl.LevelsController.titles_.LEVEL_MIN, 
+	this.onMinChange_.bind(this));
+
+    this.min_.setXObj(this.xObj_);
 
     // set folder
-    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, min);
+    xiv.ui.ctrl.XtkController.setControllerFolders(this.xObj_, this.min_);
 
 
     // store
     //window.console.log("***********", controller);
-    this.masterControllers.push(min);
+    this.masterControllers.push(this.min_);
 
     // set defaults
-    var slider = min.getComponent();
+    var slider = this.min_.getComponent();
+
 
     slider.setMaximum(xiv.ui.ctrl.LevelsController.LEVEL_MAX);
     slider.setMinimum(xiv.ui.ctrl.LevelsController.LEVEL_MIN);
@@ -302,41 +352,29 @@ xiv.ui.ctrl.LevelsController.prototype.createLevelMin = function(xObj) {
 
     slider.setValue(xiv.ui.ctrl.LevelsController.LEVEL_MIN);
     slider.setStep(1);
-    min.setValueDecimals(0);
-    min.update();
-
-
-    this.min_ = min;
+    this.min_.setValueDecimals(0);
+    this.min_.setDefaultValue(this.xObj_['min']);
+    this.min_.update();
 }
 
 
 
-
 /**
- * @param {!X.object} xObj
- * @return {xiv.ui.ctrl.XtkController}
- * @protected
+ * @private
  */
-xiv.ui.ctrl.LevelsController.prototype.createLevelMax = function(xObj) {
+xiv.ui.ctrl.LevelsController.prototype.createLevelMax_ = function() {
 
     //
     // Create
     //
-    var max = this.createController( xiv.ui.ctrl.SliderController, 
-	xiv.ui.ctrl.LevelsController.CONTROLLERS.LEVEL_MAX);
-    max.setXObj(xObj);
-    //
-    // Listen for changes
-    //
-    goog.events.listen(max, 
-	xiv.ui.ctrl.XtkController.EventType.CHANGE, 
-	function(e){
-	    xObj['windowHigh'] = e.value;
-	}.bind(this))
-
+    var max = this.createController( 
+	xiv.ui.ctrl.SliderController, 
+	xiv.ui.ctrl.LevelsController.titles_.LEVEL_MAX,
+	this.onMaxChange_.bind(this));
+    max.setXObj(this.xObj_);
 
     // set folder
-    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, max);
+    xiv.ui.ctrl.XtkController.setControllerFolders(this.xObj_, max);
 
     // store
     this.masterControllers.push(max);
@@ -347,6 +385,7 @@ xiv.ui.ctrl.LevelsController.prototype.createLevelMax = function(xObj) {
     slider.setValue(xiv.ui.ctrl.LevelsController.LEVEL_MAX);
     slider.setStep(1);
     max.setValueDecimals(0);
+    max.setDefaultValue(this.xObj_['max']);
     max.update();
 
     this.max_ = max;
@@ -354,55 +393,302 @@ xiv.ui.ctrl.LevelsController.prototype.createLevelMax = function(xObj) {
 
 
 
+/**
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.rebase_ = function(){
+
+    window.console.log("REBASE MIN MAX", this.xObj_['min'], this.xObj_['max']);
+
+    var maxSlider = this.max_.getComponent();
+    var minSlider = this.min_.getComponent();
+
+    var maxVal = maxSlider.getValue();
+    var minVal = minSlider.getValue();
+
+
+    maxSlider.setMaximum(this.xObj_['max']);
+    maxSlider.setMinimum(this.xObj_['min']);
+    maxSlider.setValue(minVal);
+
+    minSlider.setMaximum(this.xObj_['max']);
+    minSlider.setMinimum(this.xObj_['min']);
+    minSlider.setValue(minVal);
+
+    this.max_.update();
+    this.min_.update();
+    this.hist_.update();
+}
+
+
 
 /**
- * @param {!X.object} xObj
- * @param {!xiv.ui.ctrl.XtkController} min
- * @param {!xiv.ui.ctrl.XtkController} max
- * @protected
+ * @private
  */
-xiv.ui.ctrl.LevelsController.prototype.createBrightness = 
-function(xObj) {
+xiv.ui.ctrl.LevelsController.prototype.onMinChange_ = function(){
+    if (!goog.isDefAndNotNull(this.max_) ||
+	!goog.isDefAndNotNull(this.min_)) { return }
+    
+    var minSlider = this.min_.getComponent();
+    if (minSlider.getMinimum() != this.xObj_['min']){
+	this.rebase_();
+    }
+    this.xObj_['windowLow'] = minSlider.getValue();
+
+    //
+    // Now, update the controllers
+    //
+    this.updateControllers_(this.min_);
+}
+
+
+
+/**
+ * @param {Event}
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.onMaxChange_ = function(e){
+    if (!goog.isDefAndNotNull(this.max_) ||
+	!goog.isDefAndNotNull(this.min_)) { return }
+    
+    var maxSlider = this.max_.getComponent();
+    if (maxSlider.getMaximum() != this.xObj_['max'] &&
+	this.xObj_['max'] != Infinity){
+	this.rebase_();
+    }
+    this.xObj_['windowHigh'] = maxSlider.getValue();
+
+    //
+    // Now, update the controllers
+    //
+    this.updateControllers_(this.max_);
+}
+
+
+
+/**
+ * @return {!xiv.ui.ctrl.SliderController}
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.updateControllers_ = 
+function(currController) {
+
+    switch (currController){
+	
+	//
+	// MAX or MIN is adjusted
+	//
+    case this.min_:
+    case this.max_:
+	var minSlider = this.min_.getComponent();
+	var maxSlider = this.max_.getComponent();
+
+	if (currController == this.max_ &&
+	    maxSlider.getValue() <= minSlider.getValue()){
+	    minSlider.setValue(maxSlider.getValue() - 1);
+	}
+
+	else if (currController == this.min_ &&
+		 minSlider.getValue() >= maxSlider.getValue()){
+	    maxSlider.setValue(minSlider.getValue() + 1);
+	}
+	this.updateBrightness_();
+	this.updateContrast_();
+
+	//
+	// BRIGHTESS or CONTRAST is adjusted
+	//
+    case this.brightness_:
+    case this.contrast_:
+	this.updateMinMax_();
+	break;
+    }
+
+
+    //
+    // Always update the histogram
+    //
+    this.updateHist_();
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.updateMinMax_ = function(){
+    var minSlider = this.min_.getComponent();
+    var maxSlider = this.max_.getComponent();
+    var _l = this.min_.getCurrentLevels();
+
+    minSlider.suspendChangeEvent(true);
+    maxSlider.suspendChangeEvent(true);
+    
+    minSlider.setValue(_l.low);
+    maxSlider.setValue(_l.high);
+
+    this.min_.getValueInput().value = minSlider.getValue();
+    this.max_.getValueInput().value = maxSlider.getValue();
+
+    maxSlider.suspendChangeEvent(false);
+    minSlider.suspendChangeEvent(false);
+}
+
+
+/**
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.updateContrast_ =
+function(){
+    var cSlider = this.contrast_.getComponent();
+    cSlider.suspendChangeEvent(true);
+  
+    var _l = this.min_.getCurrentLevels();
+    var mid = cSlider.getMaximum()/2;
+    var c = ((_l.max - _l.min)/(_l.high - _l.low)) * mid;
+    if (c > mid) {
+	c = cSlider.getMaximum() - 
+	    ((_l.high - _l.low)/(_l.max - _l.min)) * mid;
+    }
+    var contrast = Math.round(c);
+    cSlider.setValue(contrast);
+    this.contrast_.getValueInput().value = contrast;
+
+    cSlider.suspendChangeEvent(false);
+}
+
+
+
+/**
+ * @param {boolean=} opt_suspendChangeEvent
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.updateBrightness_ =
+function(){
+    var bSlider = this.brightness_.getComponent();
+    bSlider.suspendChangeEvent(true);
+   
+
+    var _l = this.min_.getCurrentLevels();
+    var level = _l.low + (_l.high - _l.low)/2.0;
+    var normalizedLevel = 1.0 - (level - _l.min)/(_l.max - _l.min);
+    var brightness = Math.round(normalizedLevel * bSlider.getMaximum());
+
+
+    bSlider.setValue(brightness);
+    this.brightness_.getValueInput().value = brightness;
+
+    bSlider.suspendChangeEvent(false);
+}
+
+
+
+/**
+ * @param {Event} e
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.onBrightnessChange_ = 
+function(e) {
+
+    if (!goog.isDefAndNotNull(this.brightness_)) {return}
+
+    var _l = this.min_.getCurrentLevels();
+    var bSlider = this.brightness_.getComponent();
+
+    var center = 
+	_l.min + (_l.max - _l.min) *
+	((bSlider.getMaximum() - bSlider.getValue())/ bSlider.getMaximum());
+
+    var width = _l.high - _l.low;
+
+    var newLow, newHigh;
+    newLow = Math.round(center - width/2);
+    newHigh = Math.round(center + width/2);
+    this.setNewHighAndLow_(newLow, newHigh);
+
+    this.updateControllers_(this.brightness_);
+}
+
+
+
+
+/**
+ * @param {Event} e
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.onContrastChange_ = 
+function(e) {
+
+    if (!goog.isDefAndNotNull(this.contrast_)) {return}
+
+    var _l = this.min_.getCurrentLevels();
+    var cSlider = this.contrast_.getComponent();
+
+    var slope;
+    var center = _l.low + (_l.high-_l.low) / 2.0;
+    var range = _l.max - _l.min;
+    var mid = cSlider.getMaximum() / 2;
+
+    if (cSlider.getValue() <= mid) {
+	slope = cSlider.getValue() / mid;
+    }
+    else {
+	slope = mid / (cSlider.getMaximum() - cSlider.getValue());
+    }
+    
+    if (slope > 0.0) {
+	var newLow, newHigh;
+	newLow = Math.round(center - (0.5 * range)/slope);
+	newHigh = Math.round(center + (0.5 * range)/slope);
+	this.setNewHighAndLow_(newLow, newHigh);
+    }
+
+    this.updateControllers_(this.contrast_);
+}
+
+
+/**
+ * @param {!number} newLow
+ * @param {!number} newHigh
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.setNewHighAndLow_ = 
+    function(newLow, newHigh) {
+	if (newLow == newHigh){
+	    newLow = newHigh - 1;
+	}
+	this.xObj_['windowLow'] = newLow;
+	this.xObj_['windowHigh'] = newHigh;
+    }
+
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.createBrightness_ = 
+function() {
     //
     // Create
     //
-    var brightness = this.createController( xiv.ui.ctrl.SliderController, 
-	xiv.ui.ctrl.LevelsController.CONTROLLERS.BRIGHTNESS);
-    brightness.setXObj(xObj);
-    //
-    // Listen for changes
-    //
-    goog.events.listen(brightness, 
-	xiv.ui.ctrl.XtkController.EventType.CHANGE, 
-	function(e){	    
-	    var rate = (e.value - e.previous) / (e.maximum - e.minimum);
-	    var currDifference = 
-		parseInt(xObj['windowHigh']) - parseInt(xObj['windowLow']);
+    var brightness = this.createController( 
+	xiv.ui.ctrl.SliderController, 
+	xiv.ui.ctrl.LevelsController.titles_.BRIGHTNESS,
+	this.onBrightnessChange_.bind(this));
+    brightness.setXObj(this.xObj_);
 
-	    xObj['windowLow']  = 
-		Math.round(parseInt(xObj['windowLow']) - 
-			   (currDifference * rate));
-	    xObj['windowHigh'] = 
-		Math.round(parseInt(xObj['windowHigh']) - 
-			   (currDifference * rate));
-
-
-	    this.min_.getComponent().setValue(xObj['windowLow']);
-	    this.max_.getComponent().setValue(xObj['windowHigh']);
-
-
-	}.bind(this))
 
 
     // set folder
-    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, brightness);
+    xiv.ui.ctrl.XtkController.setControllerFolders(this.xObj_, brightness);
 
     // store
     this.masterControllers.push(brightness);
 
-    var slider = brightness.getSlider();
+    var slider = brightness.getComponent();
     slider.setMaximum(100);
-    slider.setMinimum(-100);
+    slider.setMinimum(0);
     slider.setValue(0);
     slider.setStep(1);
     brightness.setValueDecimals(0);
@@ -416,118 +702,33 @@ function(xObj) {
 
 
 /**
- * @param {!X.object} xObj
- * @param {!xiv.ui.ctrl.XtkController} min
- * @param {!xiv.ui.ctrl.XtkController} max
- * @protected
+ * @private
  */
-xiv.ui.ctrl.LevelsController.prototype.createContrast = 
-function(xObj, min, max) {
+xiv.ui.ctrl.LevelsController.prototype.createContrast_ = 
+function() {
     //
     // Create
     //
-    var contrast = this.createController( xiv.ui.ctrl.SliderController, 
-	xiv.ui.ctrl.LevelsController.CONTROLLERS.CONTRAST);
-    contrast.setXObj(xObj);
+    var contrast = this.createController( 
+	xiv.ui.ctrl.SliderController, 
+	xiv.ui.ctrl.LevelsController.titles_.CONTRAST,
+	this.onContrastChange_.bind(this));
+    contrast.setXObj(this.xObj_);
 
 
     var slider = contrast.getComponent();
 
-    
-    var high, low;
-    goog.events.listen(
-	slider, 
-	goog.ui.SliderBase.EventType.DRAG_START, function(){
-	    high = parseInt(xObj['windowHigh']);
-	    low = parseInt(xObj['windowLow']); 
-	})
-
-
-
-    //
-    // Listen for changes
-    //
-    goog.events.listen(contrast, 
-	xiv.ui.ctrl.XtkController.EventType.CHANGE, 
-	function(e){	 
-
-	    var newHigh, newLow;
-	    if (e.value < 0){
-		var maxMult = 3;
-		var maxExt = high * maxMult;
-
-		var lowSlope = 
-		    (low + maxExt)/(0 - slider.getMinimum());
-		newLow = lowSlope * e.value + low;
-
-		var highSlope = 
-		    (high - maxExt)/(0 - slider.getMinimum());
-		newHigh = highSlope * e.value + high;
-
-	    }
-	    else if (e.value == 0){
-		newHigh = high;
-		newLow = low;
-	    }
-	    else {
-
-		var maxMult = .5;
-		var maxExt = high * maxMult;
-
-		var lowSlope = 
-		    ((maxExt - 1) - low)/(slider.getMaximum() - 0);
-		newLow = lowSlope * e.value + low;
-
-		var highSlope = 
-		    (maxExt - high)/(slider.getMaximum() - 0);
-		newHigh = highSlope * e.value + high;	
-	
-	    }
-
-	    xObj['windowHigh'] = newHigh;
-	    xObj['windowLow'] = newLow;
-
-
-	    this.hist_.update();
-
-	    var minSlider = this.min_.getComponent();
-	    minSlider.suspendSlideEvent(true);
-	    if(xObj['windowLow'] < minSlider.getMinimum()){
-		minSlider.setValue(minSlider.getMinimum());
-	    } else {
-		minSlider.setValue(xObj['windowLow']);
-	    }
-	    this.min_.getValueInput().value = minSlider.getValue();
-	    minSlider.suspendSlideEvent(false);
-
-
-
-	    var maxSlider = this.max_.getComponent();
-	    maxSlider.suspendSlideEvent(true);
-	    if(xObj['windowHigh'] > maxSlider.getMaximum()){
-		maxSlider.setValue(maxSlider.getMaximum());
-	    } else {
-		maxSlider.setValue(xObj['windowHigh']);
-	    }
-	    this.max_.getValueInput().value = maxSlider.getValue();
-	    maxSlider.suspendSlideEvent(false);
-	    
-	    xObj['windowHigh'] = newHigh;
-	    xObj['windowLow'] = newLow;
-
-
-	}.bind(this))
 
 
     // set folder
-    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, contrast);
+    xiv.ui.ctrl.XtkController.setControllerFolders(this.xObj_, contrast);
 
     // store
     this.masterControllers.push(contrast);
 
 
     slider.setMaximum(100);
-    slider.setMinimum(-100);
+    slider.setMinimum(0);
     slider.setValue(0);
     slider.setStep(1);
     contrast.setValueDecimals(0);
@@ -573,34 +774,20 @@ xiv.ui.ctrl.LevelsController.prototype.disposeInternal = function() {
     delete this.contrast_;
     delete this.hist_;
     delete this.scaleCB_;
+    delete this.xObj_;
     goog.base(this, 'disposeInternal');
 }
 
 
-
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.ControllerSet',
+	xiv.ui.ctrl.LevelsController.ControllerSet);
 goog.exportSymbol('xiv.ui.ctrl.LevelsController.ID_PREFIX',
 	xiv.ui.ctrl.LevelsController.ID_PREFIX);
 goog.exportSymbol('xiv.ui.ctrl.LevelsController.CSS_SUFFIX',
 	xiv.ui.ctrl.LevelsController.CSS_SUFFIX);
-goog.exportSymbol('xiv.ui.ctrl.LevelsController.CONTROLLERS',
-	xiv.ui.ctrl.LevelsController.CONTROLLERS);
-goog.exportSymbol('xiv.ui.ctrl.LevelsController.LEVEL_MAX',
-	xiv.ui.ctrl.LevelsController.LEVEL_MAX);
-goog.exportSymbol('xiv.ui.ctrl.LevelsController.LEVEL_MIN',
-	xiv.ui.ctrl.LevelsController.LEVEL_MIN);
 goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.add',
 	xiv.ui.ctrl.LevelsController.prototype.add);
-goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.createHistogram',
-	xiv.ui.ctrl.LevelsController.prototype.createHistogram);
-goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.createReset',
-	xiv.ui.ctrl.LevelsController.prototype.createReset);
-goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.createLevelMin',
-	xiv.ui.ctrl.LevelsController.prototype.createLevelMin);
-goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.createLevelMax',
-	xiv.ui.ctrl.LevelsController.prototype.createLevelMax);
-goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.createBrightness',
-	xiv.ui.ctrl.LevelsController.prototype.createBrightness);
-goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.createContrast',
-	xiv.ui.ctrl.LevelsController.prototype.createContrast);
+goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.getControllerSet',
+	xiv.ui.ctrl.LevelsController.prototype.getControllerSet);
 goog.exportSymbol('xiv.ui.ctrl.LevelsController.prototype.disposeInternal',
 	xiv.ui.ctrl.LevelsController.prototype.disposeInternal);

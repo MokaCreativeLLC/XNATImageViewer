@@ -120,7 +120,7 @@ xiv.ui.ctrl.SliderController.prototype.createSlider_ = function() {
 
     // Events
     goog.events.listen(this.getComponent(), 
-		       nrg.ui.Slider.EventType.SLIDE, 
+		       nrg.ui.Slider.EventType.CHANGE, 
     		       this.dispatchComponentEvent.bind(this))
     
     
@@ -210,7 +210,7 @@ xiv.ui.ctrl.SliderController.prototype.dispatchComponentEvent = function(){
 
     var component = this.getComponent();
     var val = component.getValue().toFixed(this.valueDecimals_);
-    var previousValue = parseInt(this.valueInput_.value);
+    var previousValue = component.getPreviousValue();
     this.valueInput_.value = val;
 
     //window.console.log("SLIDER", val);

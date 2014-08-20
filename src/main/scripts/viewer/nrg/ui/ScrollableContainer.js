@@ -220,7 +220,7 @@ nrg.ui.ScrollableContainer.prototype.setSliderStyles_ = function(){
  * @protected
  */
 nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
-    //window.console.log("MAP SLIDER TO CONTENTS!");
+    //window.console.log("MAP SLIDER TO CONTENTS!", this.Slider.getThumb());
 
     var widgetHeight = goog.style.getSize(this.element_).height;
     var scrollAreaHeight = goog.style.getSize(this.scrollArea_).height
@@ -294,7 +294,8 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
  * @private
  */
 nrg.ui.ScrollableContainer.prototype.setSliderEvents_ = function() {
-    goog.events.listen(this.Slider, nrg.ui.Slider.EventType.SLIDE,
+    goog.events.listen(this.Slider, 
+		       nrg.ui.Slider.EventType.CHANGE,
 		       this.mapSliderToContents.bind(this));  
     this.Slider.bindToMouseWheel(this.getElement());
 }

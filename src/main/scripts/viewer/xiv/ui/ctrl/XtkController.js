@@ -316,6 +316,31 @@ xiv.ui.ctrl.XtkController.prototype.getXObj = function() {
 
 
 
+
+/**
+ * @param {!X.Object} xObj
+ * @struct 
+ */
+xiv.ui.ctrl.XtkController.CurrentLevels = function(xObj){
+    this.min = parseInt(xObj['min']);
+    this.max = parseInt(xObj['max']);
+    this.low = parseInt(xObj['windowLow']);
+    this.high = parseInt(xObj['windowHigh']);
+}
+
+
+
+/**
+ * @return {!xiv.ui.ctrl.XtkController.CurrentLevels}
+ * @public
+ */
+xiv.ui.ctrl.XtkController.prototype.getCurrentLevels = function(){
+    return new xiv.ui.ctrl.XtkController.CurrentLevels(this.xObj_);
+}
+
+
+
+
 /**
  * @param {!Element | !goog.ui.Component} component
  * @public
@@ -641,6 +666,8 @@ goog.exportSymbol('xiv.ui.ctrl.XtkController.EventType',
 	xiv.ui.ctrl.XtkController.EventType);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.OBJ_KEY',
 	xiv.ui.ctrl.XtkController.OBJ_KEY);
+goog.exportSymbol('xiv.ui.ctrl.XtkController.CurrentLevels', 
+		  xiv.ui.ctrl.XtkController.CurrentLevels);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.createLabel',
 	xiv.ui.ctrl.XtkController.createLabel);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.getXObjLabel',
@@ -677,6 +704,8 @@ goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.isInitialized',
 	xiv.ui.ctrl.XtkController.prototype.isInitialized);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.setInitialized',
 	xiv.ui.ctrl.XtkController.prototype.setInitialized);
+goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.getCurrentLevels',
+	xiv.ui.ctrl.XtkController.prototype.getCurrentLevels);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.getSubControllers',
 	xiv.ui.ctrl.XtkController.prototype.getSubControllers);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.getComponent',
