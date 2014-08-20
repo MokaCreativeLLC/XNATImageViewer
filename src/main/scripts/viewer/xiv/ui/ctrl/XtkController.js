@@ -320,6 +320,7 @@ xiv.ui.ctrl.XtkController.prototype.getXObj = function() {
 /**
  * @param {!X.Object} xObj
  * @struct 
+ * @constructor
  */
 xiv.ui.ctrl.XtkController.CurrentLevels = function(xObj){
     this.min = parseInt(xObj['min']);

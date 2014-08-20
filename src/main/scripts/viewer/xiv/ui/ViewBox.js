@@ -618,6 +618,69 @@ function(opt_delay, opt_callback, opt_fadeTime){
 
 
 
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.onRenderEndDemo_ = function(){ 
+    //
+    // Close levels
+    //
+    this.fireToggleButton(this.InteractorHandler_.getDialogKey('levels'));  
+
+    //
+    // Close Info
+    //
+    this.fireToggleButton(xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO);     
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.onRenderEndLive_ = function(){ 
+    var vol = this.Renderer_.getSelectedVolume();
+
+    //
+    // Single frame scans always default to transverse
+    //
+    if (vol[X.volume.SINGLE_FRAME_SCAN] == true){
+	this.setLayout('Transverse');
+
+	//
+	// remove all interactors except zoom
+	//
+	var inters = this.LayoutHandler_.getMasterInteractorElements()
+	goog.array.forEach(inters, function(inter){
+	    if (inter.id.indexOf('ZoomDisplay') == -1){
+		inter.style.visibility = 'hidden';
+	    }
+	})
+	
+	//
+	// Hide layout menu
+	//
+	goog.dom.removeNode(this.LayoutMenu_.getElement());
+	
+    } 
+
+    //
+    //  Prioritize the layout to the stored orientation via XNAT
+    //
+    else if (goog.isDefAndNotNull(this.ViewableTrees_[0].getOrientation())){
+	this.setLayout(this.ViewableTrees_[0].getOrientation());
+    }
+    // 
+    // Otherwise, refer to the volume's assessed orientation
+    //
+    else if (goog.isDefAndNotNull(vol[X.volume.ORIENTATION_KEY])){
+	this.setLayout(goog.string.toTitleCase(
+	    this.Renderer_.getSelectedVolume()[X.volume.ORIENTATION_KEY]));
+    } 
+}
+
+
+
 
 /**
  * As stated.
@@ -686,55 +749,20 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 
 
     //
-    // Set the layout based the orientation of the Volume
+    // Apply different changes depending on the mode
     //
-    if (xiv.MODE != 'demo'){
-
-	var vol = this.Renderer_.getSelectedVolume();
-
-	//
-	// Single frame scans always default to transverse
-	//
-	if (vol[X.volume.SINGLE_FRAME_SCAN] == true){
-	    this.setLayout('Transverse');
-
-	    //
-	    // remove all interactors except zoom
-	    //
-	    var inters = this.LayoutHandler_.getMasterInteractorElements()
-	    goog.array.forEach(inters, function(inter){
-		if (inter.id.indexOf('ZoomDisplay') == -1){
-		    inter.style.visibility = 'hidden';
-		}
-	    })
-	    
-	    //
-	    // Hide layout menu
-	    //
-	    goog.dom.removeNode(this.LayoutMenu_.getElement());
-	    
-	} 
-
-	//
-	//  Prioritize the layout to the stored orientation via XNAT
-	//
-	else if (goog.isDefAndNotNull(this.ViewableTrees_[0].getOrientation())){
-	    this.setLayout(this.ViewableTrees_[0].getOrientation());
-	}
-	// 
-	// Otherwise, refer to the volume's assessed orientation
-	//
-	else if (goog.isDefAndNotNull(vol[X.volume.ORIENTATION_KEY])){
-	    this.setLayout(goog.string.toTitleCase(
-		this.Renderer_.getSelectedVolume()[X.volume.ORIENTATION_KEY]));
-	} 
-
-	if (!vol[X.volume.SINGLE_FRAME_SCAN]){
-
-	    fadeIns = goog.array.concat(fadeIns, 
+    if (xiv.MODE == 'demo') {
+	this.onRenderEndDemo_();
+    }
+    else {
+	this.onRenderEndLive_();
+	if (!this.Renderer_.getSelectedVolume()[X.volume.SINGLE_FRAME_SCAN]){
+	    fadeIns = goog.array.concat(
+		fadeIns, 
 		this.LayoutHandler_.getMasterInteractorElements())
 	}
     }
+
    
     var fadeInsStartOps = [];
     var fadeInsEndOps = [];
@@ -1870,6 +1898,25 @@ xiv.ui.ViewBox.prototype.untoggle = function(buttonKeys){
 
 
 /**
+ * @public
+ * @param {!boolean} bool
+ */
+xiv.ui.ViewBox.prototype.showCornerInteractors = function(bool){
+    var interactors = this.getLayoutHandler().getMasterInteractors();
+    goog.object.forEach(interactors, function(set, plane){
+	set.ZOOM_DISPLAY.getElement().style.visibility = 
+	    bool ? 'visible' : 'hidden';
+	set.FRAME_DISPLAY.getElement().style.visibility = 
+	    bool ?  'visible' : 'hidden';
+    })
+
+}
+
+
+
+
+
+/**
  * @param {!string} menuLocation
  * @param {!string} defaultClass,
  * @param {!string} identifier
@@ -2323,6 +2370,9 @@ goog.exportSymbol('xiv.ui.ViewBox.prototype.doNotHide',
 	xiv.ui.ViewBox.prototype.doNotHide);
 goog.exportSymbol('xiv.ui.ViewBox.prototype.setLayout',
 	xiv.ui.ViewBox.prototype.setLayout);
+
+goog.exportSymbol('xiv.ui.ViewBox.prototype.showCornerInteractors',
+	xiv.ui.ViewBox.prototype.showCornerInteractors);
 
 goog.exportSymbol('xiv.ui.ViewBox.prototype.load',
 	xiv.ui.ViewBox.prototype.load);

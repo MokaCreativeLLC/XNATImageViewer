@@ -733,16 +733,27 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
 		    type: eventKey,
 		    dialog: currDialog
 		})
-		
+
+
+		//
+		// Hide the corner interactors
+		//
+		this.ViewBox_.showCornerInteractors(opened);
+
 	    }.bind(this), serverRoot + 
 		'/images/viewer/xiv/ui/ViewBox/Toggle-Info.png');
   
 
+    //
+    // Since we close the interactors as well, we don't want to turn
+    // the toggle button off when the button is clicked.
+    //
+    /*
     goog.events.listen(currDialog, 
 		      nrg.ui.Dialog.EventType.CLOSE_BUTTON_CLICKED, function(){
-			 this.ViewBox_.onToggleButtonClicked(infoToggle);
+			 //this.ViewBox_.onToggleButtonClicked(infoToggle);
 		      }.bind(this))
-
+		      */
     currDialog.resizeToContents();
     this.Dialogs_[dialogKey] = currDialog;
 }
