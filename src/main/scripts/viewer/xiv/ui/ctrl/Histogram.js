@@ -555,7 +555,7 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
 	this.drawLine_(canvasWidth, canvasHeight, canvasWidth / _l.high);
 	return;
     }
-    this.drawLine_(canvasWidth, canvasHeight, ccanvasWidth / _l.max);
+    this.drawLine_(canvasWidth, canvasHeight, canvasWidth / _l.max);
 }
 
 

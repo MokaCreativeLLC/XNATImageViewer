@@ -398,7 +398,8 @@ xiv.ui.ctrl.LevelsController.prototype.createLevelMax_ = function() {
  */
 xiv.ui.ctrl.LevelsController.prototype.rebase_ = function(){
 
-    window.console.log("REBASE MIN MAX", this.xObj_['min'], this.xObj_['max']);
+    //window.console.log("REBASE MIN MAX", 
+    //this.xObj_['min'], this.xObj_['max']);
 
     var maxSlider = this.max_.getComponent();
     var minSlider = this.min_.getComponent();

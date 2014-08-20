@@ -530,6 +530,8 @@ function(limitType, opt_callback, opt_dur) {
 nrg.ui.ResizeDragger.prototype.stopSlideAnimation = function(){
     if (goog.isDefAndNotNull(this.slideAnim_)){
 	this.slideAnim_.stop();
+	this.onResize();
+	this.onResizeEnd();
     }
 }
 

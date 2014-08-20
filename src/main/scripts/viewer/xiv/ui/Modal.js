@@ -954,12 +954,9 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
  */
 xiv.ui.Modal.prototype.tabResizing_ = function(){
     if (this.pageMonitor_.isHidden()){
-
-	window.console.log("\n\nSTOPPING");
 	var dragger = 
 	    this.ProjectTab_.getResizable().getResizeDragger('RIGHT');
-	dragger.stopSlideAnimation();
-	dragger.slideToLimits('MAX', null, 0);	   
+	dragger.stopSlideAnimation();	   
     }
 }
 

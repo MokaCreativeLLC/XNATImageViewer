@@ -1537,7 +1537,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
     this.levels_.max.setDefaultValue(levelMaxVal);
     this.levels_.min.setDefaultValue(0);
 
-    window.console.log("\n\nLEVEL MAX", levelMaxVal);
+    //window.console.log("\n\nLEVEL MAX", levelMaxVal);
     this.levels_.min.getComponent().setValue(0);
     this.levels_.max.getComponent().setValue(levelMaxVal);;
     this.levels_.scaleCB.setDefaultValue(true);
