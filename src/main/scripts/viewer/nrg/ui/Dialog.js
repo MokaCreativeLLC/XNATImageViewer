@@ -719,6 +719,7 @@ nrg.ui.Dialog.prototype.setVisible = function(visible) {
  * @public
  */
 nrg.ui.Dialog.prototype.resizeToContents = function() {
+
     var dialogElt = this.getElement();
     var contentElt = this.getContentElement();
     var maxWidth = 0;

@@ -92,7 +92,7 @@
     top: 0px;
     left: 0px;
     width: 150px;
-    height: 415px;
+    height: 370px;
     z-index: 10;
     border: none;
     cursor: default;
@@ -103,5 +103,37 @@
     border: solid 1px;
     border-radius: 5px;
     border-color: white;
-    background-color: rgba(60,60,60,.5);
+    background-color: rgba(0,0,0,.9);
+}
+
+
+.xiv-ui-viewboxinteractorhandler-levels-sliderlabel {
+    font-size: 9px;
+}
+
+.xiv-ui-viewboxinteractorhandler-levels-slidercontroller {
+    height: 35px;
+}
+
+.xiv-ui-viewboxinteractorhandler-levels-slider {
+    top: 28px;
+    width: 115px;
+}
+
+.xiv-ui-viewboxinteractorhandler-levels-checkbox {
+    top: 28px;
+    width: 115px;
+}
+
+.xiv-ui-viewboxinteractorhandler-levels-checkboxholder {
+    top: 0px;
+    width: 10px;
+    outline: none;
+    left: calc(100% - 15px);
+}
+
+
+.xiv-ui-viewboxinteractorhandler-levels-checkboxcontroller {
+    height: 15px;
+    outline: none;
 }

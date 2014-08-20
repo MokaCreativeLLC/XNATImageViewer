@@ -11,6 +11,7 @@ goog.require('goog.array');
 goog.require('goog.events');
 goog.require('goog.string');
 goog.require('goog.object');
+goog.require('goog.structs.Queue');
 goog.require('goog.events.MouseWheelHandler');
 goog.require('goog.events.KeyHandler');
 goog.require('goog.events.MouseWheelHandler.EventType');
@@ -75,10 +76,8 @@ goog.exportSymbol('nrg.ui.Slider', nrg.ui.Slider);
  * @enum {string}
  */
 nrg.ui.Slider.EventType = {
-  SLIDE: goog.events.getUniqueId('slide'),
-  START_SLIDE: goog.events.getUniqueId('start-slide'),
-  END_SLIDE: goog.events.getUniqueId('end-slide'),
-  MOUSEWHEEL: goog.events.getUniqueId('mousewheel'),
+    CHANGE: goog.events.getUniqueId('change'),
+    MOUSEWHEEL: goog.events.getUniqueId('mousewheel'),
 };
 
 
@@ -177,12 +176,12 @@ nrg.ui.Slider.prototype.track_;
 nrg.ui.Slider.prototype.thumb_; 
 
 
+
 /**
  * @type {!boolean}
  * @private
  */
-nrg.ui.Slider.prototype.suspendSlideEvent_ = false;
-
+nrg.ui.Slider.prototype.suspendChangeEvent_ = false;
 
 
 /**
@@ -190,6 +189,17 @@ nrg.ui.Slider.prototype.suspendSlideEvent_ = false;
  * @private
  */
 nrg.ui.Slider.prototype.animateOnHover_ = false;
+
+
+
+/**
+ * @return {!boolean}
+ * @public
+ */
+nrg.ui.Slider.prototype.isSliding = function(){
+    return this.isSliding_;
+}
+
 
 
 
@@ -243,22 +253,12 @@ nrg.ui.Slider.prototype.animQueue_ = null;
 
 
 
-
-/**
- * @param {!boolean} bool
- * @public
- */
-nrg.ui.Slider.prototype.suspendSlideEvent =  function (bool) {
-    this.suspendSlideEvent_ = bool;
-}
-
-
 /**
  * @param {!boolean} bool
  * @public
  */
 nrg.ui.Slider.prototype.suspendChangeEvent =  function (bool) {
-    this.suspendSlideEvent_ = bool;
+    this.suspendChangeEvent_ = bool;
 }
 
 
@@ -555,6 +555,7 @@ nrg.ui.Slider.prototype.addTrackHoverClass = function(trackClass) {
  */
 nrg.ui.Slider.prototype.animateOnHover = function(targetCSS) {
 
+    //window.console.log(this.getElement().id);
     this.animateOnHover_ = true;
     this.thumbAnimTargetCSS_ = targetCSS;
     //window.console.log("THUMB ANIM", this.thumbAnimTargetCSS_);
@@ -568,7 +569,7 @@ nrg.ui.Slider.prototype.animateOnHover = function(targetCSS) {
 
     this.baseHoverStartDims_ = nrg.fx.getAnimationDims(thumb);
     goog.dom.classes.add(thumb, this.thumbAnimTargetCSS_);
-
+   
     var newEnd = nrg.fx.getAnimationDims(thumb);
     goog.dom.classes.remove(thumb, this.thumbAnimTargetCSS_);
 
@@ -697,12 +698,51 @@ nrg.ui.Slider.prototype.initEvents_ = function() {
 
 
 /**
+ * @return {?goog.structs.Queue}
+ * @private
+ */
+nrg.ui.Slider.prototype.valueQueue_= null;
+
+
+/**
+ * @return {number}
+ * @public
+ */
+nrg.ui.Slider.prototype.getPreviousValue =  function () {
+    if (goog.isDefAndNotNull(this.valueQueue_)) {
+	var vals = this.valueQueue_.getValues();
+	if (vals.length > 0){
+	    return vals[0];
+	}
+    }
+}
+
+
+
+/**
  * Initializes the change event to the custom 'SLIDE' event.
+ * @private
  */
 nrg.ui.Slider.prototype.onChange_ =  function (e) {
     // stop propataion
     //window.console.log(e);
     e.stopPropagation();
+
+
+    //
+    // Store / add the values in the value queue
+    //
+    if (!goog.isDefAndNotNull(this.valueQueue_)){
+	this.valueQueue_ = new goog.structs.Queue();
+    }
+    if (this.valueQueue_.getCount() < 2){
+	this.valueQueue_.enqueue(this.getValue());
+    }
+    else {
+	this.valueQueue_.enqueue(this.getValue());
+	this.valueQueue_.dequeue();
+	//window.console.log('Values', this.valueQueue_.getValues());
+    }
 
     //
     // Add the hover classes
@@ -715,12 +755,12 @@ nrg.ui.Slider.prototype.onChange_ =  function (e) {
     //
     // Only fire event if suspend == false
     //
-    if (!this.suspendSlideEvent_){
+    if (!this.suspendChangeEvent_){
 	//
 	// Otherwise, fire the vents
 	//
 	this.dispatchEvent({
-	    type: nrg.ui.Slider.EventType.SLIDE,
+	    type: nrg.ui.Slider.EventType.CHANGE,
 	    value: this.getValue(),
 	    minimum: this.getMinimum(),
 	    maximum: this.getMaximum()
@@ -728,10 +768,9 @@ nrg.ui.Slider.prototype.onChange_ =  function (e) {
     }
 
     //
-    // always set this.suspendSlideEvent_ to false
+    // always set this.suspendChangeEvent_ to false
     //
-    this.suspendSlideEvent_ = false;
-
+    this.suspendChangeEvent_ = false;
 }
 
 
@@ -824,10 +863,16 @@ nrg.ui.Slider.prototype.onThumbMouseOver_ =  function(e){
  */
 nrg.ui.Slider.prototype.onMouseEnter_ =  function(e){
     //window.console.log("mouseEnter");
+    //window.console.log(this.getElement().id);
     this.isMouseOver_ = true;
 
     if (!this.isSliding_){
 	if (this.animateOnHover_){
+	    if (this.getOrientation() == 'vertical' &&
+		this.baseHoverEndDims_.width == 0){
+		this.animateOnHover(this.thumbAnimTargetCSS_)
+	    }
+	    //window.console.log(this.baseHoverEndDims_);
 	    this.animateHover_(this.baseHoverEndDims_);
 	}
 	else {
@@ -934,7 +979,7 @@ nrg.ui.Slider.prototype.onThumbnailDragEnd_ = function (e) {
 nrg.ui.Slider.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
-    delete this.suspendSlideEvent_;
+    delete this.suspendChangeEvent_;
 
     if (goog.isDefAndNotNull(this.element_)){
 	goog.events.removeAll(this);
@@ -983,6 +1028,11 @@ nrg.ui.Slider.prototype.disposeInternal = function() {
 	delete this.trackHoverClasses_;
     }
 
+    if (goog.isDefAndNotNull(this.valueQueue_)){
+	goog.object.clear(this.valueQueue_);
+	delete this.valueQueue_;
+    }
+
 
     this.clearAnims_();
 
@@ -999,6 +1049,7 @@ nrg.ui.Slider.prototype.disposeInternal = function() {
     delete this.baseHoverStartDims_;
     delete this.baseHoverEndDims_;
     delete this.isMouseOver_;
+    
 };
 
 
@@ -1006,12 +1057,15 @@ nrg.ui.Slider.prototype.disposeInternal = function() {
 goog.exportSymbol('nrg.ui.Slider.EventType', nrg.ui.Slider.EventType);
 goog.exportSymbol('nrg.ui.Slider.ID_PREFIX', nrg.ui.Slider.ID_PREFIX);
 goog.exportSymbol('nrg.ui.Slider.CSS_SUFFIX', nrg.ui.Slider.CSS_SUFFIX);
-goog.exportSymbol('nrg.ui.Slider.prototype.suspendSlideEvent',
-	nrg.ui.Slider.prototype.suspendSlideEvent);
+
 goog.exportSymbol('nrg.ui.Slider.prototype.suspendChangeEvent',
 	nrg.ui.Slider.prototype.suspendChangeEvent);
 goog.exportSymbol('nrg.ui.Slider.prototype.render',
 	nrg.ui.Slider.prototype.render);
+goog.exportSymbol('nrg.ui.Slider.prototype.isSliding',
+	nrg.ui.Slider.prototype.isSliding);
+goog.exportSymbol('nrg.ui.Slider.prototype.getPreviousValue',
+	nrg.ui.Slider.prototype.getPreviousValue);
 goog.exportSymbol('nrg.ui.Slider.prototype.getElement',
 	nrg.ui.Slider.prototype.getElement);
 goog.exportSymbol('nrg.ui.Slider.prototype.getTrack',

@@ -267,6 +267,15 @@ function(mainControls) {
 }
 
 
+/**
+ * @return {xiv.ui.ctrl.LevelsController}
+ * @public
+ */
+xiv.ui.ctrl.XtkControllerTree.prototype.getLevelsController = function(){
+    return this.LevelsController_;
+};
+
+
 
 /**
  * @return {Array.<xiv.ui.ctrl.XtkController>}
@@ -418,6 +427,8 @@ goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.prototype.getHistograms',
 	xiv.ui.ctrl.XtkControllerTree.prototype.getHistograms);
 goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.prototype.getControllers',
 	xiv.ui.ctrl.XtkControllerTree.prototype.getControllers);
+goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.prototype.getLevelsController',
+	xiv.ui.ctrl.XtkControllerTree.prototype.getLevelsController);
 goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.prototype.updateControllers',
 	xiv.ui.ctrl.XtkControllerTree.prototype.updateControllers);
 goog.exportSymbol('xiv.ui.ctrl.XtkControllerTree.prototype.createControllers',

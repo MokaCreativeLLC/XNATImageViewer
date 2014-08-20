@@ -64,6 +64,12 @@ xiv.ui.ctrl.SliderController.CSS_SUFFIX = {
 xiv.ui.ctrl.SliderController.prototype.valueDecimals_ = 2;
 
 
+/**
+ * @type {number}
+ * @private
+ */
+xiv.ui.ctrl.SliderController.prototype.sliderValueBeforeValueInput_;
+
 
 /**
  * @param {!number} num
@@ -113,7 +119,8 @@ xiv.ui.ctrl.SliderController.prototype.createSlider_ = function() {
 	xiv.ui.ctrl.SliderController.CSS.SLIDER_TRACK_HOVER);
 
     // Events
-    goog.events.listen(this.getComponent(), goog.events.EventType.CHANGE, 
+    goog.events.listen(this.getComponent(), 
+		       nrg.ui.Slider.EventType.CHANGE, 
     		       this.dispatchComponentEvent.bind(this))
     
     
@@ -154,17 +161,33 @@ xiv.ui.ctrl.SliderController.prototype.createValueInput_ = function() {
 /**
  * Callback for when a value in inputted in the input box.
  * 
+ * @return {number}
+ * @private
+ */
+xiv.ui.ctrl.SliderController.prototype.getSliderValueBeforeValueInput 
+= function(){
+    return this.sliderValueBeforeValueInput_;
+}
+
+
+
+/**
+ * Callback for when a value in inputted in the input box.
+ * 
  * @param {Event}
  * @private
  */
 xiv.ui.ctrl.SliderController.prototype.onValueInput_ = function(e){
 
-    //window.console.log("on value input");
+    //window.console.log("INPUT");
     var slider = this.getComponent();
     var val = parseFloat(this.valueInput_.value);
     val = goog.math.clamp(val, slider.getMinimum(),
 			  slider.getMaximum());
     this.valueInput_.value = val;
+    //window.console.log("on value input", val);
+    
+    this.sliderValueBeforeValueInput_ = slider.getValue();
     slider.setValue(val);
 }
 
@@ -187,7 +210,7 @@ xiv.ui.ctrl.SliderController.prototype.dispatchComponentEvent = function(){
 
     var component = this.getComponent();
     var val = component.getValue().toFixed(this.valueDecimals_);
-    var previousValue = parseInt(this.valueInput_.value);
+    var previousValue = component.getPreviousValue();
     this.valueInput_.value = val;
 
     //window.console.log("SLIDER", val);
@@ -231,6 +254,21 @@ xiv.ui.ctrl.SliderController.prototype.update = function() {
     if (component.getValue() !== this.valueInput_.value) {
 	this.valueInput_.value = oldValue;
     }
+
+    /*
+    window.console.log("\n   SLIDER:", 
+		       "\nstep: ", component.getStep(),
+		       "\nmin: ", component.getMinimum(),
+		       "\nmax: ", component.getMaximum(),
+		       "\nvalue: ", component.getValue());
+
+
+    window.console.log("   VALUE:", 
+		       "\nstep: ", this.valueInput_.step,
+		       "\nmin: ", this.valueInput_.min,
+		       "\nmax: ", this.valueInput_.max,
+		       "\nvalue: ", this.valueInput_.value);
+		       */
 }
 
 
@@ -242,6 +280,7 @@ xiv.ui.ctrl.SliderController.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
     delete this.valueDecimals_;
+    delete this.sliderValueBeforeValueInput_;
 
     // ValueInput
     if (goog.isDefAndNotNull(this.valueInput_)){
@@ -266,6 +305,9 @@ goog.exportSymbol('xiv.ui.ctrl.SliderController.prototype.getValueInput',
 goog.exportSymbol(
     'xiv.ui.ctrl.SliderController.prototype.dispatchComponentEvent',
     xiv.ui.ctrl.SliderController.prototype.dispatchComponentEvent);
+goog.exportSymbol(
+    'xiv.ui.ctrl.SliderController.prototype.getSliderValueBeforeValueInput',
+    xiv.ui.ctrl.SliderController.prototype.getSliderValueBeforeValueInput);
 goog.exportSymbol('xiv.ui.ctrl.SliderController.prototype.update',
 	xiv.ui.ctrl.SliderController.prototype.update);
 goog.exportSymbol('xiv.ui.ctrl.SliderController.prototype.disposeInternal',

@@ -214,6 +214,14 @@ xiv.ui.ctrl.XtkController.prototype.xObj_;
 
 
 /**
+ * @protected
+ * @type {number | String | boolean}
+ */
+xiv.ui.ctrl.XtkController.prototype.defaultValue;
+
+
+
+/**
  * @inheritDoc
  */
 xiv.ui.ctrl.XtkController.prototype.render = function(opt_parentElement) {
@@ -246,6 +254,23 @@ xiv.ui.ctrl.XtkController.prototype.getLabel = function() {
 }
 
 
+/**
+ * @param {!string | !number | !boolean}
+ * @public
+ */
+xiv.ui.ctrl.XtkController.prototype.setDefaultValue = function(val) {
+    this.defaultValue = val;
+}
+
+
+
+/**
+ * @return {string | number | boolean}
+ * @public
+ */
+xiv.ui.ctrl.XtkController.prototype.getDefaultValue = function() {
+    return this.defaultValue;
+}
 
 
 /**
@@ -288,6 +313,31 @@ xiv.ui.ctrl.XtkController.prototype.setXObj = function(xObj) {
 xiv.ui.ctrl.XtkController.prototype.getXObj = function() {
     return this.xObj_;
 }
+
+
+
+
+/**
+ * @param {!X.Object} xObj
+ * @struct 
+ */
+xiv.ui.ctrl.XtkController.CurrentLevels = function(xObj){
+    this.min = parseInt(xObj['min']);
+    this.max = parseInt(xObj['max']);
+    this.low = parseInt(xObj['windowLow']);
+    this.high = parseInt(xObj['windowHigh']);
+}
+
+
+
+/**
+ * @return {!xiv.ui.ctrl.XtkController.CurrentLevels}
+ * @public
+ */
+xiv.ui.ctrl.XtkController.prototype.getCurrentLevels = function(){
+    return new xiv.ui.ctrl.XtkController.CurrentLevels(this.xObj_);
+}
+
 
 
 
@@ -601,6 +651,8 @@ xiv.ui.ctrl.XtkController.prototype.disposeInternal = function() {
 	goog.dom.removeNode(this.label_);
 	delete this.label_;
     }
+
+    delete this.defaultValue;
 }
 
 
@@ -614,6 +666,8 @@ goog.exportSymbol('xiv.ui.ctrl.XtkController.EventType',
 	xiv.ui.ctrl.XtkController.EventType);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.OBJ_KEY',
 	xiv.ui.ctrl.XtkController.OBJ_KEY);
+goog.exportSymbol('xiv.ui.ctrl.XtkController.CurrentLevels', 
+		  xiv.ui.ctrl.XtkController.CurrentLevels);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.createLabel',
 	xiv.ui.ctrl.XtkController.createLabel);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.getXObjLabel',
@@ -628,6 +682,10 @@ goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.setLabel',
 	xiv.ui.ctrl.XtkController.prototype.setLabel);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.getLabel',
 	xiv.ui.ctrl.XtkController.prototype.getLabel);
+goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.setDefaultValue',
+	xiv.ui.ctrl.XtkController.prototype.setDefaultValue);
+goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.getDefaultValue',
+	xiv.ui.ctrl.XtkController.prototype.getDefaultValue);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.setFolders',
 	xiv.ui.ctrl.XtkController.prototype.setFolders);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.getFolders',
@@ -646,6 +704,8 @@ goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.isInitialized',
 	xiv.ui.ctrl.XtkController.prototype.isInitialized);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.setInitialized',
 	xiv.ui.ctrl.XtkController.prototype.setInitialized);
+goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.getCurrentLevels',
+	xiv.ui.ctrl.XtkController.prototype.getCurrentLevels);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.getSubControllers',
 	xiv.ui.ctrl.XtkController.prototype.getSubControllers);
 goog.exportSymbol('xiv.ui.ctrl.XtkController.prototype.getComponent',

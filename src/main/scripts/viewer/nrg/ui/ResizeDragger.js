@@ -511,13 +511,30 @@ nrg.ui.ResizeDragger.prototype.slideToLimits =
 function(limitType, opt_callback, opt_dur) {
     this.updateTrackingValues();
     var traj = this.getSlideTrajectory(limitType); 
+
     if (goog.isNumber(opt_dur) && opt_dur === 0) {
-	goog.style.setStyle(this.getElement(), traj.end);
+	//goog.style.setStyle(this.getElement(), traj.end);
+	goog.style.setPosition(this.getElement(), traj.end);
+	this.onResize();
+	this.onResizeEnd();
 	return;
     }
     this.createSlideAnim_(traj.start, traj.end, opt_callback, opt_dur);
     //window.console.log("\n\n\n\nSET EXPANDED!!!!", traj, opt_dur);
 }
+
+
+/**
+ * @public
+ */ 
+nrg.ui.ResizeDragger.prototype.stopSlideAnimation = function(){
+    if (goog.isDefAndNotNull(this.slideAnim_)){
+	this.slideAnim_.stop();
+	this.onResize();
+	this.onResizeEnd();
+    }
+}
+
 
 
 
@@ -723,6 +740,8 @@ goog.exportSymbol('nrg.ui.ResizeDragger.prototype.update',
 	nrg.ui.ResizeDragger.prototype.update);
 goog.exportSymbol('nrg.ui.ResizeDragger.prototype.getSlideTrajectory',
 	nrg.ui.ResizeDragger.prototype.getSlideTrajectory);
+goog.exportSymbol('nrg.ui.ResizeDragger.prototype.stopSlideAnimation',
+	nrg.ui.ResizeDragger.prototype.stopSlideAnimation);
 goog.exportSymbol('nrg.ui.ResizeDragger.prototype.slideToLimits',
 	nrg.ui.ResizeDragger.prototype.slideToLimits);
 goog.exportSymbol('nrg.ui.ResizeDragger.prototype.disposeInternal',

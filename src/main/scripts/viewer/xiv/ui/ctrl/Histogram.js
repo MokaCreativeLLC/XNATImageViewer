@@ -123,22 +123,6 @@ xiv.ui.ctrl.Histogram.prototype.maxPct_ = null;
 
 
 /**
- * @type {number}
- * @private
- */
-xiv.ui.ctrl.Histogram.prototype.windowHigh_ = null;
-
-
-
-/**
- * @type {number}
- * @private
- */
-xiv.ui.ctrl.Histogram.prototype.windowLow_ = null;
-
-
-
-/**
  * @const
  * @private
  */
@@ -432,11 +416,15 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
  */
 xiv.ui.ctrl.Histogram.prototype.drawWithHorizScaling_ = 
 function(canvasWidth, canvasHeight) {
+  
+    var startInd = 0
+    var _l = this.getCurrentLevels();  
+  
     //
-    // Determine the new max, for scaling purposes.
+    // Determine the new max -- have to loop through all percentages
     //
-    var i = 1;
-    var cutoffInd = this.getXObj()['windowHigh'];
+    var i = startInd;
+    var cutoffInd = _l.high;
     var newMax = 0;
     for (; i < cutoffInd + 1; i++){
 	if (this.percentages_[i] > newMax) {
@@ -448,54 +436,29 @@ function(canvasWidth, canvasHeight) {
     // Construct the new percentages
     //
     var newPcts = [];
-    var j = 1;
+    var j = startInd;
     for(; j < (cutoffInd + 1); j++){
 	newPcts.push(this.percentages_[j]/newMax);
-	if (j == cutoffInd){ break }
     }
 
     //
-    // Construct the histogram.
+    // Bar width of the histogram
     //
-    var barWidth = Math.round(
-	canvasWidth/(this.windowHigh_ - this.windowLow_));
+    var barWidth = Math.round(canvasWidth/_l.high);
     barWidth = barWidth > 0 ? barWidth: 1;   
-
-    var newPctInd = 0;
-    var indPct = 0;
-    var height = 0;
-    var b = 0, m = 0, canvX = 0;
 
     //
     // Draw each histogram vertical bar
     //
-    for (i=this.windowLow_; i < this.windowHigh_ + 1; i++){
+    var height = 0;
+    var slope = 0, canvX = 0;
+    for (i=0; i < _l.high + 1; i++){
 
-	if (i < 0) { continue } 
-	
-	indPct =  (i + 1) / this.windowHigh_;
-	
-	newPctInd =  Math.round(indPct * this.windowHigh_);
-
-	height = Math.round(canvasHeight * newPcts[newPctInd]);
-	
-	m = canvasWidth / (this.windowHigh_ - this.windowLow_);
-	b = -1 * m * this.windowLow_;
-	canvX = Math.round(m * i + b);
+	height = Math.round(canvasHeight * newPcts[i]);
+	slope = canvasWidth / _l.high;
+	canvX = Math.round(slope * i);
  
-	/*
-	window.console.log(
-	    'i:', i, 
-	    'newI:', canvX,
-	    'indPct:', indPct,
-	    'newPctInd:', newPctInd,
-	    'height:', height
-	);
-	*/
-	
-
-	if (!isNaN(height) && goog.isDefAndNotNull(height)){
-	
+	if (!isNaN(height) && goog.isDefAndNotNull(height)){	
 	    this.context_.fillStyle = this.histogramBarColor_;
 	    this.context_.fillRect(	
 		barWidth * canvX, // X start
@@ -505,6 +468,7 @@ function(canvasWidth, canvasHeight) {
 	}
     }
 }
+
 
 
 /**
@@ -522,13 +486,14 @@ xiv.ui.ctrl.Histogram.prototype.draw_ = function(canvasWidth, canvasHeight) {
     var pctInd = 0;
     var indPct = 0;
     var height = 0;
+    var _l = this.getCurrentLevels();  
 
     //
     // Draw each histogram vertical bar
     //
     for (i=0; i < canvasWidth; i++){
 
-	indPct = (i+1)/canvasWidth;
+	indPct = i/canvasWidth;
 	pctInd = Math.round(this.percentages_.length * indPct) -1;
 	pctInd = (pctInd < 0) ? 0 : pctInd;
 	height = Math.round(canvasHeight * this.percentages_[pctInd]);
@@ -578,6 +543,7 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
     var size = goog.style.getSize(this.lineCanvas_);
     var canvasWidth = size.width;
     var canvasHeight = size.height;
+    var _l = this.getCurrentLevels(); 
 
     //
     // Start by clearing the canvas
@@ -585,81 +551,77 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
     this.lineCanvas_.width = canvasWidth;
     
 
-    if (!this.scaleOnChange_){
-
-	var scalerX = canvasWidth / (this.startMax_ - this.startMin_);
-	var canvX1 = this.windowLow_ * scalerX
-	var canvX2 = this.windowHigh_ * scalerX;
-	var canvY1 = 0
-	var canvY2 = canvasHeight;
-
-	//
-	// Slope: (y2 - y1) / (x2 - x1)
-	//
-	var m = (canvasHeight - 0) / (canvX2 - canvX1);
-
-	//
-	//
-	//
-	var b = -1 * (m * canvX1);
-
-	
-	var limX1 = 0;
-	var limX2 = canvasWidth;
-	var limY1 = m * limX1 + b;
-	var limY2 = m * limX2 + b;
-
-	//
-	// Draw the sloped line
-	//
-	this.lineContext_.beginPath();
-	this.lineContext_.strokeStyle = "black";
-	
-	//
-	// 1st point
-	//
-	this.lineContext_.moveTo(limX1, canvasHeight - limY1);
-
-	//
-	// 2nd point
-	//
-	this.lineContext_.lineTo(limX2, canvasHeight - limY2);
-
-
-	this.lineContext_.lineWidth = .5;
-	this.lineContext_.stroke();
-
-	//
-	// Draw the min line
-	//
-	var midLineX = canvX1 + (canvX2 - canvX1) / 2;
-
-	if (midLineX > 0 && midLineX < canvasWidth){
-	    this.lineContext_.moveTo(midLineX, canvasHeight);
-	    this.lineContext_.lineTo(midLineX, canvasHeight - 15);
-	    this.lineContext_.lineWidth = .5;
-	    this.lineContext_.stroke();
-	}
+    if (this.scaleOnChange_){
+	this.drawLine_(canvasWidth, canvasHeight, canvasWidth / _l.high);
+	return;
     }
+    this.drawLine_(canvasWidth, canvasHeight, canvasWidth / _l.max);
+}
 
-    else {
 
-	//
-	// Draw the sloped line
-	//
-	this.lineContext_.beginPath();
-	this.lineContext_.strokeStyle = "black";
-	this.lineContext_.moveTo(0, canvasHeight);
-	this.lineContext_.lineTo(canvasWidth, 0);
-	this.lineContext_.lineWidth = .5;
-	this.lineContext_.stroke();
 
-	//
-	// Draw the min line
-	//
-	var midLineX = Math.round(canvasWidth / 2);
-	this.lineContext_.moveTo(midLineX, canvasHeight);
-	this.lineContext_.lineTo(midLineX, canvasHeight - 20);
+
+/**
+ * @param {!number] canvasWidth
+ * @param {!number] canvasHeight
+ * @param {!number] scaleX
+ */
+xiv.ui.ctrl.Histogram.prototype.drawLine_ = 
+function(canvasWidth, canvasHeight, scaleX) {
+    var _l = this.getCurrentLevels(); 
+    var canvX1 = _l.low * scaleX;
+    var canvX2 = _l.high * scaleX;
+    var canvY1 = 0
+    var canvY2 = canvasHeight;
+
+    //
+    // y = mx + b...so
+    //
+
+    //
+    // Slope: (y2 - y1) / (x2 - x1)
+    //
+    var slope = canvasHeight / (canvX2 - canvX1);
+
+    //
+    // b = y - mx, at canvX1, y = 0
+    //
+    var b = -slope * canvX1;
+
+    
+    var limX1 = 0;
+    var limX2 = canvasWidth;
+    var limY1 = slope * limX1 + b;
+    var limY2 = slope * limX2 + b;
+
+    //
+    // Draw the sloped line
+    //
+    this.lineContext_.beginPath();
+    this.lineContext_.strokeStyle = "black";
+    
+    //
+    // 1st point
+    //
+    this.lineContext_.moveTo(limX1, canvasHeight - limY1);
+
+    //
+    // 2nd point
+    //
+    this.lineContext_.lineTo(limX2, canvasHeight - limY2);
+
+
+    this.lineContext_.lineWidth = .5;
+    this.lineContext_.stroke();
+
+    //
+    // Draw the max line
+    //
+    var endLine = canvX2;
+
+    if (endLine > 0 && endLine < canvasWidth){
+	this.lineContext_.moveTo(endLine, canvasHeight);
+	this.lineContext_.lineTo(endLine, canvasHeight - 15);
 	this.lineContext_.lineWidth = .5;
 	this.lineContext_.stroke();
     }
@@ -674,7 +636,7 @@ xiv.ui.ctrl.Histogram.prototype.update = function(){
     
     //window.console.log("UPDATE!");
     //this.getXObj()['windowHigh'] = 
-    this.updateMaxMin();
+    this.updateMaxMin_();
     this.draw();
     this.drawLine();
 }
@@ -682,44 +644,17 @@ xiv.ui.ctrl.Histogram.prototype.update = function(){
 
 
 /**
- * @public
+ * @private
  */
-xiv.ui.ctrl.Histogram.prototype.updateMaxMin = function(){
+xiv.ui.ctrl.Histogram.prototype.updateMaxMin_ = function(){
     //
     // Do nothing if no volume
     //
     if (!goog.isDefAndNotNull(this.getXObj())) { return };
 
-    if (!goog.isDefAndNotNull(this.startMin_)){
-	this.startMin_ = parseInt(this.getXObj()['windowLow']);
-	this.startMax_ = parseInt(this.getXObj()['windowHigh']);
-	this.startMin_ = isNaN(this.startMin_) ? null : this.startMin_;
-	this.startMax_ = isNaN(this.startMax_) ? null : this.startMax_;
-	this.windowLow_ = this.startMin_;
-	this.windowHigh_ = this.startMax_;
-    }
-    
-    /*
-    window.console.log('\nupdate max min', 
-		       this.getXObj().windowLow,
-		       this.getXObj().windowHigh);
-		       */
-		       
-
-
-    this.windowLow_ = parseInt(this.getXObj()['windowLow']);
-    this.windowHigh_ = parseInt(this.getXObj()['windowHigh']);
-
-
-    this.minDiv_.innerHTML = this.windowLow_;
-    this.maxDiv_.innerHTML = this.windowHigh_;
-
-    /*
-    window.console.log('UPDATE MAX MIN', 
-		       this.startMax_, this.startMin_,
-		       this.windowHigh_, this.windowLow_);
-		       */
-    
+    var _l = this.getCurrentLevels();    
+    this.minDiv_.innerHTML = _l.low >= 0 ? _l.low : 0;
+    this.maxDiv_.innerHTML = _l.high;    
 }
 
 

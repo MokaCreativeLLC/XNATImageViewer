@@ -51,7 +51,7 @@ goog.require('xiv.ui.layouts.FourUp');
 goog.require('xiv.ui.layouts.TwoDRow');
 goog.require('xiv.ui.layouts.TwoDWidescreen');
 goog.require('xiv.ui.ctrl.XtkControllerTree');
-
+goog.require('xiv.ui.ctrl.LevelsController');
 //-----------
 
 
@@ -216,6 +216,14 @@ xiv.ui.ViewBoxInteractorHandler.CSS = {
     'xiv-ui-viewboxinteractorhandler-levelsdialog',
     LEVELS_DIALOG_HOVERED: 
     'xiv-ui-viewboxinteractorhandler-levelsdialog-hovered',
+    LEVELS_SLIDER: 'xiv-ui-viewboxinteractorhandler-levels-slider',
+    LEVELS_SLIDERCONTROLLER: 
+    'xiv-ui-viewboxinteractorhandler-levels-slidercontroller',
+    LEVELS_SLIDERLABEL: 'xiv-ui-viewboxinteractorhandler-levels-sliderlabel',
+    LEVELS_CHECKBOXHOLDER: 
+    'xiv-ui-viewboxinteractorhandler-levels-checkboxholder',
+    LEVELS_CHECKBOXCONTROLLER: 
+    'xiv-ui-viewboxinteractorhandler-levels-checkboxcontroller',
 }
 
 
@@ -267,6 +275,14 @@ xiv.ui.ViewBoxInteractorHandler.prototype.keyHandler_ = null;
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.viewableCtrls_ = null;
+
+
+
+/**
+ * @type {?xiv.ui.ctrl.LevelsController.ControllerSet}
+ * @private
+ */
+xiv.ui.ViewBoxInteractorHandler.prototype.levels_ = null;
 
 
 
@@ -1229,9 +1245,12 @@ function() {
 	// Set custom params
 	//
 	slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = renderPlaneOr;
-	frameDisplay[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = renderPlaneOr;
-	zoomDisplay[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = renderPlaneOr;
-	crosshairs[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = renderPlaneOr;
+	frameDisplay[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = 
+	    renderPlaneOr;
+	zoomDisplay[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = 
+	    renderPlaneOr;
+	crosshairs[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = 
+	    renderPlaneOr;
 
 	//
 	// Preliminary sync
@@ -1239,8 +1258,9 @@ function() {
 	this.syncSlidersToVolume_(true);
 	this.syncPlayButtonsToSlider_(true);
 	this.syncVolumeToSlider_(slider, volume);
-	this.syncCrosshairsToVolume_(slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY],
-				     volume);
+	this.syncCrosshairsToVolume_(
+	    slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY],
+	    volume);
 	this.syncFrameDisplayToSlider_(slider, volume);
 
 	//
@@ -1261,7 +1281,7 @@ function() {
 	//
 	// Change Slice when slider moves
 	//
-	goog.events.listen(slider, nrg.ui.Slider.EventType.SLIDE, 
+	goog.events.listen(slider, nrg.ui.Slider.EventType.CHANGE, 
         function(e){
 	    //window.console.log(volume);
 	    this.syncVolumeToSlider_(e.target, volume);
@@ -1509,138 +1529,19 @@ function(e, opt_dialogKey){
  * @public
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
-    //window.console.log("Applying auto window/level");
-
-    var ctrl, currFolders;
-    var folderSet = [], ctrlSet = {};
-    var defaultTag = 'DEFAULT_' + goog.string.createUniqueString();
-
-    goog.array.forEach(this.viewableCtrls_['levels']['all'], function(ctrl, i){
-	hist = null;
-	levelMax = null;
-	currFolders = ctrl.getFolders();
-	folderStr = '';
-	goog.array.forEach(currFolders, function(folder){
-	    folderStr += folder;
-	})
-
-	if (!goog.isDefAndNotNull(ctrlSet[folderStr])){
-	    ctrlSet[folderStr] = {};	    
-	}
-
-	//
-	// Histogram
-	//
-	if (ctrl instanceof xiv.ui.ctrl.Histogram ){
-	    ctrlSet[folderStr].hist = ctrl;
-	} 
-	//
-	// Checkbox
-	//
-	else if (ctrl instanceof xiv.ui.ctrl.CheckboxController ){
-	    ctrlSet[folderStr].checkbox = ctrl;
-	} 
-
-	//
-	// Non-buttons
-	//
-	else if (ctrl instanceof xiv.ui.ctrl.SliderController){
-
-	    var label = ctrl.getLabel().innerHTML;
-	    if (label.indexOf('Window Max') > -1){
-		ctrlSet[folderStr].windowMax = ctrl;
-	    } 
-
-	    else if (label.indexOf('Window Min') > -1){
-		ctrlSet[folderStr].windowMin = ctrl;
-	    }
-
-	    else if (label.indexOf('Brightness') > -1){
-		ctrlSet[folderStr].brightness = ctrl;
-	    }
-
-	    else if (label.indexOf('Contrast') > -1){
-		ctrlSet[folderStr].contrast = ctrl;
-	    }
-	} 
-	
-	//
-	// Store the reset button
-	//
-	else {
-	    ctrlSet[folderStr].reset = ctrl;
-	}
-    }.bind(this))    
-
-
-
     //
     // Performs the initial auto-level
     //
-    goog.object.forEach(ctrlSet, function(set){
-	var levelMaxVal = set.hist.getLevelByPixelThreshold(
-	    xiv.ui.ctrl.Histogram.LEVEL_CUTOFF);
-	set.windowMax.getComponent().setValue(levelMaxVal);
-	set.hist.update();
+    var levelMaxVal = this.levels_.histogram.getLevelByPixelThreshold(
+	xiv.ui.ctrl.Histogram.LEVEL_CUTOFF);
+    this.levels_.max.setDefaultValue(levelMaxVal);
+    this.levels_.min.setDefaultValue(0);
 
-	//
-	// Store the levels as defaults
-	//
-	goog.object.forEach(set, function(ctrl, key){
-
-	    if ((ctrl == set.windowMin) ||
-	        (ctrl == set.windowMax) ||
-	        (ctrl == set.brightness) ||
-	        (ctrl == set.contrast)) {
-		ctrl[defaultTag] = ctrl.getComponent().getValue();
-	    } 
-	    else if (ctrl == set.checkbox){
-		ctrl[defaultTag] = ctrl.getComponent().isChecked();
-	    }
-
-	    //window.console.log(ctrl, ctrl[defaultTag]);
-	})
-
-
-    })
-
-
-    
-    //
-    // When reset buttons are pressed, restore the defaults
-    //
-    goog.object.forEach(ctrlSet, function(set){
-	goog.events.listen(
-	    set.reset, 
-	    xiv.ui.ctrl.XtkController.EventType.CHANGE, 
-	    function(){
-
-		// Update the sliders
-		goog.object.forEach(set, function(ctrl, key){
-		    if (ctrl instanceof xiv.ui.ctrl.SliderController) {
-			ctrl.getValueInput().value = ctrl[defaultTag];
-			ctrl.getComponent().setValue(ctrl[defaultTag]);
-		    }
-		})
-
-		// Not setting this causes errors
-		set.windowMin.getXObj()['windowLow'] = 0;
-		
-		// Update the checkbox
-		set.checkbox.getComponent().setChecked(
-		    set.checkbox[defaultTag]);
-		set.hist.scaleOnChange(set.checkbox[defaultTag]);
-		
-
-		window.console.log("\n\n", set.hist.scaleOnChange_);
-
-		// Update the histogram
-		set.hist.update();
-	    })
-    })
-
-
-
+    //window.console.log("\n\nLEVEL MAX", levelMaxVal);
+    this.levels_.min.getComponent().setValue(0);
+    this.levels_.max.getComponent().setValue(levelMaxVal);;
+    this.levels_.scaleCB.setDefaultValue(true);
+    this.levels_.histogram.update();
 }
 
 
@@ -2399,6 +2300,13 @@ xiv.ui.ViewBoxInteractorHandler.prototype.createViewableCtrls = function() {
     this.viewableCtrls_ = this.Renderer_.getControllerTree();
 
     //
+    // We need to track the levels controllers independently
+    //
+    this.levels_ = this.viewableCtrls_.
+	getLevelsController().getControllerSet();
+
+
+    //
     // Create the zuppy Trees
     //
     this.createControllerZippyTrees_();
@@ -2510,63 +2418,53 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
     //
     this.ViewBox_.fireToggleButton(this.dialogKeys_['levels']);
 
+
+    //
+    // Adjust slider styles;
+    //
     goog.array.forEach(
-	this.viewableCtrls_['levels']['all'], 
+	this.levels_.sliders,
 	function(ctrl, i){
-	    if (!(ctrl instanceof xiv.ui.ctrl.Histogram) &&
-		!(ctrl instanceof xiv.ui.ctrl.ButtonController)){
-
-		var label = ctrl.getLabel()
-		if (goog.isDefAndNotNull(label)){
-		    label.style.fontSize = '9px';
-		}
-
-		ctrl.getElement().style.height = '45px';
-		ctrl.getComponent().getElement().style.top = '28px';
-		ctrl.getComponent().getElement().style.width = '115px';
-		
-		if (goog.isDefAndNotNull(ctrl.getComponent().updateStyle)){
-		    ctrl.getComponent().updateStyle();
-		}
-
-		if (ctrl instanceof xiv.ui.ctrl.CheckboxController){
-		    var cbHolder = ctrl.getCheckboxHolder();
-		    ctrl.getElement().style.height = 15;
-		    ctrl.getElement().style.outline = 'none';
-		    cbHolder.style.top = 0;
-		    cbHolder.style.width = 11;
-		    cbHolder.style.outline = 'none';
-		    cbHolder.style.left = 'calc(100% - 15px)';
-		}
-	    }
-
+	    goog.dom.classes.add(
+		ctrl.getLabel(),
+		xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_SLIDERLABEL);
+	    goog.dom.classes.add(
+		ctrl.getElement(),
+		xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_SLIDERCONTROLLER);
+	    goog.dom.classes.add(
+		ctrl.getComponent().getElement(),
+		xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_SLIDER);
+	    ctrl.getComponent().updateStyle();
 	}.bind(this))
 
+
+    //
+    // Adjust checkbox styles
+    //
+    goog.dom.classes.add(
+	this.levels_.scaleCB.getElement(),
+	xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_CHECKBOXCONTROLLER);
+    goog.dom.classes.add(
+	this.levels_.scaleCB.getLabel(),
+	xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_SLIDERLABEL);
+    goog.dom.classes.add(
+	this.levels_.scaleCB.getCheckboxHolder(),
+	xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_CHECKBOXHOLDER);
+    
 
     //
     // Move to corner
     //
     levelDia.moveToCorner('right', 'top', 4, 50);
 
-
+    //
+    // Shorten the header labels to 10 characters
+    //
     goog.array.forEach(
 	this.zippyTrees_['levels'].getZippyTree().getTopLevelNodes(), 
 	function(node){
 	    node.truncateHeaderLabel(10);
 	})
-
-    //
-    // Turn the dialog off for non-one plane views
-    //
-    var layout = this.ViewBox_.getLayoutMenu().getSelectedMenuItem();
-    switch (layout){
-    case 'Four-Up':
-    case 'Conventional':
-    case '2D Row':
-    case '2D Widescreen':
-	this.ViewBox_.fireToggleButton(this.dialogKeys_['levels'])
-	break;
-    }
     
 }
 
@@ -2687,6 +2585,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.dispose = function () {
     delete this.Renderer_;
     delete this.LayoutHandler_;
     delete this.Dialogs_;
+    delete this.levelCtrl_;
 }
 
 
