@@ -212,20 +212,39 @@ xiv.ui.ctrl.Histogram.prototype.histogramBarColor_ = "rgb(90,90,90)";
 
 
 
+
 /**
  * @private
- * @type {!bool}
+ * @type {!number}
  */
-xiv.ui.ctrl.Histogram.prototype.scaleOnChange_ = true;
+xiv.ui.ctrl.Histogram.prototype.viewMin_ = 0;
+
+
+/**
+ * @private
+ * @type {!number}
+ */
+xiv.ui.ctrl.Histogram.prototype.viewMax_ = 0;
 
 
 
 /**
- * @param {!boolean} bool
+ * @public
+ * @type {!number}
  */
-xiv.ui.ctrl.Histogram.prototype.scaleOnChange = function(bool){
-    this.scaleOnChange_ = bool;
-}
+xiv.ui.ctrl.Histogram.prototype.setViewMin = function(min){
+    this.viewMin_ = min;
+};
+
+
+/**
+ * @public
+ * @type {!number}
+ */
+xiv.ui.ctrl.Histogram.prototype.setViewMax = function(max){
+    this.viewMax_ = max;
+};
+
 
 
 
@@ -400,11 +419,9 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
 	return;
     }
 
-    if (this.scaleOnChange_){
-	this.drawWithHorizScaling_(canvasWidth, canvasHeight);
-	return;
-    }
-    this.draw_(canvasWidth, canvasHeight);
+
+    this.drawWithHorizScaling_(canvasWidth, canvasHeight);
+
 }
 
 
@@ -417,14 +434,14 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
 xiv.ui.ctrl.Histogram.prototype.drawWithHorizScaling_ = 
 function(canvasWidth, canvasHeight) {
   
-    var startInd = 0
+
     var _l = this.getCurrentLevels();  
   
     //
     // Determine the new max -- have to loop through all percentages
     //
-    var i = startInd;
-    var cutoffInd = _l.high;
+    var i = this.viewMin_;
+    var cutoffInd = this.viewMax_;
     var newMax = 0;
     for (; i < cutoffInd + 1; i++){
 	if (this.percentages_[i] > newMax) {
@@ -436,7 +453,7 @@ function(canvasWidth, canvasHeight) {
     // Construct the new percentages
     //
     var newPcts = [];
-    var j = startInd;
+    var j = this.viewMin_;
     for(; j < (cutoffInd + 1); j++){
 	newPcts.push(this.percentages_[j]/newMax);
     }
@@ -444,7 +461,7 @@ function(canvasWidth, canvasHeight) {
     //
     // Bar width of the histogram
     //
-    var barWidth = Math.round(canvasWidth/_l.high);
+    var barWidth = Math.round(canvasWidth/this.viewMax_);
     barWidth = barWidth > 0 ? barWidth: 1;   
 
     //
@@ -452,10 +469,10 @@ function(canvasWidth, canvasHeight) {
     //
     var height = 0;
     var slope = 0, canvX = 0;
-    for (i=0; i < _l.high + 1; i++){
+    for (i=0; i < this.viewMax_ + 1; i++){
 
 	height = Math.round(canvasHeight * newPcts[i]);
-	slope = canvasWidth / _l.high;
+	slope = canvasWidth / this.viewMax_;
 	canvX = Math.round(slope * i);
  
 	if (!isNaN(height) && goog.isDefAndNotNull(height)){	
@@ -469,43 +486,6 @@ function(canvasWidth, canvasHeight) {
     }
 }
 
-
-
-/**
- * @param {!number} canvasWidth
- * @param {!number} canvasHeight
- * @private
- */
-xiv.ui.ctrl.Histogram.prototype.draw_ = function(canvasWidth, canvasHeight) {
-
-    //
-    // Construct the histogram.
-    //
-    var barWidth = Math.round(canvasWidth/this.percentages_.length);
-    barWidth = barWidth > 0 ? barWidth: 1;   
-    var pctInd = 0;
-    var indPct = 0;
-    var height = 0;
-    var _l = this.getCurrentLevels();  
-
-    //
-    // Draw each histogram vertical bar
-    //
-    for (i=0; i < canvasWidth; i++){
-
-	indPct = i/canvasWidth;
-	pctInd = Math.round(this.percentages_.length * indPct) -1;
-	pctInd = (pctInd < 0) ? 0 : pctInd;
-	height = Math.round(canvasHeight * this.percentages_[pctInd]);
-
-	this.context_.fillStyle = this.histogramBarColor_;
-	this.context_.fillRect(	
-	    barWidth * i, // X start
-	    canvasHeight, // Y start		       
-	    barWidth, // width
-	    -height); // height
-    }
-}
 
 
 
@@ -551,11 +531,9 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
     this.lineCanvas_.width = canvasWidth;
     
 
-    if (this.scaleOnChange_){
-	this.drawLine_(canvasWidth, canvasHeight, canvasWidth / _l.high);
-	return;
-    }
-    this.drawLine_(canvasWidth, canvasHeight, canvasWidth / _l.max);
+    
+    this.drawLine_(canvasWidth, canvasHeight, canvasWidth / 
+		   (this.viewMax_ - this.viewMin_));
 }
 
 
@@ -573,6 +551,22 @@ function(canvasWidth, canvasHeight, scaleX) {
     var canvX2 = _l.high * scaleX;
     var canvY1 = 0
     var canvY2 = canvasHeight;
+
+    this.minDiv_.style.width = 'auto';
+    this.maxDiv_.style.width = 'auto';
+
+    if (canvX1 >= 0){
+	this.minDiv_.style.left = canvX1.toString() + 'px';
+    }
+    else {
+	this.minDiv_.style.left = '-10px';
+    }
+
+    if (canvX2 <= canvasWidth){
+	this.maxDiv_.style.left = canvX2.toString() + 'px';
+    } else {
+	this.maxDiv_.style.left = canvasWidth.toString() + 'px';
+    }
 
     //
     // y = mx + b...so
@@ -653,8 +647,8 @@ xiv.ui.ctrl.Histogram.prototype.updateMaxMin_ = function(){
     if (!goog.isDefAndNotNull(this.getXObj())) { return };
 
     var _l = this.getCurrentLevels();    
-    this.minDiv_.innerHTML = _l.low >= 0 ? _l.low : 0;
-    this.maxDiv_.innerHTML = _l.high;    
+    this.minDiv_.innerHTML = 'Min: ' + _l.low;
+    this.maxDiv_.innerHTML = 'Max: ' + _l.high;    
 }
 
 
@@ -710,7 +704,6 @@ xiv.ui.ctrl.Histogram.prototype.disposeInternal = function() {
     delete this.lineContext_;
     delete this.startMin_;
     delete this.startMax_;
-    delete this.scaleOnChange_;
 }
 
 
@@ -724,14 +717,16 @@ goog.exportSymbol('xiv.ui.ctrl.Histogram.CSS_SUFFIX',
 	xiv.ui.ctrl.Histogram.CSS_SUFFIX);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.LEVEL_CUTOFF',
 	xiv.ui.ctrl.Histogram.LEVEL_CUTOFF);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.scaleOnChange',
-	xiv.ui.ctrl.Histogram.prototype.scaleOnChange);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.render',
 	xiv.ui.ctrl.Histogram.prototype.render);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.draw',
 	xiv.ui.ctrl.Histogram.prototype.draw);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.drawLine',
 	xiv.ui.ctrl.Histogram.prototype.drawLine);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.setViewMin',
+	xiv.ui.ctrl.Histogram.prototype.setViewMin);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.setViewMax',
+	xiv.ui.ctrl.Histogram.prototype.setViewMax);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold',
 	xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.update',

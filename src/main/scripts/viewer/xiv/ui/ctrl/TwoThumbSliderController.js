@@ -69,6 +69,24 @@ xiv.ui.ctrl.TwoThumbSliderController.CSS_SUFFIX = {
 };
 
 
+/**
+ * @return {Element}
+ * @public
+ */
+xiv.ui.ctrl.TwoThumbSliderController.prototype.getValueInput = function() {
+    return this.valueInput_;
+}
+
+
+
+/**
+ * @return {Element}
+ * @public
+ */
+xiv.ui.ctrl.TwoThumbSliderController.prototype.getExtentInput = function() {
+    return this.extentInput_;
+}
+
 
 
 /**
@@ -424,6 +442,15 @@ goog.exportSymbol('xiv.ui.ctrl.TwoThumbSliderController.CSS_SUFFIX',
 	xiv.ui.ctrl.TwoThumbSliderController.CSS_SUFFIX);
 goog.exportSymbol('xiv.ui.ctrl.TwoThumbSliderController.prototype.update',
 	xiv.ui.ctrl.TwoThumbSliderController.prototype.update);
+
+goog.exportSymbol(
+    'xiv.ui.ctrl.TwoThumbSliderController.prototype.getValueInput',
+    xiv.ui.ctrl.TwoThumbSliderController.prototype.getValueInput);
+
+goog.exportSymbol(
+    'xiv.ui.ctrl.TwoThumbSliderController.prototype.getExtentInput',
+    xiv.ui.ctrl.TwoThumbSliderController.prototype.getExtentInput);
+
 goog.exportSymbol(
     'xiv.ui.ctrl.TwoThumbSliderController.prototype.dispatchComponentEvent',
     xiv.ui.ctrl.TwoThumbSliderController.prototype.dispatchComponentEvent);

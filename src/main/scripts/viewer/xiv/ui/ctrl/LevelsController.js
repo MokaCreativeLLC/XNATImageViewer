@@ -20,6 +20,7 @@ goog.require('nrg.ui.Slider');
 // xiv
 goog.require('xiv.ui.ctrl.XtkController');
 goog.require('xiv.ui.ctrl.SliderController');
+goog.require('xiv.ui.ctrl.TwoThumbSliderController');
 goog.require('xiv.ui.ctrl.Histogram');
 goog.require('xiv.ui.ctrl.MasterController');
 goog.require('xiv.ui.ctrl.ButtonController');
@@ -36,6 +37,22 @@ goog.require('xiv.ui.ctrl.CheckboxController');
  */
 xiv.ui.ctrl.LevelsController = function() {
     goog.base(this);
+
+
+    /**
+     * @type {Object}
+     */
+    this.c_ = {
+	min : null, 
+	max : null, 
+	brightness : null,
+	contrast : null, 
+	histogram : null, 
+	histogramRange : null, 
+	reset : null,
+	xObj : null,
+	sliders : []	
+    }
 
 }
 goog.inherits(xiv.ui.ctrl.LevelsController, xiv.ui.ctrl.MasterController);
@@ -66,10 +83,9 @@ xiv.ui.ctrl.LevelsController.CSS_SUFFIX = {};
 xiv.ui.ctrl.LevelsController.titles_ = {
     BRIGHTNESS: 'Brightness',
     CONTRAST: 'Contrast',
-    LEVEL_MIN: 'Window Min.',
-    LEVEL_MAX: 'Window Max.',
+    LEVEL_MIN: 'Minimum',
+    LEVEL_MAX: 'Maximum',
     HISTOGRAM: 'Histogram',
-    SCALEHISTOGRAM: 'Scale Histogram'
 };
 
 
@@ -91,57 +107,6 @@ xiv.ui.ctrl.LevelsController.LEVEL_MIN = 0;
 
 
 /**
- * @type {?xiv.ui.ctrl.XtkController} 
- * @private
- */
-xiv.ui.ctrl.LevelsController.prototype.min_ = null;
-
-
-
-/**
- * @type {?xiv.ui.ctrl.XtkController} 
- * @private
- */
-xiv.ui.ctrl.LevelsController.prototype.max_ = null;
-
-
-/**
- * @type {?xiv.ui.ctrl.XtkController} 
- * @private
- */
-xiv.ui.ctrl.LevelsController.prototype.brightness_ = null;
-
-
-/**
- * @type {?xiv.ui.ctrl.XtkController} 
- * @private
- */
-xiv.ui.ctrl.LevelsController.prototype.contrast_ = null;
-
-
-/**
- * @type {?xiv.ui.ctrl.Histogram}
- * @private
- */
-xiv.ui.ctrl.LevelsController.prototype.hist_ = null;
-
-
-/**
- * @type {?xiv.ui.ctrl.XtkController}
- * @private
- */
-xiv.ui.ctrl.LevelsController.prototype.reset_ = null;
-
-
-
-/**
- * @type {?xiv.ui.ctrl.CheckboxController}
- * @private
- */
-xiv.ui.ctrl.LevelsController.prototype.scaleCB_ = null;
-
-
-/**
  * @type {?X.Object}
  * @private
  */
@@ -149,47 +114,14 @@ xiv.ui.ctrl.LevelsController.prototype.xObj_ = null;
 
 
 
-/**
- * @constructor
- * @param {!xiv.ui.ctrl.XtkController} min
- * @param {!xiv.ui.ctrl.XtkController} max
- * @param {!xiv.ui.ctrl.XtkController} brightness
- * @param {!xiv.ui.ctrl.XtkController} contrast
- * @param {!xiv.ui.ctrl.XtkController} hist
- * @param {!xiv.ui.ctrl.XtkController} scaleCB
- * @param {!xiv.ui.ctrl.XtkController} resest
- * @param {!X.object} xObj
- * @struct
- */
-xiv.ui.ctrl.LevelsController.ControllerSet = 
-function(min, max, brightness, contrast, hist, scaleCB, reset, xObj){
-    this.min = min;
-    this.max = max;
-    this.brightness = brightness;
-    this.contrast = contrast;
-    this.histogram = hist;
-    this.scaleCB = scaleCB;
-    this.reset = reset;
-    this.xObj = xObj;
-    this.sliders = [
-	this.min, 
-	this.max, 
-	this.brightness, 
-	this.contrast
-    ]
-}
-
-
 
 
 /**
- * @return {Object.<string, xiv.ui.ctrl.XtkController>}
+ * @return {Object.<string, xiv.ui.ctrl.XtkController | Array.<xiv.ui.ctrl.XtkController>>}
  * @public
  */
 xiv.ui.ctrl.LevelsController.prototype.getControllerSet = function() {
-    return new xiv.ui.ctrl.LevelsController.ControllerSet(
-	this.min_, this.max_, this.brightness_, this.contrast_, this.hist_, 
-	this.scaleCB_, this.reset_, this.xObj_)
+    return this.c_;
 }
 
 
@@ -207,42 +139,88 @@ xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
     //
     // Create the components
     //
+    this.createHistogramRange_();
     this.createHistogram_();
     this.createLevelMin_();
     this.createLevelMax_();
     this.createBrightness_();
     this.createContrast_();
-    this.createScaleHistogramCheckbox_();
     this.createResetButton_();
+
+
+    this.groupSliders_();
+    this.adjustStyles_();
 }
- 
+
+
 
 
 /**
  * @private
  */
-xiv.ui.ctrl.LevelsController.prototype.createScaleHistogramCheckbox_ = 
-function() {
-    // create
-    var scaleHistogramCheckBox = this.createController( 
-	xiv.ui.ctrl.CheckboxController, 
-	xiv.ui.ctrl.LevelsController.titles_.SCALEHISTOGRAM, 
-	function(e){
-	    this.hist_.scaleOnChange(e.checked);
-	    this.updateHist_();
-	}.bind(this));
-
-    // set folder
-    xiv.ui.ctrl.XtkController.setControllerFolders(this.xObj_, 
-						   scaleHistogramCheckBox);
-
-
-    // set defaults
-    this.hist_.scaleOnChange(true);
-    scaleHistogramCheckBox.getComponent().setChecked(true);
-    this.masterControllers.push(scaleHistogramCheckBox);
-    this.scaleCB_ = scaleHistogramCheckBox;
+xiv.ui.ctrl.LevelsController.prototype.groupSliders_ = function() {
+    this.c_.sliders.push(this.c_.min);
+    this.c_.sliders.push(this.c_.max);
+    this.c_.sliders.push(this.c_.brightness);
+    this.c_.sliders.push(this.c_.contrast);
 }
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.adjustStyles_ = function() {
+ 
+    //
+    // Adjust slider styles;
+    //
+    goog.array.forEach(
+	this.c_.sliders,
+	function(ctrl, i){
+	    goog.dom.classes.add(
+		ctrl.getLabel(),
+		'xiv-ui-ctrl-levelscontroller-sliderlabel');
+
+	    goog.dom.classes.add(
+		ctrl.getElement(),
+		'xiv-ui-ctrl-levelscontroller-slidercontroller');
+
+	    goog.dom.classes.add(
+		ctrl.getComponent().getElement(),
+		'xiv-ui-ctrl-levelscontroller-slider');
+
+	    goog.dom.classes.add(
+		ctrl.getValueInput(),
+		'xiv-ui-ctrl-levelscontroller-slidervalue');
+
+
+	    ctrl.getComponent().updateStyle();
+	    
+	}.bind(this))
+
+
+    //
+    // Adjust histogram range
+    //
+    goog.dom.classes.add(
+	this.c_.histogramRange.getLabel(),
+	'xiv-ui-ctrl-levelscontroller-sliderlabel');
+    goog.dom.classes.add(
+	this.c_.histogramRange.getElement(),
+	'xiv-ui-ctrl-levelscontroller-twothumbslidercontroller');
+    goog.dom.classes.add(
+	this.c_.histogramRange.getComponent().getElement(),
+	'xiv-ui-ctrl-levelscontroller-twothumbslider');
+    goog.dom.classes.add(
+	this.c_.histogramRange.getValueInput(),
+	'xiv-ui-ctrl-levelscontroller-twothumbslidervalue');
+    goog.dom.classes.add(
+	this.c_.histogramRange.getExtentInput(),
+	'xiv-ui-ctrl-levelscontroller-twothumbsliderextent');
+}
+ 
+
 
 
 
@@ -253,7 +231,7 @@ function() {
 xiv.ui.ctrl.LevelsController.prototype.onResetButtonClicked_ =
 function(){
     goog.array.forEach(
-	[this.min_, this.max_],
+	[this.c_.min, this.c_.max],
 	function(ctrl){
 	    ctrl.getValueInput().value = ctrl.getDefaultValue();
 	    ctrl.getComponent().setValue(ctrl.getDefaultValue());
@@ -261,9 +239,7 @@ function(){
 	})
     
     // Update the checkbox
-    this.scaleCB_.getComponent().setChecked(this.scaleCB_.getDefaultValue());
-    this.hist_.scaleOnChange(this.scaleCB_.getDefaultValue());
-    this.hist_.update();
+    this.c_.histogram.update();
 
 }
 
@@ -287,7 +263,7 @@ xiv.ui.ctrl.LevelsController.prototype.createResetButton_ = function() {
     this.masterControllers.push(resetButton);
     resetButton.setXObj(this.xObj_);
 
-    this.reset_ = resetButton;
+    this.c_.reset = resetButton;
 }
 
 
@@ -318,7 +294,67 @@ xiv.ui.ctrl.LevelsController.prototype.createHistogram_ = function() {
 
     histogram.update();
 
-    this.hist_ = histogram;
+    this.c_.histogram = histogram;
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.onHistogramRangeChange_ = function() {
+    
+    if (!goog.isDefAndNotNull(this.c_.histogram)) { return }
+
+    //var _l = this.c_.min.getCurrentLevels();
+    var histRangeSlider = this.c_.histogramRange.getComponent();
+ 
+    this.c_.histogram.setViewMin(histRangeSlider.getValue());
+    this.c_.histogram.setViewMax(histRangeSlider.getExtent() - 
+				 histRangeSlider.getValue());
+
+    this.updateHist_();
+    
+}
+
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.createHistogramRange_ = function() {
+    //
+    // create
+    //
+    var histRange = this.createController(
+	xiv.ui.ctrl.TwoThumbSliderController, 
+	'Histogram View Range', 
+	this.onHistogramRangeChange_.bind(this));
+
+    //
+    // Point the controller to the xObj (stored as a property);
+    //
+    histRange.setXObj(this.xObj_);
+    xiv.ui.ctrl.XtkController.setControllerFolders(this.xObj_, histRange);
+
+    //
+    // strore
+    //
+    this.masterControllers.push(histRange);
+  
+
+    var lowerRange = this.xObj_['min'];
+    var upperRange = this.xObj_['max'] == Infinity ? 1000 : this.xObj_['max'];
+
+    //window.console.log("\n\nHERE", lowerRange, upperRange);
+    
+    //
+    // ADJUSTING THESE values fire's the 'CHANGE" event defined in
+    // this.constructor.onSliderChange_
+    //
+    this.c_.histogramRange = histRange;
+    this.rebaseHistogramRange_();
 }
 
 
@@ -328,23 +364,23 @@ xiv.ui.ctrl.LevelsController.prototype.createHistogram_ = function() {
  */
 xiv.ui.ctrl.LevelsController.prototype.createLevelMin_ = function() {
     // create
-    this.min_ = this.createController( 
+    this.c_.min = this.createController( 
 	xiv.ui.ctrl.SliderController, 
 	xiv.ui.ctrl.LevelsController.titles_.LEVEL_MIN, 
 	this.onMinChange_.bind(this));
 
-    this.min_.setXObj(this.xObj_);
+    this.c_.min.setXObj(this.xObj_);
 
     // set folder
-    xiv.ui.ctrl.XtkController.setControllerFolders(this.xObj_, this.min_);
+    xiv.ui.ctrl.XtkController.setControllerFolders(this.xObj_, this.c_.min);
 
 
     // store
     //window.console.log("***********", controller);
-    this.masterControllers.push(this.min_);
+    this.masterControllers.push(this.c_.min);
 
     // set defaults
-    var slider = this.min_.getComponent();
+    var slider = this.c_.min.getComponent();
 
 
     slider.setMaximum(xiv.ui.ctrl.LevelsController.LEVEL_MAX);
@@ -353,9 +389,9 @@ xiv.ui.ctrl.LevelsController.prototype.createLevelMin_ = function() {
 
     slider.setValue(xiv.ui.ctrl.LevelsController.LEVEL_MIN);
     slider.setStep(1);
-    this.min_.setValueDecimals(0);
-    this.min_.setDefaultValue(this.xObj_['min']);
-    this.min_.update();
+    this.c_.min.setValueDecimals(0);
+    this.c_.min.setDefaultValue(this.xObj_['min']);
+    this.c_.min.update();
 }
 
 
@@ -389,7 +425,7 @@ xiv.ui.ctrl.LevelsController.prototype.createLevelMax_ = function() {
     max.setDefaultValue(this.xObj_['max']);
     max.update();
 
-    this.max_ = max;
+    this.c_.max = max;
 }
 
 
@@ -402,24 +438,42 @@ xiv.ui.ctrl.LevelsController.prototype.rebase_ = function(){
     //window.console.log("REBASE MIN MAX", 
     //this.xObj_['min'], this.xObj_['max']);
 
-    var maxSlider = this.max_.getComponent();
-    var minSlider = this.min_.getComponent();
+    var maxSlider = this.c_.max.getComponent();
+    var minSlider = this.c_.min.getComponent();
+    var _l = this.c_.min.getCurrentLevels();
 
-    var maxVal = maxSlider.getValue();
-    var minVal = minSlider.getValue();
+    maxSlider.setMaximum(_l.max);
+    maxSlider.setMinimum(_l.min);
+    maxSlider.setValue(_l.max);
+
+    minSlider.setMaximum(_l.max);
+    minSlider.setMinimum(_l.min);
+    minSlider.setValue(_l.min);
+
+    this.c_.max.update();
+    this.c_.min.update();
+
+    this.rebaseHistogramRange_();
+
+    this.c_.histogram.update();
+
+}
 
 
-    maxSlider.setMaximum(this.xObj_['max']);
-    maxSlider.setMinimum(this.xObj_['min']);
-    maxSlider.setValue(minVal);
+/**
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.rebaseHistogramRange_ = function(){
 
-    minSlider.setMaximum(this.xObj_['max']);
-    minSlider.setMinimum(this.xObj_['min']);
-    minSlider.setValue(minVal);
-
-    this.max_.update();
-    this.min_.update();
-    this.hist_.update();
+    if (!goog.isDefAndNotNull(this.c_.min)) { return };
+    var _l = this.c_.min.getCurrentLevels();
+    var histRangeSlider = this.c_.histogramRange.getComponent();
+    histRangeSlider.setMinimum(_l.min);
+    histRangeSlider.setMaximum(_l.max);
+    //histRangeSlider.setValueAndExtent(_l.max - _l.min);
+    histRangeSlider.setValue(_l.min);
+    histRangeSlider.setStep(1);
+    histRangeSlider.setExtent(_l.max - _l.min);    
 }
 
 
@@ -428,10 +482,10 @@ xiv.ui.ctrl.LevelsController.prototype.rebase_ = function(){
  * @private
  */
 xiv.ui.ctrl.LevelsController.prototype.onMinChange_ = function(){
-    if (!goog.isDefAndNotNull(this.max_) ||
-	!goog.isDefAndNotNull(this.min_)) { return }
+    if (!goog.isDefAndNotNull(this.c_.max) ||
+	!goog.isDefAndNotNull(this.c_.min)) { return }
     
-    var minSlider = this.min_.getComponent();
+    var minSlider = this.c_.min.getComponent();
     if (minSlider.getMinimum() != this.xObj_['min']){
 	this.rebase_();
     }
@@ -440,7 +494,7 @@ xiv.ui.ctrl.LevelsController.prototype.onMinChange_ = function(){
     //
     // Now, update the controllers
     //
-    this.updateControllers_(this.min_);
+    this.updateControllers_(this.c_.min);
 }
 
 
@@ -450,10 +504,10 @@ xiv.ui.ctrl.LevelsController.prototype.onMinChange_ = function(){
  * @private
  */
 xiv.ui.ctrl.LevelsController.prototype.onMaxChange_ = function(e){
-    if (!goog.isDefAndNotNull(this.max_) ||
-	!goog.isDefAndNotNull(this.min_)) { return }
+    if (!goog.isDefAndNotNull(this.c_.max) ||
+	!goog.isDefAndNotNull(this.c_.min)) { return }
     
-    var maxSlider = this.max_.getComponent();
+    var maxSlider = this.c_.max.getComponent();
     if (maxSlider.getMaximum() != this.xObj_['max'] &&
 	this.xObj_['max'] != Infinity){
 	this.rebase_();
@@ -463,7 +517,7 @@ xiv.ui.ctrl.LevelsController.prototype.onMaxChange_ = function(e){
     //
     // Now, update the controllers
     //
-    this.updateControllers_(this.max_);
+    this.updateControllers_(this.c_.max);
 }
 
 
@@ -480,17 +534,17 @@ function(currController) {
 	//
 	// MAX or MIN is adjusted
 	//
-    case this.min_:
-    case this.max_:
-	var minSlider = this.min_.getComponent();
-	var maxSlider = this.max_.getComponent();
+    case this.c_.min:
+    case this.c_.max:
+	var minSlider = this.c_.min.getComponent();
+	var maxSlider = this.c_.max.getComponent();
 
-	if (currController == this.max_ &&
+	if (currController == this.c_.max &&
 	    maxSlider.getValue() <= minSlider.getValue()){
 	    minSlider.setValue(maxSlider.getValue() - 1);
 	}
 
-	else if (currController == this.min_ &&
+	else if (currController == this.c_.min &&
 		 minSlider.getValue() >= maxSlider.getValue()){
 	    maxSlider.setValue(minSlider.getValue() + 1);
 	}
@@ -500,8 +554,8 @@ function(currController) {
 	//
 	// BRIGHTESS or CONTRAST is adjusted
 	//
-    case this.brightness_:
-    case this.contrast_:
+    case this.c_.brightness:
+    case this.c_.contrast:
 	this.updateMinMax_();
 	break;
     }
@@ -519,9 +573,9 @@ function(currController) {
  * @private
  */
 xiv.ui.ctrl.LevelsController.prototype.updateMinMax_ = function(){
-    var minSlider = this.min_.getComponent();
-    var maxSlider = this.max_.getComponent();
-    var _l = this.min_.getCurrentLevels();
+    var minSlider = this.c_.min.getComponent();
+    var maxSlider = this.c_.max.getComponent();
+    var _l = this.c_.min.getCurrentLevels();
 
     minSlider.suspendChangeEvent(true);
     maxSlider.suspendChangeEvent(true);
@@ -529,8 +583,8 @@ xiv.ui.ctrl.LevelsController.prototype.updateMinMax_ = function(){
     minSlider.setValue(_l.low);
     maxSlider.setValue(_l.high);
 
-    this.min_.getValueInput().value = minSlider.getValue();
-    this.max_.getValueInput().value = maxSlider.getValue();
+    this.c_.min.getValueInput().value = minSlider.getValue();
+    this.c_.max.getValueInput().value = maxSlider.getValue();
 
     maxSlider.suspendChangeEvent(false);
     minSlider.suspendChangeEvent(false);
@@ -542,10 +596,10 @@ xiv.ui.ctrl.LevelsController.prototype.updateMinMax_ = function(){
  */
 xiv.ui.ctrl.LevelsController.prototype.updateContrast_ =
 function(){
-    var cSlider = this.contrast_.getComponent();
+    var cSlider = this.c_.contrast.getComponent();
     cSlider.suspendChangeEvent(true);
   
-    var _l = this.min_.getCurrentLevels();
+    var _l = this.c_.min.getCurrentLevels();
     var mid = cSlider.getMaximum()/2;
     var c = ((_l.max - _l.min)/(_l.high - _l.low)) * mid;
     if (c > mid) {
@@ -554,7 +608,7 @@ function(){
     }
     var contrast = Math.round(c);
     cSlider.setValue(contrast);
-    this.contrast_.getValueInput().value = contrast;
+    this.c_.contrast.getValueInput().value = contrast;
 
     cSlider.suspendChangeEvent(false);
 }
@@ -567,18 +621,18 @@ function(){
  */
 xiv.ui.ctrl.LevelsController.prototype.updateBrightness_ =
 function(){
-    var bSlider = this.brightness_.getComponent();
+    var bSlider = this.c_.brightness.getComponent();
     bSlider.suspendChangeEvent(true);
    
 
-    var _l = this.min_.getCurrentLevels();
+    var _l = this.c_.min.getCurrentLevels();
     var level = _l.low + (_l.high - _l.low)/2.0;
     var normalizedLevel = 1.0 - (level - _l.min)/(_l.max - _l.min);
     var brightness = Math.round(normalizedLevel * bSlider.getMaximum());
 
 
     bSlider.setValue(brightness);
-    this.brightness_.getValueInput().value = brightness;
+    this.c_.brightness.getValueInput().value = brightness;
 
     bSlider.suspendChangeEvent(false);
 }
@@ -592,10 +646,10 @@ function(){
 xiv.ui.ctrl.LevelsController.prototype.onBrightnessChange_ = 
 function(e) {
 
-    if (!goog.isDefAndNotNull(this.brightness_)) {return}
+    if (!goog.isDefAndNotNull(this.c_.brightness)) {return}
 
-    var _l = this.min_.getCurrentLevels();
-    var bSlider = this.brightness_.getComponent();
+    var _l = this.c_.min.getCurrentLevels();
+    var bSlider = this.c_.brightness.getComponent();
 
     var center = 
 	_l.min + (_l.max - _l.min) *
@@ -608,7 +662,7 @@ function(e) {
     newHigh = Math.round(center + width/2);
     this.setNewHighAndLow_(newLow, newHigh);
 
-    this.updateControllers_(this.brightness_);
+    this.updateControllers_(this.c_.brightness);
 }
 
 
@@ -621,10 +675,10 @@ function(e) {
 xiv.ui.ctrl.LevelsController.prototype.onContrastChange_ = 
 function(e) {
 
-    if (!goog.isDefAndNotNull(this.contrast_)) {return}
+    if (!goog.isDefAndNotNull(this.c_.contrast)) {return}
 
-    var _l = this.min_.getCurrentLevels();
-    var cSlider = this.contrast_.getComponent();
+    var _l = this.c_.min.getCurrentLevels();
+    var cSlider = this.c_.contrast.getComponent();
 
     var slope;
     var center = _l.low + (_l.high-_l.low) / 2.0;
@@ -645,7 +699,7 @@ function(e) {
 	this.setNewHighAndLow_(newLow, newHigh);
     }
 
-    this.updateControllers_(this.contrast_);
+    this.updateControllers_(this.c_.contrast);
 }
 
 
@@ -697,7 +751,7 @@ function() {
     brightness.update();
 
 
-    this.brightness_ = brightness;
+    this.c_.brightness = brightness;
 }
 
 
@@ -737,7 +791,7 @@ function() {
     contrast.update();
 
 
-    this.contrast_ = contrast;
+    this.c_.contrast = contrast;
 }
 
 
@@ -749,17 +803,17 @@ xiv.ui.ctrl.LevelsController.prototype.updateHist_ = function(){
     //window.console.log('update histogram');
 
     if((this.xObjs[0].max > xiv.ui.ctrl.LevelsController.LEVEL_MAX) &&
-       (this.max_.getComponent().getMaximum() != this.xObjs[0].max)){
+       (this.c_.max.getComponent().getMaximum() != this.xObjs[0].max)){
 	var max = this.xObjs[0].max;
 	// Level max
-	this.max_.getComponent().setMaximum(max);
-	this.max_.getComponent().setValue(max);
+	this.c_.max.getComponent().setMaximum(max);
+	this.c_.max.getComponent().setValue(max);
 	// Level min
-	this.min_.getComponent().setMaximum(max);
+	this.c_.min.getComponent().setMaximum(max);
     }
 
 
-    this.hist_.update();
+    this.c_.histogram.update();
 }
 
 
@@ -769,13 +823,7 @@ xiv.ui.ctrl.LevelsController.prototype.updateHist_ = function(){
  * @public
  */
 xiv.ui.ctrl.LevelsController.prototype.disposeInternal = function() {
-    delete this.min_;
-    delete this.max_;
-    delete this.reset_;
-    delete this.brightness_;
-    delete this.contrast_;
-    delete this.hist_;
-    delete this.scaleCB_;
+    goog.object.clear(this.c_);
     delete this.xObj_;
     goog.base(this, 'disposeInternal');
 }

@@ -275,6 +275,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 	  var i = 0;
 	  var len = first_image.length;
 	  for (; i<len; i++){
+	      /*
 	      window.console.log(
 		  '\n',
 		  i,
@@ -286,6 +287,7 @@ X.parserDCM.prototype.parse = function(container, object, data, flag) {
 		  first_image[i]['pixel_spacing'], 
 		  '\nInitial Ordering:', 
 		  _ordering);
+		  */
 	  }
       }
       //************************************

@@ -4,7 +4,6 @@
 
 .xiv-ui-ctrl-histogram  {
     position: absolute;
-    width: 90px;
     height: 70px;
     z-index: 5000;
 }
@@ -12,7 +11,8 @@
 .xiv-ui-ctrl-histogram-canvas,
 .xiv-ui-ctrl-histogram-linecanvas {
     position: absolute;
-    width: calc(100% - 2px);
+    left: calc(10% - 1px);
+    width: calc(80% - 2px);
     height: 60px;
     border-top: solid 1px rgb(120,120,120);
     border-left: solid 1px rgb(120,120,120);

@@ -1549,8 +1549,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
 
     //window.console.log("\n\nLEVEL MAX", levelMaxVal);
     this.levels_.min.getComponent().setValue(0);
-    this.levels_.max.getComponent().setValue(levelMaxVal);;
-    this.levels_.scaleCB.setDefaultValue(true);
+    this.levels_.max.getComponent().setValue(levelMaxVal);
     this.levels_.histogram.update();
 }
 
@@ -2425,38 +2424,6 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
 
 
     this.ViewBox_.fireToggleButton(this.dialogKeys_['levels']);
-
-    //
-    // Adjust slider styles;
-    //
-    goog.array.forEach(
-	this.levels_.sliders,
-	function(ctrl, i){
-	    goog.dom.classes.add(
-		ctrl.getLabel(),
-		xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_SLIDERLABEL);
-	    goog.dom.classes.add(
-		ctrl.getElement(),
-		xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_SLIDERCONTROLLER);
-	    goog.dom.classes.add(
-		ctrl.getComponent().getElement(),
-		xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_SLIDER);
-	    ctrl.getComponent().updateStyle();
-	}.bind(this))
-
-
-    //
-    // Adjust checkbox styles
-    //
-    goog.dom.classes.add(
-	this.levels_.scaleCB.getElement(),
-	xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_CHECKBOXCONTROLLER);
-    goog.dom.classes.add(
-	this.levels_.scaleCB.getLabel(),
-	xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_SLIDERLABEL);
-    goog.dom.classes.add(
-	this.levels_.scaleCB.getCheckboxHolder(),
-	xiv.ui.ViewBoxInteractorHandler.CSS.LEVELS_CHECKBOXHOLDER);
     
 
     //
