@@ -126,6 +126,19 @@ xiv.ui.ctrl.LevelsController.prototype.getControllerSet = function() {
 
 
 
+/**
+ * @public
+ */
+xiv.ui.ctrl.LevelsController.prototype.toggleVisiblePixelRange = 
+function() {
+    var range = this.c_.histogram.getVisiblePixelRange();
+
+    window.console.log('\nrange:', range);
+    this.c_.histogramRange.setValueAndExtent(range[0], range[1] - range[0]);
+    //this.c_.histogramRange.setValue(range[0]);
+}
+
+
 
 /**
  * @param {!X.object} xObj
@@ -247,6 +260,7 @@ function(){
 	})
     
     // Update the checkbox
+    this.toggleVisiblePixelRange();
     this.c_.histogram.update();
 
 }
@@ -313,14 +327,21 @@ xiv.ui.ctrl.LevelsController.prototype.createHistogram_ = function() {
 xiv.ui.ctrl.LevelsController.prototype.onHistogramRangeChange_ = function(){  
     if (!goog.isDefAndNotNull(this.c_.histogram)) { return }
  
-    
+    /*
+    window.console.log(
+	'Slider', 
+	'value:', this.c_.histogramRange.getValue(),
+	'extent:', this.c_.histogramRange.getExtent(),
+	'value + extent:', this.c_.histogramRange.getValue() + 
+	    this.c_.histogramRange.getExtent());
+    */
+
     this.c_.histogram.setViewMin(this.c_.histogramRange.getValue());
-    this.c_.histogram.setViewMax(this.c_.histogramRange.getExtent() - 
+
+    this.c_.histogram.setViewMax(this.c_.histogramRange.getExtent() + 
 				 this.c_.histogramRange.getValue());
 
-    //window.console.log('HERE', 
-    //this.c_.histogramRange.getExtent(),
-    //this.c_.histogramRange.getValue());
+
     this.updateHist_();
 }
 

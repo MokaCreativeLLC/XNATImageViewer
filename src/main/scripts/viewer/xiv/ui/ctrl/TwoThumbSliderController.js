@@ -202,6 +202,8 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.update = function() {
 }
 
 
+
+
 /**
  * @inheritDoc
  */
@@ -218,13 +220,25 @@ function(input) {
 
 
 
+
+/**
+ * @param {!number} val
+ * @param {!number} ext
+ * @public
+ */
+xiv.ui.ctrl.TwoThumbSliderController.prototype.setValueAndExtent = 
+function(val, ext){
+    this.slider.setValueAndExtent(val, ext);
+}
+
+
+
 /**
  * @param {!number} ext
  * @public
  */
 xiv.ui.ctrl.TwoThumbSliderController.prototype.setExtent = function(ext){
     this.slider.setExtent(ext);
-    //window.console.log('EXT', this.slider.getExtent());
 }
 
 
@@ -387,6 +401,10 @@ goog.exportSymbol(
 //
 // Public
 //
+goog.exportSymbol(
+    'xiv.ui.ctrl.TwoThumbSliderController.prototype.setValueAndExtent',
+    xiv.ui.ctrl.TwoThumbSliderController.prototype.setValueAndExtent);
+
 goog.exportSymbol(
     'xiv.ui.ctrl.TwoThumbSliderController.prototype.setExtent',
     xiv.ui.ctrl.TwoThumbSliderController.prototype.setExtent);

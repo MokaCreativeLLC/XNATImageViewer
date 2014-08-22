@@ -1548,12 +1548,10 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
     this.levels_.min.setDefaultValue(0);
 
     //window.console.log("\n\nLEVEL MAX", levelMaxVal);
-    this.levels_.min.getComponent().setValue(0);
-    this.levels_.max.getComponent().setValue(levelMaxVal);
+    this.levels_.min.setValue(0);
+    this.levels_.max.setValue(levelMaxVal);
 
-    var range = this.levels_.histogram.getVisiblePixelRange();
-    window.console.log('\n\n', range);
-
+    this.viewableCtrls_.getLevelsController().toggleVisiblePixelRange();
     this.levels_.histogram.update();
 }
 

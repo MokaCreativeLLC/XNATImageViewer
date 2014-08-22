@@ -4,8 +4,9 @@
 
 .xiv-ui-ctrl-histogram  {
     position: absolute;
-    height: 95px;
+    height: 105px;
     z-index: 5000;
+    top: -5px;
 }
 
 .xiv-ui-ctrl-histogram-canvas,
@@ -27,12 +28,14 @@
 }
 
 
+
+
 .xiv-ui-ctrl-histogram-max,
 .xiv-ui-ctrl-histogram-min {
     position: absolute;
     height: 14px;
     width: 50px;
-    top: calc(100% - 4px);
+    top: calc(100% - 14px);
     font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
     font-size: 10px;
     color: white;

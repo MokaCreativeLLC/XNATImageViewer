@@ -414,7 +414,6 @@ nrg.ui.Tabs.prototype.addTab = function(tabTitle) {
     //  create Tab page	
     //
     var content =  this.createTabPage_(tabTitle);
-    nrg.style.setStyle(content, nrg.style.dims(this.getElement(), 'width'))
     goog.dom.append(this.getElement().parentNode, content);
 
     //
@@ -788,6 +787,12 @@ nrg.ui.Tabs.prototype.updateStyleVertical_ = function() {
 	nrg.style.setStyle(tObj.TAB, {
 	    'height' : (100/this.Tabs_.length).toString() + '%',
 	})
+
+	//
+	// Set the width of the tab page
+	//
+	tObj.PAGE.style.width = 'calc(100% - ' + 
+	    goog.style.getSize(tObj.TAB).width + 'px)';
 
     }.bind(this))
 }

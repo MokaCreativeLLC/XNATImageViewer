@@ -194,7 +194,7 @@ xiv.ui.ctrl.SliderBase.prototype.onValueInput_ = function(e){
 
 /**
  * @return {nrg.ui.HoverInput}
- * @private
+ * @public
  */
 xiv.ui.ctrl.SliderBase.prototype.getValueInput = function(e){
     return this.valueInput;
@@ -204,7 +204,7 @@ xiv.ui.ctrl.SliderBase.prototype.getValueInput = function(e){
 
 /**
  * @param {!number} val
- * @private
+ * @public
  */
 xiv.ui.ctrl.SliderBase.prototype.setValue = function(val){
     this.slider.setValue(val);

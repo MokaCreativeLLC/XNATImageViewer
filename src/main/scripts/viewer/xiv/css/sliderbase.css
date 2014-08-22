@@ -62,6 +62,11 @@
     font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
+.xiv-ui-ctrl-sliderbase-valueinput-box
+{
+    height: 18px;
+}
+
 .xiv-ui-ctrl-sliderbase-valueinput-display {
 }
 

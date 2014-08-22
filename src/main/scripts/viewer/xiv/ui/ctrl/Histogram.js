@@ -243,6 +243,7 @@ xiv.ui.ctrl.Histogram.prototype.setViewMin = function(min){
  * @type {!number}
  */
 xiv.ui.ctrl.Histogram.prototype.setViewMax = function(max){
+    window.console.log("set View Max", max);
     this.viewMax_ = max;
 };
 
@@ -260,6 +261,9 @@ xiv.ui.ctrl.Histogram.prototype.render = function(opt_parent){
 
     this.setComponent(this);
 
+    //
+    // Canvas
+    //
     this.canvas_ = goog.dom.createDom('canvas', {
 	'id': this.constructor.ID_PREFIX + '_Canvas_' + 
 	    goog.string.createUniqueString(),
@@ -270,6 +274,9 @@ xiv.ui.ctrl.Histogram.prototype.render = function(opt_parent){
     this.context_.fillStyle = this.contextFillStyle_;
 
 
+    //
+    // Line canvas
+    //
     this.lineCanvas_ = goog.dom.createDom('canvas', {
 	'id': this.constructor.ID_PREFIX + '_LineCanvas_' + 
 	    goog.string.createUniqueString(),
@@ -279,14 +286,9 @@ xiv.ui.ctrl.Histogram.prototype.render = function(opt_parent){
     this.lineContext_ = this.lineCanvas_.getContext("2d");
     //this.lineContext_.fillStyle = this.lineContextFillStyle_;
 
-    this.maxDiv_ = goog.dom.createDom('div', {
-	'id': this.constructor.ID_PREFIX + '_Max_' + 
-	    goog.string.createUniqueString(),
-	'class': this.constructor.CSS.MAX
-    }, '1000')
-    goog.dom.appendChild(this.getElement(), this.maxDiv_);
-
-
+    //
+    // Min Div
+    //
     this.minDiv_ = goog.dom.createDom('div', {
 	'id': this.constructor.ID_PREFIX + '_Min_' + 
 	    goog.string.createUniqueString(),
@@ -294,8 +296,16 @@ xiv.ui.ctrl.Histogram.prototype.render = function(opt_parent){
     }, '-1000')
     goog.dom.appendChild(this.getElement(), this.minDiv_);
  
-    //window.console.log(this.getElement());
-    //this.draw();
+    //
+    // Max Div
+    //
+    this.maxDiv_ = goog.dom.createDom('div', {
+	'id': this.constructor.ID_PREFIX + '_Max_' + 
+	    goog.string.createUniqueString(),
+	'class': this.constructor.CSS.MAX
+    }, '1000')
+    goog.dom.appendChild(this.getElement(), this.maxDiv_);
+
 }
 
 
@@ -420,7 +430,7 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
 	return;
     }
 
-    this.drawWithHorizScaling_(canvasWidth, canvasHeight);
+    this.draw_(canvasWidth, canvasHeight);
 }
 
 
@@ -431,33 +441,49 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
  */
 xiv.ui.ctrl.Histogram.prototype.getVisiblePixelRange = function(){
 
-    var pctQueue = new goog.structs.Queue();
-    var samplePct = .1
-    var sampleSize = Math.round(this.percentages_.length * samplePct);
+    var minSamplePct = .1
+    var minSampleInd = Math.round(this.percentages_.length * minSamplePct);
+    var maxSampleInd = Math.round(this.percentages_.length * (1-minSamplePct));
     var values;
-    var i = 0;
-    var len = this.percentages_.length;
-    var j = 0;
-    
-    var newPcts = goog.array.slice(this.percentages_, 0, sampleSize);
-    
-    var indices = new Array(sampleSize);
+    var i;
 
-    goog.array.forEach(indices, function(val, i){
-	indices[i] = i;
-    })
+    //
+    // First, find the largest value of the first 10%
+    //
+    var largest = this.percentages_[0];
+    var largestIndex = 0;
+    for (i = 1; i < minSampleInd; i++) {
+	if (this.percentages_[i] > largestIndex) {
+            largestIndex = i;
+            largest = this.percentages_[i];
+	}
+    }
+    window.console.log("LARGEST", largestIndex, largest);
 
-    var min = this.percentages_[0];
-    var minIndex = 0;
-
-    for (var i = 1; i < sampleSize; i++) {
+    //
+    // Then find the smallest point beginning with largest
+    //
+    var min = this.percentages_[largestIndex];
+    var minIndex = largestIndex;
+    for (i = largestIndex + 1; i < minSampleInd; i++) {
 	if (this.percentages_[i] < min) {
             minIndex = i;
             min = this.percentages_[i];
 	}
     }
+    window.console.log("min", minIndex, min);
 
-   return [minIndex, maxIndex];
+
+    var max = this.percentages_[minSampleInd];
+    var maxIndex = 0;
+    for (i = minSampleInd + 1; i < maxSampleInd; i++) {
+	if (this.percentages_[i] < max) {
+            maxIndex = i;
+            max = this.percentages_[i];
+	}
+    }
+
+    return [minIndex, maxIndex];
 
 }
 
@@ -469,21 +495,22 @@ xiv.ui.ctrl.Histogram.prototype.getVisiblePixelRange = function(){
  * @param {!number} canvasHeight
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.drawWithHorizScaling_ = 
+xiv.ui.ctrl.Histogram.prototype.draw_ = 
 function(canvasWidth, canvasHeight) {
   
-
-    var _l = this.getCurrentLevels();  
+    window.console.log('canvasWidth: ', canvasWidth, 
+		       'canvasHeight:', canvasHeight);
   
     //
     // Determine the new max -- have to loop through all percentages
     //
-    var i = this.viewMin_;
-    var cutoffInd = this.viewMax_;
 
-    window.console.log(this.viewMin_, this.viewMax_);
+    window.console.log('viewMin', this.viewMin_, 
+		       'viewMax', this.viewMax_);
+
     var newMax = 0;
-    for (; i < cutoffInd + 1; i++){
+    var i = this.viewMin_;
+    for (; i < this.viewMax_ + 1; i++){
 	if (this.percentages_[i] > newMax) {
 	    newMax = this.percentages_[i];
 	}
@@ -493,28 +520,33 @@ function(canvasWidth, canvasHeight) {
     // Construct the new percentages
     //
     var newPcts = [];
-    var j = this.viewMin_;
-    for(; j < (cutoffInd + 1); j++){
-	newPcts.push(this.percentages_[j]/newMax);
+    i = this.viewMin_;
+    for (; i < this.viewMax_ + 1; i++){
+	newPcts.push(this.percentages_[i]/newMax);
     }
 
+    window.console.log("newPcts length", newPcts.length);
+
     //
-    // Bar width of the histogram
+    // canvasWidth = this.viewMax_ * slope + b
+    // 0 = this.viewMin_ * slope + b
     //
-    var barWidth = Math.round(canvasWidth/this.viewMax_);
-    barWidth = barWidth > 0 ? barWidth: 1;   
+    var slope = (canvasWidth - 0) / (this.viewMax_ - this.viewMin_);
+    window.console.log('slope:', slope);
+    var barWidth = (slope < 1) ? 1 : Math.round(slope);  
 
     //
     // Draw each histogram vertical bar
     //
     var height = 0;
-    var slope = 0, canvX = 0;
-    for (i=0; i < this.viewMax_ + 1; i++){
-
+    var canvX = 0;
+    var len = newPcts.length;
+    for (i=0; i < len; i++){
 	height = Math.round(canvasHeight * newPcts[i]);
-	slope = canvasWidth / this.viewMax_;
-	canvX = Math.round(slope * i);
- 
+	canvX = Math.round(i * slope);
+	
+	//window.console.log(i, 'pct', newPcts[i], 'h', height, 'x', canvX);
+
 	if (!isNaN(height) && goog.isDefAndNotNull(height)){	
 	    this.context_.fillStyle = this.histogramBarColor_;
 	    this.context_.fillRect(	
@@ -572,10 +604,52 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
     
 
     
-    this.drawLine_(canvasWidth, canvasHeight, canvasWidth / 
-		   (this.viewMax_ - this.viewMin_));
+    this.drawLine_(canvasWidth, canvasHeight);
 }
 
+
+
+/**
+ * @param {!number} minX
+ * @param {!number} maxX
+ * @private
+ */
+xiv.ui.ctrl.Histogram.prototype.positionMinMaxDivs_ = function(minX, maxX){
+    this.minDiv_.style.width = 'auto';
+    this.maxDiv_.style.width = 'auto';
+
+    var eltDims = new nrg.style.dims(this.getElement()); 
+    var leftLimit = eltDims.left;
+    var rightLimit =  eltDims.right;
+
+    this.minDiv_.style.left = minX.toString() + 'px';
+    var minDims = 
+	nrg.style.constrainHorizontally(this.minDiv_, leftLimit, rightLimit);
+
+    this.maxDiv_.style.left = maxX.toString() + 'px';
+    var maxDims = 
+	nrg.style.constrainHorizontally(this.maxDiv_, leftLimit, rightLimit);
+    
+    //window.console.log(minDims, maxDims);
+
+    //
+    // Check for overlaps
+    //
+    if (minDims.right > maxDims.left){
+	//
+	// Put all of the content in min div
+	//
+	this.minDiv_.innerHTML += ', ' + this.maxDiv_.innerHTML;
+	this.maxDiv_.innerHTML = '';
+
+	//
+	// Constrain the minDiv
+	//
+	nrg.style.constrainHorizontally(this.minDiv_, 
+					leftLimit, rightLimit);
+    }
+
+} 
 
 
 
@@ -583,58 +657,34 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
  * @param {!number] canvasWidth
  * @param {!number] canvasHeight
  * @param {!number] scaleX
+ * @private
  */
 xiv.ui.ctrl.Histogram.prototype.drawLine_ = 
 function(canvasWidth, canvasHeight, scaleX) {
     var _l = this.getCurrentLevels(); 
-    var canvX1 = _l.low * scaleX;
-    var canvX2 = _l.high * scaleX;
-    var canvY1 = 0
-    var canvY2 = canvasHeight;
 
-    this.minDiv_.style.width = 'auto';
-    this.maxDiv_.style.width = 'auto';
-
-    var minX = -1
-
-    var minDivWidth = goog.style.getSize(this.minDiv_).width;
-    var maxDivWidth = goog.style.getSize(this.maxDiv_).width;
-
-    window.console.log(minDivWidth, maxDivWidth);
-
-    if (canvX1 >= minX) {
-	this.minDiv_.style.left = canvX1.toString() + 'px';
-    }
-    else {
-	this.minDiv_.style.left = minX.toString() + 'px';
-    }
-
-    var maxLim =  canvasWidth + 30 - maxDivWidth;
-    if (canvX2 <= maxLim){
-	this.maxDiv_.style.left = canvX2.toString() + 'px';
-    } else {
-	this.maxDiv_.style.left = (maxLim).toString() + 'px';
-    }
-
-    //
-    // y = mx + b...so
-    //
-
-    //
-    // Slope: (y2 - y1) / (x2 - x1)
-    //
-    var slope = canvasHeight / (canvX2 - canvX1);
-
-    //
-    // b = y - mx, at canvX1, y = 0
-    //
-    var b = -slope * canvX1;
-
+    var xSlope = (canvasWidth - 0) / (this.viewMax_ - this.viewMin_);
+    // 0 = this.viewMin_ * xSlope  + b    
+    var b = -1 * this.viewMin_ * xSlope
+    var canvX1 = _l.low * xSlope + b;
+    var canvX2 = _l.high * xSlope + b;
+    var limX1 = this.viewMin_ * xSlope + b;
+    var limX2 = this.viewMax_ * xSlope + b;
     
-    var limX1 = 0;
-    var limX2 = canvasWidth;
-    var limY1 = slope * limX1 + b;
-    var limY2 = slope * limX2 + b;
+
+
+    var ySlope = (canvasHeight - 0) / (canvX2 - canvX1);
+    // 0 = canvX1 * ySlope  + b
+    b = -1 * canvX1 * ySlope
+    var limY1 = limX1 * ySlope + b;
+    var limY2 = limX2 * ySlope + b;
+
+
+    // 
+    // Position the min / max displays
+    //
+    this.positionMinMaxDivs_(canvX1, canvX2);
+
 
     //
     // Draw the sloped line

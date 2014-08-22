@@ -26,11 +26,11 @@
     width: 100%;
     text-align: center;
     font-size: 10px;
+    top: 0px;
 }
 
 .xiv-ui-ctrl-levelscontroller-slidercontroller, 
-.xiv-ui-ctrl-levelscontroller-twothumbslidercontroller
-{
+.xiv-ui-ctrl-levelscontroller-twothumbslidercontroller {
     height: 40px;
 }
 
@@ -48,13 +48,13 @@
 .xiv-ui-ctrl-levelscontroller-slider, 
 .xiv-ui-ctrl-levelscontroller-twothumbslider{
     left: 0px;
-    top: 33px;
+    top: 28px;
     width: 167px;
 }
 
 
 .xiv-ui-ctrl-levelscontroller-twothumbslider {
-    top: 30px;
+    top: 24px;
 }
 
 
@@ -68,7 +68,7 @@
 .xiv-ui-ctrl-levelscontroller-twothumbslidervalue,
 .xiv-ui-ctrl-levelscontroller-twothumbsliderextent {
     left: 16px;
-    top: 37px;
+    top: 32px;
 }
 
 .xiv-ui-ctrl-levelscontroller-twothumbsliderextent {
