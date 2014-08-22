@@ -12,22 +12,35 @@
 
 
 
-.xiv-ui-ctrl-levelscontroller-sliderlabel {
+.xiv-ui-ctrl-levelscontroller-sliderlabel,
+.xiv-ui-ctrl-levelscontroller-twothumbsliderlabel {
     position: absolute;
-    font-size: 10px;
+    font-size: 12px;
     top: 6px;
+}
+
+
+.xiv-ui-ctrl-levelscontroller-twothumbsliderlabel {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
 }
 
 .xiv-ui-ctrl-levelscontroller-slidercontroller, 
 .xiv-ui-ctrl-levelscontroller-twothumbslidercontroller
 {
-    border-top: solid 1px rgb(40,40,40);
     height: 40px;
 }
 
-.xiv-ui-ctrl-levelscontroller-twothumbslidercontroller
- {
-    height: 55px;
+
+.xiv-ui-ctrl-levelscontroller-slidercontroller {
+    width: 80%;
+}
+
+.xiv-ui-ctrl-levelscontroller-twothumbslidercontroller {
+    height: 45px;
 }
 
 
@@ -41,24 +54,25 @@
 
 
 .xiv-ui-ctrl-levelscontroller-twothumbslider {
-    top: 27px;
+    top: 30px;
 }
 
 
 .xiv-ui-ctrl-levelscontroller-slidervalue {
-    left: calc(100% - 47px);
+    left: calc(100% - 52px);
+    width: 50px;
     top: 4px;
 }
 
 
 .xiv-ui-ctrl-levelscontroller-twothumbslidervalue,
 .xiv-ui-ctrl-levelscontroller-twothumbsliderextent {
-    left: 0px;
-    top: 45px;
+    left: 16px;
+    top: 37px;
 }
 
 .xiv-ui-ctrl-levelscontroller-twothumbsliderextent {
-    left: calc(100% - 55px);
+    left: calc(100% - 68px);
 }
 
 

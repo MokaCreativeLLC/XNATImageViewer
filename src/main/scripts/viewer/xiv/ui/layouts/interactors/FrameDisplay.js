@@ -6,11 +6,8 @@ goog.provide('xiv.ui.layouts.interactors.FrameDisplay');
 // goog
 goog.require('goog.dom');
 
-// nrg
-goog.require('nrg.ui.Component');
-
 // xiv
-goog.require('xiv.ui.layouts.interactors.InputController');
+goog.require('nrg.ui.HoverInput');
 
 //-----------
 
@@ -21,13 +18,12 @@ goog.require('xiv.ui.layouts.interactors.InputController');
  * xiv.ui.layouts.interactors.FrameDisplay
  *
  * @constructor
- * @extends {nrg.ui.Component}
+ * @extends {nrg.ui.HoverInput}
  */
 xiv.ui.layouts.interactors.FrameDisplay = function() { 
     goog.base(this);
 }
-goog.inherits(xiv.ui.layouts.interactors.FrameDisplay, 
-	      xiv.ui.layouts.interactors.InputController);
+goog.inherits(xiv.ui.layouts.interactors.FrameDisplay, nrg.ui.HoverInput);
 goog.exportSymbol('xiv.ui.layouts.interactors.FrameDisplay', 
 		  xiv.ui.layouts.interactors.FrameDisplay);
 
@@ -51,6 +47,7 @@ function(){
     //if (!goog.isDefAndNotNull(this.inputBox)){return}
     this.displayElt.innerHTML = this.inputBox.value + 
 	' / ' + this.inputBox.max;
+    this.alignDisplayElement();
 }
 
 

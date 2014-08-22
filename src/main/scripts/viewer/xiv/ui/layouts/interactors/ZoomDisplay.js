@@ -7,11 +7,9 @@ goog.provide('xiv.ui.layouts.interactors.ZoomDisplay');
 goog.require('goog.cssom');
 goog.require('goog.dom');
 
-// nrg
-goog.require('nrg.ui.Component');
 
 // xiv
-goog.require('xiv.ui.layouts.interactors.InputController');
+goog.require('nrg.ui.HoverInput');
 goog.require('xiv.vis.XtkRenderer2D');
 
 //-----------
@@ -23,13 +21,12 @@ goog.require('xiv.vis.XtkRenderer2D');
  * xiv.ui.layouts.interactors.ZoomDisplay
  *
  * @constructor
- * @extends {nrg.ui.Component}
+ * @extends {nrg.ui.HoverInput}
  */
 xiv.ui.layouts.interactors.ZoomDisplay = function() { 
     goog.base(this);
 }
-goog.inherits(xiv.ui.layouts.interactors.ZoomDisplay, 
-	      xiv.ui.layouts.interactors.InputController);
+goog.inherits(xiv.ui.layouts.interactors.ZoomDisplay, nrg.ui.HoverInput);
 goog.exportSymbol('xiv.ui.layouts.interactors.ZoomDisplay', 
 		  xiv.ui.layouts.interactors.ZoomDisplay);
 
@@ -64,8 +61,9 @@ function(parentElement) {
 xiv.ui.layouts.interactors.ZoomDisplay.prototype.updateValue = 
 function(){
     //window.console.log(this.inputBox.min, this.inputBox.max);
-    this.displayElt.innerHTML = 'Zoom level:&nbsp' + 
+    this.displayElt.innerHTML = 'Zoom:&nbsp' + 
 	this.inputBox.value + '%';
+    this.alignDisplayElement();
 }
 
 

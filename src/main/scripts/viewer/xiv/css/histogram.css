@@ -4,7 +4,7 @@
 
 .xiv-ui-ctrl-histogram  {
     position: absolute;
-    height: 70px;
+    height: 95px;
     z-index: 5000;
 }
 
@@ -13,7 +13,7 @@
     position: absolute;
     left: calc(10% - 1px);
     width: calc(80% - 2px);
-    height: 60px;
+    height: 85px;
     border-top: solid 1px rgb(120,120,120);
     border-left: solid 1px rgb(120,120,120);
     border-right: solid 1px rgb(120,120,120);
@@ -32,10 +32,11 @@
     position: absolute;
     height: 14px;
     width: 50px;
-    top: calc(100% - 10px);
+    top: calc(100% - 4px);
     font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
     font-size: 10px;
     color: white;
+    white-space: nowrap;
 }
 
 

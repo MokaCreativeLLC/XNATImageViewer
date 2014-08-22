@@ -8,6 +8,7 @@ goog.require('goog.dom');
 goog.require('goog.string');
 goog.require('goog.array');
 goog.require('goog.style');
+goog.require('goog.structs.Queue');
 
 // xiv
 goog.require('xiv.ui.ctrl.XtkController');
@@ -419,11 +420,48 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
 	return;
     }
 
-
     this.drawWithHorizScaling_(canvasWidth, canvasHeight);
+}
+
+
+
+/**
+ * @return {!Array.<number>}
+ * @public
+ */
+xiv.ui.ctrl.Histogram.prototype.getVisiblePixelRange = function(){
+
+    var pctQueue = new goog.structs.Queue();
+    var samplePct = .1
+    var sampleSize = Math.round(this.percentages_.length * samplePct);
+    var values;
+    var i = 0;
+    var len = this.percentages_.length;
+    var j = 0;
+    
+    var newPcts = goog.array.slice(this.percentages_, 0, sampleSize);
+    
+    var indices = new Array(sampleSize);
+
+    goog.array.forEach(indices, function(val, i){
+	indices[i] = i;
+    })
+
+    var min = this.percentages_[0];
+    var minIndex = 0;
+
+    for (var i = 1; i < sampleSize; i++) {
+	if (this.percentages_[i] < min) {
+            minIndex = i;
+            min = this.percentages_[i];
+	}
+    }
+
+   return [minIndex, maxIndex];
 
 }
 
+ 
 
 
 /**
@@ -442,6 +480,8 @@ function(canvasWidth, canvasHeight) {
     //
     var i = this.viewMin_;
     var cutoffInd = this.viewMax_;
+
+    window.console.log(this.viewMin_, this.viewMax_);
     var newMax = 0;
     for (; i < cutoffInd + 1; i++){
 	if (this.percentages_[i] > newMax) {
@@ -555,17 +595,25 @@ function(canvasWidth, canvasHeight, scaleX) {
     this.minDiv_.style.width = 'auto';
     this.maxDiv_.style.width = 'auto';
 
-    if (canvX1 >= 0){
+    var minX = -1
+
+    var minDivWidth = goog.style.getSize(this.minDiv_).width;
+    var maxDivWidth = goog.style.getSize(this.maxDiv_).width;
+
+    window.console.log(minDivWidth, maxDivWidth);
+
+    if (canvX1 >= minX) {
 	this.minDiv_.style.left = canvX1.toString() + 'px';
     }
     else {
-	this.minDiv_.style.left = '-10px';
+	this.minDiv_.style.left = minX.toString() + 'px';
     }
 
-    if (canvX2 <= canvasWidth){
+    var maxLim =  canvasWidth + 30 - maxDivWidth;
+    if (canvX2 <= maxLim){
 	this.maxDiv_.style.left = canvX2.toString() + 'px';
     } else {
-	this.maxDiv_.style.left = canvasWidth.toString() + 'px';
+	this.maxDiv_.style.left = (maxLim).toString() + 'px';
     }
 
     //
@@ -729,6 +777,8 @@ goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.setViewMax',
 	xiv.ui.ctrl.Histogram.prototype.setViewMax);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold',
 	xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.getVisiblePixelRange',
+	xiv.ui.ctrl.Histogram.prototype.getVisiblePixelRange);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.update',
 	xiv.ui.ctrl.Histogram.prototype.update);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.updateMaxMin',
