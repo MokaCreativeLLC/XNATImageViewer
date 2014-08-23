@@ -4,16 +4,17 @@
 
 .xiv-ui-ctrl-histogram  {
     position: absolute;
-    width: 90px;
-    height: 70px;
+    height: 105px;
     z-index: 5000;
+    top: -5px;
 }
 
 .xiv-ui-ctrl-histogram-canvas,
 .xiv-ui-ctrl-histogram-linecanvas {
     position: absolute;
-    width: calc(100% - 2px);
-    height: 60px;
+    left: calc(10% - 1px);
+    width: calc(80% - 2px);
+    height: 85px;
     border-top: solid 1px rgb(120,120,120);
     border-left: solid 1px rgb(120,120,120);
     border-right: solid 1px rgb(120,120,120);
@@ -27,15 +28,18 @@
 }
 
 
+
+
 .xiv-ui-ctrl-histogram-max,
 .xiv-ui-ctrl-histogram-min {
     position: absolute;
     height: 14px;
     width: 50px;
-    top: calc(100% - 10px);
+    top: calc(100% - 14px);
     font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
     font-size: 10px;
     color: white;
+    white-space: nowrap;
 }
 
 

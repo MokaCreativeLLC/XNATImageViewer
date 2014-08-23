@@ -30,14 +30,13 @@ xiv.ui.ctrl.ButtonController = function(){
      * @type {!goog.ui.Button}
      * @private
      */
-    this.button_ = new goog.ui.Button('Reset to Defaults');
+    this.button_ = new goog.ui.Button('Reset');
 
     this.setComponent(this.button_);
-    
-    this.button_.getElement().style.fontFamily = 
-	'Helvetica,"Helvetica neue", Arial, sans-serif';
-    this.button_.getElement().style.fontSize = '10px';
-    this.button_.getElement().style.width = '100%';
+   
+    goog.dom.classes.add(this.button_.getElement(), 
+			 'xiv-ui-ctrl-buttoncontroller-element');
+
 
     // Events
     goog.events.listen(this.button_.getElement(), 

@@ -192,92 +192,27 @@ nrg.style.absolutePosition = function ( elt) {
 
 
 /**
- * Gets the in-line dimensions of a given element.
- * @param {!Element} elt The element to derive the result from.
- * @param {!Array.<string>= | string=} property The property or properties
- *    to retrieve the inline results from.
- * @return {Object.<string, number> | Object.<string, string>}  The inline 
- *    results.
+ * @constructor
+ * @struct
+ * @param {!Element}
  * @public
  */
-nrg.style.dims = function (elt, property) {
+nrg.style.dims = function (elt) {
+    var pos = goog.style.getPosition(elt);
+    var size = goog.style.getSize(elt);
+    
+    this.pos = pos;
+    this.size = size;
 
-    //------------------
-    // If we're looking for just one attribute we 
-    // go right to the kill...
-    //------------------
-    if (property && typeof property === 'string') {
-	var val = '';
-	
-	switch(property) {
-	case 'height':
-	    return elt.clientHeight;// || $(elt).height();
-	case 'width':
-	    return elt.clientWidth;// || $(elt).width();
-	case 'outerHeight':
-	    return elt.offsetHeight;
-	case 'outerWidth':
-	    return elt.offsetWidth;
-	case 'offsetTop':
-	    return elt.offsetTop;
-	case 'offsetLeft':
-	    return elt.offsetLeft
-	default:
+    this.x = pos.x;
+    this.left = pos.x;
+    this.width = size.width;
+    this.right = pos.x + size.width;
 
-	    val = /%emt/.test(elt.style[property]);
-	    
-	    if (!val) {
-		return nrg.convert.toInt(elt.style[property]);
-	    }
-	    
-	    var p = 
-	    goog.style.getRelativePosition(elt, elt.parentNode);
-	    var posObj = {
-		'left': nrg.convert.toInt(elt.style.left) || p.x,
-		'top': nrg.convert.toInt(elt.style.top) || p.y
-	    };
-
-	    return posObj[property];
-	    //return nrg.convert.toInt(elt.style[property]) //||  
-	    // $(elt).position()[property];
-	    //return $(elt).position()[property];
-	}
-
-
-
-    //------------------
-    // Otherwise, return an object with all style 
-    // attributes.
-    //------------------	
-    } else {
-	
-	
-	var retObj = /**{Object.<string, number> | Object.<string, string>} */
-	{};
-
-	var p = 
-	(elt.parentNode) ? goog.style.getRelativePosition(elt, 
-							  elt.parentNode) : 
-	    goog.style.getRelativePosition(elt, document.body)
-
-	var posObj ={
-	    left: nrg.convert.toInt(elt.style.left) || (p.x),
-	    top: nrg.convert.toInt(elt.style.top) || (p.y)
-	};
-
-		
-	retObj['left'] = posObj.left;
-	retObj['top'] = posObj.top;
-	retObj['height'] = elt.clientHeight;
-	retObj['width'] = elt.clientWidth;			
-	retObj['outerHeight'] = elt.offsetWidth;
-	retObj['outerWidth'] = elt.offsetHeight;
-	retObj['offsetTop'] = elt.offsetTop;
-	retObj['offsetLeft'] = elt.offsetLeft;	
-
-	return retObj;
-	
-    }
+    this.y = pos.y;
+    this.top = pos.y;
+    this.height = size.height;
+    this.bottom = pos.y + size.height;
 }
 
 
@@ -574,6 +509,37 @@ nrg.style.getPositionRelativeToAncestor = function(element, ancestor) {
 
 
 
+/**
+ * Contrains an elements dimensions horizontally within its parent.  
+ * Biases the left position, so if the parent width is less than the
+ * elements, the element is positioned at the leftLimit.
+ * 
+ * @param {!Element} element 
+ * @param {!number} leftLimit
+ * @param {!number} rightLimit
+ * 
+ * @return {!nrg.style.dims} The dimensions of the element after contstraining.
+ * @public
+ */
+nrg.style.constrainHorizontally = function(element, leftLimit, rightLimit) {
+
+    var _d = new nrg.style.dims(element);
+
+    if (_d.right > rightLimit){
+	_d.left = rightLimit - _d.width;
+    }
+
+    if (_d.left < leftLimit){
+	_d.left = leftLimit;
+    }
+
+    element.style.left = _d.left.toString() + 'px';
+
+    return new nrg.style.dims(element);
+}
+
+
+
 
 goog.exportSymbol('nrg.style.cssProperties', nrg.style.cssProperties);
 goog.exportSymbol('nrg.style.removeClassesThatContain',
@@ -585,6 +551,8 @@ goog.exportSymbol('nrg.style.getComputedStyle', nrg.style.getComputedStyle);
 goog.exportSymbol('nrg.style.parseIntNumericalProperties',
 	nrg.style.parseIntNumericalProperties);
 goog.exportSymbol('nrg.style.setStyle', nrg.style.setStyle);
+goog.exportSymbol('nrg.style.constrainHorizontally', 
+		  nrg.style.constrainHorizontally);
 goog.exportSymbol('nrg.style.IS_HOVERED', nrg.style.IS_HOVERED);
 goog.exportSymbol('nrg.style.setHoverClass', nrg.style.setHoverClass);
 goog.exportSymbol('nrg.style.getPositionRelativeToAncestor',
