@@ -132,8 +132,7 @@ xiv.ui.ctrl.LevelsController.prototype.getControllerSet = function() {
 xiv.ui.ctrl.LevelsController.prototype.toggleVisiblePixelRange = 
 function() {
     var range = this.c_.histogram.getVisiblePixelRange();
-
-    window.console.log('\nrange:', range);
+    //window.console.log('\nrange:', range);
     this.c_.histogramRange.setValueAndExtent(range[0], range[1] - range[0]);
     //this.c_.histogramRange.setValue(range[0]);
 }
@@ -586,8 +585,9 @@ xiv.ui.ctrl.LevelsController.prototype.updateMinMax_ = function(){
     minSlider.suspendChangeEvent(true);
     maxSlider.suspendChangeEvent(true);
     
-    this.c_.min.setValue(_l.low);
-    this.c_.max.setValue(_l.high);
+    this.c_.min.setValue(_l.low, true);
+    this.c_.max.setValue(_l.high, true);
+
 
     maxSlider.suspendChangeEvent(false);
     minSlider.suspendChangeEvent(false);

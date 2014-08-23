@@ -243,7 +243,7 @@ xiv.ui.ctrl.Histogram.prototype.setViewMin = function(min){
  * @type {!number}
  */
 xiv.ui.ctrl.Histogram.prototype.setViewMax = function(max){
-    window.console.log("set View Max", max);
+    //window.console.log("set View Max", max);
     this.viewMax_ = max;
 };
 
@@ -458,7 +458,7 @@ xiv.ui.ctrl.Histogram.prototype.getVisiblePixelRange = function(){
             largest = this.percentages_[i];
 	}
     }
-    window.console.log("LARGEST", largestIndex, largest);
+    //window.console.log("LARGEST", largestIndex, largest);
 
     //
     // Then find the smallest point beginning with largest
@@ -471,7 +471,7 @@ xiv.ui.ctrl.Histogram.prototype.getVisiblePixelRange = function(){
             min = this.percentages_[i];
 	}
     }
-    window.console.log("min", minIndex, min);
+    //window.console.log("min", minIndex, min);
 
 
     var max = this.percentages_[minSampleInd];
@@ -498,15 +498,15 @@ xiv.ui.ctrl.Histogram.prototype.getVisiblePixelRange = function(){
 xiv.ui.ctrl.Histogram.prototype.draw_ = 
 function(canvasWidth, canvasHeight) {
   
-    window.console.log('canvasWidth: ', canvasWidth, 
-		       'canvasHeight:', canvasHeight);
+    //window.console.log('canvasWidth: ', canvasWidth, 
+    //'canvasHeight:', canvasHeight);
   
     //
     // Determine the new max -- have to loop through all percentages
     //
 
-    window.console.log('viewMin', this.viewMin_, 
-		       'viewMax', this.viewMax_);
+    //window.console.log('viewMin', this.viewMin_, 
+    //'viewMax', this.viewMax_);
 
     var newMax = 0;
     var i = this.viewMin_;
@@ -525,14 +525,14 @@ function(canvasWidth, canvasHeight) {
 	newPcts.push(this.percentages_[i]/newMax);
     }
 
-    window.console.log("newPcts length", newPcts.length);
+    //window.console.log("newPcts length", newPcts.length);
 
     //
     // canvasWidth = this.viewMax_ * slope + b
     // 0 = this.viewMin_ * slope + b
     //
     var slope = (canvasWidth - 0) / (this.viewMax_ - this.viewMin_);
-    window.console.log('slope:', slope);
+    //window.console.log('slope:', slope);
     var barWidth = (slope < 1) ? 1 : Math.round(slope);  
 
     //

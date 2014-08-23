@@ -92,6 +92,26 @@ nrg.ui.HoverInput.prototype.inputHovered_ = false;
 
 
 /**
+ * @type {!boolean} enabled
+ * @private
+ */
+nrg.ui.HoverInput.prototype.enabled_ = true;
+
+
+
+
+/**
+ * @param {!number} num
+ * @public
+ */
+nrg.ui.HoverInput.prototype.setEnabled = function(enabled){
+    this.enabled_ = enabled;
+}
+
+
+
+
+/**
  * @param {!number} num
  * @public
  */
@@ -257,13 +277,15 @@ function(){
  * @protected
  */
 nrg.ui.HoverInput.prototype.onInput = function(e){
-    var value = parseInt(e.target.value);
-    this.inputBox.value = value;
-    this.dispatchEvent({
-	type: nrg.ui.HoverInput.EventType.INPUT,
-	value: this.inputBox.value
-    });
-    this.updateValue();
+    if (this.enabled_){
+	var value = parseInt(e.target.value);
+	this.inputBox.value = value;
+	this.dispatchEvent({
+	    type: nrg.ui.HoverInput.EventType.INPUT,
+	    value: this.inputBox.value
+	});
+	this.updateValue();
+    }
 }
 
 
@@ -351,7 +373,8 @@ nrg.ui.HoverInput.prototype.disposeInternal =
 function(){
     goog.base(this, 'disposeInternal');
     delete this.inputHovered_;
-  
+    delete this.enabled_;
+
     if (this.inputBox) {
 	goog.events.removeAll(this.inputBox);
 	goog.dom.removeNode(this.inputBox);

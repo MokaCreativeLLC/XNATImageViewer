@@ -204,10 +204,15 @@ xiv.ui.ctrl.SliderBase.prototype.getValueInput = function(e){
 
 /**
  * @param {!number} val
+ * @param {boolean=} opt_setValueInput
  * @public
  */
 xiv.ui.ctrl.SliderBase.prototype.setValue = function(val){
     this.slider.setValue(val);
+    this.valueInput.setEnabled(false);
+    this.valueInput.setValue(val);
+    this.valueInput.setEnabled(true);
+    
 }
 
 

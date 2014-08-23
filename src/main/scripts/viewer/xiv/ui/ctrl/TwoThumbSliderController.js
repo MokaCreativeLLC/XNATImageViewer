@@ -289,7 +289,7 @@ function() {
 	((this.slider.getValue() - this.slider.getMinimum()) / sliderRange);
     var extentThumbLeft = currWidth * (this.slider.getExtent() / sliderRange);
     
-    window.console.log(valueThumbLeft, extentThumbLeft)
+    //window.console.log(valueThumbLeft, extentThumbLeft)
     //
     // IMPORTANT!!!!!!!
     //
