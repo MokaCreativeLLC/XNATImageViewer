@@ -230,6 +230,23 @@ xiv.ui.ctrl.Histogram.prototype.viewMax_ = 0;
 
 
 /**
+ * @private
+ * @type {!boolean}
+ */
+xiv.ui.ctrl.Histogram.prototype.noiseFilterOn_ = false;
+
+
+
+/**
+ * @public
+ * @type {!boolean} on
+ */
+xiv.ui.ctrl.Histogram.prototype.noiseFilterOn = function(on){
+    this.noiseFilterOn_ = on;
+}
+
+
+/**
  * @public
  * @type {!number}
  */
@@ -635,7 +652,7 @@ xiv.ui.ctrl.Histogram.prototype.positionMinMaxDivs_ = function(minX, maxX){
     //
     // Check for overlaps
     //
-    if (minDims.right > maxDims.left){
+    if ((minDims.right + 5)> maxDims.left){
 	//
 	// Put all of the content in min div
 	//
@@ -802,6 +819,7 @@ xiv.ui.ctrl.Histogram.prototype.disposeInternal = function() {
     delete this.lineContext_;
     delete this.startMin_;
     delete this.startMax_;
+    delete this.noiseFilterOn_;
 }
 
 
@@ -829,6 +847,8 @@ goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold',
 	xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.getVisiblePixelRange',
 	xiv.ui.ctrl.Histogram.prototype.getVisiblePixelRange);
+goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.noiseFilterOn',
+	xiv.ui.ctrl.Histogram.prototype.noiseFilterOn);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.update',
 	xiv.ui.ctrl.Histogram.prototype.update);
 goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.updateMaxMin',

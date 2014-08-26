@@ -51,6 +51,7 @@ xiv.ui.ctrl.LevelsController = function() {
 	histogramRange : null, 
 	reset : null,
 	xObj : null,
+	filterCB: null,
 	sliders : []	
     }
 
@@ -153,6 +154,7 @@ xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
     //
     this.createHistogramRange_();
     this.createHistogram_();
+    this.createFilterCheckbox_();
     this.createLevelMin_();
     this.createLevelMax_();
     this.createBrightness_();
@@ -162,6 +164,8 @@ xiv.ui.ctrl.LevelsController.prototype.add = function(xObj) {
 
     this.groupSliders_();
     this.adjustStyles_();
+
+
 }
 
 
@@ -256,13 +260,38 @@ function(){
 	function(ctrl){
 	    ctrl.setValue(ctrl.getDefaultValue());
 	    ctrl.update();
-	})
+	        // set defaults
+	    this.c_.filterCB.setChecked(true);
+	}.bind(this))
     
     // Update the checkbox
     this.toggleVisiblePixelRange();
     this.c_.histogram.update();
 
 }
+
+
+/**
+ * @private
+ */
+xiv.ui.ctrl.LevelsController.prototype.createFilterCheckbox_ = function() {
+
+
+    this.c_.filterCB = this.createController( 
+	xiv.ui.ctrl.CheckboxController, 'Noise Filter View: ');
+
+    // set folder
+    xiv.ui.ctrl.XtkController.setControllerFolders(this.xObj_, 
+						   this.c_.filterCB);
+
+    // store
+    this.masterControllers.push(this.c_.filterCB);
+
+
+    var cbElt = this.c_.filterCB.getComponent().getElement();
+    cbElt.style.left = "calc(100% - 15px)"; 
+}
+
 
 
 
@@ -279,6 +308,7 @@ xiv.ui.ctrl.LevelsController.prototype.createResetButton_ = function() {
 	this.onResetButtonClicked_.bind(this));
 
     // set folder
+
     xiv.ui.ctrl.XtkController.setControllerFolders(this.xObj_, resetButton);
 
     this.masterControllers.push(resetButton);

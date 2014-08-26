@@ -1553,6 +1553,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.applyAutoLevel = function(){
 
     this.viewableCtrls_.getLevelsController().toggleVisiblePixelRange();
     this.levels_.histogram.update();
+
+    this.Dialogs_.getDialogs()[this.dialogKeys_['levels']];
 }
 
 
@@ -2397,6 +2399,7 @@ function() {
 
 	if (key == 'levels'){
 	    this.customizeLevelsDialog_();
+
 	}
 	
     }.bind(this))
@@ -2441,7 +2444,63 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
 	function(node){
 	    node.truncateHeaderLabel(10);
 	})
-    
+
+
+    //
+    // Filter NOISE CB
+    //
+    var filterCBElt = this.levels_.filterCB.getElement();
+    var children = goog.dom.getChildren(filterCBElt);
+    goog.array.forEach(children, function(child){
+	//child.style.fontSize = '10px';
+	child.style.outline = 'none';
+    })
+    var parent = filterCBElt.parentNode;
+    var levelDiaHeight = goog.style.getSize(levelDia.getElement()).height;
+    var xObj = this.levels_.min.getXObj();
+    goog.events.listen(
+	this.levels_.filterCB, 
+	xiv.ui.ctrl.XtkController.EventType.CHANGE, 
+	function(e){
+	    window.console.log("CHECKED!", e)
+	    if (e.checked.toString() == "true"){
+		this.levels_.histogramRange.getElement().style.visibility 
+		    = 'hidden';
+		goog.dom.removeNode(
+		    this.levels_.histogramRange.getElement());
+		levelDia.getElement().style.height = 
+		    (levelDiaHeight).toString() + 'px';
+		
+		this.levels_.histogramRange.getComponent().setEnabled(false);
+		this.levels_.histogram.noiseFilterOn(true);
+		this.levels_.histogram.setViewMin(parseInt(xObj['min']));
+		this.levels_.histogram.setViewMax(parseInt(xObj['max']));
+		this.levels_.histogram.update();
+		window.console.log(
+		    this.levels_.histogram.viewMin_,
+		    this.levels_.histogram.viewMax_)
+		this.levels_.histogram.draw();
+
+
+	    } else {
+		//filterCBElt.style.opacity = .75;
+		this.levels_.histogramRange.getElement().style.visibility 
+		    = 'visible';
+		goog.dom.insertChildAt(
+		    parent, 
+		    this.levels_.histogramRange.getElement(),
+		    0);
+		levelDia.getElement().style.height = 
+		    (levelDiaHeight + 20).toString() + 'px';
+		this.levels_.histogramRange.getComponent().setEnabled(true);
+		this.levels_.histogramRange.update();
+		this.levels_.histogram.noiseFilterOn(false);
+	    }
+	    this.zippyTrees_['levels'].mapSliderToContents();
+
+	}.bind(this))
+
+    this.levels_.filterCB.setChecked(true);
 }
 
 
