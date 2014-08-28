@@ -1,7 +1,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-goog.provide('xiv.ui.ctrl.SliderBase');
+goog.provide('xiv.ui.SliderBase');
 
 
 // goog
@@ -15,7 +15,7 @@ goog.require('nrg.ui.Slider');
 goog.require('nrg.ui.HoverInput');
 
 // xiv
-goog.require('xiv.ui.ctrl.XtkController');
+goog.require('xiv.ui.XtkController');
 
 //-----------
 
@@ -23,14 +23,14 @@ goog.require('xiv.ui.ctrl.XtkController');
 
 /**
  * @constructor
- * @extends {xiv.ui.ctrl.XtkController}
+ * @extends {xiv.ui.XtkController}
  */
-xiv.ui.ctrl.SliderBase = function(){
+xiv.ui.SliderBase = function(){
     goog.base(this);
     this.setLabel('Slider');
 }
-goog.inherits(xiv.ui.ctrl.SliderBase, xiv.ui.ctrl.XtkController);
-goog.exportSymbol('xiv.ui.ctrl.SliderBase', xiv.ui.ctrl.SliderBase);
+goog.inherits(xiv.ui.SliderBase, xiv.ui.XtkController);
+goog.exportSymbol('xiv.ui.SliderBase', xiv.ui.SliderBase);
 
 
 
@@ -39,7 +39,7 @@ goog.exportSymbol('xiv.ui.ctrl.SliderBase', xiv.ui.ctrl.SliderBase);
  * @const
  * @public
  */
-xiv.ui.ctrl.SliderBase.ID_PREFIX =  'xiv.ui.ctrl.SliderBase';
+xiv.ui.SliderBase.ID_PREFIX =  'xiv.ui.SliderBase';
 
 
 
@@ -48,7 +48,7 @@ xiv.ui.ctrl.SliderBase.ID_PREFIX =  'xiv.ui.ctrl.SliderBase';
  * @enum {string}
  * @expose
  */
-xiv.ui.ctrl.SliderBase.CSS_SUFFIX = {
+xiv.ui.SliderBase.CSS_SUFFIX = {
     SLIDER: 'slider',
     SLIDER_THUMB: 'slider-thumb',
     SLIDER_THUMB_HOVER: 'slider-thumb-hover',
@@ -64,7 +64,7 @@ xiv.ui.ctrl.SliderBase.CSS_SUFFIX = {
  * @type {number}
  * @protected
  */
-xiv.ui.ctrl.SliderBase.prototype.displayDecimals = 2;
+xiv.ui.SliderBase.prototype.displayDecimals = 2;
 
 
 
@@ -73,7 +73,7 @@ xiv.ui.ctrl.SliderBase.prototype.displayDecimals = 2;
  * @type {?nrg.ui.HoverInput}
  * @protected
  */
-xiv.ui.ctrl.SliderBase.prototype.valueInput = null;
+xiv.ui.SliderBase.prototype.valueInput = null;
 
 
 
@@ -81,7 +81,7 @@ xiv.ui.ctrl.SliderBase.prototype.valueInput = null;
  * @type {goog.ui.component}
  * @protected
  */
-xiv.ui.ctrl.SliderBase.prototype.slider = null;
+xiv.ui.SliderBase.prototype.slider = null;
 
 
 
@@ -89,7 +89,7 @@ xiv.ui.ctrl.SliderBase.prototype.slider = null;
  * @param {!number} num
  * @public
  */
-xiv.ui.ctrl.SliderBase.prototype.setDisplayDecimals = function(num){
+xiv.ui.SliderBase.prototype.setDisplayDecimals = function(num){
     this.displayDecimals = num;
 }
 
@@ -98,7 +98,7 @@ xiv.ui.ctrl.SliderBase.prototype.setDisplayDecimals = function(num){
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.SliderBase.prototype.render = function(opt_parentElement) {
+xiv.ui.SliderBase.prototype.render = function(opt_parentElement) {
     goog.base(this, 'render', opt_parentElement);
     this.createSlider();
     this.valueInput = this.createInputBox(this.onValueInput_.bind(this));
@@ -108,7 +108,7 @@ xiv.ui.ctrl.SliderBase.prototype.render = function(opt_parentElement) {
 /**
  * @public
  */
-xiv.ui.ctrl.SliderBase.prototype.createSlider = function() {
+xiv.ui.SliderBase.prototype.createSlider = function() {
     this.slider = new nrg.ui.Slider();
     this.setComponent(this.slider);
 
@@ -120,17 +120,12 @@ xiv.ui.ctrl.SliderBase.prototype.createSlider = function() {
 
     // Classes
     goog.dom.classes.add(this.slider.getElement(), 
-			 xiv.ui.ctrl.SliderBase.CSS.SLIDER);
+			 xiv.ui.SliderBase.CSS.SLIDER);
     goog.dom.classes.add(this.slider.getThumb(), 
-			 xiv.ui.ctrl.SliderBase.CSS.SLIDER_THUMB);
+			 xiv.ui.SliderBase.CSS.SLIDER_THUMB);
     goog.dom.classes.add(this.slider.getTrack(),
-			 xiv.ui.ctrl.SliderBase.CSS.SLIDER_TRACK);
+			 xiv.ui.SliderBase.CSS.SLIDER_TRACK);
 
-    // Hover classes
-    this.slider.addThumbHoverClass(
-	xiv.ui.ctrl.SliderBase.CSS.SLIDER_THUMB_HOVER);
-    this.slider.addTrackHoverClass(
-	xiv.ui.ctrl.SliderBase.CSS.SLIDER_TRACK_HOVER);
 
     // Events
     goog.events.listen(this.slider, 
@@ -147,7 +142,7 @@ xiv.ui.ctrl.SliderBase.prototype.createSlider = function() {
  * @param {!Function} inputCallback
  * @protected
  */
-xiv.ui.ctrl.SliderBase.prototype.createInputBox = 
+xiv.ui.SliderBase.prototype.createInputBox = 
 function(inputCallback) {
 
     var inputObj = new nrg.ui.HoverInput();
@@ -156,11 +151,11 @@ function(inputCallback) {
     // Classes
     inputObj.render(this.getElement());
     goog.dom.classes.add(inputObj.getElement(), 
-			 xiv.ui.ctrl.SliderBase.CSS.VALUEINPUT);
+			 xiv.ui.SliderBase.CSS.VALUEINPUT);
     goog.dom.classes.add(inputObj.getDisplayElement(), 
-			 xiv.ui.ctrl.SliderBase.CSS.VALUEINPUT_DISPLAY);
+			 xiv.ui.SliderBase.CSS.VALUEINPUT_DISPLAY);
     goog.dom.classes.add(inputObj.getInputElement(), 
-			 xiv.ui.ctrl.SliderBase.CSS.VALUEINPUT_BOX);
+			 xiv.ui.SliderBase.CSS.VALUEINPUT_BOX);
     
     // Events
     goog.events.listen(inputObj, 
@@ -178,7 +173,7 @@ function(inputCallback) {
  * @param {Event}
  * @private
  */
-xiv.ui.ctrl.SliderBase.prototype.onValueInput_ = function(e){
+xiv.ui.SliderBase.prototype.onValueInput_ = function(e){
 
     window.console.log("INPUT", e);
 
@@ -196,7 +191,7 @@ xiv.ui.ctrl.SliderBase.prototype.onValueInput_ = function(e){
  * @return {nrg.ui.HoverInput}
  * @public
  */
-xiv.ui.ctrl.SliderBase.prototype.getValueInput = function(e){
+xiv.ui.SliderBase.prototype.getValueInput = function(e){
     return this.valueInput;
 }
 
@@ -207,7 +202,7 @@ xiv.ui.ctrl.SliderBase.prototype.getValueInput = function(e){
  * @param {boolean=} opt_setValueInput
  * @public
  */
-xiv.ui.ctrl.SliderBase.prototype.setValue = function(val){
+xiv.ui.SliderBase.prototype.setValue = function(val){
     this.slider.setValue(val);
     this.valueInput.setEnabled(false);
     this.valueInput.setValue(val);
@@ -220,12 +215,12 @@ xiv.ui.ctrl.SliderBase.prototype.setValue = function(val){
  * @param {!number} max
  * @public
  */
-xiv.ui.ctrl.SliderBase.prototype.setMaximum = function(max){
+xiv.ui.SliderBase.prototype.setMaximum = function(max){
     if (goog.isDefAndNotNull(this.valueInput)) {
 	this.valueInput.setMaximum(max);
     }
     this.slider.setMaximum(max);
-    this.update();
+    this.refresh();
 }
 
 
@@ -234,12 +229,12 @@ xiv.ui.ctrl.SliderBase.prototype.setMaximum = function(max){
  * @param {!number} step
  * @public
  */
-xiv.ui.ctrl.SliderBase.prototype.setStep = function(step){
+xiv.ui.SliderBase.prototype.setStep = function(step){
     if (goog.isDefAndNotNull(this.valueInput)) {
 	this.valueInput.setStep(step);
     }
     this.slider.setStep(step);
-    this.update();
+    this.refresh();
 }
 
 
@@ -248,12 +243,12 @@ xiv.ui.ctrl.SliderBase.prototype.setStep = function(step){
  * @param {!number} min
  * @public
  */
-xiv.ui.ctrl.SliderBase.prototype.setMinimum = function(min){
+xiv.ui.SliderBase.prototype.setMinimum = function(min){
     if (goog.isDefAndNotNull(this.valueInput)) {
 	this.valueInput.setMinimum(min);
     }
     this.slider.setMinimum(min);
-    this.update();
+    this.refresh();
 }
 
 
@@ -262,7 +257,7 @@ xiv.ui.ctrl.SliderBase.prototype.setMinimum = function(min){
  * @return {!number}
  * @private
  */
-xiv.ui.ctrl.SliderBase.prototype.getValue = function(){
+xiv.ui.SliderBase.prototype.getValue = function(){
     return this.slider.getValue();
 }
 
@@ -271,7 +266,7 @@ xiv.ui.ctrl.SliderBase.prototype.getValue = function(){
  * @return {!number}
  * @public
  */
-xiv.ui.ctrl.SliderBase.prototype.getMaximum = function(){
+xiv.ui.SliderBase.prototype.getMaximum = function(){
     return this.slider.getMaximum();
 }
 
@@ -281,7 +276,7 @@ xiv.ui.ctrl.SliderBase.prototype.getMaximum = function(){
  * @return {!number} 
  * @public
  */
-xiv.ui.ctrl.SliderBase.prototype.getStep = function(){
+xiv.ui.SliderBase.prototype.getStep = function(){
     return this.slider.getStep();
 }
 
@@ -291,7 +286,7 @@ xiv.ui.ctrl.SliderBase.prototype.getStep = function(){
  * @return {!number} 
  * @public
  */
-xiv.ui.ctrl.SliderBase.prototype.getMinimum = function(){
+xiv.ui.SliderBase.prototype.getMinimum = function(){
     return this.slider.getMinimum();
 }
 
@@ -301,7 +296,7 @@ xiv.ui.ctrl.SliderBase.prototype.getMinimum = function(){
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.SliderBase.prototype.dispatchComponentEvent = function(){
+xiv.ui.SliderBase.prototype.dispatchComponentEvent = function(){
 
     var val = this.slider.getValue().toFixed(this.displayDecimals);
     var previousValue = this.slider.getPreviousValue();
@@ -313,7 +308,7 @@ xiv.ui.ctrl.SliderBase.prototype.dispatchComponentEvent = function(){
 
     //window.console.log("SLIDER", val);
     this.dispatchEvent({
-	type: xiv.ui.ctrl.XtkController.EventType.CHANGE,
+	type: xiv.ui.XtkController.EventType.CHANGE,
 	value: val,
 	minimum: this.slider.getMinimum(),
 	maximum: this.slider.getMaximum(),
@@ -327,7 +322,7 @@ xiv.ui.ctrl.SliderBase.prototype.dispatchComponentEvent = function(){
  * @param {?nrg.ui.HoverInput}
  * @protected
  */
-xiv.ui.ctrl.SliderBase.prototype.syncInputToSlider = function(input) {
+xiv.ui.SliderBase.prototype.syncInputToSlider = function(input) {
     if (!goog.isDefAndNotNull(input)){return}
     
     //
@@ -352,7 +347,7 @@ xiv.ui.ctrl.SliderBase.prototype.syncInputToSlider = function(input) {
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.SliderBase.prototype.update = function() {
+xiv.ui.SliderBase.prototype.refresh = function() {
     //
     // Updates the component (to be safe)
     //
@@ -370,7 +365,7 @@ xiv.ui.ctrl.SliderBase.prototype.update = function() {
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.SliderBase.prototype.disposeInternal = function() {
+xiv.ui.SliderBase.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
     delete this.displayDecimals;
@@ -391,97 +386,97 @@ xiv.ui.ctrl.SliderBase.prototype.disposeInternal = function() {
 
 
 
-goog.exportSymbol('xiv.ui.ctrl.SliderBase.ID_PREFIX',
-	xiv.ui.ctrl.SliderBase.ID_PREFIX);
-goog.exportSymbol('xiv.ui.ctrl.SliderBase.CSS_SUFFIX',
-	xiv.ui.ctrl.SliderBase.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.SliderBase.ID_PREFIX',
+	xiv.ui.SliderBase.ID_PREFIX);
+goog.exportSymbol('xiv.ui.SliderBase.CSS_SUFFIX',
+	xiv.ui.SliderBase.CSS_SUFFIX);
 
 //
 // Protected 
 //
 goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.slider',
-    xiv.ui.ctrl.SliderBase.prototype.slider);
+    'xiv.ui.SliderBase.prototype.slider',
+    xiv.ui.SliderBase.prototype.slider);
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.displayDecimals',
-    xiv.ui.ctrl.SliderBase.prototype.displayDecimals);
+    'xiv.ui.SliderBase.prototype.displayDecimals',
+    xiv.ui.SliderBase.prototype.displayDecimals);
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.valueInput',
-    xiv.ui.ctrl.SliderBase.prototype.valueInput);
+    'xiv.ui.SliderBase.prototype.valueInput',
+    xiv.ui.SliderBase.prototype.valueInput);
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.createSlider',
-    xiv.ui.ctrl.SliderBase.prototype.createSlider);
+    'xiv.ui.SliderBase.prototype.createSlider',
+    xiv.ui.SliderBase.prototype.createSlider);
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.createInputBox',
-    xiv.ui.ctrl.SliderBase.prototype.createInputBox);
+    'xiv.ui.SliderBase.prototype.createInputBox',
+    xiv.ui.SliderBase.prototype.createInputBox);
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.dispatchComponentEvent',
-    xiv.ui.ctrl.SliderBase.prototype.dispatchComponentEvent);
+    'xiv.ui.SliderBase.prototype.dispatchComponentEvent',
+    xiv.ui.SliderBase.prototype.dispatchComponentEvent);
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.syncInputToSlider',
-    xiv.ui.ctrl.SliderBase.prototype.syncInputToSlider);
+    'xiv.ui.SliderBase.prototype.syncInputToSlider',
+    xiv.ui.SliderBase.prototype.syncInputToSlider);
 
 //
 // Public
 //
 goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.setDisplayDecimals',
-    xiv.ui.ctrl.SliderBase.prototype.setDisplayDecimals);
+    'xiv.ui.SliderBase.prototype.setDisplayDecimals',
+    xiv.ui.SliderBase.prototype.setDisplayDecimals);
 
-goog.exportSymbol('xiv.ui.ctrl.SliderBase.prototype.render',
-	xiv.ui.ctrl.SliderBase.prototype.render);
-
-goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.getValueInput',
-    xiv.ui.ctrl.SliderBase.prototype.getValueInput);
+goog.exportSymbol('xiv.ui.SliderBase.prototype.render',
+	xiv.ui.SliderBase.prototype.render);
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.setValue',
-    xiv.ui.ctrl.SliderBase.prototype.setValue);
+    'xiv.ui.SliderBase.prototype.getValueInput',
+    xiv.ui.SliderBase.prototype.getValueInput);
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.setStep',
-    xiv.ui.ctrl.SliderBase.prototype.setStep);
+    'xiv.ui.SliderBase.prototype.setValue',
+    xiv.ui.SliderBase.prototype.setValue);
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.setMaximum',
-    xiv.ui.ctrl.SliderBase.prototype.setMaximum);
+    'xiv.ui.SliderBase.prototype.setStep',
+    xiv.ui.SliderBase.prototype.setStep);
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.setMinumum',
-    xiv.ui.ctrl.SliderBase.prototype.setMinimum);
-
-
-goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.getValue',
-    xiv.ui.ctrl.SliderBase.prototype.getValue);
+    'xiv.ui.SliderBase.prototype.setMaximum',
+    xiv.ui.SliderBase.prototype.setMaximum);
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.getStep',
-    xiv.ui.ctrl.SliderBase.prototype.getStep);
-
-goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.getMaximum',
-    xiv.ui.ctrl.SliderBase.prototype.getMaximum);
-
-goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.getMinumum',
-    xiv.ui.ctrl.SliderBase.prototype.getMinimum);
+    'xiv.ui.SliderBase.prototype.setMinumum',
+    xiv.ui.SliderBase.prototype.setMinimum);
 
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.SliderBase.prototype.update',
-    xiv.ui.ctrl.SliderBase.prototype.update);
+    'xiv.ui.SliderBase.prototype.getValue',
+    xiv.ui.SliderBase.prototype.getValue);
+
+goog.exportSymbol(
+    'xiv.ui.SliderBase.prototype.getStep',
+    xiv.ui.SliderBase.prototype.getStep);
+
+goog.exportSymbol(
+    'xiv.ui.SliderBase.prototype.getMaximum',
+    xiv.ui.SliderBase.prototype.getMaximum);
+
+goog.exportSymbol(
+    'xiv.ui.SliderBase.prototype.getMinumum',
+    xiv.ui.SliderBase.prototype.getMinimum);
 
 
-goog.exportSymbol('xiv.ui.ctrl.SliderBase.prototype.disposeInternal',
-	xiv.ui.ctrl.SliderBase.prototype.disposeInternal);
+goog.exportSymbol(
+    'xiv.ui.SliderBase.prototype.refresh',
+    xiv.ui.SliderBase.prototype.refresh);
+
+
+goog.exportSymbol('xiv.ui.SliderBase.prototype.disposeInternal',
+	xiv.ui.SliderBase.prototype.disposeInternal);
 
 
 

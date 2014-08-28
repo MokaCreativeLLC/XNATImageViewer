@@ -290,21 +290,6 @@ nrg.ui.ThumbnailGallery.prototype.loop = function(callback){
 
 
 
-/**
- * Sets the thumbnail's hover (mouseover) parent.  This allows for a more
- * seamless UX when scrolling and overing over a thumbnail.
- * 
- * @param {!Element} elt The hover parent of the thumbnails.
- * @public
- */
-nrg.ui.ThumbnailGallery.prototype.setHoverParent = function(elt){
-    this.loop(function(thumbnail){
-	goog.dom.append(elt, thumbnail.getHoverable());
-    })
-}
-
-
-
 
 /**
  * Adds a thumbnail to the gallery, or a gallery zippy if the opt_folders 
@@ -324,14 +309,6 @@ function(thumbnail, opt_folders) {
     this.Thumbs_ = this.Thumbs_ ? this.Thumbs_ : {};
     this.Thumbs_[thumbnail.getElement().getAttribute('id')] = thumbnail;
 
-    // Bind clone to mouse wheel.
-    this.getSlider().bindToMouseWheel(thumbnail.getHoverable());
-
-    
-    goog.events.listen(this.getSlider(), 
-		     nrg.ui.Slider.EventType.MOUSEWHEEL, 
-			 this.onHoverAndScroll_.bind(this));
-
     //
     // Create a sort ID for the thumbnail 
     //
@@ -347,7 +324,7 @@ function(thumbnail, opt_folders) {
     this.mapSliderToContents();
 
 
-    var thumbElt = thumbnail.getHoverable();
+    var thumbElt = thumbnail.getElement();
     //
     // Dispatch mouseover
     //
@@ -450,44 +427,6 @@ nrg.ui.ThumbnailGallery.prototype.getThumbFromElement_ = function(elt){
 }
 
 
-/**
- * Conducts the needed thumbnail element style changes when scrolling
- * and hovering over the thumbnail gallery.  
- *
- * @param {?Event}
- * @private
- */
-nrg.ui.ThumbnailGallery.prototype.onHoverAndScroll_ = function(event){    
-
-    //window.console.log(event);
-    var mouseElt = 
-    document.elementFromPoint(this.mouseX_, this.mouseY_);
-    var mouseThumb =
-    goog.dom.getAncestorByClass(mouseElt, nrg.ui.Thumbnail.ELEMENT_CLASS);
-
-
-    // Exit out if not over a thumbnail or thumbnail's hoverable.
-    if (!mouseThumb) { 
-	this.clearHoverThumb_();
-	return;
-    }
-
-    var hoverThumbId = 
-    mouseThumb.id.replace(nrg.ui.Thumbnail.HOVERABLE_PREFIX, '');
-
-    if (this.storedHoverThumbId_ !== hoverThumbId) {
-
-	this.clearHoverThumb_();
-	this.storedHoverThumbId_ = hoverThumbId;
-	//window.console.log(this.storedHoverThumbId_) ;
-	//window.console.log(this.Thumbs_);
-	//window.console.log(
-	//this.Thumbs_[this.storedHoverThumbId_].getHoverable())
-	this.Thumbs_[this.storedHoverThumbId_].onMouseEnter();
-
-    }
-    this.Thumbs_[this.storedHoverThumbId_].repositionHoverable();
-};
 
 
 
@@ -690,8 +629,6 @@ goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.createThumbnail',
 	nrg.ui.ThumbnailGallery.prototype.createThumbnail);
 goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.loop',
 	nrg.ui.ThumbnailGallery.prototype.loop);
-goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.setHoverParent',
-	nrg.ui.ThumbnailGallery.prototype.setHoverParent);
 goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.addThumbnail',
 	nrg.ui.ThumbnailGallery.prototype.addThumbnail);
 goog.exportSymbol('nrg.ui.ThumbnailGallery.prototype.createAndAddThumbnail',

@@ -317,9 +317,9 @@ xiv.ui.ThumbnailGallery.prototype.initDragDrop_ = function(){
  */
 xiv.ui.ThumbnailGallery.prototype.createDragElement_ = function(srcElt) {
     // Get the thumbnail ID from the ancestor.
+    //window.console.log(srcElt, xiv.ui.Thumbnail.ELEMENT_CLASS);
     var thumbId =   goog.dom.getAncestorByTagNameAndClass(
-	srcElt, 'div', xiv.ui.Thumbnail.ELEMENT_CLASS).id.replace(
-	    nrg.ui.Thumbnail.HOVERABLE_PREFIX, '');
+	srcElt, 'div', nrg.ui.Thumbnail.ELEMENT_CLASS).id;
 
     // Exit out of the id is not stored.
     if (!goog.object.containsKey(this.Thumbs_, thumbId)) {
@@ -447,7 +447,7 @@ xiv.ui.ThumbnailGallery.prototype.onDrop_ = function(event) {
  * @private
  */
 xiv.ui.ThumbnailGallery.prototype.addDragDropSource_ = function(thumbnail){
-    var thumbElt = thumbnail.getHoverable();
+    var thumbElt = thumbnail.getElement();
     if (thumbElt) {
 	this.thumbnailDragDropGroup_.addItem(thumbElt);
     }

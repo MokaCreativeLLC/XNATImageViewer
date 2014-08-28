@@ -3,7 +3,7 @@
  */
 
 
-.xiv-ui-layouts-interactors-playbutton {
+.xiv-ui-playbutton {
     position: absolute;
     top: calc(100% - 15px);
     left: 9px;
@@ -14,7 +14,7 @@
 
 
 
-.xiv-ui-layouts-interactors-playbutton-image {
+.xiv-ui-playbutton-image {
     height: 9px;
     width: 9px;
 }

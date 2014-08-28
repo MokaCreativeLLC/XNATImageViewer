@@ -22,6 +22,7 @@ goog.require('goog.array');
 // nrg
 goog.require('nrg.style');
 goog.require('nrg.ui.Component');
+goog.require('nrg.fx');
 
 
 /**
@@ -136,33 +137,6 @@ nrg.ui.Dialog.prototype.dragger_ = null;
 nrg.ui.Dialog.prototype.posOnClose_ = null;
 
 
-
-/** 
- * @param {string=} opt_eltMouseover
- * @param {string=} opt_titleMouseover
- * @public
- */
-nrg.ui.Dialog.prototype.setMouseoverClass = 
-function(opt_eltMouseover) {
-
-    this.titleElt_.style.visibility = 'hidden';
-    this.closeButton_.style.visibility = 'hidden';
-
-    if (goog.isDefAndNotNull(opt_eltMouseover)){
-	nrg.style.setHoverClass(this.getElement(), 
-				opt_eltMouseover,
-				null, null,
-        function(){
-	    this.titleElt_.style.visibility = 'visible';
-	    this.closeButton_.style.visibility = 'visible';
-        }.bind(this),
- 
-        function(){
-	    this.titleElt_.style.visibility = 'hidden';
-	    this.closeButton_.style.visibility = 'hidden';
-        }.bind(this));
-    }
-}
 
 
 /** 
@@ -690,10 +664,14 @@ nrg.ui.Dialog.prototype.render = function(opt_parentElement) {
 /**
  * @inheritDoc
  */
-nrg.ui.Dialog.prototype.setVisible = function(visible) {
+nrg.ui.Dialog.prototype.setVisible = function(visible, opt_override) {
     //window.console.log("SET VISIBLE", visible, this.getElement(),
     //this.getTitle(), this.isVisible())
 	
+    if (opt_override == true) { 
+	goog.base(this, 'setVisible', visible);
+    }
+
     if (!goog.isDefAndNotNull(this.getElement())) { return }
 
     if (!goog.isDefAndNotNull(this.posOnClose_)){
@@ -702,14 +680,18 @@ nrg.ui.Dialog.prototype.setVisible = function(visible) {
 
     if (this.isVisible() && visible == false){
 	this.posOnClose_ = goog.style.getPosition(this.getElement());
-	goog.base(this, 'setVisible', visible);
+
+	nrg.fx.fadeOut(this.getElement(), 200, function(){
+	    this.setVisible(visible, true);
+	}.bind(this))
     } 
 
 
     else if (!this.isVisible() && visible == true){
 	goog.base(this, 'setVisible', visible);
 	goog.style.setPosition(this.getElement(), this.posOnClose_);
-	return;
+	this.getElement().style.opacity = 0;
+	nrg.fx.fadeIn(this.getElement(), 200)
     }
 }
 
@@ -794,6 +776,18 @@ nrg.ui.Dialog.prototype.getTextElements = function() {
 
 
 /**
+ * @param {!Element | !Array.<Element>} showables
+ * @throws {Error} if showabes are not a direct child of the dialog element.
+ * @public
+ */
+nrg.ui.Dialog.prototype.hideWindowOnHover = function(showables){
+
+}
+
+
+
+
+/**
  * @inheritDoc
  */
 nrg.ui.Dialog.prototype.disposeInternal = function() {
@@ -839,8 +833,6 @@ nrg.ui.Dialog.prototype.disposeInternal = function() {
 
 goog.exportSymbol('nrg.ui.Dialog.ID_PREFIX', nrg.ui.Dialog.ID_PREFIX);
 goog.exportSymbol('nrg.ui.Dialog.EventType', nrg.ui.Dialog.EventType);
-goog.exportSymbol('nrg.ui.Dialog.prototype.setMouseoverClass',
-	nrg.ui.Dialog.prototype.setMouseoverClass);
 goog.exportSymbol('nrg.ui.Dialog.prototype.addTitleClass',
 	nrg.ui.Dialog.prototype.addTitleClass);
 goog.exportSymbol('nrg.ui.Dialog.prototype.addContentClass',
@@ -859,6 +851,8 @@ goog.exportSymbol('nrg.ui.Dialog.prototype.moveToCorner',
 	nrg.ui.Dialog.prototype.moveToCorner);
 goog.exportSymbol('nrg.ui.Dialog.prototype.center',
 	nrg.ui.Dialog.prototype.center);
+goog.exportSymbol('nrg.ui.Dialog.prototype.hideWindowOnHover',
+	nrg.ui.Dialog.prototype.hideWindowOnHover);
 goog.exportSymbol('nrg.ui.Dialog.prototype.setDraggable',
 	nrg.ui.Dialog.prototype.setDraggable);
 goog.exportSymbol('nrg.ui.Dialog.prototype.updateLimits',

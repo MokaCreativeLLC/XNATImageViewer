@@ -168,9 +168,11 @@ function(dialogKey, dialogClass, toggleButtonClass, toggleButtonSrc,
 
 	    var currDialog = this.Dialogs_[dialogKey];
 	    var opened = button.getAttribute('checked') == 'true';
-	    currDialog.setVisible(opened);
+	    //currDialog.setVisible(opened);
 	    //this.Dialogs_[dialogKey].center();
 	    
+	    currDialog.setVisible(opened);
+
 	    var eventKey = opened ? 
 		xiv.ui.ViewBoxDialogs.EventType.DIALOG_OPENED :
 		xiv.ui.ViewBoxDialogs.EventType.DIALOG_CLOSED
@@ -604,7 +606,6 @@ xiv.ui.ViewBoxDialogs.prototype.createHelpDialog_ = function(){
             function(button){
 		var opened = button.getAttribute('checked') == 'true';
 		helpDialog.setVisible(opened);
-		helpDialog.center();
 
 		var eventKey = opened ? 
 		    xiv.ui.ViewBoxDialogs.EventType.DIALOG_OPENED :
@@ -655,6 +656,8 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
     }
     currDialog = new nrg.ui.Dialog();
 
+    goog.dom.classes.add(currDialog.getTitleElement(),
+			 'xiv-ui-viewboxdialogs-infodialog-title');
     //
     // Generate widget text
     //
@@ -683,6 +686,8 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
 	    this.ViewBox_.getViewableTrees()[0].getQueryUrl());
     }
     
+    var dialogTitle = 'Info.';
+
     //
     // Add text and render
     //
@@ -692,13 +697,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
     currDialog.render(this.ViewBox_.getViewFrame());
     currDialog.setVisible(true);
     currDialog.moveToCorner('left', 'top', 0, -12);
-    currDialog.setTitle('Info. Display');
-
-    //
-    // Set the mouseover
-    //
-    currDialog.setMouseoverClass(
-	'xiv-ui-viewboxdialogs-infodialog-hovered')
+    currDialog.setTitle(dialogTitle);
 
 
     //
@@ -718,7 +717,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
 	    'LEFT', 
 	    xiv.ui.ViewBoxDialogs.CSS.GENERIC_TOGGLE,
 	    dialogKey,
-	    'Info. Display', 
+	    dialogTitle, 
 	    function(button){
 
 		var opened = button.getAttribute('checked') == 'true';

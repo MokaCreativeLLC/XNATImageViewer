@@ -36,8 +36,8 @@ goog.require('xiv.vis.XtkPlane');
 goog.require('xiv.vis.XtkPlane2D');
 goog.require('xiv.vis.XtkPlane3D');
 goog.require('xiv.vis.RenderEngine');
-goog.require('xiv.ui.ctrl.XtkController');
-goog.require('xiv.ui.ctrl.XtkControllerTree');
+goog.require('xiv.ui.XtkController');
+goog.require('xiv.ui.XtkControllerTree');
 
 //-----------
 
@@ -52,7 +52,7 @@ xiv.vis.XtkEngine = function () {
     
 
     /**
-     * @type {!xiv.ui.ctrl.XtkControllerTree}
+     * @type {!xiv.ui.XtkControllerTree}
      * @private
      */
     this.ControllerTree_ = null;
@@ -346,14 +346,14 @@ xiv.vis.XtkEngine.prototype.setPrimaryRenderPlaneEvents_ = function() {
 /**
  * @public
  */
-xiv.vis.XtkEngine.prototype.updateControllers = function(){
-    this.ControllerTree_.updateControllers();
+xiv.vis.XtkEngine.prototype.refreshControllers = function(){
+    this.ControllerTree_.refresh();
 }
 
 
 
 /**
- * @return {xiv.ui.ctrl.XtkControllerTree}
+ * @return {xiv.ui.XtkControllerTree}
  * @public
  */
 xiv.vis.XtkEngine.prototype.getControllerTree = function(){
@@ -375,7 +375,7 @@ xiv.vis.XtkEngine.prototype.createXObjects_ = function(ViewableGroup) {
 	this.ControllerTree_.dispose();
 	this.ControllerTree_ = null;
     }
-    this.ControllerTree_ = new xiv.ui.ctrl.XtkControllerTree();
+    this.ControllerTree_ = new xiv.ui.XtkControllerTree();
 
 
 
@@ -1362,8 +1362,8 @@ goog.exportSymbol('xiv.vis.XtkEngine.prototype.setPrimaryRenderPlane',
 	xiv.vis.XtkEngine.prototype.setPrimaryRenderPlane);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.getPrimaryRenderPlane',
 	xiv.vis.XtkEngine.prototype.getPrimaryRenderPlane);
-goog.exportSymbol('xiv.vis.XtkEngine.prototype.updateControllers',
-	xiv.vis.XtkEngine.prototype.updateControllers);
+goog.exportSymbol('xiv.vis.XtkEngine.prototype.refreshControllers',
+	xiv.vis.XtkEngine.prototype.refreshControllers);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.getControllerTree',
 	xiv.vis.XtkEngine.prototype.getControllerTree);
 goog.exportSymbol('xiv.vis.XtkEngine.prototype.render3dPlane',

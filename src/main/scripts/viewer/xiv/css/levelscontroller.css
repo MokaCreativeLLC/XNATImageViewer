@@ -4,7 +4,7 @@
 
 
 
-.xiv-ui-ctrl-levelscontroller {
+.xiv-ui-levelscontroller {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -12,78 +12,77 @@
 
 
 
-.xiv-ui-ctrl-levelscontroller-sliderlabel,
-.xiv-ui-ctrl-levelscontroller-twothumbsliderlabel {
+.xiv-ui-levelscontroller-sliderlabel,
+.xiv-ui-levelscontroller-twothumbsliderlabel {
     position: absolute;
     font-size: 12px;
     top: 6px;
 }
 
 
-.xiv-ui-ctrl-levelscontroller-twothumbsliderlabel {
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-    text-align: center;
+.xiv-ui-levelscontroller-twothumbsliderlabel {
+    left: 10px;
     font-size: 10px;
     top: 0px;
 }
 
-.xiv-ui-ctrl-levelscontroller-slidercontroller, 
-.xiv-ui-ctrl-levelscontroller-twothumbslidercontroller {
+.xiv-ui-levelscontroller-slidercontroller, 
+.xiv-ui-levelscontroller-twothumbslidercontroller {
     height: 40px;
 }
 
 
-.xiv-ui-ctrl-levelscontroller-slidercontroller {
+.xiv-ui-levelscontroller-slidercontroller {
     width: 80%;
 }
 
-.xiv-ui-ctrl-levelscontroller-twothumbslidercontroller {
+.xiv-ui-levelscontroller-twothumbslidercontroller {
     height: 45px;
+    width: 90%;
 }
 
 
 
-.xiv-ui-ctrl-levelscontroller-slider, 
-.xiv-ui-ctrl-levelscontroller-twothumbslider{
-    left: 0px;
+.xiv-ui-levelscontroller-slider{
+    left: 0%;
     top: 28px;
-    width: 167px;
+    width: 95%;
 }
 
 
-.xiv-ui-ctrl-levelscontroller-twothumbslider {
+.xiv-ui-levelscontroller-twothumbslider {
+    left: 7%;
     top: 24px;
+    width: 100%;
 }
 
 
-.xiv-ui-ctrl-levelscontroller-slidervalue {
+.xiv-ui-levelscontroller-slidervalue {
     left: calc(100% - 52px);
     width: 50px;
     top: 4px;
 }
 
 
-.xiv-ui-ctrl-levelscontroller-twothumbslidervalue,
-.xiv-ui-ctrl-levelscontroller-twothumbsliderextent {
-    left: 16px;
+.xiv-ui-levelscontroller-twothumbslidervalue,
+.xiv-ui-levelscontroller-twothumbsliderextent {
+    left: 10px;
     top: 32px;
 }
 
-.xiv-ui-ctrl-levelscontroller-twothumbsliderextent {
-    left: calc(100% - 68px);
+.xiv-ui-levelscontroller-twothumbsliderextent {
+    left: calc(100% - 37px);
 }
 
 
 
 
-.xiv-ui-ctrl-levelscontroller-checkbox {
+.xiv-ui-levelscontroller-checkbox {
     top: 28px;
-    width: 115px;
+    width: 110px;
 }
 
-.xiv-ui-ctrl-levelscontroller-checkboxholder {
+.xiv-ui-levelscontroller-checkboxholder {
     top: 0px;
     width: 10px;
     outline: none;
@@ -91,7 +90,7 @@
 }
 
 
-.xiv-ui-ctrl-levelscontroller-checkboxcontroller {
+.xiv-ui-levelscontroller-checkboxcontroller {
     height: 15px;
     outline: none;
 }

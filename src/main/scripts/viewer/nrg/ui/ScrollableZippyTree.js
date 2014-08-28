@@ -130,6 +130,33 @@ nrg.ui.ScrollableZippyTree.prototype.expandAll = function() {
 }
 
 
+/**
+ * @param {!Element} element
+ * @param {number=} opt_heightBuffer
+ * @param {Function=} opt_onTick
+ * @param {Function=} opt_onEnd
+ * @public
+ */
+nrg.ui.ScrollableZippyTree.prototype.scaleElementOnChange = 
+function(element, opt_heightBuffer, opt_onTick, opt_onEnd) {
+   this.ZippyTree.scaleElementOnChange(
+       element, 
+       opt_heightBuffer, 
+       function(){
+	   if (goog.isDefAndNotNull(opt_onTick)){
+	       opt_onTick();
+	   }
+	   this.mapSliderToContents();
+       }.bind(this),
+       function(){
+	   if (goog.isDefAndNotNull(opt_onEnd)){
+	       opt_onEnd();
+	   }
+       }.bind(this)
+   );
+}
+
+
 
 /**
  * @public
@@ -170,6 +197,7 @@ nrg.ui.ScrollableZippyTree.prototype.addFolders = function(folders) {
     this.ZippyTree.createBranch(folders);
     this.mapSliderToContents();
 }
+
 
 
 
@@ -248,6 +276,9 @@ goog.exportSymbol('nrg.ui.ScrollableZippyTree.prototype.addFolders',
 	nrg.ui.ScrollableZippyTree.prototype.addFolders);
 goog.exportSymbol('nrg.ui.ScrollableZippyTree.prototype.setZippyTreeEvents',
 	nrg.ui.ScrollableZippyTree.prototype.setZippyTreeEvents);
+goog.exportSymbol(
+    'nrg.ui.ScrollableZippyTree.prototype.scaleElementOnChange',
+    nrg.ui.ScrollableZippyTree.prototype.scaleElementOnChange);
 goog.exportSymbol('nrg.ui.ScrollableZippyTree.prototype.updateStyle',
 	nrg.ui.ScrollableZippyTree.prototype.updateStyle);
 goog.exportSymbol('nrg.ui.ScrollableZippyTree.prototype.disposeInternal',

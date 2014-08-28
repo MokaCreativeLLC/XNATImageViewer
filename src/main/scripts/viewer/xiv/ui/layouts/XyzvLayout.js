@@ -19,11 +19,11 @@ goog.require('nrg.string');
 // xiv
 goog.require('xiv.ui.layouts.Layout');
 goog.require('xiv.ui.layouts.LayoutFrame');
-goog.require('xiv.ui.layouts.interactors.FrameDisplay');
-goog.require('xiv.ui.layouts.interactors.Slider');
-goog.require('xiv.ui.layouts.interactors.Crosshairs');
-goog.require('xiv.ui.layouts.interactors.ZoomDisplay');
-goog.require('xiv.ui.layouts.interactors.PlayButton');
+goog.require('xiv.ui.FrameDisplay');
+goog.require('xiv.ui.FrameSlider');
+goog.require('xiv.ui.Crosshairs');
+goog.require('xiv.ui.ZoomDisplay');
+goog.require('xiv.ui.PlayButton');
 //-----------
 
 
@@ -398,8 +398,6 @@ xiv.ui.layouts.XyzvLayout.prototype.addLayoutFrameSliders_ = function(){
 			     xiv.ui.layouts.XyzvLayout.CSS.SLIDER_TRACK, 
 			 key.toLowerCase())]);
 			 
-            slider.addThumbHoverClass(
-	        xiv.ui.layouts.XyzvLayout.CSS.SLIDER_THUMB_HOVERED);
 
     }.bind(this));
 };
@@ -412,7 +410,7 @@ xiv.ui.layouts.XyzvLayout.prototype.addLayoutFrameSliders_ = function(){
 xiv.ui.layouts.XyzvLayout.prototype.addFrameDisplays_ = function(){
     var frameDisplay;
     this.loopXyz(function(LayoutFrame, key) {	
-	frameDisplay = new xiv.ui.layouts.interactors.FrameDisplay();
+	frameDisplay = new xiv.ui.FrameDisplay();
 
 	frameDisplay.render(LayoutFrame.getElement());
 
@@ -429,7 +427,7 @@ xiv.ui.layouts.XyzvLayout.prototype.addFrameDisplays_ = function(){
 xiv.ui.layouts.XyzvLayout.prototype.addZoomDisplays_ = function(){
     var zoomDisplay;
     this.loopXyz(function(LayoutFrame, key) {	
-	zoomDisplay = new xiv.ui.layouts.interactors.ZoomDisplay();
+	zoomDisplay = new xiv.ui.ZoomDisplay();
 
 	zoomDisplay.render(LayoutFrame.getElement());
 
@@ -446,7 +444,7 @@ xiv.ui.layouts.XyzvLayout.prototype.addZoomDisplays_ = function(){
 xiv.ui.layouts.XyzvLayout.prototype.addPlayButtons_ = function(){
     var playButton;
     this.loopXyz(function(LayoutFrame, key) {	
-	playButton = new xiv.ui.layouts.interactors.PlayButton();
+	playButton = new xiv.ui.PlayButton();
 
 	playButton.render(LayoutFrame.getElement());
 
@@ -464,7 +462,7 @@ xiv.ui.layouts.XyzvLayout.prototype.addCrosshairs_ = function(){
     var crosshairs;
     this.loopXyz(function(LayoutFrame, key) {
 
-	crosshairs = new xiv.ui.layouts.interactors.Crosshairs();
+	crosshairs = new xiv.ui.Crosshairs();
 
 	LayoutFrame[xiv.ui.layouts.Layout.INTERACTORS.CROSSHAIRS] = 
 	    crosshairs; 

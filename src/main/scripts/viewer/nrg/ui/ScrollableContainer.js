@@ -203,12 +203,6 @@ nrg.ui.ScrollableContainer.prototype.setSliderStyles_ = function(){
 			 nrg.ui.ScrollableContainer.CSS.SLIDER_THUMB);
     goog.dom.classes.add(this.Slider.getTrack(), 
 			 nrg.ui.ScrollableContainer.CSS.SLIDER_TRACK);
-
-    //this.Slider.addThumbHoverClass(
-    //nrg.ui.ScrollableContainer.CSS.SLIDER_THUMB_HOVERED);
-   
-    this.Slider.animateOnHover(
-	nrg.ui.ScrollableContainer.CSS.SLIDER_THUMB_HOVERED);
 }
 
 

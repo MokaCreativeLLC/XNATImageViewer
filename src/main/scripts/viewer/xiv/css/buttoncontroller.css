@@ -1,9 +1,9 @@
-.xiv-ui-ctrl-buttoncontroller {
+.xiv-ui-buttoncontroller {
     font-size: 10px;
     text-align: center;
 }
 
-.xiv-ui-ctrl-buttoncontroller-element { 
+.xiv-ui-buttoncontroller-element { 
     top: 5px;
     font-size: 10px;
     font-family: Helvetica,"Helvetica neue", Arial, sans-serif;

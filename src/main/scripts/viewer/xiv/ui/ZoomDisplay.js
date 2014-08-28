@@ -1,7 +1,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-goog.provide('xiv.ui.layouts.interactors.ZoomDisplay');
+goog.provide('xiv.ui.ZoomDisplay');
 
 // goog
 goog.require('goog.cssom');
@@ -18,17 +18,17 @@ goog.require('xiv.vis.XtkRenderer2D');
 
 
 /**
- * xiv.ui.layouts.interactors.ZoomDisplay
+ * xiv.ui.ZoomDisplay
  *
  * @constructor
  * @extends {nrg.ui.HoverInput}
  */
-xiv.ui.layouts.interactors.ZoomDisplay = function() { 
+xiv.ui.ZoomDisplay = function() { 
     goog.base(this);
 }
-goog.inherits(xiv.ui.layouts.interactors.ZoomDisplay, nrg.ui.HoverInput);
-goog.exportSymbol('xiv.ui.layouts.interactors.ZoomDisplay', 
-		  xiv.ui.layouts.interactors.ZoomDisplay);
+goog.inherits(xiv.ui.ZoomDisplay, nrg.ui.HoverInput);
+goog.exportSymbol('xiv.ui.ZoomDisplay', 
+		  xiv.ui.ZoomDisplay);
 
 
 /**
@@ -36,14 +36,14 @@ goog.exportSymbol('xiv.ui.layouts.interactors.ZoomDisplay',
  * @const
  * @expose
  */
-xiv.ui.layouts.interactors.ZoomDisplay.ID_PREFIX =  
-    'xiv.ui.layouts.interactors.ZoomDisplay';
+xiv.ui.ZoomDisplay.ID_PREFIX =  
+    'xiv.ui.ZoomDisplay';
 
 
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.interactors.ZoomDisplay.prototype.render = 
+xiv.ui.ZoomDisplay.prototype.render = 
 function(parentElement) {
     goog.base(this, 'render', parentElement);
 
@@ -51,6 +51,10 @@ function(parentElement) {
     // Match the zoom minimum
     //
     this.inputBox.min = xiv.vis.XtkRenderer2D.ZOOM_MINIMUM * 100;
+    goog.dom.classes.add(this.getDisplayElement(),
+			 'xiv-ui-framedisplay-text');
+    goog.dom.classes.add(this.getInputElement(),
+			 'xiv-ui-framedisplay-text');
 }
 
 
@@ -58,7 +62,7 @@ function(parentElement) {
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.interactors.ZoomDisplay.prototype.updateValue = 
+xiv.ui.ZoomDisplay.prototype.updateValue = 
 function(){
     //window.console.log(this.inputBox.min, this.inputBox.max);
     this.displayElt.innerHTML = 'Zoom:&nbsp' + 
@@ -69,11 +73,13 @@ function(){
 
 
 goog.exportSymbol(
-    'xiv.ui.layouts.interactors.ZoomDisplay.ID_PREFIX',
-    xiv.ui.layouts.interactors.ZoomDisplay.ID_PREFIX);
+    'xiv.ui.ZoomDisplay.ID_PREFIX',
+    xiv.ui.ZoomDisplay.ID_PREFIX);
 goog.exportSymbol(
-    'xiv.ui.layouts.interactors.ZoomDisplay.prototype.updateValue',
-    xiv.ui.layouts.interactors.ZoomDisplay.prototype.updateValue);
-
+    'xiv.ui.ZoomDisplay.prototype.updateValue',
+    xiv.ui.ZoomDisplay.prototype.updateValue);
+goog.exportSymbol(
+    'xiv.ui.ZoomDisplay.prototype.render',
+    xiv.ui.ZoomDisplay.prototype.render);
 
 

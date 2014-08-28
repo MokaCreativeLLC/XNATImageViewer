@@ -1,14 +1,18 @@
 /*
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
 
 
-.xiv-ui-layouts-interactors-framedisplay {
+.xiv-ui-framedisplay {
     position: absolute;
-    top: 10px;
+    top: 6px;
     height: 20px;
-    width: 200px;
-    left: calc(100% - 210px);
-    text-align: right;
+    width: 80px;
+    left: calc(100% - 90px);
     text-wrap: none;
+}
+
+
+.xiv-ui-framedisplay-text {
+    font-size: 10px;
 }
