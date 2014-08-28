@@ -152,7 +152,7 @@
 }
 
 
-.xiv-ui-viewboxinteractorhandler-histdetails-expandButton {    
+.xiv-ui-viewboxinteractorhandler-histdetails-expandbutton {    
     background-color: rgba(80,80,80, 1);
     position: absolute;
     top: 0px;
@@ -166,7 +166,7 @@
 
 
 
-.xiv-ui-viewboxinteractorhandler-histdetails-fadeBottom {
+.xiv-ui-viewboxinteractorhandler-histdetails-fadebottom {
     visibility: hidden;
     position: absolute;
     width: 100%;

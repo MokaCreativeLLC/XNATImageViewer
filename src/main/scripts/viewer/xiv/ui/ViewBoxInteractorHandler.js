@@ -2426,7 +2426,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
     //
     // Open the dialog to do some style adjustments
     //
-    this.ViewBox_.fireToggleButton(this.dialogKeys_['levels']);
+    //this.ViewBox_.fireToggleButton(this.dialogKeys_['levels']);
     
     //
     // Move to corner
@@ -2440,7 +2440,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
 	zTree.getTopLevelNodes(), 
 	function(node){
 	    node.getHeaderLabel().style.fontSize = '10px';
-	    node.truncateHeaderLabel(30);
+	    node.truncateHeaderLabel(25);
 	})
     
 
@@ -2455,7 +2455,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
 
     var fadeBottom = goog.dom.createDom('div', {
 	'id': 'HistDetailsFade_' + goog.string.createUniqueString(),
-	'class': 'xiv-ui-viewboxinteractorhandler-histdetails-fadeBottom'
+	'class': 'xiv-ui-viewboxinteractorhandler-histdetails-fadebottom'
     })
     goog.dom.appendChild(dialogElement, fadeBottom);
 

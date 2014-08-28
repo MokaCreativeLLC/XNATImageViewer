@@ -547,7 +547,7 @@ xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
     this.ProgressBarPanel_.setValue(0);
     this.ProgressBarPanel_.showValue(true);
     this.showSubComponent_(this.ProgressBarPanel_, 0);
-    this.highlight();
+    //this.highlight();
 }
 
 
@@ -660,11 +660,6 @@ function(opt_delay, opt_callback, opt_fadeTime){
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderEndDemo_ = function(){ 
-    //
-    // Close levels
-    //
-    this.fireToggleButton(this.InteractorHandler_.getDialogKey('levels'));  
-
     //
     // Close Info
     //
@@ -1240,7 +1235,7 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 	// too 100, which is bad UX
 	//
 
-	this.highlight();
+	//this.highlight();
 	this.inventoryViewables_(ViewableSet);
 	this.renderViewableSet_(ViewableSet);
     }
@@ -1335,7 +1330,7 @@ xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
 
 	function(event) {
 	    //window.console.log(event, event['totalSize']);
-	    this.highlight();
+	    //this.highlight();
 
 	    if (event['totalSize'] > 0){
 		var val = event.loaded/event['totalSize'] * 
