@@ -34,8 +34,7 @@ xiv.ui.Thumbnail = function (Viewable_) {
     // Default silhouette
     //
     this.setBrokenThumbnailUrl(serverRoot +
-	'/images/viewer/xiv/ui/Thumbnail/silhouette.png', 
-			       this.updateHoverable.bind(this))
+	'/images/viewer/xiv/ui/Thumbnail/silhouette.png')
 
 
     /**
@@ -45,7 +44,6 @@ xiv.ui.Thumbnail = function (Viewable_) {
     this.ViewableTree_ = Viewable_;
 
     this.createText_();
-    this.createHoverable();
 }
 goog.inherits(xiv.ui.Thumbnail, nrg.ui.Thumbnail);
 goog.exportSymbol('xiv.ui.Thumbnail', xiv.ui.Thumbnail);
@@ -67,32 +65,6 @@ xiv.ui.Thumbnail.ID_PREFIX =  'xiv.ui.Thumbnail';
  */
 xiv.ui.Thumbnail.CSS_SUFFIX = {};
 
-
-
-
-/**
- * @inheritDoc
- */
-xiv.ui.Thumbnail.prototype.updateHoverable = function(){
-    //window.console.log('update hoverable');
-    var img = goog.dom.getElementsByTagNameAndClass('img', 
-						    nrg.ui.Thumbnail.CSS.IMAGE, 
-						    this.getHoverable());
-    img = img[0];
-    img.src = this.getImage().src;
-}
-
-
-
-
-/**
- * @inheritDoc
- */
-xiv.ui.Thumbnail.prototype.createHoverable = function(){
-    goog.base(this, 'createHoverable');
-    goog.dom.classes.add(this.getHoverable(), 
-			 xiv.ui.Thumbnail.CSS_CLASS_PREFIX);
-}
 
 
 
@@ -181,10 +153,6 @@ xiv.ui.Thumbnail.prototype.disposeInternal = function(){
 
 goog.exportSymbol('xiv.ui.Thumbnail.ID_PREFIX', xiv.ui.Thumbnail.ID_PREFIX);
 goog.exportSymbol('xiv.ui.Thumbnail.CSS_SUFFIX', xiv.ui.Thumbnail.CSS_SUFFIX);
-goog.exportSymbol('xiv.ui.Thumbnail.prototype.updateHoverable',
-	xiv.ui.Thumbnail.prototype.updateHoverable);
-goog.exportSymbol('xiv.ui.Thumbnail.prototype.createHoverable',
-	xiv.ui.Thumbnail.prototype.createHoverable);
 goog.exportSymbol('xiv.ui.Thumbnail.prototype.getViewable',
 	xiv.ui.Thumbnail.prototype.getViewable);
 goog.exportSymbol('xiv.ui.Thumbnail.prototype.disposeInternal',

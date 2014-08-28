@@ -421,14 +421,51 @@ xiv.ui.ViewBox.prototype.getViewableGroupMenu =  function() {
 
 
 /**
+ * @param {Function=} opt_subtractor
+ * @private
+ */
+xiv.ui.ViewBox.prototype.highlightFade_ =  function(opt_subtractor) {
+    var timer = new goog.Timer();
+    var duration = 200;
+    var interval = duration / 10;
+    var counter = 0;
+    
+    if (!goog.isDefAndNotNull(opt_subtractor)){
+	opt_subtractor = function(val){
+	    return val;
+	}
+    }
+
+    timer.setInterval(interval);
+    goog.events.listen(
+	timer,
+	goog.Timer.TICK,
+	function(){
+	    counter += interval;
+	    str = 
+		"0px 0px 0px 1px rgba(255,255,255," + 
+		opt_subtractor(counter/duration) +")";
+	    this.viewFrameElt_.style.boxShadow = str;
+		
+	    if (counter > duration){
+		timer.stop();
+		timer.dispose();
+		delete timer;
+	    }
+	}.bind(this))
+    timer.start();
+}
+
+
+
+/**
  * Get the associated thumbnail load time for this object.
  * @return {number} The date (in millseconds) when the last thumbnail was 
  *     loaded into the ViewBox.
  * @public
  */
 xiv.ui.ViewBox.prototype.highlight =  function() {
-    goog.dom.classes.add(this.viewFrameElt_, 
-			 xiv.ui.ViewBox.CSS.COMPONENT_HIGHLIGHT);
+    this.highlightFade_();
 }
 
 
@@ -437,8 +474,9 @@ xiv.ui.ViewBox.prototype.highlight =  function() {
  * @public
  */
 xiv.ui.ViewBox.prototype.unhighlight =  function() {
-    goog.dom.classes.remove(this.viewFrameElt_, 
-			 xiv.ui.ViewBox.CSS.COMPONENT_HIGHLIGHT);
+    this.highlightFade_(function(val){
+	    return 1-val;
+    });
 }
 
 
@@ -744,8 +782,8 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 	this.Dialogs_.getVisibleDialogElements()
     );
 
-    //var fadeOuts = [];
-    var fadeOuts = [this.ProgressBarPanel_.getElement()];
+    var fadeOuts = [];
+    fadeOuts.push(this.ProgressBarPanel_.getElement());
 
 
     //
@@ -1638,7 +1676,7 @@ xiv.ui.ViewBox.prototype.addMenu_left_ = function() {
  * @private
  */
 xiv.ui.ViewBox.prototype.toggleOrder_ = [
-    'Info. Display',
+    'Info.',
     'Help',
     'Settings',
     'Levels',
@@ -1825,11 +1863,9 @@ function(button, opt_onCheck){
     //window.console.log("\n\nCLICK", button);
   
     if (button.getAttribute('checked') == 'true') {
-	goog.dom.classes.add(button, button.getAttribute(
-	    xiv.ui.ViewBoxDialogs.TOGGLED_CLASS));
+	nrg.fx.fadeTo(button, 200, 1, null, .5);
     } else {
-	goog.dom.classes.remove(button, button.getAttribute(
-	    xiv.ui.ViewBoxDialogs.TOGGLED_CLASS));
+	nrg.fx.fadeTo(button, 200, .5);
     }
 
     if (goog.isDefAndNotNull(opt_onCheck)){
@@ -1904,12 +1940,20 @@ xiv.ui.ViewBox.prototype.untoggle = function(buttonKeys){
 xiv.ui.ViewBox.prototype.showCornerInteractors = function(bool){
     var interactors = this.getLayoutHandler().getMasterInteractors();
     goog.object.forEach(interactors, function(set, plane){
-	set.ZOOM_DISPLAY.getElement().style.visibility = 
-	    bool ? 'visible' : 'hidden';
-	set.FRAME_DISPLAY.getElement().style.visibility = 
-	    bool ?  'visible' : 'hidden';
+	goog.array.forEach(
+	    [set.ZOOM_DISPLAY.getElement(), set.FRAME_DISPLAY.getElement()], 
+	    function(elt){
+		if (bool){
+		    elt.style.visibility = 'visible';
+		    elt.style.opacity = 0;
+		    nrg.fx.fadeIn(elt, 200);
+		} else {
+		    nrg.fx.fadeOut(elt, 200, function(){
+			elt.style.visibility = 'hidden';
+		    });
+		}
+	    })		    
     })
-
 }
 
 

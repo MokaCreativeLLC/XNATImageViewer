@@ -1,7 +1,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-goog.provide('xiv.ui.layouts.interactors.PlayButton');
+goog.provide('xiv.ui.PlayButton');
 
 // goog
 goog.require('goog.string');
@@ -18,18 +18,18 @@ goog.require('nrg.ui.Component');
 
 
 /**
- * xiv.ui.layouts.interactors.PlayButton
+ * xiv.ui.PlayButton
  *
  * @constructor
  * @extends {nrg.ui.Component}
  */
-xiv.ui.layouts.interactors.PlayButton = function() { 
+xiv.ui.PlayButton = function() { 
     goog.base(this);
 }
-goog.inherits(xiv.ui.layouts.interactors.PlayButton, 
+goog.inherits(xiv.ui.PlayButton, 
 	      nrg.ui.Component);
-goog.exportSymbol('xiv.ui.layouts.interactors.PlayButton', 
-		  xiv.ui.layouts.interactors.PlayButton);
+goog.exportSymbol('xiv.ui.PlayButton', 
+		  xiv.ui.PlayButton);
 
 
 /**
@@ -37,8 +37,8 @@ goog.exportSymbol('xiv.ui.layouts.interactors.PlayButton',
  * @const
  * @expose
  */
-xiv.ui.layouts.interactors.PlayButton.ID_PREFIX =  
-    'xiv.ui.layouts.interactors.PlayButton';
+xiv.ui.PlayButton.ID_PREFIX =  
+    'xiv.ui.PlayButton';
 
 
 /**
@@ -46,7 +46,7 @@ xiv.ui.layouts.interactors.PlayButton.ID_PREFIX =
  * @enum {string}
  * @public
  */
-xiv.ui.layouts.interactors.PlayButton.EventType = {}
+xiv.ui.PlayButton.EventType = {}
 
 
 
@@ -54,7 +54,7 @@ xiv.ui.layouts.interactors.PlayButton.EventType = {}
  * @enum {string}
  * @expose
  */
-xiv.ui.layouts.interactors.PlayButton.CSS_SUFFIX = {
+xiv.ui.PlayButton.CSS_SUFFIX = {
     IMAGE: 'image'
 }
 
@@ -64,7 +64,7 @@ xiv.ui.layouts.interactors.PlayButton.CSS_SUFFIX = {
  * @type {?Element}
  * @private
  */
-xiv.ui.layouts.interactors.PlayButton.prototype.image_ = null;
+xiv.ui.PlayButton.prototype.image_ = null;
 
 
 
@@ -72,7 +72,7 @@ xiv.ui.layouts.interactors.PlayButton.prototype.image_ = null;
  * @type {!boolean}
  * @private
  */
-xiv.ui.layouts.interactors.PlayButton.prototype.isPlaying_ = false;
+xiv.ui.PlayButton.prototype.isPlaying_ = false;
 
 
 
@@ -80,7 +80,7 @@ xiv.ui.layouts.interactors.PlayButton.prototype.isPlaying_ = false;
  * @type {!goog.ui.Slider}
  * @private
  */
-xiv.ui.layouts.interactors.PlayButton.prototype.slider_ = null;
+xiv.ui.PlayButton.prototype.slider_ = null;
 
 
 
@@ -88,7 +88,7 @@ xiv.ui.layouts.interactors.PlayButton.prototype.slider_ = null;
  * @private
  * @type {?goog.Timer}
  */
-xiv.ui.layouts.interactors.PlayButton.prototype.timer_ = null;
+xiv.ui.PlayButton.prototype.timer_ = null;
 
 
 
@@ -97,14 +97,14 @@ xiv.ui.layouts.interactors.PlayButton.prototype.timer_ = null;
  * @private
  * @type {!number}
  */
-xiv.ui.layouts.interactors.PlayButton.prototype.interval_ = 70;
+xiv.ui.PlayButton.prototype.interval_ = 70;
 
 
 
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.interactors.PlayButton.prototype.render = 
+xiv.ui.PlayButton.prototype.render = 
 function(parentElement) {
     goog.base(this, 'render', parentElement);
 
@@ -112,7 +112,7 @@ function(parentElement) {
 	'id': 'PlayButton_' + goog.string.createUniqueString()
     })
     goog.dom.classes.add(this.image_,
-			 xiv.ui.layouts.interactors.PlayButton.CSS.IMAGE);
+			 xiv.ui.PlayButton.CSS.IMAGE);
     goog.dom.appendChild(this.getElement(), this.image_);
 
     this.image_.src = serverRoot + 
@@ -139,7 +139,7 @@ function(parentElement) {
 /**
  * @public
  */
-xiv.ui.layouts.interactors.PlayButton.prototype.pause = function(){
+xiv.ui.PlayButton.prototype.pause = function(){
     //window.console.log("PAUSE!");
     this.image_.src = serverRoot + 
 	'/images/viewer/xiv/ui/other/play.png';
@@ -157,7 +157,7 @@ xiv.ui.layouts.interactors.PlayButton.prototype.pause = function(){
 /**
  * @public
  */
-xiv.ui.layouts.interactors.PlayButton.prototype.play = function(){
+xiv.ui.PlayButton.prototype.play = function(){
     //window.console.log("PLAY!");
     this.image_.src = serverRoot + 
 	'/images/viewer/xiv/ui/other/pause.png';
@@ -192,7 +192,7 @@ xiv.ui.layouts.interactors.PlayButton.prototype.play = function(){
  * @public
  * @param {!number}
  */
-xiv.ui.layouts.interactors.PlayButton.prototype.setInterval = 
+xiv.ui.PlayButton.prototype.setInterval = 
 function(interval){
     this.interval_ = interval;
 }
@@ -203,7 +203,7 @@ function(interval){
  * @public
  * @return {!boolean}
  */
-xiv.ui.layouts.interactors.PlayButton.prototype.isPlaying = function(){
+xiv.ui.PlayButton.prototype.isPlaying = function(){
     return this.isPlaying_;
 }
 
@@ -213,7 +213,7 @@ xiv.ui.layouts.interactors.PlayButton.prototype.isPlaying = function(){
  * @public
  * @param {!goog.ui.Slider}
  */
-xiv.ui.layouts.interactors.PlayButton.prototype.setSlider = 
+xiv.ui.PlayButton.prototype.setSlider = 
 function(slider){
     this.slider_ = slider;
 }
@@ -222,7 +222,7 @@ function(slider){
 /**
  * @inheritDoc
  */
-xiv.ui.layouts.interactors.PlayButton.prototype.disposeInternal =
+xiv.ui.PlayButton.prototype.disposeInternal =
 function(){
     goog.base(this, 'disposeInternal');
     goog.dom.removeNode(this.image_);
@@ -242,27 +242,27 @@ function(){
 }
 
 goog.exportSymbol(
-    'xiv.ui.layouts.interactors.PlayButton.ID_PREFIX',
-    xiv.ui.layouts.interactors.PlayButton.ID_PREFIX);
+    'xiv.ui.PlayButton.ID_PREFIX',
+    xiv.ui.PlayButton.ID_PREFIX);
 
 goog.exportSymbol(
-    'xiv.ui.layouts.interactors.PlayButton.prototype.pause',
-    xiv.ui.layouts.interactors.PlayButton.prototype.pause);
+    'xiv.ui.PlayButton.prototype.pause',
+    xiv.ui.PlayButton.prototype.pause);
 
 goog.exportSymbol(
-    'xiv.ui.layouts.interactors.PlayButton.prototype.play',
-    xiv.ui.layouts.interactors.PlayButton.prototype.play);
+    'xiv.ui.PlayButton.prototype.play',
+    xiv.ui.PlayButton.prototype.play);
 
 goog.exportSymbol(
-    'xiv.ui.layouts.interactors.PlayButton.prototype.isPlaying',
-    xiv.ui.layouts.interactors.PlayButton.prototype.isPlaying);
+    'xiv.ui.PlayButton.prototype.isPlaying',
+    xiv.ui.PlayButton.prototype.isPlaying);
 
 goog.exportSymbol(
-    'xiv.ui.layouts.interactors.PlayButton.prototype.setInterval',
-    xiv.ui.layouts.interactors.PlayButton.prototype.setInterval);
+    'xiv.ui.PlayButton.prototype.setInterval',
+    xiv.ui.PlayButton.prototype.setInterval);
 
 goog.exportSymbol(
-    'xiv.ui.layouts.interactors.PlayButton.prototype.setSlider',
-    xiv.ui.layouts.interactors.PlayButton.prototype.setSlider);
+    'xiv.ui.PlayButton.prototype.setSlider',
+    xiv.ui.PlayButton.prototype.setSlider);
 
 

@@ -1158,20 +1158,9 @@ function(ViewableTree, opt_folderList){
 	    }
 
 	    //
-	    // Set the hoverable parent for the thumbnail gallery.
-	    // TODO: Determine if this needs to be called *every* time (?)
-	    //
-	    ThumbGallery.setHoverParent(this.Modal_.getElement());
-
-	    //
 	    // Set the thumbnail's image.
 	    //
 	    thumb.setImage(ViewableTree.getThumbnailUrl());
-
-	    //
-	    // Update the hoverable of the thumbnail for positioning.
-	    //
-	    thumb.updateHoverable();
 	}
     }.bind(this))
 }

@@ -340,7 +340,7 @@ function(parentElement) {
     this.createDisplayElt_();
     this.createInputElt_();
 
-
+    /*
     goog.events.listen(this.inputBox, goog.events.EventType.MOUSEENTER, 
     function(e){
 	e.stopPropagation();
@@ -354,7 +354,7 @@ function(parentElement) {
 	this.inputBox.style.opacity = 0;
 	this.displayElt.style.opacity = 1;
     }.bind(this))
-
+    */
 
     goog.events.listen(this.inputBox, 
 		       goog.events.EventType.INPUT, 

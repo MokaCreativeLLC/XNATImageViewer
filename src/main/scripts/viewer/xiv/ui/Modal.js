@@ -873,7 +873,6 @@ xiv.ui.Modal.prototype.disposeAddSubjects_ = function() {
 xiv.ui.Modal.prototype.createThumbnailGallery_ = function() {
     this.ThumbnailGallery_ = new xiv.ui.ThumbnailGallery();
     this.ThumbnailGallery_.sortThumbnailsOnInsert(true);
-    this.ThumbnailGallery_.setHoverParent(this.getElement());
     this.setThumbnailGalleryEvents_();
 }
 
@@ -1255,8 +1254,11 @@ xiv.ui.Modal.prototype.onThumbnailClicked_ = function(e){
     // Only allow loading when view boxes aren't rendering.
     //
     if (!this.ViewBoxHandler_.ViewBoxesRendering()){
-	this.ViewBoxHandler_.getFirstEmpty().load(e.Thumbnail.getViewable());
-	this.highlightInUseThumbnails();
+	e.Thumbnail.pulse(300, function(){
+	    this.ViewBoxHandler_.getFirstEmpty().
+		load(e.Thumbnail.getViewable());
+	    this.highlightInUseThumbnails();
+	}.bind(this))
     }
 }
 

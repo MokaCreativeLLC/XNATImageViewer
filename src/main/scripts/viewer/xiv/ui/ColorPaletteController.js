@@ -1,7 +1,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-goog.provide('xiv.ui.ctrl.ColorPaletteController');
+goog.provide('xiv.ui.ColorPaletteController');
 
 // goog
 goog.require('goog.ui.HsvPalette');
@@ -13,7 +13,7 @@ goog.require('goog.style');
 goog.require('goog.color');
 
 // xiv
-goog.require('xiv.ui.ctrl.XtkController');
+goog.require('xiv.ui.XtkController');
 
 //-----------
 
@@ -22,9 +22,9 @@ goog.require('xiv.ui.ctrl.XtkController');
 
 /**
  * @constructor
- * @extends {xiv.ui.ctrl.XtkController}
+ * @extends {xiv.ui.XtkController}
  */
-xiv.ui.ctrl.ColorPaletteController = function(){
+xiv.ui.ColorPaletteController = function(){
     goog.base(this);
 
     this.setLabel('Color');
@@ -51,7 +51,7 @@ xiv.ui.ctrl.ColorPaletteController = function(){
     this.colorPaletteHolder_ = goog.dom.createDom('div', {
 	'id': this.constructor.ID_PREFIX + 
 	    '_ColorPaletteHolder_' + goog.string.createUniqueString(),
-	'class': xiv.ui.ctrl.ColorPaletteController.CSS.COLORPALETTEHOLDER
+	'class': xiv.ui.ColorPaletteController.CSS.COLORPALETTEHOLDER
     })
     goog.dom.append(this.colorPaletteHolder_, this.colorPalette_.getElement());
 
@@ -64,7 +64,7 @@ xiv.ui.ctrl.ColorPaletteController = function(){
     this.mainElement_ = goog.dom.createDom('div', {
 	'id': this.constructor.ID_PREFIX + 
 	    '_ColorPalette_' + goog.string.createUniqueString(),
-	'class': xiv.ui.ctrl.ColorPaletteController.CSS.ELEMENT_PREFIX
+	'class': xiv.ui.ColorPaletteController.CSS.ELEMENT_PREFIX
     })
     
     //goog.dom.appendChild(this.mainElement_, this.colorSquare_);
@@ -76,9 +76,9 @@ xiv.ui.ctrl.ColorPaletteController = function(){
 
 }
 
-goog.inherits(xiv.ui.ctrl.ColorPaletteController, xiv.ui.ctrl.XtkController);
-goog.exportSymbol('xiv.ui.ctrl.ColorPaletteController', 
-xiv.ui.ctrl.ColorPaletteController);
+goog.inherits(xiv.ui.ColorPaletteController, xiv.ui.XtkController);
+goog.exportSymbol('xiv.ui.ColorPaletteController', 
+xiv.ui.ColorPaletteController);
 
 
 
@@ -86,8 +86,8 @@ xiv.ui.ctrl.ColorPaletteController);
  * @const
  * @public
  */
-xiv.ui.ctrl.ColorPaletteController.ID_PREFIX =  
-    'xiv.ui.ctrl.ColorPaletteController';
+xiv.ui.ColorPaletteController.ID_PREFIX =  
+    'xiv.ui.ColorPaletteController';
 
 
 
@@ -95,7 +95,7 @@ xiv.ui.ctrl.ColorPaletteController.ID_PREFIX =
  * @enum {string}
  * @expose
  */
-xiv.ui.ctrl.ColorPaletteController.CSS_SUFFIX = {
+xiv.ui.ColorPaletteController.CSS_SUFFIX = {
     COLORSQUARE: 'colorsquare',
     COLORPALETTEHOLDER: 'colorpaletteholder',
     COLORPALETTE: 'colorpalette',
@@ -107,25 +107,25 @@ xiv.ui.ctrl.ColorPaletteController.CSS_SUFFIX = {
 /**
  * @const
  */
-xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_X = 20;
+xiv.ui.ColorPaletteController.PANEL_MARGIN_X = 20;
 
 
 
 /**
  * @const
  */
-xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_Y = 20;
+xiv.ui.ColorPaletteController.PANEL_MARGIN_Y = 20;
 
 
 
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.ColorPaletteController.prototype.update = function() {
+xiv.ui.ColorPaletteController.prototype.refresh = function() {
     var r = Math.floor(
-	this[xiv.ui.ctrl.XtkController.OBJ_KEY].color[0] * 255);
-    var g = Math.floor(this[xiv.ui.ctrl.XtkController.OBJ_KEY].color[1] * 255);
-    var b = Math.floor(this[xiv.ui.ctrl.XtkController.OBJ_KEY].color[2] * 255);
+	this[xiv.ui.XtkController.OBJ_KEY].color[0] * 255);
+    var g = Math.floor(this[xiv.ui.XtkController.OBJ_KEY].color[1] * 255);
+    var b = Math.floor(this[xiv.ui.XtkController.OBJ_KEY].color[2] * 255);
 
     r = Math.min(255, Math.max(0, r));
     g = Math.min(255, Math.max(0, g));
@@ -139,7 +139,7 @@ xiv.ui.ctrl.ColorPaletteController.prototype.update = function() {
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.ColorPaletteController.prototype.dispatchComponentEvent = 
+xiv.ui.ColorPaletteController.prototype.dispatchComponentEvent = 
 function(e){
 
     // Set the colorSquare color
@@ -147,7 +147,7 @@ function(e){
 
     // Dispatch event
     this.dispatchEvent({
-	type: xiv.ui.ctrl.XtkController.EventType.CHANGE,
+	type: xiv.ui.XtkController.EventType.CHANGE,
 	color: goog.color.hexToRgb(e.target.getColor()).map( function(x) { 
 	    return x / 255; 
 	})
@@ -159,7 +159,7 @@ function(e){
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.ColorPaletteController.prototype.disposeInternal = function() {
+xiv.ui.ColorPaletteController.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
     // Color Palettte
@@ -175,22 +175,22 @@ xiv.ui.ctrl.ColorPaletteController.prototype.disposeInternal = function() {
 
 
 
-goog.exportSymbol('xiv.ui.ctrl.ColorPaletteController.ID_PREFIX',
-	xiv.ui.ctrl.ColorPaletteController.ID_PREFIX);
-goog.exportSymbol('xiv.ui.ctrl.ColorPaletteController.CSS_SUFFIX',
-	xiv.ui.ctrl.ColorPaletteController.CSS_SUFFIX);
-goog.exportSymbol('xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_X',
-	xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_X);
-goog.exportSymbol('xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_Y',
-	xiv.ui.ctrl.ColorPaletteController.PANEL_MARGIN_Y);
-goog.exportSymbol('xiv.ui.ctrl.ColorPaletteController.prototype.update',
-	xiv.ui.ctrl.ColorPaletteController.prototype.update);
+goog.exportSymbol('xiv.ui.ColorPaletteController.ID_PREFIX',
+	xiv.ui.ColorPaletteController.ID_PREFIX);
+goog.exportSymbol('xiv.ui.ColorPaletteController.CSS_SUFFIX',
+	xiv.ui.ColorPaletteController.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.ColorPaletteController.PANEL_MARGIN_X',
+	xiv.ui.ColorPaletteController.PANEL_MARGIN_X);
+goog.exportSymbol('xiv.ui.ColorPaletteController.PANEL_MARGIN_Y',
+	xiv.ui.ColorPaletteController.PANEL_MARGIN_Y);
+goog.exportSymbol('xiv.ui.ColorPaletteController.prototype.refresh',
+	xiv.ui.ColorPaletteController.prototype.refresh);
 goog.exportSymbol(
-    'xiv.ui.ctrl.ColorPaletteController.prototype.dispatchComponentEvent',
-    xiv.ui.ctrl.ColorPaletteController.prototype.dispatchComponentEvent);
+    'xiv.ui.ColorPaletteController.prototype.dispatchComponentEvent',
+    xiv.ui.ColorPaletteController.prototype.dispatchComponentEvent);
 goog.exportSymbol(
-    'xiv.ui.ctrl.ColorPaletteController.prototype.disposeInternal',
-    xiv.ui.ctrl.ColorPaletteController.prototype.disposeInternal);
+    'xiv.ui.ColorPaletteController.prototype.disposeInternal',
+    xiv.ui.ColorPaletteController.prototype.disposeInternal);
 
 
 

@@ -563,7 +563,7 @@ nrg.fx.generateAnimations = function (elt, startDim, endDim, duration) {
 	case 'background-color':
 	    anims.push(
 		nrg.fx.generateAnim_BgColorTrans(elt, 
-						   startDim, endDim, duration));
+						 startDim, endDim, duration));
 	    break;
 	}
     })

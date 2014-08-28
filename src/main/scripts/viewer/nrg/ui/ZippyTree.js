@@ -272,6 +272,39 @@ nrg.ui.ZippyTree.prototype.getTopLevelNodes = function() {
 
 
 /**
+ * @private
+ */
+nrg.ui.ZippyTree.prototype.getNodesByLevel_ = 
+function(currNode, currLevel, targetLevel) {
+    //window.console.log('\ngetNodesByLevel', currNode, currLevel, targetLevel);
+    if (currLevel == targetLevel){
+	this.tempLevelNodes_.push(currNode);
+    }
+    else {
+	goog.object.forEach(currNode.getNodes(), function(node){
+	    this.getNodesByLevel_(node, currLevel+1, targetLevel);  
+	}.bind(this))
+    } 
+};
+
+
+
+/**
+ * @return {Array.<nrg.ui.ZippyNode>}
+ * @public
+ */
+nrg.ui.ZippyTree.prototype.getNodesByLevel = function(level) {
+    this.tempLevelNodes_ = [];
+    this.getNodesByLevel_(this, 0, level); 
+    var returner = goog.array.clone(this.tempLevelNodes_);
+    goog.array.clear(this.tempLevelNodes_);
+    delete this.tempLevelNodes_;
+    return returner;
+};
+
+
+
+/**
  * As stated.
  * @return {!boolean}
  * @public
@@ -590,6 +623,61 @@ function(elt, depth, opt_applyWidth, opt_applyLeft){
 
 
 /**
+ * @param {!Element} element
+ * @param {number=} opt_heightBuffer
+ * @param {Function=} opt_onTick
+ * @param {Function=} opt_onEnd
+ * @public
+ */
+nrg.ui.ZippyTree.prototype.scaleElementOnChange = 
+function(element, opt_heightBuffer, opt_onTick, opt_onEnd){
+
+    opt_heightBuffer = goog.isDefAndNotNull(opt_heightBuffer) ? 
+	opt_heightBuffer : 0;
+
+    goog.array.forEach(this.getAllNodes(), function(node){
+	goog.events.listen(
+	    node, 
+	    nrg.ui.ZippyNode.EventType.CLICKED,
+	    function(){
+		timer = new goog.Timer();
+		timer.setInterval(10);
+		timer.addEventListener(
+		    goog.Timer.TICK, 
+		    function(e) {
+			element.style.height = 
+			    (goog.style.getSize(this.getElement()).
+			     height + opt_heightBuffer).toString() + 'px';
+			if (goog.isDefAndNotNull(opt_onTick)){
+			    opt_onTick();
+			}
+		    }.bind(this));
+		timer.start();
+
+		var event = (node.getZippy().isExpanded()) ?
+		    nrg.ui.ZippyNode.EventType.COLLAPSED :
+		    nrg.ui.ZippyNode.EventType.EXPANDED
+
+		goog.events.listenOnce(
+		    node,
+		    event,
+		    function(){
+			timer.stop();
+			delete timer
+			if (goog.isDefAndNotNull(opt_onTick)){
+			    opt_onTick();
+			}
+			if (goog.isDefAndNotNull(opt_onEnd)){
+			    opt_onEnd();
+			}
+		    }.bind(this))
+	    }.bind(this))
+    }.bind(this))
+}
+
+
+
+/**
  * @param {!nrg.ui.ZippyNode} node The parent node.
  * @private
  */
@@ -608,7 +696,7 @@ nrg.ui.ZippyTree.prototype.setNodeEvents_ = function(node) {
 
 
     //
-    // Listen and dispatch the EXPANDED event
+    // Listen and dispatch the CLICKED event
     //
     goog.events.listen(node, nrg.ui.ZippyNode.EventType.CLICKED, function(){
 	this.dispatchEvent({
@@ -793,7 +881,6 @@ nrg.ui.ZippyTree.folderSorter = function(holderElt, insertElt){
     //
     if (!goog.isDefAndNotNull(holderElt.childNodes) || 
 	holderElt.childNodes.length == 0) {
-	window.console.log("FOLDER SORTER", holderElt, insertElt);
 	goog.dom.appendChild(holderElt, insertElt);
 	return;
     }
@@ -926,6 +1013,7 @@ nrg.ui.ZippyTree.prototype.onEndOfBranch_ = function(parentNode, opt_elt) {
     //
     addElement();
 }
+
 
 
 /**
@@ -1071,6 +1159,8 @@ goog.exportSymbol('nrg.ui.ZippyTree.prototype.getAllNodes',
 	nrg.ui.ZippyTree.prototype.getAllNodes);
 goog.exportSymbol('nrg.ui.ZippyTree.prototype.getTopLevelNodes',
 	nrg.ui.ZippyTree.prototype.getTopLevelNodes);
+goog.exportSymbol('nrg.ui.ZippyTree.prototype.getNodesByLevel',
+	nrg.ui.ZippyTree.prototype.getNodesByLevel);
 goog.exportSymbol('nrg.ui.ZippyTree.prototype.expandAll',
 	nrg.ui.ZippyTree.prototype.expandAll);
 goog.exportSymbol('nrg.ui.ZippyTree.prototype.traverse',
@@ -1087,6 +1177,9 @@ goog.exportSymbol('nrg.ui.ZippyTree.prototype.addContents',
 	nrg.ui.ZippyTree.prototype.addContents);
 goog.exportSymbol('nrg.ui.ZippyTree.prototype.createBranch',
 	nrg.ui.ZippyTree.prototype.createBranch);
+goog.exportSymbol(
+    'nrg.ui.ZippyTree.prototype.scaleElementOnChange',
+    nrg.ui.ZippyTree.prototype.scaleElementOnChange);
 goog.exportSymbol('nrg.ui.ZippyTree.prototype.playFx',
 	nrg.ui.ZippyTree.prototype.playFx);
 goog.exportSymbol('nrg.ui.ZippyTree.prototype.toggleFadeInFx',

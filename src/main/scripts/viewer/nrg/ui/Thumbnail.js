@@ -12,6 +12,7 @@ goog.require('goog.dom.classes');
 goog.require('goog.math.Coordinate');
 goog.require('goog.style');
 goog.require('goog.events.EventType');
+goog.require('goog.Timer');
 
 // nrg
 goog.require('nrg.dom');
@@ -57,8 +58,7 @@ nrg.ui.Thumbnail = function () {
     //window.console.log(this);
     this.setEvents_();
     this.setClasses_();
-    this.setHoverListeners_(true);
-    this.onMouseLeave();    
+    
 }
 goog.inherits(nrg.ui.Thumbnail, nrg.ui.Component);
 goog.exportSymbol('nrg.ui.Thumbnail', nrg.ui.Thumbnail);
@@ -100,16 +100,8 @@ nrg.ui.Thumbnail.CSS_SUFFIX = {
     ACTIVE: 'active',
     IMAGE_ACTIVE: 'image-active',
     TEXT_ACTIVE: 'text-active',
-    HOVERCLONE: 'hoverclone'
 }
 
-
-
-/**
- * @type {!string} 
- * @const
- */
-nrg.ui.Thumbnail.HOVERABLE_PREFIX = 'HOVERABLE_';
 
 
 
@@ -119,13 +111,6 @@ nrg.ui.Thumbnail.HOVERABLE_PREFIX = 'HOVERABLE_';
  */	
 nrg.ui.Thumbnail.prototype.brokenThumbnailUrl_ = null;
 
-
-
-/**
- * @type {?Element}
- * @private
- */	
-nrg.ui.Thumbnail.prototype.hoverable_ = null;
 
 
 
@@ -151,17 +136,13 @@ nrg.ui.Thumbnail.prototype.getImage = function() {
 
 /**
  * @param {!string} url The thumbnail image url.
- * @param {Function=} opt_callback
  * @public
  */
-nrg.ui.Thumbnail.prototype.setBrokenThumbnailUrl = function(url, opt_callback) {
+nrg.ui.Thumbnail.prototype.setBrokenThumbnailUrl = function(url) {
     this.brokenThumbnailUrl_ = url;
     this.image_.onerror = function(){
 	this.image_.onerror = '';
 	this.image_.src = this.brokenThumbnailUrl_;
-	if (goog.isDefAndNotNull(opt_callback)){
-	    opt_callback();
-	}
     }.bind(this);
 }
 
@@ -194,14 +175,40 @@ nrg.ui.Thumbnail.prototype.getText = function() {
 
 
 /**
- * Gets the hoverable div of the thumbnail.
- * @return {!Element} The hoverable div.
+ * Pulses the thumbnail.
+ * @param {number=} opt_duration
+ * @param {Function=} opt_end
  * @public
  */
-nrg.ui.Thumbnail.prototype.getHoverable = function() {
-    this.hoverable_ = this.hoverable_ ? this.hoverable_ : this.getElement();	
-    return this.hoverable_
+nrg.ui.Thumbnail.prototype.pulse = function(opt_duration, opt_onEnd) {
+    
+    if (!goog.isDefAndNotNull(opt_duration)) { opt_duration = 500}
+
+    var interval = 50;
+    var intervalCount = 0;
+    if (!goog.isDefAndNotNull(this.timer_)){
+	this.timer_ = new goog.Timer();
+    }
+    this.timer_.setInterval(interval);
+
+    this.timer_.addEventListener(goog.Timer.TICK, function(e) {
+	intervalCount += interval;
+	this.getElement().style.opacity = (intervalCount / interval) % 2; 
+	if (intervalCount >= opt_duration){
+	    this.timer_.stop();
+	    this.timer_.dispose();
+	    delete this.timer_;
+	    this.getElement().style.opacity = 1;
+
+	    if (goog.isDefAndNotNull(opt_onEnd)){
+		opt_onEnd();
+	    }
+	}
+    }.bind(this));
+    this.timer_.start();
 }
+
+
 
 
 
@@ -239,55 +246,6 @@ nrg.ui.Thumbnail.prototype.setImage = function(url){
 nrg.ui.Thumbnail.prototype.setText = function(text){
     this.text_.innerHTML = text;
 };
-
-
-
-
-/**
- * Removes the hoverable div element associated with the thumbnail.
- * @public
- */	
-nrg.ui.Thumbnail.prototype.removeHoverable = function(){
-    if (this.hoverable_) {
-	if (this.hoverable_.parentNode){
-	    this.hoverable_ = this.hoverable_.parentNode.removeChild(
-		this.hoverable_);
-	}
-	delete this.hoverable_
-	this.hoverable_ = null;
-    }
-}
-
-
-
-
-/**
- * Creates the hoverable element associated with the thumbnail.
- * @param {Element=} opt_parent The hover element's parent.
- * @param {Element=} opt_element The hover element to set in case the cloned 
- *    thumbnail is not desired.
- * @public
- */	
-nrg.ui.Thumbnail.prototype.createHoverable = function(opt_parent, 
-							opt_element) {
-
-    this.removeHoverable();
-    this.setHoverListeners_(false);
-
-
-    this.hoverable_ = (opt_element) ? opt_element : 
-	this.getElement().cloneNode(true);
-    this.hoverable_.setAttribute('id', nrg.ui.Thumbnail.HOVERABLE_PREFIX + 
-				 this.getElement().getAttribute('id'));
-    this.hoverable_.style.visibility = 'hidden';
-    goog.dom.classes.add(this.hoverable_, 
-			 nrg.ui.Thumbnail.CSS.HOVERCLONE);
-
-    this.setHoverListeners_(true);
-    if (opt_parent){ opt_parent.appendChild(this.hoverable_) }
-
-    this.setEvents_();
-}    
 
 
 
@@ -346,47 +304,6 @@ nrg.ui.Thumbnail.prototype.updateStyle = function (opt_args) {
 
 
 
-/**
- * Repositions the hoverable relative to the main element.
- * @public
- */
-nrg.ui.Thumbnail.prototype.repositionHoverable = function(){
-
-    var elt = this.getElement();
-    var hoverNode =  this.getHoverable();
-    // Adjust only if the hover node is different from the element.
-    if (hoverNode === elt) { return }
-
-
-    // Find the common ancestor
-    var commonAncestor = 
-    goog.dom.findCommonAncestor(elt, hoverNode);
-    var thumbPos = 
-    goog.style.getRelativePosition(elt, commonAncestor);
-    
-    var imgClone = 
-    hoverNode.getElementsByTagName('img')[0];
-    var textClone = 
-    hoverNode.getElementsByTagName('div')[0];
-    var cloneWidth =  0;
-
-
-    // Set the clone width to something wider than the original thumbnail 
-    // width only if the the cloneWidth is calculated to be larger (text 
-    // spillover)
-    cloneWidth = imgClone.scrollWidth + textClone.scrollWidth + 25;
-    cloneWidth = (cloneWidth > elt.clientWidth) ? cloneWidth : 
-	elt.clientWidth;
-    nrg.style.setStyle(hoverNode, {
-	'position': 'absolute',
-	'left': thumbPos.x,
-	'top': thumbPos.y, 
-	'width':  cloneWidth,
-	'visibility': 'visible'
-    });
-}
-
-
 
 /**
  * Applies the classes to the various objects when the mouse
@@ -394,17 +311,6 @@ nrg.ui.Thumbnail.prototype.repositionHoverable = function(){
  * @private
  */
 nrg.ui.Thumbnail.prototype.onMouseEnter = function() {
-
-    var hoverNode = this.getHoverable();
-    goog.dom.classes.add(hoverNode, 
-			 nrg.ui.Thumbnail.CSS.MOUSEOVER);	
-    goog.dom.classes.add(hoverNode.childNodes[1], 
-			 nrg.ui.Thumbnail.CSS.TEXT_MOUSEOVER);		
-    goog.dom.classes.add(hoverNode.childNodes[0], 
-			 nrg.ui.Thumbnail.CSS.IMAGE_MOUSEOVER);
-    if (hoverNode !== this.getElement()) {
-	this.repositionHoverable();
-    }
 }
 
 
@@ -414,50 +320,10 @@ nrg.ui.Thumbnail.prototype.onMouseEnter = function() {
  * @public
  */
 nrg.ui.Thumbnail.prototype.onMouseLeave = function() {
-    //window.console.log("MOUSEPUT");
-    var hoverNode =  this.getHoverable();
-    if (hoverNode && hoverNode.childNodes.length > 1) { 
-	
-	//window.console.log("MOUSEPUT_2");
-	goog.dom.classes.remove(hoverNode, 
-				nrg.ui.Thumbnail.CSS.MOUSEOVER);
-	goog.dom.classes.remove(hoverNode.childNodes[1], 
-				nrg.ui.Thumbnail.CSS.TEXT_MOUSEOVER);
-	goog.dom.classes.remove(hoverNode.childNodes[0], 
-				nrg.ui.Thumbnail.CSS.IMAGE_MOUSEOVER);
 
-	hoverNode.style.visibility = (hoverNode !== this.getElement()) ? 
-	    'hidden' : 'visible';
-	
-    }
 }
 
 
-
-
-/**
- * Sets the listener events for when the thumbnail is hovered on.
- * @param {boolean=} set Whether to apply the event listener or remove it.
- * @private
- */
-nrg.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
-    var hoverNode =  this.getHoverable();
-    if (set) {
-	goog.events.listen(hoverNode, 
-			   goog.events.EventType.MOUSEENTER, 
-			   this.onMouseEnter.bind(this));
-	goog.events.listen(hoverNode, 
-			   goog.events.EventType.MOUSELEAVE, 
-			   this.onMouseLeave.bind(this));
-    } else {
-	goog.events.unlisten(hoverNode, 
-			     goog.events.EventType.MOUSEENTER, 
-			     this.onMouseEnter.bind(this));
-	goog.events.unlisten(hoverNode, 
-			     goog.events.EventType.MOUSELEAVE, 
-			     this.onMouseLeave.bind(this));
-    }
-}
 
 
 
@@ -468,16 +334,19 @@ nrg.ui.Thumbnail.prototype.setHoverListeners_ = function(set) {
  */	
 nrg.ui.Thumbnail.prototype.setEvents_ = function() {
 
-    if (goog.events.hasListener(this.getHoverable(), 
-			      nrg.ui.Thumbnail.EventType.CLICK)){
+    if (goog.events.hasListener(
+	this.getElement(), 
+	nrg.ui.Thumbnail.EventType.CLICK)){
 	goog.events.unlistenByKey(nrg.ui.Thumbnail.EventType.CLICK);
 	
     }
-    goog.events.listen(this.getHoverable(), 
-		       goog.events.EventType.CLICK, function(){
-			 this.dispatchEvent({
-			     type: nrg.ui.Thumbnail.EventType.CLICK
-			 });
+    goog.events.listen(
+	this.getElement(), 
+	goog.events.EventType.CLICK, 
+	function(){
+	    this.dispatchEvent({
+		type: nrg.ui.Thumbnail.EventType.CLICK
+	    });
     }.bind(this));	   
 }
 
@@ -503,13 +372,6 @@ nrg.ui.Thumbnail.prototype.disposeInternal = function() {
     goog.events.removeAll(this);
     goog.events.removeAll(this.getElement());
 
-    // Hoverable events and object.
-    if (goog.isDefAndNotNull(this.hoverable_)){
-	goog.events.removeAll(this.hoverable_);
-	goog.dom.removeNode(this.hoverable_);
-	delete this.hoverable_;
-    }
-
     // Image
     goog.dom.removeNode(this.image_);
     delete this.image_;
@@ -532,8 +394,6 @@ nrg.ui.Thumbnail.prototype.disposeInternal = function() {
 goog.exportSymbol('nrg.ui.Thumbnail.EventType', nrg.ui.Thumbnail.EventType);
 goog.exportSymbol('nrg.ui.Thumbnail.ID_PREFIX', nrg.ui.Thumbnail.ID_PREFIX);
 goog.exportSymbol('nrg.ui.Thumbnail.CSS_SUFFIX', nrg.ui.Thumbnail.CSS_SUFFIX);
-goog.exportSymbol('nrg.ui.Thumbnail.HOVERABLE_PREFIX',
-	nrg.ui.Thumbnail.HOVERABLE_PREFIX);
 goog.exportSymbol('nrg.ui.Thumbnail.prototype.getImage',
 	nrg.ui.Thumbnail.prototype.getImage);
 goog.exportSymbol('nrg.ui.Thumbnail.prototype.setBrokenThumbnailUrl',
@@ -542,27 +402,17 @@ goog.exportSymbol('nrg.ui.Thumbnail.prototype.getTextElement',
 	nrg.ui.Thumbnail.prototype.getTextElement);
 goog.exportSymbol('nrg.ui.Thumbnail.prototype.getText',
 	nrg.ui.Thumbnail.prototype.getText);
-goog.exportSymbol('nrg.ui.Thumbnail.prototype.getHoverable',
-	nrg.ui.Thumbnail.prototype.getHoverable);
 goog.exportSymbol('nrg.ui.Thumbnail.prototype.isActive',
 	nrg.ui.Thumbnail.prototype.isActive);
 goog.exportSymbol('nrg.ui.Thumbnail.prototype.setImage',
 	nrg.ui.Thumbnail.prototype.setImage);
 goog.exportSymbol('nrg.ui.Thumbnail.prototype.setText',
 	nrg.ui.Thumbnail.prototype.setText);
-goog.exportSymbol('nrg.ui.Thumbnail.prototype.removeHoverable',
-	nrg.ui.Thumbnail.prototype.removeHoverable);
-goog.exportSymbol('nrg.ui.Thumbnail.prototype.createHoverable',
-	nrg.ui.Thumbnail.prototype.createHoverable);
 goog.exportSymbol('nrg.ui.Thumbnail.prototype.setActive',
 	nrg.ui.Thumbnail.prototype.setActive);
 goog.exportSymbol('nrg.ui.Thumbnail.prototype.updateStyle',
 	nrg.ui.Thumbnail.prototype.updateStyle);
-goog.exportSymbol('nrg.ui.Thumbnail.prototype.repositionHoverable',
-	nrg.ui.Thumbnail.prototype.repositionHoverable);
-goog.exportSymbol('nrg.ui.Thumbnail.prototype.onMouseEnter',
-	nrg.ui.Thumbnail.prototype.onMouseEnter);
-goog.exportSymbol('nrg.ui.Thumbnail.prototype.onMouseLeave',
-	nrg.ui.Thumbnail.prototype.onMouseLeave);
+goog.exportSymbol('nrg.ui.Thumbnail.prototype.pulse',
+	nrg.ui.Thumbnail.prototype.pulse);
 goog.exportSymbol('nrg.ui.Thumbnail.prototype.disposeInternal',
 	nrg.ui.Thumbnail.prototype.disposeInternal);

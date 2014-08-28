@@ -1,7 +1,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-goog.provide('xiv.ui.ctrl.TwoThumbSliderController');
+goog.provide('xiv.ui.TwoThumbSliderController');
 
 
 // goog
@@ -18,7 +18,7 @@ goog.require('nrg.style');
 goog.require('nrg.ui.HoverInput');
 
 // xiv
-goog.require('xiv.ui.ctrl.SliderBase');
+goog.require('xiv.ui.SliderBase');
 
 //-----------
 
@@ -26,15 +26,15 @@ goog.require('xiv.ui.ctrl.SliderBase');
 
 /**
  * @constructor
- * @extends {xiv.ui.ctrl.SliderBase}
+ * @extends {xiv.ui.SliderBase}
  */
-xiv.ui.ctrl.TwoThumbSliderController = function(){
+xiv.ui.TwoThumbSliderController = function(){
     goog.base(this);
     this.setLabel('TwoThumb');
 }
-goog.inherits(xiv.ui.ctrl.TwoThumbSliderController, xiv.ui.ctrl.SliderBase);
-goog.exportSymbol('xiv.ui.ctrl.TwoThumbSliderController', 
-		  xiv.ui.ctrl.TwoThumbSliderController);
+goog.inherits(xiv.ui.TwoThumbSliderController, xiv.ui.SliderBase);
+goog.exportSymbol('xiv.ui.TwoThumbSliderController', 
+		  xiv.ui.TwoThumbSliderController);
 
 
 
@@ -43,8 +43,8 @@ goog.exportSymbol('xiv.ui.ctrl.TwoThumbSliderController',
  * @const
  * @public
  */
-xiv.ui.ctrl.TwoThumbSliderController.ID_PREFIX =  
-'xiv.ui.ctrl.TwoThumbSliderController';
+xiv.ui.TwoThumbSliderController.ID_PREFIX =  
+'xiv.ui.TwoThumbSliderController';
 
 
 
@@ -53,7 +53,7 @@ xiv.ui.ctrl.TwoThumbSliderController.ID_PREFIX =
  * @enum {string}
  * @expose
  */
-xiv.ui.ctrl.TwoThumbSliderController.CSS_SUFFIX = {
+xiv.ui.TwoThumbSliderController.CSS_SUFFIX = {
     SLIDER: 'slider',
     SLIDER_TRACK: 'slider-track',
     SLIDER_THUMB: 'slider-thumb',
@@ -68,14 +68,14 @@ xiv.ui.ctrl.TwoThumbSliderController.CSS_SUFFIX = {
  * @type {?nrg.ui.HoverInput}
  * @protected
  */
-xiv.ui.ctrl.TwoThumbSliderController.prototype.extentInput = null;
+xiv.ui.TwoThumbSliderController.prototype.extentInput = null;
 
 
 
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.TwoThumbSliderController.prototype.render = 
+xiv.ui.TwoThumbSliderController.prototype.render = 
 function(opt_parentElement) {
     goog.base(this, 'render', opt_parentElement);
     this.valueInput.setDisplayAlignment('left');
@@ -89,7 +89,7 @@ function(opt_parentElement) {
  * @return {nrg.ui.HoverInput}
  * @public
  */
-xiv.ui.ctrl.TwoThumbSliderController.prototype.getExtentInput = function() {
+xiv.ui.TwoThumbSliderController.prototype.getExtentInput = function() {
     return this.extentInput;
 }
 
@@ -98,7 +98,7 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.getExtentInput = function() {
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.TwoThumbSliderController.prototype.createSlider = function() {
+xiv.ui.TwoThumbSliderController.prototype.createSlider = function() {
 
 
     /**
@@ -115,20 +115,20 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.createSlider = function() {
     elt.setAttribute('id', 
 		     'ThresholdSlider_' + goog.string.createUniqueString());
     goog.dom.classes.add(elt, 
-			 xiv.ui.ctrl.SliderBase.CSS.SLIDER);
+			 xiv.ui.SliderBase.CSS.SLIDER);
     goog.dom.classes.add(elt, 
-			 xiv.ui.ctrl.TwoThumbSliderController.CSS.SLIDER);
+			 xiv.ui.TwoThumbSliderController.CSS.SLIDER);
     
     //
     // The slider track.
     //
     var track = goog.dom.createDom('div', {
 	'id' : 'ThwoThumbSlider_track_'+ goog.string.createUniqueString(),
-	'class' : xiv.ui.ctrl.SliderBase.CSS.SLIDER_TRACK
+	'class' : xiv.ui.SliderBase.CSS.SLIDER_TRACK
     });    
     goog.dom.appendChild(elt, track);
     goog.dom.classes.add(track, 
-			 xiv.ui.ctrl.TwoThumbSliderController.CSS.SLIDER_TRACK);
+			 xiv.ui.TwoThumbSliderController.CSS.SLIDER_TRACK);
 
 
     //
@@ -153,39 +153,39 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.createSlider = function() {
 /**
  * @private
  */
-xiv.ui.ctrl.TwoThumbSliderController.prototype.setSliderClasses_ = function() {
+xiv.ui.TwoThumbSliderController.prototype.setSliderClasses_ = function() {
 
     //
     // Value Thumb
     //
     goog.dom.classes.add(this.slider.getValueThumb(), 
-	xiv.ui.ctrl.SliderBase.CSS.SLIDER_THUMB);
+	xiv.ui.SliderBase.CSS.SLIDER_THUMB);
 
 
     goog.dom.classes.add(this.slider.getValueThumb(), 
-		xiv.ui.ctrl.TwoThumbSliderController.CSS.SLIDER_THUMB);
+		xiv.ui.TwoThumbSliderController.CSS.SLIDER_THUMB);
 
     goog.dom.classes.add(this.slider.getValueThumb(), 
-		xiv.ui.ctrl.TwoThumbSliderController.CSS.SLIDER_THUMB_VALUE);
+		xiv.ui.TwoThumbSliderController.CSS.SLIDER_THUMB_VALUE);
 
     nrg.style.setHoverClass(this.slider.getValueThumb(),  
-		xiv.ui.ctrl.SliderBase.CSS.SLIDER_THUMB_HOVER);
+		xiv.ui.SliderBase.CSS.SLIDER_THUMB_HOVER);
 
 
     //
     // Extent Thumb
     //
     goog.dom.classes.add(this.slider.getExtentThumb(), 
-	xiv.ui.ctrl.SliderBase.CSS.SLIDER_THUMB);
+	xiv.ui.SliderBase.CSS.SLIDER_THUMB);
 
     goog.dom.classes.add(this.slider.getExtentThumb(), 
-		xiv.ui.ctrl.TwoThumbSliderController.CSS.SLIDER_THUMB);
+		xiv.ui.TwoThumbSliderController.CSS.SLIDER_THUMB);
 
     goog.dom.classes.add(this.slider.getExtentThumb(), 
-	xiv.ui.ctrl.TwoThumbSliderController.CSS.SLIDER_THUMB_EXTENT);
+	xiv.ui.TwoThumbSliderController.CSS.SLIDER_THUMB_EXTENT);
 
     nrg.style.setHoverClass(this.slider.getExtentThumb(),  
-		xiv.ui.ctrl.SliderBase.CSS.SLIDER_THUMB_HOVER);
+		xiv.ui.SliderBase.CSS.SLIDER_THUMB_HOVER);
 }
 
 
@@ -193,12 +193,12 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.setSliderClasses_ = function() {
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.TwoThumbSliderController.prototype.update = function() {
-    goog.base(this, 'update');
+xiv.ui.TwoThumbSliderController.prototype.refresh = function() {
+    goog.base(this, 'refresh');
     if (goog.isDefAndNotNull(this.extentInput)){
 	this.syncInputToSlider(this.extentInput);
     }
-    this.updateSliderThumbPositions_();
+    this.refreshSliderThumbPositions_();
 }
 
 
@@ -207,7 +207,7 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.update = function() {
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.TwoThumbSliderController.prototype.syncInputToSlider = 
+xiv.ui.TwoThumbSliderController.prototype.syncInputToSlider = 
 function(input) {
     goog.base(this, 'syncInputToSlider', input);
     if (goog.isDefAndNotNull(this.extentInput) && 
@@ -226,7 +226,7 @@ function(input) {
  * @param {!number} ext
  * @public
  */
-xiv.ui.ctrl.TwoThumbSliderController.prototype.setValueAndExtent = 
+xiv.ui.TwoThumbSliderController.prototype.setValueAndExtent = 
 function(val, ext){
     this.slider.setValueAndExtent(val, ext);
 }
@@ -237,7 +237,7 @@ function(val, ext){
  * @param {!number} ext
  * @public
  */
-xiv.ui.ctrl.TwoThumbSliderController.prototype.setExtent = function(ext){
+xiv.ui.TwoThumbSliderController.prototype.setExtent = function(ext){
     this.slider.setExtent(ext);
 }
 
@@ -247,7 +247,7 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.setExtent = function(ext){
  * @return {!number}
  * @public
  */
-xiv.ui.ctrl.TwoThumbSliderController.prototype.getExtent = function(){
+xiv.ui.TwoThumbSliderController.prototype.getExtent = function(){
     //window.console.log('Get extent', this.slider.getExtent());
     return this.slider.getExtent();
 }
@@ -257,7 +257,7 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.getExtent = function(){
 /**
  * @private
  */
-xiv.ui.ctrl.TwoThumbSliderController.prototype.updateSliderThumbPositions_ = 
+xiv.ui.TwoThumbSliderController.prototype.refreshSliderThumbPositions_ = 
 function() {
 
 
@@ -308,7 +308,7 @@ function() {
  * @param {Event}
  * @private
  */
-xiv.ui.ctrl.TwoThumbSliderController.prototype.onExtentInput_ = function(e){
+xiv.ui.TwoThumbSliderController.prototype.onExtentInput_ = function(e){
 
     //window.console.log(this.extentInput);
 
@@ -329,7 +329,7 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.onExtentInput_ = function(e){
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.TwoThumbSliderController.prototype.dispatchComponentEvent = 
+xiv.ui.TwoThumbSliderController.prototype.dispatchComponentEvent = 
 function(){
     var val = this.slider.getValue();
     var ext = this.slider.getExtent() + val;
@@ -338,7 +338,7 @@ function(){
     this.extentInput.setValue(ext);
 
     this.dispatchEvent({
-	type: xiv.ui.ctrl.XtkController.EventType.CHANGE,
+	type: xiv.ui.XtkController.EventType.CHANGE,
 	lower: val,
 	upper: ext,
     })
@@ -349,7 +349,7 @@ function(){
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.TwoThumbSliderController.prototype.disposeInternal = function() {
+xiv.ui.TwoThumbSliderController.prototype.disposeInternal = function() {
 
     // Slider
     if (goog.isDefAndNotNull(this.slider)){
@@ -378,23 +378,21 @@ xiv.ui.ctrl.TwoThumbSliderController.prototype.disposeInternal = function() {
 
 
 
-goog.exportSymbol('xiv.ui.ctrl.TwoThumbSliderController.ID_PREFIX',
-	xiv.ui.ctrl.TwoThumbSliderController.ID_PREFIX);
-goog.exportSymbol('xiv.ui.ctrl.TwoThumbSliderController.CSS_SUFFIX',
-	xiv.ui.ctrl.TwoThumbSliderController.CSS_SUFFIX);
-goog.exportSymbol('xiv.ui.ctrl.TwoThumbSliderController.prototype.update',
-	xiv.ui.ctrl.TwoThumbSliderController.prototype.update);
+goog.exportSymbol('xiv.ui.TwoThumbSliderController.ID_PREFIX',
+	xiv.ui.TwoThumbSliderController.ID_PREFIX);
+goog.exportSymbol('xiv.ui.TwoThumbSliderController.CSS_SUFFIX',
+	xiv.ui.TwoThumbSliderController.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.TwoThumbSliderController.prototype.refresh',
+	xiv.ui.TwoThumbSliderController.prototype.refresh);
 
 
 //
 // Protected
 //
 goog.exportSymbol(
-    'xiv.ui.ctrl.TwoThumbSliderController.prototype.extentInput',
-    xiv.ui.ctrl.TwoThumbSliderController.prototype.extentInput);
-goog.exportSymbol(
-    'xiv.ui.ctrl.TwoThumbSliderController.prototype.getExtentInput',
-    xiv.ui.ctrl.TwoThumbSliderController.prototype.getExtentInput);
+    'xiv.ui.TwoThumbSliderController.prototype.extentInput',
+    xiv.ui.TwoThumbSliderController.prototype.extentInput);
+
 
 
 
@@ -402,21 +400,24 @@ goog.exportSymbol(
 // Public
 //
 goog.exportSymbol(
-    'xiv.ui.ctrl.TwoThumbSliderController.prototype.setValueAndExtent',
-    xiv.ui.ctrl.TwoThumbSliderController.prototype.setValueAndExtent);
+    'xiv.ui.TwoThumbSliderController.prototype.getExtentInput',
+    xiv.ui.TwoThumbSliderController.prototype.getExtentInput);
+goog.exportSymbol(
+    'xiv.ui.TwoThumbSliderController.prototype.setValueAndExtent',
+    xiv.ui.TwoThumbSliderController.prototype.setValueAndExtent);
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.TwoThumbSliderController.prototype.setExtent',
-    xiv.ui.ctrl.TwoThumbSliderController.prototype.setExtent);
+    'xiv.ui.TwoThumbSliderController.prototype.setExtent',
+    xiv.ui.TwoThumbSliderController.prototype.setExtent);
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.TwoThumbSliderController.prototype.getExtent',
-    xiv.ui.ctrl.TwoThumbSliderController.prototype.getExtent);
+    'xiv.ui.TwoThumbSliderController.prototype.getExtent',
+    xiv.ui.TwoThumbSliderController.prototype.getExtent);
 
 
 goog.exportSymbol(
-    'xiv.ui.ctrl.TwoThumbSliderController.prototype.dispatchComponentEvent',
-    xiv.ui.ctrl.TwoThumbSliderController.prototype.dispatchComponentEvent);
+    'xiv.ui.TwoThumbSliderController.prototype.dispatchComponentEvent',
+    xiv.ui.TwoThumbSliderController.prototype.dispatchComponentEvent);
 goog.exportSymbol(
-    'xiv.ui.ctrl.TwoThumbSliderController.prototype.disposeInternal',
-    xiv.ui.ctrl.TwoThumbSliderController.prototype.disposeInternal);
+    'xiv.ui.TwoThumbSliderController.prototype.disposeInternal',
+    xiv.ui.TwoThumbSliderController.prototype.disposeInternal);

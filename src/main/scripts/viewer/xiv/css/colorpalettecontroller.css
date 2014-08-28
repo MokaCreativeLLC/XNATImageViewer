@@ -1,4 +1,4 @@
-.xiv-ui-ctrl-colorpalettecontroller {
+.xiv-ui-colorpalettecontroller {
     position: absolute;
     width: 450px;
     height: 300px;
@@ -7,7 +7,7 @@
 }
 
 
-.xiv-ui-ctrl-colorpalettecontroller-colorsquare {
+.xiv-ui-colorpalettecontroller-colorsquare {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -19,7 +19,7 @@
 }
 
 
-.xiv-ui-ctrl-colorpalettecontroller-colorpaletteholder {
+.xiv-ui-colorpalettecontroller-colorpaletteholder {
 /*
     position: absolute;
     top: 15px;
@@ -32,7 +32,7 @@
 }
 
 
-.xiv-ui-ctrl-colorpalettecontroller-colorpalette {
+.xiv-ui-colorpalettecontroller-colorpalette {
     position: absolute;
     top: 10px;
     left: 10px;
@@ -40,7 +40,7 @@
 }
 
 
-.xiv-ui-ctrl-colorpalettecontroller-closebutton {
+.xiv-ui-colorpalettecontroller-closebutton {
     position: absolute; 
     cursor: pointer;
     top: 5px;

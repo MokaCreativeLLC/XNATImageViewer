@@ -445,6 +445,17 @@ nrg.ui.ZippyNode.prototype.getNodes = function() {
 
 
 /**
+ * @param {!boolean} val
+ * @public
+ */
+nrg.ui.ZippyNode.prototype.showExpandIcon = function(val) { 
+    this.expandIcon_.style.visibility = (val == true) ? 'visible' : 'hidden';
+};
+
+
+
+
+/**
  * As stated.
  * @return {!Element}
  * @public
@@ -518,18 +529,20 @@ nrg.ui.ZippyNode.prototype.setAnimated = function(animated){
  * @private
  */
 nrg.ui.ZippyNode.prototype.setZippyEvents_ExpandAndCollapse_ = function() {
-    goog.events.listen(this.Zippy_,goog.object.getValues(goog.ui.Zippy.Events), 
-    function(e) { 
-	if (!this.Zippy_.isBusy()) {
-	    if (e.target.isExpanded()) {
-		this.onZippyExpanded_();
-	    } else {
-		this.onZippyCollapsed_();
+    goog.events.listen(
+	this.Zippy_,
+	goog.object.getValues(goog.ui.Zippy.Events), 
+	function(e) { 
+	    if (!this.Zippy_.isBusy()) {
+		if (e.target.isExpanded()) {
+		    this.onZippyExpanded_();
+		} else {
+		    this.onZippyCollapsed_();
+		}
 	    }
-	}
-	else {
-	    this.onZippyClicked_();
-	}
+	    else {
+		this.onZippyClicked_();
+	    }
     }.bind(this));
 }
 
@@ -614,6 +627,53 @@ nrg.ui.ZippyNode.prototype.onZippyMouseOut_ = function(){
 
 
 /**
+ * @param {!string} subNodeText
+ * @param {!number} index
+ * @private
+ */
+nrg.ui.ZippyNode.prototype.putSubNodeAt = function(subNodeText, folderIndex) {
+
+    var contentHolder = this.contentHolder_;
+    var holderChildren = goog.dom.getChildren(contentHolder);
+    var holderContentsLen = holderChildren.length;
+    var i = 0;
+    var len = holderChildren.length;
+    var j, len2, header, isLabel, isTheSubNode, _Header, _Holder;
+
+    //
+    // Get all the holder elements and the content element
+    //
+    for (; i<len; i++){
+	if (goog.dom.classlist.contains(
+	    holderChildren[i], nrg.ui.ZippyNode.CSS.HEADER)){
+	    j = 0;
+	    len2 = holderChildren[i].childNodes.length;
+	    for (; j<len2; j++) {
+		headerChild = holderChildren[i].childNodes[j];
+		isLabel = goog.dom.classlist.contains(
+		    headerChild, nrg.ui.ZippyNode.CSS.HEADER_LABEL);
+		isTheSubNode = headerChild.innerHTML.indexOf(subNodeText) > -1;
+		if (isLabel && isTheSubNode){
+		    _Header = holderChildren[i];
+		    _Holder = holderChildren[i+1];
+		    break;
+		}
+	    }
+	} 
+	if (goog.isDefAndNotNull(_Header)) { break }
+    }
+
+    if (goog.isDefAndNotNull(_Header)) {
+	goog.dom.insertChildAt(contentHolder, _Header, folderIndex);
+	goog.dom.insertChildAt(contentHolder, _Holder, folderIndex + 1);
+    }
+
+}
+
+
+
+
+/**
  * @inheritDoc
  */
 nrg.ui.ZippyNode.prototype.disposeInternal = function(){
@@ -681,6 +741,8 @@ goog.exportSymbol('nrg.ui.ZippyNode.prototype.getContentHolder',
 	nrg.ui.ZippyNode.prototype.getContentHolder);
 goog.exportSymbol('nrg.ui.ZippyNode.prototype.getHeaderLabel',
 	nrg.ui.ZippyNode.prototype.getHeaderLabel);
+goog.exportSymbol('nrg.ui.ZippyNode.prototype.showExpandIcon',
+	nrg.ui.ZippyNode.prototype.showExpandIcon);
 goog.exportSymbol('nrg.ui.ZippyNode.prototype.getZippy',
 	nrg.ui.ZippyNode.prototype.getZippy);
 goog.exportSymbol('nrg.ui.ZippyNode.prototype.setExpanded',

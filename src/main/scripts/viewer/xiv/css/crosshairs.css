@@ -4,15 +4,15 @@
 
 
 
-.xiv-ui-layouts-interactors-crosshairs-vertical, 
-.xiv-ui-layouts-interactors-crosshairs-horizontal {
+.xiv-ui-crosshairs-vertical, 
+.xiv-ui-crosshairs-horizontal {
     position: absolute;
     background-color: rgba(125,125,125, 1);
 }
 
 
 
-.xiv-ui-layouts-interactors-crosshairs-vertical {
+.xiv-ui-crosshairs-vertical {
     width: 1px;
     height: 100%;
     top: 0px;
@@ -20,7 +20,7 @@
 }
 
 
-.xiv-ui-layouts-interactors-crosshairs-horizontal {
+.xiv-ui-crosshairs-horizontal {
     width: 100%;
     height: 1px;
     top: 50%;

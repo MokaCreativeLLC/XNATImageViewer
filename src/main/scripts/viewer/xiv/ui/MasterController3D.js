@@ -1,7 +1,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-goog.provide('xiv.ui.ctrl.MasterController3D');
+goog.provide('xiv.ui.MasterController3D');
 
 // goog
 goog.require('goog.object');
@@ -12,10 +12,10 @@ goog.require('goog.array');
 goog.require('X.object');
 
 // xiv
-goog.require('xiv.ui.ctrl.XtkController');
-goog.require('xiv.ui.ctrl.CheckboxController');
-goog.require('xiv.ui.ctrl.SliderController');
-goog.require('xiv.ui.ctrl.TwoThumbSliderController');
+goog.require('xiv.ui.XtkController');
+goog.require('xiv.ui.CheckboxController');
+goog.require('xiv.ui.SliderController');
+goog.require('xiv.ui.TwoThumbSliderController');
 
 //-----------
 
@@ -24,9 +24,9 @@ goog.require('xiv.ui.ctrl.TwoThumbSliderController');
 /**
  *
  * @constructor
- * @extends {xiv.ui.ctrl.XtkController}
+ * @extends {xiv.ui.XtkController}
  */
-xiv.ui.ctrl.MasterController3D = function() {
+xiv.ui.MasterController3D = function() {
     goog.base(this);
 
 
@@ -36,9 +36,9 @@ xiv.ui.ctrl.MasterController3D = function() {
      */
     this.xObjs = [];
 }
-goog.inherits(xiv.ui.ctrl.MasterController3D, xiv.ui.ctrl.XtkController);
-goog.exportSymbol('xiv.ui.ctrl.MasterController3D', 
-		  xiv.ui.ctrl.MasterController3D);
+goog.inherits(xiv.ui.MasterController3D, xiv.ui.XtkController);
+goog.exportSymbol('xiv.ui.MasterController3D', 
+		  xiv.ui.MasterController3D);
 
 
 /**
@@ -46,7 +46,7 @@ goog.exportSymbol('xiv.ui.ctrl.MasterController3D',
  * @const
  * @expose
  */
-xiv.ui.ctrl.MasterController3D.ID_PREFIX =  'xiv.ui.ctrl.MasterController3D';
+xiv.ui.MasterController3D.ID_PREFIX =  'xiv.ui.MasterController3D';
 
 
 
@@ -54,14 +54,14 @@ xiv.ui.ctrl.MasterController3D.ID_PREFIX =  'xiv.ui.ctrl.MasterController3D';
  * @enum {string}
  * @expose
  */
-xiv.ui.ctrl.MasterController3D.CSS_SUFFIX = {};
+xiv.ui.MasterController3D.CSS_SUFFIX = {};
 
 
 /**
  * @enum {string}
  * @dict
  */
-xiv.ui.ctrl.MasterController3D.CONTROLLERS = {
+xiv.ui.MasterController3D.CONTROLLERS = {
     VISIBLE: 'Visible',
     OPACITY: 'Opacity',
 };
@@ -72,11 +72,11 @@ xiv.ui.ctrl.MasterController3D.CONTROLLERS = {
  * @param {!X.object} xObj
  * @public
  */
-xiv.ui.ctrl.MasterController3D.prototype.add = function(xObj) {
+xiv.ui.MasterController3D.prototype.add = function(xObj) {
 
     // Generic controls -- per object
     this.xObjs.push(xObj);
-    this.add_opacity(xObj, xiv.ui.ctrl.SliderController);
+    this.add_opacity(xObj, xiv.ui.SliderController);
 
 
     // Generic master controls -- all objects
@@ -92,14 +92,14 @@ xiv.ui.ctrl.MasterController3D.prototype.add = function(xObj) {
  * @param {!X.object} xObj
  * @protected
  */
-xiv.ui.ctrl.XtkController.prototype.add_displayAll = function(xObj) {
+xiv.ui.XtkController.prototype.add_displayAll = function(xObj) {
     // create
     var displayAll = this.createController(
-	xiv.ui.ctrl.CheckboxController, 'Display All', 
+	xiv.ui.CheckboxController, 'Display All', 
 	this.onMasterDisplayAllChange_.bind(this));
 
     // set folder
-    //displayAll.setFolders([xiv.ui.ctrl.XtkController.getObjectCategory(xObj)])
+    //displayAll.setFolders([xiv.ui.XtkController.getObjectCategory(xObj)])
 
     // store
     //window.console.log("***********", displayAll);
@@ -114,15 +114,15 @@ xiv.ui.ctrl.XtkController.prototype.add_displayAll = function(xObj) {
  * @param {!X.object} xObj
  * @protected
  */
-xiv.ui.ctrl.XtkController.prototype.add_masterOpacity = function(xObj) {
+xiv.ui.XtkController.prototype.add_masterOpacity = function(xObj) {
     // create
     var masterOpacity = this.createController( 
-	xiv.ui.ctrl.SliderController, 'Master Opacity', 
+	xiv.ui.SliderController, 'Master Opacity', 
 	this.onMasterOpacityChange_.bind(this));
     
     // set folder
     //masterOpacity.setFolders([
-    //xiv.ui.ctrl.XtkController.getObjectCategory(xObj)]);
+    //xiv.ui.XtkController.getObjectCategory(xObj)]);
 
     // store
     //window.console.log("***********", masterOpacity);
@@ -137,7 +137,7 @@ xiv.ui.ctrl.XtkController.prototype.add_masterOpacity = function(xObj) {
 /**
  * @private
  */
-xiv.ui.ctrl.MasterController3D.prototype.onMasterOpacityChange_ = 
+xiv.ui.MasterController3D.prototype.onMasterOpacityChange_ = 
 function(e) {
     goog.array.forEach(this.subControllers, function(subC){
 	if (subC.getLabel().innerHTML == 'Opacity') {
@@ -152,7 +152,7 @@ function(e) {
 /**
  * @private
  */
-xiv.ui.ctrl.MasterController3D.prototype.onMasterDisplayAllChange_ = 
+xiv.ui.MasterController3D.prototype.onMasterDisplayAllChange_ = 
 function(e) {
     goog.array.forEach(this.subControllers, function(subC){
 	if (subC.getLabel().innerHTML == 'Visible') {
@@ -167,7 +167,7 @@ function(e) {
  * @param {!string} labelTitle;
  * @public
  */
-xiv.ui.ctrl.MasterController3D.prototype.disposeInternal = function() {
+xiv.ui.MasterController3D.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
     // XObjs
@@ -178,14 +178,14 @@ xiv.ui.ctrl.MasterController3D.prototype.disposeInternal = function() {
 
 
 
-goog.exportSymbol('xiv.ui.ctrl.MasterController3D.ID_PREFIX',
-	xiv.ui.ctrl.MasterController3D.ID_PREFIX);
-goog.exportSymbol('xiv.ui.ctrl.MasterController3D.CSS_SUFFIX',
-	xiv.ui.ctrl.MasterController3D.CSS_SUFFIX);
-goog.exportSymbol('xiv.ui.ctrl.MasterController3D.CONTROLLERS',
-	xiv.ui.ctrl.MasterController3D.CONTROLLERS);
-goog.exportSymbol('xiv.ui.ctrl.MasterController3D.prototype.add',
-	xiv.ui.ctrl.MasterController3D.prototype.add);
-goog.exportSymbol('xiv.ui.ctrl.MasterController3D.prototype.disposeInternal',
-	xiv.ui.ctrl.MasterController3D.prototype.disposeInternal);
+goog.exportSymbol('xiv.ui.MasterController3D.ID_PREFIX',
+	xiv.ui.MasterController3D.ID_PREFIX);
+goog.exportSymbol('xiv.ui.MasterController3D.CSS_SUFFIX',
+	xiv.ui.MasterController3D.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.MasterController3D.CONTROLLERS',
+	xiv.ui.MasterController3D.CONTROLLERS);
+goog.exportSymbol('xiv.ui.MasterController3D.prototype.add',
+	xiv.ui.MasterController3D.prototype.add);
+goog.exportSymbol('xiv.ui.MasterController3D.prototype.disposeInternal',
+	xiv.ui.MasterController3D.prototype.disposeInternal);
 

@@ -26,8 +26,6 @@ goog.require('nrg.ui.Component');
 xiv.ui.ProgressBarPanel = function() {
     goog.base(this);
 
-    //window.console.log("HERE:", xiv.ui.ProgressBarPanel.CSS);
-    //window.console.log("HERE:", this.CSS, xiv.ui.ProgressBarPanel);
     /**
      * @type {!Element}
      * @private
@@ -62,12 +60,32 @@ xiv.ui.ProgressBarPanel = function() {
 
     goog.dom.classes.add(goog.dom.getElementByClass('progress-bar-thumb', 
 						    this.progBarHolder_), 
-			 xiv.ui.ProgressBarPanel.CSS.THUMB)
+			 xiv.ui.ProgressBarPanel.CSS.THUMB);
+
+
     /**
-     * @type {?Element}
+     * @type {!Element}
      * @private
-     */
-    this.progressBarHolder_ = null;
+     */	
+    this.endNode_ = goog.dom.createDom('div', {
+	'id': xiv.ui.ProgressBarPanel.ID_PREFIX + '_EndNode_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.ProgressBarPanel.CSS.ENDNODE
+    });
+    goog.dom.append(this.progBarHolder_, this.endNode_);
+
+
+    /**
+     * @type {!Element}
+     * @private
+     */	
+    this.glowNode_ = goog.dom.createDom('div', {
+	'id': xiv.ui.ProgressBarPanel.ID_PREFIX + '_GlowNode_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.ProgressBarPanel.CSS.GLOWNODE
+    });
+    goog.dom.append(this.endNode_, this.glowNode_);
+
 }
 goog.inherits(xiv.ui.ProgressBarPanel, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.ProgressBarPanel', xiv.ui.ProgressBarPanel);
@@ -99,7 +117,10 @@ xiv.ui.ProgressBarPanel.ID_PREFIX =  'xiv.ui.ProgressBarPanel';
 xiv.ui.ProgressBarPanel.CSS_SUFFIX = {
     THUMB: 'thumb',
     PROGBARHOLDER: 'progbarholder',
-    LABELHOLDER: 'labelholder'
+    PROGRESSBAR: 'progressbar',
+    LABELHOLDER: 'labelholder',
+    ENDNODE: 'endnode',
+    GLOWNODE: 'glownode',
 }
 
 
@@ -148,18 +169,18 @@ xiv.ui.ProgressBarPanel.prototype.showValue = function(opt_showValue) {
 xiv.ui.ProgressBarPanel.prototype.setValue = function(val) {
     this.ProgressBar_.setValue(val);
     
+    var progBarElt = this.ProgressBar_.getElement().childNodes[0];
     //
     // Safety - to make sure that the progress bar is always the blue
     //
-    this.ProgressBar_.getElement().childNodes[0].
-	style.background = 'rgb(100,149,237)';
-    /**
-    var progs = goog.dom.getElementsByClass('xiv-ui-progressbarpanel-thumb');
-    goog.array.forEach(progs, function(prog){
-	window.console.log(prog);
-	//prog.style.background = 'rgb(100,149,237)';
-    })
-    */
+    if (!goog.dom.classes.has(progBarElt, 
+			      xiv.ui.ProgressBarPanel.CSS.PROGRESSBAR)){
+	goog.dom.classes.add(progBarElt, 
+			     xiv.ui.ProgressBarPanel.CSS.PROGRESSBAR);
+    }
+
+    this.endNode_.style.left = 
+	'calc(' +  progBarElt.style.width + ' - 1px)';
     
     this.labelHolder_.innerHTML = this.labelText_;
     if (this.showValue_){
@@ -202,6 +223,11 @@ xiv.ui.ProgressBarPanel.prototype.disposeInternal = function() {
     if (goog.isDefAndNotNull(this.labelHolder_)){
 	goog.dom.removeNode(this.labelHolder_);
 	delete this.labelHolder_;
+    }
+
+    if (goog.isDefAndNotNull(this.endNode_)){
+	goog.dom.removeNode(this.endNode_);
+	delete this.endNode_;
     }
 
     this.showValue_ = null;

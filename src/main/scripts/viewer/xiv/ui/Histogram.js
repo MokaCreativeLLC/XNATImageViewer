@@ -1,7 +1,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-goog.provide('xiv.ui.ctrl.Histogram');
+goog.provide('xiv.ui.Histogram');
 
 // goog
 goog.require('goog.dom');
@@ -11,7 +11,7 @@ goog.require('goog.style');
 goog.require('goog.structs.Queue');
 
 // xiv
-goog.require('xiv.ui.ctrl.XtkController');
+goog.require('xiv.ui.XtkController');
 
 //-----------
 
@@ -19,16 +19,16 @@ goog.require('xiv.ui.ctrl.XtkController');
 
 
 /**
- * xiv.ui.ctrl.Histogram
+ * xiv.ui.Histogram
  *
  * @constructor
- * @extends {xiv.ui.ctrl.XtkController}
+ * @extends {xiv.ui.XtkController}
  */
-xiv.ui.ctrl.Histogram = function() {
+xiv.ui.Histogram = function() {
     goog.base(this);
 }
-goog.inherits(xiv.ui.ctrl.Histogram, xiv.ui.ctrl.XtkController);
-goog.exportSymbol('xiv.ui.ctrl.Histogram', xiv.ui.ctrl.Histogram);
+goog.inherits(xiv.ui.Histogram, xiv.ui.XtkController);
+goog.exportSymbol('xiv.ui.Histogram', xiv.ui.Histogram);
 
 
 
@@ -37,7 +37,7 @@ goog.exportSymbol('xiv.ui.ctrl.Histogram', xiv.ui.ctrl.Histogram);
  * @enum {string}
  * @public
  */
-xiv.ui.ctrl.Histogram.EventType = {}
+xiv.ui.Histogram.EventType = {}
 
 
 
@@ -46,7 +46,7 @@ xiv.ui.ctrl.Histogram.EventType = {}
  * @const
  * @expose
  */
-xiv.ui.ctrl.Histogram.ID_PREFIX =  'xiv.ui.ctrl.Histogram';
+xiv.ui.Histogram.ID_PREFIX =  'xiv.ui.Histogram';
 
 
 
@@ -54,11 +54,13 @@ xiv.ui.ctrl.Histogram.ID_PREFIX =  'xiv.ui.ctrl.Histogram';
  * @enum {string}
  * @expose
  */
-xiv.ui.ctrl.Histogram.CSS_SUFFIX = {
+xiv.ui.Histogram.CSS_SUFFIX = {
     CANVAS: 'canvas',
     LINECANVAS: 'linecanvas',
     MAX: 'max',
     MIN: 'min',
+    CLIPMAX: 'clipmax',
+    CLIPMIN: 'clipmin',
 
 }
 
@@ -69,7 +71,7 @@ xiv.ui.ctrl.Histogram.CSS_SUFFIX = {
  * @type {!number}
  * @const
  */
-xiv.ui.ctrl.Histogram.LEVEL_CUTOFF = .999;
+xiv.ui.Histogram.LEVEL_CUTOFF = .999;
 
 
 
@@ -77,7 +79,7 @@ xiv.ui.ctrl.Histogram.LEVEL_CUTOFF = .999;
  * @const
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.heightLimit_ = .95;
+xiv.ui.Histogram.prototype.heightLimit_ = .95;
 
 
 
@@ -85,7 +87,7 @@ xiv.ui.ctrl.Histogram.prototype.heightLimit_ = .95;
  * @type {?Array.<number>}
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.levels_ = null;
+xiv.ui.Histogram.prototype.levels_ = null;
 
 
 
@@ -94,7 +96,7 @@ xiv.ui.ctrl.Histogram.prototype.levels_ = null;
  * @type {?Array.<number>}
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.percentages_ = null;
+xiv.ui.Histogram.prototype.percentages_ = null;
 
 
 
@@ -102,7 +104,7 @@ xiv.ui.ctrl.Histogram.prototype.percentages_ = null;
  * @type {?Array.<number>}
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.totals_ = null;
+xiv.ui.Histogram.prototype.totals_ = null;
 
 
 
@@ -110,7 +112,7 @@ xiv.ui.ctrl.Histogram.prototype.totals_ = null;
  * @type {number}
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.totalPixels_ = null;
+xiv.ui.Histogram.prototype.totalPixels_ = null;
 
 
 
@@ -119,7 +121,7 @@ xiv.ui.ctrl.Histogram.prototype.totalPixels_ = null;
  * @type {number}
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.maxPct_ = null;
+xiv.ui.Histogram.prototype.maxPct_ = null;
 
 
 
@@ -127,7 +129,7 @@ xiv.ui.ctrl.Histogram.prototype.maxPct_ = null;
  * @const
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.contextFillStyle_ = 'rgb(40,40,40)';
+xiv.ui.Histogram.prototype.contextFillStyle_ = 'rgb(40,40,40)';
 
 
 
@@ -135,7 +137,7 @@ xiv.ui.ctrl.Histogram.prototype.contextFillStyle_ = 'rgb(40,40,40)';
  * @const
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.lineContextFillStyle_ = 'rgb(0,0,0)';
+xiv.ui.Histogram.prototype.lineContextFillStyle_ = 'rgb(0,0,0)';
 
 
 
@@ -144,7 +146,7 @@ xiv.ui.ctrl.Histogram.prototype.lineContextFillStyle_ = 'rgb(0,0,0)';
  * @type {Element}
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.canvas_;
+xiv.ui.Histogram.prototype.canvas_;
 
 
 
@@ -152,7 +154,7 @@ xiv.ui.ctrl.Histogram.prototype.canvas_;
  * @type {Object}
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.context_;
+xiv.ui.Histogram.prototype.context_;
 
 
 
@@ -160,7 +162,7 @@ xiv.ui.ctrl.Histogram.prototype.context_;
  * @type {Element}
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.lineCanvas_;
+xiv.ui.Histogram.prototype.lineCanvas_;
 
 
 
@@ -168,39 +170,24 @@ xiv.ui.ctrl.Histogram.prototype.lineCanvas_;
  * @type {Object}
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.lineContext_;
+xiv.ui.Histogram.prototype.lineContext_;
+
+
+/**
+ * @type {Array.<?Element>}
+ * @private
+ */
+xiv.ui.Histogram.prototype.minMaxDivs_ = [null, null];;
 
 
 
 /**
- * @type {Element}
+ * @type {Array.<?Element>}
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.maxDiv_;
+xiv.ui.Histogram.prototype.clipDivs_ = [null, null];
 
 
-
-/**
- * @type {Element}
- * @private
- */
-xiv.ui.ctrl.Histogram.prototype.minDiv_;
-
-
-
-/**
- * @type {number}
- * @private
- */
-xiv.ui.ctrl.Histogram.prototype.startMin_;
-
-
-
-/**
- * @type {number}
- * @private
- */
-xiv.ui.ctrl.Histogram.prototype.startMax_;
 
 
 
@@ -209,68 +196,81 @@ xiv.ui.ctrl.Histogram.prototype.startMax_;
  * @type {!string}
  * @const
  */
-xiv.ui.ctrl.Histogram.prototype.histogramBarColor_ = "rgb(90,90,90)";
+xiv.ui.Histogram.prototype.histogramBarColor_ = "rgb(90,90,90)";
 
 
 
 
 /**
  * @private
- * @type {!number}
+ * @type {!Array.<number>}
  */
-xiv.ui.ctrl.Histogram.prototype.viewMin_ = 0;
+xiv.ui.Histogram.prototype.zoomRange_ = [0,1000];
 
 
 /**
+ * @type {!Array.<number>}
  * @private
- * @type {!number}
  */
-xiv.ui.ctrl.Histogram.prototype.viewMax_ = 0;
+xiv.ui.Histogram.prototype.clipRange_ = [0, 1000];
 
 
 
 /**
+ * @param {!boolean}
  * @private
- * @type {!boolean}
  */
-xiv.ui.ctrl.Histogram.prototype.noiseFilterOn_ = false;
+xiv.ui.Histogram.prototype.clipToZoom_ = false;
+
 
 
 
 /**
  * @public
- * @type {!boolean} on
+ * @type {!number} min
+ * @type {!number} max
  */
-xiv.ui.ctrl.Histogram.prototype.noiseFilterOn = function(on){
-    this.noiseFilterOn_ = on;
-}
-
-
-/**
- * @public
- * @type {!number}
- */
-xiv.ui.ctrl.Histogram.prototype.setViewMin = function(min){
-    this.viewMin_ = min;
+xiv.ui.Histogram.prototype.setZoomRange = function(min, max){
+    this.zoomRange_[0] = min;
+    this.zoomRange_[1] = max;
 };
 
 
 /**
  * @public
- * @type {!number}
+ * @type {number=} opt_min
+ * @type {number=} opt_max
  */
-xiv.ui.ctrl.Histogram.prototype.setViewMax = function(max){
+xiv.ui.Histogram.prototype.setClipRange = function(opt_min, opt_max){
     //window.console.log("set View Max", max);
-    this.viewMax_ = max;
+   
+    if (this.clipToZoom_){
+	this.clipRange_[0] = opt_min; 
+	this.clipRange_[1] = opt_max;
+    } else {
+	var _l = this.getCurrentLevels(); 
+	this.clipRange_[0] = _l.min; 
+	this.clipRange_[1] = _l.max;	
+    }
 };
 
 
+
+/**
+ * @public
+ * @type {!number} min
+ * @type {!number} max
+ */
+xiv.ui.Histogram.prototype.setZoomAndClipRange = function(min, max){
+    this.setZoomRange(min, max);
+    this.setClipRange(min, max);
+};
 
 
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.Histogram.prototype.render = function(opt_parent){
+xiv.ui.Histogram.prototype.render = function(opt_parent){
     //window.console.log("HIST RENDER");
     goog.base(this, 'render', opt_parent);
 
@@ -306,22 +306,43 @@ xiv.ui.ctrl.Histogram.prototype.render = function(opt_parent){
     //
     // Min Div
     //
-    this.minDiv_ = goog.dom.createDom('div', {
+    this.minMaxDivs_[0] = goog.dom.createDom('div', {
 	'id': this.constructor.ID_PREFIX + '_Min_' + 
 	    goog.string.createUniqueString(),
 	'class': this.constructor.CSS.MIN
     }, '-1000')
-    goog.dom.appendChild(this.getElement(), this.minDiv_);
+    goog.dom.appendChild(this.getElement(), this.minMaxDivs_[0]);
  
     //
     // Max Div
     //
-    this.maxDiv_ = goog.dom.createDom('div', {
+    this.minMaxDivs_[1] = goog.dom.createDom('div', {
 	'id': this.constructor.ID_PREFIX + '_Max_' + 
 	    goog.string.createUniqueString(),
 	'class': this.constructor.CSS.MAX
     }, '1000')
-    goog.dom.appendChild(this.getElement(), this.maxDiv_);
+    goog.dom.appendChild(this.getElement(), this.minMaxDivs_[1]);
+
+
+    //
+    // Min Div
+    //
+    this.clipDivs_[0] = goog.dom.createDom('div', {
+	'id': this.constructor.ID_PREFIX + '_Min_' + 
+	    goog.string.createUniqueString(),
+	'class': this.constructor.CSS.CLIPMIN
+    }, '-1000')
+    goog.dom.appendChild(this.getElement(), this.clipDivs_[0]);
+ 
+    //
+    // Max Div
+    //
+    this.clipDivs_[1] = goog.dom.createDom('div', {
+	'id': this.constructor.ID_PREFIX + '_Max_' + 
+	    goog.string.createUniqueString(),
+	'class': this.constructor.CSS.CLIPMAX
+    }, '1000')
+    goog.dom.appendChild(this.getElement(), this.clipDivs_[1]);
 
 }
 
@@ -330,7 +351,7 @@ xiv.ui.ctrl.Histogram.prototype.render = function(opt_parent){
  * @return {X.volume}
  * @public
  */
-xiv.ui.ctrl.Histogram.prototype.getXObj = function() {
+xiv.ui.Histogram.prototype.getXObj = function() {
     return goog.base(this, 'getXObj');
 }
 
@@ -338,9 +359,22 @@ xiv.ui.ctrl.Histogram.prototype.getXObj = function() {
 
 
 /**
+ * @param {!boolean} val
+ * @public
+ */
+xiv.ui.Histogram.prototype.clipToZoom = function(val) {
+    this.clipToZoom_ = val;
+    if (val == false){
+	this.setClipRange(null, null);
+    }
+}
+
+
+
+/**
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.tallyLevels_ = function() {
+xiv.ui.Histogram.prototype.tallyLevels_ = function() {
 
     //
     // We don't need to re-tally if it's already there (it takes way too 
@@ -412,7 +446,7 @@ xiv.ui.ctrl.Histogram.prototype.tallyLevels_ = function() {
 /**
  * @public
  */
-xiv.ui.ctrl.Histogram.prototype.draw = function() {
+xiv.ui.Histogram.prototype.draw = function() {
     //
     // We can't do anything if there's no volume
     //
@@ -446,8 +480,12 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
     if (!goog.isDefAndNotNull(this.levels_)){
 	return;
     }
+    
+    //window.console.log("Draw", this.zoomRange_[0], this.zoomRange_[1]);
+
 
     this.draw_(canvasWidth, canvasHeight);
+    
 }
 
 
@@ -456,7 +494,7 @@ xiv.ui.ctrl.Histogram.prototype.draw = function() {
  * @return {!Array.<number>}
  * @public
  */
-xiv.ui.ctrl.Histogram.prototype.getVisiblePixelRange = function(){
+xiv.ui.Histogram.prototype.getVisiblePixelRange = function(){
 
     var minSamplePct = .1
     var minSampleInd = Math.round(this.percentages_.length * minSamplePct);
@@ -512,8 +550,7 @@ xiv.ui.ctrl.Histogram.prototype.getVisiblePixelRange = function(){
  * @param {!number} canvasHeight
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.draw_ = 
-function(canvasWidth, canvasHeight) {
+xiv.ui.Histogram.prototype.draw_ = function(canvasWidth, canvasHeight) {
   
     //window.console.log('canvasWidth: ', canvasWidth, 
     //'canvasHeight:', canvasHeight);
@@ -522,14 +559,14 @@ function(canvasWidth, canvasHeight) {
     // Determine the new max -- have to loop through all percentages
     //
 
-    //window.console.log('viewMin', this.viewMin_, 
-    //'viewMax', this.viewMax_);
+    //window.console.log('viewMin', this.zoomRange_[0], 
+    //'viewMax', this.zoomRange_[1]);
 
-    var newMax = 0;
-    var i = this.viewMin_;
-    for (; i < this.viewMax_ + 1; i++){
-	if (this.percentages_[i] > newMax) {
-	    newMax = this.percentages_[i];
+    var relativeMax = 0;
+    var i = this.zoomRange_[0];
+    for (; i < this.zoomRange_[1] + 1; i++){
+	if (this.percentages_[i] > relativeMax) {
+	    relativeMax = this.percentages_[i];
 	}
     }
 
@@ -537,18 +574,18 @@ function(canvasWidth, canvasHeight) {
     // Construct the new percentages
     //
     var newPcts = [];
-    i = this.viewMin_;
-    for (; i < this.viewMax_ + 1; i++){
-	newPcts.push(this.percentages_[i]/newMax);
+    i = this.clipRange_[0];
+    for (; i < this.clipRange_[1] + 1; i++){
+	newPcts.push(this.percentages_[i]/relativeMax);
     }
 
     //window.console.log("newPcts length", newPcts.length);
 
     //
-    // canvasWidth = this.viewMax_ * slope + b
-    // 0 = this.viewMin_ * slope + b
+    // canvasWidth = this.zoomRange_[1] * slope + b
+    // 0 = this.zoomRange_[0] * slope + b
     //
-    var slope = (canvasWidth - 0) / (this.viewMax_ - this.viewMin_);
+    var slope = (canvasWidth - 0) / (this.clipRange_[1] - this.clipRange_[0]);
     //window.console.log('slope:', slope);
     var barWidth = (slope < 1) ? 1 : Math.round(slope);  
 
@@ -583,7 +620,7 @@ function(canvasWidth, canvasHeight) {
  * @return {number} The amount of level where the threshold first starts.
  * @public
  */
-xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold = function(thresh) {
+xiv.ui.Histogram.prototype.getLevelByPixelThreshold = function(thresh) {
     //
     // For auto-level calcuations
     //
@@ -602,7 +639,7 @@ xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold = function(thresh) {
 /**
  * @public
  */
-xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
+xiv.ui.Histogram.prototype.drawLine = function() {
 
     //
     // Do nothing if no volume
@@ -631,21 +668,25 @@ xiv.ui.ctrl.Histogram.prototype.drawLine = function() {
  * @param {!number} maxX
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.positionMinMaxDivs_ = function(minX, maxX){
-    this.minDiv_.style.width = 'auto';
-    this.maxDiv_.style.width = 'auto';
+xiv.ui.Histogram.prototype.positionMinMaxDivs_ = function(minX, maxX){
+    this.minMaxDivs_[0].style.width = 'auto';
+    this.minMaxDivs_[1].style.width = 'auto';
 
     var eltDims = new nrg.style.dims(this.getElement()); 
     var leftLimit = eltDims.left;
     var rightLimit =  eltDims.right;
 
-    this.minDiv_.style.left = minX.toString() + 'px';
+    this.minMaxDivs_[0].style.left = minX.toString() + 'px';
     var minDims = 
-	nrg.style.constrainHorizontally(this.minDiv_, leftLimit, rightLimit);
+	nrg.style.constrainHorizontally(
+	    this.minMaxDivs_[0], 
+	    leftLimit, rightLimit);
 
-    this.maxDiv_.style.left = maxX.toString() + 'px';
+    this.minMaxDivs_[1].style.left = maxX.toString() + 'px';
     var maxDims = 
-	nrg.style.constrainHorizontally(this.maxDiv_, leftLimit, rightLimit);
+	nrg.style.constrainHorizontally(
+	    this.minMaxDivs_[1], 
+	    leftLimit, rightLimit);
     
     //window.console.log(minDims, maxDims);
 
@@ -656,15 +697,43 @@ xiv.ui.ctrl.Histogram.prototype.positionMinMaxDivs_ = function(minX, maxX){
 	//
 	// Put all of the content in min div
 	//
-	this.minDiv_.innerHTML += ', ' + this.maxDiv_.innerHTML;
-	this.maxDiv_.innerHTML = '';
+	this.minMaxDivs_[0].innerHTML += ', ' + this.minMaxDivs_[1].innerHTML;
+	this.minMaxDivs_[1].innerHTML = '';
 
 	//
 	// Constrain the minDiv
 	//
-	nrg.style.constrainHorizontally(this.minDiv_, 
+	nrg.style.constrainHorizontally(this.minMaxDivs_[0], 
 					leftLimit, rightLimit);
     }
+}
+
+
+
+/**
+ * @param {!number} minX
+ * @param {!number} maxX
+ * @private
+ */
+xiv.ui.Histogram.prototype.positionClipDivs_ = function(){    
+    var canvDims = new nrg.style.dims(this.canvas_);
+    this.clipDivs_[0].style.left = canvDims.left.toString() + 'px';
+    this.clipDivs_[1].style.left = 
+	(canvDims.right -
+	goog.style.getSize(this.clipDivs_[1]).width).toString() + 'px';
+
+} 
+
+
+
+/**
+ * @param {!number} minX
+ * @param {!number} maxX
+ * @private
+ */
+xiv.ui.Histogram.prototype.positionNumberDivs_ = function(minX, maxX){
+    this.positionMinMaxDivs_(minX, maxX);
+    this.positionClipDivs_();
 
 } 
 
@@ -673,20 +742,19 @@ xiv.ui.ctrl.Histogram.prototype.positionMinMaxDivs_ = function(minX, maxX){
 /**
  * @param {!number] canvasWidth
  * @param {!number] canvasHeight
- * @param {!number] scaleX
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.drawLine_ = 
-function(canvasWidth, canvasHeight, scaleX) {
+xiv.ui.Histogram.prototype.drawLine_ = 
+function(canvasWidth, canvasHeight) {
     var _l = this.getCurrentLevels(); 
 
-    var xSlope = (canvasWidth - 0) / (this.viewMax_ - this.viewMin_);
-    // 0 = this.viewMin_ * xSlope  + b    
-    var b = -1 * this.viewMin_ * xSlope
+    var xSlope = (canvasWidth - 0) / (this.clipRange_[1] - this.clipRange_[0]);
+    // 0 = this.clipRange_[0] * xSlope  + b    
+    var b = -1 * this.clipRange_[0] * xSlope
     var canvX1 = _l.low * xSlope + b;
     var canvX2 = _l.high * xSlope + b;
-    var limX1 = this.viewMin_ * xSlope + b;
-    var limX2 = this.viewMax_ * xSlope + b;
+    var limX1 = this.clipRange_[0] * xSlope + b;
+    var limX2 = this.clipRange_[1] * xSlope + b;
     
 
 
@@ -700,7 +768,7 @@ function(canvasWidth, canvasHeight, scaleX) {
     // 
     // Position the min / max displays
     //
-    this.positionMinMaxDivs_(canvX1, canvX2);
+    this.positionNumberDivs_(canvX1, canvX2);
 
 
     //
@@ -741,11 +809,11 @@ function(canvasWidth, canvasHeight, scaleX) {
 /**
  * @public
  */
-xiv.ui.ctrl.Histogram.prototype.update = function(){
+xiv.ui.Histogram.prototype.refresh = function(){
     
     //window.console.log("UPDATE!");
     //this.getXObj()['windowHigh'] = 
-    this.updateMaxMin_();
+    this.refreshNumberDisplays_();
     this.draw();
     this.drawLine();
 }
@@ -755,15 +823,18 @@ xiv.ui.ctrl.Histogram.prototype.update = function(){
 /**
  * @private
  */
-xiv.ui.ctrl.Histogram.prototype.updateMaxMin_ = function(){
+xiv.ui.Histogram.prototype.refreshNumberDisplays_ = function(){
     //
     // Do nothing if no volume
     //
     if (!goog.isDefAndNotNull(this.getXObj())) { return };
 
     var _l = this.getCurrentLevels();    
-    this.minDiv_.innerHTML = 'Min: ' + _l.low;
-    this.maxDiv_.innerHTML = 'Max: ' + _l.high;    
+    this.minMaxDivs_[0].innerHTML = 'Min: ' + _l.low;
+    this.minMaxDivs_[1].innerHTML = 'Max: ' + _l.high;  
+
+    this.clipDivs_[0].innerHTML = this.clipRange_[0];
+    this.clipDivs_[1].innerHTML = this.clipRange_[1];    
 }
 
 
@@ -772,18 +843,15 @@ xiv.ui.ctrl.Histogram.prototype.updateMaxMin_ = function(){
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.Histogram.prototype.disposeInternal = function() {
+xiv.ui.Histogram.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
 
-    if (goog.isDefAndNotNull(this.maxDiv_)){
-	goog.dom.removeNode(this.maxDiv_);
-	delete this.maxDiv_;
-    }
-
-    if (goog.isDefAndNotNull(this.minDiv_)){
-	goog.dom.removeNode(this.minDiv_);
-	delete this.minDiv_;
-    }
+  
+    this.minMaxDivs_ = [null, null];
+    delete this.minMaxDivs_;
+    this.clipDivs_ = [null, null];
+    delete this.clipDivs_;
+ 
 
 
     if (goog.isDefAndNotNull(this.canvas_)){
@@ -817,41 +885,46 @@ xiv.ui.ctrl.Histogram.prototype.disposeInternal = function() {
     delete this.maxPct_;
     delete this.context_;
     delete this.lineContext_;
-    delete this.startMin_;
-    delete this.startMax_;
-    delete this.noiseFilterOn_;
+
+    goog.array.clear(this.zoomRange_);
+    delete this.zoomRange_;
+
+    goog.array.clear(this.clipRange_);
+    delete this.clipRange_;
+
+    delete this.clipToZoom_;
 }
 
 
 
 
-goog.exportSymbol('xiv.ui.ctrl.Histogram.EventType',
-	xiv.ui.ctrl.Histogram.EventType);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.ID_PREFIX',
-	xiv.ui.ctrl.Histogram.ID_PREFIX);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.CSS_SUFFIX',
-	xiv.ui.ctrl.Histogram.CSS_SUFFIX);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.LEVEL_CUTOFF',
-	xiv.ui.ctrl.Histogram.LEVEL_CUTOFF);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.render',
-	xiv.ui.ctrl.Histogram.prototype.render);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.draw',
-	xiv.ui.ctrl.Histogram.prototype.draw);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.drawLine',
-	xiv.ui.ctrl.Histogram.prototype.drawLine);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.setViewMin',
-	xiv.ui.ctrl.Histogram.prototype.setViewMin);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.setViewMax',
-	xiv.ui.ctrl.Histogram.prototype.setViewMax);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold',
-	xiv.ui.ctrl.Histogram.prototype.getLevelByPixelThreshold);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.getVisiblePixelRange',
-	xiv.ui.ctrl.Histogram.prototype.getVisiblePixelRange);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.noiseFilterOn',
-	xiv.ui.ctrl.Histogram.prototype.noiseFilterOn);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.update',
-	xiv.ui.ctrl.Histogram.prototype.update);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.updateMaxMin',
-	xiv.ui.ctrl.Histogram.prototype.updateMaxMin);
-goog.exportSymbol('xiv.ui.ctrl.Histogram.prototype.disposeInternal',
-	xiv.ui.ctrl.Histogram.prototype.disposeInternal);
+goog.exportSymbol('xiv.ui.Histogram.EventType',
+	xiv.ui.Histogram.EventType);
+goog.exportSymbol('xiv.ui.Histogram.ID_PREFIX',
+	xiv.ui.Histogram.ID_PREFIX);
+goog.exportSymbol('xiv.ui.Histogram.CSS_SUFFIX',
+	xiv.ui.Histogram.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.Histogram.LEVEL_CUTOFF',
+	xiv.ui.Histogram.LEVEL_CUTOFF);
+goog.exportSymbol('xiv.ui.Histogram.prototype.render',
+	xiv.ui.Histogram.prototype.render);
+goog.exportSymbol('xiv.ui.Histogram.prototype.draw',
+	xiv.ui.Histogram.prototype.draw);
+goog.exportSymbol('xiv.ui.Histogram.prototype.drawLine',
+	xiv.ui.Histogram.prototype.drawLine);
+goog.exportSymbol('xiv.ui.Histogram.prototype.clipToZoom',
+	xiv.ui.Histogram.prototype.clipToZoom);
+goog.exportSymbol('xiv.ui.Histogram.prototype.setZoomRange',
+	xiv.ui.Histogram.prototype.setZoomRange);
+goog.exportSymbol('xiv.ui.Histogram.prototype.setClipRange',
+	xiv.ui.Histogram.prototype.setClipRange);
+goog.exportSymbol('xiv.ui.Histogram.prototype.setZoomAndClipRange',
+	xiv.ui.Histogram.prototype.setZoomAndClipRange);
+goog.exportSymbol('xiv.ui.Histogram.prototype.getLevelByPixelThreshold',
+	xiv.ui.Histogram.prototype.getLevelByPixelThreshold);
+goog.exportSymbol('xiv.ui.Histogram.prototype.getVisiblePixelRange',
+	xiv.ui.Histogram.prototype.getVisiblePixelRange);
+goog.exportSymbol('xiv.ui.Histogram.prototype.refresh',
+	xiv.ui.Histogram.prototype.refresh);
+goog.exportSymbol('xiv.ui.Histogram.prototype.disposeInternal',
+	xiv.ui.Histogram.prototype.disposeInternal);

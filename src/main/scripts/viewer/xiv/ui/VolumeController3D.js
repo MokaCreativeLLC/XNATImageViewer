@@ -1,7 +1,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-goog.provide('xiv.ui.ctrl.VolumeController3D');
+goog.provide('xiv.ui.VolumeController3D');
 
 
 // goog
@@ -12,10 +12,10 @@ goog.require('goog.string');
 goog.require('X.object');
 
 // xiv
-goog.require('xiv.ui.ctrl.MasterController3D');
-goog.require('xiv.ui.ctrl.CheckboxController');
-goog.require('xiv.ui.ctrl.XtkController');
-goog.require('xiv.ui.ctrl.TwoThumbSliderController');
+goog.require('xiv.ui.MasterController3D');
+goog.require('xiv.ui.CheckboxController');
+goog.require('xiv.ui.XtkController');
+goog.require('xiv.ui.TwoThumbSliderController');
 
 //-----------
 
@@ -24,14 +24,14 @@ goog.require('xiv.ui.ctrl.TwoThumbSliderController');
 /**
  *
  * @constructor
- * @extends {xiv.ui.ctrl.MasterController3D}
+ * @extends {xiv.ui.MasterController3D}
  */
-xiv.ui.ctrl.VolumeController3D = function() {
+xiv.ui.VolumeController3D = function() {
     goog.base(this);
 }
-goog.inherits(xiv.ui.ctrl.VolumeController3D, xiv.ui.ctrl.MasterController3D);
-goog.exportSymbol('xiv.ui.ctrl.VolumeController3D', 
-		  xiv.ui.ctrl.VolumeController3D);
+goog.inherits(xiv.ui.VolumeController3D, xiv.ui.MasterController3D);
+goog.exportSymbol('xiv.ui.VolumeController3D', 
+		  xiv.ui.VolumeController3D);
 
 
 /**
@@ -39,14 +39,14 @@ goog.exportSymbol('xiv.ui.ctrl.VolumeController3D',
  * @const
  * @expose
  */
-xiv.ui.ctrl.VolumeController3D.ID_PREFIX =  'xiv.ui.ctrl.VolumeController3D';
+xiv.ui.VolumeController3D.ID_PREFIX =  'xiv.ui.VolumeController3D';
 
 
 
 /**
  * @const
  */
-xiv.ui.ctrl.VolumeController3D.DEFAULT_THRESHOLD = 10000;
+xiv.ui.VolumeController3D.DEFAULT_THRESHOLD = 10000;
 
 
 
@@ -54,7 +54,7 @@ xiv.ui.ctrl.VolumeController3D.DEFAULT_THRESHOLD = 10000;
  * @enum {string}
  * @expose
  */
-xiv.ui.ctrl.VolumeController3D.CSS_SUFFIX = {};
+xiv.ui.VolumeController3D.CSS_SUFFIX = {};
 
 
 
@@ -62,17 +62,17 @@ xiv.ui.ctrl.VolumeController3D.CSS_SUFFIX = {};
  * @param {!X.object} xObj
  * @protected
  */
-xiv.ui.ctrl.VolumeController3D.prototype.add_volumeRendering = function(xObj) {
+xiv.ui.VolumeController3D.prototype.add_volumeRendering = function(xObj) {
 
     // create
     var volumeRenderingCheckBox = this.createController( 
-	xiv.ui.ctrl.CheckboxController, 'Volume Rendering', 
+	xiv.ui.CheckboxController, 'Volume Rendering', 
 	function(e){
 	    xObj['volumeRendering'] = e.checked;
 	});
 
     // set folder
-    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, 
+    xiv.ui.XtkController.setControllerFolders(xObj, 
 						   volumeRenderingCheckBox);
 
     // store
@@ -89,7 +89,7 @@ xiv.ui.ctrl.VolumeController3D.prototype.add_volumeRendering = function(xObj) {
  * @param {!Event}
  * @private
  */
-xiv.ui.ctrl.VolumeController3D.prototype.onSliderChange_ = function(e) {
+xiv.ui.VolumeController3D.prototype.onSliderChange_ = function(e) {
     if (!goog.isDefAndNotNull(this.thresholdCtrl_)) { return }
     this.thresholdCtrl_.getXObj()['lowerThreshold'] = parseFloat(e.lower);
     this.thresholdCtrl_.getXObj()['upperThreshold'] = parseFloat(e.upper);
@@ -98,10 +98,10 @@ xiv.ui.ctrl.VolumeController3D.prototype.onSliderChange_ = function(e) {
 
 
 /**
- * @type {?xiv.ui.ctrl.TwoThumbSliderController}
+ * @type {?xiv.ui.TwoThumbSliderController}
  * @private
  */
-xiv.ui.ctrl.VolumeController3D.prototype.thresholdCtrl_ = null;
+xiv.ui.VolumeController3D.prototype.thresholdCtrl_ = null;
 
 
 
@@ -109,12 +109,12 @@ xiv.ui.ctrl.VolumeController3D.prototype.thresholdCtrl_ = null;
  * @param {!X.object} xObj
  * @protected
  */
-xiv.ui.ctrl.VolumeController3D.prototype.add_threshold = function(xObj) {
+xiv.ui.VolumeController3D.prototype.add_threshold = function(xObj) {
     //
     // create controller
     //
     var threshold = this.createController(
-	xiv.ui.ctrl.TwoThumbSliderController, 'Threshold', 
+	xiv.ui.TwoThumbSliderController, 'Threshold', 
 	this.onSliderChange_.bind(this));
 
     //
@@ -125,7 +125,7 @@ xiv.ui.ctrl.VolumeController3D.prototype.add_threshold = function(xObj) {
     //
     // set folder
     //
-    xiv.ui.ctrl.XtkController.setControllerFolders(xObj, threshold);
+    xiv.ui.XtkController.setControllerFolders(xObj, threshold);
 
     //
     // strore
@@ -144,12 +144,12 @@ xiv.ui.ctrl.VolumeController3D.prototype.add_threshold = function(xObj) {
     //
     if (lowerThresh == -Infinity){
 	lowerThresh = -1 *
-	    xiv.ui.ctrl.VolumeController3D.DEFAULT_THRESHOLD;
+	    xiv.ui.VolumeController3D.DEFAULT_THRESHOLD;
 	xObj['lowerThreshold'] = lowerThresh;
     }
 
     if (xObj['upperThreshold'] == Infinity){
-	upperThresh = xiv.ui.ctrl.VolumeController3D.DEFAULT_THRESHOLD;
+	upperThresh = xiv.ui.VolumeController3D.DEFAULT_THRESHOLD;
 	xObj['upperThreshold'] = upperThresh;
     }
   
@@ -180,6 +180,13 @@ xiv.ui.ctrl.VolumeController3D.prototype.add_threshold = function(xObj) {
     xObj['upperThreshold'] = upperThresh;
     xObj['lowerThreshold'] = lowerThresh;
 
+    thresholdSlider.getElement().style.top = '8px';
+    threshold.getValueInput().getElement().style.top = '-1px'; 
+    threshold.getExtentInput().getElement().style.top = '-1px'; 
+    threshold.getValueInput().getElement().style.left = 'calc(100% - 112px)';
+    threshold.getValueInput().getDisplayElement().style.textAlign = 'left';
+    threshold.getValueInput().getInputElement().style.textAlign = 'left';
+
     this.thresholdCtrl_ = threshold;
 }
 
@@ -189,7 +196,7 @@ xiv.ui.ctrl.VolumeController3D.prototype.add_threshold = function(xObj) {
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.VolumeController3D.prototype.add = function(xObj) {
+xiv.ui.VolumeController3D.prototype.add = function(xObj) {
     // Call superclass add
     goog.base(this, 'add', xObj);
     
@@ -203,7 +210,7 @@ xiv.ui.ctrl.VolumeController3D.prototype.add = function(xObj) {
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.VolumeController3D.prototype.updateStyle = function(xObj) {
+xiv.ui.VolumeController3D.prototype.updateStyle = function(xObj) {
     // Call superclass add
     goog.base(this, 'updateStyle');
 
@@ -215,7 +222,7 @@ xiv.ui.ctrl.VolumeController3D.prototype.updateStyle = function(xObj) {
 /**
  * @inheritDoc
  */
-xiv.ui.ctrl.VolumeController3D.prototype.disposeInternal = function() {
+xiv.ui.VolumeController3D.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
     this.thresholdCtrl_.dispose();
 }
@@ -223,20 +230,20 @@ xiv.ui.ctrl.VolumeController3D.prototype.disposeInternal = function() {
 
 
 
-goog.exportSymbol('xiv.ui.ctrl.VolumeController3D.ID_PREFIX',
-	xiv.ui.ctrl.VolumeController3D.ID_PREFIX);
-goog.exportSymbol('xiv.ui.ctrl.VolumeController3D.DEFAULT_THRESHOLD',
-	xiv.ui.ctrl.VolumeController3D.DEFAULT_THRESHOLD);
-goog.exportSymbol('xiv.ui.ctrl.VolumeController3D.CSS_SUFFIX',
-	xiv.ui.ctrl.VolumeController3D.CSS_SUFFIX);
+goog.exportSymbol('xiv.ui.VolumeController3D.ID_PREFIX',
+	xiv.ui.VolumeController3D.ID_PREFIX);
+goog.exportSymbol('xiv.ui.VolumeController3D.DEFAULT_THRESHOLD',
+	xiv.ui.VolumeController3D.DEFAULT_THRESHOLD);
+goog.exportSymbol('xiv.ui.VolumeController3D.CSS_SUFFIX',
+	xiv.ui.VolumeController3D.CSS_SUFFIX);
 goog.exportSymbol(
-    'xiv.ui.ctrl.VolumeController3D.prototype.add_volumeRendering',
-    xiv.ui.ctrl.VolumeController3D.prototype.add_volumeRendering);
-goog.exportSymbol('xiv.ui.ctrl.VolumeController3D.prototype.add_threshold',
-	xiv.ui.ctrl.VolumeController3D.prototype.add_threshold);
-goog.exportSymbol('xiv.ui.ctrl.VolumeController3D.prototype.add',
-	xiv.ui.ctrl.VolumeController3D.prototype.add);
-goog.exportSymbol('xiv.ui.ctrl.VolumeController3D.prototype.updateStyle',
-	xiv.ui.ctrl.VolumeController3D.prototype.updateStyle);
-goog.exportSymbol('xiv.ui.ctrl.VolumeController3D.prototype.disposeInternal',
-	xiv.ui.ctrl.VolumeController3D.prototype.disposeInternal);
+    'xiv.ui.VolumeController3D.prototype.add_volumeRendering',
+    xiv.ui.VolumeController3D.prototype.add_volumeRendering);
+goog.exportSymbol('xiv.ui.VolumeController3D.prototype.add_threshold',
+	xiv.ui.VolumeController3D.prototype.add_threshold);
+goog.exportSymbol('xiv.ui.VolumeController3D.prototype.add',
+	xiv.ui.VolumeController3D.prototype.add);
+goog.exportSymbol('xiv.ui.VolumeController3D.prototype.updateStyle',
+	xiv.ui.VolumeController3D.prototype.updateStyle);
+goog.exportSymbol('xiv.ui.VolumeController3D.prototype.disposeInternal',
+	xiv.ui.VolumeController3D.prototype.disposeInternal);
