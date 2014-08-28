@@ -889,8 +889,6 @@ goog.exportSymbol('xiv.ui.LevelsController.ID_PREFIX',
 	xiv.ui.LevelsController.ID_PREFIX);
 goog.exportSymbol('xiv.ui.LevelsController.CSS_SUFFIX',
 	xiv.ui.LevelsController.CSS_SUFFIX);
-goog.exportSymbol('xiv.ui.LevelsController.updateAll',
-	xiv.ui.LevelsController.updateAll);
 goog.exportSymbol('xiv.ui.LevelsController.prototype.add',
 	xiv.ui.LevelsController.prototype.add);
 goog.exportSymbol('xiv.ui.LevelsController.prototype.getControllerSet',
