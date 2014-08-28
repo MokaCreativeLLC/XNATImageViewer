@@ -109,7 +109,7 @@ xiv.ui.VolumeController.prototype.add_labelMapToggle = function(xObj) {
 	function(e){
 	    //window.console.log(e);
 	    //window.console.log('label map toggle:', xObj, xObj.labelmap);
-	    xObj.labelmap.visible = e.checked;
+	    xObj['labelmap']['visible'] = e.checked;
 	});
 
     // set folder
