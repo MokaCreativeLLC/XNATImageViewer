@@ -657,9 +657,14 @@ xiv.start.prototype.getFolderTitlesFromTreeNode_ = function(treeNode){
     var branchTitles = this.ProjectTree_.getBranchTitles(treeNode);
     var i = 0;
     goog.object.forEach(branch, function(treeNode, key){
+
+	var newTitle = branchTitles[i];
+	if (newTitle.length > 25){
+	    newTitle = goog.string.truncateMiddle(newTitle, 25);
+	}
 	branchTitles[i] = 
 	    '<font color="black"><b>' + key.toUpperCase() 
-	    + ':</b></font>&nbsp&nbsp&nbsp&nbsp&nbsp' + branchTitles[i];
+	    + ':</b></font>&nbsp&nbsp&nbsp&nbsp&nbsp' + newTitle;
 
 	//window.console.log(branchTitles[i]);
 	i++;
@@ -1317,4 +1322,3 @@ window['xiv.start.checkForWebGL'] = xiv.start.checkForWebGL;
 window['xiv.start.ModalStates'] = xiv.start.ModalStates;
 xiv.start.prototype['setServerRoot'] = xiv.start.prototype.setServerRoot;
 xiv.start.prototype['begin'] = xiv.start.prototype.begin;
-

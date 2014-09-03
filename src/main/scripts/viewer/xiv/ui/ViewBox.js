@@ -626,44 +626,10 @@ xiv.ui.ViewBox.ControllersSet = function(controller, folders){
 
 
 /**
- * Introduces a delay mechanism so we're not presented 
- * with awkward progress bar issues.
- *
- * @param {number=} opt_delay The optional delay time.  Defaults to 1000ms.
- * @param {Function=} callback The optional callback function.
- * @param {number=} opt_fadeTime Defaults to 500ms.
- * @private
- */
-xiv.ui.ViewBox.prototype.hideProgressBarPanel_ = 
-function(opt_delay, opt_callback, opt_fadeTime){
-
-    //window.console.log("HIDE PROG!");
-    this.progTimer_ = goog.Timer.callOnce(function() {
-	this.progTimer_ = null;
-	//window.console.log("CALLBACK 1");
-	this.hideSubComponent_(
-	    this.ProgressBarPanel_, 
-	    goog.isNumber(opt_fadeTime) ? opt_fadeTime : 500, 
-	    function(){
-		this.updateStyle();
-		if (goog.isDefAndNotNull(opt_callback)){
-		    //window.console.log("CALLBACK 2");
-		    opt_callback();
-		}
-	}.bind(this));
-    }.bind(this), goog.isNumber(opt_delay) ? opt_delay : 1000);
-}
-
-
-
-/**
  * @private
  */
 xiv.ui.ViewBox.prototype.onRenderEndDemo_ = function(){ 
-    //
-    // Close Info
-    //
-    this.fireToggleButton(xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO);     
+
 }
 
 
@@ -710,6 +676,15 @@ xiv.ui.ViewBox.prototype.onRenderEndLive_ = function(){
 	this.setLayout(goog.string.toTitleCase(
 	    this.Renderer_.getSelectedVolume()[X.volume.ORIENTATION_KEY]));
     } 
+
+
+    //
+    // Open Info, Histogram
+    //
+    goog.Timer.callOnce(function(){
+	this.fireToggleButton(xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO);
+	this.fireToggleButton(this.InteractorHandler_.getDialogKey('levels')); 
+    }.bind(this), 700);
 }
 
 
@@ -769,13 +744,9 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     
     var fadeIns = [
 	this.menus_.LEFT,
-	this.LayoutMenu_.getElement(), 
-	this.LayoutHandler_.getElement()];
+	this.LayoutMenu_.getElement()];
+    fadeIns.push(this.LayoutHandler_.getElement()); 
 
-    fadeIns = goog.array.concat(
-	fadeIns, 
-	this.Dialogs_.getVisibleDialogElements()
-    );
 
     var fadeOuts = [];
     fadeOuts.push(this.ProgressBarPanel_.getElement());
@@ -788,6 +759,11 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 	this.onRenderEndDemo_();
     }
     else {
+   
+	fadeIns = goog.array.concat(
+	    fadeIns, 
+	    this.Dialogs_.getVisibleDialogElements()
+	);
 	this.onRenderEndLive_();
 	if (!this.Renderer_.getSelectedVolume()[X.volume.SINGLE_FRAME_SCAN]){
 	    fadeIns = goog.array.concat(
@@ -829,42 +805,31 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 	fadeElts,
 	startOps, endOps, 400,  null, null, function(){
 
-	//
-	// Set progress bar value to 0
-	//
-	this.ProgressBarPanel_.setValue(0);
-
 	    //
-	    // Show the progress bar
+	    // Set progress bar value to 0
 	    //
+	    this.ProgressBarPanel_.setValue(0);
 	    this.hideSubComponent_(this.ProgressBarPanel_, 0);
 
-	//
-	// Dispatch loaded
-	//
-	this.dispatchEvent(xiv.ui.ViewBox.EventType.VIEWABLE_LOADED);
+	    //
+	    // Dispatch loaded
+	    //
+	    this.dispatchEvent(xiv.ui.ViewBox.EventType.VIEWABLE_LOADED);
 
-	//
-	// unhighlight
-	//
-	this.unhighlight();
+	    //
+	    // Unsuspend
+	    //
+	    this.suspendHighFrameCountCheck_ = false;
 
-	//
-	// Unsuspend
-	//
-	this.suspendHighFrameCountCheck_ = false;
+	    //
+	    // Update style
+	    //
+	    this.updateStyle();
 
-	//
-	// Update style
-	//
-	this.updateStyle();
-
-	//
-	// Run resize callback to be safe.
-	//
-	this.onLayoutResize_();
-
-
+	    //
+	    // Run resize callback to be safe.
+	    //
+	    this.onLayoutResize_();
     }.bind(this));
 }
 
@@ -985,7 +950,7 @@ xiv.ui.ViewBox.prototype.loadViewableTree_ = function(ViewableTree){
 	//
 	// Show the Viewable group menu
 	//
-	this.showSubComponent_(this.ViewableGroupMenu_, 400);
+	this.showSubComponent_(this.ViewableGroupMenu_, 200);
     }
     else {
 
@@ -1167,12 +1132,12 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     //
     // Hide the menus
     //
-    this.hideSubComponent_(this.ViewableGroupMenu_, 400);
+    //this.hideSubComponent_(this.ViewableGroupMenu_, 200);
         
     //
     // Show the progress bar
     //
-    this.showSubComponent_(this.ProgressBarPanel_, 0);
+    this.showSubComponent_(this.ProgressBarPanel_, 200);
 
     //
     // Load the Viewable tree and exit out if we have to present
@@ -1204,10 +1169,11 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
 		       xiv.vis.RenderEngine.EventType.RENDER_START, 
 		       this.onRenderStart_.bind(this));
 
-    goog.events.listenOnce(this.Renderer_, 
-		       xiv.vis.RenderEngine.EventType.RENDER_END, 
-		       this.onRenderEnd_.bind(this));
-
+    goog.events.listenOnce(
+	this.Renderer_, 
+	xiv.vis.RenderEngine.EventType.RENDER_END,
+	this.onRenderEnd_.bind(this))
+    
     //
     // Listen for RENDERING event (we'll unlisten on 
     // for it in the RENDER_END callback)
@@ -1222,8 +1188,11 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     //
     // Do a zip download+render for scans (Viewer handles downloading)
     //
-    if (ViewableSet.getCategory().toLowerCase() == 'scans') {	
-	this.renderScanViaZipDownload_(ViewableSet);
+    if (ViewableSet.getCategory().toLowerCase() == 'scans') {
+	this.setProgressBarPct_(0);	
+	this.showSubComponent_(this.ProgressBarPanel_, 200, function(){
+	    this.renderScanViaZipDownload_(ViewableSet);
+	}.bind(this));
 	return;
     } else {
 
@@ -1272,11 +1241,7 @@ xiv.ui.ViewBox.prototype.inventoryViewables_ = function(ViewableSet){
  * @private
  */
 xiv.ui.ViewBox.prototype.renderScanViaZipDownload_ = function(ViewableSet){
-    //
-    // Show a downloading state in the progress bar...
-    //
-    this.showSubComponent_(this.ProgressBarPanel_, 0);
-    this.setProgressBarPct_(0);
+
     this.zipDownloading_ = true;
 
 
@@ -1392,7 +1357,7 @@ xiv.ui.ViewBox.prototype.clear_ = function(){
     //
     // Hide the progress bar panels
     //
-    this.hideSubComponent_(this.ProgressBarPanel_);
+    this.hideSubComponent_(this.ProgressBarPanel_, 200);
     
     //
     // Dispose the load components
@@ -1528,33 +1493,39 @@ xiv.ui.ViewBox.prototype.initLoadComponents_ = function() {
  */
 xiv.ui.ViewBox.prototype.hideSubComponent_ = 
 function(subComponent, opt_fadeTime, opt_callback) {
+
+    var subElt = subComponent.getElement();
+    //window.console.log("HIDE SUB");
     if (!goog.isDefAndNotNull(subComponent)) { return }
 
     opt_fadeTime = (goog.isNumber(opt_fadeTime) && opt_fadeTime >=0) ? 
 	opt_fadeTime : 0;
 
     var onOut = function(){
-	subComponent.getElement().style.visibility = 'hidden';
-	goog.dom.removeNode(subComponent.getElement());
-
+	//window.console.log('ON OUT!');
+	subElt.style.visibility = 'hidden';
+	goog.dom.removeNode(subElt);
 	if (goog.isDefAndNotNull(subComponent.getBackground)){
 	   goog.dom.removeNode(subComponent.getBackground());
 	}
-	//subComponent.getElement().style.zIndex = '-1';
+	//subElt.style.zIndex = '-1';
 	if (opt_callback) { opt_callback() };
     }
 
-    if ((subComponent.getElement().style.visibility == 'hidden') ||
+    if ((subElt.style.visibility == 'hidden') ||
 	(opt_fadeTime == 0)) { 
 	onOut();
 	return;
     } 
-    nrg.fx.fadeOut(subComponent.getElement(), opt_fadeTime, onOut);
 
-    if (goog.isDefAndNotNull(subComponent.getBackground)){
-	nrg.fx.fadeOut(subComponent.getBackground(), opt_fadeTime, onOut);
+    var faders = [subElt];
+    var startOps = [subElt.style.opacity];
+    if (goog.isDefAndNotNull(subComponent.getBackground) &&
+	goog.isDefAndNotNull(subComponent.getBackground())){
+	faders.push(subComponent.getBackground());
+	startOps.push(subComponent.getBackground().style.opacity);
     }
-  
+    nrg.fx.parallelFade(faders, startOps, 0, opt_fadeTime, null, null, onOut);  
 }
 
 
@@ -1569,30 +1540,33 @@ function(subComponent, opt_fadeTime, opt_callback) {
 xiv.ui.ViewBox.prototype.showSubComponent_ = function(subComponent, 
 						      opt_fadeTime,
 						      opt_callback) {
+    var subElt = subComponent.getElement();
     opt_fadeTime = (goog.isNumber(opt_fadeTime) && opt_fadeTime >=0) ? 
 	opt_fadeTime : 0;
 
-    subComponent.getElement().style.opacity = '0';
-    subComponent.getElement().style.visibility = 'visible';
+    subElt.style.opacity = '0';
+    subElt.style.visibility = 'visible';
 
-    goog.dom.append(this.viewFrameElt_, subComponent.getElement());
+    goog.dom.append(this.viewFrameElt_, subElt);
+    if (goog.isDefAndNotNull(subComponent.getBackground)){
+	goog.dom.append(this.viewFrameElt_, subComponent.getBackground());
+    }
 
     if (opt_fadeTime == 0) { 
-	subComponent.getElement().style.opacity = '1';
+	subElt.style.opacity = '1';
 	if (opt_callback) { opt_callback() };
 	return;
     } 
 
-    nrg.fx.fadeIn(subComponent.getElement(), opt_fadeTime, function(){
-	if (opt_callback) { opt_callback() };
-    });
-
-    if (goog.isDefAndNotNull(subComponent.getBackground)){
-	goog.dom.append(this.viewFrameElt_, subComponent.getBackground());
-	nrg.fx.fadeIn(subComponent.getBackground(), opt_fadeTime, function(){
-	    if (opt_callback) { opt_callback() };
-	});
+    var faders = [subElt];
+    var startOps = [subElt.style.opacity];
+    if (goog.isDefAndNotNull(subComponent.getBackground) &&
+	goog.isDefAndNotNull(subComponent.getBackground())){
+	faders.push(subComponent.getBackground());
+	startOps.push(subComponent.getBackground().style.opacity);
     }
+    nrg.fx.parallelFade(faders, startOps, 1, opt_fadeTime, null, null, 
+			opt_callback);
 }
 
 
@@ -1605,7 +1579,7 @@ xiv.ui.ViewBox.prototype.initProgressBarPanel_ = function(){
     this.ProgressBarPanel_ = new xiv.ui.ProgressBarPanel(); 
     goog.dom.append(this.viewFrameElt_, this.ProgressBarPanel_.getElement());
     this.ProgressBarPanel_.getElement().style.opacity = 0;
-    this.hideSubComponent_(this.ProgressBarPanel_);
+    this.hideSubComponent_(this.ProgressBarPanel_, 0);
 }
 
 
@@ -2091,8 +2065,6 @@ xiv.ui.ViewBox.prototype.initViewableGroupMenu_ = function(){
     this.ViewableGroupMenu_.render(this.viewFrameElt_);
 
     goog.dom.append(this.viewFrameElt_, this.ViewableGroupMenu_.getElement());
-    goog.dom.append(this.viewFrameElt_, 
-		    this.ViewableGroupMenu_.getBackground());
 
     goog.dom.classes.add(this.ViewableGroupMenu_.getElement(), 
 			 xiv.ui.ViewBox.CSS.VIEWABLEGROUPMENU)
@@ -2100,13 +2072,17 @@ xiv.ui.ViewBox.prototype.initViewableGroupMenu_ = function(){
     goog.events.listen(this.ViewableGroupMenu_, 
 		       xiv.ui.ViewableGroupMenu.EventType.VIEWSELECTED, 
 		       function(e){
-			   //window.console.log("VIEW SELECT", e);
-
-			   this.load(this.ViewableGroups_[
-			       goog.getUid(e.thumbnail)], false)
+			   //window.console.log("CATCH VIEW SELECT", e);
+			   this.hideSubComponent_(
+			       this.ViewableGroupMenu_, 200,
+			       function(){
+				   //window.console.log('Faded, now load');
+				   this.load(this.ViewableGroups_[
+				       goog.getUid(e.thumbnail)], false);
+			       }.bind(this));
 		       }.bind(this))
 
-    this.hideSubComponent_(this.ViewableGroupMenu_);
+    this.hideSubComponent_(this.ViewableGroupMenu_, 0);
 }
 
 

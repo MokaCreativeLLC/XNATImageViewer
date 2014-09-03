@@ -714,10 +714,14 @@ nrg.ui.Dialog.prototype.resizeToContents = function() {
     //
     var oldOverflow = dialogElt.style.overflow;
     dialogElt.style.overflow = 'visible';
+
+    var previousOpacity = this.getElement().style.opacity;
+    var prevVisibility = this.getElement().style.visibility;
+    this.getElement().style.opacity = 1;
     
 
     //
-    // Loop through all of the text elements
+    // WIDTH: Loop through all of the text elements
     //
     if (goog.isDefAndNotNull(this.texts_)){
 	goog.array.forEach(this.texts_, function(textElt) {
@@ -739,7 +743,7 @@ nrg.ui.Dialog.prototype.resizeToContents = function() {
 	    //
 	    goog.style.setSize(textElt, scrollWidth, scrollHeight);
 	})
-    }    
+    } 
 
     //
     // Re-apply the oldOverflow if needed, otherwise, remove the
@@ -751,14 +755,22 @@ nrg.ui.Dialog.prototype.resizeToContents = function() {
 	dialogElt.style.overflow = oldOverflow;
     }
 
+
+    //
+    // We also need to take into account non text elements
+    //
+    var size = goog.style.getSize(contentElt);
+    var width = maxWidth  > size.width ? maxWidth : size.width;
+    var height = maxHeight > size.height ? maxHeight : size.height; 
+    //window.console.log(size, width, height);
     //
     // IMPORTANT! Set the size of the contentElt.
     //
-    goog.style.setSize(contentElt, maxWidth, maxHeight);
-
-    var size = goog.style.getSize(contentElt);
-//    window.console.log(size);
-    goog.style.setSize(dialogElt, size.width + 20, size.height + 20);
+    goog.style.setSize(contentElt, width, height);
+    //window.console.log(goog.style.getSize(contentElt));
+    goog.style.setSize(dialogElt, width + 20, height + 20);
+    this.getElement().style.opacity = previousOpacity;
+    this.getElement().style.visibility = prevVisibility;
 }
 
 

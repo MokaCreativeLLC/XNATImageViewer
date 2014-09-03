@@ -54,7 +54,7 @@
 
 .xiv-ui-viewboxdialogs-infodialog,
 .xiv-ui-viewboxdialogs-infodialog-title { 
-    transition-duration: .3s;
+    transition-duration: .15s;
     transition-timing-function: ease-out;    
 }
 

@@ -105,12 +105,7 @@ xiv.ui.VolumeController.prototype.add_labelMapToggle = function(xObj) {
 
     // create
     var labelMapCheckBox = this.createController( 
-	xiv.ui.CheckboxController, 'Show Label Map', 
-	function(e){
-	    //window.console.log(e);
-	    //window.console.log('label map toggle:', xObj, xObj.labelmap);
-	    xObj['labelmap']['visible'] = e.checked;
-	});
+	xiv.ui.CheckboxController, 'Show Label Map');
 
     // set folder
     xiv.ui.XtkController.setControllerFolders(xObj, 
@@ -121,7 +116,7 @@ xiv.ui.VolumeController.prototype.add_labelMapToggle = function(xObj) {
     labelMapCheckBox.setXObj(xObj);
 
     // set defaults
-    labelMapCheckBox.getComponent().setChecked(false);
+    labelMapCheckBox.getComponent().setChecked(true);
 }
 
 

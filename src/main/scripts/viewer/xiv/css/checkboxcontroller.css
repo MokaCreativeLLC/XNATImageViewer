@@ -1,5 +1,5 @@
 .xiv-ui-checkboxcontroller {
-    
+        outline: none;
 }
 
 
@@ -8,4 +8,5 @@
     position: absolute;
     top: 0px;
     left: 50%;
+    outline: none;
 }
