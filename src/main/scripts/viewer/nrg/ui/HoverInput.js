@@ -98,6 +98,11 @@ nrg.ui.HoverInput.prototype.inputHovered_ = false;
 nrg.ui.HoverInput.prototype.enabled_ = true;
 
 
+/**
+ * @param {!string}
+ * @public
+ */
+nrg.ui.HoverInput.prototype.displaySuffix_ = '';
 
 
 /**
@@ -130,7 +135,7 @@ nrg.ui.HoverInput.prototype.setValue = function(num){
  */
 nrg.ui.HoverInput.prototype.getValue = function() {
     if (!goog.isDefAndNotNull(this.inputBox)) { return };
-    return this.inputBox.value;
+    return parseInt(this.inputBox.value);
 }
 
 
@@ -141,6 +146,7 @@ nrg.ui.HoverInput.prototype.getValue = function() {
  */
 nrg.ui.HoverInput.prototype.setMaximum = function(num){
     if (!goog.isDefAndNotNull(this.inputBox)){return};
+
     this.inputBox.max = num;
     this.updateValue();
 }
@@ -198,7 +204,7 @@ nrg.ui.HoverInput.prototype.setStep = function(step){
  */
 nrg.ui.HoverInput.prototype.getStep = function(){
     if (!goog.isDefAndNotNull(this.inputBox)){return};
-    return this.inputBox.step;
+    return  this.inputBox.step;
 }
 
 
@@ -265,7 +271,8 @@ nrg.ui.HoverInput.prototype.alignDisplayElement = function(){
  */
 nrg.ui.HoverInput.prototype.updateValue = 
 function(){
-    this.displayElt.innerHTML = this.inputBox.value;
+    var value = this.inputBox.value;
+    this.displayElt.innerHTML = value.toString() + this.displaySuffix_;
     this.alignDisplayElement();
 }
 
@@ -317,10 +324,13 @@ function(){
     // Input box
     //
     this.inputBox = goog.dom.createDom('input');
-    this.inputBox.type = 'number';  
+    this.inputBox.type = 'number';
+  
     this.inputBox.step = 1;
     this.inputBox.min = 0;
-    this.inputBox.value = 0;   
+    this.inputBox.max = 100;
+    this.inputBox.value = 100;   
+
     goog.dom.appendChild(this.getElement(), this.inputBox);
     goog.dom.classes.add(this.inputBox,
         nrg.ui.HoverInput.CSS.INPUT_BOX);
@@ -367,6 +377,16 @@ function(parentElement) {
 
 
 /**
+ * @param {!string}
+ * @public
+ */
+nrg.ui.HoverInput.prototype.setDisplaySuffix = function(suffix) {
+    this.displaySuffix_ = suffix;
+}
+
+
+
+/**
 * @inheritDoc
 */
 nrg.ui.HoverInput.prototype.disposeInternal = 
@@ -374,6 +394,7 @@ function(){
     goog.base(this, 'disposeInternal');
     delete this.inputHovered_;
     delete this.enabled_;
+    delete this.displaySuffix_;
 
     if (this.inputBox) {
 	goog.events.removeAll(this.inputBox);
@@ -451,6 +472,9 @@ goog.exportSymbol(
 goog.exportSymbol(
     'nrg.ui.HoverInput.prototype.getDisplayElement',
     nrg.ui.HoverInput.prototype.getDisplayElement);
+goog.exportSymbol(
+    'nrg.ui.HoverInput.prototype.setDisplaySuffix',
+    nrg.ui.HoverInput.prototype.setDisplaySuffix);
 goog.exportSymbol(
     'nrg.ui.HoverInput.prototype.render',
     nrg.ui.HoverInput.prototype.render);

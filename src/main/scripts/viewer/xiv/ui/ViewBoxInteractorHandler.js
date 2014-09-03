@@ -2494,10 +2494,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
     //
     //this.ViewBox_.fireToggleButton(this.dialogKeys_['levels']);
     
-    //
-    // Move to corner
-    //
-    levelDia.moveToCorner('right', 'top', 4, 50);
+
 
     //
     // Shorten the header labels to 10 characters
@@ -2560,10 +2557,20 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
     this.levels_.clipToCB.getElement().style.left = '10px';
     this.levels_.clipToCB.getElement().style.top = '25px';
 
+
+
     //
     // Set the clipToCB to false
     //
     this.levels_.clipToCB.setChecked(false);
+
+
+    //
+    // Move to corner
+    //
+    this.ViewBox_.fireToggleButton(this.dialogKeys_['levels']);
+    levelDia.moveToCorner('right', 'top', 10, 40);
+    this.ViewBox_.fireToggleButton(this.dialogKeys_['levels']);
 }
 
 

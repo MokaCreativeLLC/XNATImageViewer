@@ -302,6 +302,7 @@ nrg.ui.Dialog.prototype.applyFadeTransitions = function() {
  */
 nrg.ui.Dialog.prototype.moveToCorner = 
 function(cornerX, cornerY, opt_adderX, opt_adderY) {
+
     var dialogElt = this.getElement();
     var parentSize = goog.style.getSize(dialogElt.parentNode);
     var dialogSize = goog.style.getSize(dialogElt);
@@ -310,7 +311,7 @@ function(cornerX, cornerY, opt_adderX, opt_adderY) {
     opt_adderY = goog.isDefAndNotNull(opt_adderY) ? opt_adderY : 0;
 
     if (cornerX == 'left'){
-	dialogElt.style.left = 0 + opt_adderX + 'px';
+	dialogElt.style.left = (0 + opt_adderX).toString() + 'px';
     }
     else if (cornerX == 'right'){
 	//window.console.log(dialogElt.parentNode, parentSize);
@@ -319,7 +320,7 @@ function(cornerX, cornerY, opt_adderX, opt_adderY) {
     }
 
     if (cornerY == 'top'){
-	dialogElt.style.top = 0 + opt_adderY + 'px';
+	dialogElt.style.top = (0 + opt_adderY).toString() + 'px';
     }
 }
 

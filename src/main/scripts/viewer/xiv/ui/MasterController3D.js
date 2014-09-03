@@ -126,10 +126,7 @@ xiv.ui.XtkController.prototype.add_masterOpacity = function(xObj) {
 
     // store
     //window.console.log("***********", masterOpacity);
-    this.masterControllers.push(masterOpacity);
-
-    // set defaults
-    masterOpacity.getComponent().setValue(1);
+    this.masterControllers.push(masterOpacity);    
 }
 
 

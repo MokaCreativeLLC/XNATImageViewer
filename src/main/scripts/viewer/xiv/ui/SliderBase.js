@@ -64,7 +64,7 @@ xiv.ui.SliderBase.CSS_SUFFIX = {
  * @type {number}
  * @protected
  */
-xiv.ui.SliderBase.prototype.displayDecimals = 2;
+xiv.ui.SliderBase.prototype.displayDecimals = 0;
 
 
 
@@ -96,6 +96,16 @@ xiv.ui.SliderBase.prototype.setDisplayDecimals = function(num){
 
 
 /**
+ * @param {!string}
+ * @public
+ */
+xiv.ui.SliderBase.prototype.setDisplaySuffix = function(suffix) {
+    this.valueInput.setDisplaySuffix(suffix);
+}
+
+
+
+/**
  * @inheritDoc
  */
 xiv.ui.SliderBase.prototype.render = function(opt_parentElement) {
@@ -113,10 +123,10 @@ xiv.ui.SliderBase.prototype.createSlider = function() {
     this.setComponent(this.slider);
 
     // Inits
+    this.slider.setStep(1);
     this.slider.setMinimum(0);
-    this.slider.setMaximum(1);
-    this.slider.setStep(.01);
-    this.slider.setValue(1);
+    this.slider.setMaximum(100);
+    this.slider.setValue(100);
 
     // Classes
     goog.dom.classes.add(this.slider.getElement(), 
@@ -177,6 +187,10 @@ xiv.ui.SliderBase.prototype.onValueInput_ = function(e){
 
     window.console.log("INPUT", e);
 
+    window.console.log(this.valueInput.getStep());
+    window.console.log(this.valueInput.getMaximum());
+    window.console.log(this.valueInput.getMinimum());
+    window.console.log(this.valueInput.getValue());
     var val = parseFloat(this.valueInput.getValue());
     val = goog.math.clamp(val, this.slider.getMinimum(),
 			  this.slider.getMaximum());
@@ -328,16 +342,16 @@ xiv.ui.SliderBase.prototype.syncInputToSlider = function(input) {
     //
     // Sync the input box with the slider
     //
-    if (this.slider.getStep() !== input.getStep()){
+    if (this.slider.getStep() != input.getStep()){
 	input.setStep(this.slider.getStep());
     }
-    if (this.slider.getMinimum() !== input.getMinimum()) {
+    if (this.slider.getMinimum() != input.getMinimum()) {
 	input.setMinimum(this.slider.getMinimum());
     }
-    if (this.slider.getMaximum() !== input.getMaximum()) {
+    if (this.slider.getMaximum() != input.getMaximum()) {
 	input.setMaximum(this.slider.getMaximum());
     }
-    if (this.slider.getValue() !== input.getValue()) {
+    if (this.slider.getValue() != input.getValue()) {
 	input.setValue(this.slider.getValue());
     }
 }
@@ -473,6 +487,11 @@ goog.exportSymbol(
 goog.exportSymbol(
     'xiv.ui.SliderBase.prototype.refresh',
     xiv.ui.SliderBase.prototype.refresh);
+
+
+goog.exportSymbol(
+    'xiv.ui.SliderBase.prototype.setDisplaySuffix',
+    xiv.ui.SliderBase.prototype.setDisplaySuffix);
 
 
 goog.exportSymbol('xiv.ui.SliderBase.prototype.disposeInternal',
