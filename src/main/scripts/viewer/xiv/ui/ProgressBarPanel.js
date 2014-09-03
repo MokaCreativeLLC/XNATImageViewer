@@ -8,6 +8,7 @@ goog.require('goog.ui.ProgressBar');
 goog.require('goog.dom');
 goog.require('goog.string');
 goog.require('goog.dom.classes');
+goog.require('goog.structs.Queue');
 
 // nrg
 goog.require('nrg.ui.Component');
@@ -41,6 +42,19 @@ xiv.ui.ProgressBarPanel = function() {
     /**
      * @type {!Element}
      * @private
+     */
+    this.progThumb_ = goog.dom.createDom('div', {
+	'id': xiv.ui.ProgressBarPanel.ID_PREFIX + '_ProgBarThumb_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.ProgressBarPanel.CSS.THUMB
+    });
+    goog.dom.append(this.progBarHolder_, this.progThumb_);
+
+
+
+    /**
+     * @type {!Element}
+     * @private
      */	
     this.labelHolder_ = goog.dom.createDom('div', {
 	'id': xiv.ui.ProgressBarPanel.ID_PREFIX + '_LabelHolder_' + 
@@ -48,19 +62,6 @@ xiv.ui.ProgressBarPanel = function() {
 	'class': xiv.ui.ProgressBarPanel.CSS.LABELHOLDER
     });
     goog.dom.append(this.getElement(), this.labelHolder_);
-
-
-    /**
-     * @type {goog.ui.ProgressBar}
-     * @private
-     */
-    this.ProgressBar_ = new goog.ui.ProgressBar();
-    this.ProgressBar_.decorate(this.progBarHolder_);
-
-
-    goog.dom.classes.add(goog.dom.getElementByClass('progress-bar-thumb', 
-						    this.progBarHolder_), 
-			 xiv.ui.ProgressBarPanel.CSS.THUMB);
 
 
     /**
@@ -72,20 +73,7 @@ xiv.ui.ProgressBarPanel = function() {
 	    goog.string.createUniqueString(),
 	'class': xiv.ui.ProgressBarPanel.CSS.ENDNODE
     });
-    goog.dom.append(this.progBarHolder_, this.endNode_);
-
-
-    /**
-     * @type {!Element}
-     * @private
-     */	
-    this.glowNode_ = goog.dom.createDom('div', {
-	'id': xiv.ui.ProgressBarPanel.ID_PREFIX + '_GlowNode_' + 
-	    goog.string.createUniqueString(),
-	'class': xiv.ui.ProgressBarPanel.CSS.GLOWNODE
-    });
-    goog.dom.append(this.endNode_, this.glowNode_);
-
+    goog.dom.append(this.progThumb_, this.endNode_);
 }
 goog.inherits(xiv.ui.ProgressBarPanel, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.ProgressBarPanel', xiv.ui.ProgressBarPanel);
@@ -120,9 +108,36 @@ xiv.ui.ProgressBarPanel.CSS_SUFFIX = {
     PROGRESSBAR: 'progressbar',
     LABELHOLDER: 'labelholder',
     ENDNODE: 'endnode',
+    ENDNODE_GLOW: 'endnode-glow',
     GLOWNODE: 'glownode',
 }
 
+
+/**
+ * Event types.
+ * @enum {string}
+ * @public
+ */
+xiv.ui.ProgressBarPanel.EventType = {
+    ANIM_END: goog.events.getUniqueId('anim-end')
+}
+
+
+
+
+/**
+ * @return {!number}
+ * @private
+ */
+xiv.ui.ProgressBarPanel.prototype.value_= 0;
+
+
+
+/**
+ * @return {?goog.structs.Queue}
+ * @private
+ */
+xiv.ui.ProgressBarPanel.prototype.valueQueue_= null;
 
 
 
@@ -159,7 +174,7 @@ xiv.ui.ProgressBarPanel.prototype.setLabel = function(opt_label) {
 xiv.ui.ProgressBarPanel.prototype.showValue = function(opt_showValue) {
     this.showValue_ = goog.isDefAndNotNull(opt_showValue) && 
 	(opt_showValue === false) ? false : true;
-    this.setValue(this.ProgressBar_.getValue());
+    this.setValue(this.value_);
 }
 
 
@@ -167,30 +182,31 @@ xiv.ui.ProgressBarPanel.prototype.showValue = function(opt_showValue) {
  * @param {!number} val
  */
 xiv.ui.ProgressBarPanel.prototype.setValue = function(val) {
-    this.ProgressBar_.setValue(val);
     
-    var progBarElt = this.ProgressBar_.getElement().childNodes[0];
-    //
-    // Safety - to make sure that the progress bar is always the blue
-    //
-    if (!goog.dom.classes.has(progBarElt, 
-			      xiv.ui.ProgressBarPanel.CSS.PROGRESSBAR)){
-	goog.dom.classes.add(progBarElt, 
-			     xiv.ui.ProgressBarPanel.CSS.PROGRESSBAR);
+    if (val < 0 || val > 100) { return }
+    this.value_ = val;
+    this.progThumb_.style.width = 'calc(' + val.toString() + '% + 4px)';
+    
+    if (this.value_ == 0 && 
+	goog.dom.classes.has(this.endNode_, 
+			 xiv.ui.ProgressBarPanel.CSS.ENDNODE_GLOW)){
+	goog.dom.classes.remove(this.endNode_,
+			     xiv.ui.ProgressBarPanel.CSS.ENDNODE_GLOW);
     }
-
-    this.endNode_.style.left = 
-	'calc(' +  progBarElt.style.width + ' - 1px)';
-    
+    else if (this.value_ > 90 && 
+       !goog.dom.classes.has(this.endNode_, 
+			 xiv.ui.ProgressBarPanel.CSS.ENDNODE_GLOW)){
+	goog.dom.classes.add(this.endNode_,
+			     xiv.ui.ProgressBarPanel.CSS.ENDNODE_GLOW);
+    }
     this.labelHolder_.innerHTML = this.labelText_;
     if (this.showValue_){
 	if (this.labelText_.length > 0){
 	    this.labelHolder_.innerHTML += ' ';
 	}
 	this.labelHolder_.innerHTML += 
-	this.ProgressBar_.getValue().toString() + '%';
+	this.value_.toString() + '%';
     }
-    goog.dom.classes.remove(this.progBarHolder_, 'progress-bar-horizontal');
 }
 
 
@@ -199,7 +215,7 @@ xiv.ui.ProgressBarPanel.prototype.setValue = function(val) {
  * @return {!number}
  */
 xiv.ui.ProgressBarPanel.prototype.getValue = function() {
-    return this.ProgressBar_.getValue();
+    return this.value_;
 }
 
 
@@ -210,9 +226,9 @@ xiv.ui.ProgressBarPanel.prototype.getValue = function() {
 xiv.ui.ProgressBarPanel.prototype.disposeInternal = function() {
     goog.base(this, 'disposeInternal');
     
-    if (goog.isDefAndNotNull(this.ProgressBar_)){
-	this.ProgressBar_.dispose();
-	delete this.ProgressBar_;
+    if (goog.isDefAndNotNull(this.progThumb_)){
+	goog.dom.removeNode(this.progThumb_);
+	delete this.progThumb_;
     }
 
     if (goog.isDefAndNotNull(this.progBarHolder_)){
@@ -230,6 +246,10 @@ xiv.ui.ProgressBarPanel.prototype.disposeInternal = function() {
 	delete this.endNode_;
     }
 
+    if (goog.isDefAndNotNull(this.valueQueue_)){
+	goog.object.clear(this.valueQueue_);
+	delete this.valueQueue_;
+    }
     this.showValue_ = null;
     this.labelText_ = null;
 }

@@ -109,6 +109,7 @@ xiv.utils.ErrorCatcher.isCompatible = function(){
  */
 xiv.utils.ErrorCatcher.createDocumentErrorDialog_ = 
 function(errorStrings, opt_subStrings){
+    //window.console.log("\n\n\nCENTER");
     if (!goog.isArray(errorStrings)){
 	errorStrings = [errorStrings];
     }
@@ -134,12 +135,12 @@ function(errorStrings, opt_subStrings){
     
     ErrorDialog.setTitle('XImgView Error');
     ErrorDialog.setVisible(true);
-    //ErrorDialog.resizeToContents();
 
+    //window.console.log("\n\n\nCENTER");
 
 
     ErrorDialog.getElement().style.position = 'fixed'
-    //ErrorDialog.center();
+    ErrorDialog.center();
     ErrorDialog.getElement().style.opacity = 0;
     nrg.fx.fadeIn(ErrorDialog.getElement(), 400);
 
@@ -152,6 +153,9 @@ function(errorStrings, opt_subStrings){
     ErrorDialog.getElement().style.left = 'calc(50% - ' + size.width/2 + 'px)';
 
 
+    ErrorDialog.resizeToContents();
+    ErrorDialog.center();
+    //window.console.log("\n\n\nCENTER");
     //
     // Delete the dialog on close or OK press
     //
@@ -478,13 +482,12 @@ function(opt_errorMsg, opt_url, opt_lineNumber){
     this.ErrorDialog_.setModal(true);
 
     this.ErrorDialog_.setVisible(true);
-    this.ErrorDialog_.getElement().style.opacity = 0;
-
     this.ErrorDialog_.resizeToContents();
     this.ErrorDialog_.center();
+    //this.ErrorDialog_.getElement().style.opacity = 0;
 
 
-    nrg.fx.fadeIn(this.ErrorDialog_.getElement(), 200)
+    //nrg.fx.fadeIn(this.ErrorDialog_.getElement(), 200)
 
 
     //

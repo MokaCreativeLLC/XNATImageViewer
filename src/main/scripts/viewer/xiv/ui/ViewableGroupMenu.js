@@ -110,18 +110,22 @@ xiv.ui.ViewableGroupMenu.prototype.render = function(parentElement) {
 	    goog.string.createUniqueString(),
     });
     goog.dom.classes.add(this.background_, this.constructor.CSS.BACKGROUND);
-    if (goog.isDefAndNotNull(this.getElement().parentNode)){
-	goog.dom.append(this.getElement().parentNode, this.background_);
+    if (goog.isDefAndNotNull(this.getElement().parentNode) || 
+	goog.isDefAndNotNull(parentElement)){
+	var parent = parentElement || this.getElement().parentNode;
+	//window.console.log("APRENT", parent);
+	goog.dom.append(parent, this.background_);
     } else {
 	goog.dom.append(this.getElement(), this.background_);
     }
+    //window.console.log(this.background_);
 
     this.headerText_ = goog.dom.createDom('div', {
 	'id': this.constructor.ID_PREFIX + '_HeaderText_' + 
 	    goog.string.createUniqueString(),
 	'class': xiv.ui.ViewableGroupMenu.CSS.HEADER
     });
-    this.headerText_.innerHTML = '<b> Select View <b>';
+    this.headerText_.innerHTML = '<b> Select Slicer Scene View <b>';
     goog.dom.append(this.getElement(), this.headerText_);
 
     if (!goog.isDefAndNotNull(this.ThumbnailGallery_)){
@@ -221,13 +225,16 @@ xiv.ui.ViewableGroupMenu.prototype.reset = function () {
  * @private
  */
 xiv.ui.ViewableGroupMenu.prototype.setThumbnailOnClick_ = function (thumbnail) {
+
     goog.events.listen(thumbnail, nrg.ui.Thumbnail.EventType.CLICK, 
     function(e){
-	//window.console.log("CLICK!");
-	this.dispatchEvent({
-	    type: xiv.ui.ViewableGroupMenu.EventType.VIEWSELECTED,
-	    thumbnail: thumbnail
-	});			   
+	e.target.pulse(300, function(){
+	    //window.console.log("\nDISPATCH VIEW SELECT");
+	    this.dispatchEvent({
+		type: xiv.ui.ViewableGroupMenu.EventType.VIEWSELECTED,
+		thumbnail: thumbnail
+	    });
+	}.bind(this))			   
     }.bind(this))
 }
 

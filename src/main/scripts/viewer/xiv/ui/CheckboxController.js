@@ -50,7 +50,8 @@ xiv.ui.CheckboxController = function(){
 
     // Events
     goog.events.listen(this.checkbox_, goog.events.EventType.CHANGE, 
-    		       this.dispatchComponentEvent.bind(this))
+		       this.onChange_.bind(this));
+    		       
 }
 
 goog.inherits(xiv.ui.CheckboxController, xiv.ui.XtkController);
@@ -92,9 +93,18 @@ xiv.ui.CheckboxController.prototype.refresh = function(){
  * @param {!boolean} checked
  * @public
  */
-xiv.ui.CheckboxController.prototype.setChecked = function(checked){
+xiv.ui.CheckboxController.prototype.setChecked = 
+function(checked){
     this.getComponent().setChecked(checked);
-    this.dispatchComponentEvent();
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.CheckboxController.prototype.onChange_ = function(){
+   this.dispatchComponentEvent();
 }
 
 

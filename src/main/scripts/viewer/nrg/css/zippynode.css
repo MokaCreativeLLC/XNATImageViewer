@@ -18,11 +18,14 @@
     line-height: 1.5em;
     margin-bottom: 5px;
     margin-top: 5px;
+    transition-property: background-color, color;
+    transition-duration: .1s;
+    transition-timing-function: ease-out;  
 }
 
 
 
-.nrg-ui-zippynode-header-mouseover {
+.nrg-ui-zippynode-header:hover {
     background-color: rgb(120,120,120);
     color: rgb(255,255,255);
 }
@@ -33,6 +36,8 @@
     position: absolute;
     margin-left: .3em;
     background-color: none;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 

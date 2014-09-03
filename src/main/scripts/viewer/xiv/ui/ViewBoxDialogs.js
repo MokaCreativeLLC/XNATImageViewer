@@ -755,6 +755,10 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
 		      */
     currDialog.resizeToContents();
     this.Dialogs_[dialogKey] = currDialog;
+    //
+    // Close Info
+    //
+    this.ViewBox_.fireToggleButton(xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO); 
 }
 
 

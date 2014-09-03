@@ -14,7 +14,7 @@
 .xiv-ui-progressbarpanel-thumb  {
     position: absolute;
     height: 100%;
-    top: 0%;
+    top: 0px;
     background-color: rgb(100, 149, 237);
     border-radius: 1px;
 }
@@ -23,8 +23,8 @@
     position: absolute;
     height: 2px; 
     width: 95%;
-    top: calc(50% - 1.5px);
-    /*background-color: rgba(50,50,50,1);*/
+    top: calc(50% - 1px);
+    background-color: rgba(30,30,30,1);
     border-radius: 1px;
     border: none;
     left: 2.5%;
@@ -34,20 +34,20 @@
 
 .xiv-ui-progressbarpanel-progressbar  {
     background: rgba(100,149,237, 1);
-    height: 1px;
-    top: .5px;
+    height: 2px;
+    top: 0px;
 }
 
 
 .xiv-ui-progressbarpanel-labelholder  {
     position: absolute;
     height: 15px; 
-    width: 100%;
-    top: calc(50% - 25px);
-    text-align: center;
+    top: calc(50% - 15px);
+    left: 2.5%;
     color: rgba(255,255,255, 1);
     font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;
-    font-size: 12px;
+    font-size: 10px;
+    visibility: hidden;
 }
 
 
@@ -57,58 +57,40 @@
       background-color: rgba(255,255,255, .9);
       box-shadow: 0px 0px 2px 1px rgba(255,255,255, .05);
   }
+/*
   50% { 
       background-color: rgba(255,255,255, 1);
       box-shadow: 0px 0px 2px 3px rgba(255,255,255, .8);
   }
+*/
   to { 
-      background-color: rgba(255,255,255, .91); 
-      box-shadow: 0px 0px 2px 1px rgba(255,255,255, .05);
+      background-color: rgba(255,255,255, 1);
+      box-shadow: 0px 0px 2px 3px rgba(255,255,255, .8);
   }
 }
 
 
 .xiv-ui-progressbarpanel-endnode {
     position: absolute;
-    top: 1px;
-    height: 1px; 
+    top: 0px;
+    left: calc(100% - 4px);
+    height: 2px; 
     width: 4px;
     border-radius: 2px;
     z-index: 2;
-    background-color: rgba(255,255,255, 1);
+    background-color: rgba(255,255,255, .9);
+    box-shadow: 0px 0px 2px 1px rgba(255,255,255, .05);
+}
+
+
+.xiv-ui-progressbarpanel-endnode-glow {
+    -webkit-animation-fill-mode: forwards;
     -webkit-animation-name: endNode;
-    -webkit-animation-duration: 2.2s;
-    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-duration: .5s;
+    -webkit-animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation-name: endNode;
+    animation-duration: .5s;
+    animation-iteration-count: 1;
 }
-
-
-
-@-webkit-keyframes glowNode {
-  from { 
-      opacity: 0;
-  }
-  50% { 
-      opacity: 0;
-  }
-  to { 
-      opacity: 0;
-  }
-}
-
-.xiv-ui-progressbarpanel-glownode {
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    height: 5px; 
-    width: 8px;
-    border-radius: 4px;
-    background-color: rgba(255,255,255, 1);
-    -webkit-animation-name: glowNode;
-    -webkit-animation-duration: 2.2s;
-    -webkit-animation-iteration-count: infinite;
-}
-
-
-
-
 

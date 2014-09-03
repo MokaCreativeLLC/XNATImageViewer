@@ -15,8 +15,8 @@
     width: 90%;
     height: 90%;
     background-color: rgba(50,50,50,1);
-    
-    border: solid 2px rgb(155,155,155);
+    border: solid 1px rgb(155,155,155);
+    border-radius: 4px;
     z-index: 5002;
 }
 
@@ -41,7 +41,7 @@
     top: 0px;
     height: 100%;
     width: 100%;
-    font-size: 14;
+    font-size: 12;
     margin-top: 2px;
     margin-left: 4px;
     font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 

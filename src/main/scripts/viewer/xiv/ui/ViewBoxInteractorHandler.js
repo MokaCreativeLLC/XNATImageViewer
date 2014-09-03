@@ -16,6 +16,7 @@ goog.require('goog.events.Event');
 goog.require('goog.events.EventType');
 goog.require('goog.object');
 goog.require('goog.array');
+goog.require('goog.Timer');
 
 // X
 goog.require('X.volume');
@@ -1165,7 +1166,7 @@ function(){
     //
     // Create the dialog
     //
-    this.Dialogs_.createGenericToggleableDialog(
+     this.Dialogs_.createGenericToggleableDialog(
 	this.dialogKeys_[key],
 	xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_DIALOG,
 	xiv.ui.ViewBoxInteractorHandler.CSS.GENERIC_TOGGLE,
@@ -1175,6 +1176,7 @@ function(){
 	false,
 	false
     );
+    
 
 
     this.zippyTrees_[key] = new nrg.ui.ScrollableZippyTree();
@@ -1212,7 +1214,6 @@ function(){
 		       function(e){
 			   this.Renderer_.setPlaneEnabled('V', e.checked);
 		       }.bind(this))
-    
 
 
     return controller;
@@ -1241,6 +1242,55 @@ function() {
     //
     if (!goog.isDefAndNotNull(this.Renderer_)) { return };
 
+
+    //
+    // XTK label map bug
+    //
+    // WARNING: This is a *hacky* fix.
+    //
+    //window.console.log(this.viewableCtrls_['volumes']);
+    goog.array.forEach(this.viewableCtrls_['volumes']['all'], function(ctrl){
+	if (ctrl.getLabel().innerHTML == 'Show Label Map'){
+	    goog.events.listen(
+		ctrl, 
+		xiv.ui.XtkController.EventType.CHANGE, 
+		function(e){
+		    
+		    var isChecked = (e.checked.toString() == 'true')
+		    ctrl.getXObj()['labelmap']['visible'] = isChecked;
+		    
+		    var adder = isChecked ? 1 : -1;
+
+		    this.loopIR_(
+			function(renderPlane, renderPlaneOr, planeInteractors, 
+				 volume){
+			    //window.console.log('\n\n', renderPlaneOr, volume);
+			    var slider = planeInteractors.SLIDER;
+			    var oldValue = slider.getValue();
+			    slider.setValue(oldValue + adder);
+			    this.syncVolumeToSlider_(slider, volume);
+			}.bind(this))
+		    
+		    goog.Timer.callOnce(function(){
+
+		    this.loopIR_(
+			function(renderPlane, renderPlaneOr, planeInteractors, 
+				 volume){
+			    //window.console.log('\n\n', renderPlaneOr, volume);
+			    var slider = planeInteractors.SLIDER;
+			    var oldValue = slider.getValue();
+			    slider.setValue(oldValue - adder);
+			    this.syncVolumeToSlider_(slider, volume);
+			}.bind(this), 1)
+
+		    }.bind(this), 1);
+
+			
+		}.bind(this))
+	}
+    }.bind(this))
+
+
     //window.console.log("GET", ));
     this.loopIR_(
     function(renderPlane, renderPlaneOr, planeInteractors, volume){
@@ -1265,6 +1315,10 @@ function() {
 	//
 	// Preliminary sync
 	//
+   
+
+
+
 	this.syncSlidersToVolume_(true);
 	this.syncPlayButtonsToSlider_(true);
 	this.syncVolumeToSlider_(slider, volume);
@@ -1272,6 +1326,7 @@ function() {
 	    slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY],
 	    volume);
 	this.syncFrameDisplayToSlider_(slider, volume);
+	this.refreshControllers_(this.dialogKeys_['volumes']);
 
 	//
 	// Exit if no volume
@@ -1399,17 +1454,20 @@ function(ctrl, typeKey){
 xiv.ui.ViewBoxInteractorHandler.prototype.updateLabelMapToggle_ = 
 function(ctrl, typeKey){
     //window.console.log('labelmap', ctrl.getElement(),
-    //		  xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY);
+    //xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY);
+
+    //ctrl.getElement().style.visibility = 'hidden';
+    //ctrl.getElement().style.height = '0px';
 
     if (!ctrl.getXObj()[xiv.vis.XtkEngine.HAS_LABEL_MAP_KEY]){
 	goog.dom.removeNode(ctrl.getElement());
-	
 	ctrl.getElement().style.visibility = 'hidden';
 	ctrl.getElement().style.height = '0px';
+	ctrl.setChecked(false);
     } 
     else if (ctrl.getXObj()['labelmap']['visible'] &&
 	     !ctrl.getComponent().isChecked()){
-	ctrl.getComponent().setChecked(true);
+	ctrl.setChecked(true);
     }
 
     this.zippyTrees_[typeKey].mapSliderToContents();
@@ -1425,10 +1483,15 @@ function(ctrl, typeKey){
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.updateVolumeControllers_ = 
     function(ctrl, key){
-	var typeKey = key.split(xiv.ui.ViewBoxInteractorHandler.DIALOG_SPLIT)[0];
+
+	//window.console.log('LABEL:', ctrl, typeKey);
+	var typeKey = key.split(
+	    xiv.ui.ViewBoxInteractorHandler.DIALOG_SPLIT)[0];
+
 	if (ctrl instanceof xiv.ui.RadioButtonController){
 	    this.updateVolumeToggle_(ctrl, typeKey);
 	}
+
 	else if (ctrl.getLabel().innerHTML == 'Show Label Map'){
 	    this.updateLabelMapToggle_(ctrl, typeKey);
 	}
@@ -1475,6 +1538,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.updateMeshControllers_ =
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.refreshControllers_ = function(key){
     // Derive the type key
+    
     var typeKey = key.split(xiv.ui.ViewBoxInteractorHandler.DIALOG_SPLIT)[0];
 
     // Exit out if we don't have a valid key
@@ -2041,7 +2105,8 @@ xiv.ui.ViewBoxInteractorHandler.prototype.updateInteractorStyles = function() {
 	// Set custom params
 	//
 	slider[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = renderPlaneOr;
-	frameDisplay[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = renderPlaneOr;
+	frameDisplay[xiv.ui.ViewBoxInteractorHandler.ORIENTATION_KEY] = 
+	    renderPlaneOr;
 
 	//
 	// Exit if no volume
@@ -2422,6 +2487,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
 
     var zSlider = this.zippyTrees_['levels'].getSlider().getElement();
     zSlider.style.visibility = 'hidden';
+    goog.dom.removeNode(zSlider);
 
     //
     // Open the dialog to do some style adjustments

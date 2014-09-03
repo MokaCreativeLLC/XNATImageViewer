@@ -220,7 +220,8 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
     var scrollAreaHeight = goog.style.getSize(this.scrollArea_).height
     var beforeRange = [this.Slider.getMinimum(), this.Slider.getMaximum()];
     var afterRange = [0, scrollAreaHeight - widgetHeight];
-    var sliderThumb = this.Slider.getThumb()
+    var sliderThumb = this.Slider.getThumb();
+    var sliderElt = this.Slider.getElement();
 
 
     //window.console.log("MAP SLIDER TO CONTENTS!", widgetHeight, 
@@ -236,47 +237,53 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
     if (widgetHeight < scrollAreaHeight) {
 
 	//
-	// Show the slider
+	// Show the slider if it's not there
 	//
-	this.Slider.getElement().style.opacity = 1;
- 
+	if (sliderElt.style.visibility == 'hidden'){
+	    sliderElt.style.opacity = 0;
+	    sliderElt.style.visibility = 'visible';
+	    nrg.fx.fadeIn(sliderElt, 200);
+	}
+
 	var newThumbHeight = Math.round(
 	    widgetHeight * (widgetHeight / scrollAreaHeight));
-
 	sliderThumb.style.height = newThumbHeight.toString() + 'px';
 
-
-	//window.console.log("\n\nmapslider", widgetHeight, scrollAreaHeight);
+	//window.console.log("\n\nmapslider", widgetHeight, 
+	//scrollAreaHeight);
 	//window.console.log("Range", beforeRange, afterRange);
 	//window.console.log("NEW HEIGHT", 
 	//widgetHeight * (widgetHeight / scrollAreaHeight))
 
 	// Enable the slider
 	this.Slider.setEnabled(true);
-	
 
 	// Move the scroll area to the top (as the slider's thumbnail
 	// is at the top).
-	var sendVal = this.Slider.getMaximum() - this.Slider.getValue();
-	var remap = nrg.convert.remap1D(sendVal, beforeRange, afterRange);
+	var sendVal = this.Slider.getMaximum() - 
+	    this.Slider.getValue();
+	var remap = nrg.convert.remap1D(sendVal, 
+					beforeRange, afterRange);
 	var t = remap['remappedVal'];
 
 	//nrg.style.setStyle( this.scrollArea_, {'top': -t});
 	this.scrollArea_.style.top = (-t).toString() + 'px';
 	//window.console.log(this.Slider.getThumb().style.top);
 	
-
     //------------------
     // Otherwise we hide and disable the slider.
     //------------------	
     }
     else {
-	//
-	// Hide the slider
-	//
-	this.Slider.getElement().style.opacity = 0;
-	this.Slider.setEnabled(false);
-	this.Slider.setValue(100);
+	if (sliderElt.style.visibility != 'hidden'){
+	    nrg.fx.fadeOut(sliderElt, 200, function(){
+		if (this.Slider){
+		    sliderElt.style.visibility = 'hidden';
+		    this.Slider.setEnabled(false);
+		    this.Slider.setValue(100);
+		}
+	    }.bind(this))
+	}
     }	
 }
 
