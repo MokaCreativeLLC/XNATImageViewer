@@ -524,9 +524,8 @@ xiv.ui.XtkController.prototype.add_opacity = function(xObj, ctrl) {
     var opacity = this.createController( 
 	ctrl, 'Opacity', 
 	function(e){
-	    xObj['opacity'] = parseFloat(e.value);
+	    xObj['opacity'] = parseFloat(e.value / 100);
 	});
-
 
 
 
@@ -536,10 +535,9 @@ xiv.ui.XtkController.prototype.add_opacity = function(xObj, ctrl) {
     // store
     this.subControllers.push(opacity);
 
-    // set defaults
-    opacity.getComponent().setValue(1);
-
+    
     opacity.getComponent().updateStyle();
+    opacity.setDisplaySuffix('%');
 } 
 
 
