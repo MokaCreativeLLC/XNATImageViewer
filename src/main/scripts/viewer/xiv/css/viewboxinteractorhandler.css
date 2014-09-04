@@ -98,7 +98,7 @@
     overflow: visible;
 
     /* transition styles */
-    height: 165px;
+    height: 170px;
     border-color: rgba(0,0,0,0);
     background-color: rgba(0,0,0,0);
     transition-property: height; background-color, border-color;
