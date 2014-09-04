@@ -443,7 +443,7 @@ xiv.ui.ViewBox.prototype.highlightFade_ =  function(opt_subtractor) {
 	function(){
 	    counter += interval;
 	    str = 
-		"0px 0px 0px 1px rgba(255,255,255," + 
+		"0px 0px 0px 2px rgba(255,255,255," + 
 		opt_subtractor(counter/duration) +")";
 	    this.viewFrameElt_.style.boxShadow = str;
 		
@@ -782,6 +782,7 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
 	fadeInsStartOps.push(0);
 	fadeInsEndOps.push(1);
     })
+    fadeInsEndOps[0] = .5;
 
     goog.array.forEach(fadeOuts, function(fadeOutElt, i){
 	fadeOutsStartOps.push(1);
@@ -804,6 +805,8 @@ xiv.ui.ViewBox.prototype.onRenderEnd_ = function(e){
     nrg.fx.parallelFade(
 	fadeElts,
 	startOps, endOps, 400,  null, null, function(){
+
+	    this.menus_.LEFT.style.removeProperty('opacity');
 
 	    //
 	    // Set progress bar value to 0

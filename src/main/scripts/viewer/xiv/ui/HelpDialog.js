@@ -319,8 +319,8 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
     ];
     goog.array.forEach(allLines, function(lineArr, i){
 	
-	var currTable = '<table style="width:100%;' + 
-	    'color:white;" RULES=ROWS FRAME=HSIDES ' + 
+	var currTable = '<table style="margin-left:10%;width:90%;' + 
+	    'color:white;left:10%;" RULES=ROWS FRAME=HSIDES ' + 
 	    ' BORDERCOLOR="black">';
 
 	goog.array.forEach(lineArr, function(line){
@@ -329,7 +329,7 @@ xiv.ui.HelpDialog.prototype.populateZippy_ = function(){
 
 		switch (i) {
 		case 0:
-		    cell = '<b><font size="2">' + cell + '</font></b>';
+		    cell = '<b><font size="1">' + cell + '</font></b>';
 		    break;
 		case 1:
 		    cell = '<i><font size="1">' + cell + '</font></i>';

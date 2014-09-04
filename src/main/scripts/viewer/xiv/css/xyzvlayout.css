@@ -34,8 +34,8 @@
 
 .xiv-ui-layouts-xyzvlayout-slider-track {
     position: absolute;
-    height: 4px;
-    top: calc(50% - 2px);
+    height: 2px;
+    top: calc(50% - 1px);
     left: 0px;
     border-radius: 2px;
     width: 100%;
@@ -65,21 +65,21 @@
     top: calc(50% - 4px);
     width: 8px;
     height: 8px;
-    background: rgb(220,220,220);
+    background: rgb(150,150,150);
     border: 0px;
-    border-radius: 0px;
-    box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, 0);
+    border-radius: 2px;
+    box-shadow: 0px 0px 0px 3px rgba(125, 125, 125, 0);
     transition-property: box-shadow;
     transition-duration: .2s;
     transition-timing-function: ease-out; 
 }
 
 .xiv-ui-layouts-xyzvlayout-slider-thumb:hover {
-    box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, .55);
+    box-shadow: 0px 0px 0px 3px rgba(155, 155, 155, .55);
 }
 
 .xiv-ui-layouts-xyzvlayout-slider-thumb:active {
-    box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, .55);
+    box-shadow: 0px 0px 0px 3px rgba(155, 155, 155, .55);
 }
 
 
