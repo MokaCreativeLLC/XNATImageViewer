@@ -663,8 +663,8 @@ xiv.start.prototype.getFolderTitlesFromTreeNode_ = function(treeNode){
 	    newTitle = goog.string.truncateMiddle(newTitle, 25);
 	}
 	branchTitles[i] = 
-	    '<font color="black"><b>' + key.toUpperCase() 
-	    + ':</b></font>&nbsp&nbsp&nbsp&nbsp&nbsp' + newTitle;
+	    key.toUpperCase() 
+	    + ':&nbsp&nbsp&nbsp&nbsp&nbsp' + newTitle;
 
 	//window.console.log(branchTitles[i]);
 	i++;
