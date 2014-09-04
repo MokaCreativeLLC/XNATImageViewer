@@ -64,7 +64,7 @@ nrg.ui.Thumbnail = function () {
     goog.dom.classes.add(this.selectIndicator_, 
 			 nrg.ui.Thumbnail.CSS.SELECTINDICATOR);
     goog.dom.append(this.getElement(), this.selectIndicator_);
-    window.console.log(this.selectIndicator_);
+    //window.console.log(this.selectIndicator_);
 
 
 
