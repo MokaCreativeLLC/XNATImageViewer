@@ -2495,15 +2495,15 @@ xiv.ui.ViewBoxInteractorHandler.prototype.customizeLevelsDialog_ = function(){
     //this.ViewBox_.fireToggleButton(this.dialogKeys_['levels']);
     
 
-
     //
-    // Shorten the header labels to 10 characters
+    // Hide the header label for now...
     //
     goog.array.forEach(
 	zTree.getTopLevelNodes(), 
 	function(node){
-	    node.getHeaderLabel().style.fontSize = '10px';
-	    node.truncateHeaderLabel(25);
+	    node.getHeader().style.height = 0;
+	    node.getHeader().style.opacity = 0;
+	    node.getHeader().style.visibility = 'hidden';
 	})
     
 

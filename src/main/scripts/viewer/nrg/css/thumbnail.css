@@ -12,22 +12,21 @@
     left: 0px;
     cursor: pointer;
     background-color: rgb(0,0,0);
+    box-sizing: border-box;
+    border: solid 1px rgb(0, 0, 0);
     transition-duration: .2s;
-    transition-property: background-color, color;
+    transition-property: border, background-color, color;
 }
 
 
 .nrg-ui-thumbnail-selectindicator {
     position: absolute;
-    top: calc(50% - 26px);
-    left: 0px;
+    top: calc(50% - 34px);
+    left: 7px;
     width: 2px;
-    height: 50px;
+    height: 68px;
     opacity: 0;
-    border-radus: 3px;
     background-color: rgb(100,100,100);
-    transition-duration: .2s;
-    transition-property: border-color;
 }
 
 
@@ -48,16 +47,17 @@
 
 .nrg-ui-thumbnail:hover {
     background-color: rgba(30,30,30, 1);
-    opacity: 1;
     z-index: 10000;
     overflow: visible;
     color: rgb(255,255,255);
+    border: solid 1px rgb(40, 40, 40);
 }
 
 
 .nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-image {
     /*color: rgb(255,255,255);*/
     /*border-color: white;*/
+    box-shadow: 3px 3px 3px rgba(0,0,0, .3);
 }
 
 .nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-text {
@@ -68,10 +68,14 @@
     position: absolute;
     width: 70px;
     height: 70px;
-    top: 8px;
-    left: 20px;	
+    top: calc(50% - 35px);
+    left: 8px;	
     overflow-y: hidden;
     overflow-x: hidden;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
     border: solid 1px rgb(30,30,30);
     /*border : none;
     border-color: rgb(100,100,100);
@@ -92,7 +96,7 @@
     position: absolute;
     height: 70px;
     top: 17px;
-    left: 106px;
+    left: 86px;
     font-size: 9;		
     font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
     white-space: nowrap;  
@@ -100,6 +104,7 @@
     line-height: 17px;
     transition-duration: .2s;
     transition-property:  color;
+
 }
 
 
@@ -129,5 +134,5 @@
 
 
 .nrg-ui-thumbnail-image-active {
-    /*border-color : rgb(100,100,100);*/
+   /*border-left: solid 2px rgb(100,100,100);*/
 }

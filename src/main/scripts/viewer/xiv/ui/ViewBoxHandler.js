@@ -924,7 +924,7 @@ xiv.ui.ViewBoxHandler.prototype.onViewBoxClosed_ = function(ViewBox){
     //
     if (this.numViewBoxes() == 1) { return };
 
-    if (!ViewBox.isInUse()){
+    if (ViewBox.isInUse()){
 	ViewBox.showInUseDialog(function(){
 	    this.adjustToClose_(ViewBox);
 	}.bind(this))

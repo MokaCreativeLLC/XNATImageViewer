@@ -1,9 +1,32 @@
 /*
  * Standard styling for the Modal
  *
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
 
+
+
+.xiv-ui-nomobilemodal {
+    background-color: black;
+    position: fixed;
+    top: 0px;
+    left: 0px; 
+    height: 100%;
+    width: 100%;
+}
+
+
+.xiv-ui-nomobilemodal-content {
+    font-size: 14px;
+    font-family: Helvetica,\"Helvetica neue\", Arial, sans-serif;
+    color: white;
+    text-align: center;
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
 
 
 
@@ -174,6 +197,7 @@
     border-radius: 0px 4px 4px 0px;
     opacity: 0;
 }
+
 
 
 .xiv-ui-modal-projecttab-dragger-handle {
