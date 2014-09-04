@@ -357,7 +357,7 @@ xiv.ui.layouts.LayoutHandler.prototype.addLayout = function(title, layout) {
 
 /**
  * @param {!string} title
- * @param {boolean=} opt_animateSwich Whehter to animate the layout switch. 
+ * @param {boolean=} opt_animateSwich Whether to animate the layout switch. 
  *     Defaults to true.
  * @public
  */ 
@@ -402,11 +402,40 @@ function(title, opt_animateSwitch) {
     this.prevLayoutTitle_ = this.currLayoutTitle_;
     this.currLayoutTitle_ = title;
 
+
+    this.fadeInteractorsOnHover_();
+
     //
     // Switch the layout
     //
     this.switchLayout((opt_animateSwitch === false) ? 
 		      0 : xiv.ui.layouts.LayoutHandler.ANIM_TIME);
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.layouts.LayoutHandler.prototype.fadeInteractorsOnHover_ = function(){
+    var newLayoutFrames = this.Layouts_[this.currLayoutTitle_].
+	getLayoutFrames();
+    var interactors;
+    goog.object.forEach(newLayoutFrames, function(newLayoutFrame, key){		
+	interactors = this.getMasterInteractorsByPlane(key);
+	if (goog.isDefAndNotNull(interactors) &&
+	    goog.isDefAndNotNull(interactors.SLIDER) &&
+	    goog.isDefAndNotNull(interactors.PLAY_BUTTON)){
+	    goog.dom.classes.add(newLayoutFrame.getElement(),
+				 'xiv-ui-layouts-hoverframe');
+	    goog.array.forEach(
+		[interactors.SLIDER.getElement(), 
+		 interactors.PLAY_BUTTON.getElement()], function(fadeable){
+		     goog.dom.classes.add(fadeable, 
+					  'xiv-ui-layouts-fadeableinteractor');
+		 }.bind(this))
+	}
+    }.bind(this));
 }
 
 
@@ -745,9 +774,11 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
     //-------------------------------
     goog.object.forEach(newLayoutFrames, function(newLayoutFrame, key){
 	if (!goog.isDefAndNotNull(this.planeChildren_[key])){ return };
+
 	goog.array.forEach(this.planeChildren_[key], function(child){
 	    goog.dom.appendChild(newLayoutFrame.getElement(), child);
 	})
+
     }.bind(this));
 
 

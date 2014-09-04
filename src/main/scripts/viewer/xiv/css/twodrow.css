@@ -18,6 +18,7 @@
     top: 0px;
     height: 100%;
     width: 33.33%;
+
 }
 
 
@@ -27,12 +28,14 @@
 
 
 .xiv-ui-layouts-twodrow-y {
-    left: 33.33%; 
+    left: 33.33%;
+    border-left: solid 1px rgb(50,50,50); 
 }
 
 
 .xiv-ui-layouts-twodrow-z {
     left: 66.66%; 
+    border-left: solid 1px rgb(50,50,50);
 }
 
 

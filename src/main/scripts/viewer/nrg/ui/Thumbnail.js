@@ -54,6 +54,20 @@ nrg.ui.Thumbnail = function () {
     goog.dom.append(this.getElement(), this.text_);
 
 
+    /**
+     * @type {!Element}
+     * @private
+     */	
+    this.selectIndicator_ = goog.dom.createDom('div', {
+	'id': 'selectedIndicator_' + goog.string.createUniqueString()
+    });
+    goog.dom.classes.add(this.selectIndicator_, 
+			 nrg.ui.Thumbnail.CSS.SELECTINDICATOR);
+    goog.dom.append(this.getElement(), this.selectIndicator_);
+    window.console.log(this.selectIndicator_);
+
+
+
     // Other init functions.
     //window.console.log(this);
     this.setEvents_();
@@ -100,6 +114,8 @@ nrg.ui.Thumbnail.CSS_SUFFIX = {
     ACTIVE: 'active',
     IMAGE_ACTIVE: 'image-active',
     TEXT_ACTIVE: 'text-active',
+    SELECTINDICATOR: 'selectindicator',
+    SELECTINDICATOR_ACTIVE: 'selectindicator-active'
 }
 
 
@@ -274,7 +290,9 @@ nrg.ui.Thumbnail.prototype.setActive = function(active, opt_highlightBg) {
 	goog.dom.classes.add(this.text_, 
 			     nrg.ui.Thumbnail.CSS.TEXT_ACTIVE);		
 	goog.dom.classes.add(this.image_, 
-			     nrg.ui.Thumbnail.CSS.IMAGE_ACTIVE);		
+			     nrg.ui.Thumbnail.CSS.IMAGE_ACTIVE);
+	goog.dom.classes.add(this.selectIndicator_, 
+			     nrg.ui.Thumbnail.CSS.SELECTINDICATOR_ACTIVE);
 	
     } else {
 	goog.dom.classes.remove(elt, 
@@ -285,6 +303,8 @@ nrg.ui.Thumbnail.prototype.setActive = function(active, opt_highlightBg) {
 				nrg.ui.Thumbnail.CSS.TEXT_ACTIVE);		
 	goog.dom.classes.remove(this.image_, 
 				nrg.ui.Thumbnail.CSS.IMAGE_ACTIVE);
+	goog.dom.classes.remove(this.selectIndicator_, 
+			     nrg.ui.Thumbnail.CSS.SELECTINDICATOR_ACTIVE);
     }
 }
 

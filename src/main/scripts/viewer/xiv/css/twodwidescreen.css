@@ -23,6 +23,7 @@
 
 .xiv-ui-layouts-twodwidescreen-y {
     top: 0px;
+    border-bottom: solid 1px rgb(50,50,50);
 }
 
 
@@ -37,6 +38,7 @@
     top: 0px;
     width: 66%;
     height: 100%;
+    border-right: solid 1px rgb(50,50,50);
 }
 
 

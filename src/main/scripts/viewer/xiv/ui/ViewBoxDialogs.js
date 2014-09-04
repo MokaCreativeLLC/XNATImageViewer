@@ -658,6 +658,8 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
 
     goog.dom.classes.add(currDialog.getTitleElement(),
 			 'xiv-ui-viewboxdialogs-infodialog-title');
+
+
     //
     // Generate widget text
     //
@@ -759,6 +761,15 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
     // Close Info
     //
     this.ViewBox_.fireToggleButton(xiv.ui.ViewBoxDialogs.DIALOG_KEYS.INFO); 
+
+    var text = goog.dom.getElementsByClass('nrg-ui-dialog-text',
+				   currDialog.getElement())
+    window.console.log(text);
+    goog.dom.classes.add(text[0], 
+	'xiv-ui-viewboxdialogs-infodialog-text');
+
+    goog.dom.classes.add(currDialog.getContentElement(),
+			 'xiv-ui-viewboxdialogs-infodialog-content');
 }
 
 

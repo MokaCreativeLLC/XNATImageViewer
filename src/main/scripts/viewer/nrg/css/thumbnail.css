@@ -1,5 +1,5 @@
 /*
- * @author sunilk@mokacreativellc.com (Sunil Kumar)
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
 
 
@@ -17,8 +17,28 @@
 }
 
 
+.nrg-ui-thumbnail-selectindicator {
+    position: absolute;
+    top: calc(50% - 26px);
+    left: 0px;
+    width: 2px;
+    height: 50px;
+    opacity: 0;
+    border-radus: 3px;
+    background-color: rgb(100,100,100);
+    transition-duration: .2s;
+    transition-property: border-color;
+}
+
+
+.nrg-ui-thumbnail-selectindicator-active {
+    opacity: 1;
+}
+
+
+
 .nrg-ui-thumbnail-selected {
-    border: solid 1px rgb(220,220,220);
+    border: solid 1px rgb(100,100,100);
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     -ms-box-sizing: border-box;
@@ -27,7 +47,7 @@
 }
 
 .nrg-ui-thumbnail:hover {
-    background-color: rgba(50,50,50, 1);
+    background-color: rgba(30,30,30, 1);
     opacity: 1;
     z-index: 10000;
     overflow: visible;
@@ -36,12 +56,12 @@
 
 
 .nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-image {
-    color: rgb(255,255,255);
-    border-color: white;
+    /*color: rgb(255,255,255);*/
+    /*border-color: white;*/
 }
 
 .nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-text {
-    color: rgb(255,255,255);
+    color: rgb(215,215,215);
 }
 
 .nrg-ui-thumbnail-image, .nrg-ui-thumbnail-canvas {
@@ -49,33 +69,34 @@
     width: 70px;
     height: 70px;
     top: 8px;
-    left: 0px;	
+    left: 20px;	
     overflow-y: hidden;
     overflow-x: hidden;
-    border : solid;
+    border: solid 1px rgb(30,30,30);
+    /*border : none;
     border-color: rgb(100,100,100);
     border-width : 1px;
     border-radius: 0px;	
-    box-sizing: border-box; 
+    box-sizing: border-box; */
     cursor: pointer;
     transition-duration: .2s;
     transition-property: border-color;
 }
 
 .nrg-ui-thumbnail-image-mouseover {
-    border: solid 1px white;
+    /*border: solid 1px white;*/
 }
 
 
 .nrg-ui-thumbnail-text {
     position: absolute;
     height: 70px;
-    top: 8px;
-    left: 86px;
+    top: 17px;
+    left: 106px;
     font-size: 9;		
     font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
     white-space: nowrap;  
-    color : rgb(100,100,100);  
+    color : rgb(80,80,80);  
     line-height: 17px;
     transition-duration: .2s;
     transition-property:  color;
@@ -83,7 +104,7 @@
 
 
 .nrg-ui-thumbnail-text-mouseover {
-    color : rgb(255,255,255);
+    color : rgb(155,155,155);
 }
 
 
@@ -99,7 +120,7 @@
 ********/
 
 .nrg-ui-thumbnail-text-active {
-    color : rgb(230,230,230);
+    color : rgb(100,100,100);
 }
 
 .nrg-ui-thumbnail-active {
@@ -108,5 +129,5 @@
 
 
 .nrg-ui-thumbnail-image-active {
-    border-color : rgb(230,230,230);
+    /*border-color : rgb(100,100,100);*/
 }

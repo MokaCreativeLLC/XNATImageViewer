@@ -7,7 +7,7 @@
 .xiv-ui-thumbnailgallery {
     position: absolute;
     left: 0px;
-    width: calc(100% - 20px);
+    width: calc(100% - 10px);
 }
 
 

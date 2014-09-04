@@ -60,6 +60,8 @@ nrg.ui.ZippyTree = function () {
     // No margins for the top
     //
     this.getHeader().style.marginTop = '0px';
+    this.getHeader().style.border = 'none';
+    this.showExpandIcon(false);
     
 }
 goog.inherits(nrg.ui.ZippyTree, nrg.ui.ZippyNode);

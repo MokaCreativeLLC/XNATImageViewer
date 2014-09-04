@@ -264,9 +264,12 @@ xiv.ui.LevelsController.prototype.adjustStyles_ = function() {
  */
 xiv.ui.LevelsController.prototype.onResetButtonClicked_ =
 function(){
+
+    this.xObj_['windowLow'] = 0;
     goog.array.forEach(
-	[this.c_.min, this.c_.max],
+	[this.c_.max, this.c_.min],
 	function(ctrl){
+
 	    ctrl.setValue(ctrl.getDefaultValue());
 	    ctrl.refresh();
 	        // set defaults
@@ -275,6 +278,7 @@ function(){
     
     // Update the checkbox
     this.toggleVisiblePixelRange();
+    this.c_.histogram.update();
 }
 
 

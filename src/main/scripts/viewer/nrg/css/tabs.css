@@ -9,7 +9,6 @@
 .nrg-ui-tabs {
     position: absolute;
     left: 0px;
-    background-color: rgb(35, 35, 35);
 }
 
 .nrg-ui-tabs-right {
@@ -44,10 +43,10 @@
   -webkit-box-sizing:border-box;
     position: absolute;
     top: 0px;	
-    color: white;
+    color: rgb(100, 100, 100);;
     font-size: 10px;
     font-family: Helvetica, 'Helvetica neue', Arial, sans-serif;
-    background-color: rgb(0,0,0);
+    background-color: rgb(30,30,30);
     cursor: pointer;
     border: solid 1px rgb(60, 60, 60);
     text-align:center;
@@ -74,8 +73,9 @@
     width: 22px;
     left: calc(100% - 22px);
     /*border-radius: 0px 4px 4px 0px;*/
-    border-radius:  none;
     border-left: none;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
 }
 
 
@@ -83,20 +83,17 @@
     width: 18px;
     left: 0px;
     /*border-radius: 4px 0px 0px 4px;*/
-    border-radius:  none;
     border-right: none;
 }
 
 
 .nrg-ui-tabs-tab-active {
-    border: solid 1px rgb(220, 220, 220);
-    border-radius: 0px;
+    border: solid 1px rgb(100, 100, 100);
 }
 
 
 .nrg-ui-tabs-tab-active-right {
     border-left: none;
-    border-radius: 0px;
 }
 
 
@@ -111,10 +108,10 @@
 
 	
 .nrg-ui-tabs-icon {
-    opacity: .65;
+    color: rgb(100, 100, 100);
     z-index: 11;
-    color: white;
-    font-size: 12px;
+    color: rgb(100, 100, 100);
+    font-size: 10px;
     position: absolute;
     top: 0px;
     left: 0px;
@@ -124,7 +121,7 @@
 
 
 .nrg-ui-tabs-icon-active {
-    opacity: 1;
+    color: rgb(100, 100, 100);
 }
 
 
@@ -150,7 +147,7 @@
     /* Internet Explorer */
     filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
 
-    left: -33px;
+    left: -24px;
     top: calc(50% - 5px);
     white-space: nowrap;
 }
@@ -168,7 +165,7 @@
   -moz-box-sizing:border-box;
   -webkit-box-sizing:border-box;
     position: absolute;
-    color: white;
+    color: rgb(100, 100, 100);
     font-family: Helvetica, 'Helvetica neue', Arial, sans-serif;
     background-color: rgb(0,0,0);
     width: 100%;
@@ -190,7 +187,7 @@
 
 
 .nrg-ui-tabs-page-active {
-    border: solid 1px rgb(220, 220, 220);
+    border: solid 1px rgb(100, 100, 100);
     visibility: visible;
     z-index: 2;
 }
