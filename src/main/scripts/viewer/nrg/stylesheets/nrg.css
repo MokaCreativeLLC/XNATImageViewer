@@ -1,0 +1,1998 @@
+/*
+ * Standard styling for utils.ui.GenericSlider
+ *
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Standard styling for menus created by goog.ui.MenuItemRenderer.
+ *
+ * @author attila@google.com (Attila Bodis)
+ */
+/**
+ * State: resting.
+ *
+ * NOTE(mleibman,chrishenry):
+ * The RTL support in Closure is provided via two mechanisms -- "rtl" CSS
+ * classes and BiDi flipping done by the CSS compiler.  Closure supports RTL
+ * with or without the use of the CSS compiler.  In order for them not
+ * to conflict with each other, the "rtl" CSS classes need to have the @noflip
+ * annotation.  The non-rtl counterparts should ideally have them as well, but,
+ * since .goog-menuitem existed without .goog-menuitem-rtl for so long before
+ * being added, there is a risk of people having templates where they are not
+ * rendering the .goog-menuitem-rtl class when in RTL and instead rely solely
+ * on the BiDi flipping by the CSS compiler.  That's why we're not adding the
+ * @noflip to .goog-menuitem.
+ */
+/* line 30, ../sass/goog.scss */
+.goog-menuitem {
+  color: #000;
+  font: normal 13px Arial, sans-serif;
+  list-style: none;
+  margin: 0;
+  /* 28px on the left for icon or checkbox; 7em on the right for shortcut. */
+  padding: 4px 7em 4px 28px;
+  white-space: nowrap;
+}
+
+/* BiDi override for the resting state. */
+/* @noflip */
+/* line 42, ../sass/goog.scss */
+.goog-menuitem.goog-menuitem-rtl {
+  /* Flip left/right padding for BiDi. */
+  padding-left: 7em;
+  padding-right: 28px;
+}
+
+/* If a menu doesn't have checkable items or items with icons, remove padding. */
+/* line 49, ../sass/goog.scss */
+.goog-menu-nocheckbox .goog-menuitem,
+.goog-menu-noicon .goog-menuitem {
+  padding-left: 12px;
+}
+
+/*
+ * If a menu doesn't have items with shortcuts, leave just enough room for
+ * submenu arrows, if they are rendered.
+ */
+/* line 58, ../sass/goog.scss */
+.goog-menu-noaccel .goog-menuitem {
+  padding-right: 20px;
+}
+
+/* line 62, ../sass/goog.scss */
+.goog-menuitem-content {
+  color: #000;
+  font: normal 13px Arial, sans-serif;
+}
+
+/* State: disabled. */
+/* line 68, ../sass/goog.scss */
+.goog-menuitem-disabled .goog-menuitem-accel,
+.goog-menuitem-disabled .goog-menuitem-content {
+  color: #ccc !important;
+}
+
+/* line 72, ../sass/goog.scss */
+.goog-menuitem-disabled .goog-menuitem-icon {
+  opacity: 0.3;
+  -moz-opacity: 0.3;
+  filter: alpha(opacity=30);
+}
+
+/* State: hover. */
+/* line 79, ../sass/goog.scss */
+.goog-menuitem-highlight,
+.goog-menuitem-hover {
+  background-color: #d6e9f8;
+  /* Use an explicit top and bottom border so that the selection is visible
+   * in high contrast mode. */
+  border-color: #d6e9f8;
+  border-style: dotted;
+  border-width: 1px 0;
+  padding-bottom: 3px;
+  padding-top: 3px;
+}
+
+/* State: selected/checked. */
+/* line 92, ../sass/goog.scss */
+.goog-menuitem-checkbox,
+.goog-menuitem-icon {
+  background-repeat: no-repeat;
+  height: 16px;
+  left: 6px;
+  position: absolute;
+  right: auto;
+  vertical-align: middle;
+  width: 16px;
+}
+
+/* BiDi override for the selected/checked state. */
+/* @noflip */
+/* line 105, ../sass/goog.scss */
+.goog-menuitem-rtl .goog-menuitem-checkbox,
+.goog-menuitem-rtl .goog-menuitem-icon {
+  /* Flip left/right positioning. */
+  left: auto;
+  right: 6px;
+}
+
+/* line 112, ../sass/goog.scss */
+.goog-option-selected .goog-menuitem-checkbox,
+.goog-option-selected .goog-menuitem-icon {
+  /* Client apps may override the URL at which they serve the sprite. */
+  background: url(//ssl.gstatic.com/editor/editortoolbar.png) no-repeat -512px 0;
+}
+
+/* Keyboard shortcut ("accelerator") style. */
+/* line 119, ../sass/goog.scss */
+.goog-menuitem-accel {
+  color: #999;
+  /* Keyboard shortcuts are untranslated; always left-to-right. */
+  /* @noflip */
+  direction: ltr;
+  left: auto;
+  padding: 0 6px;
+  position: absolute;
+  right: 0;
+  text-align: right;
+}
+
+/* BiDi override for shortcut style. */
+/* @noflip */
+/* line 132, ../sass/goog.scss */
+.goog-menuitem-rtl .goog-menuitem-accel {
+  /* Flip left/right positioning and text alignment. */
+  left: 0;
+  right: auto;
+  text-align: left;
+}
+
+/* Mnemonic styles. */
+/* line 140, ../sass/goog.scss */
+.goog-menuitem-mnemonic-hint {
+  text-decoration: underline;
+}
+
+/* line 144, ../sass/goog.scss */
+.goog-menuitem-mnemonic-separator {
+  color: #999;
+  font-size: 12px;
+  padding-left: 4px;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Standard styling for menus created by goog.ui.MenuSeparatorRenderer.
+ *
+ * @author attila@google.com (Attila Bodis)
+ */
+/* line 163, ../sass/goog.scss */
+.goog-menuseparator {
+  border-top: 1px solid #ccc;
+  margin: 4px 0;
+  padding: 0;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Standard styling for buttons created by goog.ui.MenuButtonRenderer.
+ *
+ * @author attila@google.com (Attila Bodis)
+ */
+/* State: resting. */
+/* line 183, ../sass/goog.scss */
+.goog-menu-button {
+  /* Client apps may override the URL at which they serve the image. */
+  background: #ddd url(//ssl.gstatic.com/editor/button-bg.png) repeat-x top left;
+  border: 0;
+  color: #000;
+  cursor: pointer;
+  list-style: none;
+  margin: 2px;
+  outline: none;
+  padding: 0;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+/* Pseudo-rounded corners. */
+/* line 198, ../sass/goog.scss */
+.goog-menu-button-outer-box,
+.goog-menu-button-inner-box {
+  border-style: solid;
+  border-color: #aaa;
+  vertical-align: top;
+}
+
+/* line 204, ../sass/goog.scss */
+.goog-menu-button-outer-box {
+  margin: 0;
+  border-width: 1px 0;
+  padding: 0;
+}
+
+/* line 209, ../sass/goog.scss */
+.goog-menu-button-inner-box {
+  margin: 0 -1px;
+  border-width: 0 1px;
+  padding: 3px 4px;
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 216, ../sass/goog.scss */
+* html .goog-menu-button-inner-box {
+  /* IE6 needs to have the box shifted to make the borders line up. */
+  left: -1px;
+}
+
+/* Pre-IE7 BiDi fixes. */
+/* line 222, ../sass/goog.scss */
+* html .goog-menu-button-rtl .goog-menu-button-outer-box {
+  /* @noflip */
+  left: -1px;
+  /* @noflip */
+  right: auto;
+}
+
+/* line 226, ../sass/goog.scss */
+* html .goog-menu-button-rtl .goog-menu-button-inner-box {
+  /* @noflip */
+  right: auto;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 231, ../sass/goog.scss */
+*:first-child + html .goog-menu-button-inner-box {
+  /* IE7 needs to have the box shifted to make the borders line up. */
+  left: -1px;
+}
+
+/* IE7 BiDi fix. */
+/* line 236, ../sass/goog.scss */
+*:first-child + html .goog-menu-button-rtl .goog-menu-button-inner-box {
+  /* @noflip */
+  left: 1px;
+  /* @noflip */
+  right: auto;
+}
+
+/* Safari-only hacks. */
+/* line 242, ../sass/goog.scss */
+::root .goog-menu-button,
+::root .goog-menu-button-outer-box,
+::root .goog-menu-button-inner-box {
+  /* Required to make pseudo-rounded corners work on Safari. */
+  line-height: 0;
+}
+
+/* line 248, ../sass/goog.scss */
+::root .goog-menu-button-caption,
+::root .goog-menu-button-dropdown {
+  /* Required to make pseudo-rounded corners work on Safari. */
+  line-height: normal;
+}
+
+/* State: disabled. */
+/* line 255, ../sass/goog.scss */
+.goog-menu-button-disabled {
+  background-image: none !important;
+  opacity: 0.3;
+  -moz-opacity: 0.3;
+  filter: alpha(opacity=30);
+}
+
+/* line 261, ../sass/goog.scss */
+.goog-menu-button-disabled .goog-menu-button-outer-box,
+.goog-menu-button-disabled .goog-menu-button-inner-box,
+.goog-menu-button-disabled .goog-menu-button-caption,
+.goog-menu-button-disabled .goog-menu-button-dropdown {
+  color: #333 !important;
+  border-color: #999 !important;
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 270, ../sass/goog.scss */
+* html .goog-menu-button-disabled {
+  margin: 2px 1px !important;
+  padding: 0 1px !important;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 276, ../sass/goog.scss */
+*:first-child + html .goog-menu-button-disabled {
+  margin: 2px 1px !important;
+  padding: 0 1px !important;
+}
+
+/* State: hover. */
+/* line 282, ../sass/goog.scss */
+.goog-menu-button-hover .goog-menu-button-outer-box,
+.goog-menu-button-hover .goog-menu-button-inner-box {
+  border-color: #9cf #69e #69e #7af !important;
+  /* Hover border wins. */
+}
+
+/* State: active, open. */
+/* line 288, ../sass/goog.scss */
+.goog-menu-button-active,
+.goog-menu-button-open {
+  background-color: #bbb;
+  background-position: bottom left;
+}
+
+/* State: focused. */
+/* line 295, ../sass/goog.scss */
+.goog-menu-button-focused .goog-menu-button-outer-box,
+.goog-menu-button-focused .goog-menu-button-inner-box {
+  border-color: orange;
+}
+
+/* Caption style. */
+/* line 301, ../sass/goog.scss */
+.goog-menu-button-caption {
+  padding: 0 4px 0 0;
+  vertical-align: top;
+}
+
+/* Dropdown arrow style. */
+/* line 307, ../sass/goog.scss */
+.goog-menu-button-dropdown {
+  height: 15px;
+  width: 7px;
+  /* Client apps may override the URL at which they serve the sprite. */
+  background: url(//ssl.gstatic.com/editor/editortoolbar.png) no-repeat -388px 0;
+  vertical-align: top;
+}
+
+/* Pill (collapsed border) styles. */
+/* TODO(gboyer): Remove specific menu button styles and have any button support being a menu button. */
+/* line 317, ../sass/goog.scss */
+.goog-menu-button-collapse-right,
+.goog-menu-button-collapse-right .goog-menu-button-outer-box,
+.goog-menu-button-collapse-right .goog-menu-button-inner-box {
+  margin-right: 0;
+}
+
+/* line 323, ../sass/goog.scss */
+.goog-menu-button-collapse-left,
+.goog-menu-button-collapse-left .goog-menu-button-outer-box,
+.goog-menu-button-collapse-left .goog-menu-button-inner-box {
+  margin-left: 0;
+}
+
+/* line 329, ../sass/goog.scss */
+.goog-menu-button-collapse-left .goog-menu-button-inner-box {
+  border-left: 1px solid #fff;
+}
+
+/* line 333, ../sass/goog.scss */
+.goog-menu-button-collapse-left.goog-menu-button-checked
+.goog-menu-button-inner-box {
+  border-left: 1px solid #ddd;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Styling for custom buttons rendered by goog.ui.CustomButtonRenderer.
+ *
+ * @author attila@google.com (Attila Bodis)
+ */
+/* line 350, ../sass/goog.scss */
+.goog-custom-button {
+  margin: 2px;
+  border: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: #000;
+  /* Client apps may override the URL at which they serve the image. */
+  background: #ddd url(//ssl.gstatic.com/editor/button-bg.png) repeat-x top left;
+  text-decoration: none;
+  list-style: none;
+  vertical-align: middle;
+  cursor: default;
+  outline: none;
+}
+
+/* Pseudo-rounded corners. */
+/* line 366, ../sass/goog.scss */
+.goog-custom-button-outer-box,
+.goog-custom-button-inner-box {
+  border-style: solid;
+  border-color: #aaa;
+  vertical-align: top;
+}
+
+/* line 373, ../sass/goog.scss */
+.goog-custom-button-outer-box {
+  margin: 0;
+  border-width: 1px 0;
+  padding: 0;
+}
+
+/* line 379, ../sass/goog.scss */
+.goog-custom-button-inner-box {
+  margin: 0 -1px;
+  border-width: 0 1px;
+  padding: 3px 4px;
+  white-space: nowrap;
+  /* Prevents buttons from line breaking on android. */
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 387, ../sass/goog.scss */
+* html .goog-custom-button-inner-box {
+  /* IE6 needs to have the box shifted to make the borders line up. */
+  left: -1px;
+}
+
+/* Pre-IE7 BiDi fixes. */
+/* line 392, ../sass/goog.scss */
+* html .goog-custom-button-rtl .goog-custom-button-outer-box {
+  /* @noflip */
+  left: -1px;
+}
+
+/* line 395, ../sass/goog.scss */
+* html .goog-custom-button-rtl .goog-custom-button-inner-box {
+  /* @noflip */
+  right: auto;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 400, ../sass/goog.scss */
+*:first-child + html .goog-custom-button-inner-box {
+  /* IE7 needs to have the box shifted to make the borders line up. */
+  left: -1px;
+}
+
+/* IE7 BiDi fix. */
+/* line 405, ../sass/goog.scss */
+*:first-child + html .goog-custom-button-rtl .goog-custom-button-inner-box {
+  /* @noflip */
+  left: 1px;
+}
+
+/* Safari-only hacks. */
+/* line 410, ../sass/goog.scss */
+::root .goog-custom-button,
+::root .goog-custom-button-outer-box {
+  /* Required to make pseudo-rounded corners work on Safari. */
+  line-height: 0;
+}
+
+/* line 416, ../sass/goog.scss */
+::root .goog-custom-button-inner-box {
+  /* Required to make pseudo-rounded corners work on Safari. */
+  line-height: normal;
+}
+
+/* State: disabled. */
+/* line 422, ../sass/goog.scss */
+.goog-custom-button-disabled {
+  background-image: none !important;
+  opacity: 0.3;
+  -moz-opacity: 0.3;
+  filter: alpha(opacity=30);
+}
+
+/* line 429, ../sass/goog.scss */
+.goog-custom-button-disabled .goog-custom-button-outer-box,
+.goog-custom-button-disabled .goog-custom-button-inner-box {
+  color: #333 !important;
+  border-color: #999 !important;
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 436, ../sass/goog.scss */
+* html .goog-custom-button-disabled {
+  margin: 2px 1px !important;
+  padding: 0 1px !important;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 442, ../sass/goog.scss */
+*:first-child + html .goog-custom-button-disabled {
+  margin: 2px 1px !important;
+  padding: 0 1px !important;
+}
+
+/* State: hover. */
+/* line 448, ../sass/goog.scss */
+.goog-custom-button-hover .goog-custom-button-outer-box,
+.goog-custom-button-hover .goog-custom-button-inner-box {
+  border-color: #9cf #69e #69e #7af !important;
+  /* Hover border wins. */
+}
+
+/* State: active, checked. */
+/* line 454, ../sass/goog.scss */
+.goog-custom-button-active,
+.goog-custom-button-checked {
+  background-color: #bbb;
+  background-position: bottom left;
+}
+
+/* State: focused. */
+/* line 461, ../sass/goog.scss */
+.goog-custom-button-focused .goog-custom-button-outer-box,
+.goog-custom-button-focused .goog-custom-button-inner-box {
+  border-color: orange;
+}
+
+/* Pill (collapsed border) styles. */
+/* line 467, ../sass/goog.scss */
+.goog-custom-button-collapse-right,
+.goog-custom-button-collapse-right .goog-custom-button-outer-box,
+.goog-custom-button-collapse-right .goog-custom-button-inner-box {
+  margin-right: 0;
+}
+
+/* line 473, ../sass/goog.scss */
+.goog-custom-button-collapse-left,
+.goog-custom-button-collapse-left .goog-custom-button-outer-box,
+.goog-custom-button-collapse-left .goog-custom-button-inner-box {
+  margin-left: 0;
+}
+
+/* line 479, ../sass/goog.scss */
+.goog-custom-button-collapse-left .goog-custom-button-inner-box {
+  border-left: 1px solid #fff;
+}
+
+/* line 483, ../sass/goog.scss */
+.goog-custom-button-collapse-left.goog-custom-button-checked
+.goog-custom-button-inner-box {
+  border-left: 1px solid #ddd;
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 489, ../sass/goog.scss */
+* html .goog-custom-button-collapse-left .goog-custom-button-inner-box {
+  left: 0;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 494, ../sass/goog.scss */
+*:first-child + html .goog-custom-button-collapse-left
+.goog-custom-button-inner-box {
+  left: 0;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/* Author: pallosp@google.com (Peter Pallos) */
+/* Sample 3-state checkbox styles. */
+/* line 509, ../sass/goog.scss */
+.goog-checkbox {
+  border: 1px solid #1C5180;
+  display: -moz-inline-box;
+  display: inline-block;
+  font-size: 1px;
+  /* Fixes the height in IE6 */
+  height: 11px;
+  margin: 0 4px 0 1px;
+  vertical-align: text-bottom;
+  width: 11px;
+}
+
+/* line 520, ../sass/goog.scss */
+.goog-checkbox-checked {
+  background: #fff url(//ssl.gstatic.com/closure/check-sprite.gif) no-repeat 2px center;
+}
+
+/* line 524, ../sass/goog.scss */
+.goog-checkbox-undetermined {
+  background: #bbb url(//ssl.gstatic.com/closure/check-sprite.gif) no-repeat 2px center;
+}
+
+/* line 528, ../sass/goog.scss */
+.goog-checkbox-unchecked {
+  background: #fff;
+}
+
+/* line 532, ../sass/goog.scss */
+.goog-checkbox-disabled {
+  border: 1px solid lightgray;
+  background-position: -7px;
+}
+
+/*
+ * Copyright 2008 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * All Rights Reserved.
+ *
+ * Styles for the HSV color palette.
+ *
+ * @author smcbride@google.com (Sean McBride)
+ * @author arv@google.com (Erik Arvidsson)
+ * @author manucornet@google.com (Manu Cornet)
+ */
+/* line 553, ../sass/goog.scss */
+.goog-hsv-palette,
+.goog-hsv-palette-sm {
+  position: relative;
+  border: 1px solid #999;
+  border-color: #ccc #999 #999 #ccc;
+  width: 400px;
+  height: 276px;
+}
+
+/* line 562, ../sass/goog.scss */
+.goog-hsv-palette-sm {
+  width: 182px;
+  height: 185px;
+}
+
+/* line 567, ../sass/goog.scss */
+.goog-hsv-palette label span,
+.goog-hsv-palette-sm label span {
+  display: none;
+}
+
+/* line 572, ../sass/goog.scss */
+.goog-hsv-palette-hs-backdrop,
+.goog-hsv-palette-sm-hs-backdrop,
+.goog-hsv-palette-hs-image,
+.goog-hsv-palette-sm-hs-image {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 256px;
+  height: 256px;
+  border: 1px solid #999;
+}
+
+/* line 584, ../sass/goog.scss */
+.goog-hsv-palette-sm-hs-backdrop,
+.goog-hsv-palette-sm-hs-image {
+  top: 45px;
+  width: 128px;
+  height: 128px;
+}
+
+/* line 591, ../sass/goog.scss */
+.goog-hsv-palette-hs-backdrop,
+.goog-hsv-palette-sm-hs-backdrop {
+  background-color: #000;
+}
+
+/* line 596, ../sass/goog.scss */
+.goog-hsv-palette-hs-image,
+.goog-hsv-palette-v-image,
+.goog-hsv-palette-hs-handle,
+.goog-hsv-palette-v-handle {
+  background-image: url(//ssl.gstatic.com/closure/hsv-sprite.png);
+}
+
+/* line 603, ../sass/goog.scss */
+.goog-hsv-palette-noalpha .goog-hsv-palette-hs-image,
+.goog-hsv-palette-noalpha .goog-hsv-palette-v-image,
+.goog-hsv-palette-noalpha .goog-hsv-palette-hs-handle,
+.goog-hsv-palette-noalpha .goog-hsv-palette-v-handle {
+  background-image: url(//ssl.gstatic.com/closure/hsv-sprite.gif);
+}
+
+/* line 610, ../sass/goog.scss */
+.goog-hsv-palette-sm-hs-image,
+.goog-hsv-palette-sm-v-image,
+.goog-hsv-palette-sm-hs-handle,
+.goog-hsv-palette-sm-v-handle {
+  background-image: url(//ssl.gstatic.com/closure/hsv-sprite-sm.png);
+}
+
+/* line 617, ../sass/goog.scss */
+.goog-hsv-palette-noalpha .goog-hsv-palette-sm-hs-image,
+.goog-hsv-palette-noalpha .goog-hsv-palette-sm-v-image,
+.goog-hsv-palette-noalpha .goog-hsv-palette-sm-hs-handle,
+.goog-hsv-palette-noalpha .goog-hsv-palette-sm-v-handle {
+  background-image: url(//ssl.gstatic.com/closure/hsv-sprite-sm.gif);
+}
+
+/* line 624, ../sass/goog.scss */
+.goog-hsv-palette-hs-image,
+.goog-hsv-palette-sm-hs-image {
+  background-position: 0 0;
+}
+
+/* line 629, ../sass/goog.scss */
+.goog-hsv-palette-hs-handle,
+.goog-hsv-palette-sm-hs-handle {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  width: 11px;
+  height: 11px;
+  overflow: hidden;
+  background-position: 0 -256px;
+}
+
+/* line 640, ../sass/goog.scss */
+.goog-hsv-palette-sm-hs-handle {
+  top: 40px;
+  background-position: 0 -128px;
+}
+
+/* line 645, ../sass/goog.scss */
+.goog-hsv-palette-v-image,
+.goog-hsv-palette-sm-v-image {
+  position: absolute;
+  top: 10px;
+  left: 286px;
+  width: 19px;
+  height: 256px;
+  border: 1px solid #999;
+  background-color: #fff;
+  background-position: -256px 0;
+}
+
+/* line 657, ../sass/goog.scss */
+.goog-hsv-palette-sm-v-image {
+  top: 45px;
+  left: 155px;
+  width: 9px;
+  height: 128px;
+  background-position: -128px 0;
+}
+
+/* line 665, ../sass/goog.scss */
+.goog-hsv-palette-v-handle,
+.goog-hsv-palette-sm-v-handle {
+  position: absolute;
+  top: 5px;
+  left: 279px;
+  width: 35px;
+  height: 11px;
+  background-position: -11px -256px;
+  overflow: hidden;
+}
+
+/* line 676, ../sass/goog.scss */
+.goog-hsv-palette-sm-v-handle {
+  top: 40px;
+  left: 148px;
+  width: 25px;
+  background-position: -11px -128px;
+}
+
+/* line 683, ../sass/goog.scss */
+.goog-hsv-palette-swatch,
+.goog-hsv-palette-sm-swatch {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 65px;
+  height: 65px;
+  border: 1px solid #999;
+  background-color: #fff;
+}
+
+/* line 694, ../sass/goog.scss */
+.goog-hsv-palette-sm-swatch {
+  top: 10px;
+  right: auto;
+  left: 10px;
+  width: 30px;
+  height: 22px;
+}
+
+/* line 702, ../sass/goog.scss */
+.goog-hsv-palette-input,
+.goog-hsv-palette-sm-input {
+  position: absolute;
+  top: 85px;
+  right: 10px;
+  width: 65px;
+}
+
+/* line 710, ../sass/goog.scss */
+.goog-hsv-palette-sm-input {
+  top: 10px;
+  right: auto;
+  left: 50px;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Standard styling for goog.ui.Dialog.
+ *
+ * @author ssaviano@google.com (Steven Saviano)
+ * @author attila@google.com (Attila Bodis)
+ */
+/* line 730, ../sass/goog.scss */
+.modal-dialog {
+  background: #c1d9ff;
+  border: 1px solid #3a5774;
+  color: #000;
+  padding: 4px;
+  position: absolute;
+}
+
+/* line 738, ../sass/goog.scss */
+.modal-dialog a,
+.modal-dialog a:link,
+.modal-dialog a:visited {
+  color: #06c;
+  cursor: pointer;
+}
+
+/* line 745, ../sass/goog.scss */
+.modal-dialog-bg {
+  background: #666;
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+/* line 752, ../sass/goog.scss */
+.modal-dialog-title {
+  background: #e0edfe;
+  color: #000;
+  cursor: pointer;
+  font-size: 120%;
+  font-weight: bold;
+  /* Add padding on the right to ensure the close button has room. */
+  padding: 8px 31px 8px 8px;
+  position: relative;
+  _zoom: 1;
+  /* Ensures proper width in IE6 RTL. */
+}
+
+/* line 766, ../sass/goog.scss */
+.modal-dialog-title-close {
+  /* Client apps may override the URL at which they serve the sprite. */
+  background: #e0edfe url(//ssl.gstatic.com/editor/editortoolbar.png) no-repeat -528px 0;
+  cursor: default;
+  height: 15px;
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  width: 15px;
+  vertical-align: middle;
+}
+
+/* line 778, ../sass/goog.scss */
+.modal-dialog-buttons,
+.modal-dialog-content {
+  background-color: #fff;
+  padding: 8px;
+}
+
+/* line 784, ../sass/goog.scss */
+.goog-buttonset-default {
+  font-weight: bold;
+}
+
+/* line 30, ../sass/nrg.scss */
+.nrg-ui-slider {
+  position: absolute;
+  outline: 0;
+  /* removes chrome blue border */
+}
+
+/* line 37, ../sass/nrg.scss */
+.nrg-ui-slider-horizontal {
+  width: 100%;
+  height: 10px;
+  top: calc(100% - 10px);
+  left: 0px;
+}
+
+/* line 46, ../sass/nrg.scss */
+.nrg-ui-slider-vertical {
+  width: 10px;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+}
+
+/*
+ * TRACK
+ */
+/* line 57, ../sass/nrg.scss */
+.nrg-ui-slider-track {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  /*background-color : rgba(100,100,100,0);*/
+}
+
+/* line 68, ../sass/nrg.scss */
+.nrg-ui-slider-track-hovered {
+  /*box-sizing: border-box;
+  background-color: rgb(50,50,50);
+  border: solid 1px rgb(100,100,100);*/
+}
+
+/*
+ * THUMB
+ */
+/* line 79, ../sass/nrg.scss */
+.nrg-ui-slider-thumb {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: gainsboro;
+  z-index: 2;
+  border-radius: 4px;
+}
+
+/* line 89, ../sass/nrg.scss */
+.nrg-ui-slider-thumb-horizontal {
+  width: 30px;
+  height: 100%;
+}
+
+/* line 95, ../sass/nrg.scss */
+.nrg-ui-slider-thumb-vertical {
+  height: 30px;
+  width: 100%;
+  left: 0px;
+}
+
+/* line 102, ../sass/nrg.scss */
+.nrg-ui-slider-thumb-hovered {
+  box-sizing: border-box;
+  background-color: gainsboro;
+  /*border: solid 1px rgb(100,100,100);*/
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 112, ../sass/nrg.scss */
+.nrg-ui-hoverinput {
+  position: absolute;
+  top: 3px;
+  width: 100px;
+  height: 17px;
+  left: calc(100% - 110px);
+  background-color: transparent;
+  transition-property: background-color;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 124, ../sass/nrg.scss */
+.nrg-ui-hoverinput-display,
+.nrg-ui-hoverinput-inputbox {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  line-height: 17px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  white-space: nowrap;
+}
+
+/* line 136, ../sass/nrg.scss */
+.nrg-ui-hoverinput-display {
+  color: #9b9b9b;
+  text-align: right;
+  text-wrap: none;
+}
+
+/* line 144, ../sass/nrg.scss */
+.nrg-ui-hoverinput-inputbox {
+  opacity: 0;
+  width: 100%;
+  height: 18px;
+  left: 0px;
+  background-color: black;
+  border: none;
+  /*border-bottom: solid 1px rgb(95,95,95);*/
+  outline: 0;
+  color: white;
+  z-index: 3;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  text-align: right;
+}
+
+/* line 162, ../sass/nrg.scss */
+.nrg-ui-hoverinput:hover {
+  background-color: rgba(0, 0, 1, 0);
+}
+
+/* line 166, ../sass/nrg.scss */
+.nrg-ui-hoverinput:hover > .nrg-ui-hoverinput-inputbox {
+  opacity: 1;
+}
+
+/**
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 174, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer {
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+/* line 186, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer-scrollarea {
+  display: block;
+  position: relative;
+  width: calc(100% - 19px);
+  left: 19px;
+}
+
+/* line 194, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyheader {
+  position: relative;
+  background-color: #323232;
+  left: 0px;
+  width: 100%;
+  height: 1.5em;
+  color: 10px;
+  font-size: #787878;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  cursor: pointer;
+  line-height: 1.5em;
+  margin-bottom: 4px;
+}
+
+/* line 209, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyheader-mouseover {
+  background-color: #5a5a5a;
+  color: white;
+}
+
+/* line 216, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyheaderlabel, .nrg-ui-scrollablecontainer-zippyexpandicon {
+  position: absolute;
+  margin-left: .3em;
+  background-color: none;
+}
+
+/* line 223, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyexpandicon {
+  right: .5em;
+  margin-left: -10px;
+  color: black;
+}
+
+/* line 230, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyexpandicon-mouseover {
+  color: black;
+}
+
+/* line 237, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippycontent {
+  overflow: visible;
+  width: 100%;
+  top: 20px;
+  left: 12px;
+  margin-bottom: 4px;
+}
+
+/* line 247, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider {
+  position: absolute;
+  width: 8px;
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  background-color: black;
+  transition-property: background-color;
+  transition-duration: .2;
+}
+
+/* line 259, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider:hover {
+  background-color: black;
+}
+
+/* line 263, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider-thumb {
+  background-color: #505050;
+  width: 4px;
+  left: 5px;
+  border-radius: 5px;
+  transition-property: background-color, width, left;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 273, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider:hover > .nrg-ui-scrollablecontainer-slider-thumb {
+  background-color: #787878;
+  width: 8px;
+  left: 3px;
+}
+
+/* line 279, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider-thumb:active {
+  background-color: #787878;
+  width: 8px;
+  left: 3px;
+}
+
+/* line 287, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider-track {
+  background-color: transparent;
+}
+
+/* line 292, ../sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider-track-hovered {
+  /*
+  box-sizing: border-box;
+  background-color: rgb(50,50,50);
+  border-right: solid 1px rgb(100,100,100);
+  border-left: none;
+  border-top: none;
+  border-bottom: none;*/
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 308, ../sass/nrg.scss */
+.nrg-ui-scrollablezippytree {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+}
+
+/* line 317, ../sass/nrg.scss */
+.nrg-ui-scrollablezippytree-zippytree {
+  top: 0px;
+  left: 0px;
+  width: 100%;
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 327, ../sass/nrg.scss */
+.nrg-ui-zippynode-header {
+  position: relative;
+  outline: 0;
+  /*background-color: rgb(90,90,90);*/
+  border-bottom: solid 1px #505050;
+  left: 0px;
+  width: 100%;
+  height: 1.5em;
+  color: #505050;
+  font-size: 12px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  cursor: pointer;
+  z-index: 1000;
+  line-height: 1.5em;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  transition-property: background-color, color;
+  transition-duration: .1s;
+  transition-timing-function: ease-out;
+}
+
+/* line 348, ../sass/nrg.scss */
+.nrg-ui-zippynode-header:hover {
+  background-color: #323232;
+  color: white;
+}
+
+/* line 355, ../sass/nrg.scss */
+.nrg-ui-zippynode-header-label, .nrg-ui-zippynode-expandicon {
+  position: absolute;
+  margin-left: .3em;
+  background-color: none;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* line 364, ../sass/nrg.scss */
+.nrg-ui-zippynode-expandicon {
+  right: .5em;
+  margin-left: -10px;
+  color: #646464;
+}
+
+/* line 371, ../sass/nrg.scss */
+.nrg-ui-zippynode-expandicon-mouseover {
+  color: white;
+}
+
+/* line 378, ../sass/nrg.scss */
+.nrg-ui-zippynode-content {
+  overflow: visible;
+  width: 100%;
+  top: 20px;
+  left: 12px;
+  z-index: 1000;
+}
+
+/* line 389, ../sass/nrg.scss */
+.nrg-ui-zippynode-loading-holder {
+  position: relative;
+  height: 87px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 395, ../sass/nrg.scss */
+.nrg-ui-zippynode-loading-text {
+  position: absolute;
+  top: calc(50% - 12px);
+  left: calc(50% - 23px);
+}
+
+/* line 402, ../sass/nrg.scss */
+.nrg-ui-zippynode-loading-image {
+  position: absolute;
+  width: 150px;
+  height: 2px;
+  top: calc(50% + 10px);
+  left: calc(50% - 75px);
+  opacity: .50;
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 428, ../sass/nrg.scss */
+.nrg-ui-zippytree-rootnode {
+  margin-bottom: 0px;
+  height: 0px;
+}
+
+/**
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 436, ../sass/nrg.scss */
+.nrg-ui-dialog {
+  position: absolute;
+  outline: none;
+  background-color: black;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  border-radius: 5px;
+  border-color: white;
+  z-index: 10;
+  overflow: hidden;
+}
+
+/* line 448, ../sass/nrg.scss */
+.nrg-ui-dialog-overlay {
+  position: absolute;
+  left: 30%;
+  top: 35%;
+  width: 40%;
+  height: 30%;
+  background-color: black;
+  z-index: 201;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 460, ../sass/nrg.scss */
+.nrg-ui-dialog-background {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(20, 20, 20, 0.6);
+  z-index: 200;
+  display: inline-block;
+}
+
+/* line 478, ../sass/nrg.scss */
+.nrg-ui-dialog-subtext {
+  text-align: left;
+  font-size: 12px;
+}
+
+/* line 485, ../sass/nrg.scss */
+.nrg-ui-dialog-text {
+  text-align: center;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 490, ../sass/nrg.scss */
+.nrg-ui-dialog-closebutton-image, .nrg-ui-dialog-closebutton {
+  height: 10;
+  width: 10;
+}
+
+/* line 494, ../sass/nrg.scss */
+.nrg-ui-dialog-closebutton {
+  position: absolute;
+  cursor: pointer;
+  top: 2px;
+  left: calc(100% - 16px);
+  z-index: 103;
+  background: none;
+  outline: none;
+}
+
+/* line 510, ../sass/nrg.scss */
+.modal-dialog-title-text {
+  top: 2px;
+  left: 7px;
+  position: absolute;
+  text-align: center;
+}
+
+/* line 518, ../sass/nrg.scss */
+.nrg-ui-dialog-title {
+  background-color: #3c3c3c;
+  height: 15px;
+  padding: 0px;
+  margin-top: -3px;
+  width: 104%;
+  left: -2%;
+  border: none;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  z-index: -1;
+}
+
+/* line 531, ../sass/nrg.scss */
+.nrg-ui-dialog-content {
+  background-color: none;
+  background: none;
+}
+
+/* line 537, ../sass/nrg.scss */
+.nrg-ui-dialog-buttons {
+  background-color: none;
+  background: none;
+}
+
+/* line 544, ../sass/nrg.scss */
+.nrg-ui-dialog-yesnomodal {
+  position: absolute;
+  top: calc(50% - 60px);
+  left: calc(50% - 125px);
+  width: 250px;
+  height: 120px;
+  background: black;
+  background-color: black;
+  border: 1px solid white;
+  padding: 4px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  border-radius: 10px;
+  outline: 0;
+  z-index: 1000;
+  cursor: default;
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 566, ../sass/nrg.scss */
+.nrg-ui-errordialog {
+  width: 400px;
+  height: 300px;
+  z-index: 100000;
+}
+
+/* line 574, ../sass/nrg.scss */
+.nrg-ui-errordialog-image {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  left: calc(50% - 40px);
+}
+
+/* line 583, ../sass/nrg.scss */
+.nrg-ui-errordialog-text {
+  top: 145px;
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 591, ../sass/nrg.scss */
+.nrg-ui-thumbnail {
+  position: absolute;
+  width: 87px;
+  height: 87px;
+  top: 0px;
+  left: 0px;
+  cursor: pointer;
+  background-color: black;
+  box-sizing: border-box;
+  border: solid 1px black;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  transition-property: border, background-color, color;
+}
+
+/* line 606, ../sass/nrg.scss */
+.nrg-ui-thumbnail-selectindicator {
+  position: absolute;
+  top: calc(50% - 34px);
+  left: 7px;
+  width: 2px;
+  height: 68px;
+  opacity: 0;
+  background-color: #646464;
+}
+
+/* line 617, ../sass/nrg.scss */
+.nrg-ui-thumbnail-selectindicator-active {
+  opacity: 1;
+}
+
+/* line 623, ../sass/nrg.scss */
+.nrg-ui-thumbnail-selected {
+  border: solid 1px #646464;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* line 632, ../sass/nrg.scss */
+.nrg-ui-thumbnail:hover {
+  background-color: #1e1e1e;
+  z-index: 10000;
+  overflow: visible;
+  color: white;
+  border: solid 1px #282828;
+}
+
+/* line 641, ../sass/nrg.scss */
+.nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-image {
+  /*color: rgb(255,255,255);*/
+  /*border-color: white;*/
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* line 647, ../sass/nrg.scss */
+.nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-text {
+  color: #d7d7d7;
+}
+
+/* line 651, ../sass/nrg.scss */
+.nrg-ui-thumbnail-image, .nrg-ui-thumbnail-canvas {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  top: calc(50% - 35px);
+  left: 8px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  border: solid 1px #1e1e1e;
+  /*border : none;
+  border-color: rgb(100,100,100);
+  border-width : 1px;
+  border-radius: 0px;	
+  box-sizing: border-box; */
+  cursor: pointer;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  transition-property: border-color;
+}
+
+/* line 674, ../sass/nrg.scss */
+.nrg-ui-thumbnail-image-mouseover {
+  /*border: solid 1px white;*/
+}
+
+/* line 679, ../sass/nrg.scss */
+.nrg-ui-thumbnail-text {
+  position: absolute;
+  height: 70px;
+  top: 8px;
+  left: 86px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  font-size: 9;
+  white-space: nowrap;
+  color: #505050;
+  line-height: 17px;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  transition-property: color;
+}
+
+/* line 695, ../sass/nrg.scss */
+.nrg-ui-thumbnail-text-mouseover {
+  color: #9b9b9b;
+}
+
+/* line 700, ../sass/nrg.scss */
+.nrg-ui-thumbnail-canvas {
+  top: 8px;
+  left: 8px;
+}
+
+/*******
+* Active state
+********/
+/* line 711, ../sass/nrg.scss */
+.nrg-ui-thumbnail-text-active {
+  /*color : rgb(100,100,100);*/
+}
+
+/* line 715, ../sass/nrg.scss */
+.nrg-ui-thumbnail-active {
+  opacity: 1;
+}
+
+/* line 720, ../sass/nrg.scss */
+.nrg-ui-thumbnail-image-active {
+  /*border-left: solid 2px rgb(100,100,100);*/
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 728, ../sass/nrg.scss */
+.nrg-ui-thumbnailgallery {
+  position: absolute;
+  overflow: hidden;
+}
+
+/* line 736, ../sass/nrg.scss */
+.nrg-ui-thumbnailgallery-thumbnail {
+  position: relative;
+  width: 100%;
+  height: 176px;
+  top: 0px;
+  left: 0px;
+  cursor: pointer;
+}
+
+/* line 746, ../sass/nrg.scss */
+.nrg-ui-thumbnailgallery-thumbnail-image {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  top: 8px;
+  left: 8px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  border: solid;
+  border-color: white;
+  border-width: 1px;
+  border-radius: 0px;
+  cursor: pointer;
+}
+
+/* line 762, ../sass/nrg.scss */
+.nrg-ui-thumbnailgallery-thumbnail-text {
+  position: absolute;
+  height: 70px;
+  top: 8px;
+  left: 176px;
+  color: white;
+  font-size: 9px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  line-height: 17px;
+}
+
+/* line 773, ../sass/nrg.scss */
+.nrg-ui-resizable-boundary {
+  position: absolute;
+  border: 1px dotted red;
+  background-color: rgba(255, 120, 120, 0.5);
+}
+
+/* line 780, ../sass/nrg.scss */
+.nrg-ui-resizedragger {
+  position: absolute;
+  font-size: 0.1px;
+  z-index: 1;
+  /*background-color: rgba(255,20,20, 0);*/
+}
+
+/**
+  RIGHT AND LEFT
+*/
+/* line 791, ../sass/nrg.scss */
+.nrg-ui-resizedraggerright, .nrg-ui-resizedraggerleft {
+  position: absolute;
+  width: 7px;
+  height: 100%;
+  cursor: ew-resize;
+}
+
+/* line 798, ../sass/nrg.scss */
+.nrg-ui-resizedraggerright {
+  left: 100%;
+  /*background-color: rgba(0,255,0,.5);*/
+}
+
+/* line 803, ../sass/nrg.scss */
+.nrg-ui-resizedraggerleft {
+  left: -7px;
+}
+
+/**
+ * TOP AND BOTTOM
+ */
+/* line 813, ../sass/nrg.scss */
+.nrg-ui-resizedraggertop, .nrg-ui-resizedraggerbottom {
+  position: absolute;
+  left: 0px;
+  width: 100%;
+  height: 7px;
+  cursor: ns-resize;
+}
+
+/* line 821, ../sass/nrg.scss */
+.nrg-ui-resizedraggertop {
+  top: -7px;
+  /*background-color: rgba(0,255,0,.5);*/
+}
+
+/* line 826, ../sass/nrg.scss */
+.nrg-ui-resizedraggerbottom {
+  top: 100%;
+  /*background-color: rgba(255,0,0,.5);*/
+}
+
+/**
+ * CORNERS
+ */
+/* line 838, ../sass/nrg.scss */
+.nrg-ui-resizedraggertopright,
+.nrg-ui-resizedraggertopleft,
+.nrg-ui-resizedraggerbottomright,
+.nrg-ui-resizedraggerbottomleft {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  cursor: move;
+}
+
+/* line 849, ../sass/nrg.scss */
+.nrg-ui-resizedraggertopright,
+.nrg-ui-resizedraggertopleft {
+  top: calc(100% - 7px);
+}
+
+/* line 854, ../sass/nrg.scss */
+.nrg-ui-resizedraggertopright {
+  left: calc(100% - 7px);
+  /*background-color: orange;*/
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/**
+ * ELEMENT
+ */
+/* line 866, ../sass/nrg.scss */
+.nrg-ui-tabs {
+  position: absolute;
+  left: 0px;
+}
+
+/* line 871, ../sass/nrg.scss */
+.nrg-ui-tabs-right {
+  left: 0px;
+}
+
+/* line 876, ../sass/nrg.scss */
+.nrg-ui-tabs-left {
+  left: calc(100% - 18px);
+}
+
+/* line 881, ../sass/nrg.scss */
+.nrg-ui-tabs-top {
+  top: calc(100% - 18px);
+}
+
+/* line 886, ../sass/nrg.scss */
+.nrg-ui-tabs-bottom {
+  top: 0px;
+}
+
+/**
+ * TABS
+ */
+/* line 897, ../sass/nrg.scss */
+.nrg-ui-tabs-tab {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  position: absolute;
+  top: 0px;
+  color: #646464;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  background-color: #1e1e1e;
+  cursor: pointer;
+  border: solid 1px #3c3c3c;
+  text-align: center;
+}
+
+/* line 911, ../sass/nrg.scss */
+.nrg-ui-tabs-tab-top {
+  height: 18px;
+  top: 0px;
+  border-radius: 4px 4px 0px 0px;
+  border-bottom: none;
+}
+
+/* line 919, ../sass/nrg.scss */
+.nrg-ui-tabs-tab-bottom {
+  height: 18px;
+  top: calc(100% - 18px);
+  border-radius: 0px 0px 4px 4px;
+  border-top: none;
+}
+
+/* line 927, ../sass/nrg.scss */
+.nrg-ui-tabs-tab-right {
+  width: 22px;
+  left: calc(100% - 22px);
+  /*border-radius: 0px 4px 4px 0px;*/
+  border-left: none;
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
+}
+
+/* line 937, ../sass/nrg.scss */
+.nrg-ui-tabs-tab-left {
+  width: 18px;
+  left: 0px;
+  /*border-radius: 4px 0px 0px 4px;*/
+  border-right: none;
+}
+
+/* line 945, ../sass/nrg.scss */
+.nrg-ui-tabs-tab-active {
+  border: solid 1px #646464;
+}
+
+/* line 950, ../sass/nrg.scss */
+.nrg-ui-tabs-tab-active-right {
+  border-left: none;
+}
+
+/* line 955, ../sass/nrg.scss */
+.nrg-ui-tabs-tab-active-top {
+  border-bottom: none;
+}
+
+/* line 960, ../sass/nrg.scss */
+.nrg-ui-tabs-tab-active {
+  z-index: 1;
+}
+
+/* line 965, ../sass/nrg.scss */
+.nrg-ui-tabs-icon {
+  color: #646464;
+  z-index: 11;
+  color: #646464;
+  font-size: 10px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  display: table;
+}
+
+/* line 978, ../sass/nrg.scss */
+.nrg-ui-tabs-icon-active {
+  color: #646464;
+}
+
+/* line 983, ../sass/nrg.scss */
+.nrg-ui-tabs-icon-top {
+  width: 100%;
+  height: 100%;
+}
+
+/* line 989, ../sass/nrg.scss */
+.nrg-ui-tabs-icon-right {
+  left: -24px;
+  top: calc(50% - 5px);
+  white-space: nowrap;
+}
+
+/* line 998, ../sass/nrg.scss */
+.nrg-ui-tabs-icon-content {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* line 1005, ../sass/nrg.scss */
+.nrg-ui-tabs-page {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  position: absolute;
+  color: #646464;
+  font-size: 12px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  background-color: black;
+  width: 100%;
+  border: solid 1px #3c3c3c;
+  visibility: hidden;
+  overflow: hidden;
+}
+
+/* line 1019, ../sass/nrg.scss */
+.nrg-ui-tabs-page-content {
+  position: absolute;
+  left: 0px;
+  top: 10px;
+  height: calc(100% - 20px);
+  width: 100%;
+  z-index: 2;
+}
+
+/* line 1030, ../sass/nrg.scss */
+.nrg-ui-tabs-page-active {
+  border: solid 1px #646464;
+  visibility: visible;
+  z-index: 2;
+}
+
+/* line 1037, ../sass/nrg.scss */
+.nrg-ui-tabs-page-right, .nrg-ui-tabs-page-left {
+  position: absolute;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  width: calc(100% - 18px);
+  border-right: none;
+  border-left: none;
+}
+
+/* line 1048, ../sass/nrg.scss */
+.nrg-ui-tabs-page-top, .nrg-ui-tabs-page-bottom {
+  position: absolute;
+  top: 18px;
+  left: 0px;
+  height: calc(100% - 18px);
+  width: 100%;
+  border-bottom: none;
+}
+
+/**
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 1061, ../sass/nrg.scss */
+.nrg-ui-ziptabs {
+  position: absolute;
+}
+
+/* line 1066, ../sass/nrg.scss */
+.nrg-ui-ziptabs:hover {
+  opacity: 1;
+}
+
+/* line 1072, ../sass/nrg.scss */
+.nrg-ui-ziptabs-top, .nrg-ui-ziptabs-bottom {
+  height: 18px;
+}
+
+/* line 1077, ../sass/nrg.scss */
+.nrg-ui-ziptabs-left, .nrg-ui-ziptabs-right {
+  width: 18px;
+  opacity: .7;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  transition-property: opacity;
+}
+
+/* line 1086, ../sass/nrg.scss */
+.nrg-ui-ziptabs-right:hover {
+  opacity: 1;
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1100, ../sass/nrg.scss */
+.nrg-ui-slideinmenu-icon {
+  max-width: 100%;
+  max-height: 100%;
+  opacity: 1;
+}
+
+/* line 1107, ../sass/nrg.scss */
+.nrg-ui-slideinmenu-icon-hovered {
+  opacity: 1;
+}
+
+/* line 1112, ../sass/nrg.scss */
+.nrg-ui-slideinmenu-menuholder {
+  position: absolute;
+  background-color: #ff6416;
+  z-index: 4000;
+}
+
+/* line 1119, ../sass/nrg.scss */
+.nrg-ui-slideinmenu-menu {
+  background-color: #7d7d7d;
+  border: solid 1px #323232;
+  z-index: 20000;
+  cursor: pointer;
+  width: 130px;
+}
+
+/* line 1128, ../sass/nrg.scss */
+.nrg-ui-slideinmenu-menuitem {
+  overflow: visible;
+  margin-left: 5px;
+  margin-top: 7px;
+  height: 20px;
+}
+
+/* line 1136, ../sass/nrg.scss */
+.nrg-ui-slideinmenu-menuitem-highlight {
+  color: white;
+}
+
+/* line 1140, ../sass/nrg.scss */
+.nrg-ui-slideinmenu-menuitem-icon {
+  position: absolute;
+  margin-top: -3px;
+  left: 5px;
+  width: 20px;
+  height: 20px;
+}

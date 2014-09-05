@@ -103,6 +103,7 @@ xiv.ui.Modal.CSS_SUFFIX = {
     PROJECTTAB_DRAGGER : 'projecttab-dragger',
     PROJECTTAB_DRAGGER_HANDLE : 'projecttab-dragger-handle',
     ADDSUBJECTS : 'addsubjects',
+    FOLDERICON: 'foldericon'
 }
 
 
@@ -908,6 +909,7 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
     this.ThumbnailGallery_.render(this.ProjectTab_.getElement())
 
 
+
     //
     // add thumbnail gallery to ProjectTab_
     //
@@ -936,6 +938,17 @@ xiv.ui.Modal.prototype.initProjectTab_ = function() {
 	'class': xiv.ui.Modal.CSS.PROJECTTAB_DRAGGER_HANDLE
     }));
 
+
+    var iconHolder = this.ProjectTab_.getTabIcons()[0];
+    iconHolder.childNodes[0].style.visibility = 'hidden';
+    var folderIcon = goog.dom.createDom('img', {
+	'id': xiv.ui.ViewBox.ID_PREFIX + '_FolderIcon_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.Modal.CSS.FOLDERICON
+    })
+    folderIcon.src = 
+	this.imagePrefix + '/images/viewer/xiv/ui/Modal/folder.png';
+    goog.dom.append(iconHolder, folderIcon); 
 
     // Event listener
     this.pageMonitor_ = new goog.labs.dom.PageVisibilityMonitor();

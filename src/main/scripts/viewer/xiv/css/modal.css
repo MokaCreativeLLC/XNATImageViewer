@@ -236,3 +236,13 @@
 .xiv-ui-modal-addsubjects-hovered {
     opacity: 1;
 }
+
+
+.xiv-ui-modal-foldericon {
+    position: absolute;
+    left: calc(50% - 9px);
+    height: 15px;
+    width: 15px;
+    opacity: .5;
+    top: 5px;
+}
