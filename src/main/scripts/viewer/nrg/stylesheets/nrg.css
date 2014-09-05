@@ -1494,7 +1494,7 @@
 .nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-image {
   /*color: rgb(255,255,255);*/
   /*border-color: white;*/
-  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+  /*box-shadow: 3px 3px 3px rgba(0,0,0, .3);*/
 }
 
 /* line 647, ../sass/nrg.scss */
