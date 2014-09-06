@@ -5,8 +5,8 @@
 
 @import "compass/reset";
 @import "../../nrg/sass/nrg";
-
-
+@import "layoutframe";
+@import "xyzvlayout";
 
 
 .xiv-ui-xtkcontroller {
@@ -151,8 +151,7 @@
     box-sizing: content-box;
     box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, 0);
     transition-property: box-shadow;
-    @include nrg-hoverable;
-
+    @include nrg-transitionable;
     transition-timing-function: ease-out; 
 }
 
@@ -491,7 +490,7 @@ box-sizing:border-box;
       z-index: 2;
       border: solid 1px rgb(50,50,50);
     transition-property: border;
-    @include nrg-hoverable;
+    @include nrg-transitionable;
 }
 
 
@@ -545,7 +544,7 @@ box-sizing:border-box;
     background-color: rgb(0,0,0);
     opacity: .5;
     transition-property: opacity;
-    @include nrg-hoverable;
+    @include nrg-transitionable;
 }
 
 .xiv-ui-viewbox-menu-left:hover{
@@ -677,14 +676,14 @@ box-sizing:border-box;
     border-color: rgba(255,255,255,0);
     background-color: rgba(60,60,60,0);
     transition-property: color, background-color, border-color; 
-    @include nrg-hoverable;
+    @include nrg-transitionable;
 }
 
 
 .xiv-ui-viewboxdialogs-infodialog-text {
     color: rgb(155,155,155);
     transition-property: color; 
-    @include nrg-hoverable;
+    @include nrg-transitionable;
 }
 
 
@@ -1295,17 +1294,7 @@ box-sizing:border-box;
 }
 
 
-.xiv-ui-layouts-hoverframe:hover > .xiv-ui-layouts-fadeableinteractor {
-    opacity: 1;
-}
 
-
-.xiv-ui-layouts-fadeableinteractor {
-    opacity: 0;
-    transition-property: opacity;
-    transition-duration: .25s;
-    transition-timing-function: ease-out
-}
 
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
@@ -1419,100 +1408,6 @@ box-sizing:border-box;
 
 
 
-.xiv-ui-layouts-xyzvlayout {
-    position: absolute;
-}
-
-
-.xiv-ui-layouts-xyzvlayout-x,  .xiv-ui-layouts-xyzvlayout-y, 
-.xiv-ui-layouts-xyzvlayout-z, .xiv-ui-layouts-xyzvlayout-v {
-    position: absolute;
-  box-sizing:border-box;
-  -moz-box-sizing:border-box;
-  -webkit-box-sizing:border-box;
-}
-
-
-
-
-.xiv-ui-layouts-xyzvlayout-slider {
-    position: absolute;
-    left: 30px;
-    top: calc(100% - 15px);
-    width: calc(100% - 40px);
-    height: 10px;
-}
-
-
-
-
-
-.xiv-ui-layouts-xyzvlayout-slider-track {
-    position: absolute;
-    height: 2px;
-    top: calc(50% - 1px);
-    left: 0px;
-    border-radius: 2px;
-    width: 100%;
-    background-color: rgb(80,80,80);
-}
-
-
-
-.xiv-ui-layouts-xyzvlayout-slider-track-x {
-   background: rgba(255,0,0, .5);
-}
-
-
-
-.xiv-ui-layouts-xyzvlayout-slider-track-y {
-   background: rgba(0,255,0, .5);
-}
-
-
-
-.xiv-ui-layouts-xyzvlayout-slider-track-z {
-   background: rgba(0,0,255, .5);
-}
-
-.xiv-ui-layouts-xyzvlayout-slider-thumb {
-    position: absolute;
-    top: calc(50% - 4px);
-    width: 8px;
-    height: 8px;
-    background: rgb(150,150,150);
-    border: 0px;
-    border-radius: 2px;
-    box-shadow: 0px 0px 0px 3px rgba(125, 125, 125, 0);
-    transition-property: box-shadow;
-    @include nrg-hoverable;
-}
-
-.xiv-ui-layouts-xyzvlayout-slider-thumb:hover {
-    box-shadow: 0px 0px 0px 3px rgba(155, 155, 155, .55);
-}
-
-.xiv-ui-layouts-xyzvlayout-slider-thumb:active {
-    box-shadow: 0px 0px 0px 3px rgba(155, 155, 155, .55);
-}
-
-
-
-
-.xiv-ui-layouts-xyzvlayout-framenumber {
-    position: absolute;
-    top: 5px;
-    left: 0;
-    width: 100%;
-    margin-left: -8px;
-    color: rgb(255,255,255);
-    font-size: 9px;
-    opacity: .8;
-    text-align: right;
-}
-/*
- * @author kumar.sunil.p@gmail.com (Sunil Kumar)
- */
 
 
 
@@ -1765,31 +1660,6 @@ box-sizing:border-box;
 }
 
 
-
-/*
- * @author kumar.sunil.p@gmail.com (Sunil Kumar)
- */
-
-
-
-.xiv-ui-layouts-layoutframe {
-    position: absolute;
-  box-sizing:border-box;
-  -moz-box-sizing:border-box;
-  -webkit-box-sizing:border-box;
-  overflow: hidden;
-  background: black;
-}
-
-
-.xiv-ui-layouts-layoutframe-sagittal, .xiv-ui-layouts-layoutframe-coronal, 
-.xiv-ui-layouts-layoutframe-transverse, .xiv-ui-layouts-layoutframe-threed {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-}
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
@@ -2103,17 +1973,22 @@ box-sizing:border-box;
 
 .xiv-ui-playbutton {
     position: absolute;
-    top: calc(100% - 15px);
     left: 9px;
-    height: 9px;
     width: 9px;
     cursor: pointer;
+    opacity: 1;
+    top: calc(100% - 14px);
+    height: 6px;
+    transition-property: opacity, top;
+    @include nrg-transitionable;
 }
 
 
 
+
+
 .xiv-ui-playbutton-image {
-    height: 9px;
+    height: 6px;
     width: 9px;
     opacity: .6;
 }

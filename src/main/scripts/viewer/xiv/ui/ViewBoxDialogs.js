@@ -764,7 +764,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
 
     var text = goog.dom.getElementsByClass('nrg-ui-dialog-text',
 				   currDialog.getElement())
-    window.console.log(text);
+    //window.console.log(text);
     goog.dom.classes.add(text[0], 
 	'xiv-ui-viewboxdialogs-infodialog-text');
 

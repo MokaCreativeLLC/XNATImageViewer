@@ -14,7 +14,7 @@
     font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;  
 }
 
-@mixin nrg-hoverable($dur: .2s, $timing: ease-out) {
+@mixin nrg-transitionable($dur: .2s, $timing: ease-out) {
   -webkit-transition-duration: $dur;
   transition-duration: $dur;
   transition-timing-function: $timing; 
@@ -117,7 +117,7 @@
     left: calc(100% - 110px);
     background-color: rgba(0,0,0,0);
     transition-property: background-color;
-    @include nrg-hoverable;
+    @include nrg-transitionable;
 }
 
 
@@ -153,7 +153,7 @@
     color: rgb(255,255,255);
     z-index: 3;
     transition-property: opacity;
-    @include nrg-hoverable;
+    @include nrg-transitionable;
     text-align: right;
 }
 
@@ -266,7 +266,7 @@
     left: 5px;
     border-radius: 5px;
     transition-property: background-color, width, left;
-    @include nrg-hoverable;
+    @include nrg-transitionable;
 }
 
 
@@ -598,7 +598,7 @@
     background-color: rgb(0,0,0);
     box-sizing: border-box;
     border: solid 1px rgb(0, 0, 0);
-    @include nrg-hoverable;
+    @include nrg-transitionable;
     transition-property: border, background-color, color;
 }
 
@@ -667,7 +667,7 @@
     border-radius: 0px;	
     box-sizing: border-box; */
     cursor: pointer;
-    @include nrg-hoverable;
+    @include nrg-transitionable;
     transition-property: border-color;
 }
 
@@ -686,7 +686,7 @@
     white-space: nowrap;  
     color : rgb(80,80,80);  
     line-height: 17px;
-    @include nrg-hoverable;
+    @include nrg-transitionable;
     transition-property:  color;
 
 }
@@ -1077,7 +1077,7 @@
 .nrg-ui-ziptabs-left, .nrg-ui-ziptabs-right {
     width: 18px;
     opacity: .7;
-    @include nrg-hoverable;
+    @include nrg-transitionable;
     transition-property: opacity;
 }
 

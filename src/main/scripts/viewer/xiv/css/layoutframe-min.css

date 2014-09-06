@@ -1997,129 +1997,25 @@
   height: 20px;
 }
 
-/* line 4, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout {
-  position: absolute;
-}
-
-/* line 9, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-x, .xiv-ui-layouts-xyzvlayout-y,
-.xiv-ui-layouts-xyzvlayout-z, .xiv-ui-layouts-xyzvlayout-v {
+/* line 4, layoutframe.scss */
+.xiv-ui-layouts-layoutframe {
   position: absolute;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
-}
-
-/* line 28, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slide-maxthumb, .xiv-ui-layouts-xyzvlayout-slider:hover > .xiv-ui-layouts-xyzvlayout-slider-thumb, .xiv-ui-layouts-xyzvlayout-slider:active > .xiv-ui-layouts-xyzvlayout-slider-thumb {
-  height: 8px;
-  top: 5px;
-}
-
-/* line 34, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider {
-  position: absolute;
-  left: 30px;
-  top: calc(100% - 30px);
-  width: calc(100% - 40px);
-  height: 30px;
-  /*background-color: rgba(20,100,0,.2);*/
+  overflow: hidden;
+  background: black;
   -webkit-transition-duration: 0.2s;
   transition-duration: 0.2s;
   transition-timing-function: ease-out;
 }
-/* line 46, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider:hover ~ .xiv-ui-playbutton {
-  top: calc(100% - 24px);
-}
-/* line 51, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider:hover > .xiv-ui-layouts-xyzvlayout-slider-track-x, .xiv-ui-layouts-xyzvlayout-slider:active > .xiv-ui-layouts-xyzvlayout-slider-track-x {
-  height: 6px;
-  top: 6px;
-  opacity: 1;
-  border-color: rgba(50, 50, 50, 0.8);
-  background-color: rgba(255, 0, 0, 0.3);
-}
-/* line 55, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider:hover > .xiv-ui-layouts-xyzvlayout-slider-track-y, .xiv-ui-layouts-xyzvlayout-slider:active > .xiv-ui-layouts-xyzvlayout-slider-track-y {
-  height: 6px;
-  top: 6px;
-  opacity: 1;
-  border-color: rgba(50, 50, 50, 0.8);
-  background-color: rgba(0, 255, 0, 0.3);
-}
-/* line 59, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider:hover > .xiv-ui-layouts-xyzvlayout-slider-track-z, .xiv-ui-layouts-xyzvlayout-slider:active > .xiv-ui-layouts-xyzvlayout-slider-track-z {
-  height: 6px;
-  top: 6px;
-  opacity: 1;
-  border-color: rgba(50, 50, 50, 0.8);
-  background-color: rgba(0, 0, 255, 0.3);
-}
 
-/* line 76, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider-track, .xiv-ui-layouts-xyzvlayout-slider-track-x,
-.xiv-ui-layouts-xyzvlayout-slider-track-y,
-.xiv-ui-layouts-xyzvlayout-slider-track-z {
+/* line 16, layoutframe.scss */
+.xiv-ui-layouts-layoutframe-sagittal, .xiv-ui-layouts-layoutframe-coronal,
+.xiv-ui-layouts-layoutframe-transverse, .xiv-ui-layouts-layoutframe-threed {
   position: absolute;
-  height: 1px;
-  top: 18px;
+  top: 0px;
   left: 0px;
-  border-radius: 2px;
-  border: solid 1px #646464;
   width: 100%;
-  transition-property: top, height;
-  background-color: rgba(50, 50, 50, 0.5);
-  transition-property: border-color, opacity, height, top;
-  opacity: .5;
-  -webkit-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-out;
-}
-
-/* line 97, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider-track-x,
-.xiv-ui-layouts-xyzvlayout-slider-track-y,
-.xiv-ui-layouts-xyzvlayout-slider-track-z {
-  transition-property: opacity, height, top;
-}
-
-/* line 108, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider-thumb {
-  position: absolute;
-  width: 8px;
-  background: #969696;
-  border: solid 1px #a0a0a0;
-  border-radius: 2px;
-  box-shadow: 0px 0px 0px 3px rgba(125, 125, 125, 0);
-  height: 1px;
-  top: calc(100% - 12px);
-  transition-property: box-shadow, top, height;
-  -webkit-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-out;
-}
-
-/* line 125, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider-thumb:hover {
-  box-shadow: 0px 0px 0px 3px rgba(155, 155, 155, 0.55);
-}
-
-/* line 129, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider-thumb:active {
-  box-shadow: 0px 0px 0px 3px rgba(155, 155, 155, 0.55);
-}
-
-/* line 134, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-framenumber {
-  position: absolute;
-  top: 5px;
-  left: 0;
-  width: 100%;
-  margin-left: -8px;
-  color: white;
-  font-size: 9px;
-  opacity: .8;
-  text-align: right;
+  height: 100%;
 }

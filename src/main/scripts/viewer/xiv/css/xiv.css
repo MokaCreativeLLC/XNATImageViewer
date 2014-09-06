@@ -1,3 +1,72 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+/* line 5, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
+  display: block;
+}
+
 /*
  * Standard styling for utils.ui.GenericSlider
  *
@@ -1997,6 +2066,34 @@
   height: 20px;
 }
 
+/* line 4, layoutframe.scss */
+.xiv-ui-layouts-layoutframe {
+  position: absolute;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  overflow: hidden;
+  background: black;
+  /*@include nrg-transitionable;*/
+}
+
+/* line 15, layoutframe.scss */
+.xiv-ui-layouts-layoutframe-transitionable {
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 25, layoutframe.scss */
+.xiv-ui-layouts-layoutframe-sagittal, .xiv-ui-layouts-layoutframe-coronal,
+.xiv-ui-layouts-layoutframe-transverse, .xiv-ui-layouts-layoutframe-threed {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+
 /* line 4, xyzvlayout.scss */
 .xiv-ui-layouts-xyzvlayout {
   position: absolute;
@@ -2122,4 +2219,1875 @@
   font-size: 9px;
   opacity: .8;
   text-align: right;
+}
+
+/* line 12, xiv.scss */
+.xiv-ui-xtkcontroller {
+  display: block;
+  position: relative;
+  width: 95%;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+
+/* line 21, xiv.scss */
+.xiv-ui-xtkcontroller-label {
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/*
+ * Standard styling for the scroll gallery
+ *
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 41, xiv.scss */
+.xiv-ui-xtkcontroller-scrollgallery {
+  top: 25px;
+  left: 0px;
+  width: 100%;
+  height: 90%;
+  position: absolute;
+  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+/* line 53, xiv.scss */
+.xiv-ui-xtkcontroller-scrollgallery-scrollarea {
+  position: relative;
+  width: 166px;
+  left: 14px;
+}
+
+/* line 60, xiv.scss */
+.xiv-ui-xtkcontroller-scrollgallery-zippyheader {
+  position: relative;
+  background-color: #464646;
+  left: 0px;
+  color: black;
+  font-size: 1.5em;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  cursor: pointer;
+}
+
+/* line 69, xiv.scss */
+.xiv-ui-xtkcontroller-scrollgallery-slider-widget {
+  width: 7;
+  background-color: black;
+  border: none;
+}
+
+/* line 77, xiv.scss */
+.xiv-ui-xtkcontroller-scrollgallery-slider-thumb {
+  height: 60px;
+  background-color: #787878;
+  border: none;
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 86, xiv.scss */
+.xiv-vis-xtkplane-disabledoverlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  display: table;
+  color: black;
+  font-size: 20px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  text-align: center;
+  z-index: 100;
+  background-color: #787878;
+  opacity: 0;
+}
+
+/* line 104, xiv.scss */
+.xiv-ui-displayall-checkboxholder {
+  position: absolute;
+  left: 30%;
+}
+
+/* line 116, xiv.scss */
+.xiv-ui-sliderbase-slider {
+  position: absolute;
+  left: calc(55% - 65px);
+  width: calc(55% - 65px);
+  top: 2px;
+  outline: none;
+}
+
+/* line 126, xiv.scss */
+.xiv-ui-sliderbase-slider-track, .xiv-ui-slidercontroller-slider-track, .xiv-ui-twothumbslidercontroller-slider-track {
+  position: absolute;
+  height: 1px;
+  width: 100%;
+  top: calc(50% - 2px);
+  background-color: #969696;
+  z-index: -1;
+  outline: 0;
+}
+
+/* line 138, xiv.scss */
+.xiv-ui-sliderbase-slider-thumb, .xiv-ui-twothumbslidercontroller-slider-thumb-extent, .xiv-ui-twothumbslidercontroller-slider-thumb-value {
+  position: absolute;
+  height: 7px;
+  width: 7px;
+  border-radius: 0px;
+  margin-top: -5px;
+  background-color: #c8c8c8;
+  border: solid 1px white;
+  overflow: hidden;
+  outline: 0;
+  top: 4px;
+  border-radius: 2px;
+  box-sizing: content-box;
+  box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, 0);
+  transition-property: box-shadow;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  transition-timing-function: ease-out;
+}
+
+/* line 158, xiv.scss */
+.xiv-ui-sliderbase-slider-thumb:hover, .xiv-ui-twothumbslidercontroller-slider-thumb-extent:hover, .xiv-ui-twothumbslidercontroller-slider-thumb-value:hover,
+.xiv-ui-sliderbase-slider-thumb:active,
+.xiv-ui-twothumbslidercontroller-slider-thumb-extent:active,
+.xiv-ui-twothumbslidercontroller-slider-thumb-value:active {
+  box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, 0.55);
+}
+
+/* line 164, xiv.scss */
+.xiv-ui-sliderbase-slider-track-hover {
+  box-sizing: content-box;
+}
+
+/* line 169, xiv.scss */
+.xiv-ui-sliderbase-valueinput {
+  position: absolute;
+  top: 0px;
+  left: calc(100% - 56px);
+  width: 50px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  outline: none;
+}
+
+/* line 179, xiv.scss */
+.xiv-ui-sliderbase-valueinput-display,
+.xiv-ui-sliderbase-valueinput-box {
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 185, xiv.scss */
+.xiv-ui-sliderbase-valueinput-box {
+  height: 17px;
+}
+
+/* line 202, xiv.scss */
+.xiv-ui-slidercontroller-slider {
+  position: absolute;
+  left: calc(55% - 65px);
+  width: calc(55% - 65px);
+  outline: none;
+}
+
+/* line 217, xiv.scss */
+.xiv-ui-slidercontroller-slider-track-hover {
+  box-sizing: content-box;
+}
+
+/* line 222, xiv.scss */
+.xiv-ui-slidercontroller-value-input {
+  top: -3px;
+  width: 46px;
+  left: calc(100% - 56px);
+  background-color: transparent;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 230, xiv.scss */
+.xiv-ui-buttoncontroller {
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  text-align: center;
+}
+
+/* line 235, xiv.scss */
+.xiv-ui-buttoncontroller-element {
+  top: 5px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  height: 22px;
+  border-radius: 0px;
+  border: none;
+  background: #c8c8c8;
+  width: 60px;
+  font-weight: normal;
+}
+
+/* line 246, xiv.scss */
+.xiv-ui-twothumbslidercontroller {
+  outline: 0;
+}
+
+/* line 253, xiv.scss */
+.xiv-ui-twothumbslidercontroller-slider {
+  position: absolute;
+  top: 20px;
+  left: 25%;
+  width: calc(70% - 140px);
+  outline: 0;
+}
+
+/* line 268, xiv.scss */
+.xiv-ui-twothumbslidercontroller-slider-thumb, .xiv-ui-twothumbslidercontroller-slider-thumb-extent, .xiv-ui-twothumbslidercontroller-slider-thumb-value {
+  top: -1px;
+}
+
+/* line 278, xiv.scss */
+.xiv-ui-twothumbslidercontroller-slider-thumb-value {
+  left: 0px;
+}
+
+/* line 286, xiv.scss */
+.xiv-ui-twothumbslidercontroller-value-input,
+.xiv-ui-twothumbslidercontroller-extent-input {
+  position: absolute;
+  top: 0px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 294, xiv.scss */
+.xiv-ui-twothumbslidercontroller-value-input {
+  left: calc(100% - 140px);
+}
+
+/* line 299, xiv.scss */
+.xiv-ui-twothumbslidercontroller-extent-input {
+  left: calc(100% - 68px);
+}
+
+/* line 301, xiv.scss */
+.xiv-ui-checkboxcontroller {
+  outline: none;
+}
+
+/* line 307, xiv.scss */
+.xiv-ui-checkboxcontroller-checkboxholder {
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  outline: none;
+}
+
+/* line 312, xiv.scss */
+.xiv-ui-radiobuttoncontroller-radiobutton {
+  position: absolute;
+  top: 0px;
+  left: 50%;
+}
+
+/* line 316, xiv.scss */
+.xiv-ui-colorpalettecontroller {
+  position: absolute;
+  width: 450px;
+  height: 300px;
+  top: 0px;
+  left: 30%;
+}
+
+/* line 325, xiv.scss */
+.xiv-ui-colorpalettecontroller-colorsquare {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 11px;
+  width: 11px;
+  border: solid 1px #5a5a5a;
+  background-color: red;
+  cursor: pointer;
+}
+
+/* line 337, xiv.scss */
+.xiv-ui-colorpalettecontroller-colorpaletteholder {
+  /*
+      position: absolute;
+      top: 15px;
+      left: 0px;
+      width: 420px;
+      height: 300px;
+      background-color: rgb(0,0,0);
+      border: solid 1px white;
+  */
+}
+
+/* line 350, xiv.scss */
+.xiv-ui-colorpalettecontroller-colorpalette {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  border: none;
+}
+
+/* line 358, xiv.scss */
+.xiv-ui-colorpalettecontroller-closebutton {
+  position: absolute;
+  cursor: pointer;
+  top: 5px;
+  left: 100%;
+  margin-left: -15px;
+  width: 10px;
+  height: 10px;
+  content: url("../../../../images/viewer/xiv/ui/Modal/close.png");
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 372, xiv.scss */
+.xiv-ui-helpdialog {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.9);
+  border-radius: 5px;
+  border: solid 1px white;
+  font-size: 8px;
+  color: white;
+  text-align: left;
+  top: 10%;
+  left: 10%;
+  height: 300px;
+  width: 400px;
+  z-index: 20000;
+}
+
+/* line 388, xiv.scss */
+.xiv-ui-helpdialog-title {
+  height: 15px;
+}
+
+/* line 392, xiv.scss */
+.xiv-ui-helpdialog-closebutton {
+  top: 2px;
+  left: calc(100% - 12px);
+}
+
+/* line 398, xiv.scss */
+.xiv-ui-helpdialog-scrollablezippytree {
+  position: absolute;
+  top: 25px;
+  left: 0px;
+  width: calc(100% - 14px);
+  height: calc(100% - 40px);
+}
+
+/* line 408, xiv.scss */
+.xiv-ui-helpdialog-text {
+  position: absolute;
+  text-align: left;
+  color: white;
+  font-size: 12px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  white-space: normal;
+  padding: 8px;
+  top: 20px;
+  left: 20px;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 423, xiv.scss */
+.xiv-ui-viewbox {
+  top: 0px;
+  left: 80px;
+  width: 500px;
+  height: 500px;
+  position: absolute;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+/* line 435, xiv.scss */
+.xiv-ui-viewbox-hidden {
+  visibility: hidden;
+}
+
+/* line 440, xiv.scss */
+.xiv-ui-viewbox-draganddrophandle {
+  position: absolute;
+  cursor: pointer;
+  width: 6px;
+  height: 13px;
+  opacity: .4;
+  z-index: 1000;
+  margin-left: -10px;
+}
+
+/* line 452, xiv.scss */
+.xiv-ui-viewbox-tabdragger {
+  background-color: #282828;
+  height: 10px;
+}
+
+/* line 458, xiv.scss */
+.xiv-ui-viewbox-tabdragger-handle {
+  position: absolute;
+  top: calc(50% - 1.5px);
+  left: calc(50% - 15px);
+  width: 30px;
+  height: 3px;
+  background-color: #646464;
+}
+
+/* line 469, xiv.scss */
+.xiv-ui-viewbox-viewlayoutmenu {
+  height: 14px;
+  width: 14px;
+  cursor: pointer;
+}
+
+/* line 478, xiv.scss */
+.xiv-ui-viewbox-viewframe {
+  position: absolute;
+  top: 0px;
+  left: 22px;
+  width: calc(100% - 22px);
+  height: calc(100% - 2px);
+  position: absolute;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  overflow: visible;
+  z-index: 2;
+  border: solid 1px #323232;
+  transition-property: border;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 499, xiv.scss */
+.xiv-ui-viewbox-ziptabs {
+  left: 0px;
+  width: 100%;
+}
+
+/* line 505, xiv.scss */
+.xiv-ui-viewbox-ziptab-bounds {
+  position: absolute;
+  cursor: auto;
+  left: 0px;
+  top: 300px;
+  height: calc(100% - 300px);
+  width: 100%;
+  background-color: rgba(255, 0, 0, 0);
+}
+
+/* line 516, xiv.scss */
+.xiv-ui-viewbox-viewlayouthandler {
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  position: absolute;
+}
+
+/* line 525, xiv.scss */
+.xiv-ui-viewbox-viewablegroupmenu {
+  z-index: 100;
+}
+
+/* line 530, xiv.scss */
+.xiv-ui-viewbox-menu-left,
+.xiv-ui-viewbox-menu-top-left {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  position: absolute;
+  display: block;
+  overflow: hidden;
+  width: 22px;
+  border-top: solid #646464 1px;
+  border-left: solid #646464 1px;
+  border-bottom: solid #646464 1px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  background-color: black;
+  opacity: .5;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 550, xiv.scss */
+.xiv-ui-viewbox-menu-left:hover {
+  opacity: 1;
+}
+
+/* line 554, xiv.scss */
+.xiv-ui-viewbox-menu-top-left:hover {
+  opacity: 1;
+}
+
+/* line 559, xiv.scss */
+.xiv-ui-viewbox:hover > .xiv-ui-viewbox-viewframe {
+  border: solid 1px #6e6e6e;
+}
+
+/* line 566, xiv.scss */
+.xiv-ui-viewbox-menu-left {
+  top: calc(50% - 57px);
+}
+
+/* line 572, xiv.scss */
+.xiv-ui-viewbox-button-threedtoggle {
+  width: 15px;
+  height: 15px;
+  opacity: .5;
+}
+
+/* line 579, xiv.scss */
+.xiv-ui-viewbox-button-threedtoggle-on {
+  opacity: 1;
+  background-color: black;
+}
+
+/* line 587, xiv.scss */
+.xiv-ui-viewbox-button-crosshairtoggle {
+  width: 15px;
+  height: 15px;
+  opacity: .5;
+}
+
+/* line 592, xiv.scss */
+.xiv-ui-viewbox-button-crosshairtoggle-on {
+  opacity: 1;
+  background-color: black;
+}
+
+/* line 599, xiv.scss */
+.xiv-ui-viewbox-button-brightnesscontrasttoggle {
+  width: 15px;
+  height: 15px;
+  opacity: .5;
+}
+
+/* line 604, xiv.scss */
+.xiv-ui-viewbox-button-brightnesscontrasttoggle-on {
+  opacity: 1;
+  background-color: black;
+}
+
+/* line 610, xiv.scss */
+.xiv-ui-viewbox-component-highlight {
+  /*box-shadow: 0px 0px 1px 1px rgba(255,255,255, 1);*/
+}
+
+/* line 616, xiv.scss */
+.xiv-ui-viewbox-inusedialog {
+  position: absolute;
+  top: calc(50% - 60px);
+  left: calc(50% - 125px);
+  width: 250px;
+  height: 120px;
+  background: black;
+  background-color: black;
+  border: 1px solid white;
+  padding: 4px;
+  color: white;
+  font-size: 12px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  border-radius: 10px;
+  outline: 0;
+  z-index: 200;
+}
+
+/* line 634, xiv.scss */
+.xiv-ui-viewbox-emptymenubutton {
+  width: 15px;
+  height: 15px;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 647, xiv.scss */
+.xiv-ui-viewboxdialogs-generic-toggle {
+  width: 15px;
+  height: 15px;
+  opacity: .5;
+  background-color: black;
+}
+
+/* line 655, xiv.scss */
+.xiv-ui-viewboxdialogs-generic-toggle-on {
+  opacity: 1;
+  background-color: black;
+}
+
+/* line 663, xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog {
+  position: absolute;
+  background-color: transparent;
+  font-size: 12px;
+  color: #9b9b9b !important;
+  top: 0px;
+  left: 0px;
+  width: 200px;
+  z-index: 10;
+  border: none;
+  cursor: default;
+  border: solid 1px;
+  border-radius: 5px;
+  border-color: rgba(255, 255, 255, 0);
+  background-color: rgba(60, 60, 60, 0);
+  transition-property: color, background-color, border-color;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 683, xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog-text {
+  color: #9b9b9b;
+  transition-property: color;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 690, xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog:hover {
+  color: white !important;
+  border-color: white;
+  background-color: rgba(60, 60, 60, 0.5);
+}
+
+/* line 697, xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog-content:hover > .xiv-ui-viewboxdialogs-infodialog-text {
+  color: white;
+}
+
+/* line 702, xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog-title {
+  opacity: 0;
+  transition-property: opacity;
+}
+
+/* line 709, xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog,
+.xiv-ui-viewboxdialogs-infodialog-title {
+  transition-duration: .15s;
+  transition-timing-function: ease-out;
+}
+
+/* line 716, xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog:hover > .xiv-ui-viewboxdialogs-infodialog-title {
+  opacity: 1;
+}
+
+/* line 736, xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog-text {
+  white-space: nowrap;
+  text-align: left;
+  font-size: 12px;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 755, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-generic-toggle {
+  width: 15px;
+  height: 15px;
+  opacity: .5;
+}
+
+/* line 762, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-generic-toggle-on {
+  opacity: 1;
+  background-color: black;
+}
+
+/* line 769, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-generic-zippytree {
+  top: 30px;
+  width: calc(100% - 20px);
+  height: calc(100% - 30px);
+}
+
+/* line 777, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-generic-dialog {
+  width: 470px;
+  height: 330px;
+  cursor: default;
+  z-index: 1000000;
+}
+
+/* line 786, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-viewframe-grab {
+  cursor: hand;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+/* line 795, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-viewframe-grabbing {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+/* line 801, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-viewframe-grab-custom {
+  cursor: url(https://mail.google.com/mail/images/2/openhand.cur), default !important;
+}
+
+/* line 806, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-viewframe-grabbing-custom {
+  cursor: url(https://mail.google.com/mail/images/2/closedhand.cur), default !important;
+}
+
+/* line 811, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-viewframe-zoom-in {
+  cursor: zoom-in;
+  cursor: -webkit-zoom-in;
+}
+
+/* line 817, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-viewframe-zoom-out {
+  cursor: zoom-out;
+  cursor: -webkit-zoom-out;
+}
+
+/* line 824, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-zoom-follower {
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  position: absolute;
+  z-index: 1000;
+  visibility: hidden;
+  text-wrap: none;
+  width: 200px;
+}
+
+/* line 835, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-levelsdialog {
+  position: absolute;
+  font-size: 12px;
+  top: 0px;
+  color: white;
+  left: 0px;
+  width: 200px;
+  z-index: 10;
+  cursor: default;
+  border: solid 1px;
+  border-radius: 5px;
+  overflow: visible;
+  /* transition styles */
+  height: 150px;
+  border-color: transparent;
+  background-color: transparent;
+  transition-property: height, background-color, border-color;
+}
+
+/* line 856, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-levelsdialog:hover {
+  height: 440px;
+  background-color: rgba(0, 0, 0, 0.9);
+  border-color: white;
+}
+
+/* line 863, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-levelsdialog-title {
+  opacity: 0;
+  transition-property: opacity;
+}
+
+/* line 868, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-levelsdialog,
+.xiv-ui-viewboxinteractorhandler-levelsdialog-title {
+  transition-duration: .3s;
+  /*transition-timing-function: ease-out;*/
+}
+
+/* line 874, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-levelsdialog:hover > .xiv-ui-viewboxinteractorhandler-levelsdialog-title {
+  opacity: 1;
+}
+
+/* line 878, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-levelsdialog-max:hover > .xiv-ui-viewboxinteractorhandler-levelsdialog-title {
+  opacity: 1;
+}
+
+/* line 885, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-histdetails {
+  position: relative;
+  height: 17px;
+  width: 100%;
+  cursor: pointer;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  border: solid 1px rgba(80, 80, 80, 0);
+  transition-property: height, border;
+  transition-duration: .3s;
+  overflow: hidden;
+}
+
+/* line 901, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-histdetails-expandbutton {
+  background-color: #505050;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 15px;
+  width: 100%;
+  padding-left: 5px;
+  padding-top: 1px;
+  z-index: 2;
+}
+
+/* line 915, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-histdetails-fadebottom {
+  visibility: hidden;
+  position: absolute;
+  width: 100%;
+  top: calc(100% - 100px);
+  height: 100px;
+  left: 0px;
+  background: linear-gradient(to bottom, transparent 0%, black 100%);
+}
+
+/* line 926, xiv.scss */
+.xiv-ui-viewboxinteractorhandler-histdetails:hover {
+  border: solid 1px #505050;
+  height: 110px;
+}
+
+/*
+ * Standard styling for the Modal
+ *
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 938, xiv.scss */
+.xiv-ui-nomobilemodal {
+  background-color: black;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+}
+
+/* line 948, xiv.scss */
+.xiv-ui-nomobilemodal-content {
+  color: white;
+  font-size: 12px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  color: white;
+  text-align: center;
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+/* line 961, xiv.scss */
+.xiv-ui-modal {
+  position: fixed;
+  background-color: black;
+  border: none;
+  z-index: 2;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+}
+
+/* line 973, xiv.scss */
+.xiv-ui-modal-windowed {
+  position: fixed;
+  border: solid 1px black;
+  border-radius: 20px;
+  top: 10px;
+  left: 10px;
+  height: calc(100% - 20px);
+  width: calc(100% - 20px);
+}
+
+/* line 986, xiv.scss */
+.xiv-ui-modal-background {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: inline-block;
+}
+
+/* line 998, xiv.scss */
+.xiv-ui-modal-background-black {
+  background-color: black;
+  color: black;
+}
+
+/* line 1004, xiv.scss */
+.xiv-ui-modal-close-button {
+  position: absolute;
+  cursor: pointer;
+  top: 10px;
+  left: 100%;
+  margin-left: -20px;
+  width: 10px;
+  height: 10px;
+  z-index: 103;
+}
+
+/* line 1016, xiv.scss */
+.xiv-ui-modal-fullscreen-button, .xiv-ui-modal-windowed-button {
+  position: absolute;
+  cursor: pointer;
+  top: 27px;
+  left: 100%;
+  margin-left: -20px;
+  width: 11px;
+  height: 11px;
+  z-index: 1000;
+}
+
+/* line 1036, xiv.scss */
+.xiv-ui-modal-popup-button {
+  position: absolute;
+  cursor: pointer;
+  top: 45px;
+  left: 100%;
+  margin-left: -21px;
+  width: 12px;
+  height: 12px;
+  z-index: 1000;
+}
+
+/* line 1050, xiv.scss */
+.xiv-ui-modal-insertcolumn-button, .xiv-ui-modal-removecolumn-button,
+.xiv-ui-modal-insertrow-button, .xiv-ui-modal-removerow-button {
+  position: absolute;
+  cursor: pointer;
+  z-index: 2;
+}
+
+/* line 1059, xiv.scss */
+.xiv-ui-modal-insertcolumn-button, .xiv-ui-modal-removecolumn-button {
+  left: 100%;
+  top: 50%;
+  margin-left: -19px;
+  width: 8px;
+  height: 24px;
+}
+
+/* line 1068, xiv.scss */
+.xiv-ui-modal-insertcolumn-button {
+  margin-top: -10px;
+}
+
+/* line 1073, xiv.scss */
+.xiv-ui-modal-removecolumn-button {
+  margin-top: 10px;
+}
+
+/* line 1080, xiv.scss */
+.xiv-ui-modal-insertrow-button, .xiv-ui-modal-removerow-button {
+  top: 100%;
+  left: 50%;
+  margin-top: -23px;
+  width: 24px;
+  height: 8px;
+}
+
+/* line 1090, xiv.scss */
+.xiv-ui-modal-insertrow-button {
+  margin-left: -10px;
+}
+
+/* line 1095, xiv.scss */
+.xiv-ui-modal-removerow-button {
+  margin-left: 10px;
+}
+
+/* line 1100, xiv.scss */
+.xiv-ui-modal-projecttab-bounds {
+  position: absolute;
+  top: 29px;
+  left: 0px;
+  height: calc(100% - 58px);
+  width: 30%;
+  background-color: rgba(120, 220, 120, 0);
+}
+
+/* line 1110, xiv.scss */
+.xiv-ui-modal-projecttab {
+  left: 0px;
+  height: calc(100% - 60px);
+  top: 29px;
+  border-radius: 0px;
+}
+
+/* line 1118, xiv.scss */
+.xiv-ui-modal-projecttab-dragger {
+  left: calc(100%);
+  width: 10px;
+  background-color: #2d2d2d;
+  top: 29px;
+  height: calc(100% - 58px);
+  border-radius: 0px 4px 4px 0px;
+  opacity: 0;
+}
+
+/* line 1130, xiv.scss */
+.xiv-ui-modal-projecttab-dragger-handle {
+  position: absolute;
+  width: 4px;
+  left: 3px;
+  height: 30px;
+  top: calc(50% - 15px);
+  background-color: #646464;
+  border-radius: 4px;
+}
+
+/* line 1142, xiv.scss */
+.xiv-ui-modal-addsubjects {
+  width: 87%;
+  height: 40px;
+  line-height: 40px;
+  top: calc(100% - 50px);
+  background-color: #646464;
+  position: absolute;
+  left: 8%;
+  z-index: 200;
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+  cursor: pointer;
+  opacity: .7;
+  border-radius: 5px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 1161, xiv.scss */
+.xiv-ui-modal-addsubjects-hovered {
+  opacity: 1;
+}
+
+/* line 1166, xiv.scss */
+.xiv-ui-modal-foldericon {
+  position: absolute;
+  left: calc(50% - 9px);
+  height: 15px;
+  width: 15px;
+  opacity: .5;
+  top: 5px;
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 1179, xiv.scss */
+.xiv-ui-thumbnail {
+  position: absolute;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1188, xiv.scss */
+.xiv-ui-thumbnailgallery {
+  position: absolute;
+  left: 0px;
+  width: calc(100% - 10px);
+}
+
+/* line 1196, xiv.scss */
+.xiv-ui-thumbnailgallery-thumbnail-dragging {
+  position: absolute;
+  width: 87px;
+  height: 87px;
+  top: 0px;
+  left: 0px;
+  cursor: pointer;
+  background-color: black;
+  z-index: 2;
+  opacity: .85;
+  width: 150px;
+  background-color: transparent;
+  opacity: 0.5;
+}
+
+/*#
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 1215, xiv.scss */
+.xiv-ui-viewboxhandler-handle {
+  position: relative;
+  cursor: pointer;
+  width: 7px;
+  margin-left: -1px;
+  height: 17px;
+  opacity: .5;
+}
+
+/* line 1226, xiv.scss */
+.xiv-ui-viewboxhandler-viewboxdragclone {
+  border: solid 1px white;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+}
+
+/* line 1233, xiv.scss */
+.xiv-ui-viewboxhandler-closebutton {
+  position: absolute;
+  height: 9px;
+  width: 9px;
+  outline: 0;
+  cursor: pointer;
+  opacity: .6;
+}
+
+/* line 1244, xiv.scss */
+.xiv-ui-viewboxhandler-closebutton-hovered {
+  opacity: 1;
+}
+
+/* line 1250, xiv.scss */
+.xiv-ui-viewboxhandler-addrowbutton {
+  position: absolute;
+  height: 5px;
+  width: 10px;
+  outline: 0;
+  cursor: pointer;
+  opacity: .6;
+}
+
+/* line 1261, xiv.scss */
+.xiv-ui-viewboxhandler-addrowbutton-hovered {
+  opacity: 1;
+}
+
+/* line 1266, xiv.scss */
+.xiv-ui-viewboxhandler-addcolumnbutton {
+  position: absolute;
+  height: 10px;
+  width: 5px;
+  margin-left: 5px;
+  outline: 0;
+  cursor: pointer;
+  opacity: .6;
+}
+
+/* line 1278, xiv.scss */
+.xiv-ui-viewboxhandler-addcolumnbutton-hovered {
+  opacity: 1;
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 1286, xiv.scss */
+.xiv-ui-layouts-layouthandler {
+  position: absolute;
+  background: black;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1305, xiv.scss */
+.xiv-ui-layouts-layout {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1316, xiv.scss */
+.xiv-ui-levelscontroller {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* line 1324, xiv.scss */
+.xiv-ui-levelscontroller-sliderlabel,
+.xiv-ui-levelscontroller-twothumbsliderlabel {
+  position: absolute;
+  font-size: 12px;
+  top: 6px;
+}
+
+/* line 1332, xiv.scss */
+.xiv-ui-levelscontroller-twothumbsliderlabel {
+  left: 10px;
+  font-size: 10px;
+  top: 0px;
+}
+
+/* line 1338, xiv.scss */
+.xiv-ui-levelscontroller-slidercontroller,
+.xiv-ui-levelscontroller-twothumbslidercontroller {
+  height: 40px;
+}
+
+/* line 1344, xiv.scss */
+.xiv-ui-levelscontroller-slidercontroller {
+  width: 80%;
+}
+
+/* line 1348, xiv.scss */
+.xiv-ui-levelscontroller-twothumbslidercontroller {
+  height: 45px;
+  width: 90%;
+}
+
+/* line 1355, xiv.scss */
+.xiv-ui-levelscontroller-slider {
+  left: 0%;
+  top: 28px;
+  width: 95%;
+}
+
+/* line 1362, xiv.scss */
+.xiv-ui-levelscontroller-twothumbslider {
+  left: 7%;
+  top: 24px;
+  width: 100%;
+}
+
+/* line 1369, xiv.scss */
+.xiv-ui-levelscontroller-slidervalue {
+  left: calc(100% - 52px);
+  width: 50px;
+  top: 4px;
+}
+
+/* line 1376, xiv.scss */
+.xiv-ui-levelscontroller-twothumbslidervalue,
+.xiv-ui-levelscontroller-twothumbsliderextent {
+  left: 10px;
+  top: 32px;
+}
+
+/* line 1382, xiv.scss */
+.xiv-ui-levelscontroller-twothumbsliderextent {
+  left: calc(100% - 37px);
+}
+
+/* line 1389, xiv.scss */
+.xiv-ui-levelscontroller-checkbox {
+  top: 28px;
+  width: 110px;
+}
+
+/* line 1394, xiv.scss */
+.xiv-ui-levelscontroller-checkboxholder {
+  top: 0px;
+  width: 10px;
+  outline: none;
+  left: calc(100% - 15px);
+}
+
+/* line 1402, xiv.scss */
+.xiv-ui-levelscontroller-checkboxcontroller {
+  height: 15px;
+  outline: none;
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 1414, xiv.scss */
+.xiv-ui-layouts-conventional {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* line 1421, xiv.scss */
+.xiv-ui-layouts-conventional-x, .xiv-ui-layouts-conventional-y,
+.xiv-ui-layouts-conventional-z, .xiv-ui-layouts-conventional-v {
+  position: absolute;
+}
+
+/* line 1427, xiv.scss */
+.xiv-ui-layouts-conventional-v {
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 65%;
+  z-index: 4;
+  border-left: none;
+  border-top: none;
+  border-right: none;
+  border-bottom: solid 1px #323232;
+}
+
+/* line 1441, xiv.scss */
+.xiv-ui-layouts-conventional-x, .xiv-ui-layouts-conventional-y,
+.xiv-ui-layouts-conventional-z {
+  top: 65%;
+  height: 35%;
+  width: 33.33%;
+}
+
+/* line 1449, xiv.scss */
+.xiv-ui-layouts-conventional-x {
+  left: 33.33%;
+  /*border-left: solid 1px rgb(50,50,50);*/
+}
+
+/* line 1455, xiv.scss */
+.xiv-ui-layouts-conventional-y {
+  left: 66.66%;
+  border-left: solid 1px #323232;
+}
+
+/* line 1461, xiv.scss */
+.xiv-ui-layouts-conventional-z {
+  left: 0px;
+  border-right: solid 1px #323232;
+}
+
+/* line 1468, xiv.scss */
+.xiv-ui-layouts-conventional-x-resizeboundary,
+.xiv-ui-layouts-conventional-y-resizeboundary,
+.xiv-ui-layouts-conventional-z-resizeboundary,
+.xiv-ui-layouts-conventional-v-resizeboundary {
+  position: absolute;
+  z-index: -1;
+}
+
+/* line 1477, xiv.scss */
+.xiv-ui-layouts-conventional-x-resizeboundary {
+  /**
+  background-color: purple;
+  opacity: .5;
+  z-index: 20;
+  */
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1493, xiv.scss */
+.xiv-ui-layouts-fourup {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* line 1500, xiv.scss */
+.xiv-ui-layouts-fourup-x, .xiv-ui-layouts-fourup-y,
+.xiv-ui-layouts-fourup-z, .xiv-ui-layouts-fourup-v {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+}
+
+/* line 1508, xiv.scss */
+.xiv-ui-layouts-fourup-x-resizeboundary {
+  /*
+  background-color: blue;
+  opacity: .3;
+  */
+  z-index: -1;
+}
+
+/* line 1517, xiv.scss */
+.xiv-ui-layouts-fourup-v {
+  left: 50%;
+  top: 0%;
+  border-left: none;
+  border-top: none;
+  border-right: none;
+  border-bottom: solid 1px #323232;
+}
+
+/* line 1529, xiv.scss */
+.xiv-ui-layouts-fourup-x {
+  left: 0%;
+  top: 50%;
+  border-left: none;
+  border-top: none;
+  border-right: solid 1px #323232;
+  border-bottom: none;
+}
+
+/* line 1539, xiv.scss */
+.xiv-ui-layouts-fourup-y {
+  border-left: none;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  left: 50%;
+  top: 50%;
+}
+
+/* line 1549, xiv.scss */
+.xiv-ui-layouts-fourup-z {
+  border-left: none;
+  border-top: none;
+  border-right: solid 1px #323232;
+  border-bottom: solid 1px #323232;
+  left: 0%;
+  top: 0%;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1565, xiv.scss */
+.xiv-ui-layouts-twodrow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* line 1573, xiv.scss */
+.xiv-ui-layouts-twodrow-x, .xiv-ui-layouts-twodrow-y,
+.xiv-ui-layouts-twodrow-z {
+  position: absolute;
+  top: 0px;
+  height: 100%;
+  width: 33.33%;
+}
+
+/* line 1583, xiv.scss */
+.xiv-ui-layouts-twodrow-x {
+  left: 0px;
+}
+
+/* line 1588, xiv.scss */
+.xiv-ui-layouts-twodrow-y {
+  left: 33.33%;
+  border-left: solid 1px #323232;
+}
+
+/* line 1594, xiv.scss */
+.xiv-ui-layouts-twodrow-z {
+  left: 66.66%;
+  border-left: solid 1px #323232;
+}
+
+/* line 1601, xiv.scss */
+.xiv-ui-layouts-twodrow-x-resizeboundary,
+.xiv-ui-layouts-twodrow-y-resizeboundary,
+.xiv-ui-layouts-twodrow-z-resizeboundary {
+  position: absolute;
+  z-index: -1;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1616, xiv.scss */
+.xiv-ui-layouts-twodwidescreen {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* line 1624, xiv.scss */
+.xiv-ui-layouts-twodwidescreen-y,
+.xiv-ui-layouts-twodwidescreen-z {
+  position: absolute;
+  left: 66%;
+  height: 50%;
+  width: 33.33%;
+}
+
+/* line 1633, xiv.scss */
+.xiv-ui-layouts-twodwidescreen-y {
+  top: 0px;
+  border-bottom: solid 1px #323232;
+}
+
+/* line 1639, xiv.scss */
+.xiv-ui-layouts-twodwidescreen-z {
+  top: 50%;
+}
+
+/* line 1644, xiv.scss */
+.xiv-ui-layouts-twodwidescreen-x {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 66%;
+  height: 100%;
+  border-right: solid 1px #323232;
+}
+
+/* line 1655, xiv.scss */
+.xiv-ui-layouts-twodwidescreen-x-resizeboundary,
+.xiv-ui-layouts-twodwidescreen-y-resizeboundary,
+.xiv-ui-layouts-twodwidescreen-z-resizeboundary {
+  position: absolute;
+  z-index: -1;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1667, xiv.scss */
+.xiv-ui-progressbarpanel {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: black;
+  text-align: middle;
+  z-index: 2;
+}
+
+/* line 1676, xiv.scss */
+.xiv-ui-progressbarpanel-thumb {
+  position: absolute;
+  height: 100%;
+  top: 0px;
+  background-color: cornflowerblue;
+  border-radius: 1px;
+}
+
+/* line 1684, xiv.scss */
+.xiv-ui-progressbarpanel-progbarholder {
+  position: absolute;
+  height: 1px;
+  width: 95%;
+  top: calc(50% - 1px);
+  background-color: #1e1e1e;
+  border-radius: 1px;
+  border: none;
+  left: 2.5%;
+  overflow: visible;
+}
+
+/* line 1697, xiv.scss */
+.xiv-ui-progressbarpanel-progressbar {
+  background: cornflowerblue;
+  height: 100%;
+  top: 0px;
+}
+
+/* line 1704, xiv.scss */
+.xiv-ui-progressbarpanel-labelholder {
+  position: absolute;
+  height: 15px;
+  top: calc(50% - 15px);
+  left: 2.5%;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  visibility: hidden;
+}
+
+@-webkit-keyframes endNode {
+  from {
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0px 0px 2px 1px rgba(255, 255, 255, 0.05);
+  }
+  /*
+    50% { 
+        background-color: rgba(255,255,255, 1);
+        box-shadow: 0px 0px 2px 3px rgba(255,255,255, .8);
+    }
+  */
+  to {
+    background-color: white;
+    box-shadow: 0px 0px 2px 3px rgba(255, 255, 255, 0.8);
+  }
+}
+/* line 1733, xiv.scss */
+.xiv-ui-progressbarpanel-endnode {
+  position: absolute;
+  top: 0px;
+  left: calc(100% - 4px);
+  height: 100%;
+  width: 4px;
+  border-radius: 2px;
+  z-index: 2;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0px 0px 2px 1px rgba(255, 255, 255, 0.05);
+}
+
+/* line 1746, xiv.scss */
+.xiv-ui-progressbarpanel-endnode-glow {
+  -webkit-animation-fill-mode: forwards;
+  -webkit-animation-name: endNode;
+  -webkit-animation-duration: .5s;
+  -webkit-animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-name: endNode;
+  animation-duration: .5s;
+  animation-iteration-count: 1;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1761, xiv.scss */
+.xiv-ui-histogram {
+  position: absolute;
+  height: 120px;
+  z-index: 5000;
+  top: -12px;
+}
+
+/* line 1768, xiv.scss */
+.xiv-ui-histogram-canvas,
+.xiv-ui-histogram-linecanvas {
+  position: absolute;
+  left: calc(10% - 1px);
+  width: calc(80% - 2px);
+  height: 85px;
+  top: 20px;
+}
+
+/* line 1778, xiv.scss */
+.xiv-ui-histogram-canvas {
+  background-color: white;
+}
+
+/* line 1784, xiv.scss */
+.xiv-ui-histogram-clipmax,
+.xiv-ui-histogram-clipmin,
+.xiv-ui-histogram-max,
+.xiv-ui-histogram-min {
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  position: absolute;
+  height: 14px;
+  white-space: nowrap;
+}
+
+/* line 1795, xiv.scss */
+.xiv-ui-histogram-clipmax,
+.xiv-ui-histogram-clipmin {
+  top: 7px;
+}
+
+/* line 1802, xiv.scss */
+.xiv-ui-histogram-max,
+.xiv-ui-histogram-min {
+  top: calc(100% - 12px);
+}
+
+/* line 1808, xiv.scss */
+.xiv-ui-histogram-max {
+  width: 100%;
+  text-align: right;
+}
+
+/* line 1814, xiv.scss */
+.xiv-ui-histogram-min {
+  left: 0px;
+  text-align: left;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1825, xiv.scss */
+.xiv-ui-viewablegroupmenu {
+  cursor: pointer;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
+  background-color: #323232;
+  border: solid 1px #9b9b9b;
+  border-radius: 4px;
+  z-index: 5002;
+}
+
+/* line 1842, xiv.scss */
+.xiv-ui-viewablegroupmenu-thumbnailgallery {
+  position: absolute;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  left: 0px;
+  top: 20px;
+  height: calc(100% - 20px);
+  width: 100%;
+  background-color: black;
+  border-top: solid 1px #9b9b9b;
+}
+
+/* line 1856, xiv.scss */
+.xiv-ui-viewablegroupmenu-header {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+  margin-top: 2px;
+  margin-left: 4px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 1868, xiv.scss */
+.xiv-ui-viewablegroupmenu-thumbnail {
+  width: 100%;
+  height: 150px;
+}
+
+/* line 1874, xiv.scss */
+.xiv-ui-viewablegroupmenu-background {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  z-index: 1000;
+  background-color: black;
+}
+
+/* line 1887, xiv.scss */
+.xiv-ui-viewablegroupmenu-thumbnail-image {
+  width: 140px;
+  height: 140px;
+  top: 5px;
+  left: 5px;
+  border: solid 1px #646464;
+}
+
+/* line 1896, xiv.scss */
+.xiv-ui-viewablegroupmenu-thumbnail-text {
+  position: absolute;
+  left: 160px;
+  top: calc(50% - 7px);
+  color: white;
+  font-size: 14px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1910, xiv.scss */
+.xiv-ui-crosshairs-vertical,
+.xiv-ui-crosshairs-horizontal {
+  position: absolute;
+  background-color: #7d7d7d;
+}
+
+/* line 1918, xiv.scss */
+.xiv-ui-crosshairs-vertical {
+  width: 1px;
+  height: 100%;
+  top: 0px;
+  left: 50%;
+}
+
+/* line 1926, xiv.scss */
+.xiv-ui-crosshairs-horizontal {
+  width: 100%;
+  height: 1px;
+  top: 50%;
+  left: 0px;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1938, xiv.scss */
+.xiv-ui-framedisplay {
+  position: absolute;
+  top: 6px;
+  height: 20px;
+  width: 80px;
+  left: calc(100% - 90px);
+  text-wrap: none;
+}
+
+/* line 1948, xiv.scss */
+.xiv-ui-framedisplay-text {
+  font-size: 10px;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1956, xiv.scss */
+.xiv-ui-zoomdisplay {
+  position: absolute;
+  top: 22px;
+  height: 20px;
+  width: 80px;
+  left: calc(100% - 90px);
+  text-wrap: none;
+  font-size: 10px !important;
+}
+
+/* line 1967, xiv.scss */
+.xiv-ui-zoomdisplay-text {
+  font-size: 10px;
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 1974, xiv.scss */
+.xiv-ui-playbutton {
+  position: absolute;
+  left: 9px;
+  width: 9px;
+  cursor: pointer;
+  opacity: 1;
+  top: calc(100% - 14px);
+  height: 6px;
+  transition-property: opacity, top;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 1990, xiv.scss */
+.xiv-ui-playbutton-image {
+  height: 6px;
+  width: 9px;
+  opacity: .6;
 }

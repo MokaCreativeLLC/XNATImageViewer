@@ -29,7 +29,7 @@
  * on the BiDi flipping by the CSS compiler.  That's why we're not adding the
  * @noflip to .goog-menuitem.
  */
-/* line 30, ../../nrg/sass/goog.scss */
+/* line 30, goog.scss */
 .goog-menuitem {
   color: #000;
   font: normal 13px Arial, sans-serif;
@@ -42,7 +42,7 @@
 
 /* BiDi override for the resting state. */
 /* @noflip */
-/* line 42, ../../nrg/sass/goog.scss */
+/* line 42, goog.scss */
 .goog-menuitem.goog-menuitem-rtl {
   /* Flip left/right padding for BiDi. */
   padding-left: 7em;
@@ -50,7 +50,7 @@
 }
 
 /* If a menu doesn't have checkable items or items with icons, remove padding. */
-/* line 49, ../../nrg/sass/goog.scss */
+/* line 49, goog.scss */
 .goog-menu-nocheckbox .goog-menuitem,
 .goog-menu-noicon .goog-menuitem {
   padding-left: 12px;
@@ -60,25 +60,25 @@
  * If a menu doesn't have items with shortcuts, leave just enough room for
  * submenu arrows, if they are rendered.
  */
-/* line 58, ../../nrg/sass/goog.scss */
+/* line 58, goog.scss */
 .goog-menu-noaccel .goog-menuitem {
   padding-right: 20px;
 }
 
-/* line 62, ../../nrg/sass/goog.scss */
+/* line 62, goog.scss */
 .goog-menuitem-content {
   color: #000;
   font: normal 13px Arial, sans-serif;
 }
 
 /* State: disabled. */
-/* line 68, ../../nrg/sass/goog.scss */
+/* line 68, goog.scss */
 .goog-menuitem-disabled .goog-menuitem-accel,
 .goog-menuitem-disabled .goog-menuitem-content {
   color: #ccc !important;
 }
 
-/* line 72, ../../nrg/sass/goog.scss */
+/* line 72, goog.scss */
 .goog-menuitem-disabled .goog-menuitem-icon {
   opacity: 0.3;
   -moz-opacity: 0.3;
@@ -86,7 +86,7 @@
 }
 
 /* State: hover. */
-/* line 79, ../../nrg/sass/goog.scss */
+/* line 79, goog.scss */
 .goog-menuitem-highlight,
 .goog-menuitem-hover {
   background-color: #d6e9f8;
@@ -100,7 +100,7 @@
 }
 
 /* State: selected/checked. */
-/* line 92, ../../nrg/sass/goog.scss */
+/* line 92, goog.scss */
 .goog-menuitem-checkbox,
 .goog-menuitem-icon {
   background-repeat: no-repeat;
@@ -114,7 +114,7 @@
 
 /* BiDi override for the selected/checked state. */
 /* @noflip */
-/* line 105, ../../nrg/sass/goog.scss */
+/* line 105, goog.scss */
 .goog-menuitem-rtl .goog-menuitem-checkbox,
 .goog-menuitem-rtl .goog-menuitem-icon {
   /* Flip left/right positioning. */
@@ -122,7 +122,7 @@
   right: 6px;
 }
 
-/* line 112, ../../nrg/sass/goog.scss */
+/* line 112, goog.scss */
 .goog-option-selected .goog-menuitem-checkbox,
 .goog-option-selected .goog-menuitem-icon {
   /* Client apps may override the URL at which they serve the sprite. */
@@ -130,7 +130,7 @@
 }
 
 /* Keyboard shortcut ("accelerator") style. */
-/* line 119, ../../nrg/sass/goog.scss */
+/* line 119, goog.scss */
 .goog-menuitem-accel {
   color: #999;
   /* Keyboard shortcuts are untranslated; always left-to-right. */
@@ -145,7 +145,7 @@
 
 /* BiDi override for shortcut style. */
 /* @noflip */
-/* line 132, ../../nrg/sass/goog.scss */
+/* line 132, goog.scss */
 .goog-menuitem-rtl .goog-menuitem-accel {
   /* Flip left/right positioning and text alignment. */
   left: 0;
@@ -154,12 +154,12 @@
 }
 
 /* Mnemonic styles. */
-/* line 140, ../../nrg/sass/goog.scss */
+/* line 140, goog.scss */
 .goog-menuitem-mnemonic-hint {
   text-decoration: underline;
 }
 
-/* line 144, ../../nrg/sass/goog.scss */
+/* line 144, goog.scss */
 .goog-menuitem-mnemonic-separator {
   color: #999;
   font-size: 12px;
@@ -177,7 +177,7 @@
  *
  * @author attila@google.com (Attila Bodis)
  */
-/* line 163, ../../nrg/sass/goog.scss */
+/* line 163, goog.scss */
 .goog-menuseparator {
   border-top: 1px solid #ccc;
   margin: 4px 0;
@@ -196,7 +196,7 @@
  * @author attila@google.com (Attila Bodis)
  */
 /* State: resting. */
-/* line 183, ../../nrg/sass/goog.scss */
+/* line 183, goog.scss */
 .goog-menu-button {
   /* Client apps may override the URL at which they serve the image. */
   background: #ddd url(//ssl.gstatic.com/editor/button-bg.png) repeat-x top left;
@@ -212,7 +212,7 @@
 }
 
 /* Pseudo-rounded corners. */
-/* line 198, ../../nrg/sass/goog.scss */
+/* line 198, goog.scss */
 .goog-menu-button-outer-box,
 .goog-menu-button-inner-box {
   border-style: solid;
@@ -220,14 +220,14 @@
   vertical-align: top;
 }
 
-/* line 204, ../../nrg/sass/goog.scss */
+/* line 204, goog.scss */
 .goog-menu-button-outer-box {
   margin: 0;
   border-width: 1px 0;
   padding: 0;
 }
 
-/* line 209, ../../nrg/sass/goog.scss */
+/* line 209, goog.scss */
 .goog-menu-button-inner-box {
   margin: 0 -1px;
   border-width: 0 1px;
@@ -235,14 +235,14 @@
 }
 
 /* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
-/* line 216, ../../nrg/sass/goog.scss */
+/* line 216, goog.scss */
 * html .goog-menu-button-inner-box {
   /* IE6 needs to have the box shifted to make the borders line up. */
   left: -1px;
 }
 
 /* Pre-IE7 BiDi fixes. */
-/* line 222, ../../nrg/sass/goog.scss */
+/* line 222, goog.scss */
 * html .goog-menu-button-rtl .goog-menu-button-outer-box {
   /* @noflip */
   left: -1px;
@@ -250,21 +250,21 @@
   right: auto;
 }
 
-/* line 226, ../../nrg/sass/goog.scss */
+/* line 226, goog.scss */
 * html .goog-menu-button-rtl .goog-menu-button-inner-box {
   /* @noflip */
   right: auto;
 }
 
 /* IE7-only hack; ignored by all other browsers. */
-/* line 231, ../../nrg/sass/goog.scss */
+/* line 231, goog.scss */
 *:first-child + html .goog-menu-button-inner-box {
   /* IE7 needs to have the box shifted to make the borders line up. */
   left: -1px;
 }
 
 /* IE7 BiDi fix. */
-/* line 236, ../../nrg/sass/goog.scss */
+/* line 236, goog.scss */
 *:first-child + html .goog-menu-button-rtl .goog-menu-button-inner-box {
   /* @noflip */
   left: 1px;
@@ -273,7 +273,7 @@
 }
 
 /* Safari-only hacks. */
-/* line 242, ../../nrg/sass/goog.scss */
+/* line 242, goog.scss */
 ::root .goog-menu-button,
 ::root .goog-menu-button-outer-box,
 ::root .goog-menu-button-inner-box {
@@ -281,7 +281,7 @@
   line-height: 0;
 }
 
-/* line 248, ../../nrg/sass/goog.scss */
+/* line 248, goog.scss */
 ::root .goog-menu-button-caption,
 ::root .goog-menu-button-dropdown {
   /* Required to make pseudo-rounded corners work on Safari. */
@@ -289,7 +289,7 @@
 }
 
 /* State: disabled. */
-/* line 255, ../../nrg/sass/goog.scss */
+/* line 255, goog.scss */
 .goog-menu-button-disabled {
   background-image: none !important;
   opacity: 0.3;
@@ -297,7 +297,7 @@
   filter: alpha(opacity=30);
 }
 
-/* line 261, ../../nrg/sass/goog.scss */
+/* line 261, goog.scss */
 .goog-menu-button-disabled .goog-menu-button-outer-box,
 .goog-menu-button-disabled .goog-menu-button-inner-box,
 .goog-menu-button-disabled .goog-menu-button-caption,
@@ -307,21 +307,21 @@
 }
 
 /* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
-/* line 270, ../../nrg/sass/goog.scss */
+/* line 270, goog.scss */
 * html .goog-menu-button-disabled {
   margin: 2px 1px !important;
   padding: 0 1px !important;
 }
 
 /* IE7-only hack; ignored by all other browsers. */
-/* line 276, ../../nrg/sass/goog.scss */
+/* line 276, goog.scss */
 *:first-child + html .goog-menu-button-disabled {
   margin: 2px 1px !important;
   padding: 0 1px !important;
 }
 
 /* State: hover. */
-/* line 282, ../../nrg/sass/goog.scss */
+/* line 282, goog.scss */
 .goog-menu-button-hover .goog-menu-button-outer-box,
 .goog-menu-button-hover .goog-menu-button-inner-box {
   border-color: #9cf #69e #69e #7af !important;
@@ -329,7 +329,7 @@
 }
 
 /* State: active, open. */
-/* line 288, ../../nrg/sass/goog.scss */
+/* line 288, goog.scss */
 .goog-menu-button-active,
 .goog-menu-button-open {
   background-color: #bbb;
@@ -337,21 +337,21 @@
 }
 
 /* State: focused. */
-/* line 295, ../../nrg/sass/goog.scss */
+/* line 295, goog.scss */
 .goog-menu-button-focused .goog-menu-button-outer-box,
 .goog-menu-button-focused .goog-menu-button-inner-box {
   border-color: orange;
 }
 
 /* Caption style. */
-/* line 301, ../../nrg/sass/goog.scss */
+/* line 301, goog.scss */
 .goog-menu-button-caption {
   padding: 0 4px 0 0;
   vertical-align: top;
 }
 
 /* Dropdown arrow style. */
-/* line 307, ../../nrg/sass/goog.scss */
+/* line 307, goog.scss */
 .goog-menu-button-dropdown {
   height: 15px;
   width: 7px;
@@ -362,26 +362,26 @@
 
 /* Pill (collapsed border) styles. */
 /* TODO(gboyer): Remove specific menu button styles and have any button support being a menu button. */
-/* line 317, ../../nrg/sass/goog.scss */
+/* line 317, goog.scss */
 .goog-menu-button-collapse-right,
 .goog-menu-button-collapse-right .goog-menu-button-outer-box,
 .goog-menu-button-collapse-right .goog-menu-button-inner-box {
   margin-right: 0;
 }
 
-/* line 323, ../../nrg/sass/goog.scss */
+/* line 323, goog.scss */
 .goog-menu-button-collapse-left,
 .goog-menu-button-collapse-left .goog-menu-button-outer-box,
 .goog-menu-button-collapse-left .goog-menu-button-inner-box {
   margin-left: 0;
 }
 
-/* line 329, ../../nrg/sass/goog.scss */
+/* line 329, goog.scss */
 .goog-menu-button-collapse-left .goog-menu-button-inner-box {
   border-left: 1px solid #fff;
 }
 
-/* line 333, ../../nrg/sass/goog.scss */
+/* line 333, goog.scss */
 .goog-menu-button-collapse-left.goog-menu-button-checked
 .goog-menu-button-inner-box {
   border-left: 1px solid #ddd;
@@ -398,7 +398,7 @@
  *
  * @author attila@google.com (Attila Bodis)
  */
-/* line 350, ../../nrg/sass/goog.scss */
+/* line 350, goog.scss */
 .goog-custom-button {
   margin: 2px;
   border: 0;
@@ -415,7 +415,7 @@
 }
 
 /* Pseudo-rounded corners. */
-/* line 366, ../../nrg/sass/goog.scss */
+/* line 366, goog.scss */
 .goog-custom-button-outer-box,
 .goog-custom-button-inner-box {
   border-style: solid;
@@ -423,14 +423,14 @@
   vertical-align: top;
 }
 
-/* line 373, ../../nrg/sass/goog.scss */
+/* line 373, goog.scss */
 .goog-custom-button-outer-box {
   margin: 0;
   border-width: 1px 0;
   padding: 0;
 }
 
-/* line 379, ../../nrg/sass/goog.scss */
+/* line 379, goog.scss */
 .goog-custom-button-inner-box {
   margin: 0 -1px;
   border-width: 0 1px;
@@ -440,55 +440,55 @@
 }
 
 /* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
-/* line 387, ../../nrg/sass/goog.scss */
+/* line 387, goog.scss */
 * html .goog-custom-button-inner-box {
   /* IE6 needs to have the box shifted to make the borders line up. */
   left: -1px;
 }
 
 /* Pre-IE7 BiDi fixes. */
-/* line 392, ../../nrg/sass/goog.scss */
+/* line 392, goog.scss */
 * html .goog-custom-button-rtl .goog-custom-button-outer-box {
   /* @noflip */
   left: -1px;
 }
 
-/* line 395, ../../nrg/sass/goog.scss */
+/* line 395, goog.scss */
 * html .goog-custom-button-rtl .goog-custom-button-inner-box {
   /* @noflip */
   right: auto;
 }
 
 /* IE7-only hack; ignored by all other browsers. */
-/* line 400, ../../nrg/sass/goog.scss */
+/* line 400, goog.scss */
 *:first-child + html .goog-custom-button-inner-box {
   /* IE7 needs to have the box shifted to make the borders line up. */
   left: -1px;
 }
 
 /* IE7 BiDi fix. */
-/* line 405, ../../nrg/sass/goog.scss */
+/* line 405, goog.scss */
 *:first-child + html .goog-custom-button-rtl .goog-custom-button-inner-box {
   /* @noflip */
   left: 1px;
 }
 
 /* Safari-only hacks. */
-/* line 410, ../../nrg/sass/goog.scss */
+/* line 410, goog.scss */
 ::root .goog-custom-button,
 ::root .goog-custom-button-outer-box {
   /* Required to make pseudo-rounded corners work on Safari. */
   line-height: 0;
 }
 
-/* line 416, ../../nrg/sass/goog.scss */
+/* line 416, goog.scss */
 ::root .goog-custom-button-inner-box {
   /* Required to make pseudo-rounded corners work on Safari. */
   line-height: normal;
 }
 
 /* State: disabled. */
-/* line 422, ../../nrg/sass/goog.scss */
+/* line 422, goog.scss */
 .goog-custom-button-disabled {
   background-image: none !important;
   opacity: 0.3;
@@ -496,7 +496,7 @@
   filter: alpha(opacity=30);
 }
 
-/* line 429, ../../nrg/sass/goog.scss */
+/* line 429, goog.scss */
 .goog-custom-button-disabled .goog-custom-button-outer-box,
 .goog-custom-button-disabled .goog-custom-button-inner-box {
   color: #333 !important;
@@ -504,21 +504,21 @@
 }
 
 /* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
-/* line 436, ../../nrg/sass/goog.scss */
+/* line 436, goog.scss */
 * html .goog-custom-button-disabled {
   margin: 2px 1px !important;
   padding: 0 1px !important;
 }
 
 /* IE7-only hack; ignored by all other browsers. */
-/* line 442, ../../nrg/sass/goog.scss */
+/* line 442, goog.scss */
 *:first-child + html .goog-custom-button-disabled {
   margin: 2px 1px !important;
   padding: 0 1px !important;
 }
 
 /* State: hover. */
-/* line 448, ../../nrg/sass/goog.scss */
+/* line 448, goog.scss */
 .goog-custom-button-hover .goog-custom-button-outer-box,
 .goog-custom-button-hover .goog-custom-button-inner-box {
   border-color: #9cf #69e #69e #7af !important;
@@ -526,7 +526,7 @@
 }
 
 /* State: active, checked. */
-/* line 454, ../../nrg/sass/goog.scss */
+/* line 454, goog.scss */
 .goog-custom-button-active,
 .goog-custom-button-checked {
   background-color: #bbb;
@@ -534,46 +534,46 @@
 }
 
 /* State: focused. */
-/* line 461, ../../nrg/sass/goog.scss */
+/* line 461, goog.scss */
 .goog-custom-button-focused .goog-custom-button-outer-box,
 .goog-custom-button-focused .goog-custom-button-inner-box {
   border-color: orange;
 }
 
 /* Pill (collapsed border) styles. */
-/* line 467, ../../nrg/sass/goog.scss */
+/* line 467, goog.scss */
 .goog-custom-button-collapse-right,
 .goog-custom-button-collapse-right .goog-custom-button-outer-box,
 .goog-custom-button-collapse-right .goog-custom-button-inner-box {
   margin-right: 0;
 }
 
-/* line 473, ../../nrg/sass/goog.scss */
+/* line 473, goog.scss */
 .goog-custom-button-collapse-left,
 .goog-custom-button-collapse-left .goog-custom-button-outer-box,
 .goog-custom-button-collapse-left .goog-custom-button-inner-box {
   margin-left: 0;
 }
 
-/* line 479, ../../nrg/sass/goog.scss */
+/* line 479, goog.scss */
 .goog-custom-button-collapse-left .goog-custom-button-inner-box {
   border-left: 1px solid #fff;
 }
 
-/* line 483, ../../nrg/sass/goog.scss */
+/* line 483, goog.scss */
 .goog-custom-button-collapse-left.goog-custom-button-checked
 .goog-custom-button-inner-box {
   border-left: 1px solid #ddd;
 }
 
 /* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
-/* line 489, ../../nrg/sass/goog.scss */
+/* line 489, goog.scss */
 * html .goog-custom-button-collapse-left .goog-custom-button-inner-box {
   left: 0;
 }
 
 /* IE7-only hack; ignored by all other browsers. */
-/* line 494, ../../nrg/sass/goog.scss */
+/* line 494, goog.scss */
 *:first-child + html .goog-custom-button-collapse-left
 .goog-custom-button-inner-box {
   left: 0;
@@ -587,7 +587,7 @@
  */
 /* Author: pallosp@google.com (Peter Pallos) */
 /* Sample 3-state checkbox styles. */
-/* line 509, ../../nrg/sass/goog.scss */
+/* line 509, goog.scss */
 .goog-checkbox {
   border: 1px solid #1C5180;
   display: -moz-inline-box;
@@ -600,22 +600,22 @@
   width: 11px;
 }
 
-/* line 520, ../../nrg/sass/goog.scss */
+/* line 520, goog.scss */
 .goog-checkbox-checked {
   background: #fff url(//ssl.gstatic.com/closure/check-sprite.gif) no-repeat 2px center;
 }
 
-/* line 524, ../../nrg/sass/goog.scss */
+/* line 524, goog.scss */
 .goog-checkbox-undetermined {
   background: #bbb url(//ssl.gstatic.com/closure/check-sprite.gif) no-repeat 2px center;
 }
 
-/* line 528, ../../nrg/sass/goog.scss */
+/* line 528, goog.scss */
 .goog-checkbox-unchecked {
   background: #fff;
 }
 
-/* line 532, ../../nrg/sass/goog.scss */
+/* line 532, goog.scss */
 .goog-checkbox-disabled {
   border: 1px solid lightgray;
   background-position: -7px;
@@ -636,7 +636,7 @@
  * @author arv@google.com (Erik Arvidsson)
  * @author manucornet@google.com (Manu Cornet)
  */
-/* line 553, ../../nrg/sass/goog.scss */
+/* line 553, goog.scss */
 .goog-hsv-palette,
 .goog-hsv-palette-sm {
   position: relative;
@@ -646,19 +646,19 @@
   height: 276px;
 }
 
-/* line 562, ../../nrg/sass/goog.scss */
+/* line 562, goog.scss */
 .goog-hsv-palette-sm {
   width: 182px;
   height: 185px;
 }
 
-/* line 567, ../../nrg/sass/goog.scss */
+/* line 567, goog.scss */
 .goog-hsv-palette label span,
 .goog-hsv-palette-sm label span {
   display: none;
 }
 
-/* line 572, ../../nrg/sass/goog.scss */
+/* line 572, goog.scss */
 .goog-hsv-palette-hs-backdrop,
 .goog-hsv-palette-sm-hs-backdrop,
 .goog-hsv-palette-hs-image,
@@ -671,7 +671,7 @@
   border: 1px solid #999;
 }
 
-/* line 584, ../../nrg/sass/goog.scss */
+/* line 584, goog.scss */
 .goog-hsv-palette-sm-hs-backdrop,
 .goog-hsv-palette-sm-hs-image {
   top: 45px;
@@ -679,13 +679,13 @@
   height: 128px;
 }
 
-/* line 591, ../../nrg/sass/goog.scss */
+/* line 591, goog.scss */
 .goog-hsv-palette-hs-backdrop,
 .goog-hsv-palette-sm-hs-backdrop {
   background-color: #000;
 }
 
-/* line 596, ../../nrg/sass/goog.scss */
+/* line 596, goog.scss */
 .goog-hsv-palette-hs-image,
 .goog-hsv-palette-v-image,
 .goog-hsv-palette-hs-handle,
@@ -693,7 +693,7 @@
   background-image: url(//ssl.gstatic.com/closure/hsv-sprite.png);
 }
 
-/* line 603, ../../nrg/sass/goog.scss */
+/* line 603, goog.scss */
 .goog-hsv-palette-noalpha .goog-hsv-palette-hs-image,
 .goog-hsv-palette-noalpha .goog-hsv-palette-v-image,
 .goog-hsv-palette-noalpha .goog-hsv-palette-hs-handle,
@@ -701,7 +701,7 @@
   background-image: url(//ssl.gstatic.com/closure/hsv-sprite.gif);
 }
 
-/* line 610, ../../nrg/sass/goog.scss */
+/* line 610, goog.scss */
 .goog-hsv-palette-sm-hs-image,
 .goog-hsv-palette-sm-v-image,
 .goog-hsv-palette-sm-hs-handle,
@@ -709,7 +709,7 @@
   background-image: url(//ssl.gstatic.com/closure/hsv-sprite-sm.png);
 }
 
-/* line 617, ../../nrg/sass/goog.scss */
+/* line 617, goog.scss */
 .goog-hsv-palette-noalpha .goog-hsv-palette-sm-hs-image,
 .goog-hsv-palette-noalpha .goog-hsv-palette-sm-v-image,
 .goog-hsv-palette-noalpha .goog-hsv-palette-sm-hs-handle,
@@ -717,13 +717,13 @@
   background-image: url(//ssl.gstatic.com/closure/hsv-sprite-sm.gif);
 }
 
-/* line 624, ../../nrg/sass/goog.scss */
+/* line 624, goog.scss */
 .goog-hsv-palette-hs-image,
 .goog-hsv-palette-sm-hs-image {
   background-position: 0 0;
 }
 
-/* line 629, ../../nrg/sass/goog.scss */
+/* line 629, goog.scss */
 .goog-hsv-palette-hs-handle,
 .goog-hsv-palette-sm-hs-handle {
   position: absolute;
@@ -735,13 +735,13 @@
   background-position: 0 -256px;
 }
 
-/* line 640, ../../nrg/sass/goog.scss */
+/* line 640, goog.scss */
 .goog-hsv-palette-sm-hs-handle {
   top: 40px;
   background-position: 0 -128px;
 }
 
-/* line 645, ../../nrg/sass/goog.scss */
+/* line 645, goog.scss */
 .goog-hsv-palette-v-image,
 .goog-hsv-palette-sm-v-image {
   position: absolute;
@@ -754,7 +754,7 @@
   background-position: -256px 0;
 }
 
-/* line 657, ../../nrg/sass/goog.scss */
+/* line 657, goog.scss */
 .goog-hsv-palette-sm-v-image {
   top: 45px;
   left: 155px;
@@ -763,7 +763,7 @@
   background-position: -128px 0;
 }
 
-/* line 665, ../../nrg/sass/goog.scss */
+/* line 665, goog.scss */
 .goog-hsv-palette-v-handle,
 .goog-hsv-palette-sm-v-handle {
   position: absolute;
@@ -775,7 +775,7 @@
   overflow: hidden;
 }
 
-/* line 676, ../../nrg/sass/goog.scss */
+/* line 676, goog.scss */
 .goog-hsv-palette-sm-v-handle {
   top: 40px;
   left: 148px;
@@ -783,7 +783,7 @@
   background-position: -11px -128px;
 }
 
-/* line 683, ../../nrg/sass/goog.scss */
+/* line 683, goog.scss */
 .goog-hsv-palette-swatch,
 .goog-hsv-palette-sm-swatch {
   position: absolute;
@@ -795,7 +795,7 @@
   background-color: #fff;
 }
 
-/* line 694, ../../nrg/sass/goog.scss */
+/* line 694, goog.scss */
 .goog-hsv-palette-sm-swatch {
   top: 10px;
   right: auto;
@@ -804,7 +804,7 @@
   height: 22px;
 }
 
-/* line 702, ../../nrg/sass/goog.scss */
+/* line 702, goog.scss */
 .goog-hsv-palette-input,
 .goog-hsv-palette-sm-input {
   position: absolute;
@@ -813,7 +813,7 @@
   width: 65px;
 }
 
-/* line 710, ../../nrg/sass/goog.scss */
+/* line 710, goog.scss */
 .goog-hsv-palette-sm-input {
   top: 10px;
   right: auto;
@@ -832,7 +832,7 @@
  * @author ssaviano@google.com (Steven Saviano)
  * @author attila@google.com (Attila Bodis)
  */
-/* line 730, ../../nrg/sass/goog.scss */
+/* line 730, goog.scss */
 .modal-dialog {
   background: #c1d9ff;
   border: 1px solid #3a5774;
@@ -841,7 +841,7 @@
   position: absolute;
 }
 
-/* line 738, ../../nrg/sass/goog.scss */
+/* line 738, goog.scss */
 .modal-dialog a,
 .modal-dialog a:link,
 .modal-dialog a:visited {
@@ -849,7 +849,7 @@
   cursor: pointer;
 }
 
-/* line 745, ../../nrg/sass/goog.scss */
+/* line 745, goog.scss */
 .modal-dialog-bg {
   background: #666;
   left: 0;
@@ -857,7 +857,7 @@
   top: 0;
 }
 
-/* line 752, ../../nrg/sass/goog.scss */
+/* line 752, goog.scss */
 .modal-dialog-title {
   background: #e0edfe;
   color: #000;
@@ -871,7 +871,7 @@
   /* Ensures proper width in IE6 RTL. */
 }
 
-/* line 766, ../../nrg/sass/goog.scss */
+/* line 766, goog.scss */
 .modal-dialog-title-close {
   /* Client apps may override the URL at which they serve the sprite. */
   background: #e0edfe url(//ssl.gstatic.com/editor/editortoolbar.png) no-repeat -528px 0;
@@ -884,26 +884,26 @@
   vertical-align: middle;
 }
 
-/* line 778, ../../nrg/sass/goog.scss */
+/* line 778, goog.scss */
 .modal-dialog-buttons,
 .modal-dialog-content {
   background-color: #fff;
   padding: 8px;
 }
 
-/* line 784, ../../nrg/sass/goog.scss */
+/* line 784, goog.scss */
 .goog-buttonset-default {
   font-weight: bold;
 }
 
-/* line 30, ../../nrg/sass/nrg.scss */
+/* line 30, nrg.scss */
 .nrg-ui-slider {
   position: absolute;
   outline: 0;
   /* removes chrome blue border */
 }
 
-/* line 37, ../../nrg/sass/nrg.scss */
+/* line 37, nrg.scss */
 .nrg-ui-slider-horizontal {
   width: 100%;
   height: 10px;
@@ -911,7 +911,7 @@
   left: 0px;
 }
 
-/* line 46, ../../nrg/sass/nrg.scss */
+/* line 46, nrg.scss */
 .nrg-ui-slider-vertical {
   width: 10px;
   height: 100%;
@@ -922,7 +922,7 @@
 /*
  * TRACK
  */
-/* line 57, ../../nrg/sass/nrg.scss */
+/* line 57, nrg.scss */
 .nrg-ui-slider-track {
   position: absolute;
   top: 0px;
@@ -932,7 +932,7 @@
   /*background-color : rgba(100,100,100,0);*/
 }
 
-/* line 68, ../../nrg/sass/nrg.scss */
+/* line 68, nrg.scss */
 .nrg-ui-slider-track-hovered {
   /*box-sizing: border-box;
   background-color: rgb(50,50,50);
@@ -942,7 +942,7 @@
 /*
  * THUMB
  */
-/* line 79, ../../nrg/sass/nrg.scss */
+/* line 79, nrg.scss */
 .nrg-ui-slider-thumb {
   position: absolute;
   top: 0px;
@@ -952,20 +952,20 @@
   border-radius: 4px;
 }
 
-/* line 89, ../../nrg/sass/nrg.scss */
+/* line 89, nrg.scss */
 .nrg-ui-slider-thumb-horizontal {
   width: 30px;
   height: 100%;
 }
 
-/* line 95, ../../nrg/sass/nrg.scss */
+/* line 95, nrg.scss */
 .nrg-ui-slider-thumb-vertical {
   height: 30px;
   width: 100%;
   left: 0px;
 }
 
-/* line 102, ../../nrg/sass/nrg.scss */
+/* line 102, nrg.scss */
 .nrg-ui-slider-thumb-hovered {
   box-sizing: border-box;
   background-color: gainsboro;
@@ -975,7 +975,7 @@
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 112, ../../nrg/sass/nrg.scss */
+/* line 112, nrg.scss */
 .nrg-ui-hoverinput {
   position: absolute;
   top: 3px;
@@ -989,7 +989,7 @@
   transition-timing-function: ease-out;
 }
 
-/* line 124, ../../nrg/sass/nrg.scss */
+/* line 124, nrg.scss */
 .nrg-ui-hoverinput-display,
 .nrg-ui-hoverinput-inputbox {
   position: absolute;
@@ -1002,14 +1002,14 @@
   white-space: nowrap;
 }
 
-/* line 136, ../../nrg/sass/nrg.scss */
+/* line 136, nrg.scss */
 .nrg-ui-hoverinput-display {
   color: #9b9b9b;
   text-align: right;
   text-wrap: none;
 }
 
-/* line 144, ../../nrg/sass/nrg.scss */
+/* line 144, nrg.scss */
 .nrg-ui-hoverinput-inputbox {
   opacity: 0;
   width: 100%;
@@ -1028,12 +1028,12 @@
   text-align: right;
 }
 
-/* line 162, ../../nrg/sass/nrg.scss */
+/* line 162, nrg.scss */
 .nrg-ui-hoverinput:hover {
   background-color: rgba(0, 0, 1, 0);
 }
 
-/* line 166, ../../nrg/sass/nrg.scss */
+/* line 166, nrg.scss */
 .nrg-ui-hoverinput:hover > .nrg-ui-hoverinput-inputbox {
   opacity: 1;
 }
@@ -1041,7 +1041,7 @@
 /**
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 174, ../../nrg/sass/nrg.scss */
+/* line 174, nrg.scss */
 .nrg-ui-scrollablecontainer {
   top: 0px;
   left: 0px;
@@ -1053,7 +1053,7 @@
   overflow-y: hidden;
 }
 
-/* line 186, ../../nrg/sass/nrg.scss */
+/* line 186, nrg.scss */
 .nrg-ui-scrollablecontainer-scrollarea {
   display: block;
   position: relative;
@@ -1061,7 +1061,7 @@
   left: 19px;
 }
 
-/* line 194, ../../nrg/sass/nrg.scss */
+/* line 194, nrg.scss */
 .nrg-ui-scrollablecontainer-zippyheader {
   position: relative;
   background-color: #323232;
@@ -1076,32 +1076,32 @@
   margin-bottom: 4px;
 }
 
-/* line 209, ../../nrg/sass/nrg.scss */
+/* line 209, nrg.scss */
 .nrg-ui-scrollablecontainer-zippyheader-mouseover {
   background-color: #5a5a5a;
   color: white;
 }
 
-/* line 216, ../../nrg/sass/nrg.scss */
+/* line 216, nrg.scss */
 .nrg-ui-scrollablecontainer-zippyheaderlabel, .nrg-ui-scrollablecontainer-zippyexpandicon {
   position: absolute;
   margin-left: .3em;
   background-color: none;
 }
 
-/* line 223, ../../nrg/sass/nrg.scss */
+/* line 223, nrg.scss */
 .nrg-ui-scrollablecontainer-zippyexpandicon {
   right: .5em;
   margin-left: -10px;
   color: black;
 }
 
-/* line 230, ../../nrg/sass/nrg.scss */
+/* line 230, nrg.scss */
 .nrg-ui-scrollablecontainer-zippyexpandicon-mouseover {
   color: black;
 }
 
-/* line 237, ../../nrg/sass/nrg.scss */
+/* line 237, nrg.scss */
 .nrg-ui-scrollablecontainer-zippycontent {
   overflow: visible;
   width: 100%;
@@ -1110,7 +1110,7 @@
   margin-bottom: 4px;
 }
 
-/* line 247, ../../nrg/sass/nrg.scss */
+/* line 247, nrg.scss */
 .nrg-ui-scrollablecontainer-slider {
   position: absolute;
   width: 8px;
@@ -1122,12 +1122,12 @@
   transition-duration: .2;
 }
 
-/* line 259, ../../nrg/sass/nrg.scss */
+/* line 259, nrg.scss */
 .nrg-ui-scrollablecontainer-slider:hover {
   background-color: black;
 }
 
-/* line 263, ../../nrg/sass/nrg.scss */
+/* line 263, nrg.scss */
 .nrg-ui-scrollablecontainer-slider-thumb {
   background-color: #505050;
   width: 4px;
@@ -1139,26 +1139,26 @@
   transition-timing-function: ease-out;
 }
 
-/* line 273, ../../nrg/sass/nrg.scss */
+/* line 273, nrg.scss */
 .nrg-ui-scrollablecontainer-slider:hover > .nrg-ui-scrollablecontainer-slider-thumb {
   background-color: #787878;
   width: 8px;
   left: 3px;
 }
 
-/* line 279, ../../nrg/sass/nrg.scss */
+/* line 279, nrg.scss */
 .nrg-ui-scrollablecontainer-slider-thumb:active {
   background-color: #787878;
   width: 8px;
   left: 3px;
 }
 
-/* line 287, ../../nrg/sass/nrg.scss */
+/* line 287, nrg.scss */
 .nrg-ui-scrollablecontainer-slider-track {
   background-color: transparent;
 }
 
-/* line 292, ../../nrg/sass/nrg.scss */
+/* line 292, nrg.scss */
 .nrg-ui-scrollablecontainer-slider-track-hovered {
   /*
   box-sizing: border-box;
@@ -1172,7 +1172,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 308, ../../nrg/sass/nrg.scss */
+/* line 308, nrg.scss */
 .nrg-ui-scrollablezippytree {
   position: absolute;
   top: 0px;
@@ -1181,7 +1181,7 @@
   width: 100%;
 }
 
-/* line 317, ../../nrg/sass/nrg.scss */
+/* line 317, nrg.scss */
 .nrg-ui-scrollablezippytree-zippytree {
   top: 0px;
   left: 0px;
@@ -1191,7 +1191,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 327, ../../nrg/sass/nrg.scss */
+/* line 327, nrg.scss */
 .nrg-ui-zippynode-header {
   position: relative;
   outline: 0;
@@ -1213,13 +1213,13 @@
   transition-timing-function: ease-out;
 }
 
-/* line 348, ../../nrg/sass/nrg.scss */
+/* line 348, nrg.scss */
 .nrg-ui-zippynode-header:hover {
   background-color: #323232;
   color: white;
 }
 
-/* line 355, ../../nrg/sass/nrg.scss */
+/* line 355, nrg.scss */
 .nrg-ui-zippynode-header-label, .nrg-ui-zippynode-expandicon {
   position: absolute;
   margin-left: .3em;
@@ -1228,19 +1228,19 @@
   overflow: hidden;
 }
 
-/* line 364, ../../nrg/sass/nrg.scss */
+/* line 364, nrg.scss */
 .nrg-ui-zippynode-expandicon {
   right: .5em;
   margin-left: -10px;
   color: #646464;
 }
 
-/* line 371, ../../nrg/sass/nrg.scss */
+/* line 371, nrg.scss */
 .nrg-ui-zippynode-expandicon-mouseover {
   color: white;
 }
 
-/* line 378, ../../nrg/sass/nrg.scss */
+/* line 378, nrg.scss */
 .nrg-ui-zippynode-content {
   overflow: visible;
   width: 100%;
@@ -1249,7 +1249,7 @@
   z-index: 1000;
 }
 
-/* line 389, ../../nrg/sass/nrg.scss */
+/* line 389, nrg.scss */
 .nrg-ui-zippynode-loading-holder {
   position: relative;
   height: 87px;
@@ -1258,14 +1258,14 @@
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 395, ../../nrg/sass/nrg.scss */
+/* line 395, nrg.scss */
 .nrg-ui-zippynode-loading-text {
   position: absolute;
   top: calc(50% - 12px);
   left: calc(50% - 23px);
 }
 
-/* line 402, ../../nrg/sass/nrg.scss */
+/* line 402, nrg.scss */
 .nrg-ui-zippynode-loading-image {
   position: absolute;
   width: 150px;
@@ -1278,7 +1278,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 428, ../../nrg/sass/nrg.scss */
+/* line 428, nrg.scss */
 .nrg-ui-zippytree-rootnode {
   margin-bottom: 0px;
   height: 0px;
@@ -1287,7 +1287,7 @@
 /**
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 436, ../../nrg/sass/nrg.scss */
+/* line 436, nrg.scss */
 .nrg-ui-dialog {
   position: absolute;
   outline: none;
@@ -1301,7 +1301,7 @@
   overflow: hidden;
 }
 
-/* line 448, ../../nrg/sass/nrg.scss */
+/* line 448, nrg.scss */
 .nrg-ui-dialog-overlay {
   position: absolute;
   left: 30%;
@@ -1315,7 +1315,7 @@
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 460, ../../nrg/sass/nrg.scss */
+/* line 460, nrg.scss */
 .nrg-ui-dialog-background {
   position: absolute;
   left: 0px;
@@ -1327,13 +1327,13 @@
   display: inline-block;
 }
 
-/* line 478, ../../nrg/sass/nrg.scss */
+/* line 478, nrg.scss */
 .nrg-ui-dialog-subtext {
   text-align: left;
   font-size: 12px;
 }
 
-/* line 485, ../../nrg/sass/nrg.scss */
+/* line 485, nrg.scss */
 .nrg-ui-dialog-text {
   text-align: center;
   color: white;
@@ -1341,13 +1341,13 @@
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 490, ../../nrg/sass/nrg.scss */
+/* line 490, nrg.scss */
 .nrg-ui-dialog-closebutton-image, .nrg-ui-dialog-closebutton {
   height: 10;
   width: 10;
 }
 
-/* line 494, ../../nrg/sass/nrg.scss */
+/* line 494, nrg.scss */
 .nrg-ui-dialog-closebutton {
   position: absolute;
   cursor: pointer;
@@ -1358,7 +1358,7 @@
   outline: none;
 }
 
-/* line 510, ../../nrg/sass/nrg.scss */
+/* line 510, nrg.scss */
 .modal-dialog-title-text {
   top: 2px;
   left: 7px;
@@ -1366,7 +1366,7 @@
   text-align: center;
 }
 
-/* line 518, ../../nrg/sass/nrg.scss */
+/* line 518, nrg.scss */
 .nrg-ui-dialog-title {
   background-color: #3c3c3c;
   height: 15px;
@@ -1381,19 +1381,19 @@
   z-index: -1;
 }
 
-/* line 531, ../../nrg/sass/nrg.scss */
+/* line 531, nrg.scss */
 .nrg-ui-dialog-content {
   background-color: none;
   background: none;
 }
 
-/* line 537, ../../nrg/sass/nrg.scss */
+/* line 537, nrg.scss */
 .nrg-ui-dialog-buttons {
   background-color: none;
   background: none;
 }
 
-/* line 544, ../../nrg/sass/nrg.scss */
+/* line 544, nrg.scss */
 .nrg-ui-dialog-yesnomodal {
   position: absolute;
   top: calc(50% - 60px);
@@ -1416,14 +1416,14 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 566, ../../nrg/sass/nrg.scss */
+/* line 566, nrg.scss */
 .nrg-ui-errordialog {
   width: 400px;
   height: 300px;
   z-index: 100000;
 }
 
-/* line 574, ../../nrg/sass/nrg.scss */
+/* line 574, nrg.scss */
 .nrg-ui-errordialog-image {
   position: relative;
   width: 80px;
@@ -1431,7 +1431,7 @@
   left: calc(50% - 40px);
 }
 
-/* line 583, ../../nrg/sass/nrg.scss */
+/* line 583, nrg.scss */
 .nrg-ui-errordialog-text {
   top: 145px;
 }
@@ -1439,7 +1439,7 @@
 /*
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 591, ../../nrg/sass/nrg.scss */
+/* line 591, nrg.scss */
 .nrg-ui-thumbnail {
   position: absolute;
   width: 87px;
@@ -1456,7 +1456,7 @@
   transition-property: border, background-color, color;
 }
 
-/* line 606, ../../nrg/sass/nrg.scss */
+/* line 606, nrg.scss */
 .nrg-ui-thumbnail-selectindicator {
   position: absolute;
   top: calc(50% - 34px);
@@ -1467,12 +1467,12 @@
   background-color: #646464;
 }
 
-/* line 617, ../../nrg/sass/nrg.scss */
+/* line 617, nrg.scss */
 .nrg-ui-thumbnail-selectindicator-active {
   opacity: 1;
 }
 
-/* line 623, ../../nrg/sass/nrg.scss */
+/* line 623, nrg.scss */
 .nrg-ui-thumbnail-selected {
   border: solid 1px #646464;
   -moz-box-sizing: border-box;
@@ -1481,7 +1481,7 @@
   box-sizing: border-box;
 }
 
-/* line 632, ../../nrg/sass/nrg.scss */
+/* line 632, nrg.scss */
 .nrg-ui-thumbnail:hover {
   background-color: #1e1e1e;
   z-index: 10000;
@@ -1490,19 +1490,19 @@
   border: solid 1px #282828;
 }
 
-/* line 641, ../../nrg/sass/nrg.scss */
+/* line 641, nrg.scss */
 .nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-image {
   /*color: rgb(255,255,255);*/
   /*border-color: white;*/
   /*box-shadow: 3px 3px 3px rgba(0,0,0, .3);*/
 }
 
-/* line 647, ../../nrg/sass/nrg.scss */
+/* line 647, nrg.scss */
 .nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-text {
   color: #d7d7d7;
 }
 
-/* line 651, ../../nrg/sass/nrg.scss */
+/* line 651, nrg.scss */
 .nrg-ui-thumbnail-image, .nrg-ui-thumbnail-canvas {
   position: absolute;
   width: 70px;
@@ -1528,12 +1528,12 @@
   transition-property: border-color;
 }
 
-/* line 674, ../../nrg/sass/nrg.scss */
+/* line 674, nrg.scss */
 .nrg-ui-thumbnail-image-mouseover {
   /*border: solid 1px white;*/
 }
 
-/* line 679, ../../nrg/sass/nrg.scss */
+/* line 679, nrg.scss */
 .nrg-ui-thumbnail-text {
   position: absolute;
   height: 70px;
@@ -1552,12 +1552,12 @@
   transition-property: color;
 }
 
-/* line 695, ../../nrg/sass/nrg.scss */
+/* line 695, nrg.scss */
 .nrg-ui-thumbnail-text-mouseover {
   color: #9b9b9b;
 }
 
-/* line 700, ../../nrg/sass/nrg.scss */
+/* line 700, nrg.scss */
 .nrg-ui-thumbnail-canvas {
   top: 8px;
   left: 8px;
@@ -1566,17 +1566,17 @@
 /*******
 * Active state
 ********/
-/* line 711, ../../nrg/sass/nrg.scss */
+/* line 711, nrg.scss */
 .nrg-ui-thumbnail-text-active {
   /*color : rgb(100,100,100);*/
 }
 
-/* line 715, ../../nrg/sass/nrg.scss */
+/* line 715, nrg.scss */
 .nrg-ui-thumbnail-active {
   opacity: 1;
 }
 
-/* line 720, ../../nrg/sass/nrg.scss */
+/* line 720, nrg.scss */
 .nrg-ui-thumbnail-image-active {
   /*border-left: solid 2px rgb(100,100,100);*/
 }
@@ -1584,13 +1584,13 @@
 /*
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 728, ../../nrg/sass/nrg.scss */
+/* line 728, nrg.scss */
 .nrg-ui-thumbnailgallery {
   position: absolute;
   overflow: hidden;
 }
 
-/* line 736, ../../nrg/sass/nrg.scss */
+/* line 736, nrg.scss */
 .nrg-ui-thumbnailgallery-thumbnail {
   position: relative;
   width: 100%;
@@ -1600,7 +1600,7 @@
   cursor: pointer;
 }
 
-/* line 746, ../../nrg/sass/nrg.scss */
+/* line 746, nrg.scss */
 .nrg-ui-thumbnailgallery-thumbnail-image {
   position: absolute;
   width: 160px;
@@ -1616,7 +1616,7 @@
   cursor: pointer;
 }
 
-/* line 762, ../../nrg/sass/nrg.scss */
+/* line 762, nrg.scss */
 .nrg-ui-thumbnailgallery-thumbnail-text {
   position: absolute;
   height: 70px;
@@ -1628,14 +1628,14 @@
   line-height: 17px;
 }
 
-/* line 773, ../../nrg/sass/nrg.scss */
+/* line 773, nrg.scss */
 .nrg-ui-resizable-boundary {
   position: absolute;
   border: 1px dotted red;
   background-color: rgba(255, 120, 120, 0.5);
 }
 
-/* line 780, ../../nrg/sass/nrg.scss */
+/* line 780, nrg.scss */
 .nrg-ui-resizedragger {
   position: absolute;
   font-size: 0.1px;
@@ -1646,7 +1646,7 @@
 /**
   RIGHT AND LEFT
 */
-/* line 791, ../../nrg/sass/nrg.scss */
+/* line 791, nrg.scss */
 .nrg-ui-resizedraggerright, .nrg-ui-resizedraggerleft {
   position: absolute;
   width: 7px;
@@ -1654,13 +1654,13 @@
   cursor: ew-resize;
 }
 
-/* line 798, ../../nrg/sass/nrg.scss */
+/* line 798, nrg.scss */
 .nrg-ui-resizedraggerright {
   left: 100%;
   /*background-color: rgba(0,255,0,.5);*/
 }
 
-/* line 803, ../../nrg/sass/nrg.scss */
+/* line 803, nrg.scss */
 .nrg-ui-resizedraggerleft {
   left: -7px;
 }
@@ -1668,7 +1668,7 @@
 /**
  * TOP AND BOTTOM
  */
-/* line 813, ../../nrg/sass/nrg.scss */
+/* line 813, nrg.scss */
 .nrg-ui-resizedraggertop, .nrg-ui-resizedraggerbottom {
   position: absolute;
   left: 0px;
@@ -1677,13 +1677,13 @@
   cursor: ns-resize;
 }
 
-/* line 821, ../../nrg/sass/nrg.scss */
+/* line 821, nrg.scss */
 .nrg-ui-resizedraggertop {
   top: -7px;
   /*background-color: rgba(0,255,0,.5);*/
 }
 
-/* line 826, ../../nrg/sass/nrg.scss */
+/* line 826, nrg.scss */
 .nrg-ui-resizedraggerbottom {
   top: 100%;
   /*background-color: rgba(255,0,0,.5);*/
@@ -1692,7 +1692,7 @@
 /**
  * CORNERS
  */
-/* line 838, ../../nrg/sass/nrg.scss */
+/* line 838, nrg.scss */
 .nrg-ui-resizedraggertopright,
 .nrg-ui-resizedraggertopleft,
 .nrg-ui-resizedraggerbottomright,
@@ -1703,13 +1703,13 @@
   cursor: move;
 }
 
-/* line 849, ../../nrg/sass/nrg.scss */
+/* line 849, nrg.scss */
 .nrg-ui-resizedraggertopright,
 .nrg-ui-resizedraggertopleft {
   top: calc(100% - 7px);
 }
 
-/* line 854, ../../nrg/sass/nrg.scss */
+/* line 854, nrg.scss */
 .nrg-ui-resizedraggertopright {
   left: calc(100% - 7px);
   /*background-color: orange;*/
@@ -1721,28 +1721,28 @@
 /**
  * ELEMENT
  */
-/* line 866, ../../nrg/sass/nrg.scss */
+/* line 866, nrg.scss */
 .nrg-ui-tabs {
   position: absolute;
   left: 0px;
 }
 
-/* line 871, ../../nrg/sass/nrg.scss */
+/* line 871, nrg.scss */
 .nrg-ui-tabs-right {
   left: 0px;
 }
 
-/* line 876, ../../nrg/sass/nrg.scss */
+/* line 876, nrg.scss */
 .nrg-ui-tabs-left {
   left: calc(100% - 18px);
 }
 
-/* line 881, ../../nrg/sass/nrg.scss */
+/* line 881, nrg.scss */
 .nrg-ui-tabs-top {
   top: calc(100% - 18px);
 }
 
-/* line 886, ../../nrg/sass/nrg.scss */
+/* line 886, nrg.scss */
 .nrg-ui-tabs-bottom {
   top: 0px;
 }
@@ -1750,7 +1750,7 @@
 /**
  * TABS
  */
-/* line 897, ../../nrg/sass/nrg.scss */
+/* line 897, nrg.scss */
 .nrg-ui-tabs-tab {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1766,7 +1766,7 @@
   text-align: center;
 }
 
-/* line 911, ../../nrg/sass/nrg.scss */
+/* line 911, nrg.scss */
 .nrg-ui-tabs-tab-top {
   height: 18px;
   top: 0px;
@@ -1774,7 +1774,7 @@
   border-bottom: none;
 }
 
-/* line 919, ../../nrg/sass/nrg.scss */
+/* line 919, nrg.scss */
 .nrg-ui-tabs-tab-bottom {
   height: 18px;
   top: calc(100% - 18px);
@@ -1782,7 +1782,7 @@
   border-top: none;
 }
 
-/* line 927, ../../nrg/sass/nrg.scss */
+/* line 927, nrg.scss */
 .nrg-ui-tabs-tab-right {
   width: 22px;
   left: calc(100% - 22px);
@@ -1792,7 +1792,7 @@
   border-bottom-right-radius: 7px;
 }
 
-/* line 937, ../../nrg/sass/nrg.scss */
+/* line 937, nrg.scss */
 .nrg-ui-tabs-tab-left {
   width: 18px;
   left: 0px;
@@ -1800,27 +1800,27 @@
   border-right: none;
 }
 
-/* line 945, ../../nrg/sass/nrg.scss */
+/* line 945, nrg.scss */
 .nrg-ui-tabs-tab-active {
   border: solid 1px #646464;
 }
 
-/* line 950, ../../nrg/sass/nrg.scss */
+/* line 950, nrg.scss */
 .nrg-ui-tabs-tab-active-right {
   border-left: none;
 }
 
-/* line 955, ../../nrg/sass/nrg.scss */
+/* line 955, nrg.scss */
 .nrg-ui-tabs-tab-active-top {
   border-bottom: none;
 }
 
-/* line 960, ../../nrg/sass/nrg.scss */
+/* line 960, nrg.scss */
 .nrg-ui-tabs-tab-active {
   z-index: 1;
 }
 
-/* line 965, ../../nrg/sass/nrg.scss */
+/* line 965, nrg.scss */
 .nrg-ui-tabs-icon {
   color: #646464;
   z-index: 11;
@@ -1832,32 +1832,32 @@
   display: table;
 }
 
-/* line 978, ../../nrg/sass/nrg.scss */
+/* line 978, nrg.scss */
 .nrg-ui-tabs-icon-active {
   color: #646464;
 }
 
-/* line 983, ../../nrg/sass/nrg.scss */
+/* line 983, nrg.scss */
 .nrg-ui-tabs-icon-top {
   width: 100%;
   height: 100%;
 }
 
-/* line 989, ../../nrg/sass/nrg.scss */
+/* line 989, nrg.scss */
 .nrg-ui-tabs-icon-right {
   left: -24px;
   top: calc(50% - 5px);
   white-space: nowrap;
 }
 
-/* line 998, ../../nrg/sass/nrg.scss */
+/* line 998, nrg.scss */
 .nrg-ui-tabs-icon-content {
   display: table-cell;
   text-align: center;
   vertical-align: middle;
 }
 
-/* line 1005, ../../nrg/sass/nrg.scss */
+/* line 1005, nrg.scss */
 .nrg-ui-tabs-page {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1873,7 +1873,7 @@
   overflow: hidden;
 }
 
-/* line 1019, ../../nrg/sass/nrg.scss */
+/* line 1019, nrg.scss */
 .nrg-ui-tabs-page-content {
   position: absolute;
   left: 0px;
@@ -1883,14 +1883,14 @@
   z-index: 2;
 }
 
-/* line 1030, ../../nrg/sass/nrg.scss */
+/* line 1030, nrg.scss */
 .nrg-ui-tabs-page-active {
   border: solid 1px #646464;
   visibility: visible;
   z-index: 2;
 }
 
-/* line 1037, ../../nrg/sass/nrg.scss */
+/* line 1037, nrg.scss */
 .nrg-ui-tabs-page-right, .nrg-ui-tabs-page-left {
   position: absolute;
   height: 100%;
@@ -1901,7 +1901,7 @@
   border-left: none;
 }
 
-/* line 1048, ../../nrg/sass/nrg.scss */
+/* line 1048, nrg.scss */
 .nrg-ui-tabs-page-top, .nrg-ui-tabs-page-bottom {
   position: absolute;
   top: 18px;
@@ -1914,22 +1914,22 @@
 /**
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 1061, ../../nrg/sass/nrg.scss */
+/* line 1061, nrg.scss */
 .nrg-ui-ziptabs {
   position: absolute;
 }
 
-/* line 1066, ../../nrg/sass/nrg.scss */
+/* line 1066, nrg.scss */
 .nrg-ui-ziptabs:hover {
   opacity: 1;
 }
 
-/* line 1072, ../../nrg/sass/nrg.scss */
+/* line 1072, nrg.scss */
 .nrg-ui-ziptabs-top, .nrg-ui-ziptabs-bottom {
   height: 18px;
 }
 
-/* line 1077, ../../nrg/sass/nrg.scss */
+/* line 1077, nrg.scss */
 .nrg-ui-ziptabs-left, .nrg-ui-ziptabs-right {
   width: 18px;
   opacity: .7;
@@ -1939,7 +1939,7 @@
   transition-property: opacity;
 }
 
-/* line 1086, ../../nrg/sass/nrg.scss */
+/* line 1086, nrg.scss */
 .nrg-ui-ziptabs-right:hover {
   opacity: 1;
 }
@@ -1947,26 +1947,26 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1100, ../../nrg/sass/nrg.scss */
+/* line 1100, nrg.scss */
 .nrg-ui-slideinmenu-icon {
   max-width: 100%;
   max-height: 100%;
   opacity: 1;
 }
 
-/* line 1107, ../../nrg/sass/nrg.scss */
+/* line 1107, nrg.scss */
 .nrg-ui-slideinmenu-icon-hovered {
   opacity: 1;
 }
 
-/* line 1112, ../../nrg/sass/nrg.scss */
+/* line 1112, nrg.scss */
 .nrg-ui-slideinmenu-menuholder {
   position: absolute;
   background-color: #ff6416;
   z-index: 4000;
 }
 
-/* line 1119, ../../nrg/sass/nrg.scss */
+/* line 1119, nrg.scss */
 .nrg-ui-slideinmenu-menu {
   background-color: #7d7d7d;
   border: solid 1px #323232;
@@ -1975,7 +1975,7 @@
   width: 130px;
 }
 
-/* line 1128, ../../nrg/sass/nrg.scss */
+/* line 1128, nrg.scss */
 .nrg-ui-slideinmenu-menuitem {
   overflow: visible;
   margin-left: 5px;
@@ -1983,143 +1983,16 @@
   height: 20px;
 }
 
-/* line 1136, ../../nrg/sass/nrg.scss */
+/* line 1136, nrg.scss */
 .nrg-ui-slideinmenu-menuitem-highlight {
   color: white;
 }
 
-/* line 1140, ../../nrg/sass/nrg.scss */
+/* line 1140, nrg.scss */
 .nrg-ui-slideinmenu-menuitem-icon {
   position: absolute;
   margin-top: -3px;
   left: 5px;
   width: 20px;
   height: 20px;
-}
-
-/* line 4, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout {
-  position: absolute;
-}
-
-/* line 9, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-x, .xiv-ui-layouts-xyzvlayout-y,
-.xiv-ui-layouts-xyzvlayout-z, .xiv-ui-layouts-xyzvlayout-v {
-  position: absolute;
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-}
-
-/* line 28, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slide-maxthumb, .xiv-ui-layouts-xyzvlayout-slider:hover > .xiv-ui-layouts-xyzvlayout-slider-thumb, .xiv-ui-layouts-xyzvlayout-slider:active > .xiv-ui-layouts-xyzvlayout-slider-thumb {
-  height: 8px;
-  top: 5px;
-}
-
-/* line 34, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider {
-  position: absolute;
-  left: 30px;
-  top: calc(100% - 30px);
-  width: calc(100% - 40px);
-  height: 30px;
-  /*background-color: rgba(20,100,0,.2);*/
-  -webkit-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-out;
-}
-/* line 46, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider:hover ~ .xiv-ui-playbutton {
-  top: calc(100% - 24px);
-}
-/* line 51, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider:hover > .xiv-ui-layouts-xyzvlayout-slider-track-x, .xiv-ui-layouts-xyzvlayout-slider:active > .xiv-ui-layouts-xyzvlayout-slider-track-x {
-  height: 6px;
-  top: 6px;
-  opacity: 1;
-  border-color: rgba(50, 50, 50, 0.8);
-  background-color: rgba(255, 0, 0, 0.3);
-}
-/* line 55, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider:hover > .xiv-ui-layouts-xyzvlayout-slider-track-y, .xiv-ui-layouts-xyzvlayout-slider:active > .xiv-ui-layouts-xyzvlayout-slider-track-y {
-  height: 6px;
-  top: 6px;
-  opacity: 1;
-  border-color: rgba(50, 50, 50, 0.8);
-  background-color: rgba(0, 255, 0, 0.3);
-}
-/* line 59, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider:hover > .xiv-ui-layouts-xyzvlayout-slider-track-z, .xiv-ui-layouts-xyzvlayout-slider:active > .xiv-ui-layouts-xyzvlayout-slider-track-z {
-  height: 6px;
-  top: 6px;
-  opacity: 1;
-  border-color: rgba(50, 50, 50, 0.8);
-  background-color: rgba(0, 0, 255, 0.3);
-}
-
-/* line 76, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider-track, .xiv-ui-layouts-xyzvlayout-slider-track-x,
-.xiv-ui-layouts-xyzvlayout-slider-track-y,
-.xiv-ui-layouts-xyzvlayout-slider-track-z {
-  position: absolute;
-  height: 1px;
-  top: 18px;
-  left: 0px;
-  border-radius: 2px;
-  border: solid 1px #646464;
-  width: 100%;
-  transition-property: top, height;
-  background-color: rgba(50, 50, 50, 0.5);
-  transition-property: border-color, opacity, height, top;
-  opacity: .5;
-  -webkit-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-out;
-}
-
-/* line 97, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider-track-x,
-.xiv-ui-layouts-xyzvlayout-slider-track-y,
-.xiv-ui-layouts-xyzvlayout-slider-track-z {
-  transition-property: opacity, height, top;
-}
-
-/* line 108, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider-thumb {
-  position: absolute;
-  width: 8px;
-  background: #969696;
-  border: solid 1px #a0a0a0;
-  border-radius: 2px;
-  box-shadow: 0px 0px 0px 3px rgba(125, 125, 125, 0);
-  height: 1px;
-  top: calc(100% - 12px);
-  transition-property: box-shadow, top, height;
-  -webkit-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-out;
-}
-
-/* line 125, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider-thumb:hover {
-  box-shadow: 0px 0px 0px 3px rgba(155, 155, 155, 0.55);
-}
-
-/* line 129, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-slider-thumb:active {
-  box-shadow: 0px 0px 0px 3px rgba(155, 155, 155, 0.55);
-}
-
-/* line 134, xyzvlayout.scss */
-.xiv-ui-layouts-xyzvlayout-framenumber {
-  position: absolute;
-  top: 5px;
-  left: 0;
-  width: 100%;
-  margin-left: -8px;
-  color: white;
-  font-size: 9px;
-  opacity: .8;
-  text-align: right;
 }
