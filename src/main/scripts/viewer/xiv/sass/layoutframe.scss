@@ -8,12 +8,11 @@
   -webkit-box-sizing:border-box;
   overflow: hidden;
   background: black;
-  /*@include nrg-transitionable;*/
 }
 
 
 .xiv-ui-layouts-layoutframe-transitionable {
-  @include nrg-transitionable;
+
 }
 
 

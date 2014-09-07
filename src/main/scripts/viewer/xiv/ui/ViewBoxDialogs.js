@@ -669,15 +669,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
     // For viewables with a 'sessionInfo' property (i.e. Scans)
     //
     if (this.ViewBox_.getViewableTrees().length > 0) {
- 	goog.object.forEach(this.ViewBox_.getViewableTrees()[0].
-			    getSessionInfo(), 
-	    function(value, key){
-		if (goog.isDefAndNotNull(value)){
-		    if (value.length > 0){
-			infoText += key + ': ' + value + '<br>';
-		    }
-		}
-	    })
+	infoText = this.ViewBox_.getViewableTrees()[0].getSessionInfoAsHtml();
     }
 
     //

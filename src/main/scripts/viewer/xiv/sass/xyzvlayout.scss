@@ -17,17 +17,18 @@
 
 
 @mixin bgColorChange($bgCol) {
+    /*
     height: 6px;
-    top: 6px;
+    top: 6px; */
     opacity: 1;   
-    border-color: rgba(50,50,50, .8);
+    border-color: rgba(150,150,150, .2);
     background-color: $bgCol;
 }
 
 
 .xiv-ui-layouts-xyzvlayout-slide-maxthumb {
     height: 8px;
-    top: 5px;
+    top: 14px;
 }
 
 
@@ -42,23 +43,24 @@
     @include nrg-transitionable;
 
 
- 
+/*
     &:hover ~ .xiv-ui-playbutton {
 	top: calc(100% - 24px);
     }
+*/
 
 
     &:hover > .xiv-ui-layouts-xyzvlayout-slider-track-x,
     &:active > .xiv-ui-layouts-xyzvlayout-slider-track-x{
-	@include bgColorChange(rgba(255, 0, 0, .3));
+	@include bgColorChange(rgba(255, 0, 0, .8));
     }
     &:hover > .xiv-ui-layouts-xyzvlayout-slider-track-y,
     &:active > .xiv-ui-layouts-xyzvlayout-slider-track-y {
-	@include bgColorChange(rgba(0, 255, 0, .3));
+	@include bgColorChange(rgba(0, 255, 0, .8));
     }
     &:hover > .xiv-ui-layouts-xyzvlayout-slider-track-z,
     &:active > .xiv-ui-layouts-xyzvlayout-slider-track-z {
-	@include bgColorChange(rgba(0, 0, 255, .3));
+	@include bgColorChange(rgba(0, 0, 255, .8));
     }
     &:hover > .xiv-ui-layouts-xyzvlayout-slider-thumb,
     &:active > .xiv-ui-layouts-xyzvlayout-slider-thumb {
@@ -98,7 +100,7 @@
 .xiv-ui-layouts-xyzvlayout-slider-track-y,
 .xiv-ui-layouts-xyzvlayout-slider-track-z {
    @extend .xiv-ui-layouts-xyzvlayout-slider-track;
-   transition-property: opacity, height, top;
+   /*transition-property: opacity, height, top;*/
 }
 
 
@@ -109,7 +111,7 @@
     position: absolute;
     width: 8px;
     background: rgb(150,150,150);
-    border: solid 1px rgb(160,160,160);
+    border: solid 1px rgb(190,190,190);
     border-radius: 2px;
     box-shadow: 0px 0px 0px 3px rgba(125, 125, 125, 0);
     height: 1px;

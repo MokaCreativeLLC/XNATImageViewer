@@ -34,9 +34,6 @@ xiv.ui.layouts.LayoutFrame = function(title, opt_resizeDirs) {
      * @private
      */
     this.title_ = title;
-
-    goog.dom.classes.add(this.getElement(),
-			 'xiv-ui-layouts-layoutframe-transitionable');
 }
 goog.inherits(xiv.ui.layouts.LayoutFrame, nrg.ui.Component);
 goog.exportSymbol('xiv.ui.layouts.LayoutFrame', xiv.ui.layouts.LayoutFrame);

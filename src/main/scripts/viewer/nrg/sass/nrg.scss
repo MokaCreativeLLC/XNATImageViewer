@@ -25,6 +25,10 @@
     width: $w;
 }
 
+%nrg-metadata-text {
+    @include nrg-font(12px);
+    line-height: 16px;
+}
 
 
 .nrg-ui-slider {
@@ -328,7 +332,6 @@
     position: relative;
     outline:0;
     /*background-color: rgb(90,90,90);*/
-    border-bottom: solid 1px rgb(80,80,80);
     left: 0px;
     width: 100%;
     height: 1.5em;
@@ -338,9 +341,8 @@
     line-height: 1.5em;
     margin-bottom: 5px;
     margin-top: 5px;
+    @include nrg-transitionable;
     transition-property: background-color, color;
-    transition-duration: .1s;
-    transition-timing-function: ease-out;  
 }
 
 
@@ -641,7 +643,7 @@
 .nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-image {
     /*color: rgb(255,255,255);*/
     /*border-color: white;*/
-    /*box-shadow: 3px 3px 3px rgba(0,0,0, .3);*/
+    box-shadow: 3px 3px 3px rgba(0,0,0, .3);
 }
 
 .nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-text {
@@ -667,13 +669,9 @@
     border-radius: 0px;	
     box-sizing: border-box; */
     cursor: pointer;
-    @include nrg-transitionable;
-    transition-property: border-color;
 }
 
-.nrg-ui-thumbnail-image-mouseover {
-    /*border: solid 1px white;*/
-}
+
 
 
 .nrg-ui-thumbnail-text {
@@ -719,9 +717,7 @@
 
 .nrg-ui-thumbnail-image-active {
    /*border-left: solid 2px rgb(100,100,100);*/
-}/*
- * @author kumar.sunil.p@gmail.com (Sunil Kumar)
- */
+}
 
 
 

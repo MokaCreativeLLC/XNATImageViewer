@@ -896,14 +896,14 @@
   font-weight: bold;
 }
 
-/* line 30, ../../nrg/sass/nrg.scss */
+/* line 34, ../../nrg/sass/nrg.scss */
 .nrg-ui-slider {
   position: absolute;
   outline: 0;
   /* removes chrome blue border */
 }
 
-/* line 37, ../../nrg/sass/nrg.scss */
+/* line 41, ../../nrg/sass/nrg.scss */
 .nrg-ui-slider-horizontal {
   width: 100%;
   height: 10px;
@@ -911,7 +911,7 @@
   left: 0px;
 }
 
-/* line 46, ../../nrg/sass/nrg.scss */
+/* line 50, ../../nrg/sass/nrg.scss */
 .nrg-ui-slider-vertical {
   width: 10px;
   height: 100%;
@@ -922,7 +922,7 @@
 /*
  * TRACK
  */
-/* line 57, ../../nrg/sass/nrg.scss */
+/* line 61, ../../nrg/sass/nrg.scss */
 .nrg-ui-slider-track {
   position: absolute;
   top: 0px;
@@ -932,7 +932,7 @@
   /*background-color : rgba(100,100,100,0);*/
 }
 
-/* line 68, ../../nrg/sass/nrg.scss */
+/* line 72, ../../nrg/sass/nrg.scss */
 .nrg-ui-slider-track-hovered {
   /*box-sizing: border-box;
   background-color: rgb(50,50,50);
@@ -942,7 +942,7 @@
 /*
  * THUMB
  */
-/* line 79, ../../nrg/sass/nrg.scss */
+/* line 83, ../../nrg/sass/nrg.scss */
 .nrg-ui-slider-thumb {
   position: absolute;
   top: 0px;
@@ -952,20 +952,20 @@
   border-radius: 4px;
 }
 
-/* line 89, ../../nrg/sass/nrg.scss */
+/* line 93, ../../nrg/sass/nrg.scss */
 .nrg-ui-slider-thumb-horizontal {
   width: 30px;
   height: 100%;
 }
 
-/* line 95, ../../nrg/sass/nrg.scss */
+/* line 99, ../../nrg/sass/nrg.scss */
 .nrg-ui-slider-thumb-vertical {
   height: 30px;
   width: 100%;
   left: 0px;
 }
 
-/* line 102, ../../nrg/sass/nrg.scss */
+/* line 106, ../../nrg/sass/nrg.scss */
 .nrg-ui-slider-thumb-hovered {
   box-sizing: border-box;
   background-color: gainsboro;
@@ -975,7 +975,7 @@
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 112, ../../nrg/sass/nrg.scss */
+/* line 116, ../../nrg/sass/nrg.scss */
 .nrg-ui-hoverinput {
   position: absolute;
   top: 3px;
@@ -989,7 +989,7 @@
   transition-timing-function: ease-out;
 }
 
-/* line 124, ../../nrg/sass/nrg.scss */
+/* line 128, ../../nrg/sass/nrg.scss */
 .nrg-ui-hoverinput-display,
 .nrg-ui-hoverinput-inputbox {
   position: absolute;
@@ -1002,14 +1002,14 @@
   white-space: nowrap;
 }
 
-/* line 136, ../../nrg/sass/nrg.scss */
+/* line 140, ../../nrg/sass/nrg.scss */
 .nrg-ui-hoverinput-display {
   color: #9b9b9b;
   text-align: right;
   text-wrap: none;
 }
 
-/* line 144, ../../nrg/sass/nrg.scss */
+/* line 148, ../../nrg/sass/nrg.scss */
 .nrg-ui-hoverinput-inputbox {
   opacity: 0;
   width: 100%;
@@ -1028,12 +1028,12 @@
   text-align: right;
 }
 
-/* line 162, ../../nrg/sass/nrg.scss */
+/* line 166, ../../nrg/sass/nrg.scss */
 .nrg-ui-hoverinput:hover {
   background-color: rgba(0, 0, 1, 0);
 }
 
-/* line 166, ../../nrg/sass/nrg.scss */
+/* line 170, ../../nrg/sass/nrg.scss */
 .nrg-ui-hoverinput:hover > .nrg-ui-hoverinput-inputbox {
   opacity: 1;
 }
@@ -1041,7 +1041,7 @@
 /**
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 174, ../../nrg/sass/nrg.scss */
+/* line 178, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer {
   top: 0px;
   left: 0px;
@@ -1053,7 +1053,7 @@
   overflow-y: hidden;
 }
 
-/* line 186, ../../nrg/sass/nrg.scss */
+/* line 190, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer-scrollarea {
   display: block;
   position: relative;
@@ -1061,7 +1061,7 @@
   left: 19px;
 }
 
-/* line 194, ../../nrg/sass/nrg.scss */
+/* line 198, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer-zippyheader {
   position: relative;
   background-color: #323232;
@@ -1076,32 +1076,32 @@
   margin-bottom: 4px;
 }
 
-/* line 209, ../../nrg/sass/nrg.scss */
+/* line 213, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer-zippyheader-mouseover {
   background-color: #5a5a5a;
   color: white;
 }
 
-/* line 216, ../../nrg/sass/nrg.scss */
+/* line 220, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer-zippyheaderlabel, .nrg-ui-scrollablecontainer-zippyexpandicon {
   position: absolute;
   margin-left: .3em;
   background-color: none;
 }
 
-/* line 223, ../../nrg/sass/nrg.scss */
+/* line 227, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer-zippyexpandicon {
   right: .5em;
   margin-left: -10px;
   color: black;
 }
 
-/* line 230, ../../nrg/sass/nrg.scss */
+/* line 234, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer-zippyexpandicon-mouseover {
   color: black;
 }
 
-/* line 237, ../../nrg/sass/nrg.scss */
+/* line 241, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer-zippycontent {
   overflow: visible;
   width: 100%;
@@ -1110,7 +1110,7 @@
   margin-bottom: 4px;
 }
 
-/* line 247, ../../nrg/sass/nrg.scss */
+/* line 251, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer-slider {
   position: absolute;
   width: 8px;
@@ -1122,12 +1122,12 @@
   transition-duration: .2;
 }
 
-/* line 259, ../../nrg/sass/nrg.scss */
+/* line 263, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer-slider:hover {
   background-color: black;
 }
 
-/* line 263, ../../nrg/sass/nrg.scss */
+/* line 267, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer-slider-thumb {
   background-color: #505050;
   width: 4px;
@@ -1139,26 +1139,26 @@
   transition-timing-function: ease-out;
 }
 
-/* line 273, ../../nrg/sass/nrg.scss */
+/* line 277, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer-slider:hover > .nrg-ui-scrollablecontainer-slider-thumb {
   background-color: #787878;
   width: 8px;
   left: 3px;
 }
 
-/* line 279, ../../nrg/sass/nrg.scss */
+/* line 283, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer-slider-thumb:active {
   background-color: #787878;
   width: 8px;
   left: 3px;
 }
 
-/* line 287, ../../nrg/sass/nrg.scss */
+/* line 291, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer-slider-track {
   background-color: transparent;
 }
 
-/* line 292, ../../nrg/sass/nrg.scss */
+/* line 296, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablecontainer-slider-track-hovered {
   /*
   box-sizing: border-box;
@@ -1172,7 +1172,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 308, ../../nrg/sass/nrg.scss */
+/* line 312, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablezippytree {
   position: absolute;
   top: 0px;
@@ -1181,7 +1181,7 @@
   width: 100%;
 }
 
-/* line 317, ../../nrg/sass/nrg.scss */
+/* line 321, ../../nrg/sass/nrg.scss */
 .nrg-ui-scrollablezippytree-zippytree {
   top: 0px;
   left: 0px;
@@ -1191,12 +1191,11 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 327, ../../nrg/sass/nrg.scss */
+/* line 331, ../../nrg/sass/nrg.scss */
 .nrg-ui-zippynode-header {
   position: relative;
   outline: 0;
   /*background-color: rgb(90,90,90);*/
-  border-bottom: solid 1px #505050;
   left: 0px;
   width: 100%;
   height: 1.5em;
@@ -1208,18 +1207,19 @@
   line-height: 1.5em;
   margin-bottom: 5px;
   margin-top: 5px;
-  transition-property: background-color, color;
-  transition-duration: .1s;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
   transition-timing-function: ease-out;
+  transition-property: background-color, color;
 }
 
-/* line 348, ../../nrg/sass/nrg.scss */
+/* line 350, ../../nrg/sass/nrg.scss */
 .nrg-ui-zippynode-header:hover {
   background-color: #323232;
   color: white;
 }
 
-/* line 355, ../../nrg/sass/nrg.scss */
+/* line 357, ../../nrg/sass/nrg.scss */
 .nrg-ui-zippynode-header-label, .nrg-ui-zippynode-expandicon {
   position: absolute;
   margin-left: .3em;
@@ -1228,19 +1228,19 @@
   overflow: hidden;
 }
 
-/* line 364, ../../nrg/sass/nrg.scss */
+/* line 366, ../../nrg/sass/nrg.scss */
 .nrg-ui-zippynode-expandicon {
   right: .5em;
   margin-left: -10px;
   color: #646464;
 }
 
-/* line 371, ../../nrg/sass/nrg.scss */
+/* line 373, ../../nrg/sass/nrg.scss */
 .nrg-ui-zippynode-expandicon-mouseover {
   color: white;
 }
 
-/* line 378, ../../nrg/sass/nrg.scss */
+/* line 380, ../../nrg/sass/nrg.scss */
 .nrg-ui-zippynode-content {
   overflow: visible;
   width: 100%;
@@ -1249,7 +1249,7 @@
   z-index: 1000;
 }
 
-/* line 389, ../../nrg/sass/nrg.scss */
+/* line 391, ../../nrg/sass/nrg.scss */
 .nrg-ui-zippynode-loading-holder {
   position: relative;
   height: 87px;
@@ -1258,14 +1258,14 @@
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 395, ../../nrg/sass/nrg.scss */
+/* line 397, ../../nrg/sass/nrg.scss */
 .nrg-ui-zippynode-loading-text {
   position: absolute;
   top: calc(50% - 12px);
   left: calc(50% - 23px);
 }
 
-/* line 402, ../../nrg/sass/nrg.scss */
+/* line 404, ../../nrg/sass/nrg.scss */
 .nrg-ui-zippynode-loading-image {
   position: absolute;
   width: 150px;
@@ -1278,7 +1278,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 428, ../../nrg/sass/nrg.scss */
+/* line 430, ../../nrg/sass/nrg.scss */
 .nrg-ui-zippytree-rootnode {
   margin-bottom: 0px;
   height: 0px;
@@ -1287,7 +1287,7 @@
 /**
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 436, ../../nrg/sass/nrg.scss */
+/* line 438, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog {
   position: absolute;
   outline: none;
@@ -1301,7 +1301,7 @@
   overflow: hidden;
 }
 
-/* line 448, ../../nrg/sass/nrg.scss */
+/* line 450, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-overlay {
   position: absolute;
   left: 30%;
@@ -1315,7 +1315,7 @@
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 460, ../../nrg/sass/nrg.scss */
+/* line 462, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-background {
   position: absolute;
   left: 0px;
@@ -1327,13 +1327,13 @@
   display: inline-block;
 }
 
-/* line 478, ../../nrg/sass/nrg.scss */
+/* line 480, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-subtext {
   text-align: left;
   font-size: 12px;
 }
 
-/* line 485, ../../nrg/sass/nrg.scss */
+/* line 487, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-text {
   text-align: center;
   color: white;
@@ -1341,13 +1341,13 @@
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 490, ../../nrg/sass/nrg.scss */
+/* line 492, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-closebutton-image, .nrg-ui-dialog-closebutton {
   height: 10;
   width: 10;
 }
 
-/* line 494, ../../nrg/sass/nrg.scss */
+/* line 496, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-closebutton {
   position: absolute;
   cursor: pointer;
@@ -1358,7 +1358,7 @@
   outline: none;
 }
 
-/* line 510, ../../nrg/sass/nrg.scss */
+/* line 512, ../../nrg/sass/nrg.scss */
 .modal-dialog-title-text {
   top: 2px;
   left: 7px;
@@ -1366,7 +1366,7 @@
   text-align: center;
 }
 
-/* line 518, ../../nrg/sass/nrg.scss */
+/* line 520, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-title {
   background-color: #3c3c3c;
   height: 15px;
@@ -1381,19 +1381,19 @@
   z-index: -1;
 }
 
-/* line 531, ../../nrg/sass/nrg.scss */
+/* line 533, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-content {
   background-color: none;
   background: none;
 }
 
-/* line 537, ../../nrg/sass/nrg.scss */
+/* line 539, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-buttons {
   background-color: none;
   background: none;
 }
 
-/* line 544, ../../nrg/sass/nrg.scss */
+/* line 546, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-yesnomodal {
   position: absolute;
   top: calc(50% - 60px);
@@ -1416,14 +1416,14 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 566, ../../nrg/sass/nrg.scss */
+/* line 568, ../../nrg/sass/nrg.scss */
 .nrg-ui-errordialog {
   width: 400px;
   height: 300px;
   z-index: 100000;
 }
 
-/* line 574, ../../nrg/sass/nrg.scss */
+/* line 576, ../../nrg/sass/nrg.scss */
 .nrg-ui-errordialog-image {
   position: relative;
   width: 80px;
@@ -1431,7 +1431,7 @@
   left: calc(50% - 40px);
 }
 
-/* line 583, ../../nrg/sass/nrg.scss */
+/* line 585, ../../nrg/sass/nrg.scss */
 .nrg-ui-errordialog-text {
   top: 145px;
 }
@@ -1439,7 +1439,7 @@
 /*
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 591, ../../nrg/sass/nrg.scss */
+/* line 593, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail {
   position: absolute;
   width: 87px;
@@ -1456,7 +1456,7 @@
   transition-property: border, background-color, color;
 }
 
-/* line 606, ../../nrg/sass/nrg.scss */
+/* line 608, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-selectindicator {
   position: absolute;
   top: calc(50% - 34px);
@@ -1467,12 +1467,12 @@
   background-color: #646464;
 }
 
-/* line 617, ../../nrg/sass/nrg.scss */
+/* line 619, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-selectindicator-active {
   opacity: 1;
 }
 
-/* line 623, ../../nrg/sass/nrg.scss */
+/* line 625, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-selected {
   border: solid 1px #646464;
   -moz-box-sizing: border-box;
@@ -1481,7 +1481,7 @@
   box-sizing: border-box;
 }
 
-/* line 632, ../../nrg/sass/nrg.scss */
+/* line 634, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail:hover {
   background-color: #1e1e1e;
   z-index: 10000;
@@ -1490,19 +1490,19 @@
   border: solid 1px #282828;
 }
 
-/* line 641, ../../nrg/sass/nrg.scss */
+/* line 643, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-image {
   /*color: rgb(255,255,255);*/
   /*border-color: white;*/
-  /*box-shadow: 3px 3px 3px rgba(0,0,0, .3);*/
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* line 647, ../../nrg/sass/nrg.scss */
+/* line 649, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-text {
   color: #d7d7d7;
 }
 
-/* line 651, ../../nrg/sass/nrg.scss */
+/* line 653, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-image, .nrg-ui-thumbnail-canvas {
   position: absolute;
   width: 70px;
@@ -1522,18 +1522,9 @@
   border-radius: 0px;	
   box-sizing: border-box; */
   cursor: pointer;
-  -webkit-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-out;
-  transition-property: border-color;
 }
 
-/* line 674, ../../nrg/sass/nrg.scss */
-.nrg-ui-thumbnail-image-mouseover {
-  /*border: solid 1px white;*/
-}
-
-/* line 679, ../../nrg/sass/nrg.scss */
+/* line 677, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-text {
   position: absolute;
   height: 70px;
@@ -1552,12 +1543,12 @@
   transition-property: color;
 }
 
-/* line 695, ../../nrg/sass/nrg.scss */
+/* line 693, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-text-mouseover {
   color: #9b9b9b;
 }
 
-/* line 700, ../../nrg/sass/nrg.scss */
+/* line 698, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-canvas {
   top: 8px;
   left: 8px;
@@ -1566,31 +1557,28 @@
 /*******
 * Active state
 ********/
-/* line 711, ../../nrg/sass/nrg.scss */
+/* line 709, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-text-active {
   /*color : rgb(100,100,100);*/
 }
 
-/* line 715, ../../nrg/sass/nrg.scss */
+/* line 713, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-active {
   opacity: 1;
 }
 
-/* line 720, ../../nrg/sass/nrg.scss */
+/* line 718, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-image-active {
   /*border-left: solid 2px rgb(100,100,100);*/
 }
 
-/*
-* @author kumar.sunil.p@gmail.com (Sunil Kumar)
-*/
-/* line 728, ../../nrg/sass/nrg.scss */
+/* line 724, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnailgallery {
   position: absolute;
   overflow: hidden;
 }
 
-/* line 736, ../../nrg/sass/nrg.scss */
+/* line 732, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnailgallery-thumbnail {
   position: relative;
   width: 100%;
@@ -1600,7 +1588,7 @@
   cursor: pointer;
 }
 
-/* line 746, ../../nrg/sass/nrg.scss */
+/* line 742, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnailgallery-thumbnail-image {
   position: absolute;
   width: 160px;
@@ -1616,7 +1604,7 @@
   cursor: pointer;
 }
 
-/* line 762, ../../nrg/sass/nrg.scss */
+/* line 758, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnailgallery-thumbnail-text {
   position: absolute;
   height: 70px;
@@ -1628,14 +1616,14 @@
   line-height: 17px;
 }
 
-/* line 773, ../../nrg/sass/nrg.scss */
+/* line 769, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizable-boundary {
   position: absolute;
   border: 1px dotted red;
   background-color: rgba(255, 120, 120, 0.5);
 }
 
-/* line 780, ../../nrg/sass/nrg.scss */
+/* line 776, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedragger {
   position: absolute;
   font-size: 0.1px;
@@ -1646,7 +1634,7 @@
 /**
   RIGHT AND LEFT
 */
-/* line 791, ../../nrg/sass/nrg.scss */
+/* line 787, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggerright, .nrg-ui-resizedraggerleft {
   position: absolute;
   width: 7px;
@@ -1654,13 +1642,13 @@
   cursor: ew-resize;
 }
 
-/* line 798, ../../nrg/sass/nrg.scss */
+/* line 794, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggerright {
   left: 100%;
   /*background-color: rgba(0,255,0,.5);*/
 }
 
-/* line 803, ../../nrg/sass/nrg.scss */
+/* line 799, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggerleft {
   left: -7px;
 }
@@ -1668,7 +1656,7 @@
 /**
  * TOP AND BOTTOM
  */
-/* line 813, ../../nrg/sass/nrg.scss */
+/* line 809, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggertop, .nrg-ui-resizedraggerbottom {
   position: absolute;
   left: 0px;
@@ -1677,13 +1665,13 @@
   cursor: ns-resize;
 }
 
-/* line 821, ../../nrg/sass/nrg.scss */
+/* line 817, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggertop {
   top: -7px;
   /*background-color: rgba(0,255,0,.5);*/
 }
 
-/* line 826, ../../nrg/sass/nrg.scss */
+/* line 822, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggerbottom {
   top: 100%;
   /*background-color: rgba(255,0,0,.5);*/
@@ -1692,7 +1680,7 @@
 /**
  * CORNERS
  */
-/* line 838, ../../nrg/sass/nrg.scss */
+/* line 834, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggertopright,
 .nrg-ui-resizedraggertopleft,
 .nrg-ui-resizedraggerbottomright,
@@ -1703,13 +1691,13 @@
   cursor: move;
 }
 
-/* line 849, ../../nrg/sass/nrg.scss */
+/* line 845, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggertopright,
 .nrg-ui-resizedraggertopleft {
   top: calc(100% - 7px);
 }
 
-/* line 854, ../../nrg/sass/nrg.scss */
+/* line 850, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggertopright {
   left: calc(100% - 7px);
   /*background-color: orange;*/
@@ -1721,28 +1709,28 @@
 /**
  * ELEMENT
  */
-/* line 866, ../../nrg/sass/nrg.scss */
+/* line 862, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs {
   position: absolute;
   left: 0px;
 }
 
-/* line 871, ../../nrg/sass/nrg.scss */
+/* line 867, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-right {
   left: 0px;
 }
 
-/* line 876, ../../nrg/sass/nrg.scss */
+/* line 872, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-left {
   left: calc(100% - 18px);
 }
 
-/* line 881, ../../nrg/sass/nrg.scss */
+/* line 877, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-top {
   top: calc(100% - 18px);
 }
 
-/* line 886, ../../nrg/sass/nrg.scss */
+/* line 882, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-bottom {
   top: 0px;
 }
@@ -1750,7 +1738,7 @@
 /**
  * TABS
  */
-/* line 897, ../../nrg/sass/nrg.scss */
+/* line 893, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1766,7 +1754,7 @@
   text-align: center;
 }
 
-/* line 911, ../../nrg/sass/nrg.scss */
+/* line 907, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-top {
   height: 18px;
   top: 0px;
@@ -1774,7 +1762,7 @@
   border-bottom: none;
 }
 
-/* line 919, ../../nrg/sass/nrg.scss */
+/* line 915, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-bottom {
   height: 18px;
   top: calc(100% - 18px);
@@ -1782,7 +1770,7 @@
   border-top: none;
 }
 
-/* line 927, ../../nrg/sass/nrg.scss */
+/* line 923, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-right {
   width: 22px;
   left: calc(100% - 22px);
@@ -1792,7 +1780,7 @@
   border-bottom-right-radius: 7px;
 }
 
-/* line 937, ../../nrg/sass/nrg.scss */
+/* line 933, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-left {
   width: 18px;
   left: 0px;
@@ -1800,27 +1788,27 @@
   border-right: none;
 }
 
-/* line 945, ../../nrg/sass/nrg.scss */
+/* line 941, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-active {
   border: solid 1px #646464;
 }
 
-/* line 950, ../../nrg/sass/nrg.scss */
+/* line 946, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-active-right {
   border-left: none;
 }
 
-/* line 955, ../../nrg/sass/nrg.scss */
+/* line 951, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-active-top {
   border-bottom: none;
 }
 
-/* line 960, ../../nrg/sass/nrg.scss */
+/* line 956, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-active {
   z-index: 1;
 }
 
-/* line 965, ../../nrg/sass/nrg.scss */
+/* line 961, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-icon {
   color: #646464;
   z-index: 11;
@@ -1832,32 +1820,32 @@
   display: table;
 }
 
-/* line 978, ../../nrg/sass/nrg.scss */
+/* line 974, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-icon-active {
   color: #646464;
 }
 
-/* line 983, ../../nrg/sass/nrg.scss */
+/* line 979, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-icon-top {
   width: 100%;
   height: 100%;
 }
 
-/* line 989, ../../nrg/sass/nrg.scss */
+/* line 985, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-icon-right {
   left: -24px;
   top: calc(50% - 5px);
   white-space: nowrap;
 }
 
-/* line 998, ../../nrg/sass/nrg.scss */
+/* line 994, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-icon-content {
   display: table-cell;
   text-align: center;
   vertical-align: middle;
 }
 
-/* line 1005, ../../nrg/sass/nrg.scss */
+/* line 1001, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-page {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1873,7 +1861,7 @@
   overflow: hidden;
 }
 
-/* line 1019, ../../nrg/sass/nrg.scss */
+/* line 1015, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-page-content {
   position: absolute;
   left: 0px;
@@ -1883,14 +1871,14 @@
   z-index: 2;
 }
 
-/* line 1030, ../../nrg/sass/nrg.scss */
+/* line 1026, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-page-active {
   border: solid 1px #646464;
   visibility: visible;
   z-index: 2;
 }
 
-/* line 1037, ../../nrg/sass/nrg.scss */
+/* line 1033, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-page-right, .nrg-ui-tabs-page-left {
   position: absolute;
   height: 100%;
@@ -1901,7 +1889,7 @@
   border-left: none;
 }
 
-/* line 1048, ../../nrg/sass/nrg.scss */
+/* line 1044, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-page-top, .nrg-ui-tabs-page-bottom {
   position: absolute;
   top: 18px;
@@ -1914,22 +1902,22 @@
 /**
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 1061, ../../nrg/sass/nrg.scss */
+/* line 1057, ../../nrg/sass/nrg.scss */
 .nrg-ui-ziptabs {
   position: absolute;
 }
 
-/* line 1066, ../../nrg/sass/nrg.scss */
+/* line 1062, ../../nrg/sass/nrg.scss */
 .nrg-ui-ziptabs:hover {
   opacity: 1;
 }
 
-/* line 1072, ../../nrg/sass/nrg.scss */
+/* line 1068, ../../nrg/sass/nrg.scss */
 .nrg-ui-ziptabs-top, .nrg-ui-ziptabs-bottom {
   height: 18px;
 }
 
-/* line 1077, ../../nrg/sass/nrg.scss */
+/* line 1073, ../../nrg/sass/nrg.scss */
 .nrg-ui-ziptabs-left, .nrg-ui-ziptabs-right {
   width: 18px;
   opacity: .7;
@@ -1939,7 +1927,7 @@
   transition-property: opacity;
 }
 
-/* line 1086, ../../nrg/sass/nrg.scss */
+/* line 1082, ../../nrg/sass/nrg.scss */
 .nrg-ui-ziptabs-right:hover {
   opacity: 1;
 }
@@ -1947,26 +1935,26 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1100, ../../nrg/sass/nrg.scss */
+/* line 1096, ../../nrg/sass/nrg.scss */
 .nrg-ui-slideinmenu-icon {
   max-width: 100%;
   max-height: 100%;
   opacity: 1;
 }
 
-/* line 1107, ../../nrg/sass/nrg.scss */
+/* line 1103, ../../nrg/sass/nrg.scss */
 .nrg-ui-slideinmenu-icon-hovered {
   opacity: 1;
 }
 
-/* line 1112, ../../nrg/sass/nrg.scss */
+/* line 1108, ../../nrg/sass/nrg.scss */
 .nrg-ui-slideinmenu-menuholder {
   position: absolute;
   background-color: #ff6416;
   z-index: 4000;
 }
 
-/* line 1119, ../../nrg/sass/nrg.scss */
+/* line 1115, ../../nrg/sass/nrg.scss */
 .nrg-ui-slideinmenu-menu {
   background-color: #7d7d7d;
   border: solid 1px #323232;
@@ -1975,7 +1963,7 @@
   width: 130px;
 }
 
-/* line 1128, ../../nrg/sass/nrg.scss */
+/* line 1124, ../../nrg/sass/nrg.scss */
 .nrg-ui-slideinmenu-menuitem {
   overflow: visible;
   margin-left: 5px;
@@ -1983,12 +1971,12 @@
   height: 20px;
 }
 
-/* line 1136, ../../nrg/sass/nrg.scss */
+/* line 1132, ../../nrg/sass/nrg.scss */
 .nrg-ui-slideinmenu-menuitem-highlight {
   color: white;
 }
 
-/* line 1140, ../../nrg/sass/nrg.scss */
+/* line 1136, ../../nrg/sass/nrg.scss */
 .nrg-ui-slideinmenu-menuitem-icon {
   position: absolute;
   margin-top: -3px;
@@ -2005,17 +1993,9 @@
   -webkit-box-sizing: border-box;
   overflow: hidden;
   background: black;
-  /*@include nrg-transitionable;*/
 }
 
-/* line 15, layoutframe.scss */
-.xiv-ui-layouts-layoutframe-transitionable {
-  -webkit-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-out;
-}
-
-/* line 25, layoutframe.scss */
+/* line 24, layoutframe.scss */
 .xiv-ui-layouts-layoutframe-sagittal, .xiv-ui-layouts-layoutframe-coronal,
 .xiv-ui-layouts-layoutframe-transverse, .xiv-ui-layouts-layoutframe-threed {
   position: absolute;

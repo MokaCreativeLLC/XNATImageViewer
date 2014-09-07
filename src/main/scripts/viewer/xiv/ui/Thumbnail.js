@@ -44,6 +44,58 @@ xiv.ui.Thumbnail = function (Viewable_) {
     this.ViewableTree_ = Viewable_;
 
     this.createText_();
+
+    goog.dom.classes.add(this.getElement(), 'xiv-ui-thumbnail');
+    goog.dom.classes.add(this.getImage(), xiv.ui.Thumbnail.CSS.IMAGE);
+
+    var modal = goog.dom.getElementsByClass('xiv-ui-modal')[0];
+    this.infoHover_ = goog.dom.createDom('div',{
+	'id': 'InfoHover_' + goog.string.createUniqueString(),
+    })
+    goog.dom.classes.add(this.infoHover_, xiv.ui.Thumbnail.CSS.INFO);
+    goog.dom.append(modal, this.infoHover_);
+
+
+    this.metadataLink_ = goog.dom.createDom('div',{
+	'id': 'MetdataLink_' + goog.string.createUniqueString(),
+    }, "info")
+    goog.dom.classes.add(this.metadataLink_, xiv.ui.Thumbnail.CSS.METADATA);
+    goog.dom.append(this.getElement(), this.metadataLink_);
+    window.console.log(this.metadataLink_);
+
+
+    this.infoHover_.innerHTML = this.getViewable().getSessionInfoAsHtml();
+
+
+    
+    goog.events.listen(
+	this.metadataLink_,
+	goog.events.EventType.MOUSEENTER, 
+	function(){
+	    var abs = 
+		goog.style.getRelativePosition(this.getElement(), modal);
+	    this.infoHover_.style.left = abs.x + 
+		goog.style.getSize(this.getElement()).width + 8;
+	    this.infoHover_.style.top = abs.y - 8;
+	    goog.dom.classes.remove(this.infoHover_, 
+				    xiv.ui.Thumbnail.CSS.INFO_SHRINK);
+	    goog.dom.classes.add(this.infoHover_,
+				 xiv.ui.Thumbnail.CSS.INFO_GROW);
+	    window.console.log('enter:', this.infoHover_.className, abs);
+	}.bind(this))
+
+
+    goog.events.listen(
+	this.metadataLink_,
+	goog.events.EventType.MOUSELEAVE, 
+	function(){
+	    goog.dom.classes.remove(this.infoHover_, 
+				    xiv.ui.Thumbnail.CSS.INFO_GROW);
+	    goog.dom.classes.add(this.infoHover_,
+				 xiv.ui.Thumbnail.CSS.INFO_SHRINK);
+	    window.console.log('leave:', this.infoHover_.className);
+	}.bind(this))
+
 }
 goog.inherits(xiv.ui.Thumbnail, nrg.ui.Thumbnail);
 goog.exportSymbol('xiv.ui.Thumbnail', xiv.ui.Thumbnail);
@@ -63,7 +115,14 @@ xiv.ui.Thumbnail.ID_PREFIX =  'xiv.ui.Thumbnail';
  * @enum {string}
  * @expose
  */
-xiv.ui.Thumbnail.CSS_SUFFIX = {};
+xiv.ui.Thumbnail.CSS_SUFFIX = {
+    INFO: 'info',
+    INFO_TRIANGLE: 'info-triangle',
+    INFO_GROW: 'info-grow',
+    INFO_SHRINK: 'info-shrink',
+    METADATA: 'metadata',
+    IMAGE: 'image'
+};
 
 
 

@@ -284,6 +284,24 @@ gxnat.vis.AjaxViewableTree.prototype.getSessionInfo = function() {
 
 
 /**
+ * @return {!Object}
+ * @public
+ */
+gxnat.vis.AjaxViewableTree.prototype.getSessionInfoAsHtml = function() {
+    var infoText = '';
+    goog.object.forEach(this.sessionInfo, 
+			function(value, key){
+			    if (goog.isDefAndNotNull(value)){
+				if (value.length > 0){
+				    infoText += key + ': ' + value + '<br>';
+				}
+			    }
+			})
+    return infoText;
+}
+
+
+/**
  * @param {!Object} sessionInfo
  * @public
  */
@@ -569,6 +587,8 @@ goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.getQueryUrl',
 	gxnat.vis.AjaxViewableTree.prototype.getQueryUrl);
 goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.getSessionInfo',
 	gxnat.vis.AjaxViewableTree.prototype.getSessionInfo);
+goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.getSessionInfoAsHtml',
+	gxnat.vis.AjaxViewableTree.prototype.getSessionInfoAsHtml);
 goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.setSessionInfo',
 	gxnat.vis.AjaxViewableTree.prototype.setSessionInfo);
 goog.exportSymbol('gxnat.vis.AjaxViewableTree.prototype.setViewableMetadata',

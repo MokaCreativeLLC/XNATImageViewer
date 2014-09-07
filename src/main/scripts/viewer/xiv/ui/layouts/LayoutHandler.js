@@ -677,9 +677,7 @@ function(opt_duration) {
 		this.toBeDims_[key] = {'opacity' :  0};
 	    }
 
-	    goog.dom.classes.remove(
-		transitionElt,
-		'xiv-ui-layouts-layoutframe-transitionable');
+
 	    //window.console.log(transitionElt);
 	    /*
 
@@ -766,6 +764,12 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
     var newLayoutFrames = this.Layouts_[this.currLayoutTitle_].
 	getLayoutFrames();
 
+    //
+    // Dispose of the transition elements
+    //
+    this.disposeTransitionElts_();
+
+
     //-------------------------------
     // IMPORTANT!!!!!!!!!!!!!!
     // 
@@ -807,10 +811,7 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
     }
 
 
-    //
-    // Dispose of the transition elements
-    //
-    this.disposeTransitionElts_();
+
 
 
     //
