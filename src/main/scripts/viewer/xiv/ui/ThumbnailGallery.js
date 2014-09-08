@@ -40,6 +40,16 @@ goog.require('xiv.ui.Thumbnail');
 xiv.ui.ThumbnailGallery = function () {
     goog.base(this);
 
+    goog.events.listen(
+	this,
+	nrg.ui.ScrollableContainer.EventType.SCROLL_START, 
+	function(){
+	    goog.object.forEach(this.Thumbs_, function(thumb){
+		thumb.hideInfo();
+	    })
+	}.bind(this))
+
+
     // inits
     this.initDragDrop_();
 }

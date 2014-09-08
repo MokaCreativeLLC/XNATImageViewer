@@ -9,6 +9,7 @@ goog.require('goog.dom');
 goog.require('goog.string');
 goog.require('goog.dom.classes');
 goog.require('goog.array');
+goog.require('goog.events');
 
 // nrg
 goog.require('nrg.ui.Thumbnail');
@@ -45,56 +46,7 @@ xiv.ui.Thumbnail = function (Viewable_) {
 
     this.createText_();
 
-    goog.dom.classes.add(this.getElement(), 'xiv-ui-thumbnail');
-    goog.dom.classes.add(this.getImage(), xiv.ui.Thumbnail.CSS.IMAGE);
 
-    var modal = goog.dom.getElementsByClass('xiv-ui-modal')[0];
-    this.infoHover_ = goog.dom.createDom('div',{
-	'id': 'InfoHover_' + goog.string.createUniqueString(),
-    })
-    goog.dom.classes.add(this.infoHover_, xiv.ui.Thumbnail.CSS.INFO);
-    goog.dom.append(modal, this.infoHover_);
-
-
-    this.metadataLink_ = goog.dom.createDom('div',{
-	'id': 'MetdataLink_' + goog.string.createUniqueString(),
-    }, "info")
-    goog.dom.classes.add(this.metadataLink_, xiv.ui.Thumbnail.CSS.METADATA);
-    goog.dom.append(this.getElement(), this.metadataLink_);
-    window.console.log(this.metadataLink_);
-
-
-    this.infoHover_.innerHTML = this.getViewable().getSessionInfoAsHtml();
-
-
-    
-    goog.events.listen(
-	this.metadataLink_,
-	goog.events.EventType.MOUSEENTER, 
-	function(){
-	    var abs = 
-		goog.style.getRelativePosition(this.getElement(), modal);
-	    this.infoHover_.style.left = abs.x + 
-		goog.style.getSize(this.getElement()).width + 8;
-	    this.infoHover_.style.top = abs.y - 8;
-	    goog.dom.classes.remove(this.infoHover_, 
-				    xiv.ui.Thumbnail.CSS.INFO_SHRINK);
-	    goog.dom.classes.add(this.infoHover_,
-				 xiv.ui.Thumbnail.CSS.INFO_GROW);
-	    window.console.log('enter:', this.infoHover_.className, abs);
-	}.bind(this))
-
-
-    goog.events.listen(
-	this.metadataLink_,
-	goog.events.EventType.MOUSELEAVE, 
-	function(){
-	    goog.dom.classes.remove(this.infoHover_, 
-				    xiv.ui.Thumbnail.CSS.INFO_GROW);
-	    goog.dom.classes.add(this.infoHover_,
-				 xiv.ui.Thumbnail.CSS.INFO_SHRINK);
-	    window.console.log('leave:', this.infoHover_.className);
-	}.bind(this))
 
 }
 goog.inherits(xiv.ui.Thumbnail, nrg.ui.Thumbnail);
@@ -116,13 +68,38 @@ xiv.ui.Thumbnail.ID_PREFIX =  'xiv.ui.Thumbnail';
  * @expose
  */
 xiv.ui.Thumbnail.CSS_SUFFIX = {
-    INFO: 'info',
-    INFO_TRIANGLE: 'info-triangle',
-    INFO_GROW: 'info-grow',
-    INFO_SHRINK: 'info-shrink',
-    METADATA: 'metadata',
-    IMAGE: 'image'
+    HOVERINFO: 'hoverinfo',
+    HOVERINFO_ARROW: 'hoverinfo-arrow',
+    HOVERINFO_ARROWTOP: 'hoverinfo-arrowtop',
+    HOVERINFO_ARROWBOTTOM: 'hoverinfo-arrowbottom',
+    HOVERINFO_APPEAR: 'hoverinfo-appear',
+    HOVERINFO_DISAPPEAR: 'hoverinfo-disappear',
+    INFOHOVERTEXT: 'infohovertext',
+    IMAGE: 'image',
+    TEXT: 'image'
 };
+
+
+
+/**
+ * @type {!Element}
+ * @private  
+ */
+xiv.ui.Thumbnail.prototype.infoHoverText_ = null;
+
+
+/**
+ * @type {!Element}
+ * @private  
+ */
+xiv.ui.Thumbnail.prototype.infoDiv_ = null;
+
+
+/**
+ * @type {!Element}
+ * @private  
+ */
+xiv.ui.Thumbnail.prototype.infoHoverArrow_ = null;
 
 
 
@@ -184,8 +161,137 @@ xiv.ui.Thumbnail.prototype.createText_ = function(){
     // Set the text
     //
     this.setText(displayText);
+
+
+    this.createInfoHover_();
 }
 
+
+
+
+/**
+ * @private  
+ */
+xiv.ui.Thumbnail.prototype.createInfoHover_ = function(){
+
+    this.infoHoverText_ = goog.dom.createDom('div',{
+	'id': 'MetdataLink_' + goog.string.createUniqueString(),
+    }, "more...")
+    goog.dom.classes.add(this.infoHoverText_, 
+			 xiv.ui.Thumbnail.CSS.INFOHOVERTEXT);
+    goog.dom.append(this.getElement(), this.infoHoverText_);
+
+    goog.dom.classes.add(this.getElement(), 'xiv-ui-thumbnail');
+    goog.dom.classes.add(this.getImage(), xiv.ui.Thumbnail.CSS.IMAGE);
+
+    
+    this.infoDiv_ = goog.dom.createDom('div',{
+	'id': 'InfoHover_' + goog.string.createUniqueString(),
+    })
+    goog.dom.classes.add(this.infoDiv_, xiv.ui.Thumbnail.CSS.HOVERINFO);
+    goog.dom.append(goog.dom.getElementsByClass('xiv-ui-modal')[0], 
+		    this.infoDiv_);
+
+
+    this.infoHoverArrow_ = goog.dom.createDom('div',{
+	'id': 'InfoHoverArrow_' + goog.string.createUniqueString(),
+    })
+    goog.dom.classes.add(this.infoHoverArrow_, 
+			 xiv.ui.Thumbnail.CSS.HOVERINFO_ARROW);
+    goog.dom.append(this.infoDiv_.parentNode, this.infoHoverArrow_);
+
+    var arrowBottom = goog.dom.createDom('div',{
+	'id': 'InfoHoverArrowBottom_' + goog.string.createUniqueString(),
+    })
+    goog.dom.classes.add(arrowBottom, 
+			 xiv.ui.Thumbnail.CSS.HOVERINFO_ARROWBOTTOM);
+    goog.dom.append(this.infoHoverArrow_, arrowBottom);
+
+    var arrowTop = goog.dom.createDom('div',{
+	'id': 'InfoHoverArrowTop_' + goog.string.createUniqueString(),
+    })
+    goog.dom.classes.add(arrowTop, 
+			 xiv.ui.Thumbnail.CSS.HOVERINFO_ARROWTOP);
+    goog.dom.append(this.infoHoverArrow_, arrowTop);
+
+
+
+
+    this.infoDiv_.innerHTML = this.getViewable().getSessionInfoAsHtml();
+
+
+    goog.dom.classes.add(this.infoDiv_,
+			 xiv.ui.Thumbnail.CSS.HOVERINFO_DISAPPEAR);
+    goog.events.listen(
+	this.infoHoverText_,
+	goog.events.EventType.MOUSEENTER, 
+	this.showInfo.bind(this))
+
+    goog.events.listen(
+	this.infoHoverText_,
+	goog.events.EventType.MOUSELEAVE, 
+	this.hideInfo.bind(this))
+}
+
+
+
+/**
+ * @public
+ */
+xiv.ui.Thumbnail.prototype.showInfo = function(){
+
+    var abs = 
+	goog.style.getRelativePosition(this.getElement(), 
+				       this.infoDiv_.parentNode);
+    goog.dom.classes.remove(this.infoDiv_, 
+			    xiv.ui.Thumbnail.CSS.HOVERINFO_DISAPPEAR);
+    goog.dom.classes.add(this.infoDiv_,
+			 xiv.ui.Thumbnail.CSS.HOVERINFO_APPEAR);
+
+    this.infoHoverArrow_.style.opacity = 1;
+    this.infoHoverArrow_.style.visible = 'visible';
+
+
+    //
+    // Positions the infoDiv to be in screen
+    //
+    var infoDivY = abs.y - 13;
+    if ((infoDivY + this.infoDiv_.offsetHeight) > window.innerHeight){
+	infoDivY = window.innerHeight - 
+	    goog.style.getSize(this.infoDiv_).height;
+    } 
+    else if (infoDivY < 0){
+	infoDivY = 2;
+    }
+
+    //
+    // Sets the position
+    //
+    goog.style.setPosition(
+	this.infoDiv_, 
+	abs.x + goog.style.getSize(this.getElement()).width + 13,
+	infoDivY)
+
+    goog.style.setPosition(
+	this.infoHoverArrow_, 
+	abs.x + goog.style.getSize(this.getElement()).width - 6,
+	abs.y + 7)
+
+    //window.console.log(this.infoHoverArrow_);
+}
+
+
+/**
+ * @public
+ */
+xiv.ui.Thumbnail.prototype.hideInfo = function(){
+    this.infoHoverArrow_.style.opacity = 0;
+    this.infoHoverArrow_.style.visible = 'hidden';
+    goog.dom.classes.remove(this.infoDiv_, 
+			    xiv.ui.Thumbnail.CSS.HOVERINFO_APPEAR);
+    goog.dom.classes.add(this.infoDiv_,
+			 xiv.ui.Thumbnail.CSS.HOVERINFO_DISAPPEAR);
+}
 
 
 
@@ -206,7 +312,10 @@ xiv.ui.Thumbnail.prototype.getViewable = function(){
 xiv.ui.Thumbnail.prototype.disposeInternal = function(){
     goog.base(this, 'disposeInternal');
     this.ViewableTree_.dispose();
-    delete this.ViewableTree_;
+    delete this.ViewableTree_; 
+    delete this.infoHoverText_;
+    delete this.infoDiv_;
+    delete this.infoHoverArrow_;
 }
 
 
@@ -214,5 +323,9 @@ goog.exportSymbol('xiv.ui.Thumbnail.ID_PREFIX', xiv.ui.Thumbnail.ID_PREFIX);
 goog.exportSymbol('xiv.ui.Thumbnail.CSS_SUFFIX', xiv.ui.Thumbnail.CSS_SUFFIX);
 goog.exportSymbol('xiv.ui.Thumbnail.prototype.getViewable',
 	xiv.ui.Thumbnail.prototype.getViewable);
+goog.exportSymbol('xiv.ui.Thumbnail.prototype.hideInfo',
+	xiv.ui.Thumbnail.prototype.hideInfo);
+goog.exportSymbol('xiv.ui.Thumbnail.prototype.showInfo',
+	xiv.ui.Thumbnail.prototype.showInfo);
 goog.exportSymbol('xiv.ui.Thumbnail.prototype.disposeInternal',
 	xiv.ui.Thumbnail.prototype.disposeInternal);

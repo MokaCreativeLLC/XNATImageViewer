@@ -115,7 +115,8 @@ nrg.ui.Thumbnail.CSS_SUFFIX = {
     IMAGE_ACTIVE: 'image-active',
     TEXT_ACTIVE: 'text-active',
     SELECTINDICATOR: 'selectindicator',
-    SELECTINDICATOR_ACTIVE: 'selectindicator-active'
+    SELECTINDICATOR_ACTIVE: 'selectindicator-active',
+    HOVERABLE: 'hoverable'
 }
 
 
@@ -367,7 +368,8 @@ nrg.ui.Thumbnail.prototype.setEvents_ = function() {
 	    this.dispatchEvent({
 		type: nrg.ui.Thumbnail.EventType.CLICK
 	    });
-    }.bind(this));	   
+    }.bind(this));
+
 }
 
 
@@ -378,6 +380,8 @@ nrg.ui.Thumbnail.prototype.setEvents_ = function() {
  */
 nrg.ui.Thumbnail.prototype.setClasses_ = function() {
     goog.dom.classes.set(this.getElement(), nrg.ui.Thumbnail.ELEMENT_CLASS);
+    goog.dom.classes.add(this.getElement(), 
+			 nrg.ui.Thumbnail.CSS.HOVERABLE);
     goog.dom.classes.set(this.image_, nrg.ui.Thumbnail.CSS.IMAGE);
     goog.dom.classes.set(this.text_, nrg.ui.Thumbnail.CSS.TEXT);
 }
