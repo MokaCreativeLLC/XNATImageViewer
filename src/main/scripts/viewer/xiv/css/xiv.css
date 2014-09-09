@@ -1416,57 +1416,59 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 
 /* line 490, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-closebutton-image, .nrg-ui-dialog-closebutton {
-  height: 10;
-  width: 10;
+  height: 10px;
+  width: 10px;
 }
 
 /* line 494, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-closebutton {
   position: absolute;
   cursor: pointer;
-  top: 2px;
-  left: calc(100% - 16px);
+  top: calc(50% - 7px);
+  height: 10px;
+  width: 10px;
+  left: calc(100% - 17px);
   z-index: 103;
   background: none;
   outline: none;
 }
 
-/* line 510, ../../nrg/sass/nrg.scss */
+/* line 512, ../../nrg/sass/nrg.scss */
 .modal-dialog-title-text {
-  top: 2px;
+  top: 1px;
   left: 7px;
   position: absolute;
   text-align: center;
 }
 
-/* line 518, ../../nrg/sass/nrg.scss */
+/* line 520, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-title {
   background-color: #3c3c3c;
-  height: 15px;
+  height: 17px;
   padding: 0px;
-  margin-top: -3px;
-  width: 104%;
-  left: -2%;
+  top: -3px;
   border: none;
   color: white;
   font-size: 10px;
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
   z-index: -1;
+  width: calc(100% + 6px);
+  left: -3px;
 }
 
-/* line 531, ../../nrg/sass/nrg.scss */
+/* line 533, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-content {
   background-color: none;
   background: none;
 }
 
-/* line 537, ../../nrg/sass/nrg.scss */
+/* line 539, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-buttons {
   background-color: none;
   background: none;
 }
 
-/* line 544, ../../nrg/sass/nrg.scss */
+/* line 546, ../../nrg/sass/nrg.scss */
 .nrg-ui-dialog-yesnomodal {
   position: absolute;
   top: calc(50% - 60px);
@@ -1489,14 +1491,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 566, ../../nrg/sass/nrg.scss */
+/* line 568, ../../nrg/sass/nrg.scss */
 .nrg-ui-errordialog {
   width: 400px;
   height: 300px;
   z-index: 100000;
 }
 
-/* line 574, ../../nrg/sass/nrg.scss */
+/* line 576, ../../nrg/sass/nrg.scss */
 .nrg-ui-errordialog-image {
   position: relative;
   width: 80px;
@@ -1504,7 +1506,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   left: calc(50% - 40px);
 }
 
-/* line 583, ../../nrg/sass/nrg.scss */
+/* line 585, ../../nrg/sass/nrg.scss */
 .nrg-ui-errordialog-text {
   top: 145px;
 }
@@ -1512,7 +1514,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 591, ../../nrg/sass/nrg.scss */
+/* line 593, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail {
   position: absolute;
   width: 87px;
@@ -1525,7 +1527,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border: solid 1px black;
 }
 
-/* line 604, ../../nrg/sass/nrg.scss */
+/* line 606, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-selectindicator {
   position: absolute;
   top: calc(50% - 34px);
@@ -1536,12 +1538,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background-color: #646464;
 }
 
-/* line 615, ../../nrg/sass/nrg.scss */
+/* line 617, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-selectindicator-active {
   opacity: 1;
 }
 
-/* line 621, ../../nrg/sass/nrg.scss */
+/* line 623, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-selected {
   border: solid 1px #646464;
   -moz-box-sizing: border-box;
@@ -1550,7 +1552,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   box-sizing: border-box;
 }
 
-/* line 634, ../../nrg/sass/nrg.scss */
+/* line 636, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-hoverable:hover {
   background-color: #1e1e1e;
   z-index: 10000;
@@ -1559,19 +1561,19 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border: solid 1px #282828;
 }
 
-/* line 643, ../../nrg/sass/nrg.scss */
+/* line 645, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-hoverable:hover > .nrg-ui-thumbnail-image {
   /*color: rgb(255,255,255);*/
   /*border-color: white;*/
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* line 649, ../../nrg/sass/nrg.scss */
+/* line 651, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-hoverable:hover > .nrg-ui-thumbnail-text {
   color: #d7d7d7;
 }
 
-/* line 653, ../../nrg/sass/nrg.scss */
+/* line 655, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-image, .nrg-ui-thumbnail-canvas {
   position: absolute;
   width: 70px;
@@ -1593,7 +1595,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   cursor: pointer;
 }
 
-/* line 677, ../../nrg/sass/nrg.scss */
+/* line 679, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-text {
   position: absolute;
   height: 70px;
@@ -1608,12 +1610,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   line-height: 17px;
 }
 
-/* line 691, ../../nrg/sass/nrg.scss */
+/* line 693, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-text-mouseover {
   color: #9b9b9b;
 }
 
-/* line 696, ../../nrg/sass/nrg.scss */
+/* line 698, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-canvas {
   top: 8px;
   left: 8px;
@@ -1622,28 +1624,28 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*******
 * Active state
 ********/
-/* line 707, ../../nrg/sass/nrg.scss */
+/* line 709, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-text-active {
   /*color : rgb(100,100,100);*/
 }
 
-/* line 711, ../../nrg/sass/nrg.scss */
+/* line 713, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-active {
   opacity: 1;
 }
 
-/* line 716, ../../nrg/sass/nrg.scss */
+/* line 718, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnail-image-active {
   /*border-left: solid 2px rgb(100,100,100);*/
 }
 
-/* line 722, ../../nrg/sass/nrg.scss */
+/* line 724, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnailgallery {
   position: absolute;
   overflow: hidden;
 }
 
-/* line 730, ../../nrg/sass/nrg.scss */
+/* line 732, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnailgallery-thumbnail {
   position: relative;
   width: 100%;
@@ -1653,7 +1655,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   cursor: pointer;
 }
 
-/* line 740, ../../nrg/sass/nrg.scss */
+/* line 742, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnailgallery-thumbnail-image {
   position: absolute;
   width: 160px;
@@ -1669,7 +1671,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   cursor: pointer;
 }
 
-/* line 756, ../../nrg/sass/nrg.scss */
+/* line 758, ../../nrg/sass/nrg.scss */
 .nrg-ui-thumbnailgallery-thumbnail-text {
   position: absolute;
   height: 70px;
@@ -1681,14 +1683,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   line-height: 17px;
 }
 
-/* line 767, ../../nrg/sass/nrg.scss */
+/* line 769, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizable-boundary {
   position: absolute;
   border: 1px dotted red;
   background-color: rgba(255, 120, 120, 0.5);
 }
 
-/* line 774, ../../nrg/sass/nrg.scss */
+/* line 776, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedragger {
   position: absolute;
   font-size: 0.1px;
@@ -1699,7 +1701,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /**
   RIGHT AND LEFT
 */
-/* line 785, ../../nrg/sass/nrg.scss */
+/* line 787, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggerright, .nrg-ui-resizedraggerleft {
   position: absolute;
   width: 7px;
@@ -1707,13 +1709,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   cursor: ew-resize;
 }
 
-/* line 792, ../../nrg/sass/nrg.scss */
+/* line 794, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggerright {
   left: 100%;
   /*background-color: rgba(0,255,0,.5);*/
 }
 
-/* line 797, ../../nrg/sass/nrg.scss */
+/* line 799, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggerleft {
   left: -7px;
 }
@@ -1721,7 +1723,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /**
  * TOP AND BOTTOM
  */
-/* line 807, ../../nrg/sass/nrg.scss */
+/* line 809, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggertop, .nrg-ui-resizedraggerbottom {
   position: absolute;
   left: 0px;
@@ -1730,13 +1732,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   cursor: ns-resize;
 }
 
-/* line 815, ../../nrg/sass/nrg.scss */
+/* line 817, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggertop {
   top: -7px;
   /*background-color: rgba(0,255,0,.5);*/
 }
 
-/* line 820, ../../nrg/sass/nrg.scss */
+/* line 822, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggerbottom {
   top: 100%;
   /*background-color: rgba(255,0,0,.5);*/
@@ -1745,7 +1747,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /**
  * CORNERS
  */
-/* line 832, ../../nrg/sass/nrg.scss */
+/* line 834, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggertopright,
 .nrg-ui-resizedraggertopleft,
 .nrg-ui-resizedraggerbottomright,
@@ -1756,13 +1758,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   cursor: move;
 }
 
-/* line 843, ../../nrg/sass/nrg.scss */
+/* line 845, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggertopright,
 .nrg-ui-resizedraggertopleft {
   top: calc(100% - 7px);
 }
 
-/* line 848, ../../nrg/sass/nrg.scss */
+/* line 850, ../../nrg/sass/nrg.scss */
 .nrg-ui-resizedraggertopright {
   left: calc(100% - 7px);
   /*background-color: orange;*/
@@ -1774,28 +1776,28 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /**
  * ELEMENT
  */
-/* line 860, ../../nrg/sass/nrg.scss */
+/* line 862, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs {
   position: absolute;
   left: 0px;
 }
 
-/* line 865, ../../nrg/sass/nrg.scss */
+/* line 867, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-right {
   left: 0px;
 }
 
-/* line 870, ../../nrg/sass/nrg.scss */
+/* line 872, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-left {
   left: calc(100% - 18px);
 }
 
-/* line 875, ../../nrg/sass/nrg.scss */
+/* line 877, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-top {
   top: calc(100% - 18px);
 }
 
-/* line 880, ../../nrg/sass/nrg.scss */
+/* line 882, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-bottom {
   top: 0px;
 }
@@ -1803,7 +1805,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /**
  * TABS
  */
-/* line 891, ../../nrg/sass/nrg.scss */
+/* line 893, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1819,7 +1821,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   text-align: center;
 }
 
-/* line 905, ../../nrg/sass/nrg.scss */
+/* line 907, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-top {
   height: 18px;
   top: 0px;
@@ -1827,7 +1829,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-bottom: none;
 }
 
-/* line 913, ../../nrg/sass/nrg.scss */
+/* line 915, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-bottom {
   height: 18px;
   top: calc(100% - 18px);
@@ -1835,7 +1837,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-top: none;
 }
 
-/* line 921, ../../nrg/sass/nrg.scss */
+/* line 923, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-right {
   width: 22px;
   left: calc(100% - 22px);
@@ -1845,7 +1847,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-bottom-right-radius: 7px;
 }
 
-/* line 931, ../../nrg/sass/nrg.scss */
+/* line 933, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-left {
   width: 18px;
   left: 0px;
@@ -1853,27 +1855,27 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-right: none;
 }
 
-/* line 939, ../../nrg/sass/nrg.scss */
+/* line 941, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-active {
   border: solid 1px #646464;
 }
 
-/* line 944, ../../nrg/sass/nrg.scss */
+/* line 946, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-active-right {
   border-left: none;
 }
 
-/* line 949, ../../nrg/sass/nrg.scss */
+/* line 951, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-active-top {
   border-bottom: none;
 }
 
-/* line 954, ../../nrg/sass/nrg.scss */
+/* line 956, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-tab-active {
   z-index: 1;
 }
 
-/* line 959, ../../nrg/sass/nrg.scss */
+/* line 961, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-icon {
   color: #646464;
   z-index: 11;
@@ -1885,32 +1887,32 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   display: table;
 }
 
-/* line 972, ../../nrg/sass/nrg.scss */
+/* line 974, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-icon-active {
   color: #646464;
 }
 
-/* line 977, ../../nrg/sass/nrg.scss */
+/* line 979, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-icon-top {
   width: 100%;
   height: 100%;
 }
 
-/* line 983, ../../nrg/sass/nrg.scss */
+/* line 985, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-icon-right {
   left: -24px;
   top: calc(50% - 5px);
   white-space: nowrap;
 }
 
-/* line 992, ../../nrg/sass/nrg.scss */
+/* line 994, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-icon-content {
   display: table-cell;
   text-align: center;
   vertical-align: middle;
 }
 
-/* line 999, ../../nrg/sass/nrg.scss */
+/* line 1001, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-page {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1926,7 +1928,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   overflow: hidden;
 }
 
-/* line 1013, ../../nrg/sass/nrg.scss */
+/* line 1015, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-page-content {
   position: absolute;
   left: 0px;
@@ -1936,14 +1938,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: 2;
 }
 
-/* line 1024, ../../nrg/sass/nrg.scss */
+/* line 1026, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-page-active {
   border: solid 1px #646464;
   visibility: visible;
   z-index: 2;
 }
 
-/* line 1031, ../../nrg/sass/nrg.scss */
+/* line 1033, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-page-right, .nrg-ui-tabs-page-left {
   position: absolute;
   height: 100%;
@@ -1954,7 +1956,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-left: none;
 }
 
-/* line 1042, ../../nrg/sass/nrg.scss */
+/* line 1044, ../../nrg/sass/nrg.scss */
 .nrg-ui-tabs-page-top, .nrg-ui-tabs-page-bottom {
   position: absolute;
   top: 18px;
@@ -1967,22 +1969,22 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /**
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 1055, ../../nrg/sass/nrg.scss */
+/* line 1057, ../../nrg/sass/nrg.scss */
 .nrg-ui-ziptabs {
   position: absolute;
 }
 
-/* line 1060, ../../nrg/sass/nrg.scss */
+/* line 1062, ../../nrg/sass/nrg.scss */
 .nrg-ui-ziptabs:hover {
   opacity: 1;
 }
 
-/* line 1066, ../../nrg/sass/nrg.scss */
+/* line 1068, ../../nrg/sass/nrg.scss */
 .nrg-ui-ziptabs-top, .nrg-ui-ziptabs-bottom {
   height: 18px;
 }
 
-/* line 1071, ../../nrg/sass/nrg.scss */
+/* line 1073, ../../nrg/sass/nrg.scss */
 .nrg-ui-ziptabs-left, .nrg-ui-ziptabs-right {
   width: 18px;
   opacity: .7;
@@ -1992,7 +1994,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transition-property: opacity;
 }
 
-/* line 1080, ../../nrg/sass/nrg.scss */
+/* line 1082, ../../nrg/sass/nrg.scss */
 .nrg-ui-ziptabs-right:hover {
   opacity: 1;
 }
@@ -2000,26 +2002,26 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1094, ../../nrg/sass/nrg.scss */
+/* line 1096, ../../nrg/sass/nrg.scss */
 .nrg-ui-slideinmenu-icon {
   max-width: 100%;
   max-height: 100%;
   opacity: 1;
 }
 
-/* line 1101, ../../nrg/sass/nrg.scss */
+/* line 1103, ../../nrg/sass/nrg.scss */
 .nrg-ui-slideinmenu-icon-hovered {
   opacity: 1;
 }
 
-/* line 1106, ../../nrg/sass/nrg.scss */
+/* line 1108, ../../nrg/sass/nrg.scss */
 .nrg-ui-slideinmenu-menuholder {
   position: absolute;
   background-color: #ff6416;
   z-index: 4000;
 }
 
-/* line 1113, ../../nrg/sass/nrg.scss */
+/* line 1115, ../../nrg/sass/nrg.scss */
 .nrg-ui-slideinmenu-menu {
   background-color: #7d7d7d;
   border: solid 1px #323232;
@@ -2028,7 +2030,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 130px;
 }
 
-/* line 1122, ../../nrg/sass/nrg.scss */
+/* line 1124, ../../nrg/sass/nrg.scss */
 .nrg-ui-slideinmenu-menuitem {
   overflow: visible;
   margin-left: 5px;
@@ -2036,12 +2038,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   height: 20px;
 }
 
-/* line 1130, ../../nrg/sass/nrg.scss */
+/* line 1132, ../../nrg/sass/nrg.scss */
 .nrg-ui-slideinmenu-menuitem-highlight {
   color: white;
 }
 
-/* line 1134, ../../nrg/sass/nrg.scss */
+/* line 1136, ../../nrg/sass/nrg.scss */
 .nrg-ui-slideinmenu-menuitem-icon {
   position: absolute;
   margin-top: -3px;
@@ -3113,9 +3115,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 200px;
   z-index: 10;
   cursor: default;
-  border: solid 1px;
-  border-radius: 5px;
-  overflow: visible;
+  overflow: hidden;
   /* transition styles */
   height: 150px;
   border-color: transparent;
@@ -3123,37 +3123,37 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transition-property: height, background-color, border-color;
 }
 
-/* line 857, xiv.scss */
+/* line 854, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-levelsdialog:hover {
   height: 440px;
   background-color: rgba(0, 0, 0, 0.9);
   border-color: white;
 }
 
-/* line 864, xiv.scss */
+/* line 861, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-levelsdialog-title {
   opacity: 0;
   transition-property: opacity;
 }
 
-/* line 869, xiv.scss */
+/* line 866, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-levelsdialog,
 .xiv-ui-viewboxinteractorhandler-levelsdialog-title {
   transition-duration: .3s;
   /*transition-timing-function: ease-out;*/
 }
 
-/* line 875, xiv.scss */
+/* line 872, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-levelsdialog:hover > .xiv-ui-viewboxinteractorhandler-levelsdialog-title {
   opacity: 1;
 }
 
-/* line 879, xiv.scss */
+/* line 876, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-levelsdialog-max:hover > .xiv-ui-viewboxinteractorhandler-levelsdialog-title {
   opacity: 1;
 }
 
-/* line 886, xiv.scss */
+/* line 883, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-histdetails {
   position: relative;
   height: 17px;
@@ -3171,7 +3171,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   overflow: hidden;
 }
 
-/* line 902, xiv.scss */
+/* line 899, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-histdetails-expandbutton {
   background-color: #505050;
   position: absolute;
@@ -3184,7 +3184,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: 2;
 }
 
-/* line 916, xiv.scss */
+/* line 913, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-histdetails-fadebottom {
   visibility: hidden;
   position: absolute;
@@ -3195,7 +3195,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background: linear-gradient(to bottom, transparent 0%, black 100%);
 }
 
-/* line 927, xiv.scss */
+/* line 924, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-histdetails:hover {
   border: solid 1px #505050;
   height: 110px;
@@ -3206,7 +3206,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
  *
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 939, xiv.scss */
+/* line 936, xiv.scss */
 .xiv-ui-nomobilemodal {
   background-color: black;
   position: fixed;
@@ -3216,7 +3216,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 100%;
 }
 
-/* line 949, xiv.scss */
+/* line 946, xiv.scss */
 .xiv-ui-nomobilemodal-content {
   color: white;
   font-size: 12px;
@@ -3230,7 +3230,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transform: translateY(-50%);
 }
 
-/* line 962, xiv.scss */
+/* line 959, xiv.scss */
 .xiv-ui-modal {
   position: fixed;
   background-color: black;
@@ -3242,7 +3242,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 100%;
 }
 
-/* line 974, xiv.scss */
+/* line 971, xiv.scss */
 .xiv-ui-modal-windowed {
   position: fixed;
   border: solid 1px black;
@@ -3253,7 +3253,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: calc(100% - 20px);
 }
 
-/* line 987, xiv.scss */
+/* line 984, xiv.scss */
 .xiv-ui-modal-background {
   position: fixed;
   top: 0px;
@@ -3265,13 +3265,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   display: inline-block;
 }
 
-/* line 999, xiv.scss */
+/* line 996, xiv.scss */
 .xiv-ui-modal-background-black {
   background-color: black;
   color: black;
 }
 
-/* line 1005, xiv.scss */
+/* line 1002, xiv.scss */
 .xiv-ui-modal-close-button {
   position: absolute;
   cursor: pointer;
@@ -3280,10 +3280,9 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   margin-left: -20px;
   width: 10px;
   height: 10px;
-  z-index: 103;
 }
 
-/* line 1017, xiv.scss */
+/* line 1013, xiv.scss */
 .xiv-ui-modal-fullscreen-button, .xiv-ui-modal-windowed-button {
   position: absolute;
   cursor: pointer;
@@ -3292,10 +3291,9 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   margin-left: -20px;
   width: 11px;
   height: 11px;
-  z-index: 1000;
 }
 
-/* line 1037, xiv.scss */
+/* line 1032, xiv.scss */
 .xiv-ui-modal-popup-button {
   position: absolute;
   cursor: pointer;
@@ -3304,10 +3302,9 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   margin-left: -21px;
   width: 12px;
   height: 12px;
-  z-index: 1000;
 }
 
-/* line 1051, xiv.scss */
+/* line 1045, xiv.scss */
 .xiv-ui-modal-insertcolumn-button, .xiv-ui-modal-removecolumn-button,
 .xiv-ui-modal-insertrow-button, .xiv-ui-modal-removerow-button {
   position: absolute;
@@ -3315,7 +3312,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: 2;
 }
 
-/* line 1060, xiv.scss */
+/* line 1054, xiv.scss */
 .xiv-ui-modal-insertcolumn-button, .xiv-ui-modal-removecolumn-button {
   left: 100%;
   top: 50%;
@@ -3324,17 +3321,17 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   height: 24px;
 }
 
-/* line 1069, xiv.scss */
+/* line 1063, xiv.scss */
 .xiv-ui-modal-insertcolumn-button {
   margin-top: -10px;
 }
 
-/* line 1074, xiv.scss */
+/* line 1068, xiv.scss */
 .xiv-ui-modal-removecolumn-button {
   margin-top: 10px;
 }
 
-/* line 1081, xiv.scss */
+/* line 1075, xiv.scss */
 .xiv-ui-modal-insertrow-button, .xiv-ui-modal-removerow-button {
   top: 100%;
   left: 50%;
@@ -3343,17 +3340,17 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   height: 8px;
 }
 
-/* line 1091, xiv.scss */
+/* line 1085, xiv.scss */
 .xiv-ui-modal-insertrow-button {
   margin-left: -10px;
 }
 
-/* line 1096, xiv.scss */
+/* line 1090, xiv.scss */
 .xiv-ui-modal-removerow-button {
   margin-left: 10px;
 }
 
-/* line 1101, xiv.scss */
+/* line 1095, xiv.scss */
 .xiv-ui-modal-projecttab-bounds {
   position: absolute;
   top: 29px;
@@ -3363,7 +3360,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background-color: rgba(120, 220, 120, 0);
 }
 
-/* line 1111, xiv.scss */
+/* line 1105, xiv.scss */
 .xiv-ui-modal-projecttab {
   left: 0px;
   height: calc(100% - 60px);
@@ -3371,7 +3368,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-radius: 0px;
 }
 
-/* line 1119, xiv.scss */
+/* line 1113, xiv.scss */
 .xiv-ui-modal-projecttab-dragger {
   left: calc(100%);
   width: 10px;
@@ -3382,7 +3379,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: 0;
 }
 
-/* line 1131, xiv.scss */
+/* line 1125, xiv.scss */
 .xiv-ui-modal-projecttab-dragger-handle {
   position: absolute;
   width: 4px;
@@ -3393,7 +3390,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-radius: 4px;
 }
 
-/* line 1143, xiv.scss */
+/* line 1137, xiv.scss */
 .xiv-ui-modal-addsubjects {
   width: 87%;
   height: 40px;
@@ -3414,12 +3411,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 1162, xiv.scss */
+/* line 1156, xiv.scss */
 .xiv-ui-modal-addsubjects-hovered {
   opacity: 1;
 }
 
-/* line 1167, xiv.scss */
+/* line 1161, xiv.scss */
 .xiv-ui-modal-foldericon {
   position: absolute;
   left: calc(50% - 9px);
@@ -3435,14 +3432,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1187, xiv.scss */
+/* line 1181, xiv.scss */
 .xiv-ui-thumbnailgallery {
   position: absolute;
   left: 0px;
   width: calc(100% - 10px);
 }
 
-/* line 1195, xiv.scss */
+/* line 1189, xiv.scss */
 .xiv-ui-thumbnailgallery-thumbnail-dragging {
   position: absolute;
   width: 87px;
@@ -3461,7 +3458,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*#
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 1214, xiv.scss */
+/* line 1208, xiv.scss */
 .xiv-ui-viewboxhandler-handle {
   position: relative;
   cursor: pointer;
@@ -3471,14 +3468,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: .5;
 }
 
-/* line 1225, xiv.scss */
+/* line 1219, xiv.scss */
 .xiv-ui-viewboxhandler-viewboxdragclone {
   border: solid 1px white;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 10000;
 }
 
-/* line 1232, xiv.scss */
+/* line 1226, xiv.scss */
 .xiv-ui-viewboxhandler-closebutton {
   position: absolute;
   height: 9px;
@@ -3488,12 +3485,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: .6;
 }
 
-/* line 1243, xiv.scss */
+/* line 1237, xiv.scss */
 .xiv-ui-viewboxhandler-closebutton-hovered {
   opacity: 1;
 }
 
-/* line 1249, xiv.scss */
+/* line 1243, xiv.scss */
 .xiv-ui-viewboxhandler-addrowbutton {
   position: absolute;
   height: 5px;
@@ -3503,12 +3500,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: .6;
 }
 
-/* line 1260, xiv.scss */
+/* line 1254, xiv.scss */
 .xiv-ui-viewboxhandler-addrowbutton-hovered {
   opacity: 1;
 }
 
-/* line 1265, xiv.scss */
+/* line 1259, xiv.scss */
 .xiv-ui-viewboxhandler-addcolumnbutton {
   position: absolute;
   height: 10px;
@@ -3519,7 +3516,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: .6;
 }
 
-/* line 1277, xiv.scss */
+/* line 1271, xiv.scss */
 .xiv-ui-viewboxhandler-addcolumnbutton-hovered {
   opacity: 1;
 }
@@ -3527,7 +3524,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 1285, xiv.scss */
+/* line 1279, xiv.scss */
 .xiv-ui-layouts-layouthandler {
   position: absolute;
   background: black;
@@ -3536,7 +3533,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1304, xiv.scss */
+/* line 1298, xiv.scss */
 .xiv-ui-layouts-layout {
   position: absolute;
   width: 100%;
@@ -3546,14 +3543,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1315, xiv.scss */
+/* line 1309, xiv.scss */
 .xiv-ui-levelscontroller {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-/* line 1323, xiv.scss */
+/* line 1317, xiv.scss */
 .xiv-ui-levelscontroller-sliderlabel,
 .xiv-ui-levelscontroller-twothumbsliderlabel {
   position: absolute;
@@ -3561,70 +3558,70 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   top: 6px;
 }
 
-/* line 1331, xiv.scss */
+/* line 1325, xiv.scss */
 .xiv-ui-levelscontroller-twothumbsliderlabel {
   left: 10px;
   font-size: 10px;
   top: 0px;
 }
 
-/* line 1337, xiv.scss */
+/* line 1331, xiv.scss */
 .xiv-ui-levelscontroller-slidercontroller,
 .xiv-ui-levelscontroller-twothumbslidercontroller {
   height: 40px;
 }
 
-/* line 1343, xiv.scss */
+/* line 1337, xiv.scss */
 .xiv-ui-levelscontroller-slidercontroller {
   width: 80%;
 }
 
-/* line 1347, xiv.scss */
+/* line 1341, xiv.scss */
 .xiv-ui-levelscontroller-twothumbslidercontroller {
   height: 45px;
   width: 90%;
 }
 
-/* line 1354, xiv.scss */
+/* line 1348, xiv.scss */
 .xiv-ui-levelscontroller-slider {
   left: 0%;
   top: 28px;
   width: 95%;
 }
 
-/* line 1361, xiv.scss */
+/* line 1355, xiv.scss */
 .xiv-ui-levelscontroller-twothumbslider {
   left: 7%;
   top: 24px;
   width: 100%;
 }
 
-/* line 1368, xiv.scss */
+/* line 1362, xiv.scss */
 .xiv-ui-levelscontroller-slidervalue {
   left: calc(100% - 52px);
   width: 50px;
   top: 4px;
 }
 
-/* line 1375, xiv.scss */
+/* line 1369, xiv.scss */
 .xiv-ui-levelscontroller-twothumbslidervalue,
 .xiv-ui-levelscontroller-twothumbsliderextent {
   left: 10px;
   top: 32px;
 }
 
-/* line 1381, xiv.scss */
+/* line 1375, xiv.scss */
 .xiv-ui-levelscontroller-twothumbsliderextent {
   left: calc(100% - 37px);
 }
 
-/* line 1388, xiv.scss */
+/* line 1382, xiv.scss */
 .xiv-ui-levelscontroller-checkbox {
   top: 28px;
   width: 110px;
 }
 
-/* line 1393, xiv.scss */
+/* line 1387, xiv.scss */
 .xiv-ui-levelscontroller-checkboxholder {
   top: 0px;
   width: 10px;
@@ -3632,7 +3629,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   left: calc(100% - 15px);
 }
 
-/* line 1401, xiv.scss */
+/* line 1395, xiv.scss */
 .xiv-ui-levelscontroller-checkboxcontroller {
   height: 15px;
   outline: none;
@@ -3641,20 +3638,20 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 1413, xiv.scss */
+/* line 1407, xiv.scss */
 .xiv-ui-layouts-conventional {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-/* line 1420, xiv.scss */
+/* line 1414, xiv.scss */
 .xiv-ui-layouts-conventional-x, .xiv-ui-layouts-conventional-y,
 .xiv-ui-layouts-conventional-z, .xiv-ui-layouts-conventional-v {
   position: absolute;
 }
 
-/* line 1426, xiv.scss */
+/* line 1420, xiv.scss */
 .xiv-ui-layouts-conventional-v {
   top: 0px;
   left: 0px;
@@ -3667,7 +3664,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-bottom: solid 1px #323232;
 }
 
-/* line 1440, xiv.scss */
+/* line 1434, xiv.scss */
 .xiv-ui-layouts-conventional-x, .xiv-ui-layouts-conventional-y,
 .xiv-ui-layouts-conventional-z {
   top: 65%;
@@ -3675,25 +3672,25 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 33.33%;
 }
 
-/* line 1448, xiv.scss */
+/* line 1442, xiv.scss */
 .xiv-ui-layouts-conventional-x {
   left: 33.33%;
   /*border-left: solid 1px rgb(50,50,50);*/
 }
 
-/* line 1454, xiv.scss */
+/* line 1448, xiv.scss */
 .xiv-ui-layouts-conventional-y {
   left: 66.66%;
   border-left: solid 1px #323232;
 }
 
-/* line 1460, xiv.scss */
+/* line 1454, xiv.scss */
 .xiv-ui-layouts-conventional-z {
   left: 0px;
   border-right: solid 1px #323232;
 }
 
-/* line 1467, xiv.scss */
+/* line 1461, xiv.scss */
 .xiv-ui-layouts-conventional-x-resizeboundary,
 .xiv-ui-layouts-conventional-y-resizeboundary,
 .xiv-ui-layouts-conventional-z-resizeboundary,
@@ -3702,7 +3699,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: -1;
 }
 
-/* line 1476, xiv.scss */
+/* line 1470, xiv.scss */
 .xiv-ui-layouts-conventional-x-resizeboundary {
   /**
   background-color: purple;
@@ -3714,14 +3711,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1492, xiv.scss */
+/* line 1486, xiv.scss */
 .xiv-ui-layouts-fourup {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-/* line 1499, xiv.scss */
+/* line 1493, xiv.scss */
 .xiv-ui-layouts-fourup-x, .xiv-ui-layouts-fourup-y,
 .xiv-ui-layouts-fourup-z, .xiv-ui-layouts-fourup-v {
   position: absolute;
@@ -3729,7 +3726,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   height: 50%;
 }
 
-/* line 1507, xiv.scss */
+/* line 1501, xiv.scss */
 .xiv-ui-layouts-fourup-x-resizeboundary {
   /*
   background-color: blue;
@@ -3738,7 +3735,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: -1;
 }
 
-/* line 1516, xiv.scss */
+/* line 1510, xiv.scss */
 .xiv-ui-layouts-fourup-v {
   left: 50%;
   top: 0%;
@@ -3748,7 +3745,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-bottom: solid 1px #323232;
 }
 
-/* line 1528, xiv.scss */
+/* line 1522, xiv.scss */
 .xiv-ui-layouts-fourup-x {
   left: 0%;
   top: 50%;
@@ -3758,7 +3755,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-bottom: none;
 }
 
-/* line 1538, xiv.scss */
+/* line 1532, xiv.scss */
 .xiv-ui-layouts-fourup-y {
   border-left: none;
   border-top: none;
@@ -3768,7 +3765,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   top: 50%;
 }
 
-/* line 1548, xiv.scss */
+/* line 1542, xiv.scss */
 .xiv-ui-layouts-fourup-z {
   border-left: none;
   border-top: none;
@@ -3781,14 +3778,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1564, xiv.scss */
+/* line 1558, xiv.scss */
 .xiv-ui-layouts-twodrow {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-/* line 1572, xiv.scss */
+/* line 1566, xiv.scss */
 .xiv-ui-layouts-twodrow-x, .xiv-ui-layouts-twodrow-y,
 .xiv-ui-layouts-twodrow-z {
   position: absolute;
@@ -3797,24 +3794,24 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 33.33%;
 }
 
-/* line 1582, xiv.scss */
+/* line 1576, xiv.scss */
 .xiv-ui-layouts-twodrow-x {
   left: 0px;
 }
 
-/* line 1587, xiv.scss */
+/* line 1581, xiv.scss */
 .xiv-ui-layouts-twodrow-y {
   left: 33.33%;
   border-left: solid 1px #323232;
 }
 
-/* line 1593, xiv.scss */
+/* line 1587, xiv.scss */
 .xiv-ui-layouts-twodrow-z {
   left: 66.66%;
   border-left: solid 1px #323232;
 }
 
-/* line 1600, xiv.scss */
+/* line 1594, xiv.scss */
 .xiv-ui-layouts-twodrow-x-resizeboundary,
 .xiv-ui-layouts-twodrow-y-resizeboundary,
 .xiv-ui-layouts-twodrow-z-resizeboundary {
@@ -3825,14 +3822,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1615, xiv.scss */
+/* line 1609, xiv.scss */
 .xiv-ui-layouts-twodwidescreen {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-/* line 1623, xiv.scss */
+/* line 1617, xiv.scss */
 .xiv-ui-layouts-twodwidescreen-y,
 .xiv-ui-layouts-twodwidescreen-z {
   position: absolute;
@@ -3841,18 +3838,18 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 33.33%;
 }
 
-/* line 1632, xiv.scss */
+/* line 1626, xiv.scss */
 .xiv-ui-layouts-twodwidescreen-y {
   top: 0px;
   border-bottom: solid 1px #323232;
 }
 
-/* line 1638, xiv.scss */
+/* line 1632, xiv.scss */
 .xiv-ui-layouts-twodwidescreen-z {
   top: 50%;
 }
 
-/* line 1643, xiv.scss */
+/* line 1637, xiv.scss */
 .xiv-ui-layouts-twodwidescreen-x {
   position: absolute;
   left: 0px;
@@ -3862,7 +3859,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-right: solid 1px #323232;
 }
 
-/* line 1654, xiv.scss */
+/* line 1648, xiv.scss */
 .xiv-ui-layouts-twodwidescreen-x-resizeboundary,
 .xiv-ui-layouts-twodwidescreen-y-resizeboundary,
 .xiv-ui-layouts-twodwidescreen-z-resizeboundary {
@@ -3873,7 +3870,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1666, xiv.scss */
+/* line 1660, xiv.scss */
 .xiv-ui-progressbarpanel {
   position: absolute;
   height: 100%;
@@ -3883,7 +3880,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: 2;
 }
 
-/* line 1675, xiv.scss */
+/* line 1669, xiv.scss */
 .xiv-ui-progressbarpanel-thumb {
   position: absolute;
   height: 100%;
@@ -3892,7 +3889,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-radius: 1px;
 }
 
-/* line 1683, xiv.scss */
+/* line 1677, xiv.scss */
 .xiv-ui-progressbarpanel-progbarholder {
   position: absolute;
   height: 1px;
@@ -3905,14 +3902,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   overflow: visible;
 }
 
-/* line 1696, xiv.scss */
+/* line 1690, xiv.scss */
 .xiv-ui-progressbarpanel-progressbar {
   background: cornflowerblue;
   height: 100%;
   top: 0px;
 }
 
-/* line 1703, xiv.scss */
+/* line 1697, xiv.scss */
 .xiv-ui-progressbarpanel-labelholder {
   position: absolute;
   height: 15px;
@@ -3940,7 +3937,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
     box-shadow: 0px 0px 2px 3px rgba(255, 255, 255, 0.8);
   }
 }
-/* line 1732, xiv.scss */
+/* line 1726, xiv.scss */
 .xiv-ui-progressbarpanel-endnode {
   position: absolute;
   top: 0px;
@@ -3953,7 +3950,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   box-shadow: 0px 0px 2px 1px rgba(255, 255, 255, 0.05);
 }
 
-/* line 1745, xiv.scss */
+/* line 1739, xiv.scss */
 .xiv-ui-progressbarpanel-endnode-glow {
   -webkit-animation-fill-mode: forwards;
   -webkit-animation-name: endNode;
@@ -3968,7 +3965,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1760, xiv.scss */
+/* line 1754, xiv.scss */
 .xiv-ui-histogram {
   position: absolute;
   height: 120px;
@@ -3976,7 +3973,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   top: -12px;
 }
 
-/* line 1767, xiv.scss */
+/* line 1761, xiv.scss */
 .xiv-ui-histogram-canvas,
 .xiv-ui-histogram-linecanvas {
   position: absolute;
@@ -3986,12 +3983,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   top: 20px;
 }
 
-/* line 1777, xiv.scss */
+/* line 1771, xiv.scss */
 .xiv-ui-histogram-canvas {
   background-color: white;
 }
 
-/* line 1783, xiv.scss */
+/* line 1777, xiv.scss */
 .xiv-ui-histogram-clipmax,
 .xiv-ui-histogram-clipmin,
 .xiv-ui-histogram-max,
@@ -4004,25 +4001,25 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   white-space: nowrap;
 }
 
-/* line 1794, xiv.scss */
+/* line 1788, xiv.scss */
 .xiv-ui-histogram-clipmax,
 .xiv-ui-histogram-clipmin {
   top: 7px;
 }
 
-/* line 1801, xiv.scss */
+/* line 1795, xiv.scss */
 .xiv-ui-histogram-max,
 .xiv-ui-histogram-min {
   top: calc(100% - 12px);
 }
 
-/* line 1807, xiv.scss */
+/* line 1801, xiv.scss */
 .xiv-ui-histogram-max {
   width: 100%;
   text-align: right;
 }
 
-/* line 1813, xiv.scss */
+/* line 1807, xiv.scss */
 .xiv-ui-histogram-min {
   left: 0px;
   text-align: left;
@@ -4031,7 +4028,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1824, xiv.scss */
+/* line 1818, xiv.scss */
 .xiv-ui-viewablegroupmenu {
   cursor: pointer;
   box-sizing: border-box;
@@ -4048,7 +4045,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: 5002;
 }
 
-/* line 1841, xiv.scss */
+/* line 1835, xiv.scss */
 .xiv-ui-viewablegroupmenu-thumbnailgallery {
   position: absolute;
   box-sizing: border-box;
@@ -4062,7 +4059,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-top: solid 1px #9b9b9b;
 }
 
-/* line 1855, xiv.scss */
+/* line 1849, xiv.scss */
 .xiv-ui-viewablegroupmenu-header {
   position: absolute;
   left: 0px;
@@ -4076,13 +4073,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 1867, xiv.scss */
+/* line 1861, xiv.scss */
 .xiv-ui-viewablegroupmenu-thumbnail {
   width: 100%;
   height: 150px;
 }
 
-/* line 1873, xiv.scss */
+/* line 1867, xiv.scss */
 .xiv-ui-viewablegroupmenu-background {
   position: absolute;
   top: 0px;
@@ -4093,7 +4090,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background-color: black;
 }
 
-/* line 1886, xiv.scss */
+/* line 1880, xiv.scss */
 .xiv-ui-viewablegroupmenu-thumbnail-image {
   width: 140px;
   height: 140px;
@@ -4102,7 +4099,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border: solid 1px #646464;
 }
 
-/* line 1895, xiv.scss */
+/* line 1889, xiv.scss */
 .xiv-ui-viewablegroupmenu-thumbnail-text {
   position: absolute;
   left: 160px;
@@ -4115,14 +4112,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1909, xiv.scss */
+/* line 1903, xiv.scss */
 .xiv-ui-crosshairs-vertical,
 .xiv-ui-crosshairs-horizontal {
   position: absolute;
   background-color: #7d7d7d;
 }
 
-/* line 1917, xiv.scss */
+/* line 1911, xiv.scss */
 .xiv-ui-crosshairs-vertical {
   width: 1px;
   height: 100%;
@@ -4130,7 +4127,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   left: 50%;
 }
 
-/* line 1925, xiv.scss */
+/* line 1919, xiv.scss */
 .xiv-ui-crosshairs-horizontal {
   width: 100%;
   height: 1px;
@@ -4141,7 +4138,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1937, xiv.scss */
+/* line 1931, xiv.scss */
 .xiv-ui-framedisplay {
   position: absolute;
   top: 6px;
@@ -4151,7 +4148,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   text-wrap: none;
 }
 
-/* line 1947, xiv.scss */
+/* line 1941, xiv.scss */
 .xiv-ui-framedisplay-text {
   font-size: 10px;
 }
@@ -4159,7 +4156,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1955, xiv.scss */
+/* line 1949, xiv.scss */
 .xiv-ui-zoomdisplay {
   position: absolute;
   top: 22px;
@@ -4170,7 +4167,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-size: 10px !important;
 }
 
-/* line 1966, xiv.scss */
+/* line 1960, xiv.scss */
 .xiv-ui-zoomdisplay-text {
   font-size: 10px;
 }
@@ -4178,14 +4175,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 1973, xiv.scss */
+/* line 1967, xiv.scss */
 .xiv-ui-playbutton {
   position: absolute;
   left: 9px;
   width: 9px;
   cursor: pointer;
   opacity: 1;
-  top: calc(100% - 13px);
+  top: calc(100% - 18px);
   height: 6px;
   transition-property: opacity, top;
   -webkit-transition-duration: 0.2s;
@@ -4193,7 +4190,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transition-timing-function: ease-out;
 }
 
-/* line 1989, xiv.scss */
+/* line 1983, xiv.scss */
 .xiv-ui-playbutton-image {
   height: 6px;
   width: 9px;

@@ -403,6 +403,8 @@ function(title, opt_animateSwitch) {
     this.currLayoutTitle_ = title;
 
 
+    this.fadeInteractorsOnHover_();
+
     //
     // Switch the layout
     //
@@ -410,6 +412,31 @@ function(title, opt_animateSwitch) {
 		      0 : xiv.ui.layouts.LayoutHandler.ANIM_TIME);
 }
 
+
+
+/**
+ * @private
+ */
+xiv.ui.layouts.LayoutHandler.prototype.fadeInteractorsOnHover_ = function(){
+    var newLayoutFrames = this.Layouts_[this.currLayoutTitle_].
+	getLayoutFrames();
+    var interactors;
+    goog.object.forEach(newLayoutFrames, function(newLayoutFrame, key){		
+	interactors = this.getMasterInteractorsByPlane(key);
+	if (goog.isDefAndNotNull(interactors) &&
+	    goog.isDefAndNotNull(interactors.SLIDER) &&
+	    goog.isDefAndNotNull(interactors.PLAY_BUTTON)){
+	    goog.dom.classes.add(newLayoutFrame.getElement(),
+				 'xiv-ui-layouts-hoverframe');
+	    goog.array.forEach(
+		[interactors.SLIDER.getElement(), 
+		 interactors.PLAY_BUTTON.getElement()], function(fadeable){
+		     goog.dom.classes.add(fadeable, 
+					  'xiv-ui-layouts-fadeableinteractor');
+		 }.bind(this))
+	}
+    }.bind(this));
+}
 
 
 /**
@@ -618,7 +645,6 @@ function(opt_duration) {
 	    // layout panels.
 	    //
 	    transitionElt = plane.getElement().cloneNode(false);
-	    
 	    this.transitionElts_[key] = transitionElt;
 
 	    //
@@ -639,18 +665,10 @@ function(opt_duration) {
 		//-------------------------------
 		goog.array.forEach(planeArr, function(planeChildElt){
 		    goog.dom.removeNode(planeChildElt);
-		    //window.console.log(planeChildElt);
-
-		    //if (!goog.dom.classes.has(
-			//planeChildElt, xiv.ui.layouts.XyzvLayout.CSS.SLIDER)){
-			if (goog.isDefAndNotNull(
-			    this.transitionElts_[planeOr])){
-			    goog.dom.appendChild(this.transitionElts_[planeOr], 
-						 planeChildElt)	
-			}	
-		    //} else {
-			//planeChildElt.style.visibility = 'hidden';
-		    //}
+		    if (goog.isDefAndNotNull(this.transitionElts_[planeOr])){
+			goog.dom.appendChild(this.transitionElts_[planeOr], 
+					     planeChildElt)	
+		    }
 		}.bind(this))
 	    }.bind(this))
 
@@ -666,7 +684,7 @@ function(opt_duration) {
 			plane.getElement(), newLayoutFrames[key].getElement());
 		this.asIsDims_[key] = transitionDims.asIs;
 		this.toBeDims_[key] = transitionDims.toBe;
-		window.console.log("TRANS", key, this.toBeDims_[key]);
+		//window.console.log("TRANS", key, this.toBeDims_[key]);
 
 
 	    //
@@ -677,23 +695,8 @@ function(opt_duration) {
 		this.toBeDims_[key] = {'opacity' :  0};
 	    }
 
-
-	    //window.console.log(transitionElt);
-	    /*
-
-	    transitionElt.className = '';
-	    goog.object.forEach(this.asIsDims_[key], function(val, key){
-		window.console.log(val, key);
-		transitionElt.style[goog.string.toCamelCase(key)] = val;
-		window.console.log(transitionElt.style);
-		transitionElt.style.zIndex = 300;
-		transitionElt.style.visibility = 'visible';
-		//goog.style.setStyle(transitionElt, key, val);
-	    })
-	    */
-
 	}.bind(this))
-  
+
     //
     // attach transition elements to parent
     //
@@ -764,12 +767,6 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
     var newLayoutFrames = this.Layouts_[this.currLayoutTitle_].
 	getLayoutFrames();
 
-    //
-    // Dispose of the transition elements
-    //
-    this.disposeTransitionElts_();
-
-
     //-------------------------------
     // IMPORTANT!!!!!!!!!!!!!!
     // 
@@ -811,8 +808,10 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
     }
 
 
-
-
+    //
+    // Dispose of the transition elements
+    //
+    this.disposeTransitionElts_();
 
     //
     // Track changing
@@ -843,8 +842,6 @@ xiv.ui.layouts.LayoutHandler.prototype.onLayoutChangeEnd_ = function() {
     // IMPORTANT!!
     //
     this.bindLayoutToSliderMousewheels_();
-
-
 
 
     //
@@ -909,13 +906,10 @@ xiv.ui.layouts.LayoutHandler.prototype.hideAllLayouts = function() {
  * @private
  */
 xiv.ui.layouts.LayoutHandler.prototype.disposeTransitionElts_ = function() {
-    var elts = goog.object.getValues(this.transitionElts_);
-
-    nrg.fx.parallelFade(elts, 1, 0, 200, null, null, function(){
-	goog.array.forEach(elts, function(elt){
-	    goog.dom.removeNode(elt);
-	    delete elt;
-	})
+    goog.object.forEach(this.transitionElts_, function(elt){
+	//window.console.log(goog.dom.getChildren(elt));
+	goog.dom.removeNode(elt);
+	delete elt;
     })
 }
 

@@ -29,7 +29,7 @@
  * on the BiDi flipping by the CSS compiler.  That's why we're not adding the
  * @noflip to .goog-menuitem.
  */
-/* line 30, ../nrg/sass/goog.scss */
+/* line 30, goog.scss */
 .goog-menuitem {
   color: #000;
   font: normal 13px Arial, sans-serif;
@@ -42,7 +42,7 @@
 
 /* BiDi override for the resting state. */
 /* @noflip */
-/* line 42, ../nrg/sass/goog.scss */
+/* line 42, goog.scss */
 .goog-menuitem.goog-menuitem-rtl {
   /* Flip left/right padding for BiDi. */
   padding-left: 7em;
@@ -50,7 +50,7 @@
 }
 
 /* If a menu doesn't have checkable items or items with icons, remove padding. */
-/* line 49, ../nrg/sass/goog.scss */
+/* line 49, goog.scss */
 .goog-menu-nocheckbox .goog-menuitem,
 .goog-menu-noicon .goog-menuitem {
   padding-left: 12px;
@@ -60,25 +60,25 @@
  * If a menu doesn't have items with shortcuts, leave just enough room for
  * submenu arrows, if they are rendered.
  */
-/* line 58, ../nrg/sass/goog.scss */
+/* line 58, goog.scss */
 .goog-menu-noaccel .goog-menuitem {
   padding-right: 20px;
 }
 
-/* line 62, ../nrg/sass/goog.scss */
+/* line 62, goog.scss */
 .goog-menuitem-content {
   color: #000;
   font: normal 13px Arial, sans-serif;
 }
 
 /* State: disabled. */
-/* line 68, ../nrg/sass/goog.scss */
+/* line 68, goog.scss */
 .goog-menuitem-disabled .goog-menuitem-accel,
 .goog-menuitem-disabled .goog-menuitem-content {
   color: #ccc !important;
 }
 
-/* line 72, ../nrg/sass/goog.scss */
+/* line 72, goog.scss */
 .goog-menuitem-disabled .goog-menuitem-icon {
   opacity: 0.3;
   -moz-opacity: 0.3;
@@ -86,7 +86,7 @@
 }
 
 /* State: hover. */
-/* line 79, ../nrg/sass/goog.scss */
+/* line 79, goog.scss */
 .goog-menuitem-highlight,
 .goog-menuitem-hover {
   background-color: #d6e9f8;
@@ -100,7 +100,7 @@
 }
 
 /* State: selected/checked. */
-/* line 92, ../nrg/sass/goog.scss */
+/* line 92, goog.scss */
 .goog-menuitem-checkbox,
 .goog-menuitem-icon {
   background-repeat: no-repeat;
@@ -114,7 +114,7 @@
 
 /* BiDi override for the selected/checked state. */
 /* @noflip */
-/* line 105, ../nrg/sass/goog.scss */
+/* line 105, goog.scss */
 .goog-menuitem-rtl .goog-menuitem-checkbox,
 .goog-menuitem-rtl .goog-menuitem-icon {
   /* Flip left/right positioning. */
@@ -122,7 +122,7 @@
   right: 6px;
 }
 
-/* line 112, ../nrg/sass/goog.scss */
+/* line 112, goog.scss */
 .goog-option-selected .goog-menuitem-checkbox,
 .goog-option-selected .goog-menuitem-icon {
   /* Client apps may override the URL at which they serve the sprite. */
@@ -130,7 +130,7 @@
 }
 
 /* Keyboard shortcut ("accelerator") style. */
-/* line 119, ../nrg/sass/goog.scss */
+/* line 119, goog.scss */
 .goog-menuitem-accel {
   color: #999;
   /* Keyboard shortcuts are untranslated; always left-to-right. */
@@ -145,7 +145,7 @@
 
 /* BiDi override for shortcut style. */
 /* @noflip */
-/* line 132, ../nrg/sass/goog.scss */
+/* line 132, goog.scss */
 .goog-menuitem-rtl .goog-menuitem-accel {
   /* Flip left/right positioning and text alignment. */
   left: 0;
@@ -154,12 +154,12 @@
 }
 
 /* Mnemonic styles. */
-/* line 140, ../nrg/sass/goog.scss */
+/* line 140, goog.scss */
 .goog-menuitem-mnemonic-hint {
   text-decoration: underline;
 }
 
-/* line 144, ../nrg/sass/goog.scss */
+/* line 144, goog.scss */
 .goog-menuitem-mnemonic-separator {
   color: #999;
   font-size: 12px;
@@ -177,7 +177,7 @@
  *
  * @author attila@google.com (Attila Bodis)
  */
-/* line 163, ../nrg/sass/goog.scss */
+/* line 163, goog.scss */
 .goog-menuseparator {
   border-top: 1px solid #ccc;
   margin: 4px 0;
@@ -196,7 +196,7 @@
  * @author attila@google.com (Attila Bodis)
  */
 /* State: resting. */
-/* line 183, ../nrg/sass/goog.scss */
+/* line 183, goog.scss */
 .goog-menu-button {
   /* Client apps may override the URL at which they serve the image. */
   background: #ddd url(//ssl.gstatic.com/editor/button-bg.png) repeat-x top left;
@@ -212,7 +212,7 @@
 }
 
 /* Pseudo-rounded corners. */
-/* line 198, ../nrg/sass/goog.scss */
+/* line 198, goog.scss */
 .goog-menu-button-outer-box,
 .goog-menu-button-inner-box {
   border-style: solid;
@@ -220,14 +220,14 @@
   vertical-align: top;
 }
 
-/* line 204, ../nrg/sass/goog.scss */
+/* line 204, goog.scss */
 .goog-menu-button-outer-box {
   margin: 0;
   border-width: 1px 0;
   padding: 0;
 }
 
-/* line 209, ../nrg/sass/goog.scss */
+/* line 209, goog.scss */
 .goog-menu-button-inner-box {
   margin: 0 -1px;
   border-width: 0 1px;
@@ -235,14 +235,14 @@
 }
 
 /* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
-/* line 216, ../nrg/sass/goog.scss */
+/* line 216, goog.scss */
 * html .goog-menu-button-inner-box {
   /* IE6 needs to have the box shifted to make the borders line up. */
   left: -1px;
 }
 
 /* Pre-IE7 BiDi fixes. */
-/* line 222, ../nrg/sass/goog.scss */
+/* line 222, goog.scss */
 * html .goog-menu-button-rtl .goog-menu-button-outer-box {
   /* @noflip */
   left: -1px;
@@ -250,21 +250,21 @@
   right: auto;
 }
 
-/* line 226, ../nrg/sass/goog.scss */
+/* line 226, goog.scss */
 * html .goog-menu-button-rtl .goog-menu-button-inner-box {
   /* @noflip */
   right: auto;
 }
 
 /* IE7-only hack; ignored by all other browsers. */
-/* line 231, ../nrg/sass/goog.scss */
+/* line 231, goog.scss */
 *:first-child + html .goog-menu-button-inner-box {
   /* IE7 needs to have the box shifted to make the borders line up. */
   left: -1px;
 }
 
 /* IE7 BiDi fix. */
-/* line 236, ../nrg/sass/goog.scss */
+/* line 236, goog.scss */
 *:first-child + html .goog-menu-button-rtl .goog-menu-button-inner-box {
   /* @noflip */
   left: 1px;
@@ -273,7 +273,7 @@
 }
 
 /* Safari-only hacks. */
-/* line 242, ../nrg/sass/goog.scss */
+/* line 242, goog.scss */
 ::root .goog-menu-button,
 ::root .goog-menu-button-outer-box,
 ::root .goog-menu-button-inner-box {
@@ -281,7 +281,7 @@
   line-height: 0;
 }
 
-/* line 248, ../nrg/sass/goog.scss */
+/* line 248, goog.scss */
 ::root .goog-menu-button-caption,
 ::root .goog-menu-button-dropdown {
   /* Required to make pseudo-rounded corners work on Safari. */
@@ -289,7 +289,7 @@
 }
 
 /* State: disabled. */
-/* line 255, ../nrg/sass/goog.scss */
+/* line 255, goog.scss */
 .goog-menu-button-disabled {
   background-image: none !important;
   opacity: 0.3;
@@ -297,7 +297,7 @@
   filter: alpha(opacity=30);
 }
 
-/* line 261, ../nrg/sass/goog.scss */
+/* line 261, goog.scss */
 .goog-menu-button-disabled .goog-menu-button-outer-box,
 .goog-menu-button-disabled .goog-menu-button-inner-box,
 .goog-menu-button-disabled .goog-menu-button-caption,
@@ -307,21 +307,21 @@
 }
 
 /* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
-/* line 270, ../nrg/sass/goog.scss */
+/* line 270, goog.scss */
 * html .goog-menu-button-disabled {
   margin: 2px 1px !important;
   padding: 0 1px !important;
 }
 
 /* IE7-only hack; ignored by all other browsers. */
-/* line 276, ../nrg/sass/goog.scss */
+/* line 276, goog.scss */
 *:first-child + html .goog-menu-button-disabled {
   margin: 2px 1px !important;
   padding: 0 1px !important;
 }
 
 /* State: hover. */
-/* line 282, ../nrg/sass/goog.scss */
+/* line 282, goog.scss */
 .goog-menu-button-hover .goog-menu-button-outer-box,
 .goog-menu-button-hover .goog-menu-button-inner-box {
   border-color: #9cf #69e #69e #7af !important;
@@ -329,7 +329,7 @@
 }
 
 /* State: active, open. */
-/* line 288, ../nrg/sass/goog.scss */
+/* line 288, goog.scss */
 .goog-menu-button-active,
 .goog-menu-button-open {
   background-color: #bbb;
@@ -337,21 +337,21 @@
 }
 
 /* State: focused. */
-/* line 295, ../nrg/sass/goog.scss */
+/* line 295, goog.scss */
 .goog-menu-button-focused .goog-menu-button-outer-box,
 .goog-menu-button-focused .goog-menu-button-inner-box {
   border-color: orange;
 }
 
 /* Caption style. */
-/* line 301, ../nrg/sass/goog.scss */
+/* line 301, goog.scss */
 .goog-menu-button-caption {
   padding: 0 4px 0 0;
   vertical-align: top;
 }
 
 /* Dropdown arrow style. */
-/* line 307, ../nrg/sass/goog.scss */
+/* line 307, goog.scss */
 .goog-menu-button-dropdown {
   height: 15px;
   width: 7px;
@@ -362,26 +362,26 @@
 
 /* Pill (collapsed border) styles. */
 /* TODO(gboyer): Remove specific menu button styles and have any button support being a menu button. */
-/* line 317, ../nrg/sass/goog.scss */
+/* line 317, goog.scss */
 .goog-menu-button-collapse-right,
 .goog-menu-button-collapse-right .goog-menu-button-outer-box,
 .goog-menu-button-collapse-right .goog-menu-button-inner-box {
   margin-right: 0;
 }
 
-/* line 323, ../nrg/sass/goog.scss */
+/* line 323, goog.scss */
 .goog-menu-button-collapse-left,
 .goog-menu-button-collapse-left .goog-menu-button-outer-box,
 .goog-menu-button-collapse-left .goog-menu-button-inner-box {
   margin-left: 0;
 }
 
-/* line 329, ../nrg/sass/goog.scss */
+/* line 329, goog.scss */
 .goog-menu-button-collapse-left .goog-menu-button-inner-box {
   border-left: 1px solid #fff;
 }
 
-/* line 333, ../nrg/sass/goog.scss */
+/* line 333, goog.scss */
 .goog-menu-button-collapse-left.goog-menu-button-checked
 .goog-menu-button-inner-box {
   border-left: 1px solid #ddd;
@@ -398,7 +398,7 @@
  *
  * @author attila@google.com (Attila Bodis)
  */
-/* line 350, ../nrg/sass/goog.scss */
+/* line 350, goog.scss */
 .goog-custom-button {
   margin: 2px;
   border: 0;
@@ -415,7 +415,7 @@
 }
 
 /* Pseudo-rounded corners. */
-/* line 366, ../nrg/sass/goog.scss */
+/* line 366, goog.scss */
 .goog-custom-button-outer-box,
 .goog-custom-button-inner-box {
   border-style: solid;
@@ -423,14 +423,14 @@
   vertical-align: top;
 }
 
-/* line 373, ../nrg/sass/goog.scss */
+/* line 373, goog.scss */
 .goog-custom-button-outer-box {
   margin: 0;
   border-width: 1px 0;
   padding: 0;
 }
 
-/* line 379, ../nrg/sass/goog.scss */
+/* line 379, goog.scss */
 .goog-custom-button-inner-box {
   margin: 0 -1px;
   border-width: 0 1px;
@@ -440,55 +440,55 @@
 }
 
 /* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
-/* line 387, ../nrg/sass/goog.scss */
+/* line 387, goog.scss */
 * html .goog-custom-button-inner-box {
   /* IE6 needs to have the box shifted to make the borders line up. */
   left: -1px;
 }
 
 /* Pre-IE7 BiDi fixes. */
-/* line 392, ../nrg/sass/goog.scss */
+/* line 392, goog.scss */
 * html .goog-custom-button-rtl .goog-custom-button-outer-box {
   /* @noflip */
   left: -1px;
 }
 
-/* line 395, ../nrg/sass/goog.scss */
+/* line 395, goog.scss */
 * html .goog-custom-button-rtl .goog-custom-button-inner-box {
   /* @noflip */
   right: auto;
 }
 
 /* IE7-only hack; ignored by all other browsers. */
-/* line 400, ../nrg/sass/goog.scss */
+/* line 400, goog.scss */
 *:first-child + html .goog-custom-button-inner-box {
   /* IE7 needs to have the box shifted to make the borders line up. */
   left: -1px;
 }
 
 /* IE7 BiDi fix. */
-/* line 405, ../nrg/sass/goog.scss */
+/* line 405, goog.scss */
 *:first-child + html .goog-custom-button-rtl .goog-custom-button-inner-box {
   /* @noflip */
   left: 1px;
 }
 
 /* Safari-only hacks. */
-/* line 410, ../nrg/sass/goog.scss */
+/* line 410, goog.scss */
 ::root .goog-custom-button,
 ::root .goog-custom-button-outer-box {
   /* Required to make pseudo-rounded corners work on Safari. */
   line-height: 0;
 }
 
-/* line 416, ../nrg/sass/goog.scss */
+/* line 416, goog.scss */
 ::root .goog-custom-button-inner-box {
   /* Required to make pseudo-rounded corners work on Safari. */
   line-height: normal;
 }
 
 /* State: disabled. */
-/* line 422, ../nrg/sass/goog.scss */
+/* line 422, goog.scss */
 .goog-custom-button-disabled {
   background-image: none !important;
   opacity: 0.3;
@@ -496,7 +496,7 @@
   filter: alpha(opacity=30);
 }
 
-/* line 429, ../nrg/sass/goog.scss */
+/* line 429, goog.scss */
 .goog-custom-button-disabled .goog-custom-button-outer-box,
 .goog-custom-button-disabled .goog-custom-button-inner-box {
   color: #333 !important;
@@ -504,21 +504,21 @@
 }
 
 /* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
-/* line 436, ../nrg/sass/goog.scss */
+/* line 436, goog.scss */
 * html .goog-custom-button-disabled {
   margin: 2px 1px !important;
   padding: 0 1px !important;
 }
 
 /* IE7-only hack; ignored by all other browsers. */
-/* line 442, ../nrg/sass/goog.scss */
+/* line 442, goog.scss */
 *:first-child + html .goog-custom-button-disabled {
   margin: 2px 1px !important;
   padding: 0 1px !important;
 }
 
 /* State: hover. */
-/* line 448, ../nrg/sass/goog.scss */
+/* line 448, goog.scss */
 .goog-custom-button-hover .goog-custom-button-outer-box,
 .goog-custom-button-hover .goog-custom-button-inner-box {
   border-color: #9cf #69e #69e #7af !important;
@@ -526,7 +526,7 @@
 }
 
 /* State: active, checked. */
-/* line 454, ../nrg/sass/goog.scss */
+/* line 454, goog.scss */
 .goog-custom-button-active,
 .goog-custom-button-checked {
   background-color: #bbb;
@@ -534,46 +534,46 @@
 }
 
 /* State: focused. */
-/* line 461, ../nrg/sass/goog.scss */
+/* line 461, goog.scss */
 .goog-custom-button-focused .goog-custom-button-outer-box,
 .goog-custom-button-focused .goog-custom-button-inner-box {
   border-color: orange;
 }
 
 /* Pill (collapsed border) styles. */
-/* line 467, ../nrg/sass/goog.scss */
+/* line 467, goog.scss */
 .goog-custom-button-collapse-right,
 .goog-custom-button-collapse-right .goog-custom-button-outer-box,
 .goog-custom-button-collapse-right .goog-custom-button-inner-box {
   margin-right: 0;
 }
 
-/* line 473, ../nrg/sass/goog.scss */
+/* line 473, goog.scss */
 .goog-custom-button-collapse-left,
 .goog-custom-button-collapse-left .goog-custom-button-outer-box,
 .goog-custom-button-collapse-left .goog-custom-button-inner-box {
   margin-left: 0;
 }
 
-/* line 479, ../nrg/sass/goog.scss */
+/* line 479, goog.scss */
 .goog-custom-button-collapse-left .goog-custom-button-inner-box {
   border-left: 1px solid #fff;
 }
 
-/* line 483, ../nrg/sass/goog.scss */
+/* line 483, goog.scss */
 .goog-custom-button-collapse-left.goog-custom-button-checked
 .goog-custom-button-inner-box {
   border-left: 1px solid #ddd;
 }
 
 /* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
-/* line 489, ../nrg/sass/goog.scss */
+/* line 489, goog.scss */
 * html .goog-custom-button-collapse-left .goog-custom-button-inner-box {
   left: 0;
 }
 
 /* IE7-only hack; ignored by all other browsers. */
-/* line 494, ../nrg/sass/goog.scss */
+/* line 494, goog.scss */
 *:first-child + html .goog-custom-button-collapse-left
 .goog-custom-button-inner-box {
   left: 0;
@@ -587,7 +587,7 @@
  */
 /* Author: pallosp@google.com (Peter Pallos) */
 /* Sample 3-state checkbox styles. */
-/* line 509, ../nrg/sass/goog.scss */
+/* line 509, goog.scss */
 .goog-checkbox {
   border: 1px solid #1C5180;
   display: -moz-inline-box;
@@ -600,22 +600,22 @@
   width: 11px;
 }
 
-/* line 520, ../nrg/sass/goog.scss */
+/* line 520, goog.scss */
 .goog-checkbox-checked {
   background: #fff url(//ssl.gstatic.com/closure/check-sprite.gif) no-repeat 2px center;
 }
 
-/* line 524, ../nrg/sass/goog.scss */
+/* line 524, goog.scss */
 .goog-checkbox-undetermined {
   background: #bbb url(//ssl.gstatic.com/closure/check-sprite.gif) no-repeat 2px center;
 }
 
-/* line 528, ../nrg/sass/goog.scss */
+/* line 528, goog.scss */
 .goog-checkbox-unchecked {
   background: #fff;
 }
 
-/* line 532, ../nrg/sass/goog.scss */
+/* line 532, goog.scss */
 .goog-checkbox-disabled {
   border: 1px solid lightgray;
   background-position: -7px;
@@ -636,7 +636,7 @@
  * @author arv@google.com (Erik Arvidsson)
  * @author manucornet@google.com (Manu Cornet)
  */
-/* line 553, ../nrg/sass/goog.scss */
+/* line 553, goog.scss */
 .goog-hsv-palette,
 .goog-hsv-palette-sm {
   position: relative;
@@ -646,19 +646,19 @@
   height: 276px;
 }
 
-/* line 562, ../nrg/sass/goog.scss */
+/* line 562, goog.scss */
 .goog-hsv-palette-sm {
   width: 182px;
   height: 185px;
 }
 
-/* line 567, ../nrg/sass/goog.scss */
+/* line 567, goog.scss */
 .goog-hsv-palette label span,
 .goog-hsv-palette-sm label span {
   display: none;
 }
 
-/* line 572, ../nrg/sass/goog.scss */
+/* line 572, goog.scss */
 .goog-hsv-palette-hs-backdrop,
 .goog-hsv-palette-sm-hs-backdrop,
 .goog-hsv-palette-hs-image,
@@ -671,7 +671,7 @@
   border: 1px solid #999;
 }
 
-/* line 584, ../nrg/sass/goog.scss */
+/* line 584, goog.scss */
 .goog-hsv-palette-sm-hs-backdrop,
 .goog-hsv-palette-sm-hs-image {
   top: 45px;
@@ -679,13 +679,13 @@
   height: 128px;
 }
 
-/* line 591, ../nrg/sass/goog.scss */
+/* line 591, goog.scss */
 .goog-hsv-palette-hs-backdrop,
 .goog-hsv-palette-sm-hs-backdrop {
   background-color: #000;
 }
 
-/* line 596, ../nrg/sass/goog.scss */
+/* line 596, goog.scss */
 .goog-hsv-palette-hs-image,
 .goog-hsv-palette-v-image,
 .goog-hsv-palette-hs-handle,
@@ -693,7 +693,7 @@
   background-image: url(//ssl.gstatic.com/closure/hsv-sprite.png);
 }
 
-/* line 603, ../nrg/sass/goog.scss */
+/* line 603, goog.scss */
 .goog-hsv-palette-noalpha .goog-hsv-palette-hs-image,
 .goog-hsv-palette-noalpha .goog-hsv-palette-v-image,
 .goog-hsv-palette-noalpha .goog-hsv-palette-hs-handle,
@@ -701,7 +701,7 @@
   background-image: url(//ssl.gstatic.com/closure/hsv-sprite.gif);
 }
 
-/* line 610, ../nrg/sass/goog.scss */
+/* line 610, goog.scss */
 .goog-hsv-palette-sm-hs-image,
 .goog-hsv-palette-sm-v-image,
 .goog-hsv-palette-sm-hs-handle,
@@ -709,7 +709,7 @@
   background-image: url(//ssl.gstatic.com/closure/hsv-sprite-sm.png);
 }
 
-/* line 617, ../nrg/sass/goog.scss */
+/* line 617, goog.scss */
 .goog-hsv-palette-noalpha .goog-hsv-palette-sm-hs-image,
 .goog-hsv-palette-noalpha .goog-hsv-palette-sm-v-image,
 .goog-hsv-palette-noalpha .goog-hsv-palette-sm-hs-handle,
@@ -717,13 +717,13 @@
   background-image: url(//ssl.gstatic.com/closure/hsv-sprite-sm.gif);
 }
 
-/* line 624, ../nrg/sass/goog.scss */
+/* line 624, goog.scss */
 .goog-hsv-palette-hs-image,
 .goog-hsv-palette-sm-hs-image {
   background-position: 0 0;
 }
 
-/* line 629, ../nrg/sass/goog.scss */
+/* line 629, goog.scss */
 .goog-hsv-palette-hs-handle,
 .goog-hsv-palette-sm-hs-handle {
   position: absolute;
@@ -735,13 +735,13 @@
   background-position: 0 -256px;
 }
 
-/* line 640, ../nrg/sass/goog.scss */
+/* line 640, goog.scss */
 .goog-hsv-palette-sm-hs-handle {
   top: 40px;
   background-position: 0 -128px;
 }
 
-/* line 645, ../nrg/sass/goog.scss */
+/* line 645, goog.scss */
 .goog-hsv-palette-v-image,
 .goog-hsv-palette-sm-v-image {
   position: absolute;
@@ -754,7 +754,7 @@
   background-position: -256px 0;
 }
 
-/* line 657, ../nrg/sass/goog.scss */
+/* line 657, goog.scss */
 .goog-hsv-palette-sm-v-image {
   top: 45px;
   left: 155px;
@@ -763,7 +763,7 @@
   background-position: -128px 0;
 }
 
-/* line 665, ../nrg/sass/goog.scss */
+/* line 665, goog.scss */
 .goog-hsv-palette-v-handle,
 .goog-hsv-palette-sm-v-handle {
   position: absolute;
@@ -775,7 +775,7 @@
   overflow: hidden;
 }
 
-/* line 676, ../nrg/sass/goog.scss */
+/* line 676, goog.scss */
 .goog-hsv-palette-sm-v-handle {
   top: 40px;
   left: 148px;
@@ -783,7 +783,7 @@
   background-position: -11px -128px;
 }
 
-/* line 683, ../nrg/sass/goog.scss */
+/* line 683, goog.scss */
 .goog-hsv-palette-swatch,
 .goog-hsv-palette-sm-swatch {
   position: absolute;
@@ -795,7 +795,7 @@
   background-color: #fff;
 }
 
-/* line 694, ../nrg/sass/goog.scss */
+/* line 694, goog.scss */
 .goog-hsv-palette-sm-swatch {
   top: 10px;
   right: auto;
@@ -804,7 +804,7 @@
   height: 22px;
 }
 
-/* line 702, ../nrg/sass/goog.scss */
+/* line 702, goog.scss */
 .goog-hsv-palette-input,
 .goog-hsv-palette-sm-input {
   position: absolute;
@@ -813,7 +813,7 @@
   width: 65px;
 }
 
-/* line 710, ../nrg/sass/goog.scss */
+/* line 710, goog.scss */
 .goog-hsv-palette-sm-input {
   top: 10px;
   right: auto;
@@ -832,7 +832,7 @@
  * @author ssaviano@google.com (Steven Saviano)
  * @author attila@google.com (Attila Bodis)
  */
-/* line 730, ../nrg/sass/goog.scss */
+/* line 730, goog.scss */
 .modal-dialog {
   background: #c1d9ff;
   border: 1px solid #3a5774;
@@ -841,7 +841,7 @@
   position: absolute;
 }
 
-/* line 738, ../nrg/sass/goog.scss */
+/* line 738, goog.scss */
 .modal-dialog a,
 .modal-dialog a:link,
 .modal-dialog a:visited {
@@ -849,7 +849,7 @@
   cursor: pointer;
 }
 
-/* line 745, ../nrg/sass/goog.scss */
+/* line 745, goog.scss */
 .modal-dialog-bg {
   background: #666;
   left: 0;
@@ -857,7 +857,7 @@
   top: 0;
 }
 
-/* line 752, ../nrg/sass/goog.scss */
+/* line 752, goog.scss */
 .modal-dialog-title {
   background: #e0edfe;
   color: #000;
@@ -871,7 +871,7 @@
   /* Ensures proper width in IE6 RTL. */
 }
 
-/* line 766, ../nrg/sass/goog.scss */
+/* line 766, goog.scss */
 .modal-dialog-title-close {
   /* Client apps may override the URL at which they serve the sprite. */
   background: #e0edfe url(//ssl.gstatic.com/editor/editortoolbar.png) no-repeat -528px 0;
@@ -884,34 +884,26 @@
   vertical-align: middle;
 }
 
-/* line 778, ../nrg/sass/goog.scss */
+/* line 778, goog.scss */
 .modal-dialog-buttons,
 .modal-dialog-content {
   background-color: #fff;
   padding: 8px;
 }
 
-/* line 784, ../nrg/sass/goog.scss */
+/* line 784, goog.scss */
 .goog-buttonset-default {
   font-weight: bold;
 }
 
-/* line 28, ../nrg/sass/nrg.scss */
-.xiv-ui-thumbnail-hoverinfo, .xiv-ui-viewboxdialogs-infodialog {
-  color: white;
-  font-size: 12px;
-  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
-  line-height: 16px;
-}
-
-/* line 34, ../nrg/sass/nrg.scss */
+/* line 34, nrg.scss */
 .nrg-ui-slider {
   position: absolute;
   outline: 0;
   /* removes chrome blue border */
 }
 
-/* line 41, ../nrg/sass/nrg.scss */
+/* line 41, nrg.scss */
 .nrg-ui-slider-horizontal {
   width: 100%;
   height: 10px;
@@ -919,7 +911,7 @@
   left: 0px;
 }
 
-/* line 50, ../nrg/sass/nrg.scss */
+/* line 50, nrg.scss */
 .nrg-ui-slider-vertical {
   width: 10px;
   height: 100%;
@@ -930,7 +922,7 @@
 /*
  * TRACK
  */
-/* line 61, ../nrg/sass/nrg.scss */
+/* line 61, nrg.scss */
 .nrg-ui-slider-track {
   position: absolute;
   top: 0px;
@@ -940,7 +932,7 @@
   /*background-color : rgba(100,100,100,0);*/
 }
 
-/* line 72, ../nrg/sass/nrg.scss */
+/* line 72, nrg.scss */
 .nrg-ui-slider-track-hovered {
   /*box-sizing: border-box;
   background-color: rgb(50,50,50);
@@ -950,7 +942,7 @@
 /*
  * THUMB
  */
-/* line 83, ../nrg/sass/nrg.scss */
+/* line 83, nrg.scss */
 .nrg-ui-slider-thumb {
   position: absolute;
   top: 0px;
@@ -960,20 +952,20 @@
   border-radius: 4px;
 }
 
-/* line 93, ../nrg/sass/nrg.scss */
+/* line 93, nrg.scss */
 .nrg-ui-slider-thumb-horizontal {
   width: 30px;
   height: 100%;
 }
 
-/* line 99, ../nrg/sass/nrg.scss */
+/* line 99, nrg.scss */
 .nrg-ui-slider-thumb-vertical {
   height: 30px;
   width: 100%;
   left: 0px;
 }
 
-/* line 106, ../nrg/sass/nrg.scss */
+/* line 106, nrg.scss */
 .nrg-ui-slider-thumb-hovered {
   box-sizing: border-box;
   background-color: gainsboro;
@@ -983,7 +975,7 @@
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 116, ../nrg/sass/nrg.scss */
+/* line 116, nrg.scss */
 .nrg-ui-hoverinput {
   position: absolute;
   top: 3px;
@@ -997,7 +989,7 @@
   transition-timing-function: ease-out;
 }
 
-/* line 128, ../nrg/sass/nrg.scss */
+/* line 128, nrg.scss */
 .nrg-ui-hoverinput-display,
 .nrg-ui-hoverinput-inputbox {
   position: absolute;
@@ -1010,14 +1002,14 @@
   white-space: nowrap;
 }
 
-/* line 140, ../nrg/sass/nrg.scss */
+/* line 140, nrg.scss */
 .nrg-ui-hoverinput-display {
   color: #9b9b9b;
   text-align: right;
   text-wrap: none;
 }
 
-/* line 148, ../nrg/sass/nrg.scss */
+/* line 148, nrg.scss */
 .nrg-ui-hoverinput-inputbox {
   opacity: 0;
   width: 100%;
@@ -1036,12 +1028,12 @@
   text-align: right;
 }
 
-/* line 166, ../nrg/sass/nrg.scss */
+/* line 166, nrg.scss */
 .nrg-ui-hoverinput:hover {
   background-color: rgba(0, 0, 1, 0);
 }
 
-/* line 170, ../nrg/sass/nrg.scss */
+/* line 170, nrg.scss */
 .nrg-ui-hoverinput:hover > .nrg-ui-hoverinput-inputbox {
   opacity: 1;
 }
@@ -1049,7 +1041,7 @@
 /**
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 178, ../nrg/sass/nrg.scss */
+/* line 178, nrg.scss */
 .nrg-ui-scrollablecontainer {
   top: 0px;
   left: 0px;
@@ -1061,7 +1053,7 @@
   overflow-y: hidden;
 }
 
-/* line 190, ../nrg/sass/nrg.scss */
+/* line 190, nrg.scss */
 .nrg-ui-scrollablecontainer-scrollarea {
   display: block;
   position: relative;
@@ -1069,7 +1061,7 @@
   left: 19px;
 }
 
-/* line 198, ../nrg/sass/nrg.scss */
+/* line 198, nrg.scss */
 .nrg-ui-scrollablecontainer-zippyheader {
   position: relative;
   background-color: #323232;
@@ -1084,32 +1076,32 @@
   margin-bottom: 4px;
 }
 
-/* line 213, ../nrg/sass/nrg.scss */
+/* line 213, nrg.scss */
 .nrg-ui-scrollablecontainer-zippyheader-mouseover {
   background-color: #5a5a5a;
   color: white;
 }
 
-/* line 220, ../nrg/sass/nrg.scss */
+/* line 220, nrg.scss */
 .nrg-ui-scrollablecontainer-zippyheaderlabel, .nrg-ui-scrollablecontainer-zippyexpandicon {
   position: absolute;
   margin-left: .3em;
   background-color: none;
 }
 
-/* line 227, ../nrg/sass/nrg.scss */
+/* line 227, nrg.scss */
 .nrg-ui-scrollablecontainer-zippyexpandicon {
   right: .5em;
   margin-left: -10px;
   color: black;
 }
 
-/* line 234, ../nrg/sass/nrg.scss */
+/* line 234, nrg.scss */
 .nrg-ui-scrollablecontainer-zippyexpandicon-mouseover {
   color: black;
 }
 
-/* line 241, ../nrg/sass/nrg.scss */
+/* line 241, nrg.scss */
 .nrg-ui-scrollablecontainer-zippycontent {
   overflow: visible;
   width: 100%;
@@ -1118,7 +1110,7 @@
   margin-bottom: 4px;
 }
 
-/* line 251, ../nrg/sass/nrg.scss */
+/* line 251, nrg.scss */
 .nrg-ui-scrollablecontainer-slider {
   position: absolute;
   width: 8px;
@@ -1130,12 +1122,12 @@
   transition-duration: .2;
 }
 
-/* line 263, ../nrg/sass/nrg.scss */
+/* line 263, nrg.scss */
 .nrg-ui-scrollablecontainer-slider:hover {
   background-color: black;
 }
 
-/* line 267, ../nrg/sass/nrg.scss */
+/* line 267, nrg.scss */
 .nrg-ui-scrollablecontainer-slider-thumb {
   background-color: #505050;
   width: 4px;
@@ -1147,26 +1139,26 @@
   transition-timing-function: ease-out;
 }
 
-/* line 277, ../nrg/sass/nrg.scss */
+/* line 277, nrg.scss */
 .nrg-ui-scrollablecontainer-slider:hover > .nrg-ui-scrollablecontainer-slider-thumb {
   background-color: #787878;
   width: 8px;
   left: 3px;
 }
 
-/* line 283, ../nrg/sass/nrg.scss */
+/* line 283, nrg.scss */
 .nrg-ui-scrollablecontainer-slider-thumb:active {
   background-color: #787878;
   width: 8px;
   left: 3px;
 }
 
-/* line 291, ../nrg/sass/nrg.scss */
+/* line 291, nrg.scss */
 .nrg-ui-scrollablecontainer-slider-track {
   background-color: transparent;
 }
 
-/* line 296, ../nrg/sass/nrg.scss */
+/* line 296, nrg.scss */
 .nrg-ui-scrollablecontainer-slider-track-hovered {
   /*
   box-sizing: border-box;
@@ -1180,7 +1172,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 312, ../nrg/sass/nrg.scss */
+/* line 312, nrg.scss */
 .nrg-ui-scrollablezippytree {
   position: absolute;
   top: 0px;
@@ -1189,7 +1181,7 @@
   width: 100%;
 }
 
-/* line 321, ../nrg/sass/nrg.scss */
+/* line 321, nrg.scss */
 .nrg-ui-scrollablezippytree-zippytree {
   top: 0px;
   left: 0px;
@@ -1199,7 +1191,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 331, ../nrg/sass/nrg.scss */
+/* line 331, nrg.scss */
 .nrg-ui-zippynode-header {
   position: relative;
   outline: 0;
@@ -1217,13 +1209,13 @@
   margin-top: 5px;
 }
 
-/* line 348, ../nrg/sass/nrg.scss */
+/* line 348, nrg.scss */
 .nrg-ui-zippynode-header:hover {
   background-color: #323232;
   color: white;
 }
 
-/* line 355, ../nrg/sass/nrg.scss */
+/* line 355, nrg.scss */
 .nrg-ui-zippynode-header-label, .nrg-ui-zippynode-expandicon {
   position: absolute;
   margin-left: .3em;
@@ -1232,19 +1224,19 @@
   overflow: hidden;
 }
 
-/* line 364, ../nrg/sass/nrg.scss */
+/* line 364, nrg.scss */
 .nrg-ui-zippynode-expandicon {
   right: .5em;
   margin-left: -10px;
   color: #646464;
 }
 
-/* line 371, ../nrg/sass/nrg.scss */
+/* line 371, nrg.scss */
 .nrg-ui-zippynode-expandicon-mouseover {
   color: white;
 }
 
-/* line 378, ../nrg/sass/nrg.scss */
+/* line 378, nrg.scss */
 .nrg-ui-zippynode-content {
   overflow: visible;
   width: 100%;
@@ -1253,7 +1245,7 @@
   z-index: 1000;
 }
 
-/* line 389, ../nrg/sass/nrg.scss */
+/* line 389, nrg.scss */
 .nrg-ui-zippynode-loading-holder {
   position: relative;
   height: 87px;
@@ -1262,14 +1254,14 @@
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 395, ../nrg/sass/nrg.scss */
+/* line 395, nrg.scss */
 .nrg-ui-zippynode-loading-text {
   position: absolute;
   top: calc(50% - 12px);
   left: calc(50% - 23px);
 }
 
-/* line 402, ../nrg/sass/nrg.scss */
+/* line 402, nrg.scss */
 .nrg-ui-zippynode-loading-image {
   position: absolute;
   width: 150px;
@@ -1282,7 +1274,7 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 428, ../nrg/sass/nrg.scss */
+/* line 428, nrg.scss */
 .nrg-ui-zippytree-rootnode {
   margin-bottom: 0px;
   height: 0px;
@@ -1291,7 +1283,7 @@
 /**
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 436, ../nrg/sass/nrg.scss */
+/* line 436, nrg.scss */
 .nrg-ui-dialog {
   position: absolute;
   outline: none;
@@ -1305,7 +1297,7 @@
   overflow: hidden;
 }
 
-/* line 448, ../nrg/sass/nrg.scss */
+/* line 448, nrg.scss */
 .nrg-ui-dialog-overlay {
   position: absolute;
   left: 30%;
@@ -1319,7 +1311,7 @@
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 460, ../nrg/sass/nrg.scss */
+/* line 460, nrg.scss */
 .nrg-ui-dialog-background {
   position: absolute;
   left: 0px;
@@ -1331,13 +1323,13 @@
   display: inline-block;
 }
 
-/* line 478, ../nrg/sass/nrg.scss */
+/* line 478, nrg.scss */
 .nrg-ui-dialog-subtext {
   text-align: left;
   font-size: 12px;
 }
 
-/* line 485, ../nrg/sass/nrg.scss */
+/* line 485, nrg.scss */
 .nrg-ui-dialog-text {
   text-align: center;
   color: white;
@@ -1345,13 +1337,13 @@
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 490, ../nrg/sass/nrg.scss */
+/* line 490, nrg.scss */
 .nrg-ui-dialog-closebutton-image, .nrg-ui-dialog-closebutton {
   height: 10px;
   width: 10px;
 }
 
-/* line 494, ../nrg/sass/nrg.scss */
+/* line 494, nrg.scss */
 .nrg-ui-dialog-closebutton {
   position: absolute;
   cursor: pointer;
@@ -1364,7 +1356,7 @@
   outline: none;
 }
 
-/* line 512, ../nrg/sass/nrg.scss */
+/* line 512, nrg.scss */
 .modal-dialog-title-text {
   top: 1px;
   left: 7px;
@@ -1372,7 +1364,7 @@
   text-align: center;
 }
 
-/* line 520, ../nrg/sass/nrg.scss */
+/* line 520, nrg.scss */
 .nrg-ui-dialog-title {
   background-color: #3c3c3c;
   height: 17px;
@@ -1387,19 +1379,19 @@
   left: -3px;
 }
 
-/* line 533, ../nrg/sass/nrg.scss */
+/* line 533, nrg.scss */
 .nrg-ui-dialog-content {
   background-color: none;
   background: none;
 }
 
-/* line 539, ../nrg/sass/nrg.scss */
+/* line 539, nrg.scss */
 .nrg-ui-dialog-buttons {
   background-color: none;
   background: none;
 }
 
-/* line 546, ../nrg/sass/nrg.scss */
+/* line 546, nrg.scss */
 .nrg-ui-dialog-yesnomodal {
   position: absolute;
   top: calc(50% - 60px);
@@ -1422,14 +1414,14 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 568, ../nrg/sass/nrg.scss */
+/* line 568, nrg.scss */
 .nrg-ui-errordialog {
   width: 400px;
   height: 300px;
   z-index: 100000;
 }
 
-/* line 576, ../nrg/sass/nrg.scss */
+/* line 576, nrg.scss */
 .nrg-ui-errordialog-image {
   position: relative;
   width: 80px;
@@ -1437,7 +1429,7 @@
   left: calc(50% - 40px);
 }
 
-/* line 585, ../nrg/sass/nrg.scss */
+/* line 585, nrg.scss */
 .nrg-ui-errordialog-text {
   top: 145px;
 }
@@ -1445,7 +1437,7 @@
 /*
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 593, ../nrg/sass/nrg.scss */
+/* line 593, nrg.scss */
 .nrg-ui-thumbnail {
   position: absolute;
   width: 87px;
@@ -1458,7 +1450,7 @@
   border: solid 1px black;
 }
 
-/* line 606, ../nrg/sass/nrg.scss */
+/* line 606, nrg.scss */
 .nrg-ui-thumbnail-selectindicator {
   position: absolute;
   top: calc(50% - 34px);
@@ -1469,12 +1461,12 @@
   background-color: #646464;
 }
 
-/* line 617, ../nrg/sass/nrg.scss */
+/* line 617, nrg.scss */
 .nrg-ui-thumbnail-selectindicator-active {
   opacity: 1;
 }
 
-/* line 623, ../nrg/sass/nrg.scss */
+/* line 623, nrg.scss */
 .nrg-ui-thumbnail-selected {
   border: solid 1px #646464;
   -moz-box-sizing: border-box;
@@ -1483,7 +1475,7 @@
   box-sizing: border-box;
 }
 
-/* line 636, ../nrg/sass/nrg.scss */
+/* line 636, nrg.scss */
 .nrg-ui-thumbnail-hoverable:hover {
   background-color: #1e1e1e;
   z-index: 10000;
@@ -1492,19 +1484,19 @@
   border: solid 1px #282828;
 }
 
-/* line 645, ../nrg/sass/nrg.scss */
+/* line 645, nrg.scss */
 .nrg-ui-thumbnail-hoverable:hover > .nrg-ui-thumbnail-image {
   /*color: rgb(255,255,255);*/
   /*border-color: white;*/
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* line 651, ../nrg/sass/nrg.scss */
+/* line 651, nrg.scss */
 .nrg-ui-thumbnail-hoverable:hover > .nrg-ui-thumbnail-text {
   color: #d7d7d7;
 }
 
-/* line 655, ../nrg/sass/nrg.scss */
+/* line 655, nrg.scss */
 .nrg-ui-thumbnail-image, .nrg-ui-thumbnail-canvas {
   position: absolute;
   width: 70px;
@@ -1526,7 +1518,7 @@
   cursor: pointer;
 }
 
-/* line 679, ../nrg/sass/nrg.scss */
+/* line 679, nrg.scss */
 .nrg-ui-thumbnail-text {
   position: absolute;
   height: 70px;
@@ -1541,12 +1533,12 @@
   line-height: 17px;
 }
 
-/* line 693, ../nrg/sass/nrg.scss */
+/* line 693, nrg.scss */
 .nrg-ui-thumbnail-text-mouseover {
   color: #9b9b9b;
 }
 
-/* line 698, ../nrg/sass/nrg.scss */
+/* line 698, nrg.scss */
 .nrg-ui-thumbnail-canvas {
   top: 8px;
   left: 8px;
@@ -1555,28 +1547,28 @@
 /*******
 * Active state
 ********/
-/* line 709, ../nrg/sass/nrg.scss */
+/* line 709, nrg.scss */
 .nrg-ui-thumbnail-text-active {
   /*color : rgb(100,100,100);*/
 }
 
-/* line 713, ../nrg/sass/nrg.scss */
+/* line 713, nrg.scss */
 .nrg-ui-thumbnail-active {
   opacity: 1;
 }
 
-/* line 718, ../nrg/sass/nrg.scss */
+/* line 718, nrg.scss */
 .nrg-ui-thumbnail-image-active {
   /*border-left: solid 2px rgb(100,100,100);*/
 }
 
-/* line 724, ../nrg/sass/nrg.scss */
+/* line 724, nrg.scss */
 .nrg-ui-thumbnailgallery {
   position: absolute;
   overflow: hidden;
 }
 
-/* line 732, ../nrg/sass/nrg.scss */
+/* line 732, nrg.scss */
 .nrg-ui-thumbnailgallery-thumbnail {
   position: relative;
   width: 100%;
@@ -1586,7 +1578,7 @@
   cursor: pointer;
 }
 
-/* line 742, ../nrg/sass/nrg.scss */
+/* line 742, nrg.scss */
 .nrg-ui-thumbnailgallery-thumbnail-image {
   position: absolute;
   width: 160px;
@@ -1602,7 +1594,7 @@
   cursor: pointer;
 }
 
-/* line 758, ../nrg/sass/nrg.scss */
+/* line 758, nrg.scss */
 .nrg-ui-thumbnailgallery-thumbnail-text {
   position: absolute;
   height: 70px;
@@ -1614,14 +1606,14 @@
   line-height: 17px;
 }
 
-/* line 769, ../nrg/sass/nrg.scss */
+/* line 769, nrg.scss */
 .nrg-ui-resizable-boundary {
   position: absolute;
   border: 1px dotted red;
   background-color: rgba(255, 120, 120, 0.5);
 }
 
-/* line 776, ../nrg/sass/nrg.scss */
+/* line 776, nrg.scss */
 .nrg-ui-resizedragger {
   position: absolute;
   font-size: 0.1px;
@@ -1632,7 +1624,7 @@
 /**
   RIGHT AND LEFT
 */
-/* line 787, ../nrg/sass/nrg.scss */
+/* line 787, nrg.scss */
 .nrg-ui-resizedraggerright, .nrg-ui-resizedraggerleft {
   position: absolute;
   width: 7px;
@@ -1640,13 +1632,13 @@
   cursor: ew-resize;
 }
 
-/* line 794, ../nrg/sass/nrg.scss */
+/* line 794, nrg.scss */
 .nrg-ui-resizedraggerright {
   left: 100%;
   /*background-color: rgba(0,255,0,.5);*/
 }
 
-/* line 799, ../nrg/sass/nrg.scss */
+/* line 799, nrg.scss */
 .nrg-ui-resizedraggerleft {
   left: -7px;
 }
@@ -1654,7 +1646,7 @@
 /**
  * TOP AND BOTTOM
  */
-/* line 809, ../nrg/sass/nrg.scss */
+/* line 809, nrg.scss */
 .nrg-ui-resizedraggertop, .nrg-ui-resizedraggerbottom {
   position: absolute;
   left: 0px;
@@ -1663,13 +1655,13 @@
   cursor: ns-resize;
 }
 
-/* line 817, ../nrg/sass/nrg.scss */
+/* line 817, nrg.scss */
 .nrg-ui-resizedraggertop {
   top: -7px;
   /*background-color: rgba(0,255,0,.5);*/
 }
 
-/* line 822, ../nrg/sass/nrg.scss */
+/* line 822, nrg.scss */
 .nrg-ui-resizedraggerbottom {
   top: 100%;
   /*background-color: rgba(255,0,0,.5);*/
@@ -1678,7 +1670,7 @@
 /**
  * CORNERS
  */
-/* line 834, ../nrg/sass/nrg.scss */
+/* line 834, nrg.scss */
 .nrg-ui-resizedraggertopright,
 .nrg-ui-resizedraggertopleft,
 .nrg-ui-resizedraggerbottomright,
@@ -1689,13 +1681,13 @@
   cursor: move;
 }
 
-/* line 845, ../nrg/sass/nrg.scss */
+/* line 845, nrg.scss */
 .nrg-ui-resizedraggertopright,
 .nrg-ui-resizedraggertopleft {
   top: calc(100% - 7px);
 }
 
-/* line 850, ../nrg/sass/nrg.scss */
+/* line 850, nrg.scss */
 .nrg-ui-resizedraggertopright {
   left: calc(100% - 7px);
   /*background-color: orange;*/
@@ -1707,28 +1699,28 @@
 /**
  * ELEMENT
  */
-/* line 862, ../nrg/sass/nrg.scss */
+/* line 862, nrg.scss */
 .nrg-ui-tabs {
   position: absolute;
   left: 0px;
 }
 
-/* line 867, ../nrg/sass/nrg.scss */
+/* line 867, nrg.scss */
 .nrg-ui-tabs-right {
   left: 0px;
 }
 
-/* line 872, ../nrg/sass/nrg.scss */
+/* line 872, nrg.scss */
 .nrg-ui-tabs-left {
   left: calc(100% - 18px);
 }
 
-/* line 877, ../nrg/sass/nrg.scss */
+/* line 877, nrg.scss */
 .nrg-ui-tabs-top {
   top: calc(100% - 18px);
 }
 
-/* line 882, ../nrg/sass/nrg.scss */
+/* line 882, nrg.scss */
 .nrg-ui-tabs-bottom {
   top: 0px;
 }
@@ -1736,7 +1728,7 @@
 /**
  * TABS
  */
-/* line 893, ../nrg/sass/nrg.scss */
+/* line 893, nrg.scss */
 .nrg-ui-tabs-tab {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1752,7 +1744,7 @@
   text-align: center;
 }
 
-/* line 907, ../nrg/sass/nrg.scss */
+/* line 907, nrg.scss */
 .nrg-ui-tabs-tab-top {
   height: 18px;
   top: 0px;
@@ -1760,7 +1752,7 @@
   border-bottom: none;
 }
 
-/* line 915, ../nrg/sass/nrg.scss */
+/* line 915, nrg.scss */
 .nrg-ui-tabs-tab-bottom {
   height: 18px;
   top: calc(100% - 18px);
@@ -1768,7 +1760,7 @@
   border-top: none;
 }
 
-/* line 923, ../nrg/sass/nrg.scss */
+/* line 923, nrg.scss */
 .nrg-ui-tabs-tab-right {
   width: 22px;
   left: calc(100% - 22px);
@@ -1778,7 +1770,7 @@
   border-bottom-right-radius: 7px;
 }
 
-/* line 933, ../nrg/sass/nrg.scss */
+/* line 933, nrg.scss */
 .nrg-ui-tabs-tab-left {
   width: 18px;
   left: 0px;
@@ -1786,27 +1778,27 @@
   border-right: none;
 }
 
-/* line 941, ../nrg/sass/nrg.scss */
+/* line 941, nrg.scss */
 .nrg-ui-tabs-tab-active {
   border: solid 1px #646464;
 }
 
-/* line 946, ../nrg/sass/nrg.scss */
+/* line 946, nrg.scss */
 .nrg-ui-tabs-tab-active-right {
   border-left: none;
 }
 
-/* line 951, ../nrg/sass/nrg.scss */
+/* line 951, nrg.scss */
 .nrg-ui-tabs-tab-active-top {
   border-bottom: none;
 }
 
-/* line 956, ../nrg/sass/nrg.scss */
+/* line 956, nrg.scss */
 .nrg-ui-tabs-tab-active {
   z-index: 1;
 }
 
-/* line 961, ../nrg/sass/nrg.scss */
+/* line 961, nrg.scss */
 .nrg-ui-tabs-icon {
   color: #646464;
   z-index: 11;
@@ -1818,32 +1810,32 @@
   display: table;
 }
 
-/* line 974, ../nrg/sass/nrg.scss */
+/* line 974, nrg.scss */
 .nrg-ui-tabs-icon-active {
   color: #646464;
 }
 
-/* line 979, ../nrg/sass/nrg.scss */
+/* line 979, nrg.scss */
 .nrg-ui-tabs-icon-top {
   width: 100%;
   height: 100%;
 }
 
-/* line 985, ../nrg/sass/nrg.scss */
+/* line 985, nrg.scss */
 .nrg-ui-tabs-icon-right {
   left: -24px;
   top: calc(50% - 5px);
   white-space: nowrap;
 }
 
-/* line 994, ../nrg/sass/nrg.scss */
+/* line 994, nrg.scss */
 .nrg-ui-tabs-icon-content {
   display: table-cell;
   text-align: center;
   vertical-align: middle;
 }
 
-/* line 1001, ../nrg/sass/nrg.scss */
+/* line 1001, nrg.scss */
 .nrg-ui-tabs-page {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1859,7 +1851,7 @@
   overflow: hidden;
 }
 
-/* line 1015, ../nrg/sass/nrg.scss */
+/* line 1015, nrg.scss */
 .nrg-ui-tabs-page-content {
   position: absolute;
   left: 0px;
@@ -1869,14 +1861,14 @@
   z-index: 2;
 }
 
-/* line 1026, ../nrg/sass/nrg.scss */
+/* line 1026, nrg.scss */
 .nrg-ui-tabs-page-active {
   border: solid 1px #646464;
   visibility: visible;
   z-index: 2;
 }
 
-/* line 1033, ../nrg/sass/nrg.scss */
+/* line 1033, nrg.scss */
 .nrg-ui-tabs-page-right, .nrg-ui-tabs-page-left {
   position: absolute;
   height: 100%;
@@ -1887,7 +1879,7 @@
   border-left: none;
 }
 
-/* line 1044, ../nrg/sass/nrg.scss */
+/* line 1044, nrg.scss */
 .nrg-ui-tabs-page-top, .nrg-ui-tabs-page-bottom {
   position: absolute;
   top: 18px;
@@ -1900,22 +1892,22 @@
 /**
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 1057, ../nrg/sass/nrg.scss */
+/* line 1057, nrg.scss */
 .nrg-ui-ziptabs {
   position: absolute;
 }
 
-/* line 1062, ../nrg/sass/nrg.scss */
+/* line 1062, nrg.scss */
 .nrg-ui-ziptabs:hover {
   opacity: 1;
 }
 
-/* line 1068, ../nrg/sass/nrg.scss */
+/* line 1068, nrg.scss */
 .nrg-ui-ziptabs-top, .nrg-ui-ziptabs-bottom {
   height: 18px;
 }
 
-/* line 1073, ../nrg/sass/nrg.scss */
+/* line 1073, nrg.scss */
 .nrg-ui-ziptabs-left, .nrg-ui-ziptabs-right {
   width: 18px;
   opacity: .7;
@@ -1925,7 +1917,7 @@
   transition-property: opacity;
 }
 
-/* line 1082, ../nrg/sass/nrg.scss */
+/* line 1082, nrg.scss */
 .nrg-ui-ziptabs-right:hover {
   opacity: 1;
 }
@@ -1933,26 +1925,26 @@
 /**
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1096, ../nrg/sass/nrg.scss */
+/* line 1096, nrg.scss */
 .nrg-ui-slideinmenu-icon {
   max-width: 100%;
   max-height: 100%;
   opacity: 1;
 }
 
-/* line 1103, ../nrg/sass/nrg.scss */
+/* line 1103, nrg.scss */
 .nrg-ui-slideinmenu-icon-hovered {
   opacity: 1;
 }
 
-/* line 1108, ../nrg/sass/nrg.scss */
+/* line 1108, nrg.scss */
 .nrg-ui-slideinmenu-menuholder {
   position: absolute;
   background-color: #ff6416;
   z-index: 4000;
 }
 
-/* line 1115, ../nrg/sass/nrg.scss */
+/* line 1115, nrg.scss */
 .nrg-ui-slideinmenu-menu {
   background-color: #7d7d7d;
   border: solid 1px #323232;
@@ -1961,7 +1953,7 @@
   width: 130px;
 }
 
-/* line 1124, ../nrg/sass/nrg.scss */
+/* line 1124, nrg.scss */
 .nrg-ui-slideinmenu-menuitem {
   overflow: visible;
   margin-left: 5px;
@@ -1969,12 +1961,12 @@
   height: 20px;
 }
 
-/* line 1132, ../nrg/sass/nrg.scss */
+/* line 1132, nrg.scss */
 .nrg-ui-slideinmenu-menuitem-highlight {
   color: white;
 }
 
-/* line 1136, ../nrg/sass/nrg.scss */
+/* line 1136, nrg.scss */
 .nrg-ui-slideinmenu-menuitem-icon {
   position: absolute;
   margin-top: -3px;
@@ -1982,12 +1974,11 @@
   width: 20px;
   height: 20px;
 }
-
 /* Welcome to Compass.
  * In this file you should write your main styles. (or centralize your imports)
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
-/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -2009,50 +2000,2035 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1;
 }
 
-/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none;
 }
 
-/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none;
 }
-/* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+/* line 103, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
   content: none;
 }
 
-/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none;
 }
 
-/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block;
 }
 
-/* line 4, ../xiv/sass/layoutframe.scss */
+/*
+ * Standard styling for utils.ui.GenericSlider
+ *
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Standard styling for menus created by goog.ui.MenuItemRenderer.
+ *
+ * @author attila@google.com (Attila Bodis)
+ */
+/**
+ * State: resting.
+ *
+ * NOTE(mleibman,chrishenry):
+ * The RTL support in Closure is provided via two mechanisms -- "rtl" CSS
+ * classes and BiDi flipping done by the CSS compiler.  Closure supports RTL
+ * with or without the use of the CSS compiler.  In order for them not
+ * to conflict with each other, the "rtl" CSS classes need to have the @noflip
+ * annotation.  The non-rtl counterparts should ideally have them as well, but,
+ * since .goog-menuitem existed without .goog-menuitem-rtl for so long before
+ * being added, there is a risk of people having templates where they are not
+ * rendering the .goog-menuitem-rtl class when in RTL and instead rely solely
+ * on the BiDi flipping by the CSS compiler.  That's why we're not adding the
+ * @noflip to .goog-menuitem.
+ */
+/* line 30, ../../nrg/sass/goog.scss */
+.goog-menuitem {
+  color: #000;
+  font: normal 13px Arial, sans-serif;
+  list-style: none;
+  margin: 0;
+  /* 28px on the left for icon or checkbox; 7em on the right for shortcut. */
+  padding: 4px 7em 4px 28px;
+  white-space: nowrap;
+}
+
+/* BiDi override for the resting state. */
+/* @noflip */
+/* line 42, ../../nrg/sass/goog.scss */
+.goog-menuitem.goog-menuitem-rtl {
+  /* Flip left/right padding for BiDi. */
+  padding-left: 7em;
+  padding-right: 28px;
+}
+
+/* If a menu doesn't have checkable items or items with icons, remove padding. */
+/* line 49, ../../nrg/sass/goog.scss */
+.goog-menu-nocheckbox .goog-menuitem,
+.goog-menu-noicon .goog-menuitem {
+  padding-left: 12px;
+}
+
+/*
+ * If a menu doesn't have items with shortcuts, leave just enough room for
+ * submenu arrows, if they are rendered.
+ */
+/* line 58, ../../nrg/sass/goog.scss */
+.goog-menu-noaccel .goog-menuitem {
+  padding-right: 20px;
+}
+
+/* line 62, ../../nrg/sass/goog.scss */
+.goog-menuitem-content {
+  color: #000;
+  font: normal 13px Arial, sans-serif;
+}
+
+/* State: disabled. */
+/* line 68, ../../nrg/sass/goog.scss */
+.goog-menuitem-disabled .goog-menuitem-accel,
+.goog-menuitem-disabled .goog-menuitem-content {
+  color: #ccc !important;
+}
+
+/* line 72, ../../nrg/sass/goog.scss */
+.goog-menuitem-disabled .goog-menuitem-icon {
+  opacity: 0.3;
+  -moz-opacity: 0.3;
+  filter: alpha(opacity=30);
+}
+
+/* State: hover. */
+/* line 79, ../../nrg/sass/goog.scss */
+.goog-menuitem-highlight,
+.goog-menuitem-hover {
+  background-color: #d6e9f8;
+  /* Use an explicit top and bottom border so that the selection is visible
+   * in high contrast mode. */
+  border-color: #d6e9f8;
+  border-style: dotted;
+  border-width: 1px 0;
+  padding-bottom: 3px;
+  padding-top: 3px;
+}
+
+/* State: selected/checked. */
+/* line 92, ../../nrg/sass/goog.scss */
+.goog-menuitem-checkbox,
+.goog-menuitem-icon {
+  background-repeat: no-repeat;
+  height: 16px;
+  left: 6px;
+  position: absolute;
+  right: auto;
+  vertical-align: middle;
+  width: 16px;
+}
+
+/* BiDi override for the selected/checked state. */
+/* @noflip */
+/* line 105, ../../nrg/sass/goog.scss */
+.goog-menuitem-rtl .goog-menuitem-checkbox,
+.goog-menuitem-rtl .goog-menuitem-icon {
+  /* Flip left/right positioning. */
+  left: auto;
+  right: 6px;
+}
+
+/* line 112, ../../nrg/sass/goog.scss */
+.goog-option-selected .goog-menuitem-checkbox,
+.goog-option-selected .goog-menuitem-icon {
+  /* Client apps may override the URL at which they serve the sprite. */
+  background: url(//ssl.gstatic.com/editor/editortoolbar.png) no-repeat -512px 0;
+}
+
+/* Keyboard shortcut ("accelerator") style. */
+/* line 119, ../../nrg/sass/goog.scss */
+.goog-menuitem-accel {
+  color: #999;
+  /* Keyboard shortcuts are untranslated; always left-to-right. */
+  /* @noflip */
+  direction: ltr;
+  left: auto;
+  padding: 0 6px;
+  position: absolute;
+  right: 0;
+  text-align: right;
+}
+
+/* BiDi override for shortcut style. */
+/* @noflip */
+/* line 132, ../../nrg/sass/goog.scss */
+.goog-menuitem-rtl .goog-menuitem-accel {
+  /* Flip left/right positioning and text alignment. */
+  left: 0;
+  right: auto;
+  text-align: left;
+}
+
+/* Mnemonic styles. */
+/* line 140, ../../nrg/sass/goog.scss */
+.goog-menuitem-mnemonic-hint {
+  text-decoration: underline;
+}
+
+/* line 144, ../../nrg/sass/goog.scss */
+.goog-menuitem-mnemonic-separator {
+  color: #999;
+  font-size: 12px;
+  padding-left: 4px;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Standard styling for menus created by goog.ui.MenuSeparatorRenderer.
+ *
+ * @author attila@google.com (Attila Bodis)
+ */
+/* line 163, ../../nrg/sass/goog.scss */
+.goog-menuseparator {
+  border-top: 1px solid #ccc;
+  margin: 4px 0;
+  padding: 0;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Standard styling for buttons created by goog.ui.MenuButtonRenderer.
+ *
+ * @author attila@google.com (Attila Bodis)
+ */
+/* State: resting. */
+/* line 183, ../../nrg/sass/goog.scss */
+.goog-menu-button {
+  /* Client apps may override the URL at which they serve the image. */
+  background: #ddd url(//ssl.gstatic.com/editor/button-bg.png) repeat-x top left;
+  border: 0;
+  color: #000;
+  cursor: pointer;
+  list-style: none;
+  margin: 2px;
+  outline: none;
+  padding: 0;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+/* Pseudo-rounded corners. */
+/* line 198, ../../nrg/sass/goog.scss */
+.goog-menu-button-outer-box,
+.goog-menu-button-inner-box {
+  border-style: solid;
+  border-color: #aaa;
+  vertical-align: top;
+}
+
+/* line 204, ../../nrg/sass/goog.scss */
+.goog-menu-button-outer-box {
+  margin: 0;
+  border-width: 1px 0;
+  padding: 0;
+}
+
+/* line 209, ../../nrg/sass/goog.scss */
+.goog-menu-button-inner-box {
+  margin: 0 -1px;
+  border-width: 0 1px;
+  padding: 3px 4px;
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 216, ../../nrg/sass/goog.scss */
+* html .goog-menu-button-inner-box {
+  /* IE6 needs to have the box shifted to make the borders line up. */
+  left: -1px;
+}
+
+/* Pre-IE7 BiDi fixes. */
+/* line 222, ../../nrg/sass/goog.scss */
+* html .goog-menu-button-rtl .goog-menu-button-outer-box {
+  /* @noflip */
+  left: -1px;
+  /* @noflip */
+  right: auto;
+}
+
+/* line 226, ../../nrg/sass/goog.scss */
+* html .goog-menu-button-rtl .goog-menu-button-inner-box {
+  /* @noflip */
+  right: auto;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 231, ../../nrg/sass/goog.scss */
+*:first-child + html .goog-menu-button-inner-box {
+  /* IE7 needs to have the box shifted to make the borders line up. */
+  left: -1px;
+}
+
+/* IE7 BiDi fix. */
+/* line 236, ../../nrg/sass/goog.scss */
+*:first-child + html .goog-menu-button-rtl .goog-menu-button-inner-box {
+  /* @noflip */
+  left: 1px;
+  /* @noflip */
+  right: auto;
+}
+
+/* Safari-only hacks. */
+/* line 242, ../../nrg/sass/goog.scss */
+::root .goog-menu-button,
+::root .goog-menu-button-outer-box,
+::root .goog-menu-button-inner-box {
+  /* Required to make pseudo-rounded corners work on Safari. */
+  line-height: 0;
+}
+
+/* line 248, ../../nrg/sass/goog.scss */
+::root .goog-menu-button-caption,
+::root .goog-menu-button-dropdown {
+  /* Required to make pseudo-rounded corners work on Safari. */
+  line-height: normal;
+}
+
+/* State: disabled. */
+/* line 255, ../../nrg/sass/goog.scss */
+.goog-menu-button-disabled {
+  background-image: none !important;
+  opacity: 0.3;
+  -moz-opacity: 0.3;
+  filter: alpha(opacity=30);
+}
+
+/* line 261, ../../nrg/sass/goog.scss */
+.goog-menu-button-disabled .goog-menu-button-outer-box,
+.goog-menu-button-disabled .goog-menu-button-inner-box,
+.goog-menu-button-disabled .goog-menu-button-caption,
+.goog-menu-button-disabled .goog-menu-button-dropdown {
+  color: #333 !important;
+  border-color: #999 !important;
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 270, ../../nrg/sass/goog.scss */
+* html .goog-menu-button-disabled {
+  margin: 2px 1px !important;
+  padding: 0 1px !important;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 276, ../../nrg/sass/goog.scss */
+*:first-child + html .goog-menu-button-disabled {
+  margin: 2px 1px !important;
+  padding: 0 1px !important;
+}
+
+/* State: hover. */
+/* line 282, ../../nrg/sass/goog.scss */
+.goog-menu-button-hover .goog-menu-button-outer-box,
+.goog-menu-button-hover .goog-menu-button-inner-box {
+  border-color: #9cf #69e #69e #7af !important;
+  /* Hover border wins. */
+}
+
+/* State: active, open. */
+/* line 288, ../../nrg/sass/goog.scss */
+.goog-menu-button-active,
+.goog-menu-button-open {
+  background-color: #bbb;
+  background-position: bottom left;
+}
+
+/* State: focused. */
+/* line 295, ../../nrg/sass/goog.scss */
+.goog-menu-button-focused .goog-menu-button-outer-box,
+.goog-menu-button-focused .goog-menu-button-inner-box {
+  border-color: orange;
+}
+
+/* Caption style. */
+/* line 301, ../../nrg/sass/goog.scss */
+.goog-menu-button-caption {
+  padding: 0 4px 0 0;
+  vertical-align: top;
+}
+
+/* Dropdown arrow style. */
+/* line 307, ../../nrg/sass/goog.scss */
+.goog-menu-button-dropdown {
+  height: 15px;
+  width: 7px;
+  /* Client apps may override the URL at which they serve the sprite. */
+  background: url(//ssl.gstatic.com/editor/editortoolbar.png) no-repeat -388px 0;
+  vertical-align: top;
+}
+
+/* Pill (collapsed border) styles. */
+/* TODO(gboyer): Remove specific menu button styles and have any button support being a menu button. */
+/* line 317, ../../nrg/sass/goog.scss */
+.goog-menu-button-collapse-right,
+.goog-menu-button-collapse-right .goog-menu-button-outer-box,
+.goog-menu-button-collapse-right .goog-menu-button-inner-box {
+  margin-right: 0;
+}
+
+/* line 323, ../../nrg/sass/goog.scss */
+.goog-menu-button-collapse-left,
+.goog-menu-button-collapse-left .goog-menu-button-outer-box,
+.goog-menu-button-collapse-left .goog-menu-button-inner-box {
+  margin-left: 0;
+}
+
+/* line 329, ../../nrg/sass/goog.scss */
+.goog-menu-button-collapse-left .goog-menu-button-inner-box {
+  border-left: 1px solid #fff;
+}
+
+/* line 333, ../../nrg/sass/goog.scss */
+.goog-menu-button-collapse-left.goog-menu-button-checked
+.goog-menu-button-inner-box {
+  border-left: 1px solid #ddd;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Styling for custom buttons rendered by goog.ui.CustomButtonRenderer.
+ *
+ * @author attila@google.com (Attila Bodis)
+ */
+/* line 350, ../../nrg/sass/goog.scss */
+.goog-custom-button {
+  margin: 2px;
+  border: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: #000;
+  /* Client apps may override the URL at which they serve the image. */
+  background: #ddd url(//ssl.gstatic.com/editor/button-bg.png) repeat-x top left;
+  text-decoration: none;
+  list-style: none;
+  vertical-align: middle;
+  cursor: default;
+  outline: none;
+}
+
+/* Pseudo-rounded corners. */
+/* line 366, ../../nrg/sass/goog.scss */
+.goog-custom-button-outer-box,
+.goog-custom-button-inner-box {
+  border-style: solid;
+  border-color: #aaa;
+  vertical-align: top;
+}
+
+/* line 373, ../../nrg/sass/goog.scss */
+.goog-custom-button-outer-box {
+  margin: 0;
+  border-width: 1px 0;
+  padding: 0;
+}
+
+/* line 379, ../../nrg/sass/goog.scss */
+.goog-custom-button-inner-box {
+  margin: 0 -1px;
+  border-width: 0 1px;
+  padding: 3px 4px;
+  white-space: nowrap;
+  /* Prevents buttons from line breaking on android. */
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 387, ../../nrg/sass/goog.scss */
+* html .goog-custom-button-inner-box {
+  /* IE6 needs to have the box shifted to make the borders line up. */
+  left: -1px;
+}
+
+/* Pre-IE7 BiDi fixes. */
+/* line 392, ../../nrg/sass/goog.scss */
+* html .goog-custom-button-rtl .goog-custom-button-outer-box {
+  /* @noflip */
+  left: -1px;
+}
+
+/* line 395, ../../nrg/sass/goog.scss */
+* html .goog-custom-button-rtl .goog-custom-button-inner-box {
+  /* @noflip */
+  right: auto;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 400, ../../nrg/sass/goog.scss */
+*:first-child + html .goog-custom-button-inner-box {
+  /* IE7 needs to have the box shifted to make the borders line up. */
+  left: -1px;
+}
+
+/* IE7 BiDi fix. */
+/* line 405, ../../nrg/sass/goog.scss */
+*:first-child + html .goog-custom-button-rtl .goog-custom-button-inner-box {
+  /* @noflip */
+  left: 1px;
+}
+
+/* Safari-only hacks. */
+/* line 410, ../../nrg/sass/goog.scss */
+::root .goog-custom-button,
+::root .goog-custom-button-outer-box {
+  /* Required to make pseudo-rounded corners work on Safari. */
+  line-height: 0;
+}
+
+/* line 416, ../../nrg/sass/goog.scss */
+::root .goog-custom-button-inner-box {
+  /* Required to make pseudo-rounded corners work on Safari. */
+  line-height: normal;
+}
+
+/* State: disabled. */
+/* line 422, ../../nrg/sass/goog.scss */
+.goog-custom-button-disabled {
+  background-image: none !important;
+  opacity: 0.3;
+  -moz-opacity: 0.3;
+  filter: alpha(opacity=30);
+}
+
+/* line 429, ../../nrg/sass/goog.scss */
+.goog-custom-button-disabled .goog-custom-button-outer-box,
+.goog-custom-button-disabled .goog-custom-button-inner-box {
+  color: #333 !important;
+  border-color: #999 !important;
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 436, ../../nrg/sass/goog.scss */
+* html .goog-custom-button-disabled {
+  margin: 2px 1px !important;
+  padding: 0 1px !important;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 442, ../../nrg/sass/goog.scss */
+*:first-child + html .goog-custom-button-disabled {
+  margin: 2px 1px !important;
+  padding: 0 1px !important;
+}
+
+/* State: hover. */
+/* line 448, ../../nrg/sass/goog.scss */
+.goog-custom-button-hover .goog-custom-button-outer-box,
+.goog-custom-button-hover .goog-custom-button-inner-box {
+  border-color: #9cf #69e #69e #7af !important;
+  /* Hover border wins. */
+}
+
+/* State: active, checked. */
+/* line 454, ../../nrg/sass/goog.scss */
+.goog-custom-button-active,
+.goog-custom-button-checked {
+  background-color: #bbb;
+  background-position: bottom left;
+}
+
+/* State: focused. */
+/* line 461, ../../nrg/sass/goog.scss */
+.goog-custom-button-focused .goog-custom-button-outer-box,
+.goog-custom-button-focused .goog-custom-button-inner-box {
+  border-color: orange;
+}
+
+/* Pill (collapsed border) styles. */
+/* line 467, ../../nrg/sass/goog.scss */
+.goog-custom-button-collapse-right,
+.goog-custom-button-collapse-right .goog-custom-button-outer-box,
+.goog-custom-button-collapse-right .goog-custom-button-inner-box {
+  margin-right: 0;
+}
+
+/* line 473, ../../nrg/sass/goog.scss */
+.goog-custom-button-collapse-left,
+.goog-custom-button-collapse-left .goog-custom-button-outer-box,
+.goog-custom-button-collapse-left .goog-custom-button-inner-box {
+  margin-left: 0;
+}
+
+/* line 479, ../../nrg/sass/goog.scss */
+.goog-custom-button-collapse-left .goog-custom-button-inner-box {
+  border-left: 1px solid #fff;
+}
+
+/* line 483, ../../nrg/sass/goog.scss */
+.goog-custom-button-collapse-left.goog-custom-button-checked
+.goog-custom-button-inner-box {
+  border-left: 1px solid #ddd;
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 489, ../../nrg/sass/goog.scss */
+* html .goog-custom-button-collapse-left .goog-custom-button-inner-box {
+  left: 0;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 494, ../../nrg/sass/goog.scss */
+*:first-child + html .goog-custom-button-collapse-left
+.goog-custom-button-inner-box {
+  left: 0;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/* Author: pallosp@google.com (Peter Pallos) */
+/* Sample 3-state checkbox styles. */
+/* line 509, ../../nrg/sass/goog.scss */
+.goog-checkbox {
+  border: 1px solid #1C5180;
+  display: -moz-inline-box;
+  display: inline-block;
+  font-size: 1px;
+  /* Fixes the height in IE6 */
+  height: 11px;
+  margin: 0 4px 0 1px;
+  vertical-align: text-bottom;
+  width: 11px;
+}
+
+/* line 520, ../../nrg/sass/goog.scss */
+.goog-checkbox-checked {
+  background: #fff url(//ssl.gstatic.com/closure/check-sprite.gif) no-repeat 2px center;
+}
+
+/* line 524, ../../nrg/sass/goog.scss */
+.goog-checkbox-undetermined {
+  background: #bbb url(//ssl.gstatic.com/closure/check-sprite.gif) no-repeat 2px center;
+}
+
+/* line 528, ../../nrg/sass/goog.scss */
+.goog-checkbox-unchecked {
+  background: #fff;
+}
+
+/* line 532, ../../nrg/sass/goog.scss */
+.goog-checkbox-disabled {
+  border: 1px solid lightgray;
+  background-position: -7px;
+}
+
+/*
+ * Copyright 2008 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * All Rights Reserved.
+ *
+ * Styles for the HSV color palette.
+ *
+ * @author smcbride@google.com (Sean McBride)
+ * @author arv@google.com (Erik Arvidsson)
+ * @author manucornet@google.com (Manu Cornet)
+ */
+/* line 553, ../../nrg/sass/goog.scss */
+.goog-hsv-palette,
+.goog-hsv-palette-sm {
+  position: relative;
+  border: 1px solid #999;
+  border-color: #ccc #999 #999 #ccc;
+  width: 400px;
+  height: 276px;
+}
+
+/* line 562, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-sm {
+  width: 182px;
+  height: 185px;
+}
+
+/* line 567, ../../nrg/sass/goog.scss */
+.goog-hsv-palette label span,
+.goog-hsv-palette-sm label span {
+  display: none;
+}
+
+/* line 572, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-hs-backdrop,
+.goog-hsv-palette-sm-hs-backdrop,
+.goog-hsv-palette-hs-image,
+.goog-hsv-palette-sm-hs-image {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 256px;
+  height: 256px;
+  border: 1px solid #999;
+}
+
+/* line 584, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-sm-hs-backdrop,
+.goog-hsv-palette-sm-hs-image {
+  top: 45px;
+  width: 128px;
+  height: 128px;
+}
+
+/* line 591, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-hs-backdrop,
+.goog-hsv-palette-sm-hs-backdrop {
+  background-color: #000;
+}
+
+/* line 596, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-hs-image,
+.goog-hsv-palette-v-image,
+.goog-hsv-palette-hs-handle,
+.goog-hsv-palette-v-handle {
+  background-image: url(//ssl.gstatic.com/closure/hsv-sprite.png);
+}
+
+/* line 603, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-noalpha .goog-hsv-palette-hs-image,
+.goog-hsv-palette-noalpha .goog-hsv-palette-v-image,
+.goog-hsv-palette-noalpha .goog-hsv-palette-hs-handle,
+.goog-hsv-palette-noalpha .goog-hsv-palette-v-handle {
+  background-image: url(//ssl.gstatic.com/closure/hsv-sprite.gif);
+}
+
+/* line 610, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-sm-hs-image,
+.goog-hsv-palette-sm-v-image,
+.goog-hsv-palette-sm-hs-handle,
+.goog-hsv-palette-sm-v-handle {
+  background-image: url(//ssl.gstatic.com/closure/hsv-sprite-sm.png);
+}
+
+/* line 617, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-noalpha .goog-hsv-palette-sm-hs-image,
+.goog-hsv-palette-noalpha .goog-hsv-palette-sm-v-image,
+.goog-hsv-palette-noalpha .goog-hsv-palette-sm-hs-handle,
+.goog-hsv-palette-noalpha .goog-hsv-palette-sm-v-handle {
+  background-image: url(//ssl.gstatic.com/closure/hsv-sprite-sm.gif);
+}
+
+/* line 624, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-hs-image,
+.goog-hsv-palette-sm-hs-image {
+  background-position: 0 0;
+}
+
+/* line 629, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-hs-handle,
+.goog-hsv-palette-sm-hs-handle {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  width: 11px;
+  height: 11px;
+  overflow: hidden;
+  background-position: 0 -256px;
+}
+
+/* line 640, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-sm-hs-handle {
+  top: 40px;
+  background-position: 0 -128px;
+}
+
+/* line 645, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-v-image,
+.goog-hsv-palette-sm-v-image {
+  position: absolute;
+  top: 10px;
+  left: 286px;
+  width: 19px;
+  height: 256px;
+  border: 1px solid #999;
+  background-color: #fff;
+  background-position: -256px 0;
+}
+
+/* line 657, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-sm-v-image {
+  top: 45px;
+  left: 155px;
+  width: 9px;
+  height: 128px;
+  background-position: -128px 0;
+}
+
+/* line 665, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-v-handle,
+.goog-hsv-palette-sm-v-handle {
+  position: absolute;
+  top: 5px;
+  left: 279px;
+  width: 35px;
+  height: 11px;
+  background-position: -11px -256px;
+  overflow: hidden;
+}
+
+/* line 676, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-sm-v-handle {
+  top: 40px;
+  left: 148px;
+  width: 25px;
+  background-position: -11px -128px;
+}
+
+/* line 683, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-swatch,
+.goog-hsv-palette-sm-swatch {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 65px;
+  height: 65px;
+  border: 1px solid #999;
+  background-color: #fff;
+}
+
+/* line 694, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-sm-swatch {
+  top: 10px;
+  right: auto;
+  left: 10px;
+  width: 30px;
+  height: 22px;
+}
+
+/* line 702, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-input,
+.goog-hsv-palette-sm-input {
+  position: absolute;
+  top: 85px;
+  right: 10px;
+  width: 65px;
+}
+
+/* line 710, ../../nrg/sass/goog.scss */
+.goog-hsv-palette-sm-input {
+  top: 10px;
+  right: auto;
+  left: 50px;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Standard styling for goog.ui.Dialog.
+ *
+ * @author ssaviano@google.com (Steven Saviano)
+ * @author attila@google.com (Attila Bodis)
+ */
+/* line 730, ../../nrg/sass/goog.scss */
+.modal-dialog {
+  background: #c1d9ff;
+  border: 1px solid #3a5774;
+  color: #000;
+  padding: 4px;
+  position: absolute;
+}
+
+/* line 738, ../../nrg/sass/goog.scss */
+.modal-dialog a,
+.modal-dialog a:link,
+.modal-dialog a:visited {
+  color: #06c;
+  cursor: pointer;
+}
+
+/* line 745, ../../nrg/sass/goog.scss */
+.modal-dialog-bg {
+  background: #666;
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+/* line 752, ../../nrg/sass/goog.scss */
+.modal-dialog-title {
+  background: #e0edfe;
+  color: #000;
+  cursor: pointer;
+  font-size: 120%;
+  font-weight: bold;
+  /* Add padding on the right to ensure the close button has room. */
+  padding: 8px 31px 8px 8px;
+  position: relative;
+  _zoom: 1;
+  /* Ensures proper width in IE6 RTL. */
+}
+
+/* line 766, ../../nrg/sass/goog.scss */
+.modal-dialog-title-close {
+  /* Client apps may override the URL at which they serve the sprite. */
+  background: #e0edfe url(//ssl.gstatic.com/editor/editortoolbar.png) no-repeat -528px 0;
+  cursor: default;
+  height: 15px;
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  width: 15px;
+  vertical-align: middle;
+}
+
+/* line 778, ../../nrg/sass/goog.scss */
+.modal-dialog-buttons,
+.modal-dialog-content {
+  background-color: #fff;
+  padding: 8px;
+}
+
+/* line 784, ../../nrg/sass/goog.scss */
+.goog-buttonset-default {
+  font-weight: bold;
+}
+
+/* line 28, ../../nrg/sass/nrg.scss */
+.xiv-ui-thumbnail-hoverinfo, .xiv-ui-viewboxdialogs-infodialog {
+  color: white;
+  font-size: 12px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  line-height: 16px;
+}
+
+/* line 34, ../../nrg/sass/nrg.scss */
+.nrg-ui-slider {
+  position: absolute;
+  outline: 0;
+  /* removes chrome blue border */
+}
+
+/* line 41, ../../nrg/sass/nrg.scss */
+.nrg-ui-slider-horizontal {
+  width: 100%;
+  height: 10px;
+  top: calc(100% - 10px);
+  left: 0px;
+}
+
+/* line 50, ../../nrg/sass/nrg.scss */
+.nrg-ui-slider-vertical {
+  width: 10px;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+}
+
+/*
+ * TRACK
+ */
+/* line 61, ../../nrg/sass/nrg.scss */
+.nrg-ui-slider-track {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  /*background-color : rgba(100,100,100,0);*/
+}
+
+/* line 72, ../../nrg/sass/nrg.scss */
+.nrg-ui-slider-track-hovered {
+  /*box-sizing: border-box;
+  background-color: rgb(50,50,50);
+  border: solid 1px rgb(100,100,100);*/
+}
+
+/*
+ * THUMB
+ */
+/* line 83, ../../nrg/sass/nrg.scss */
+.nrg-ui-slider-thumb {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: gainsboro;
+  z-index: 2;
+  border-radius: 4px;
+}
+
+/* line 93, ../../nrg/sass/nrg.scss */
+.nrg-ui-slider-thumb-horizontal {
+  width: 30px;
+  height: 100%;
+}
+
+/* line 99, ../../nrg/sass/nrg.scss */
+.nrg-ui-slider-thumb-vertical {
+  height: 30px;
+  width: 100%;
+  left: 0px;
+}
+
+/* line 106, ../../nrg/sass/nrg.scss */
+.nrg-ui-slider-thumb-hovered {
+  box-sizing: border-box;
+  background-color: gainsboro;
+  /*border: solid 1px rgb(100,100,100);*/
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 116, ../../nrg/sass/nrg.scss */
+.nrg-ui-hoverinput {
+  position: absolute;
+  top: 3px;
+  width: 100px;
+  height: 17px;
+  left: calc(100% - 110px);
+  background-color: transparent;
+  transition-property: background-color;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 128, ../../nrg/sass/nrg.scss */
+.nrg-ui-hoverinput-display,
+.nrg-ui-hoverinput-inputbox {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  line-height: 17px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  white-space: nowrap;
+}
+
+/* line 140, ../../nrg/sass/nrg.scss */
+.nrg-ui-hoverinput-display {
+  color: #9b9b9b;
+  text-align: right;
+  text-wrap: none;
+}
+
+/* line 148, ../../nrg/sass/nrg.scss */
+.nrg-ui-hoverinput-inputbox {
+  opacity: 0;
+  width: 100%;
+  height: 18px;
+  left: 0px;
+  background-color: black;
+  border: none;
+  /*border-bottom: solid 1px rgb(95,95,95);*/
+  outline: 0;
+  color: white;
+  z-index: 3;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  text-align: right;
+}
+
+/* line 166, ../../nrg/sass/nrg.scss */
+.nrg-ui-hoverinput:hover {
+  background-color: rgba(0, 0, 1, 0);
+}
+
+/* line 170, ../../nrg/sass/nrg.scss */
+.nrg-ui-hoverinput:hover > .nrg-ui-hoverinput-inputbox {
+  opacity: 1;
+}
+
+/**
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 178, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer {
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+/* line 190, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-scrollarea {
+  display: block;
+  position: relative;
+  width: calc(100% - 19px);
+  left: 19px;
+}
+
+/* line 198, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyheader {
+  position: relative;
+  background-color: #323232;
+  left: 0px;
+  width: 100%;
+  height: 1.5em;
+  color: 10px;
+  font-size: #787878;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  cursor: pointer;
+  line-height: 1.5em;
+  margin-bottom: 4px;
+}
+
+/* line 213, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyheader-mouseover {
+  background-color: #5a5a5a;
+  color: white;
+}
+
+/* line 220, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyheaderlabel, .nrg-ui-scrollablecontainer-zippyexpandicon {
+  position: absolute;
+  margin-left: .3em;
+  background-color: none;
+}
+
+/* line 227, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyexpandicon {
+  right: .5em;
+  margin-left: -10px;
+  color: black;
+}
+
+/* line 234, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyexpandicon-mouseover {
+  color: black;
+}
+
+/* line 241, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippycontent {
+  overflow: visible;
+  width: 100%;
+  top: 20px;
+  left: 12px;
+  margin-bottom: 4px;
+}
+
+/* line 251, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider {
+  position: absolute;
+  width: 8px;
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  background-color: black;
+  transition-property: background-color;
+  transition-duration: .2;
+}
+
+/* line 263, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider:hover {
+  background-color: black;
+}
+
+/* line 267, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider-thumb {
+  background-color: #505050;
+  width: 4px;
+  left: 5px;
+  border-radius: 5px;
+  transition-property: background-color, width, left;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 277, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider:hover > .nrg-ui-scrollablecontainer-slider-thumb {
+  background-color: #787878;
+  width: 8px;
+  left: 3px;
+}
+
+/* line 283, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider-thumb:active {
+  background-color: #787878;
+  width: 8px;
+  left: 3px;
+}
+
+/* line 291, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider-track {
+  background-color: transparent;
+}
+
+/* line 296, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider-track-hovered {
+  /*
+  box-sizing: border-box;
+  background-color: rgb(50,50,50);
+  border-right: solid 1px rgb(100,100,100);
+  border-left: none;
+  border-top: none;
+  border-bottom: none;*/
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 312, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablezippytree {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+}
+
+/* line 321, ../../nrg/sass/nrg.scss */
+.nrg-ui-scrollablezippytree-zippytree {
+  top: 0px;
+  left: 0px;
+  width: 100%;
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 331, ../../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-header {
+  position: relative;
+  outline: 0;
+  /*background-color: rgb(90,90,90);*/
+  left: 0px;
+  width: 100%;
+  height: 1.5em;
+  color: #505050;
+  font-size: 12px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  cursor: pointer;
+  z-index: 1000;
+  line-height: 1.5em;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+/* line 348, ../../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-header:hover {
+  background-color: #323232;
+  color: white;
+}
+
+/* line 355, ../../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-header-label, .nrg-ui-zippynode-expandicon {
+  position: absolute;
+  margin-left: .3em;
+  background-color: none;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* line 364, ../../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-expandicon {
+  right: .5em;
+  margin-left: -10px;
+  color: #646464;
+}
+
+/* line 371, ../../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-expandicon-mouseover {
+  color: white;
+}
+
+/* line 378, ../../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-content {
+  overflow: visible;
+  width: 100%;
+  top: 20px;
+  left: 12px;
+  z-index: 1000;
+}
+
+/* line 389, ../../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-loading-holder {
+  position: relative;
+  height: 87px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 395, ../../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-loading-text {
+  position: absolute;
+  top: calc(50% - 12px);
+  left: calc(50% - 23px);
+}
+
+/* line 402, ../../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-loading-image {
+  position: absolute;
+  width: 150px;
+  height: 2px;
+  top: calc(50% + 10px);
+  left: calc(50% - 75px);
+  opacity: .50;
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 428, ../../nrg/sass/nrg.scss */
+.nrg-ui-zippytree-rootnode {
+  margin-bottom: 0px;
+  height: 0px;
+}
+
+/**
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 436, ../../nrg/sass/nrg.scss */
+.nrg-ui-dialog {
+  position: absolute;
+  outline: none;
+  background-color: black;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  border-radius: 5px;
+  border-color: white;
+  z-index: 10;
+  overflow: hidden;
+}
+
+/* line 448, ../../nrg/sass/nrg.scss */
+.nrg-ui-dialog-overlay {
+  position: absolute;
+  left: 30%;
+  top: 35%;
+  width: 40%;
+  height: 30%;
+  background-color: black;
+  z-index: 201;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 460, ../../nrg/sass/nrg.scss */
+.nrg-ui-dialog-background {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(20, 20, 20, 0.6);
+  z-index: 200;
+  display: inline-block;
+}
+
+/* line 478, ../../nrg/sass/nrg.scss */
+.nrg-ui-dialog-subtext {
+  text-align: left;
+  font-size: 12px;
+}
+
+/* line 485, ../../nrg/sass/nrg.scss */
+.nrg-ui-dialog-text {
+  text-align: center;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 490, ../../nrg/sass/nrg.scss */
+.nrg-ui-dialog-closebutton-image, .nrg-ui-dialog-closebutton {
+  height: 10px;
+  width: 10px;
+}
+
+/* line 494, ../../nrg/sass/nrg.scss */
+.nrg-ui-dialog-closebutton {
+  position: absolute;
+  cursor: pointer;
+  top: calc(50% - 7px);
+  height: 10px;
+  width: 10px;
+  left: calc(100% - 17px);
+  z-index: 103;
+  background: none;
+  outline: none;
+}
+
+/* line 512, ../../nrg/sass/nrg.scss */
+.modal-dialog-title-text {
+  top: 1px;
+  left: 7px;
+  position: absolute;
+  text-align: center;
+}
+
+/* line 520, ../../nrg/sass/nrg.scss */
+.nrg-ui-dialog-title {
+  background-color: #3c3c3c;
+  height: 17px;
+  padding: 0px;
+  top: -3px;
+  border: none;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  z-index: -1;
+  width: calc(100% + 6px);
+  left: -3px;
+}
+
+/* line 533, ../../nrg/sass/nrg.scss */
+.nrg-ui-dialog-content {
+  background-color: none;
+  background: none;
+}
+
+/* line 539, ../../nrg/sass/nrg.scss */
+.nrg-ui-dialog-buttons {
+  background-color: none;
+  background: none;
+}
+
+/* line 546, ../../nrg/sass/nrg.scss */
+.nrg-ui-dialog-yesnomodal {
+  position: absolute;
+  top: calc(50% - 60px);
+  left: calc(50% - 125px);
+  width: 250px;
+  height: 120px;
+  background: black;
+  background-color: black;
+  border: 1px solid white;
+  padding: 4px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  border-radius: 10px;
+  outline: 0;
+  z-index: 1000;
+  cursor: default;
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 568, ../../nrg/sass/nrg.scss */
+.nrg-ui-errordialog {
+  width: 400px;
+  height: 300px;
+  z-index: 100000;
+}
+
+/* line 576, ../../nrg/sass/nrg.scss */
+.nrg-ui-errordialog-image {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  left: calc(50% - 40px);
+}
+
+/* line 585, ../../nrg/sass/nrg.scss */
+.nrg-ui-errordialog-text {
+  top: 145px;
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 593, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail {
+  position: absolute;
+  width: 87px;
+  height: 87px;
+  top: 0px;
+  left: 0px;
+  cursor: pointer;
+  background-color: black;
+  box-sizing: border-box;
+  border: solid 1px black;
+}
+
+/* line 606, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-selectindicator {
+  position: absolute;
+  top: calc(50% - 34px);
+  left: 7px;
+  width: 2px;
+  height: 68px;
+  opacity: 0;
+  background-color: #646464;
+}
+
+/* line 617, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-selectindicator-active {
+  opacity: 1;
+}
+
+/* line 623, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-selected {
+  border: solid 1px #646464;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* line 636, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-hoverable:hover {
+  background-color: #1e1e1e;
+  z-index: 10000;
+  overflow: visible;
+  color: white;
+  border: solid 1px #282828;
+}
+
+/* line 645, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-hoverable:hover > .nrg-ui-thumbnail-image {
+  /*color: rgb(255,255,255);*/
+  /*border-color: white;*/
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* line 651, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-hoverable:hover > .nrg-ui-thumbnail-text {
+  color: #d7d7d7;
+}
+
+/* line 655, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-image, .nrg-ui-thumbnail-canvas {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  top: calc(50% - 35px);
+  left: 8px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  border: solid 1px #1e1e1e;
+  /*border : none;
+  border-color: rgb(100,100,100);
+  border-width : 1px;
+  border-radius: 0px;	
+  box-sizing: border-box; */
+  cursor: pointer;
+}
+
+/* line 679, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-text {
+  position: absolute;
+  height: 70px;
+  top: 8px;
+  left: 86px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  font-size: 9;
+  white-space: nowrap;
+  color: #505050;
+  line-height: 17px;
+}
+
+/* line 693, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-text-mouseover {
+  color: #9b9b9b;
+}
+
+/* line 698, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-canvas {
+  top: 8px;
+  left: 8px;
+}
+
+/*******
+* Active state
+********/
+/* line 709, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-text-active {
+  /*color : rgb(100,100,100);*/
+}
+
+/* line 713, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-active {
+  opacity: 1;
+}
+
+/* line 718, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-image-active {
+  /*border-left: solid 2px rgb(100,100,100);*/
+}
+
+/* line 724, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnailgallery {
+  position: absolute;
+  overflow: hidden;
+}
+
+/* line 732, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnailgallery-thumbnail {
+  position: relative;
+  width: 100%;
+  height: 176px;
+  top: 0px;
+  left: 0px;
+  cursor: pointer;
+}
+
+/* line 742, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnailgallery-thumbnail-image {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  top: 8px;
+  left: 8px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  border: solid;
+  border-color: white;
+  border-width: 1px;
+  border-radius: 0px;
+  cursor: pointer;
+}
+
+/* line 758, ../../nrg/sass/nrg.scss */
+.nrg-ui-thumbnailgallery-thumbnail-text {
+  position: absolute;
+  height: 70px;
+  top: 8px;
+  left: 176px;
+  color: white;
+  font-size: 9px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  line-height: 17px;
+}
+
+/* line 769, ../../nrg/sass/nrg.scss */
+.nrg-ui-resizable-boundary {
+  position: absolute;
+  border: 1px dotted red;
+  background-color: rgba(255, 120, 120, 0.5);
+}
+
+/* line 776, ../../nrg/sass/nrg.scss */
+.nrg-ui-resizedragger {
+  position: absolute;
+  font-size: 0.1px;
+  z-index: 1;
+  /*background-color: rgba(255,20,20, 0);*/
+}
+
+/**
+  RIGHT AND LEFT
+*/
+/* line 787, ../../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggerright, .nrg-ui-resizedraggerleft {
+  position: absolute;
+  width: 7px;
+  height: 100%;
+  cursor: ew-resize;
+}
+
+/* line 794, ../../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggerright {
+  left: 100%;
+  /*background-color: rgba(0,255,0,.5);*/
+}
+
+/* line 799, ../../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggerleft {
+  left: -7px;
+}
+
+/**
+ * TOP AND BOTTOM
+ */
+/* line 809, ../../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggertop, .nrg-ui-resizedraggerbottom {
+  position: absolute;
+  left: 0px;
+  width: 100%;
+  height: 7px;
+  cursor: ns-resize;
+}
+
+/* line 817, ../../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggertop {
+  top: -7px;
+  /*background-color: rgba(0,255,0,.5);*/
+}
+
+/* line 822, ../../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggerbottom {
+  top: 100%;
+  /*background-color: rgba(255,0,0,.5);*/
+}
+
+/**
+ * CORNERS
+ */
+/* line 834, ../../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggertopright,
+.nrg-ui-resizedraggertopleft,
+.nrg-ui-resizedraggerbottomright,
+.nrg-ui-resizedraggerbottomleft {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  cursor: move;
+}
+
+/* line 845, ../../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggertopright,
+.nrg-ui-resizedraggertopleft {
+  top: calc(100% - 7px);
+}
+
+/* line 850, ../../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggertopright {
+  left: calc(100% - 7px);
+  /*background-color: orange;*/
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/**
+ * ELEMENT
+ */
+/* line 862, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs {
+  position: absolute;
+  left: 0px;
+}
+
+/* line 867, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-right {
+  left: 0px;
+}
+
+/* line 872, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-left {
+  left: calc(100% - 18px);
+}
+
+/* line 877, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-top {
+  top: calc(100% - 18px);
+}
+
+/* line 882, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-bottom {
+  top: 0px;
+}
+
+/**
+ * TABS
+ */
+/* line 893, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  position: absolute;
+  top: 0px;
+  color: #646464;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  background-color: #1e1e1e;
+  cursor: pointer;
+  border: solid 1px #3c3c3c;
+  text-align: center;
+}
+
+/* line 907, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-top {
+  height: 18px;
+  top: 0px;
+  border-radius: 4px 4px 0px 0px;
+  border-bottom: none;
+}
+
+/* line 915, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-bottom {
+  height: 18px;
+  top: calc(100% - 18px);
+  border-radius: 0px 0px 4px 4px;
+  border-top: none;
+}
+
+/* line 923, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-right {
+  width: 22px;
+  left: calc(100% - 22px);
+  /*border-radius: 0px 4px 4px 0px;*/
+  border-left: none;
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
+}
+
+/* line 933, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-left {
+  width: 18px;
+  left: 0px;
+  /*border-radius: 4px 0px 0px 4px;*/
+  border-right: none;
+}
+
+/* line 941, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-active {
+  border: solid 1px #646464;
+}
+
+/* line 946, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-active-right {
+  border-left: none;
+}
+
+/* line 951, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-active-top {
+  border-bottom: none;
+}
+
+/* line 956, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-active {
+  z-index: 1;
+}
+
+/* line 961, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-icon {
+  color: #646464;
+  z-index: 11;
+  color: #646464;
+  font-size: 10px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  display: table;
+}
+
+/* line 974, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-icon-active {
+  color: #646464;
+}
+
+/* line 979, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-icon-top {
+  width: 100%;
+  height: 100%;
+}
+
+/* line 985, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-icon-right {
+  left: -24px;
+  top: calc(50% - 5px);
+  white-space: nowrap;
+}
+
+/* line 994, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-icon-content {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* line 1001, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-page {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  position: absolute;
+  color: #646464;
+  font-size: 12px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  background-color: black;
+  width: 100%;
+  border: solid 1px #3c3c3c;
+  visibility: hidden;
+  overflow: hidden;
+}
+
+/* line 1015, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-page-content {
+  position: absolute;
+  left: 0px;
+  top: 10px;
+  height: calc(100% - 20px);
+  width: 100%;
+  z-index: 2;
+}
+
+/* line 1026, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-page-active {
+  border: solid 1px #646464;
+  visibility: visible;
+  z-index: 2;
+}
+
+/* line 1033, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-page-right, .nrg-ui-tabs-page-left {
+  position: absolute;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  width: calc(100% - 18px);
+  border-right: none;
+  border-left: none;
+}
+
+/* line 1044, ../../nrg/sass/nrg.scss */
+.nrg-ui-tabs-page-top, .nrg-ui-tabs-page-bottom {
+  position: absolute;
+  top: 18px;
+  left: 0px;
+  height: calc(100% - 18px);
+  width: 100%;
+  border-bottom: none;
+}
+
+/**
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 1057, ../../nrg/sass/nrg.scss */
+.nrg-ui-ziptabs {
+  position: absolute;
+}
+
+/* line 1062, ../../nrg/sass/nrg.scss */
+.nrg-ui-ziptabs:hover {
+  opacity: 1;
+}
+
+/* line 1068, ../../nrg/sass/nrg.scss */
+.nrg-ui-ziptabs-top, .nrg-ui-ziptabs-bottom {
+  height: 18px;
+}
+
+/* line 1073, ../../nrg/sass/nrg.scss */
+.nrg-ui-ziptabs-left, .nrg-ui-ziptabs-right {
+  width: 18px;
+  opacity: .7;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  transition-property: opacity;
+}
+
+/* line 1082, ../../nrg/sass/nrg.scss */
+.nrg-ui-ziptabs-right:hover {
+  opacity: 1;
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1096, ../../nrg/sass/nrg.scss */
+.nrg-ui-slideinmenu-icon {
+  max-width: 100%;
+  max-height: 100%;
+  opacity: 1;
+}
+
+/* line 1103, ../../nrg/sass/nrg.scss */
+.nrg-ui-slideinmenu-icon-hovered {
+  opacity: 1;
+}
+
+/* line 1108, ../../nrg/sass/nrg.scss */
+.nrg-ui-slideinmenu-menuholder {
+  position: absolute;
+  background-color: #ff6416;
+  z-index: 4000;
+}
+
+/* line 1115, ../../nrg/sass/nrg.scss */
+.nrg-ui-slideinmenu-menu {
+  background-color: #7d7d7d;
+  border: solid 1px #323232;
+  z-index: 20000;
+  cursor: pointer;
+  width: 130px;
+}
+
+/* line 1124, ../../nrg/sass/nrg.scss */
+.nrg-ui-slideinmenu-menuitem {
+  overflow: visible;
+  margin-left: 5px;
+  margin-top: 7px;
+  height: 20px;
+}
+
+/* line 1132, ../../nrg/sass/nrg.scss */
+.nrg-ui-slideinmenu-menuitem-highlight {
+  color: white;
+}
+
+/* line 1136, ../../nrg/sass/nrg.scss */
+.nrg-ui-slideinmenu-menuitem-icon {
+  position: absolute;
+  margin-top: -3px;
+  left: 5px;
+  width: 20px;
+  height: 20px;
+}
+
+/* line 4, layoutframe.scss */
 .xiv-ui-layouts-layoutframe {
   position: absolute;
   box-sizing: border-box;
@@ -2062,7 +4038,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background: black;
 }
 
-/* line 24, ../xiv/sass/layoutframe.scss */
+/* line 24, layoutframe.scss */
 .xiv-ui-layouts-layoutframe-sagittal, .xiv-ui-layouts-layoutframe-coronal,
 .xiv-ui-layouts-layoutframe-transverse, .xiv-ui-layouts-layoutframe-threed {
   position: absolute;
@@ -2072,12 +4048,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   height: 100%;
 }
 
-/* line 4, ../xiv/sass/xyzvlayout.scss */
+/* line 4, xyzvlayout.scss */
 .xiv-ui-layouts-xyzvlayout {
   position: absolute;
 }
 
-/* line 9, ../xiv/sass/xyzvlayout.scss */
+/* line 9, xyzvlayout.scss */
 .xiv-ui-layouts-xyzvlayout-x, .xiv-ui-layouts-xyzvlayout-y,
 .xiv-ui-layouts-xyzvlayout-z, .xiv-ui-layouts-xyzvlayout-v {
   position: absolute;
@@ -2086,13 +4062,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   -webkit-box-sizing: border-box;
 }
 
-/* line 29, ../xiv/sass/xyzvlayout.scss */
+/* line 29, xyzvlayout.scss */
 .xiv-ui-layouts-xyzvlayout-slide-maxthumb, .xiv-ui-layouts-xyzvlayout-slider:hover > .xiv-ui-layouts-xyzvlayout-slider-thumb, .xiv-ui-layouts-xyzvlayout-slider:active > .xiv-ui-layouts-xyzvlayout-slider-thumb {
   height: 8px;
   top: 14px;
 }
 
-/* line 35, ../xiv/sass/xyzvlayout.scss */
+/* line 35, xyzvlayout.scss */
 .xiv-ui-layouts-xyzvlayout-slider {
   position: absolute;
   left: 30px;
@@ -2109,7 +4085,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
       }
   */
 }
-/* line 53, ../xiv/sass/xyzvlayout.scss */
+/* line 53, xyzvlayout.scss */
 .xiv-ui-layouts-xyzvlayout-slider:hover > .xiv-ui-layouts-xyzvlayout-slider-track-x, .xiv-ui-layouts-xyzvlayout-slider:active > .xiv-ui-layouts-xyzvlayout-slider-track-x {
   /*
   height: 6px;
@@ -2118,7 +4094,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-color: rgba(150, 150, 150, 0.2);
   background-color: rgba(255, 0, 0, 0.8);
 }
-/* line 57, ../xiv/sass/xyzvlayout.scss */
+/* line 57, xyzvlayout.scss */
 .xiv-ui-layouts-xyzvlayout-slider:hover > .xiv-ui-layouts-xyzvlayout-slider-track-y, .xiv-ui-layouts-xyzvlayout-slider:active > .xiv-ui-layouts-xyzvlayout-slider-track-y {
   /*
   height: 6px;
@@ -2127,7 +4103,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-color: rgba(150, 150, 150, 0.2);
   background-color: rgba(0, 255, 0, 0.8);
 }
-/* line 61, ../xiv/sass/xyzvlayout.scss */
+/* line 61, xyzvlayout.scss */
 .xiv-ui-layouts-xyzvlayout-slider:hover > .xiv-ui-layouts-xyzvlayout-slider-track-z, .xiv-ui-layouts-xyzvlayout-slider:active > .xiv-ui-layouts-xyzvlayout-slider-track-z {
   /*
   height: 6px;
@@ -2137,7 +4113,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background-color: rgba(0, 0, 255, 0.8);
 }
 
-/* line 78, ../xiv/sass/xyzvlayout.scss */
+/* line 78, xyzvlayout.scss */
 .xiv-ui-layouts-xyzvlayout-slider-track, .xiv-ui-layouts-xyzvlayout-slider-track-x,
 .xiv-ui-layouts-xyzvlayout-slider-track-y,
 .xiv-ui-layouts-xyzvlayout-slider-track-z {
@@ -2157,14 +4133,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transition-timing-function: ease-out;
 }
 
-/* line 99, ../xiv/sass/xyzvlayout.scss */
+/* line 99, xyzvlayout.scss */
 .xiv-ui-layouts-xyzvlayout-slider-track-x,
 .xiv-ui-layouts-xyzvlayout-slider-track-y,
 .xiv-ui-layouts-xyzvlayout-slider-track-z {
   /*transition-property: opacity, height, top;*/
 }
 
-/* line 110, ../xiv/sass/xyzvlayout.scss */
+/* line 110, xyzvlayout.scss */
 .xiv-ui-layouts-xyzvlayout-slider-thumb {
   position: absolute;
   width: 8px;
@@ -2180,17 +4156,17 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transition-timing-function: ease-out;
 }
 
-/* line 127, ../xiv/sass/xyzvlayout.scss */
+/* line 127, xyzvlayout.scss */
 .xiv-ui-layouts-xyzvlayout-slider-thumb:hover {
   box-shadow: 0px 0px 0px 3px rgba(155, 155, 155, 0.55);
 }
 
-/* line 131, ../xiv/sass/xyzvlayout.scss */
+/* line 131, xyzvlayout.scss */
 .xiv-ui-layouts-xyzvlayout-slider-thumb:active {
   box-shadow: 0px 0px 0px 3px rgba(155, 155, 155, 0.55);
 }
 
-/* line 136, ../xiv/sass/xyzvlayout.scss */
+/* line 136, xyzvlayout.scss */
 .xiv-ui-layouts-xyzvlayout-framenumber {
   position: absolute;
   top: 5px;
@@ -2203,13 +4179,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   text-align: right;
 }
 
-/* line 6, ../xiv/sass/thumbnail.scss */
+/* line 6, thumbnail.scss */
 .xiv-ui-thumbnail {
   position: absolute;
   overflow: visible;
 }
 
-/* line 13, ../xiv/sass/thumbnail.scss */
+/* line 13, thumbnail.scss */
 .xiv-ui-thumbnail-image {
   position: absolute;
   overflow: visible;
@@ -2249,19 +4225,19 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   }
 }
 */
-/* line 54, ../xiv/sass/thumbnail.scss */
+/* line 54, thumbnail.scss */
 .xiv-ui-thumbnail-hoverinfo-appear {
   visibility: visible;
   opacity: 1;
 }
 
-/* line 60, ../xiv/sass/thumbnail.scss */
+/* line 60, thumbnail.scss */
 .xiv-ui-thumbnail-hoverinfo-disappear {
   opacity: 0;
   visibility: hidden;
 }
 
-/* line 66, ../xiv/sass/thumbnail.scss */
+/* line 66, thumbnail.scss */
 .xiv-ui-thumbnail-hoverinfo {
   position: absolute;
   z-index: 1000;
@@ -2280,14 +4256,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 
  Generated by: http://cssarrowplease.com/
 */
-/* line 86, ../xiv/sass/thumbnail.scss */
+/* line 86, thumbnail.scss */
 .xiv-ui-thumbnail-hoverinfo-arrow {
   position: absolute;
   z-index: 1001;
   opacity: 0;
 }
 
-/* line 92, ../xiv/sass/thumbnail.scss */
+/* line 92, thumbnail.scss */
 .xiv-ui-thumbnail-hoverinfo-arrowbottom, .xiv-ui-thumbnail-hoverinfo-arrowtop {
   position: absolute;
   border: solid transparent;
@@ -2298,7 +4274,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   pointer-events: none;
 }
 
-/* line 102, ../xiv/sass/thumbnail.scss */
+/* line 102, thumbnail.scss */
 .xiv-ui-thumbnail-hoverinfo-arrowbottom {
   border-color: rgba(194, 225, 245, 0);
   border-right-color: #646464;
@@ -2306,7 +4282,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   margin-top: -10px;
 }
 
-/* line 109, ../xiv/sass/thumbnail.scss */
+/* line 109, thumbnail.scss */
 .xiv-ui-thumbnail-hoverinfo-arrowtop {
   border-color: transparent;
   border-right-color: #1e1e1e;
@@ -2315,12 +4291,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   left: 4px;
 }
 
-/* line 118, ../xiv/sass/thumbnail.scss */
+/* line 118, thumbnail.scss */
 .xiv-ui-thumbnail:hover > .xiv-ui-thumbnail-infohovertext {
   opacity: 1;
 }
 
-/* line 122, ../xiv/sass/thumbnail.scss */
+/* line 122, thumbnail.scss */
 .xiv-ui-thumbnail-infohovertext {
   color: white;
   font-size: 10px;
@@ -2331,13 +4307,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: 0;
 }
 
-/* line 131, ../xiv/sass/thumbnail.scss */
+/* line 131, thumbnail.scss */
 .xiv-ui-thumbnail-infohovertext:hover {
   color: #787878;
   text-decoration: underline;
 }
 
-/* line 13, ../xiv/sass/xiv.scss */
+/* line 13, xiv.scss */
 .xiv-ui-xtkcontroller {
   display: block;
   position: relative;
@@ -2346,7 +4322,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   margin-top: 5px;
 }
 
-/* line 22, ../xiv/sass/xiv.scss */
+/* line 22, xiv.scss */
 .xiv-ui-xtkcontroller-label {
   color: white;
   font-size: 10px;
@@ -2358,7 +4334,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
  *
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 42, ../xiv/sass/xiv.scss */
+/* line 42, xiv.scss */
 .xiv-ui-xtkcontroller-scrollgallery {
   top: 25px;
   left: 0px;
@@ -2370,14 +4346,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   overflow-y: hidden;
 }
 
-/* line 54, ../xiv/sass/xiv.scss */
+/* line 54, xiv.scss */
 .xiv-ui-xtkcontroller-scrollgallery-scrollarea {
   position: relative;
   width: 166px;
   left: 14px;
 }
 
-/* line 61, ../xiv/sass/xiv.scss */
+/* line 61, xiv.scss */
 .xiv-ui-xtkcontroller-scrollgallery-zippyheader {
   position: relative;
   background-color: #464646;
@@ -2388,14 +4364,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   cursor: pointer;
 }
 
-/* line 70, ../xiv/sass/xiv.scss */
+/* line 70, xiv.scss */
 .xiv-ui-xtkcontroller-scrollgallery-slider-widget {
   width: 7;
   background-color: black;
   border: none;
 }
 
-/* line 78, ../xiv/sass/xiv.scss */
+/* line 78, xiv.scss */
 .xiv-ui-xtkcontroller-scrollgallery-slider-thumb {
   height: 60px;
   background-color: #787878;
@@ -2405,7 +4381,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 87, ../xiv/sass/xiv.scss */
+/* line 87, xiv.scss */
 .xiv-vis-xtkplane-disabledoverlay {
   position: absolute;
   top: 0px;
@@ -2422,13 +4398,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: 0;
 }
 
-/* line 105, ../xiv/sass/xiv.scss */
+/* line 105, xiv.scss */
 .xiv-ui-displayall-checkboxholder {
   position: absolute;
   left: 30%;
 }
 
-/* line 117, ../xiv/sass/xiv.scss */
+/* line 117, xiv.scss */
 .xiv-ui-sliderbase-slider {
   position: absolute;
   left: calc(55% - 65px);
@@ -2437,7 +4413,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   outline: none;
 }
 
-/* line 127, ../xiv/sass/xiv.scss */
+/* line 127, xiv.scss */
 .xiv-ui-sliderbase-slider-track, .xiv-ui-slidercontroller-slider-track, .xiv-ui-twothumbslidercontroller-slider-track {
   position: absolute;
   height: 1px;
@@ -2448,7 +4424,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   outline: 0;
 }
 
-/* line 139, ../xiv/sass/xiv.scss */
+/* line 139, xiv.scss */
 .xiv-ui-sliderbase-slider-thumb, .xiv-ui-twothumbslidercontroller-slider-thumb-extent, .xiv-ui-twothumbslidercontroller-slider-thumb-value {
   position: absolute;
   height: 7px;
@@ -2470,7 +4446,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transition-timing-function: ease-out;
 }
 
-/* line 159, ../xiv/sass/xiv.scss */
+/* line 159, xiv.scss */
 .xiv-ui-sliderbase-slider-thumb:hover, .xiv-ui-twothumbslidercontroller-slider-thumb-extent:hover, .xiv-ui-twothumbslidercontroller-slider-thumb-value:hover,
 .xiv-ui-sliderbase-slider-thumb:active,
 .xiv-ui-twothumbslidercontroller-slider-thumb-extent:active,
@@ -2478,12 +4454,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, 0.55);
 }
 
-/* line 165, ../xiv/sass/xiv.scss */
+/* line 165, xiv.scss */
 .xiv-ui-sliderbase-slider-track-hover {
   box-sizing: content-box;
 }
 
-/* line 170, ../xiv/sass/xiv.scss */
+/* line 170, xiv.scss */
 .xiv-ui-sliderbase-valueinput {
   position: absolute;
   top: 0px;
@@ -2495,7 +4471,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   outline: none;
 }
 
-/* line 180, ../xiv/sass/xiv.scss */
+/* line 180, xiv.scss */
 .xiv-ui-sliderbase-valueinput-display,
 .xiv-ui-sliderbase-valueinput-box {
   color: white;
@@ -2503,12 +4479,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 186, ../xiv/sass/xiv.scss */
+/* line 186, xiv.scss */
 .xiv-ui-sliderbase-valueinput-box {
   height: 17px;
 }
 
-/* line 203, ../xiv/sass/xiv.scss */
+/* line 203, xiv.scss */
 .xiv-ui-slidercontroller-slider {
   position: absolute;
   left: calc(55% - 65px);
@@ -2516,12 +4492,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   outline: none;
 }
 
-/* line 218, ../xiv/sass/xiv.scss */
+/* line 218, xiv.scss */
 .xiv-ui-slidercontroller-slider-track-hover {
   box-sizing: content-box;
 }
 
-/* line 223, ../xiv/sass/xiv.scss */
+/* line 223, xiv.scss */
 .xiv-ui-slidercontroller-value-input {
   top: -3px;
   width: 46px;
@@ -2532,7 +4508,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 231, ../xiv/sass/xiv.scss */
+/* line 231, xiv.scss */
 .xiv-ui-buttoncontroller {
   color: white;
   font-size: 10px;
@@ -2540,7 +4516,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   text-align: center;
 }
 
-/* line 236, ../xiv/sass/xiv.scss */
+/* line 236, xiv.scss */
 .xiv-ui-buttoncontroller-element {
   top: 5px;
   color: white;
@@ -2554,12 +4530,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-weight: normal;
 }
 
-/* line 247, ../xiv/sass/xiv.scss */
+/* line 247, xiv.scss */
 .xiv-ui-twothumbslidercontroller {
   outline: 0;
 }
 
-/* line 254, ../xiv/sass/xiv.scss */
+/* line 254, xiv.scss */
 .xiv-ui-twothumbslidercontroller-slider {
   position: absolute;
   top: 20px;
@@ -2568,17 +4544,17 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   outline: 0;
 }
 
-/* line 269, ../xiv/sass/xiv.scss */
+/* line 269, xiv.scss */
 .xiv-ui-twothumbslidercontroller-slider-thumb, .xiv-ui-twothumbslidercontroller-slider-thumb-extent, .xiv-ui-twothumbslidercontroller-slider-thumb-value {
   top: -1px;
 }
 
-/* line 279, ../xiv/sass/xiv.scss */
+/* line 279, xiv.scss */
 .xiv-ui-twothumbslidercontroller-slider-thumb-value {
   left: 0px;
 }
 
-/* line 287, ../xiv/sass/xiv.scss */
+/* line 287, xiv.scss */
 .xiv-ui-twothumbslidercontroller-value-input,
 .xiv-ui-twothumbslidercontroller-extent-input {
   position: absolute;
@@ -2588,22 +4564,22 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 295, ../xiv/sass/xiv.scss */
+/* line 295, xiv.scss */
 .xiv-ui-twothumbslidercontroller-value-input {
   left: calc(100% - 140px);
 }
 
-/* line 300, ../xiv/sass/xiv.scss */
+/* line 300, xiv.scss */
 .xiv-ui-twothumbslidercontroller-extent-input {
   left: calc(100% - 68px);
 }
 
-/* line 302, ../xiv/sass/xiv.scss */
+/* line 302, xiv.scss */
 .xiv-ui-checkboxcontroller {
   outline: none;
 }
 
-/* line 308, ../xiv/sass/xiv.scss */
+/* line 308, xiv.scss */
 .xiv-ui-checkboxcontroller-checkboxholder {
   position: absolute;
   top: 0px;
@@ -2611,14 +4587,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   outline: none;
 }
 
-/* line 313, ../xiv/sass/xiv.scss */
+/* line 313, xiv.scss */
 .xiv-ui-radiobuttoncontroller-radiobutton {
   position: absolute;
   top: 0px;
   left: 50%;
 }
 
-/* line 317, ../xiv/sass/xiv.scss */
+/* line 317, xiv.scss */
 .xiv-ui-colorpalettecontroller {
   position: absolute;
   width: 450px;
@@ -2627,7 +4603,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   left: 30%;
 }
 
-/* line 326, ../xiv/sass/xiv.scss */
+/* line 326, xiv.scss */
 .xiv-ui-colorpalettecontroller-colorsquare {
   position: absolute;
   top: 0px;
@@ -2639,7 +4615,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   cursor: pointer;
 }
 
-/* line 338, ../xiv/sass/xiv.scss */
+/* line 338, xiv.scss */
 .xiv-ui-colorpalettecontroller-colorpaletteholder {
   /*
       position: absolute;
@@ -2652,7 +4628,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   */
 }
 
-/* line 351, ../xiv/sass/xiv.scss */
+/* line 351, xiv.scss */
 .xiv-ui-colorpalettecontroller-colorpalette {
   position: absolute;
   top: 10px;
@@ -2660,7 +4636,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border: none;
 }
 
-/* line 359, ../xiv/sass/xiv.scss */
+/* line 359, xiv.scss */
 .xiv-ui-colorpalettecontroller-closebutton {
   position: absolute;
   cursor: pointer;
@@ -2675,7 +4651,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 373, ../xiv/sass/xiv.scss */
+/* line 373, xiv.scss */
 .xiv-ui-helpdialog {
   position: absolute;
   background-color: rgba(0, 0, 0, 0.9);
@@ -2691,18 +4667,18 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: 20000;
 }
 
-/* line 389, ../xiv/sass/xiv.scss */
+/* line 389, xiv.scss */
 .xiv-ui-helpdialog-title {
   height: 15px;
 }
 
-/* line 393, ../xiv/sass/xiv.scss */
+/* line 393, xiv.scss */
 .xiv-ui-helpdialog-closebutton {
   top: 2px;
   left: calc(100% - 12px);
 }
 
-/* line 399, ../xiv/sass/xiv.scss */
+/* line 399, xiv.scss */
 .xiv-ui-helpdialog-scrollablezippytree {
   position: absolute;
   top: 25px;
@@ -2711,7 +4687,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   height: calc(100% - 40px);
 }
 
-/* line 409, ../xiv/sass/xiv.scss */
+/* line 409, xiv.scss */
 .xiv-ui-helpdialog-text {
   position: absolute;
   text-align: left;
@@ -2727,7 +4703,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 424, ../xiv/sass/xiv.scss */
+/* line 424, xiv.scss */
 .xiv-ui-viewbox {
   top: 0px;
   left: 80px;
@@ -2739,12 +4715,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   -webkit-box-sizing: border-box;
 }
 
-/* line 436, ../xiv/sass/xiv.scss */
+/* line 436, xiv.scss */
 .xiv-ui-viewbox-hidden {
   visibility: hidden;
 }
 
-/* line 441, ../xiv/sass/xiv.scss */
+/* line 441, xiv.scss */
 .xiv-ui-viewbox-draganddrophandle {
   position: absolute;
   cursor: pointer;
@@ -2755,13 +4731,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   margin-left: -10px;
 }
 
-/* line 453, ../xiv/sass/xiv.scss */
+/* line 453, xiv.scss */
 .xiv-ui-viewbox-tabdragger {
   background-color: #282828;
   height: 10px;
 }
 
-/* line 459, ../xiv/sass/xiv.scss */
+/* line 459, xiv.scss */
 .xiv-ui-viewbox-tabdragger-handle {
   position: absolute;
   top: calc(50% - 1.5px);
@@ -2771,14 +4747,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background-color: #646464;
 }
 
-/* line 470, ../xiv/sass/xiv.scss */
+/* line 470, xiv.scss */
 .xiv-ui-viewbox-viewlayoutmenu {
   height: 14px;
   width: 14px;
   cursor: pointer;
 }
 
-/* line 479, ../xiv/sass/xiv.scss */
+/* line 479, xiv.scss */
 .xiv-ui-viewbox-viewframe {
   position: absolute;
   top: 0px;
@@ -2798,13 +4774,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transition-timing-function: ease-out;
 }
 
-/* line 500, ../xiv/sass/xiv.scss */
+/* line 500, xiv.scss */
 .xiv-ui-viewbox-ziptabs {
   left: 0px;
   width: 100%;
 }
 
-/* line 506, ../xiv/sass/xiv.scss */
+/* line 506, xiv.scss */
 .xiv-ui-viewbox-ziptab-bounds {
   position: absolute;
   cursor: auto;
@@ -2815,7 +4791,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background-color: rgba(255, 0, 0, 0);
 }
 
-/* line 517, ../xiv/sass/xiv.scss */
+/* line 517, xiv.scss */
 .xiv-ui-viewbox-viewlayouthandler {
   height: 100%;
   width: 100%;
@@ -2824,12 +4800,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   position: absolute;
 }
 
-/* line 526, ../xiv/sass/xiv.scss */
+/* line 526, xiv.scss */
 .xiv-ui-viewbox-viewablegroupmenu {
   z-index: 100;
 }
 
-/* line 531, ../xiv/sass/xiv.scss */
+/* line 531, xiv.scss */
 .xiv-ui-viewbox-menu-left,
 .xiv-ui-viewbox-menu-top-left {
   box-sizing: border-box;
@@ -2852,71 +4828,71 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transition-timing-function: ease-out;
 }
 
-/* line 551, ../xiv/sass/xiv.scss */
+/* line 551, xiv.scss */
 .xiv-ui-viewbox-menu-left:hover {
   opacity: 1;
 }
 
-/* line 555, ../xiv/sass/xiv.scss */
+/* line 555, xiv.scss */
 .xiv-ui-viewbox-menu-top-left:hover {
   opacity: 1;
 }
 
-/* line 560, ../xiv/sass/xiv.scss */
+/* line 560, xiv.scss */
 .xiv-ui-viewbox:hover > .xiv-ui-viewbox-viewframe {
   border: solid 1px #6e6e6e;
 }
 
-/* line 567, ../xiv/sass/xiv.scss */
+/* line 567, xiv.scss */
 .xiv-ui-viewbox-menu-left {
   top: calc(50% - 57px);
 }
 
-/* line 573, ../xiv/sass/xiv.scss */
+/* line 573, xiv.scss */
 .xiv-ui-viewbox-button-threedtoggle {
   width: 15px;
   height: 15px;
   opacity: .5;
 }
 
-/* line 580, ../xiv/sass/xiv.scss */
+/* line 580, xiv.scss */
 .xiv-ui-viewbox-button-threedtoggle-on {
   opacity: 1;
   background-color: black;
 }
 
-/* line 588, ../xiv/sass/xiv.scss */
+/* line 588, xiv.scss */
 .xiv-ui-viewbox-button-crosshairtoggle {
   width: 15px;
   height: 15px;
   opacity: .5;
 }
 
-/* line 593, ../xiv/sass/xiv.scss */
+/* line 593, xiv.scss */
 .xiv-ui-viewbox-button-crosshairtoggle-on {
   opacity: 1;
   background-color: black;
 }
 
-/* line 600, ../xiv/sass/xiv.scss */
+/* line 600, xiv.scss */
 .xiv-ui-viewbox-button-brightnesscontrasttoggle {
   width: 15px;
   height: 15px;
   opacity: .5;
 }
 
-/* line 605, ../xiv/sass/xiv.scss */
+/* line 605, xiv.scss */
 .xiv-ui-viewbox-button-brightnesscontrasttoggle-on {
   opacity: 1;
   background-color: black;
 }
 
-/* line 611, ../xiv/sass/xiv.scss */
+/* line 611, xiv.scss */
 .xiv-ui-viewbox-component-highlight {
   /*box-shadow: 0px 0px 1px 1px rgba(255,255,255, 1);*/
 }
 
-/* line 617, ../xiv/sass/xiv.scss */
+/* line 617, xiv.scss */
 .xiv-ui-viewbox-inusedialog {
   position: absolute;
   top: calc(50% - 60px);
@@ -2935,7 +4911,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: 200;
 }
 
-/* line 635, ../xiv/sass/xiv.scss */
+/* line 635, xiv.scss */
 .xiv-ui-viewbox-emptymenubutton {
   width: 15px;
   height: 15px;
@@ -2944,7 +4920,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 648, ../xiv/sass/xiv.scss */
+/* line 648, xiv.scss */
 .xiv-ui-viewboxdialogs-generic-toggle {
   width: 15px;
   height: 15px;
@@ -2952,13 +4928,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background-color: black;
 }
 
-/* line 656, ../xiv/sass/xiv.scss */
+/* line 656, xiv.scss */
 .xiv-ui-viewboxdialogs-generic-toggle-on {
   opacity: 1;
   background-color: black;
 }
 
-/* line 664, ../xiv/sass/xiv.scss */
+/* line 664, xiv.scss */
 .xiv-ui-viewboxdialogs-infodialog {
   position: absolute;
   background-color: transparent;
@@ -2979,7 +4955,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transition-timing-function: ease-out;
 }
 
-/* line 684, ../xiv/sass/xiv.scss */
+/* line 684, xiv.scss */
 .xiv-ui-viewboxdialogs-infodialog-text {
   color: #9b9b9b;
   transition-property: color;
@@ -2988,37 +4964,37 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transition-timing-function: ease-out;
 }
 
-/* line 691, ../xiv/sass/xiv.scss */
+/* line 691, xiv.scss */
 .xiv-ui-viewboxdialogs-infodialog:hover {
   color: white !important;
   border-color: white;
   background-color: rgba(60, 60, 60, 0.5);
 }
 
-/* line 698, ../xiv/sass/xiv.scss */
+/* line 698, xiv.scss */
 .xiv-ui-viewboxdialogs-infodialog-content:hover > .xiv-ui-viewboxdialogs-infodialog-text {
   color: white;
 }
 
-/* line 703, ../xiv/sass/xiv.scss */
+/* line 703, xiv.scss */
 .xiv-ui-viewboxdialogs-infodialog-title {
   opacity: 0;
   transition-property: opacity;
 }
 
-/* line 710, ../xiv/sass/xiv.scss */
+/* line 710, xiv.scss */
 .xiv-ui-viewboxdialogs-infodialog,
 .xiv-ui-viewboxdialogs-infodialog-title {
   transition-duration: .15s;
   transition-timing-function: ease-out;
 }
 
-/* line 717, ../xiv/sass/xiv.scss */
+/* line 717, xiv.scss */
 .xiv-ui-viewboxdialogs-infodialog:hover > .xiv-ui-viewboxdialogs-infodialog-title {
   opacity: 1;
 }
 
-/* line 737, ../xiv/sass/xiv.scss */
+/* line 737, xiv.scss */
 .xiv-ui-viewboxdialogs-infodialog-text {
   white-space: nowrap;
   text-align: left;
@@ -3028,27 +5004,27 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 756, ../xiv/sass/xiv.scss */
+/* line 756, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-generic-toggle {
   width: 15px;
   height: 15px;
   opacity: .5;
 }
 
-/* line 763, ../xiv/sass/xiv.scss */
+/* line 763, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-generic-toggle-on {
   opacity: 1;
   background-color: black;
 }
 
-/* line 770, ../xiv/sass/xiv.scss */
+/* line 770, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-generic-zippytree {
   top: 30px;
   width: calc(100% - 20px);
   height: calc(100% - 30px);
 }
 
-/* line 778, ../xiv/sass/xiv.scss */
+/* line 778, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-generic-dialog {
   width: 470px;
   height: 330px;
@@ -3056,7 +5032,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: 1000000;
 }
 
-/* line 787, ../xiv/sass/xiv.scss */
+/* line 787, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-viewframe-grab {
   cursor: hand;
   cursor: grab;
@@ -3064,36 +5040,36 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   cursor: -webkit-grab;
 }
 
-/* line 796, ../xiv/sass/xiv.scss */
+/* line 796, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-viewframe-grabbing {
   cursor: grabbing;
   cursor: -moz-grabbing;
   cursor: -webkit-grabbing;
 }
 
-/* line 802, ../xiv/sass/xiv.scss */
+/* line 802, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-viewframe-grab-custom {
   cursor: url(https://mail.google.com/mail/images/2/openhand.cur), default !important;
 }
 
-/* line 807, ../xiv/sass/xiv.scss */
+/* line 807, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-viewframe-grabbing-custom {
   cursor: url(https://mail.google.com/mail/images/2/closedhand.cur), default !important;
 }
 
-/* line 812, ../xiv/sass/xiv.scss */
+/* line 812, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-viewframe-zoom-in {
   cursor: zoom-in;
   cursor: -webkit-zoom-in;
 }
 
-/* line 818, ../xiv/sass/xiv.scss */
+/* line 818, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-viewframe-zoom-out {
   cursor: zoom-out;
   cursor: -webkit-zoom-out;
 }
 
-/* line 825, ../xiv/sass/xiv.scss */
+/* line 825, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-zoom-follower {
   color: white;
   font-size: 10px;
@@ -3105,7 +5081,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 200px;
 }
 
-/* line 836, ../xiv/sass/xiv.scss */
+/* line 836, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-levelsdialog {
   position: absolute;
   font-size: 12px;
@@ -3123,37 +5099,37 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transition-property: height, background-color, border-color;
 }
 
-/* line 854, ../xiv/sass/xiv.scss */
+/* line 854, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-levelsdialog:hover {
   height: 440px;
   background-color: rgba(0, 0, 0, 0.9);
   border-color: white;
 }
 
-/* line 861, ../xiv/sass/xiv.scss */
+/* line 861, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-levelsdialog-title {
   opacity: 0;
   transition-property: opacity;
 }
 
-/* line 866, ../xiv/sass/xiv.scss */
+/* line 866, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-levelsdialog,
 .xiv-ui-viewboxinteractorhandler-levelsdialog-title {
   transition-duration: .3s;
   /*transition-timing-function: ease-out;*/
 }
 
-/* line 872, ../xiv/sass/xiv.scss */
+/* line 872, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-levelsdialog:hover > .xiv-ui-viewboxinteractorhandler-levelsdialog-title {
   opacity: 1;
 }
 
-/* line 876, ../xiv/sass/xiv.scss */
+/* line 876, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-levelsdialog-max:hover > .xiv-ui-viewboxinteractorhandler-levelsdialog-title {
   opacity: 1;
 }
 
-/* line 883, ../xiv/sass/xiv.scss */
+/* line 883, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-histdetails {
   position: relative;
   height: 17px;
@@ -3171,7 +5147,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   overflow: hidden;
 }
 
-/* line 899, ../xiv/sass/xiv.scss */
+/* line 899, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-histdetails-expandbutton {
   background-color: #505050;
   position: absolute;
@@ -3184,7 +5160,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: 2;
 }
 
-/* line 913, ../xiv/sass/xiv.scss */
+/* line 913, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-histdetails-fadebottom {
   visibility: hidden;
   position: absolute;
@@ -3195,7 +5171,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background: linear-gradient(to bottom, transparent 0%, black 100%);
 }
 
-/* line 924, ../xiv/sass/xiv.scss */
+/* line 924, xiv.scss */
 .xiv-ui-viewboxinteractorhandler-histdetails:hover {
   border: solid 1px #505050;
   height: 110px;
@@ -3206,7 +5182,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
  *
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 936, ../xiv/sass/xiv.scss */
+/* line 936, xiv.scss */
 .xiv-ui-nomobilemodal {
   background-color: black;
   position: fixed;
@@ -3216,7 +5192,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 100%;
 }
 
-/* line 946, ../xiv/sass/xiv.scss */
+/* line 946, xiv.scss */
 .xiv-ui-nomobilemodal-content {
   color: white;
   font-size: 12px;
@@ -3230,7 +5206,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transform: translateY(-50%);
 }
 
-/* line 959, ../xiv/sass/xiv.scss */
+/* line 959, xiv.scss */
 .xiv-ui-modal {
   position: fixed;
   background-color: black;
@@ -3242,7 +5218,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 100%;
 }
 
-/* line 971, ../xiv/sass/xiv.scss */
+/* line 971, xiv.scss */
 .xiv-ui-modal-windowed {
   position: fixed;
   border: solid 1px black;
@@ -3253,7 +5229,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: calc(100% - 20px);
 }
 
-/* line 984, ../xiv/sass/xiv.scss */
+/* line 984, xiv.scss */
 .xiv-ui-modal-background {
   position: fixed;
   top: 0px;
@@ -3265,13 +5241,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   display: inline-block;
 }
 
-/* line 996, ../xiv/sass/xiv.scss */
+/* line 996, xiv.scss */
 .xiv-ui-modal-background-black {
   background-color: black;
   color: black;
 }
 
-/* line 1002, ../xiv/sass/xiv.scss */
+/* line 1002, xiv.scss */
 .xiv-ui-modal-close-button {
   position: absolute;
   cursor: pointer;
@@ -3282,7 +5258,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   height: 10px;
 }
 
-/* line 1013, ../xiv/sass/xiv.scss */
+/* line 1013, xiv.scss */
 .xiv-ui-modal-fullscreen-button, .xiv-ui-modal-windowed-button {
   position: absolute;
   cursor: pointer;
@@ -3293,7 +5269,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   height: 11px;
 }
 
-/* line 1032, ../xiv/sass/xiv.scss */
+/* line 1032, xiv.scss */
 .xiv-ui-modal-popup-button {
   position: absolute;
   cursor: pointer;
@@ -3304,7 +5280,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   height: 12px;
 }
 
-/* line 1045, ../xiv/sass/xiv.scss */
+/* line 1045, xiv.scss */
 .xiv-ui-modal-insertcolumn-button, .xiv-ui-modal-removecolumn-button,
 .xiv-ui-modal-insertrow-button, .xiv-ui-modal-removerow-button {
   position: absolute;
@@ -3312,7 +5288,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: 2;
 }
 
-/* line 1054, ../xiv/sass/xiv.scss */
+/* line 1054, xiv.scss */
 .xiv-ui-modal-insertcolumn-button, .xiv-ui-modal-removecolumn-button {
   left: 100%;
   top: 50%;
@@ -3321,17 +5297,17 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   height: 24px;
 }
 
-/* line 1063, ../xiv/sass/xiv.scss */
+/* line 1063, xiv.scss */
 .xiv-ui-modal-insertcolumn-button {
   margin-top: -10px;
 }
 
-/* line 1068, ../xiv/sass/xiv.scss */
+/* line 1068, xiv.scss */
 .xiv-ui-modal-removecolumn-button {
   margin-top: 10px;
 }
 
-/* line 1075, ../xiv/sass/xiv.scss */
+/* line 1075, xiv.scss */
 .xiv-ui-modal-insertrow-button, .xiv-ui-modal-removerow-button {
   top: 100%;
   left: 50%;
@@ -3340,17 +5316,17 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   height: 8px;
 }
 
-/* line 1085, ../xiv/sass/xiv.scss */
+/* line 1085, xiv.scss */
 .xiv-ui-modal-insertrow-button {
   margin-left: -10px;
 }
 
-/* line 1090, ../xiv/sass/xiv.scss */
+/* line 1090, xiv.scss */
 .xiv-ui-modal-removerow-button {
   margin-left: 10px;
 }
 
-/* line 1095, ../xiv/sass/xiv.scss */
+/* line 1095, xiv.scss */
 .xiv-ui-modal-projecttab-bounds {
   position: absolute;
   top: 29px;
@@ -3360,7 +5336,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background-color: rgba(120, 220, 120, 0);
 }
 
-/* line 1105, ../xiv/sass/xiv.scss */
+/* line 1105, xiv.scss */
 .xiv-ui-modal-projecttab {
   left: 0px;
   height: calc(100% - 60px);
@@ -3368,7 +5344,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-radius: 0px;
 }
 
-/* line 1113, ../xiv/sass/xiv.scss */
+/* line 1113, xiv.scss */
 .xiv-ui-modal-projecttab-dragger {
   left: calc(100%);
   width: 10px;
@@ -3379,7 +5355,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: 0;
 }
 
-/* line 1125, ../xiv/sass/xiv.scss */
+/* line 1125, xiv.scss */
 .xiv-ui-modal-projecttab-dragger-handle {
   position: absolute;
   width: 4px;
@@ -3390,7 +5366,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-radius: 4px;
 }
 
-/* line 1137, ../xiv/sass/xiv.scss */
+/* line 1137, xiv.scss */
 .xiv-ui-modal-addsubjects {
   width: 87%;
   height: 40px;
@@ -3411,12 +5387,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 1156, ../xiv/sass/xiv.scss */
+/* line 1156, xiv.scss */
 .xiv-ui-modal-addsubjects-hovered {
   opacity: 1;
 }
 
-/* line 1161, ../xiv/sass/xiv.scss */
+/* line 1161, xiv.scss */
 .xiv-ui-modal-foldericon {
   position: absolute;
   left: calc(50% - 9px);
@@ -3432,14 +5408,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1181, ../xiv/sass/xiv.scss */
+/* line 1181, xiv.scss */
 .xiv-ui-thumbnailgallery {
   position: absolute;
   left: 0px;
   width: calc(100% - 10px);
 }
 
-/* line 1189, ../xiv/sass/xiv.scss */
+/* line 1189, xiv.scss */
 .xiv-ui-thumbnailgallery-thumbnail-dragging {
   position: absolute;
   width: 87px;
@@ -3458,7 +5434,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*#
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 1208, ../xiv/sass/xiv.scss */
+/* line 1208, xiv.scss */
 .xiv-ui-viewboxhandler-handle {
   position: relative;
   cursor: pointer;
@@ -3468,14 +5444,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: .5;
 }
 
-/* line 1219, ../xiv/sass/xiv.scss */
+/* line 1219, xiv.scss */
 .xiv-ui-viewboxhandler-viewboxdragclone {
   border: solid 1px white;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 10000;
 }
 
-/* line 1226, ../xiv/sass/xiv.scss */
+/* line 1226, xiv.scss */
 .xiv-ui-viewboxhandler-closebutton {
   position: absolute;
   height: 9px;
@@ -3485,12 +5461,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: .6;
 }
 
-/* line 1237, ../xiv/sass/xiv.scss */
+/* line 1237, xiv.scss */
 .xiv-ui-viewboxhandler-closebutton-hovered {
   opacity: 1;
 }
 
-/* line 1243, ../xiv/sass/xiv.scss */
+/* line 1243, xiv.scss */
 .xiv-ui-viewboxhandler-addrowbutton {
   position: absolute;
   height: 5px;
@@ -3500,12 +5476,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: .6;
 }
 
-/* line 1254, ../xiv/sass/xiv.scss */
+/* line 1254, xiv.scss */
 .xiv-ui-viewboxhandler-addrowbutton-hovered {
   opacity: 1;
 }
 
-/* line 1259, ../xiv/sass/xiv.scss */
+/* line 1259, xiv.scss */
 .xiv-ui-viewboxhandler-addcolumnbutton {
   position: absolute;
   height: 10px;
@@ -3516,7 +5492,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: .6;
 }
 
-/* line 1271, ../xiv/sass/xiv.scss */
+/* line 1271, xiv.scss */
 .xiv-ui-viewboxhandler-addcolumnbutton-hovered {
   opacity: 1;
 }
@@ -3524,7 +5500,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 1279, ../xiv/sass/xiv.scss */
+/* line 1279, xiv.scss */
 .xiv-ui-layouts-layouthandler {
   position: absolute;
   background: black;
@@ -3533,7 +5509,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1298, ../xiv/sass/xiv.scss */
+/* line 1298, xiv.scss */
 .xiv-ui-layouts-layout {
   position: absolute;
   width: 100%;
@@ -3543,14 +5519,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1309, ../xiv/sass/xiv.scss */
+/* line 1309, xiv.scss */
 .xiv-ui-levelscontroller {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-/* line 1317, ../xiv/sass/xiv.scss */
+/* line 1317, xiv.scss */
 .xiv-ui-levelscontroller-sliderlabel,
 .xiv-ui-levelscontroller-twothumbsliderlabel {
   position: absolute;
@@ -3558,70 +5534,70 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   top: 6px;
 }
 
-/* line 1325, ../xiv/sass/xiv.scss */
+/* line 1325, xiv.scss */
 .xiv-ui-levelscontroller-twothumbsliderlabel {
   left: 10px;
   font-size: 10px;
   top: 0px;
 }
 
-/* line 1331, ../xiv/sass/xiv.scss */
+/* line 1331, xiv.scss */
 .xiv-ui-levelscontroller-slidercontroller,
 .xiv-ui-levelscontroller-twothumbslidercontroller {
   height: 40px;
 }
 
-/* line 1337, ../xiv/sass/xiv.scss */
+/* line 1337, xiv.scss */
 .xiv-ui-levelscontroller-slidercontroller {
   width: 80%;
 }
 
-/* line 1341, ../xiv/sass/xiv.scss */
+/* line 1341, xiv.scss */
 .xiv-ui-levelscontroller-twothumbslidercontroller {
   height: 45px;
   width: 90%;
 }
 
-/* line 1348, ../xiv/sass/xiv.scss */
+/* line 1348, xiv.scss */
 .xiv-ui-levelscontroller-slider {
   left: 0%;
   top: 28px;
   width: 95%;
 }
 
-/* line 1355, ../xiv/sass/xiv.scss */
+/* line 1355, xiv.scss */
 .xiv-ui-levelscontroller-twothumbslider {
   left: 7%;
   top: 24px;
   width: 100%;
 }
 
-/* line 1362, ../xiv/sass/xiv.scss */
+/* line 1362, xiv.scss */
 .xiv-ui-levelscontroller-slidervalue {
   left: calc(100% - 52px);
   width: 50px;
   top: 4px;
 }
 
-/* line 1369, ../xiv/sass/xiv.scss */
+/* line 1369, xiv.scss */
 .xiv-ui-levelscontroller-twothumbslidervalue,
 .xiv-ui-levelscontroller-twothumbsliderextent {
   left: 10px;
   top: 32px;
 }
 
-/* line 1375, ../xiv/sass/xiv.scss */
+/* line 1375, xiv.scss */
 .xiv-ui-levelscontroller-twothumbsliderextent {
   left: calc(100% - 37px);
 }
 
-/* line 1382, ../xiv/sass/xiv.scss */
+/* line 1382, xiv.scss */
 .xiv-ui-levelscontroller-checkbox {
   top: 28px;
   width: 110px;
 }
 
-/* line 1387, ../xiv/sass/xiv.scss */
+/* line 1387, xiv.scss */
 .xiv-ui-levelscontroller-checkboxholder {
   top: 0px;
   width: 10px;
@@ -3629,7 +5605,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   left: calc(100% - 15px);
 }
 
-/* line 1395, ../xiv/sass/xiv.scss */
+/* line 1395, xiv.scss */
 .xiv-ui-levelscontroller-checkboxcontroller {
   height: 15px;
   outline: none;
@@ -3638,20 +5614,20 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 1407, ../xiv/sass/xiv.scss */
+/* line 1407, xiv.scss */
 .xiv-ui-layouts-conventional {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-/* line 1414, ../xiv/sass/xiv.scss */
+/* line 1414, xiv.scss */
 .xiv-ui-layouts-conventional-x, .xiv-ui-layouts-conventional-y,
 .xiv-ui-layouts-conventional-z, .xiv-ui-layouts-conventional-v {
   position: absolute;
 }
 
-/* line 1420, ../xiv/sass/xiv.scss */
+/* line 1420, xiv.scss */
 .xiv-ui-layouts-conventional-v {
   top: 0px;
   left: 0px;
@@ -3664,7 +5640,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-bottom: solid 1px #323232;
 }
 
-/* line 1434, ../xiv/sass/xiv.scss */
+/* line 1434, xiv.scss */
 .xiv-ui-layouts-conventional-x, .xiv-ui-layouts-conventional-y,
 .xiv-ui-layouts-conventional-z {
   top: 65%;
@@ -3672,25 +5648,25 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 33.33%;
 }
 
-/* line 1442, ../xiv/sass/xiv.scss */
+/* line 1442, xiv.scss */
 .xiv-ui-layouts-conventional-x {
   left: 33.33%;
   /*border-left: solid 1px rgb(50,50,50);*/
 }
 
-/* line 1448, ../xiv/sass/xiv.scss */
+/* line 1448, xiv.scss */
 .xiv-ui-layouts-conventional-y {
   left: 66.66%;
   border-left: solid 1px #323232;
 }
 
-/* line 1454, ../xiv/sass/xiv.scss */
+/* line 1454, xiv.scss */
 .xiv-ui-layouts-conventional-z {
   left: 0px;
   border-right: solid 1px #323232;
 }
 
-/* line 1461, ../xiv/sass/xiv.scss */
+/* line 1461, xiv.scss */
 .xiv-ui-layouts-conventional-x-resizeboundary,
 .xiv-ui-layouts-conventional-y-resizeboundary,
 .xiv-ui-layouts-conventional-z-resizeboundary,
@@ -3699,7 +5675,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: -1;
 }
 
-/* line 1470, ../xiv/sass/xiv.scss */
+/* line 1470, xiv.scss */
 .xiv-ui-layouts-conventional-x-resizeboundary {
   /**
   background-color: purple;
@@ -3711,14 +5687,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1486, ../xiv/sass/xiv.scss */
+/* line 1486, xiv.scss */
 .xiv-ui-layouts-fourup {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-/* line 1493, ../xiv/sass/xiv.scss */
+/* line 1493, xiv.scss */
 .xiv-ui-layouts-fourup-x, .xiv-ui-layouts-fourup-y,
 .xiv-ui-layouts-fourup-z, .xiv-ui-layouts-fourup-v {
   position: absolute;
@@ -3726,7 +5702,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   height: 50%;
 }
 
-/* line 1501, ../xiv/sass/xiv.scss */
+/* line 1501, xiv.scss */
 .xiv-ui-layouts-fourup-x-resizeboundary {
   /*
   background-color: blue;
@@ -3735,7 +5711,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: -1;
 }
 
-/* line 1510, ../xiv/sass/xiv.scss */
+/* line 1510, xiv.scss */
 .xiv-ui-layouts-fourup-v {
   left: 50%;
   top: 0%;
@@ -3745,7 +5721,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-bottom: solid 1px #323232;
 }
 
-/* line 1522, ../xiv/sass/xiv.scss */
+/* line 1522, xiv.scss */
 .xiv-ui-layouts-fourup-x {
   left: 0%;
   top: 50%;
@@ -3755,7 +5731,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-bottom: none;
 }
 
-/* line 1532, ../xiv/sass/xiv.scss */
+/* line 1532, xiv.scss */
 .xiv-ui-layouts-fourup-y {
   border-left: none;
   border-top: none;
@@ -3765,7 +5741,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   top: 50%;
 }
 
-/* line 1542, ../xiv/sass/xiv.scss */
+/* line 1542, xiv.scss */
 .xiv-ui-layouts-fourup-z {
   border-left: none;
   border-top: none;
@@ -3778,14 +5754,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1558, ../xiv/sass/xiv.scss */
+/* line 1558, xiv.scss */
 .xiv-ui-layouts-twodrow {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-/* line 1566, ../xiv/sass/xiv.scss */
+/* line 1566, xiv.scss */
 .xiv-ui-layouts-twodrow-x, .xiv-ui-layouts-twodrow-y,
 .xiv-ui-layouts-twodrow-z {
   position: absolute;
@@ -3794,24 +5770,24 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 33.33%;
 }
 
-/* line 1576, ../xiv/sass/xiv.scss */
+/* line 1576, xiv.scss */
 .xiv-ui-layouts-twodrow-x {
   left: 0px;
 }
 
-/* line 1581, ../xiv/sass/xiv.scss */
+/* line 1581, xiv.scss */
 .xiv-ui-layouts-twodrow-y {
   left: 33.33%;
   border-left: solid 1px #323232;
 }
 
-/* line 1587, ../xiv/sass/xiv.scss */
+/* line 1587, xiv.scss */
 .xiv-ui-layouts-twodrow-z {
   left: 66.66%;
   border-left: solid 1px #323232;
 }
 
-/* line 1594, ../xiv/sass/xiv.scss */
+/* line 1594, xiv.scss */
 .xiv-ui-layouts-twodrow-x-resizeboundary,
 .xiv-ui-layouts-twodrow-y-resizeboundary,
 .xiv-ui-layouts-twodrow-z-resizeboundary {
@@ -3822,14 +5798,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1609, ../xiv/sass/xiv.scss */
+/* line 1609, xiv.scss */
 .xiv-ui-layouts-twodwidescreen {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-/* line 1617, ../xiv/sass/xiv.scss */
+/* line 1617, xiv.scss */
 .xiv-ui-layouts-twodwidescreen-y,
 .xiv-ui-layouts-twodwidescreen-z {
   position: absolute;
@@ -3838,18 +5814,18 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 33.33%;
 }
 
-/* line 1626, ../xiv/sass/xiv.scss */
+/* line 1626, xiv.scss */
 .xiv-ui-layouts-twodwidescreen-y {
   top: 0px;
   border-bottom: solid 1px #323232;
 }
 
-/* line 1632, ../xiv/sass/xiv.scss */
+/* line 1632, xiv.scss */
 .xiv-ui-layouts-twodwidescreen-z {
   top: 50%;
 }
 
-/* line 1637, ../xiv/sass/xiv.scss */
+/* line 1637, xiv.scss */
 .xiv-ui-layouts-twodwidescreen-x {
   position: absolute;
   left: 0px;
@@ -3859,7 +5835,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-right: solid 1px #323232;
 }
 
-/* line 1648, ../xiv/sass/xiv.scss */
+/* line 1648, xiv.scss */
 .xiv-ui-layouts-twodwidescreen-x-resizeboundary,
 .xiv-ui-layouts-twodwidescreen-y-resizeboundary,
 .xiv-ui-layouts-twodwidescreen-z-resizeboundary {
@@ -3870,7 +5846,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1660, ../xiv/sass/xiv.scss */
+/* line 1660, xiv.scss */
 .xiv-ui-progressbarpanel {
   position: absolute;
   height: 100%;
@@ -3880,7 +5856,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: 2;
 }
 
-/* line 1669, ../xiv/sass/xiv.scss */
+/* line 1669, xiv.scss */
 .xiv-ui-progressbarpanel-thumb {
   position: absolute;
   height: 100%;
@@ -3889,7 +5865,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-radius: 1px;
 }
 
-/* line 1677, ../xiv/sass/xiv.scss */
+/* line 1677, xiv.scss */
 .xiv-ui-progressbarpanel-progbarholder {
   position: absolute;
   height: 1px;
@@ -3902,14 +5878,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   overflow: visible;
 }
 
-/* line 1690, ../xiv/sass/xiv.scss */
+/* line 1690, xiv.scss */
 .xiv-ui-progressbarpanel-progressbar {
   background: cornflowerblue;
   height: 100%;
   top: 0px;
 }
 
-/* line 1697, ../xiv/sass/xiv.scss */
+/* line 1697, xiv.scss */
 .xiv-ui-progressbarpanel-labelholder {
   position: absolute;
   height: 15px;
@@ -3937,7 +5913,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
     box-shadow: 0px 0px 2px 3px rgba(255, 255, 255, 0.8);
   }
 }
-/* line 1726, ../xiv/sass/xiv.scss */
+/* line 1726, xiv.scss */
 .xiv-ui-progressbarpanel-endnode {
   position: absolute;
   top: 0px;
@@ -3950,7 +5926,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   box-shadow: 0px 0px 2px 1px rgba(255, 255, 255, 0.05);
 }
 
-/* line 1739, ../xiv/sass/xiv.scss */
+/* line 1739, xiv.scss */
 .xiv-ui-progressbarpanel-endnode-glow {
   -webkit-animation-fill-mode: forwards;
   -webkit-animation-name: endNode;
@@ -3965,7 +5941,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1754, ../xiv/sass/xiv.scss */
+/* line 1754, xiv.scss */
 .xiv-ui-histogram {
   position: absolute;
   height: 120px;
@@ -3973,7 +5949,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   top: -12px;
 }
 
-/* line 1761, ../xiv/sass/xiv.scss */
+/* line 1761, xiv.scss */
 .xiv-ui-histogram-canvas,
 .xiv-ui-histogram-linecanvas {
   position: absolute;
@@ -3983,12 +5959,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   top: 20px;
 }
 
-/* line 1771, ../xiv/sass/xiv.scss */
+/* line 1771, xiv.scss */
 .xiv-ui-histogram-canvas {
   background-color: white;
 }
 
-/* line 1777, ../xiv/sass/xiv.scss */
+/* line 1777, xiv.scss */
 .xiv-ui-histogram-clipmax,
 .xiv-ui-histogram-clipmin,
 .xiv-ui-histogram-max,
@@ -4001,25 +5977,25 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   white-space: nowrap;
 }
 
-/* line 1788, ../xiv/sass/xiv.scss */
+/* line 1788, xiv.scss */
 .xiv-ui-histogram-clipmax,
 .xiv-ui-histogram-clipmin {
   top: 7px;
 }
 
-/* line 1795, ../xiv/sass/xiv.scss */
+/* line 1795, xiv.scss */
 .xiv-ui-histogram-max,
 .xiv-ui-histogram-min {
   top: calc(100% - 12px);
 }
 
-/* line 1801, ../xiv/sass/xiv.scss */
+/* line 1801, xiv.scss */
 .xiv-ui-histogram-max {
   width: 100%;
   text-align: right;
 }
 
-/* line 1807, ../xiv/sass/xiv.scss */
+/* line 1807, xiv.scss */
 .xiv-ui-histogram-min {
   left: 0px;
   text-align: left;
@@ -4028,7 +6004,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1818, ../xiv/sass/xiv.scss */
+/* line 1818, xiv.scss */
 .xiv-ui-viewablegroupmenu {
   cursor: pointer;
   box-sizing: border-box;
@@ -4045,7 +6021,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   z-index: 5002;
 }
 
-/* line 1835, ../xiv/sass/xiv.scss */
+/* line 1835, xiv.scss */
 .xiv-ui-viewablegroupmenu-thumbnailgallery {
   position: absolute;
   box-sizing: border-box;
@@ -4059,7 +6035,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-top: solid 1px #9b9b9b;
 }
 
-/* line 1849, ../xiv/sass/xiv.scss */
+/* line 1849, xiv.scss */
 .xiv-ui-viewablegroupmenu-header {
   position: absolute;
   left: 0px;
@@ -4073,13 +6049,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
 }
 
-/* line 1861, ../xiv/sass/xiv.scss */
+/* line 1861, xiv.scss */
 .xiv-ui-viewablegroupmenu-thumbnail {
   width: 100%;
   height: 150px;
 }
 
-/* line 1867, ../xiv/sass/xiv.scss */
+/* line 1867, xiv.scss */
 .xiv-ui-viewablegroupmenu-background {
   position: absolute;
   top: 0px;
@@ -4090,7 +6066,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background-color: black;
 }
 
-/* line 1880, ../xiv/sass/xiv.scss */
+/* line 1880, xiv.scss */
 .xiv-ui-viewablegroupmenu-thumbnail-image {
   width: 140px;
   height: 140px;
@@ -4099,7 +6075,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border: solid 1px #646464;
 }
 
-/* line 1889, ../xiv/sass/xiv.scss */
+/* line 1889, xiv.scss */
 .xiv-ui-viewablegroupmenu-thumbnail-text {
   position: absolute;
   left: 160px;
@@ -4112,14 +6088,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1903, ../xiv/sass/xiv.scss */
+/* line 1903, xiv.scss */
 .xiv-ui-crosshairs-vertical,
 .xiv-ui-crosshairs-horizontal {
   position: absolute;
   background-color: #7d7d7d;
 }
 
-/* line 1911, ../xiv/sass/xiv.scss */
+/* line 1911, xiv.scss */
 .xiv-ui-crosshairs-vertical {
   width: 1px;
   height: 100%;
@@ -4127,7 +6103,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   left: 50%;
 }
 
-/* line 1919, ../xiv/sass/xiv.scss */
+/* line 1919, xiv.scss */
 .xiv-ui-crosshairs-horizontal {
   width: 100%;
   height: 1px;
@@ -4138,7 +6114,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1931, ../xiv/sass/xiv.scss */
+/* line 1931, xiv.scss */
 .xiv-ui-framedisplay {
   position: absolute;
   top: 6px;
@@ -4148,7 +6124,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   text-wrap: none;
 }
 
-/* line 1941, ../xiv/sass/xiv.scss */
+/* line 1941, xiv.scss */
 .xiv-ui-framedisplay-text {
   font-size: 10px;
 }
@@ -4156,7 +6132,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */
-/* line 1949, ../xiv/sass/xiv.scss */
+/* line 1949, xiv.scss */
 .xiv-ui-zoomdisplay {
   position: absolute;
   top: 22px;
@@ -4167,7 +6143,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-size: 10px !important;
 }
 
-/* line 1960, ../xiv/sass/xiv.scss */
+/* line 1960, xiv.scss */
 .xiv-ui-zoomdisplay-text {
   font-size: 10px;
 }
@@ -4175,7 +6151,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
-/* line 1967, ../xiv/sass/xiv.scss */
+/* line 1967, xiv.scss */
 .xiv-ui-playbutton {
   position: absolute;
   left: 9px;
@@ -4190,7 +6166,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   transition-timing-function: ease-out;
 }
 
-/* line 1983, ../xiv/sass/xiv.scss */
+/* line 1983, xiv.scss */
 .xiv-ui-playbutton-image {
   height: 6px;
   width: 9px;

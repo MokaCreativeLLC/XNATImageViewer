@@ -690,7 +690,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
     currDialog.setButtonSet(null);
     currDialog.render(this.ViewBox_.getViewFrame());
     currDialog.setVisible(true);
-    currDialog.moveToCorner('left', 'top', 0, -12);
+    currDialog.moveToCorner('left', 'top', 0, -22);
     currDialog.setTitle(dialogTitle);
 
 

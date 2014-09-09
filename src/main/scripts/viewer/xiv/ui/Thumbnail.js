@@ -219,9 +219,11 @@ xiv.ui.Thumbnail.prototype.createInfoHover_ = function(){
 
     this.infoDiv_.innerHTML = this.getViewable().getSessionInfoAsHtml();
 
+    goog.array.forEach([this.infoDiv_, this.infoHoverArrow_], function(elt){
+	elt.style.opacity = 0;
+	elt.style.visibility = 'hidden';
+    })
 
-    goog.dom.classes.add(this.infoDiv_,
-			 xiv.ui.Thumbnail.CSS.HOVERINFO_DISAPPEAR);
     goog.events.listen(
 	this.infoHoverText_,
 	goog.events.EventType.MOUSEENTER, 
@@ -243,14 +245,20 @@ xiv.ui.Thumbnail.prototype.showInfo = function(){
     var abs = 
 	goog.style.getRelativePosition(this.getElement(), 
 				       this.infoDiv_.parentNode);
+
+    /*
     goog.dom.classes.remove(this.infoDiv_, 
 			    xiv.ui.Thumbnail.CSS.HOVERINFO_DISAPPEAR);
     goog.dom.classes.add(this.infoDiv_,
 			 xiv.ui.Thumbnail.CSS.HOVERINFO_APPEAR);
+    */
 
-    this.infoHoverArrow_.style.opacity = 1;
-    this.infoHoverArrow_.style.visible = 'visible';
+    //this.infoHoverArrow_.style.opacity = 1;
 
+
+    goog.array.forEach([this.infoDiv_, this.infoHoverArrow_], function(elt){
+	elt.style.visibility = 'visible';
+    })  
 
     //
     // Positions the infoDiv to be in screen
@@ -277,6 +285,20 @@ xiv.ui.Thumbnail.prototype.showInfo = function(){
 	abs.x + goog.style.getSize(this.getElement()).width - 6,
 	abs.y + 7)
 
+    nrg.fx.fadeIn(this.infoDiv_, 200);
+    nrg.fx.fadeIn(this.infoHoverArrow_, 200);
+    /*
+    nrg.fx.parallelFade(
+	[this.infoDiv_, this.infoHoverArrow_], 
+	[this.infoDiv_.style.opacity, this.infoHoverArrow_.style.opacity],
+	[1,1],
+	200,
+	null,
+	null,
+	function(){
+	    //window.console.log(this.infoDiv_, this.infoHoverArrow_);
+	}.bind(this));
+    */
     //window.console.log(this.infoHoverArrow_);
 }
 
@@ -285,12 +307,29 @@ xiv.ui.Thumbnail.prototype.showInfo = function(){
  * @public
  */
 xiv.ui.Thumbnail.prototype.hideInfo = function(){
-    this.infoHoverArrow_.style.opacity = 0;
-    this.infoHoverArrow_.style.visible = 'hidden';
-    goog.dom.classes.remove(this.infoDiv_, 
-			    xiv.ui.Thumbnail.CSS.HOVERINFO_APPEAR);
-    goog.dom.classes.add(this.infoDiv_,
-			 xiv.ui.Thumbnail.CSS.HOVERINFO_DISAPPEAR);
+    //this.infoHoverArrow_.style.opacity = 0;
+    //this.infoHoverArrow_.style.visible = 'hidden';
+
+    nrg.fx.fadeOut(this.infoDiv_, 200, function(){
+	this.infoDiv_.style.visibility = 'hidden';
+    }.bind(this));
+    nrg.fx.fadeOut(this.infoHoverArrow_, 200, function(){
+	this.infoHoverArrow_.style.visibility = 'hidden';
+    }.bind(this));
+
+    /*
+    nrg.fx.parallelFade(
+	[this.infoDiv_, this.infoHoverArrow_], 
+	[this.infoDiv_.style.opacity, this.infoHoverArrow_.style.opacity],
+	[0,0],
+	200, null, null, function(){
+	    goog.array.forEach([this.infoDiv_, this.infoHoverArrow_], 
+			       function(elt){
+				   elt.style.visibility = 'hidden';
+			       }) 
+	}.bind(this));
+	*/
+
 }
 
 
