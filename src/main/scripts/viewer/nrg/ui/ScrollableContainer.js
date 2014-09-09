@@ -12,6 +12,7 @@ goog.require('goog.ui.AnimatedZippy');
 goog.require('goog.ui.Zippy');
 goog.require('goog.dom.classes');
 goog.require('goog.style');
+goog.require('goog.Timer');
 
 // nrg
 goog.require('nrg.fx');
@@ -66,6 +67,17 @@ nrg.ui.ScrollableContainer.CSS_SUFFIX = {
 
 
 /**
+ * Event types.
+ * @enum {string}
+ */
+nrg.ui.ScrollableContainer.EventType = {
+  SCROLL: goog.events.getUniqueId('scroll'),
+  SCROLL_START: goog.events.getUniqueId('scroll-start'),
+  SCROLL_END: goog.events.getUniqueId('scroll-end'),
+};
+
+
+/**
  * @const
  * @type {!number}
  */
@@ -104,6 +116,14 @@ nrg.ui.ScrollableContainer.prototype.createScrollArea_ = function() {
 
 
 /**
+ * @private
+ * @type {?goog.Timer}
+ */
+nrg.ui.ScrollableContainer.prototype.timer_ = null;
+
+
+
+/**
  * @inheritDoc
  */
 nrg.ui.ScrollableContainer.prototype.render = function(opt_parentElement) {
@@ -121,6 +141,7 @@ nrg.ui.ScrollableContainer.prototype.render = function(opt_parentElement) {
     this.Slider = new nrg.ui.Slider('vertical');
     this.Slider.render(this.getElement());
 
+
     //
     // Set Slider UI and callbacks
     //
@@ -128,6 +149,9 @@ nrg.ui.ScrollableContainer.prototype.render = function(opt_parentElement) {
     this.setSliderStyles_();
     this.updateStyle();
     this.mapSliderToContents();
+
+
+    this.timer_ = new goog.Timer();
 }
 
 
@@ -269,6 +293,7 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 	//nrg.style.setStyle( this.scrollArea_, {'top': -t});
 	this.scrollArea_.style.top = (-t).toString() + 'px';
 	//window.console.log(this.Slider.getThumb().style.top);
+	//this.scrollArea_.style.pointerEvents = 'none !important';
 	
     //------------------
     // Otherwise we hide and disable the slider.
@@ -288,6 +313,35 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 }
 
 
+/**
+ * @private
+ */
+nrg.ui.ScrollableContainer.prototype.onScrollStart_ = function() {
+    this.dispatchEvent({
+	type: nrg.ui.ScrollableContainer.EventType.SCROLL_START
+    });    
+}
+
+
+/**
+ * @private
+ */
+nrg.ui.ScrollableContainer.prototype.onScrollEnd_ = function() {
+    this.dispatchEvent({
+	type: nrg.ui.ScrollableContainer.EventType.SCROLL_END
+    });    
+}
+
+
+/**
+ * @private
+ */
+nrg.ui.ScrollableContainer.prototype.onScroll_ = function() {
+    this.mapSliderToContents(); 
+    this.dispatchEvent({
+	type: nrg.ui.ScrollableContainer.EventType.SCROLL
+    });    
+}
 
 
 /**
@@ -297,7 +351,53 @@ nrg.ui.ScrollableContainer.prototype.mapSliderToContents = function () {
 nrg.ui.ScrollableContainer.prototype.setSliderEvents_ = function() {
     goog.events.listen(this.Slider, 
 		       nrg.ui.Slider.EventType.CHANGE,
-		       this.mapSliderToContents.bind(this));  
+		       this.onScroll_.bind(this));  
+
+    goog.events.listen(this.Slider, 
+		       goog.ui.SliderBase.EventType.DRAG_START,
+		       this.onScrollStart_.bind(this));
+
+    goog.events.listen(this.Slider, 
+		       goog.ui.SliderBase.EventType.DRAG_END,
+		       this.onScrollEnd_.bind(this));
+
+    this.initMousewheelListeners_();
+}
+
+
+/**
+ * @private
+ */
+nrg.ui.ScrollableContainer.prototype.initMousewheelListeners_ = function() {
+    //this.date_ = new Date();
+
+    this.timer_ = new goog.Timer();
+    this.timer_.setInterval(100);
+
+    var tickInterval = function(e) {
+	var currTime = (new Date()).getTime();
+	if ((currTime - this.lastMousewheelTime_) > 200){
+	    this.timer_.stop();
+	    delete this.lastMousewheelTime_;
+	    this.onScrollEnd_();
+	}
+    }.bind(this)
+
+    goog.events.listen(
+	this.Slider,
+	nrg.ui.Slider.EventType.MOUSEWHEEL,
+	function(){
+	    if (this.lastMousewheelTime_ == undefined){
+		this.onScrollStart_();
+	    }
+	    this.lastMousewheelTime_ = (new Date()).getTime();
+	    this.timer_.stop();
+	    this.timer_.addEventListener(goog.Timer.TICK, tickInterval);
+	    this.timer_.start();
+	}.bind(this)
+    );
+
+
     this.Slider.bindToMouseWheel(this.getElement());
 }
 
@@ -320,6 +420,10 @@ nrg.ui.ScrollableContainer.prototype.disposeInternal = function() {
 	goog.dom.removeNode(this.scrollArea_);
 	delete this.scrollArea_;
     }
+
+    this.timer_.dispose();
+    delete this.timer_;
+    
 }
 
 

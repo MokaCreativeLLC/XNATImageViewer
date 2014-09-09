@@ -87,7 +87,7 @@
     position: absolute;
     width: 150px;
     height: 2px;
-    top: calc(50%);
+    top: calc(50% + 10px);
     left: calc(50% - 75px);
     opacity: .50;
 }

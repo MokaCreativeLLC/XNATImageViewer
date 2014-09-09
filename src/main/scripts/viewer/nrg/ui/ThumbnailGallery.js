@@ -171,6 +171,37 @@ nrg.ui.ThumbnailGallery.prototype.render = function(opt_parentElement) {
 	this.ZippyTree.setCustomInsertMethod(
 	    nrg.ui.ThumbnailGallery.thumbnailSorter)
     }
+
+    this.setScrollEvents_();
+}
+
+
+/**
+ * @private
+ */
+nrg.ui.ThumbnailGallery.prototype.setScrollEvents_ = function() {
+
+    /*
+    goog.events.listen(
+	this,
+	nrg.ui.ScrollableContainer.EventType.SCROLL_START, 
+	function(){
+	    goog.object.forEach(this.Thumbs_, function(thumb){
+		thumb.hideInfo();
+	    })
+	}.bind(this))
+
+
+    goog.events.listen(
+	this,
+	nrg.ui.ScrollableContainer.EventType.SCROLL_END, 
+	function(){
+	    goog.object.forEach(this.Thumbs_, function(thumb){
+		goog.dom.classes.add(
+		    thumb.getElement(), nrg.ui.Thumbnail.CSS.HOVERABLE);
+	    })
+	}.bind(this))
+    */
 }
 
 

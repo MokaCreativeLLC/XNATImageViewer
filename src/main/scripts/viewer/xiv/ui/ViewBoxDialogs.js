@@ -669,15 +669,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
     // For viewables with a 'sessionInfo' property (i.e. Scans)
     //
     if (this.ViewBox_.getViewableTrees().length > 0) {
- 	goog.object.forEach(this.ViewBox_.getViewableTrees()[0].
-			    getSessionInfo(), 
-	    function(value, key){
-		if (goog.isDefAndNotNull(value)){
-		    if (value.length > 0){
-			infoText += key + ': ' + value + '<br>';
-		    }
-		}
-	    })
+	infoText = this.ViewBox_.getViewableTrees()[0].getSessionInfoAsHtml();
     }
 
     //
@@ -698,7 +690,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
     currDialog.setButtonSet(null);
     currDialog.render(this.ViewBox_.getViewFrame());
     currDialog.setVisible(true);
-    currDialog.moveToCorner('left', 'top', 0, -12);
+    currDialog.moveToCorner('left', 'top', 0, -22);
     currDialog.setTitle(dialogTitle);
 
 
@@ -764,7 +756,7 @@ xiv.ui.ViewBoxDialogs.prototype.createInfoDialog_ = function(){
 
     var text = goog.dom.getElementsByClass('nrg-ui-dialog-text',
 				   currDialog.getElement())
-    window.console.log(text);
+    //window.console.log(text);
     goog.dom.classes.add(text[0], 
 	'xiv-ui-viewboxdialogs-infodialog-text');
 

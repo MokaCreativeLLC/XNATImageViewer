@@ -8,6 +8,7 @@ PPRINT = pprint.PrettyPrinter(indent=2)
 IMG_VIEW_HOME = os.environ.get('XNATIMAGEVIEWER_HOME')
 DEMO_HOME = IMG_VIEW_HOME + "/Demo.html"
 MIN_CSS_FILE = IMG_VIEW_HOME + "/src/main/scripts/viewer/xiv-min.css"
+TOTAL_CSS_FILE = IMG_VIEW_HOME + "/src/main/scripts/viewer/xiv-all.css"
 
 def getXivCss(demoPath, walkPath):
     """ 
@@ -38,30 +39,36 @@ def getXivCss(demoPath, walkPath):
 
 
 
-def getMinCss(cssFiles):
+def getAllCssAsString(cssFiles):
     cssLines = []
     for cssFile in cssFiles:
         cssLines += [line for line in open(cssFile)]
 
     allCss = ''
     for line in cssLines:
-        allCss += line
+        allCss += line    
+    return allCss;
 
+
+def getMinCss(cssFiles):
+    allCss = getAllCssAsString(cssFiles)
     from slimmer import css_slimmer
     minCss = css_slimmer(allCss)
-
     return minCss
 
 
-def writeMinCss(cssStr):
-    text_file = open(MIN_CSS_FILE, "w")
+def writeFile(fileName, cssStr):
+    text_file = open(fileName, "w")
     text_file.write(cssStr)
     text_file.close()
 
 def main():
     cssFiles = getXivCss(DEMO_HOME, IMG_VIEW_HOME)
-    minCss = getMinCss(cssFiles)
-    writeMinCss(minCss)
+    #minCss = getMinCss(cssFiles)
+    #writeMinCss(MIN_CSS_FILE, minCss)
+
+    allCss = getAllCssAsString(cssFiles)
+    writeFile(TOTAL_CSS_FILE, allCss)
 
 if __name__ == "__main__":
     main()

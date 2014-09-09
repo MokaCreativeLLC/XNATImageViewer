@@ -50,6 +50,7 @@ function(parentElement) {
     //
     // Match the zoom minimum
     //
+    this.inputBox.max = 100000;
     this.inputBox.min = xiv.vis.XtkRenderer2D.ZOOM_MINIMUM * 100;
     goog.dom.classes.add(this.getDisplayElement(),
 			 'xiv-ui-framedisplay-text');

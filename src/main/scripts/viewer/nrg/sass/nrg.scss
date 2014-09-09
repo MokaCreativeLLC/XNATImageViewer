@@ -1,0 +1,1144 @@
+
+/*
+ * Standard styling for utils.ui.GenericSlider
+ *
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+
+@import "../../nrg/sass/goog";
+
+
+@mixin nrg-font($size: 10px, $color: white) {
+    color: $color;
+    font-size: $size;
+    font-family:  Helvetica,"Helvetica neue", Arial, sans-serif;  
+}
+
+@mixin nrg-transitionable($dur: .2s, $timing: ease-out) {
+  -webkit-transition-duration: $dur;
+  transition-duration: $dur;
+  transition-timing-function: $timing; 
+}
+
+@mixin nrg-icon($h: 15px, $w: 15px){
+    height: $h;
+    width: $w;
+}
+
+%nrg-metadata-text {
+    @include nrg-font(12px);
+    line-height: 16px;
+}
+
+
+.nrg-ui-slider {
+    position: absolute;
+    outline: 0; /* removes chrome blue border */
+}
+
+
+
+.nrg-ui-slider-horizontal {
+    width : 100%;
+    height : 10px;
+    top: calc(100% - 10px);
+    left: 0px;
+}
+
+
+
+.nrg-ui-slider-vertical {
+    width : 10px;
+    height : 100%;
+    top: 0px;
+    left: 0px;
+}
+
+
+/*
+ * TRACK
+ */
+.nrg-ui-slider-track {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    /*background-color : rgba(100,100,100,0);*/
+    
+}
+
+
+.nrg-ui-slider-track-hovered {
+    /*box-sizing: border-box;
+    background-color: rgb(50,50,50);
+    border: solid 1px rgb(100,100,100);*/
+}
+
+
+
+/*
+ * THUMB
+ */
+.nrg-ui-slider-thumb {
+    position : absolute;
+    top: 0px;
+    left: 0px;
+    background-color: rgb(220,220,220);
+    z-index: 2;
+    border-radius: 4px;
+}
+
+
+.nrg-ui-slider-thumb-horizontal {
+    width: 30px;
+    height: 100%;
+}
+
+
+.nrg-ui-slider-thumb-vertical {
+    height : 30px;
+    width: 100%;
+    left: 0px;
+}
+
+
+.nrg-ui-slider-thumb-hovered {
+    box-sizing: border-box;
+    background-color: rgb(220,220,220);
+    /*border: solid 1px rgb(100,100,100);*/
+}
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+
+
+.nrg-ui-hoverinput {
+    position: absolute;
+    top: 3px;
+    width: 100px;
+    height: 17px;
+    left: calc(100% - 110px);
+    background-color: rgba(0,0,0,0);
+    transition-property: background-color;
+    @include nrg-transitionable;
+}
+
+
+.nrg-ui-hoverinput-display,
+.nrg-ui-hoverinput-inputbox {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    line-height: 17px;
+    @include nrg-font;
+    white-space: nowrap;
+}
+
+
+
+.nrg-ui-hoverinput-display {
+    color: rgb(155,155,155);
+    text-align: right;
+    text-wrap: none;
+}
+
+
+
+.nrg-ui-hoverinput-inputbox {
+    opacity: 0;
+    width: 100%;
+    height: 18px;
+    left: 0px;
+    background-color: rgb(0,0,0);
+    border: none;
+    /*border-bottom: solid 1px rgb(95,95,95);*/
+    outline: 0;
+    color: rgb(255,255,255);
+    z-index: 3;
+    transition-property: opacity;
+    @include nrg-transitionable;
+    text-align: right;
+}
+
+
+
+.nrg-ui-hoverinput:hover {
+    background-color: rgba(0,0,1,0);
+}
+
+.nrg-ui-hoverinput:hover > .nrg-ui-hoverinput-inputbox {
+    opacity: 1;
+}/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+
+
+
+.nrg-ui-scrollablecontainer {
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+
+.nrg-ui-scrollablecontainer-scrollarea {
+    display: block;
+    position: relative;
+    width: calc(100% - 19px);
+    left: 19px;
+}
+
+
+.nrg-ui-scrollablecontainer-zippyheader {
+
+    position: relative;
+    background-color: rgb(50,50,50);
+    left: 0px;
+    width: 100%;
+    height: 1.5em;
+    @include nrg-font(rgb(120,120,120), 10px);
+    cursor: pointer;
+    line-height: 1.5em;
+    margin-bottom: 4px;
+}
+
+
+
+.nrg-ui-scrollablecontainer-zippyheader-mouseover {
+    background-color: rgb(90,90,90);
+    color: rgb(255,255,255);
+}
+
+
+
+.nrg-ui-scrollablecontainer-zippyheaderlabel, .nrg-ui-scrollablecontainer-zippyexpandicon {
+    position: absolute;
+    margin-left: .3em;
+    background-color: none;
+}
+
+
+.nrg-ui-scrollablecontainer-zippyexpandicon {
+    right: .5em;
+    margin-left: -10px;
+    color: rgb(0,0,0);
+}
+
+
+.nrg-ui-scrollablecontainer-zippyexpandicon-mouseover {
+    color: rgb(0,0,0);
+}
+
+
+
+
+.nrg-ui-scrollablecontainer-zippycontent {
+    overflow: visible;
+    width: 100%;
+    top: 20px;
+    left: 12px;
+    margin-bottom: 4px;
+}
+
+
+
+.nrg-ui-scrollablecontainer-slider {
+    position: absolute;
+    width: 8px;
+    left: 0px;
+    top: 0px;
+    height: 100%;
+    background-color: rgb(0,0,0);
+    transition-property: background-color;
+    transition-duration: .2;
+}
+
+
+.nrg-ui-scrollablecontainer-slider:hover {
+    background-color: rgb(0,0,0);
+}
+
+.nrg-ui-scrollablecontainer-slider-thumb {
+    background-color: rgb(80,80,80);
+    width: 4px;
+    left: 5px;
+    border-radius: 5px;
+    transition-property: background-color, width, left;
+    @include nrg-transitionable;
+}
+
+
+.nrg-ui-scrollablecontainer-slider:hover > .nrg-ui-scrollablecontainer-slider-thumb{
+    background-color: rgb(120,120,120);
+    width: 8px;
+    left: 3px;
+}
+
+.nrg-ui-scrollablecontainer-slider-thumb:active {
+    background-color: rgb(120,120,120);
+    width: 8px;
+    left: 3px;
+}
+
+
+
+.nrg-ui-scrollablecontainer-slider-track {;
+    background-color: rgba(0,0,0,0);
+}
+
+
+.nrg-ui-scrollablecontainer-slider-track-hovered {
+    /*
+    box-sizing: border-box;
+    background-color: rgb(50,50,50);
+    border-right: solid 1px rgb(100,100,100);
+    border-left: none;
+    border-top: none;
+    border-bottom: none;*/
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+
+
+
+.nrg-ui-scrollablezippytree {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+
+.nrg-ui-scrollablezippytree-zippytree {
+    top: 0px;
+    left: 0px;
+    width: 100%;
+}
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+
+
+.nrg-ui-zippynode-header {
+    position: relative;
+    outline:0;
+    /*background-color: rgb(90,90,90);*/
+    left: 0px;
+    width: 100%;
+    height: 1.5em;
+    @include nrg-font(12px, rgb(80,80,80));
+    cursor: pointer;
+    z-index: 1000;
+    line-height: 1.5em;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+
+
+.nrg-ui-zippynode-header:hover {
+    background-color: rgb(50,50,50);
+    color: rgb(255,255,255);
+}
+
+
+
+.nrg-ui-zippynode-header-label, .nrg-ui-zippynode-expandicon {
+    position: absolute;
+    margin-left: .3em;
+    background-color: none;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+
+.nrg-ui-zippynode-expandicon {
+    right: .5em;
+    margin-left: -10px;
+    color: rgb(100,100,100);
+}
+
+
+.nrg-ui-zippynode-expandicon-mouseover {
+    color: rgb(255,255,255);
+}
+
+
+
+
+.nrg-ui-zippynode-content {
+    overflow: visible;
+    width: 100%;
+    top: 20px;
+    left: 12px;
+    z-index: 1000;
+
+}
+
+
+
+.nrg-ui-zippynode-loading-holder {
+    position: relative;
+    height: 87px;
+    @include nrg-font;
+}
+
+.nrg-ui-zippynode-loading-text {
+    position: absolute;
+    top: calc(50% - 12px);
+    left: calc(50% - 23px);
+}
+
+
+.nrg-ui-zippynode-loading-image {
+    position: absolute;
+    width: 150px;
+    height: 2px;
+    top: calc(50% + 10px);
+    left: calc(50% - 75px);
+    opacity: .50;
+}
+
+
+
+.nrg-ui-zippynode-content-sub {
+
+}
+
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+
+
+.nrg-ui-zippytree {
+    
+}
+
+
+.nrg-ui-zippytree-rootnode {
+    margin-bottom: 0px;
+    height: 0px;
+}/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+
+
+.nrg-ui-dialog {
+    position: absolute;
+    outline: none; 
+    background-color: black;
+    @include nrg-font; 
+    border-radius: 5px;
+    border-color: white;
+    z-index: 10;
+    overflow: hidden;
+}
+
+
+.nrg-ui-dialog-overlay {
+    position:  absolute;
+    left: 30%;
+    top: 35%;
+    width: 40%;
+    height: 30%;
+    background-color: rgb(0, 0, 0);
+    z-index: 201;
+    @include nrg-font;
+}
+
+
+.nrg-ui-dialog-background {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(20, 20, 20, .6);
+    z-index: 200;
+    display: inline-block;
+}
+
+
+.nrg-ui-dialog-image {
+
+}
+
+
+
+.nrg-ui-dialog-subtext {
+    text-align: left;
+    font-size: 12px;
+}
+
+
+
+.nrg-ui-dialog-text {
+    text-align: center;
+    @include nrg-font;
+}
+
+.nrg-ui-dialog-closebutton-image {
+    @include nrg-icon(10px,10px);
+}
+
+.nrg-ui-dialog-closebutton {
+    @extend .nrg-ui-dialog-closebutton-image;
+    position: absolute; 
+    cursor: pointer;
+    top: calc(50% - 7px);
+    height: 10px;
+    width: 10px;
+    left: calc(100% - 17px);
+    z-index: 103;
+    background: none;
+    outline: none;
+}
+
+
+
+
+
+
+.modal-dialog-title-text {
+    top: 1px;
+    left: 7px;
+    position: absolute;
+    text-align: center;
+}
+
+
+.nrg-ui-dialog-title {
+    background-color: rgb(60,60,60);
+    height: 17px;
+    padding: 0px;
+    top: -3px;
+    border: none;
+    @include nrg-font;
+    z-index: -1;
+    width: calc(100% + 6px);
+    left: -3px;
+}
+
+
+.nrg-ui-dialog-content {
+    background-color: none;
+    background: none;
+}
+
+
+.nrg-ui-dialog-buttons {
+    background-color: none;
+    background: none;
+}
+
+
+
+.nrg-ui-dialog-yesnomodal {
+    position: absolute;
+    top: calc(50% - 60px);
+    left: calc(50% - 125px);
+    width: 250px;
+    height: 120px;
+    background: black;
+    background-color: black;
+    border: 1px solid white;
+    padding: 4px;
+    @include nrg-font;
+    border-radius: 10px;
+    outline: 0;
+    z-index: 1000;
+    cursor: default;
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+
+
+.nrg-ui-errordialog {
+    width: 400px;
+    height: 300px;
+    z-index: 100000;
+}
+
+
+
+.nrg-ui-errordialog-image {
+    position: relative; 
+    width: 80px;
+    height: 80px;
+    left: calc(50% - 40px);
+}
+
+
+
+.nrg-ui-errordialog-text {
+    top: 145px;
+}/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+
+
+
+.nrg-ui-thumbnail {
+    position: absolute;
+    width: 87px;
+    height: 87px;
+    top: 0px;
+    left: 0px;
+    cursor: pointer;
+    background-color: rgb(0,0,0);
+    box-sizing: border-box;
+    border: solid 1px rgb(0, 0, 0);
+}
+
+
+.nrg-ui-thumbnail-selectindicator {
+    position: absolute;
+    top: calc(50% - 34px);
+    left: 7px;
+    width: 2px;
+    height: 68px;
+    opacity: 0;
+    background-color: rgb(100,100,100);
+}
+
+
+.nrg-ui-thumbnail-selectindicator-active {
+    opacity: 1;
+}
+
+
+
+.nrg-ui-thumbnail-selected {
+    border: solid 1px rgb(100,100,100);
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+
+}
+
+.nrg-ui-thumbnail-hoverable {
+
+}
+
+.nrg-ui-thumbnail-hoverable:hover {
+    background-color: rgba(30,30,30, 1);
+    z-index: 10000;
+    overflow: visible;
+    color: rgb(255,255,255);
+    border: solid 1px rgb(40, 40, 40);
+}
+
+
+.nrg-ui-thumbnail-hoverable:hover > .nrg-ui-thumbnail-image {
+    /*color: rgb(255,255,255);*/
+    /*border-color: white;*/
+    box-shadow: 3px 3px 3px rgba(0,0,0, .3);
+}
+
+.nrg-ui-thumbnail-hoverable:hover > .nrg-ui-thumbnail-text {
+    color: rgb(215,215,215);
+}
+
+.nrg-ui-thumbnail-image, .nrg-ui-thumbnail-canvas {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    top: calc(50% - 35px);
+    left: 8px;	
+    overflow-y: hidden;
+    overflow-x: hidden;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+    border: solid 1px rgb(30,30,30);
+    /*border : none;
+    border-color: rgb(100,100,100);
+    border-width : 1px;
+    border-radius: 0px;	
+    box-sizing: border-box; */
+    cursor: pointer;
+}
+
+
+
+
+.nrg-ui-thumbnail-text {
+    position: absolute;
+    height: 70px;
+    top: 8px;
+    left: 86px;		
+    @include nrg-font;
+    font-size: 9;
+    white-space: nowrap;  
+    color : rgb(80,80,80);  
+    line-height: 17px;
+
+}
+
+
+.nrg-ui-thumbnail-text-mouseover {
+    color : rgb(155,155,155);
+}
+
+
+.nrg-ui-thumbnail-canvas {
+    top: 8px;
+    left: 8px;
+}
+
+
+
+/*******
+* Active state
+********/
+
+.nrg-ui-thumbnail-text-active {
+    /*color : rgb(100,100,100);*/
+}
+
+.nrg-ui-thumbnail-active {
+    opacity: 1;
+}
+
+
+.nrg-ui-thumbnail-image-active {
+   /*border-left: solid 2px rgb(100,100,100);*/
+}
+
+
+
+.nrg-ui-thumbnailgallery {
+    position: absolute;
+    overflow: hidden;
+}
+
+
+
+
+.nrg-ui-thumbnailgallery-thumbnail {
+    position: relative;
+    width: 100%;
+    height: 176px;
+    top: 0px;
+    left: 0px;
+    cursor: pointer;
+}
+
+
+.nrg-ui-thumbnailgallery-thumbnail-image {
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    top: 8px;
+    left: 8px;	
+    overflow-y: hidden;
+    overflow-x: hidden;
+    border : solid;
+    border-color: rgb(255,255,255);
+    border-width : 1px;
+    border-radius: 0px;	 
+    cursor: pointer;
+}
+
+
+.nrg-ui-thumbnailgallery-thumbnail-text {
+    position: absolute;
+    height: 70px;
+    top: 8px;
+    left: 176px;
+    @include nrg-font(9px);		
+    line-height: 17px;
+	
+}
+
+
+.nrg-ui-resizable-boundary {
+  position: absolute;
+  border: 1px dotted rgb(255,0,0);
+  background-color: rgba(255, 120, 120, .5);
+}
+
+
+.nrg-ui-resizedragger {
+  position: absolute;
+  font-size: 0.1px;
+  z-index: 1;
+  /*background-color: rgba(255,20,20, 0);*/
+}
+
+
+/**
+  RIGHT AND LEFT
+*/
+.nrg-ui-resizedraggerright, .nrg-ui-resizedraggerleft {
+  position: absolute;
+  width: 7px;
+  height: 100%;
+  cursor: ew-resize;
+}
+
+.nrg-ui-resizedraggerright {
+  left: 100%;
+  /*background-color: rgba(0,255,0,.5);*/
+}
+
+.nrg-ui-resizedraggerleft {
+  left: -7px
+  /*background-color: rgba(0,0,255,.5);*/
+}
+
+
+
+/**
+ * TOP AND BOTTOM
+ */
+.nrg-ui-resizedraggertop, .nrg-ui-resizedraggerbottom {
+  position: absolute;
+  left: 0px;
+  width: 100%;
+  height: 7px;
+  cursor: ns-resize;
+}
+
+.nrg-ui-resizedraggertop {
+  top: -7px;
+  /*background-color: rgba(0,255,0,.5);*/
+}
+
+.nrg-ui-resizedraggerbottom {
+  top: 100%;
+  /*background-color: rgba(255,0,0,.5);*/
+}
+
+
+
+
+/**
+ * CORNERS
+ */
+
+.nrg-ui-resizedraggertopright, 
+.nrg-ui-resizedraggertopleft, 
+.nrg-ui-resizedraggerbottomright, 
+.nrg-ui-resizedraggerbottomleft {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  cursor: move;
+}
+
+
+.nrg-ui-resizedraggertopright, 
+.nrg-ui-resizedraggertopleft, {
+  top: calc(100% - 7px);
+}
+
+.nrg-ui-resizedraggertopright {
+  left: calc(100% - 7px);
+  /*background-color: orange;*/
+}
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+
+
+/**
+ * ELEMENT
+ */
+.nrg-ui-tabs {
+    position: absolute;
+    left: 0px;
+}
+
+.nrg-ui-tabs-right {
+    left: 0px;
+}
+
+
+.nrg-ui-tabs-left {
+    left: calc(100% - 18px);
+}
+
+
+.nrg-ui-tabs-top {
+    top: calc(100% - 18px);
+}
+
+
+.nrg-ui-tabs-bottom {
+    top: 0px;
+}
+
+
+
+
+
+/**
+ * TABS
+ */	
+.nrg-ui-tabs-tab {
+  box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -webkit-box-sizing:border-box;
+    position: absolute;
+    top: 0px;	
+    @include nrg-font(10px, rgb(100,100,100));
+    background-color: rgb(30,30,30);
+    cursor: pointer;
+    border: solid 1px rgb(60, 60, 60);
+    text-align:center;
+}
+
+
+.nrg-ui-tabs-tab-top {
+    height: 18px;
+    top: 0px;
+    border-radius: 4px 4px 0px 0px;
+    border-bottom: none;
+}
+
+
+.nrg-ui-tabs-tab-bottom {
+    height: 18px;
+    top: calc(100% - 18px);
+    border-radius: 0px 0px 4px 4px;
+    border-top: none;
+}
+
+
+.nrg-ui-tabs-tab-right {
+    width: 22px;
+    left: calc(100% - 22px);
+    /*border-radius: 0px 4px 4px 0px;*/
+    border-left: none;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
+}
+
+
+.nrg-ui-tabs-tab-left {
+    width: 18px;
+    left: 0px;
+    /*border-radius: 4px 0px 0px 4px;*/
+    border-right: none;
+}
+
+
+.nrg-ui-tabs-tab-active {
+    border: solid 1px rgb(100, 100, 100);
+}
+
+
+.nrg-ui-tabs-tab-active-right {
+    border-left: none;
+}
+
+
+.nrg-ui-tabs-tab-active-top {
+    border-bottom: none;
+}
+
+
+.nrg-ui-tabs-tab-active {
+    z-index: 1;
+}
+
+	
+.nrg-ui-tabs-icon {
+    color: rgb(100, 100, 100);
+    z-index: 11;
+    color: rgb(100, 100, 100);
+    font-size: 10px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    display: table;
+}
+
+
+
+.nrg-ui-tabs-icon-active {
+    color: rgb(100, 100, 100);
+}
+
+
+.nrg-ui-tabs-icon-top {
+    width: 100%;
+    height: 100%;
+}
+
+
+.nrg-ui-tabs-icon-right {
+
+
+    left: -24px;
+    top: calc(50% - 5px);
+    white-space: nowrap;
+}
+
+
+.nrg-ui-tabs-icon-content {
+  display: table-cell;
+   text-align: center;
+   vertical-align: middle;
+}
+
+	
+.nrg-ui-tabs-page {
+  box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -webkit-box-sizing:border-box;
+    position: absolute;
+    @include nrg-font(12px, rgb(100,100,100));
+    background-color: rgb(0,0,0);
+    width: 100%;
+    border: solid 1px rgb(60, 60, 60);
+    visibility: hidden;
+    overflow: hidden;
+}
+
+
+.nrg-ui-tabs-page-content {
+    position: absolute;
+    left: 0px;
+    top: 10px;
+    height: calc(100% - 20px);
+    width: 100%;
+    z-index: 2;
+}
+
+
+
+.nrg-ui-tabs-page-active {
+    border: solid 1px rgb(100, 100, 100);
+    visibility: visible;
+    z-index: 2;
+}
+
+
+.nrg-ui-tabs-page-right, .nrg-ui-tabs-page-left {
+    position: absolute;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    width: calc(100% - 18px);
+    border-right: none;
+    border-left: none;
+}
+
+
+.nrg-ui-tabs-page-top, .nrg-ui-tabs-page-bottom {
+    position: absolute;
+    top: 18px;
+    left: 0px;
+    height: calc(100% - 18px);
+    width: 100%;
+    border-bottom: none;
+}/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+
+
+
+.nrg-ui-ziptabs {
+    position: absolute;
+}
+
+
+.nrg-ui-ziptabs:hover {
+    opacity: 1;
+}
+
+
+
+.nrg-ui-ziptabs-top, .nrg-ui-ziptabs-bottom {
+    height: 18px;
+}
+
+
+.nrg-ui-ziptabs-left, .nrg-ui-ziptabs-right {
+    width: 18px;
+    opacity: .7;
+    @include nrg-transitionable;
+    transition-property: opacity;
+}
+
+
+
+.nrg-ui-ziptabs-right:hover {
+    opacity: 1;
+}
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+
+
+
+.nrg-ui-slideinmenu {
+   
+}
+
+
+.nrg-ui-slideinmenu-icon {
+    max-width:100%;
+    max-height:100%;
+    opacity: 1; 
+}
+
+
+.nrg-ui-slideinmenu-icon-hovered {
+    opacity: 1; 
+}
+
+
+.nrg-ui-slideinmenu-menuholder {
+    position : absolute;	
+    background-color: rgba(255,100,22,1);    
+    z-index: 4000;
+}
+
+
+.nrg-ui-slideinmenu-menu {
+  background-color: rgb(125,125,125);
+  border: solid 1px rgb(50,50,50);
+  z-index: 20000; 
+  cursor: pointer;
+  width: 130px;
+}
+
+
+.nrg-ui-slideinmenu-menuitem {
+    overflow: visible;
+    margin-left: 5px;
+    margin-top: 7px;
+    height: 20px;
+}
+
+
+.nrg-ui-slideinmenu-menuitem-highlight {
+    color: white;
+}
+
+.nrg-ui-slideinmenu-menuitem-icon {
+    position: absolute;
+    margin-top: -3px;
+    left: 5px;
+    width: 20px;
+    height: 20px;
+}
+
+

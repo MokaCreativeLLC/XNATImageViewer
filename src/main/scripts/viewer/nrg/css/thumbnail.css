@@ -95,7 +95,7 @@
 .nrg-ui-thumbnail-text {
     position: absolute;
     height: 70px;
-    top: 17px;
+    top: 8px;
     left: 86px;
     font-size: 9;		
     font-family: Helvetica,"Helvetica neue", Arial, sans-serif; 
@@ -125,7 +125,7 @@
 ********/
 
 .nrg-ui-thumbnail-text-active {
-    color : rgb(100,100,100);
+    /*color : rgb(100,100,100);*/
 }
 
 .nrg-ui-thumbnail-active {

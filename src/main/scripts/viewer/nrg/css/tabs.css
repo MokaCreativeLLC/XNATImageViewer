@@ -132,20 +132,7 @@
 
 
 .nrg-ui-tabs-icon-right {
-    /* Safari */
-    -webkit-transform: rotate(90deg);
 
-    /* Firefox */
-    -moz-transform: rotate(90deg);
-
-    /* IE */
-    -ms-transform: rotate(90deg);
-
-    /* Opera */
-    -o-transform: rotate(90deg);
-
-    /* Internet Explorer */
-    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
 
     left: -24px;
     top: calc(50% - 5px);

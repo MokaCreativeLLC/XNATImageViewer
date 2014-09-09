@@ -1,0 +1,4052 @@
+/*
+ * Standard styling for utils.ui.GenericSlider
+ *
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Standard styling for menus created by goog.ui.MenuItemRenderer.
+ *
+ * @author attila@google.com (Attila Bodis)
+ */
+/**
+ * State: resting.
+ *
+ * NOTE(mleibman,chrishenry):
+ * The RTL support in Closure is provided via two mechanisms -- "rtl" CSS
+ * classes and BiDi flipping done by the CSS compiler.  Closure supports RTL
+ * with or without the use of the CSS compiler.  In order for them not
+ * to conflict with each other, the "rtl" CSS classes need to have the @noflip
+ * annotation.  The non-rtl counterparts should ideally have them as well, but,
+ * since .goog-menuitem existed without .goog-menuitem-rtl for so long before
+ * being added, there is a risk of people having templates where they are not
+ * rendering the .goog-menuitem-rtl class when in RTL and instead rely solely
+ * on the BiDi flipping by the CSS compiler.  That's why we're not adding the
+ * @noflip to .goog-menuitem.
+ */
+/* line 30, ../nrg/sass/goog.scss */
+.goog-menuitem {
+  color: #000;
+  font: normal 13px Arial, sans-serif;
+  list-style: none;
+  margin: 0;
+  /* 28px on the left for icon or checkbox; 7em on the right for shortcut. */
+  padding: 4px 7em 4px 28px;
+  white-space: nowrap;
+}
+
+/* BiDi override for the resting state. */
+/* @noflip */
+/* line 42, ../nrg/sass/goog.scss */
+.goog-menuitem.goog-menuitem-rtl {
+  /* Flip left/right padding for BiDi. */
+  padding-left: 7em;
+  padding-right: 28px;
+}
+
+/* If a menu doesn't have checkable items or items with icons, remove padding. */
+/* line 49, ../nrg/sass/goog.scss */
+.goog-menu-nocheckbox .goog-menuitem,
+.goog-menu-noicon .goog-menuitem {
+  padding-left: 12px;
+}
+
+/*
+ * If a menu doesn't have items with shortcuts, leave just enough room for
+ * submenu arrows, if they are rendered.
+ */
+/* line 58, ../nrg/sass/goog.scss */
+.goog-menu-noaccel .goog-menuitem {
+  padding-right: 20px;
+}
+
+/* line 62, ../nrg/sass/goog.scss */
+.goog-menuitem-content {
+  color: #000;
+  font: normal 13px Arial, sans-serif;
+}
+
+/* State: disabled. */
+/* line 68, ../nrg/sass/goog.scss */
+.goog-menuitem-disabled .goog-menuitem-accel,
+.goog-menuitem-disabled .goog-menuitem-content {
+  color: #ccc !important;
+}
+
+/* line 72, ../nrg/sass/goog.scss */
+.goog-menuitem-disabled .goog-menuitem-icon {
+  opacity: 0.3;
+  -moz-opacity: 0.3;
+  filter: alpha(opacity=30);
+}
+
+/* State: hover. */
+/* line 79, ../nrg/sass/goog.scss */
+.goog-menuitem-highlight,
+.goog-menuitem-hover {
+  background-color: #d6e9f8;
+  /* Use an explicit top and bottom border so that the selection is visible
+   * in high contrast mode. */
+  border-color: #d6e9f8;
+  border-style: dotted;
+  border-width: 1px 0;
+  padding-bottom: 3px;
+  padding-top: 3px;
+}
+
+/* State: selected/checked. */
+/* line 92, ../nrg/sass/goog.scss */
+.goog-menuitem-checkbox,
+.goog-menuitem-icon {
+  background-repeat: no-repeat;
+  height: 16px;
+  left: 6px;
+  position: absolute;
+  right: auto;
+  vertical-align: middle;
+  width: 16px;
+}
+
+/* BiDi override for the selected/checked state. */
+/* @noflip */
+/* line 105, ../nrg/sass/goog.scss */
+.goog-menuitem-rtl .goog-menuitem-checkbox,
+.goog-menuitem-rtl .goog-menuitem-icon {
+  /* Flip left/right positioning. */
+  left: auto;
+  right: 6px;
+}
+
+/* line 112, ../nrg/sass/goog.scss */
+.goog-option-selected .goog-menuitem-checkbox,
+.goog-option-selected .goog-menuitem-icon {
+  /* Client apps may override the URL at which they serve the sprite. */
+  background: url(//ssl.gstatic.com/editor/editortoolbar.png) no-repeat -512px 0;
+}
+
+/* Keyboard shortcut ("accelerator") style. */
+/* line 119, ../nrg/sass/goog.scss */
+.goog-menuitem-accel {
+  color: #999;
+  /* Keyboard shortcuts are untranslated; always left-to-right. */
+  /* @noflip */
+  direction: ltr;
+  left: auto;
+  padding: 0 6px;
+  position: absolute;
+  right: 0;
+  text-align: right;
+}
+
+/* BiDi override for shortcut style. */
+/* @noflip */
+/* line 132, ../nrg/sass/goog.scss */
+.goog-menuitem-rtl .goog-menuitem-accel {
+  /* Flip left/right positioning and text alignment. */
+  left: 0;
+  right: auto;
+  text-align: left;
+}
+
+/* Mnemonic styles. */
+/* line 140, ../nrg/sass/goog.scss */
+.goog-menuitem-mnemonic-hint {
+  text-decoration: underline;
+}
+
+/* line 144, ../nrg/sass/goog.scss */
+.goog-menuitem-mnemonic-separator {
+  color: #999;
+  font-size: 12px;
+  padding-left: 4px;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Standard styling for menus created by goog.ui.MenuSeparatorRenderer.
+ *
+ * @author attila@google.com (Attila Bodis)
+ */
+/* line 163, ../nrg/sass/goog.scss */
+.goog-menuseparator {
+  border-top: 1px solid #ccc;
+  margin: 4px 0;
+  padding: 0;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Standard styling for buttons created by goog.ui.MenuButtonRenderer.
+ *
+ * @author attila@google.com (Attila Bodis)
+ */
+/* State: resting. */
+/* line 183, ../nrg/sass/goog.scss */
+.goog-menu-button {
+  /* Client apps may override the URL at which they serve the image. */
+  background: #ddd url(//ssl.gstatic.com/editor/button-bg.png) repeat-x top left;
+  border: 0;
+  color: #000;
+  cursor: pointer;
+  list-style: none;
+  margin: 2px;
+  outline: none;
+  padding: 0;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+/* Pseudo-rounded corners. */
+/* line 198, ../nrg/sass/goog.scss */
+.goog-menu-button-outer-box,
+.goog-menu-button-inner-box {
+  border-style: solid;
+  border-color: #aaa;
+  vertical-align: top;
+}
+
+/* line 204, ../nrg/sass/goog.scss */
+.goog-menu-button-outer-box {
+  margin: 0;
+  border-width: 1px 0;
+  padding: 0;
+}
+
+/* line 209, ../nrg/sass/goog.scss */
+.goog-menu-button-inner-box {
+  margin: 0 -1px;
+  border-width: 0 1px;
+  padding: 3px 4px;
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 216, ../nrg/sass/goog.scss */
+* html .goog-menu-button-inner-box {
+  /* IE6 needs to have the box shifted to make the borders line up. */
+  left: -1px;
+}
+
+/* Pre-IE7 BiDi fixes. */
+/* line 222, ../nrg/sass/goog.scss */
+* html .goog-menu-button-rtl .goog-menu-button-outer-box {
+  /* @noflip */
+  left: -1px;
+  /* @noflip */
+  right: auto;
+}
+
+/* line 226, ../nrg/sass/goog.scss */
+* html .goog-menu-button-rtl .goog-menu-button-inner-box {
+  /* @noflip */
+  right: auto;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 231, ../nrg/sass/goog.scss */
+*:first-child + html .goog-menu-button-inner-box {
+  /* IE7 needs to have the box shifted to make the borders line up. */
+  left: -1px;
+}
+
+/* IE7 BiDi fix. */
+/* line 236, ../nrg/sass/goog.scss */
+*:first-child + html .goog-menu-button-rtl .goog-menu-button-inner-box {
+  /* @noflip */
+  left: 1px;
+  /* @noflip */
+  right: auto;
+}
+
+/* Safari-only hacks. */
+/* line 242, ../nrg/sass/goog.scss */
+::root .goog-menu-button,
+::root .goog-menu-button-outer-box,
+::root .goog-menu-button-inner-box {
+  /* Required to make pseudo-rounded corners work on Safari. */
+  line-height: 0;
+}
+
+/* line 248, ../nrg/sass/goog.scss */
+::root .goog-menu-button-caption,
+::root .goog-menu-button-dropdown {
+  /* Required to make pseudo-rounded corners work on Safari. */
+  line-height: normal;
+}
+
+/* State: disabled. */
+/* line 255, ../nrg/sass/goog.scss */
+.goog-menu-button-disabled {
+  background-image: none !important;
+  opacity: 0.3;
+  -moz-opacity: 0.3;
+  filter: alpha(opacity=30);
+}
+
+/* line 261, ../nrg/sass/goog.scss */
+.goog-menu-button-disabled .goog-menu-button-outer-box,
+.goog-menu-button-disabled .goog-menu-button-inner-box,
+.goog-menu-button-disabled .goog-menu-button-caption,
+.goog-menu-button-disabled .goog-menu-button-dropdown {
+  color: #333 !important;
+  border-color: #999 !important;
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 270, ../nrg/sass/goog.scss */
+* html .goog-menu-button-disabled {
+  margin: 2px 1px !important;
+  padding: 0 1px !important;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 276, ../nrg/sass/goog.scss */
+*:first-child + html .goog-menu-button-disabled {
+  margin: 2px 1px !important;
+  padding: 0 1px !important;
+}
+
+/* State: hover. */
+/* line 282, ../nrg/sass/goog.scss */
+.goog-menu-button-hover .goog-menu-button-outer-box,
+.goog-menu-button-hover .goog-menu-button-inner-box {
+  border-color: #9cf #69e #69e #7af !important;
+  /* Hover border wins. */
+}
+
+/* State: active, open. */
+/* line 288, ../nrg/sass/goog.scss */
+.goog-menu-button-active,
+.goog-menu-button-open {
+  background-color: #bbb;
+  background-position: bottom left;
+}
+
+/* State: focused. */
+/* line 295, ../nrg/sass/goog.scss */
+.goog-menu-button-focused .goog-menu-button-outer-box,
+.goog-menu-button-focused .goog-menu-button-inner-box {
+  border-color: orange;
+}
+
+/* Caption style. */
+/* line 301, ../nrg/sass/goog.scss */
+.goog-menu-button-caption {
+  padding: 0 4px 0 0;
+  vertical-align: top;
+}
+
+/* Dropdown arrow style. */
+/* line 307, ../nrg/sass/goog.scss */
+.goog-menu-button-dropdown {
+  height: 15px;
+  width: 7px;
+  /* Client apps may override the URL at which they serve the sprite. */
+  background: url(//ssl.gstatic.com/editor/editortoolbar.png) no-repeat -388px 0;
+  vertical-align: top;
+}
+
+/* Pill (collapsed border) styles. */
+/* TODO(gboyer): Remove specific menu button styles and have any button support being a menu button. */
+/* line 317, ../nrg/sass/goog.scss */
+.goog-menu-button-collapse-right,
+.goog-menu-button-collapse-right .goog-menu-button-outer-box,
+.goog-menu-button-collapse-right .goog-menu-button-inner-box {
+  margin-right: 0;
+}
+
+/* line 323, ../nrg/sass/goog.scss */
+.goog-menu-button-collapse-left,
+.goog-menu-button-collapse-left .goog-menu-button-outer-box,
+.goog-menu-button-collapse-left .goog-menu-button-inner-box {
+  margin-left: 0;
+}
+
+/* line 329, ../nrg/sass/goog.scss */
+.goog-menu-button-collapse-left .goog-menu-button-inner-box {
+  border-left: 1px solid #fff;
+}
+
+/* line 333, ../nrg/sass/goog.scss */
+.goog-menu-button-collapse-left.goog-menu-button-checked
+.goog-menu-button-inner-box {
+  border-left: 1px solid #ddd;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Styling for custom buttons rendered by goog.ui.CustomButtonRenderer.
+ *
+ * @author attila@google.com (Attila Bodis)
+ */
+/* line 350, ../nrg/sass/goog.scss */
+.goog-custom-button {
+  margin: 2px;
+  border: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: #000;
+  /* Client apps may override the URL at which they serve the image. */
+  background: #ddd url(//ssl.gstatic.com/editor/button-bg.png) repeat-x top left;
+  text-decoration: none;
+  list-style: none;
+  vertical-align: middle;
+  cursor: default;
+  outline: none;
+}
+
+/* Pseudo-rounded corners. */
+/* line 366, ../nrg/sass/goog.scss */
+.goog-custom-button-outer-box,
+.goog-custom-button-inner-box {
+  border-style: solid;
+  border-color: #aaa;
+  vertical-align: top;
+}
+
+/* line 373, ../nrg/sass/goog.scss */
+.goog-custom-button-outer-box {
+  margin: 0;
+  border-width: 1px 0;
+  padding: 0;
+}
+
+/* line 379, ../nrg/sass/goog.scss */
+.goog-custom-button-inner-box {
+  margin: 0 -1px;
+  border-width: 0 1px;
+  padding: 3px 4px;
+  white-space: nowrap;
+  /* Prevents buttons from line breaking on android. */
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 387, ../nrg/sass/goog.scss */
+* html .goog-custom-button-inner-box {
+  /* IE6 needs to have the box shifted to make the borders line up. */
+  left: -1px;
+}
+
+/* Pre-IE7 BiDi fixes. */
+/* line 392, ../nrg/sass/goog.scss */
+* html .goog-custom-button-rtl .goog-custom-button-outer-box {
+  /* @noflip */
+  left: -1px;
+}
+
+/* line 395, ../nrg/sass/goog.scss */
+* html .goog-custom-button-rtl .goog-custom-button-inner-box {
+  /* @noflip */
+  right: auto;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 400, ../nrg/sass/goog.scss */
+*:first-child + html .goog-custom-button-inner-box {
+  /* IE7 needs to have the box shifted to make the borders line up. */
+  left: -1px;
+}
+
+/* IE7 BiDi fix. */
+/* line 405, ../nrg/sass/goog.scss */
+*:first-child + html .goog-custom-button-rtl .goog-custom-button-inner-box {
+  /* @noflip */
+  left: 1px;
+}
+
+/* Safari-only hacks. */
+/* line 410, ../nrg/sass/goog.scss */
+::root .goog-custom-button,
+::root .goog-custom-button-outer-box {
+  /* Required to make pseudo-rounded corners work on Safari. */
+  line-height: 0;
+}
+
+/* line 416, ../nrg/sass/goog.scss */
+::root .goog-custom-button-inner-box {
+  /* Required to make pseudo-rounded corners work on Safari. */
+  line-height: normal;
+}
+
+/* State: disabled. */
+/* line 422, ../nrg/sass/goog.scss */
+.goog-custom-button-disabled {
+  background-image: none !important;
+  opacity: 0.3;
+  -moz-opacity: 0.3;
+  filter: alpha(opacity=30);
+}
+
+/* line 429, ../nrg/sass/goog.scss */
+.goog-custom-button-disabled .goog-custom-button-outer-box,
+.goog-custom-button-disabled .goog-custom-button-inner-box {
+  color: #333 !important;
+  border-color: #999 !important;
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 436, ../nrg/sass/goog.scss */
+* html .goog-custom-button-disabled {
+  margin: 2px 1px !important;
+  padding: 0 1px !important;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 442, ../nrg/sass/goog.scss */
+*:first-child + html .goog-custom-button-disabled {
+  margin: 2px 1px !important;
+  padding: 0 1px !important;
+}
+
+/* State: hover. */
+/* line 448, ../nrg/sass/goog.scss */
+.goog-custom-button-hover .goog-custom-button-outer-box,
+.goog-custom-button-hover .goog-custom-button-inner-box {
+  border-color: #9cf #69e #69e #7af !important;
+  /* Hover border wins. */
+}
+
+/* State: active, checked. */
+/* line 454, ../nrg/sass/goog.scss */
+.goog-custom-button-active,
+.goog-custom-button-checked {
+  background-color: #bbb;
+  background-position: bottom left;
+}
+
+/* State: focused. */
+/* line 461, ../nrg/sass/goog.scss */
+.goog-custom-button-focused .goog-custom-button-outer-box,
+.goog-custom-button-focused .goog-custom-button-inner-box {
+  border-color: orange;
+}
+
+/* Pill (collapsed border) styles. */
+/* line 467, ../nrg/sass/goog.scss */
+.goog-custom-button-collapse-right,
+.goog-custom-button-collapse-right .goog-custom-button-outer-box,
+.goog-custom-button-collapse-right .goog-custom-button-inner-box {
+  margin-right: 0;
+}
+
+/* line 473, ../nrg/sass/goog.scss */
+.goog-custom-button-collapse-left,
+.goog-custom-button-collapse-left .goog-custom-button-outer-box,
+.goog-custom-button-collapse-left .goog-custom-button-inner-box {
+  margin-left: 0;
+}
+
+/* line 479, ../nrg/sass/goog.scss */
+.goog-custom-button-collapse-left .goog-custom-button-inner-box {
+  border-left: 1px solid #fff;
+}
+
+/* line 483, ../nrg/sass/goog.scss */
+.goog-custom-button-collapse-left.goog-custom-button-checked
+.goog-custom-button-inner-box {
+  border-left: 1px solid #ddd;
+}
+
+/* Pre-IE7 IE hack; ignored by IE7 and all non-IE browsers. */
+/* line 489, ../nrg/sass/goog.scss */
+* html .goog-custom-button-collapse-left .goog-custom-button-inner-box {
+  left: 0;
+}
+
+/* IE7-only hack; ignored by all other browsers. */
+/* line 494, ../nrg/sass/goog.scss */
+*:first-child + html .goog-custom-button-collapse-left
+.goog-custom-button-inner-box {
+  left: 0;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/* Author: pallosp@google.com (Peter Pallos) */
+/* Sample 3-state checkbox styles. */
+/* line 509, ../nrg/sass/goog.scss */
+.goog-checkbox {
+  border: 1px solid #1C5180;
+  display: -moz-inline-box;
+  display: inline-block;
+  font-size: 1px;
+  /* Fixes the height in IE6 */
+  height: 11px;
+  margin: 0 4px 0 1px;
+  vertical-align: text-bottom;
+  width: 11px;
+}
+
+/* line 520, ../nrg/sass/goog.scss */
+.goog-checkbox-checked {
+  background: #fff url(//ssl.gstatic.com/closure/check-sprite.gif) no-repeat 2px center;
+}
+
+/* line 524, ../nrg/sass/goog.scss */
+.goog-checkbox-undetermined {
+  background: #bbb url(//ssl.gstatic.com/closure/check-sprite.gif) no-repeat 2px center;
+}
+
+/* line 528, ../nrg/sass/goog.scss */
+.goog-checkbox-unchecked {
+  background: #fff;
+}
+
+/* line 532, ../nrg/sass/goog.scss */
+.goog-checkbox-disabled {
+  border: 1px solid lightgray;
+  background-position: -7px;
+}
+
+/*
+ * Copyright 2008 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * All Rights Reserved.
+ *
+ * Styles for the HSV color palette.
+ *
+ * @author smcbride@google.com (Sean McBride)
+ * @author arv@google.com (Erik Arvidsson)
+ * @author manucornet@google.com (Manu Cornet)
+ */
+/* line 553, ../nrg/sass/goog.scss */
+.goog-hsv-palette,
+.goog-hsv-palette-sm {
+  position: relative;
+  border: 1px solid #999;
+  border-color: #ccc #999 #999 #ccc;
+  width: 400px;
+  height: 276px;
+}
+
+/* line 562, ../nrg/sass/goog.scss */
+.goog-hsv-palette-sm {
+  width: 182px;
+  height: 185px;
+}
+
+/* line 567, ../nrg/sass/goog.scss */
+.goog-hsv-palette label span,
+.goog-hsv-palette-sm label span {
+  display: none;
+}
+
+/* line 572, ../nrg/sass/goog.scss */
+.goog-hsv-palette-hs-backdrop,
+.goog-hsv-palette-sm-hs-backdrop,
+.goog-hsv-palette-hs-image,
+.goog-hsv-palette-sm-hs-image {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 256px;
+  height: 256px;
+  border: 1px solid #999;
+}
+
+/* line 584, ../nrg/sass/goog.scss */
+.goog-hsv-palette-sm-hs-backdrop,
+.goog-hsv-palette-sm-hs-image {
+  top: 45px;
+  width: 128px;
+  height: 128px;
+}
+
+/* line 591, ../nrg/sass/goog.scss */
+.goog-hsv-palette-hs-backdrop,
+.goog-hsv-palette-sm-hs-backdrop {
+  background-color: #000;
+}
+
+/* line 596, ../nrg/sass/goog.scss */
+.goog-hsv-palette-hs-image,
+.goog-hsv-palette-v-image,
+.goog-hsv-palette-hs-handle,
+.goog-hsv-palette-v-handle {
+  background-image: url(//ssl.gstatic.com/closure/hsv-sprite.png);
+}
+
+/* line 603, ../nrg/sass/goog.scss */
+.goog-hsv-palette-noalpha .goog-hsv-palette-hs-image,
+.goog-hsv-palette-noalpha .goog-hsv-palette-v-image,
+.goog-hsv-palette-noalpha .goog-hsv-palette-hs-handle,
+.goog-hsv-palette-noalpha .goog-hsv-palette-v-handle {
+  background-image: url(//ssl.gstatic.com/closure/hsv-sprite.gif);
+}
+
+/* line 610, ../nrg/sass/goog.scss */
+.goog-hsv-palette-sm-hs-image,
+.goog-hsv-palette-sm-v-image,
+.goog-hsv-palette-sm-hs-handle,
+.goog-hsv-palette-sm-v-handle {
+  background-image: url(//ssl.gstatic.com/closure/hsv-sprite-sm.png);
+}
+
+/* line 617, ../nrg/sass/goog.scss */
+.goog-hsv-palette-noalpha .goog-hsv-palette-sm-hs-image,
+.goog-hsv-palette-noalpha .goog-hsv-palette-sm-v-image,
+.goog-hsv-palette-noalpha .goog-hsv-palette-sm-hs-handle,
+.goog-hsv-palette-noalpha .goog-hsv-palette-sm-v-handle {
+  background-image: url(//ssl.gstatic.com/closure/hsv-sprite-sm.gif);
+}
+
+/* line 624, ../nrg/sass/goog.scss */
+.goog-hsv-palette-hs-image,
+.goog-hsv-palette-sm-hs-image {
+  background-position: 0 0;
+}
+
+/* line 629, ../nrg/sass/goog.scss */
+.goog-hsv-palette-hs-handle,
+.goog-hsv-palette-sm-hs-handle {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  width: 11px;
+  height: 11px;
+  overflow: hidden;
+  background-position: 0 -256px;
+}
+
+/* line 640, ../nrg/sass/goog.scss */
+.goog-hsv-palette-sm-hs-handle {
+  top: 40px;
+  background-position: 0 -128px;
+}
+
+/* line 645, ../nrg/sass/goog.scss */
+.goog-hsv-palette-v-image,
+.goog-hsv-palette-sm-v-image {
+  position: absolute;
+  top: 10px;
+  left: 286px;
+  width: 19px;
+  height: 256px;
+  border: 1px solid #999;
+  background-color: #fff;
+  background-position: -256px 0;
+}
+
+/* line 657, ../nrg/sass/goog.scss */
+.goog-hsv-palette-sm-v-image {
+  top: 45px;
+  left: 155px;
+  width: 9px;
+  height: 128px;
+  background-position: -128px 0;
+}
+
+/* line 665, ../nrg/sass/goog.scss */
+.goog-hsv-palette-v-handle,
+.goog-hsv-palette-sm-v-handle {
+  position: absolute;
+  top: 5px;
+  left: 279px;
+  width: 35px;
+  height: 11px;
+  background-position: -11px -256px;
+  overflow: hidden;
+}
+
+/* line 676, ../nrg/sass/goog.scss */
+.goog-hsv-palette-sm-v-handle {
+  top: 40px;
+  left: 148px;
+  width: 25px;
+  background-position: -11px -128px;
+}
+
+/* line 683, ../nrg/sass/goog.scss */
+.goog-hsv-palette-swatch,
+.goog-hsv-palette-sm-swatch {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 65px;
+  height: 65px;
+  border: 1px solid #999;
+  background-color: #fff;
+}
+
+/* line 694, ../nrg/sass/goog.scss */
+.goog-hsv-palette-sm-swatch {
+  top: 10px;
+  right: auto;
+  left: 10px;
+  width: 30px;
+  height: 22px;
+}
+
+/* line 702, ../nrg/sass/goog.scss */
+.goog-hsv-palette-input,
+.goog-hsv-palette-sm-input {
+  position: absolute;
+  top: 85px;
+  right: 10px;
+  width: 65px;
+}
+
+/* line 710, ../nrg/sass/goog.scss */
+.goog-hsv-palette-sm-input {
+  top: 10px;
+  right: auto;
+  left: 50px;
+}
+
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+/*
+ * Standard styling for goog.ui.Dialog.
+ *
+ * @author ssaviano@google.com (Steven Saviano)
+ * @author attila@google.com (Attila Bodis)
+ */
+/* line 730, ../nrg/sass/goog.scss */
+.modal-dialog {
+  background: #c1d9ff;
+  border: 1px solid #3a5774;
+  color: #000;
+  padding: 4px;
+  position: absolute;
+}
+
+/* line 738, ../nrg/sass/goog.scss */
+.modal-dialog a,
+.modal-dialog a:link,
+.modal-dialog a:visited {
+  color: #06c;
+  cursor: pointer;
+}
+
+/* line 745, ../nrg/sass/goog.scss */
+.modal-dialog-bg {
+  background: #666;
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+/* line 752, ../nrg/sass/goog.scss */
+.modal-dialog-title {
+  background: #e0edfe;
+  color: #000;
+  cursor: pointer;
+  font-size: 120%;
+  font-weight: bold;
+  /* Add padding on the right to ensure the close button has room. */
+  padding: 8px 31px 8px 8px;
+  position: relative;
+  _zoom: 1;
+  /* Ensures proper width in IE6 RTL. */
+}
+
+/* line 766, ../nrg/sass/goog.scss */
+.modal-dialog-title-close {
+  /* Client apps may override the URL at which they serve the sprite. */
+  background: #e0edfe url(//ssl.gstatic.com/editor/editortoolbar.png) no-repeat -528px 0;
+  cursor: default;
+  height: 15px;
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  width: 15px;
+  vertical-align: middle;
+}
+
+/* line 778, ../nrg/sass/goog.scss */
+.modal-dialog-buttons,
+.modal-dialog-content {
+  background-color: #fff;
+  padding: 8px;
+}
+
+/* line 784, ../nrg/sass/goog.scss */
+.goog-buttonset-default {
+  font-weight: bold;
+}
+
+/* line 30, ../nrg/sass/nrg.scss */
+.nrg-ui-slider {
+  position: absolute;
+  outline: 0;
+  /* removes chrome blue border */
+}
+
+/* line 37, ../nrg/sass/nrg.scss */
+.nrg-ui-slider-horizontal {
+  width: 100%;
+  height: 10px;
+  top: calc(100% - 10px);
+  left: 0px;
+}
+
+/* line 46, ../nrg/sass/nrg.scss */
+.nrg-ui-slider-vertical {
+  width: 10px;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+}
+
+/*
+ * TRACK
+ */
+/* line 57, ../nrg/sass/nrg.scss */
+.nrg-ui-slider-track {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  /*background-color : rgba(100,100,100,0);*/
+}
+
+/* line 68, ../nrg/sass/nrg.scss */
+.nrg-ui-slider-track-hovered {
+  /*box-sizing: border-box;
+  background-color: rgb(50,50,50);
+  border: solid 1px rgb(100,100,100);*/
+}
+
+/*
+ * THUMB
+ */
+/* line 79, ../nrg/sass/nrg.scss */
+.nrg-ui-slider-thumb {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: gainsboro;
+  z-index: 2;
+  border-radius: 4px;
+}
+
+/* line 89, ../nrg/sass/nrg.scss */
+.nrg-ui-slider-thumb-horizontal {
+  width: 30px;
+  height: 100%;
+}
+
+/* line 95, ../nrg/sass/nrg.scss */
+.nrg-ui-slider-thumb-vertical {
+  height: 30px;
+  width: 100%;
+  left: 0px;
+}
+
+/* line 102, ../nrg/sass/nrg.scss */
+.nrg-ui-slider-thumb-hovered {
+  box-sizing: border-box;
+  background-color: gainsboro;
+  /*border: solid 1px rgb(100,100,100);*/
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 112, ../nrg/sass/nrg.scss */
+.nrg-ui-hoverinput {
+  position: absolute;
+  top: 3px;
+  width: 100px;
+  height: 17px;
+  left: calc(100% - 110px);
+  background-color: transparent;
+  transition-property: background-color;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 124, ../nrg/sass/nrg.scss */
+.nrg-ui-hoverinput-display,
+.nrg-ui-hoverinput-inputbox {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  line-height: 17px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  white-space: nowrap;
+}
+
+/* line 136, ../nrg/sass/nrg.scss */
+.nrg-ui-hoverinput-display {
+  color: #9b9b9b;
+  text-align: right;
+  text-wrap: none;
+}
+
+/* line 144, ../nrg/sass/nrg.scss */
+.nrg-ui-hoverinput-inputbox {
+  opacity: 0;
+  width: 100%;
+  height: 18px;
+  left: 0px;
+  background-color: black;
+  border: none;
+  /*border-bottom: solid 1px rgb(95,95,95);*/
+  outline: 0;
+  color: white;
+  z-index: 3;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  text-align: right;
+}
+
+/* line 162, ../nrg/sass/nrg.scss */
+.nrg-ui-hoverinput:hover {
+  background-color: rgba(0, 0, 1, 0);
+}
+
+/* line 166, ../nrg/sass/nrg.scss */
+.nrg-ui-hoverinput:hover > .nrg-ui-hoverinput-inputbox {
+  opacity: 1;
+}
+
+/**
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 174, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer {
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+/* line 186, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-scrollarea {
+  display: block;
+  position: relative;
+  width: calc(100% - 19px);
+  left: 19px;
+}
+
+/* line 194, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyheader {
+  position: relative;
+  background-color: #323232;
+  left: 0px;
+  width: 100%;
+  height: 1.5em;
+  color: 10px;
+  font-size: #787878;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  cursor: pointer;
+  line-height: 1.5em;
+  margin-bottom: 4px;
+}
+
+/* line 209, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyheader-mouseover {
+  background-color: #5a5a5a;
+  color: white;
+}
+
+/* line 216, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyheaderlabel, .nrg-ui-scrollablecontainer-zippyexpandicon {
+  position: absolute;
+  margin-left: .3em;
+  background-color: none;
+}
+
+/* line 223, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyexpandicon {
+  right: .5em;
+  margin-left: -10px;
+  color: black;
+}
+
+/* line 230, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippyexpandicon-mouseover {
+  color: black;
+}
+
+/* line 237, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-zippycontent {
+  overflow: visible;
+  width: 100%;
+  top: 20px;
+  left: 12px;
+  margin-bottom: 4px;
+}
+
+/* line 247, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider {
+  position: absolute;
+  width: 8px;
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  background-color: black;
+  transition-property: background-color;
+  transition-duration: .2;
+}
+
+/* line 259, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider:hover {
+  background-color: black;
+}
+
+/* line 263, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider-thumb {
+  background-color: #505050;
+  width: 4px;
+  left: 5px;
+  border-radius: 5px;
+  transition-property: background-color, width, left;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 273, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider:hover > .nrg-ui-scrollablecontainer-slider-thumb {
+  background-color: #787878;
+  width: 8px;
+  left: 3px;
+}
+
+/* line 279, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider-thumb:active {
+  background-color: #787878;
+  width: 8px;
+  left: 3px;
+}
+
+/* line 287, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider-track {
+  background-color: transparent;
+}
+
+/* line 292, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablecontainer-slider-track-hovered {
+  /*
+  box-sizing: border-box;
+  background-color: rgb(50,50,50);
+  border-right: solid 1px rgb(100,100,100);
+  border-left: none;
+  border-top: none;
+  border-bottom: none;*/
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 308, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablezippytree {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+}
+
+/* line 317, ../nrg/sass/nrg.scss */
+.nrg-ui-scrollablezippytree-zippytree {
+  top: 0px;
+  left: 0px;
+  width: 100%;
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 327, ../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-header {
+  position: relative;
+  outline: 0;
+  /*background-color: rgb(90,90,90);*/
+  border-bottom: solid 1px #505050;
+  left: 0px;
+  width: 100%;
+  height: 1.5em;
+  color: #505050;
+  font-size: 12px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  cursor: pointer;
+  z-index: 1000;
+  line-height: 1.5em;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  transition-property: background-color, color;
+  transition-duration: .1s;
+  transition-timing-function: ease-out;
+}
+
+/* line 348, ../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-header:hover {
+  background-color: #323232;
+  color: white;
+}
+
+/* line 355, ../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-header-label, .nrg-ui-zippynode-expandicon {
+  position: absolute;
+  margin-left: .3em;
+  background-color: none;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* line 364, ../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-expandicon {
+  right: .5em;
+  margin-left: -10px;
+  color: #646464;
+}
+
+/* line 371, ../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-expandicon-mouseover {
+  color: white;
+}
+
+/* line 378, ../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-content {
+  overflow: visible;
+  width: 100%;
+  top: 20px;
+  left: 12px;
+  z-index: 1000;
+}
+
+/* line 389, ../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-loading-holder {
+  position: relative;
+  height: 87px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 395, ../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-loading-text {
+  position: absolute;
+  top: calc(50% - 12px);
+  left: calc(50% - 23px);
+}
+
+/* line 402, ../nrg/sass/nrg.scss */
+.nrg-ui-zippynode-loading-image {
+  position: absolute;
+  width: 150px;
+  height: 2px;
+  top: calc(50% + 10px);
+  left: calc(50% - 75px);
+  opacity: .50;
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 428, ../nrg/sass/nrg.scss */
+.nrg-ui-zippytree-rootnode {
+  margin-bottom: 0px;
+  height: 0px;
+}
+
+/**
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 436, ../nrg/sass/nrg.scss */
+.nrg-ui-dialog {
+  position: absolute;
+  outline: none;
+  background-color: black;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  border-radius: 5px;
+  border-color: white;
+  z-index: 10;
+  overflow: hidden;
+}
+
+/* line 448, ../nrg/sass/nrg.scss */
+.nrg-ui-dialog-overlay {
+  position: absolute;
+  left: 30%;
+  top: 35%;
+  width: 40%;
+  height: 30%;
+  background-color: black;
+  z-index: 201;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 460, ../nrg/sass/nrg.scss */
+.nrg-ui-dialog-background {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(20, 20, 20, 0.6);
+  z-index: 200;
+  display: inline-block;
+}
+
+/* line 478, ../nrg/sass/nrg.scss */
+.nrg-ui-dialog-subtext {
+  text-align: left;
+  font-size: 12px;
+}
+
+/* line 485, ../nrg/sass/nrg.scss */
+.nrg-ui-dialog-text {
+  text-align: center;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 490, ../nrg/sass/nrg.scss */
+.nrg-ui-dialog-closebutton-image, .nrg-ui-dialog-closebutton {
+  height: 10;
+  width: 10;
+}
+
+/* line 494, ../nrg/sass/nrg.scss */
+.nrg-ui-dialog-closebutton {
+  position: absolute;
+  cursor: pointer;
+  top: 2px;
+  left: calc(100% - 16px);
+  z-index: 103;
+  background: none;
+  outline: none;
+}
+
+/* line 510, ../nrg/sass/nrg.scss */
+.modal-dialog-title-text {
+  top: 2px;
+  left: 7px;
+  position: absolute;
+  text-align: center;
+}
+
+/* line 518, ../nrg/sass/nrg.scss */
+.nrg-ui-dialog-title {
+  background-color: #3c3c3c;
+  height: 15px;
+  padding: 0px;
+  margin-top: -3px;
+  width: 104%;
+  left: -2%;
+  border: none;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  z-index: -1;
+}
+
+/* line 531, ../nrg/sass/nrg.scss */
+.nrg-ui-dialog-content {
+  background-color: none;
+  background: none;
+}
+
+/* line 537, ../nrg/sass/nrg.scss */
+.nrg-ui-dialog-buttons {
+  background-color: none;
+  background: none;
+}
+
+/* line 544, ../nrg/sass/nrg.scss */
+.nrg-ui-dialog-yesnomodal {
+  position: absolute;
+  top: calc(50% - 60px);
+  left: calc(50% - 125px);
+  width: 250px;
+  height: 120px;
+  background: black;
+  background-color: black;
+  border: 1px solid white;
+  padding: 4px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  border-radius: 10px;
+  outline: 0;
+  z-index: 1000;
+  cursor: default;
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 566, ../nrg/sass/nrg.scss */
+.nrg-ui-errordialog {
+  width: 400px;
+  height: 300px;
+  z-index: 100000;
+}
+
+/* line 574, ../nrg/sass/nrg.scss */
+.nrg-ui-errordialog-image {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  left: calc(50% - 40px);
+}
+
+/* line 583, ../nrg/sass/nrg.scss */
+.nrg-ui-errordialog-text {
+  top: 145px;
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 591, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail {
+  position: absolute;
+  width: 87px;
+  height: 87px;
+  top: 0px;
+  left: 0px;
+  cursor: pointer;
+  background-color: black;
+  box-sizing: border-box;
+  border: solid 1px black;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  transition-property: border, background-color, color;
+}
+
+/* line 606, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-selectindicator {
+  position: absolute;
+  top: calc(50% - 34px);
+  left: 7px;
+  width: 2px;
+  height: 68px;
+  opacity: 0;
+  background-color: #646464;
+}
+
+/* line 617, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-selectindicator-active {
+  opacity: 1;
+}
+
+/* line 623, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-selected {
+  border: solid 1px #646464;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* line 632, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail:hover {
+  background-color: #1e1e1e;
+  z-index: 10000;
+  overflow: visible;
+  color: white;
+  border: solid 1px #282828;
+}
+
+/* line 641, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-image {
+  /*color: rgb(255,255,255);*/
+  /*border-color: white;*/
+  /*box-shadow: 3px 3px 3px rgba(0,0,0, .3);*/
+}
+
+/* line 647, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail:hover > .nrg-ui-thumbnail-text {
+  color: #d7d7d7;
+}
+
+/* line 651, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-image, .nrg-ui-thumbnail-canvas {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  top: calc(50% - 35px);
+  left: 8px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  border: solid 1px #1e1e1e;
+  /*border : none;
+  border-color: rgb(100,100,100);
+  border-width : 1px;
+  border-radius: 0px;	
+  box-sizing: border-box; */
+  cursor: pointer;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  transition-property: border-color;
+}
+
+/* line 674, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-image-mouseover {
+  /*border: solid 1px white;*/
+}
+
+/* line 679, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-text {
+  position: absolute;
+  height: 70px;
+  top: 8px;
+  left: 86px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  font-size: 9;
+  white-space: nowrap;
+  color: #505050;
+  line-height: 17px;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  transition-property: color;
+}
+
+/* line 695, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-text-mouseover {
+  color: #9b9b9b;
+}
+
+/* line 700, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-canvas {
+  top: 8px;
+  left: 8px;
+}
+
+/*******
+* Active state
+********/
+/* line 711, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-text-active {
+  /*color : rgb(100,100,100);*/
+}
+
+/* line 715, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-active {
+  opacity: 1;
+}
+
+/* line 720, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnail-image-active {
+  /*border-left: solid 2px rgb(100,100,100);*/
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 728, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnailgallery {
+  position: absolute;
+  overflow: hidden;
+}
+
+/* line 736, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnailgallery-thumbnail {
+  position: relative;
+  width: 100%;
+  height: 176px;
+  top: 0px;
+  left: 0px;
+  cursor: pointer;
+}
+
+/* line 746, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnailgallery-thumbnail-image {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  top: 8px;
+  left: 8px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  border: solid;
+  border-color: white;
+  border-width: 1px;
+  border-radius: 0px;
+  cursor: pointer;
+}
+
+/* line 762, ../nrg/sass/nrg.scss */
+.nrg-ui-thumbnailgallery-thumbnail-text {
+  position: absolute;
+  height: 70px;
+  top: 8px;
+  left: 176px;
+  color: white;
+  font-size: 9px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  line-height: 17px;
+}
+
+/* line 773, ../nrg/sass/nrg.scss */
+.nrg-ui-resizable-boundary {
+  position: absolute;
+  border: 1px dotted red;
+  background-color: rgba(255, 120, 120, 0.5);
+}
+
+/* line 780, ../nrg/sass/nrg.scss */
+.nrg-ui-resizedragger {
+  position: absolute;
+  font-size: 0.1px;
+  z-index: 1;
+  /*background-color: rgba(255,20,20, 0);*/
+}
+
+/**
+  RIGHT AND LEFT
+*/
+/* line 791, ../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggerright, .nrg-ui-resizedraggerleft {
+  position: absolute;
+  width: 7px;
+  height: 100%;
+  cursor: ew-resize;
+}
+
+/* line 798, ../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggerright {
+  left: 100%;
+  /*background-color: rgba(0,255,0,.5);*/
+}
+
+/* line 803, ../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggerleft {
+  left: -7px;
+}
+
+/**
+ * TOP AND BOTTOM
+ */
+/* line 813, ../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggertop, .nrg-ui-resizedraggerbottom {
+  position: absolute;
+  left: 0px;
+  width: 100%;
+  height: 7px;
+  cursor: ns-resize;
+}
+
+/* line 821, ../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggertop {
+  top: -7px;
+  /*background-color: rgba(0,255,0,.5);*/
+}
+
+/* line 826, ../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggerbottom {
+  top: 100%;
+  /*background-color: rgba(255,0,0,.5);*/
+}
+
+/**
+ * CORNERS
+ */
+/* line 838, ../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggertopright,
+.nrg-ui-resizedraggertopleft,
+.nrg-ui-resizedraggerbottomright,
+.nrg-ui-resizedraggerbottomleft {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  cursor: move;
+}
+
+/* line 849, ../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggertopright,
+.nrg-ui-resizedraggertopleft {
+  top: calc(100% - 7px);
+}
+
+/* line 854, ../nrg/sass/nrg.scss */
+.nrg-ui-resizedraggertopright {
+  left: calc(100% - 7px);
+  /*background-color: orange;*/
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/**
+ * ELEMENT
+ */
+/* line 866, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs {
+  position: absolute;
+  left: 0px;
+}
+
+/* line 871, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-right {
+  left: 0px;
+}
+
+/* line 876, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-left {
+  left: calc(100% - 18px);
+}
+
+/* line 881, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-top {
+  top: calc(100% - 18px);
+}
+
+/* line 886, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-bottom {
+  top: 0px;
+}
+
+/**
+ * TABS
+ */
+/* line 897, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  position: absolute;
+  top: 0px;
+  color: #646464;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  background-color: #1e1e1e;
+  cursor: pointer;
+  border: solid 1px #3c3c3c;
+  text-align: center;
+}
+
+/* line 911, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-top {
+  height: 18px;
+  top: 0px;
+  border-radius: 4px 4px 0px 0px;
+  border-bottom: none;
+}
+
+/* line 919, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-bottom {
+  height: 18px;
+  top: calc(100% - 18px);
+  border-radius: 0px 0px 4px 4px;
+  border-top: none;
+}
+
+/* line 927, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-right {
+  width: 22px;
+  left: calc(100% - 22px);
+  /*border-radius: 0px 4px 4px 0px;*/
+  border-left: none;
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
+}
+
+/* line 937, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-left {
+  width: 18px;
+  left: 0px;
+  /*border-radius: 4px 0px 0px 4px;*/
+  border-right: none;
+}
+
+/* line 945, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-active {
+  border: solid 1px #646464;
+}
+
+/* line 950, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-active-right {
+  border-left: none;
+}
+
+/* line 955, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-active-top {
+  border-bottom: none;
+}
+
+/* line 960, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-tab-active {
+  z-index: 1;
+}
+
+/* line 965, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-icon {
+  color: #646464;
+  z-index: 11;
+  color: #646464;
+  font-size: 10px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  display: table;
+}
+
+/* line 978, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-icon-active {
+  color: #646464;
+}
+
+/* line 983, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-icon-top {
+  width: 100%;
+  height: 100%;
+}
+
+/* line 989, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-icon-right {
+  left: -24px;
+  top: calc(50% - 5px);
+  white-space: nowrap;
+}
+
+/* line 998, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-icon-content {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* line 1005, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-page {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  position: absolute;
+  color: #646464;
+  font-size: 12px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  background-color: black;
+  width: 100%;
+  border: solid 1px #3c3c3c;
+  visibility: hidden;
+  overflow: hidden;
+}
+
+/* line 1019, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-page-content {
+  position: absolute;
+  left: 0px;
+  top: 10px;
+  height: calc(100% - 20px);
+  width: 100%;
+  z-index: 2;
+}
+
+/* line 1030, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-page-active {
+  border: solid 1px #646464;
+  visibility: visible;
+  z-index: 2;
+}
+
+/* line 1037, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-page-right, .nrg-ui-tabs-page-left {
+  position: absolute;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  width: calc(100% - 18px);
+  border-right: none;
+  border-left: none;
+}
+
+/* line 1048, ../nrg/sass/nrg.scss */
+.nrg-ui-tabs-page-top, .nrg-ui-tabs-page-bottom {
+  position: absolute;
+  top: 18px;
+  left: 0px;
+  height: calc(100% - 18px);
+  width: 100%;
+  border-bottom: none;
+}
+
+/**
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 1061, ../nrg/sass/nrg.scss */
+.nrg-ui-ziptabs {
+  position: absolute;
+}
+
+/* line 1066, ../nrg/sass/nrg.scss */
+.nrg-ui-ziptabs:hover {
+  opacity: 1;
+}
+
+/* line 1072, ../nrg/sass/nrg.scss */
+.nrg-ui-ziptabs-top, .nrg-ui-ziptabs-bottom {
+  height: 18px;
+}
+
+/* line 1077, ../nrg/sass/nrg.scss */
+.nrg-ui-ziptabs-left, .nrg-ui-ziptabs-right {
+  width: 18px;
+  opacity: .7;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  transition-property: opacity;
+}
+
+/* line 1086, ../nrg/sass/nrg.scss */
+.nrg-ui-ziptabs-right:hover {
+  opacity: 1;
+}
+
+/**
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1100, ../nrg/sass/nrg.scss */
+.nrg-ui-slideinmenu-icon {
+  max-width: 100%;
+  max-height: 100%;
+  opacity: 1;
+}
+
+/* line 1107, ../nrg/sass/nrg.scss */
+.nrg-ui-slideinmenu-icon-hovered {
+  opacity: 1;
+}
+
+/* line 1112, ../nrg/sass/nrg.scss */
+.nrg-ui-slideinmenu-menuholder {
+  position: absolute;
+  background-color: #ff6416;
+  z-index: 4000;
+}
+
+/* line 1119, ../nrg/sass/nrg.scss */
+.nrg-ui-slideinmenu-menu {
+  background-color: #7d7d7d;
+  border: solid 1px #323232;
+  z-index: 20000;
+  cursor: pointer;
+  width: 130px;
+}
+
+/* line 1128, ../nrg/sass/nrg.scss */
+.nrg-ui-slideinmenu-menuitem {
+  overflow: visible;
+  margin-left: 5px;
+  margin-top: 7px;
+  height: 20px;
+}
+
+/* line 1136, ../nrg/sass/nrg.scss */
+.nrg-ui-slideinmenu-menuitem-highlight {
+  color: white;
+}
+
+/* line 1140, ../nrg/sass/nrg.scss */
+.nrg-ui-slideinmenu-menuitem-icon {
+  position: absolute;
+  margin-top: -3px;
+  left: 5px;
+  width: 20px;
+  height: 20px;
+}
+
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
+  display: block;
+}
+
+/* line 4, ../xiv/sass/layoutframe.scss */
+.xiv-ui-layouts-layoutframe {
+  position: absolute;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  overflow: hidden;
+  background: black;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 16, ../xiv/sass/layoutframe.scss */
+.xiv-ui-layouts-layoutframe-sagittal, .xiv-ui-layouts-layoutframe-coronal,
+.xiv-ui-layouts-layoutframe-transverse, .xiv-ui-layouts-layoutframe-threed {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+/* line 4, ../xiv/sass/xyzvlayout.scss */
+.xiv-ui-layouts-xyzvlayout {
+  position: absolute;
+}
+
+/* line 9, ../xiv/sass/xyzvlayout.scss */
+.xiv-ui-layouts-xyzvlayout-x, .xiv-ui-layouts-xyzvlayout-y,
+.xiv-ui-layouts-xyzvlayout-z, .xiv-ui-layouts-xyzvlayout-v {
+  position: absolute;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+/*
+.xiv-ui-layouts-xyzvlayout-slider {
+    position: absolute;
+    left: 30px;
+    top: calc(100% - 15px);
+    width: calc(100% - 40px);
+    height: 10px;
+    opacity: 0;
+    transition-property: opacity;
+    @include nrg-transitionable;
+}
+*/
+/* line 35, ../xiv/sass/xyzvlayout.scss */
+.xiv-ui-layouts-xyzvlayout-slider-track {
+  position: absolute;
+  height: 2px;
+  top: calc(50% - 1px);
+  left: 0px;
+  border-radius: 2px;
+  width: 100%;
+  background-color: #505050;
+}
+
+/* line 47, ../xiv/sass/xyzvlayout.scss */
+.xiv-ui-layouts-xyzvlayout-slider-track-x {
+  background: rgba(255, 0, 0, 0.5);
+}
+
+/* line 53, ../xiv/sass/xyzvlayout.scss */
+.xiv-ui-layouts-xyzvlayout-slider-track-y {
+  background: rgba(0, 255, 0, 0.5);
+}
+
+/* line 59, ../xiv/sass/xyzvlayout.scss */
+.xiv-ui-layouts-xyzvlayout-slider-track-z {
+  background: rgba(0, 0, 255, 0.5);
+}
+
+/* line 63, ../xiv/sass/xyzvlayout.scss */
+.xiv-ui-layouts-xyzvlayout-slider-thumb {
+  position: absolute;
+  top: calc(50% - 4px);
+  width: 8px;
+  height: 8px;
+  background: #969696;
+  border: 0px;
+  border-radius: 2px;
+  box-shadow: 0px 0px 0px 3px rgba(125, 125, 125, 0);
+  transition-property: box-shadow;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 76, ../xiv/sass/xyzvlayout.scss */
+.xiv-ui-layouts-xyzvlayout-slider-thumb:hover {
+  box-shadow: 0px 0px 0px 3px rgba(155, 155, 155, 0.55);
+}
+
+/* line 80, ../xiv/sass/xyzvlayout.scss */
+.xiv-ui-layouts-xyzvlayout-slider-thumb:active {
+  box-shadow: 0px 0px 0px 3px rgba(155, 155, 155, 0.55);
+}
+
+/* line 85, ../xiv/sass/xyzvlayout.scss */
+.xiv-ui-layouts-xyzvlayout-framenumber {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  width: 100%;
+  margin-left: -8px;
+  color: white;
+  font-size: 9px;
+  opacity: .8;
+  text-align: right;
+}
+
+/* line 12, ../xiv/sass/xiv.scss */
+.xiv-ui-xtkcontroller {
+  display: block;
+  position: relative;
+  width: 95%;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+
+/* line 21, ../xiv/sass/xiv.scss */
+.xiv-ui-xtkcontroller-label {
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/*
+ * Standard styling for the scroll gallery
+ *
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 41, ../xiv/sass/xiv.scss */
+.xiv-ui-xtkcontroller-scrollgallery {
+  top: 25px;
+  left: 0px;
+  width: 100%;
+  height: 90%;
+  position: absolute;
+  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+/* line 53, ../xiv/sass/xiv.scss */
+.xiv-ui-xtkcontroller-scrollgallery-scrollarea {
+  position: relative;
+  width: 166px;
+  left: 14px;
+}
+
+/* line 60, ../xiv/sass/xiv.scss */
+.xiv-ui-xtkcontroller-scrollgallery-zippyheader {
+  position: relative;
+  background-color: #464646;
+  left: 0px;
+  color: black;
+  font-size: 1.5em;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  cursor: pointer;
+}
+
+/* line 69, ../xiv/sass/xiv.scss */
+.xiv-ui-xtkcontroller-scrollgallery-slider-widget {
+  width: 7;
+  background-color: black;
+  border: none;
+}
+
+/* line 77, ../xiv/sass/xiv.scss */
+.xiv-ui-xtkcontroller-scrollgallery-slider-thumb {
+  height: 60px;
+  background-color: #787878;
+  border: none;
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 86, ../xiv/sass/xiv.scss */
+.xiv-vis-xtkplane-disabledoverlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  display: table;
+  color: black;
+  font-size: 20px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  text-align: center;
+  z-index: 100;
+  background-color: #787878;
+  opacity: 0;
+}
+
+/* line 104, ../xiv/sass/xiv.scss */
+.xiv-ui-displayall-checkboxholder {
+  position: absolute;
+  left: 30%;
+}
+
+/* line 116, ../xiv/sass/xiv.scss */
+.xiv-ui-sliderbase-slider {
+  position: absolute;
+  left: calc(55% - 65px);
+  width: calc(55% - 65px);
+  top: 2px;
+  outline: none;
+}
+
+/* line 126, ../xiv/sass/xiv.scss */
+.xiv-ui-sliderbase-slider-track, .xiv-ui-slidercontroller-slider-track, .xiv-ui-twothumbslidercontroller-slider-track {
+  position: absolute;
+  height: 1px;
+  width: 100%;
+  top: calc(50% - 2px);
+  background-color: #969696;
+  z-index: -1;
+  outline: 0;
+}
+
+/* line 138, ../xiv/sass/xiv.scss */
+.xiv-ui-sliderbase-slider-thumb, .xiv-ui-twothumbslidercontroller-slider-thumb-extent, .xiv-ui-twothumbslidercontroller-slider-thumb-value {
+  position: absolute;
+  height: 7px;
+  width: 7px;
+  border-radius: 0px;
+  margin-top: -5px;
+  background-color: #c8c8c8;
+  border: solid 1px white;
+  overflow: hidden;
+  outline: 0;
+  top: 4px;
+  border-radius: 2px;
+  box-sizing: content-box;
+  box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, 0);
+  transition-property: box-shadow;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  transition-timing-function: ease-out;
+}
+
+/* line 158, ../xiv/sass/xiv.scss */
+.xiv-ui-sliderbase-slider-thumb:hover, .xiv-ui-twothumbslidercontroller-slider-thumb-extent:hover, .xiv-ui-twothumbslidercontroller-slider-thumb-value:hover,
+.xiv-ui-sliderbase-slider-thumb:active,
+.xiv-ui-twothumbslidercontroller-slider-thumb-extent:active,
+.xiv-ui-twothumbslidercontroller-slider-thumb-value:active {
+  box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, 0.55);
+}
+
+/* line 164, ../xiv/sass/xiv.scss */
+.xiv-ui-sliderbase-slider-track-hover {
+  box-sizing: content-box;
+}
+
+/* line 169, ../xiv/sass/xiv.scss */
+.xiv-ui-sliderbase-valueinput {
+  position: absolute;
+  top: 0px;
+  left: calc(100% - 56px);
+  width: 50px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  outline: none;
+}
+
+/* line 179, ../xiv/sass/xiv.scss */
+.xiv-ui-sliderbase-valueinput-display,
+.xiv-ui-sliderbase-valueinput-box {
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 185, ../xiv/sass/xiv.scss */
+.xiv-ui-sliderbase-valueinput-box {
+  height: 17px;
+}
+
+/* line 202, ../xiv/sass/xiv.scss */
+.xiv-ui-slidercontroller-slider {
+  position: absolute;
+  left: calc(55% - 65px);
+  width: calc(55% - 65px);
+  outline: none;
+}
+
+/* line 217, ../xiv/sass/xiv.scss */
+.xiv-ui-slidercontroller-slider-track-hover {
+  box-sizing: content-box;
+}
+
+/* line 222, ../xiv/sass/xiv.scss */
+.xiv-ui-slidercontroller-value-input {
+  top: -3px;
+  width: 46px;
+  left: calc(100% - 56px);
+  background-color: transparent;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 230, ../xiv/sass/xiv.scss */
+.xiv-ui-buttoncontroller {
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  text-align: center;
+}
+
+/* line 235, ../xiv/sass/xiv.scss */
+.xiv-ui-buttoncontroller-element {
+  top: 5px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  height: 22px;
+  border-radius: 0px;
+  border: none;
+  background: #c8c8c8;
+  width: 60px;
+  font-weight: normal;
+}
+
+/* line 246, ../xiv/sass/xiv.scss */
+.xiv-ui-twothumbslidercontroller {
+  outline: 0;
+}
+
+/* line 253, ../xiv/sass/xiv.scss */
+.xiv-ui-twothumbslidercontroller-slider {
+  position: absolute;
+  top: 20px;
+  left: 25%;
+  width: calc(70% - 140px);
+  outline: 0;
+}
+
+/* line 268, ../xiv/sass/xiv.scss */
+.xiv-ui-twothumbslidercontroller-slider-thumb, .xiv-ui-twothumbslidercontroller-slider-thumb-extent, .xiv-ui-twothumbslidercontroller-slider-thumb-value {
+  top: -1px;
+}
+
+/* line 278, ../xiv/sass/xiv.scss */
+.xiv-ui-twothumbslidercontroller-slider-thumb-value {
+  left: 0px;
+}
+
+/* line 286, ../xiv/sass/xiv.scss */
+.xiv-ui-twothumbslidercontroller-value-input,
+.xiv-ui-twothumbslidercontroller-extent-input {
+  position: absolute;
+  top: 0px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 294, ../xiv/sass/xiv.scss */
+.xiv-ui-twothumbslidercontroller-value-input {
+  left: calc(100% - 140px);
+}
+
+/* line 299, ../xiv/sass/xiv.scss */
+.xiv-ui-twothumbslidercontroller-extent-input {
+  left: calc(100% - 68px);
+}
+
+/* line 301, ../xiv/sass/xiv.scss */
+.xiv-ui-checkboxcontroller {
+  outline: none;
+}
+
+/* line 307, ../xiv/sass/xiv.scss */
+.xiv-ui-checkboxcontroller-checkboxholder {
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  outline: none;
+}
+
+/* line 312, ../xiv/sass/xiv.scss */
+.xiv-ui-radiobuttoncontroller-radiobutton {
+  position: absolute;
+  top: 0px;
+  left: 50%;
+}
+
+/* line 316, ../xiv/sass/xiv.scss */
+.xiv-ui-colorpalettecontroller {
+  position: absolute;
+  width: 450px;
+  height: 300px;
+  top: 0px;
+  left: 30%;
+}
+
+/* line 325, ../xiv/sass/xiv.scss */
+.xiv-ui-colorpalettecontroller-colorsquare {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 11px;
+  width: 11px;
+  border: solid 1px #5a5a5a;
+  background-color: red;
+  cursor: pointer;
+}
+
+/* line 337, ../xiv/sass/xiv.scss */
+.xiv-ui-colorpalettecontroller-colorpaletteholder {
+  /*
+      position: absolute;
+      top: 15px;
+      left: 0px;
+      width: 420px;
+      height: 300px;
+      background-color: rgb(0,0,0);
+      border: solid 1px white;
+  */
+}
+
+/* line 350, ../xiv/sass/xiv.scss */
+.xiv-ui-colorpalettecontroller-colorpalette {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  border: none;
+}
+
+/* line 358, ../xiv/sass/xiv.scss */
+.xiv-ui-colorpalettecontroller-closebutton {
+  position: absolute;
+  cursor: pointer;
+  top: 5px;
+  left: 100%;
+  margin-left: -15px;
+  width: 10px;
+  height: 10px;
+  content: url("../../../../images/viewer/xiv/ui/Modal/close.png");
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 372, ../xiv/sass/xiv.scss */
+.xiv-ui-helpdialog {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.9);
+  border-radius: 5px;
+  border: solid 1px white;
+  font-size: 8px;
+  color: white;
+  text-align: left;
+  top: 10%;
+  left: 10%;
+  height: 300px;
+  width: 400px;
+  z-index: 20000;
+}
+
+/* line 388, ../xiv/sass/xiv.scss */
+.xiv-ui-helpdialog-title {
+  height: 15px;
+}
+
+/* line 392, ../xiv/sass/xiv.scss */
+.xiv-ui-helpdialog-closebutton {
+  top: 2px;
+  left: calc(100% - 12px);
+}
+
+/* line 398, ../xiv/sass/xiv.scss */
+.xiv-ui-helpdialog-scrollablezippytree {
+  position: absolute;
+  top: 25px;
+  left: 0px;
+  width: calc(100% - 14px);
+  height: calc(100% - 40px);
+}
+
+/* line 408, ../xiv/sass/xiv.scss */
+.xiv-ui-helpdialog-text {
+  position: absolute;
+  text-align: left;
+  color: white;
+  font-size: 12px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  white-space: normal;
+  padding: 8px;
+  top: 20px;
+  left: 20px;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 423, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox {
+  top: 0px;
+  left: 80px;
+  width: 500px;
+  height: 500px;
+  position: absolute;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+/* line 435, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-hidden {
+  visibility: hidden;
+}
+
+/* line 440, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-draganddrophandle {
+  position: absolute;
+  cursor: pointer;
+  width: 6px;
+  height: 13px;
+  opacity: .4;
+  z-index: 1000;
+  margin-left: -10px;
+}
+
+/* line 452, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-tabdragger {
+  background-color: #282828;
+  height: 10px;
+}
+
+/* line 458, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-tabdragger-handle {
+  position: absolute;
+  top: calc(50% - 1.5px);
+  left: calc(50% - 15px);
+  width: 30px;
+  height: 3px;
+  background-color: #646464;
+}
+
+/* line 469, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-viewlayoutmenu {
+  height: 14px;
+  width: 14px;
+  cursor: pointer;
+}
+
+/* line 478, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-viewframe {
+  position: absolute;
+  top: 0px;
+  left: 22px;
+  width: calc(100% - 22px);
+  height: calc(100% - 2px);
+  position: absolute;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  overflow: visible;
+  z-index: 2;
+  border: solid 1px #323232;
+  transition-property: border;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 499, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-ziptabs {
+  left: 0px;
+  width: 100%;
+}
+
+/* line 505, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-ziptab-bounds {
+  position: absolute;
+  cursor: auto;
+  left: 0px;
+  top: 300px;
+  height: calc(100% - 300px);
+  width: 100%;
+  background-color: rgba(255, 0, 0, 0);
+}
+
+/* line 516, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-viewlayouthandler {
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  position: absolute;
+}
+
+/* line 525, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-viewablegroupmenu {
+  z-index: 100;
+}
+
+/* line 530, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-menu-left,
+.xiv-ui-viewbox-menu-top-left {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  position: absolute;
+  display: block;
+  overflow: hidden;
+  width: 22px;
+  border-top: solid #646464 1px;
+  border-left: solid #646464 1px;
+  border-bottom: solid #646464 1px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  background-color: black;
+  opacity: .5;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 550, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-menu-left:hover {
+  opacity: 1;
+}
+
+/* line 554, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-menu-top-left:hover {
+  opacity: 1;
+}
+
+/* line 559, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox:hover > .xiv-ui-viewbox-viewframe {
+  border: solid 1px #6e6e6e;
+}
+
+/* line 566, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-menu-left {
+  top: calc(50% - 57px);
+}
+
+/* line 572, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-button-threedtoggle {
+  width: 15px;
+  height: 15px;
+  opacity: .5;
+}
+
+/* line 579, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-button-threedtoggle-on {
+  opacity: 1;
+  background-color: black;
+}
+
+/* line 587, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-button-crosshairtoggle {
+  width: 15px;
+  height: 15px;
+  opacity: .5;
+}
+
+/* line 592, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-button-crosshairtoggle-on {
+  opacity: 1;
+  background-color: black;
+}
+
+/* line 599, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-button-brightnesscontrasttoggle {
+  width: 15px;
+  height: 15px;
+  opacity: .5;
+}
+
+/* line 604, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-button-brightnesscontrasttoggle-on {
+  opacity: 1;
+  background-color: black;
+}
+
+/* line 610, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-component-highlight {
+  /*box-shadow: 0px 0px 1px 1px rgba(255,255,255, 1);*/
+}
+
+/* line 616, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-inusedialog {
+  position: absolute;
+  top: calc(50% - 60px);
+  left: calc(50% - 125px);
+  width: 250px;
+  height: 120px;
+  background: black;
+  background-color: black;
+  border: 1px solid white;
+  padding: 4px;
+  color: white;
+  font-size: 12px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  border-radius: 10px;
+  outline: 0;
+  z-index: 200;
+}
+
+/* line 634, ../xiv/sass/xiv.scss */
+.xiv-ui-viewbox-emptymenubutton {
+  width: 15px;
+  height: 15px;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 647, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxdialogs-generic-toggle {
+  width: 15px;
+  height: 15px;
+  opacity: .5;
+  background-color: black;
+}
+
+/* line 655, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxdialogs-generic-toggle-on {
+  opacity: 1;
+  background-color: black;
+}
+
+/* line 663, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog {
+  position: absolute;
+  background-color: transparent;
+  font-size: 12px;
+  color: #9b9b9b !important;
+  top: 0px;
+  left: 0px;
+  width: 200px;
+  z-index: 10;
+  border: none;
+  cursor: default;
+  border: solid 1px;
+  border-radius: 5px;
+  border-color: rgba(255, 255, 255, 0);
+  background-color: rgba(60, 60, 60, 0);
+  transition-property: color, background-color, border-color;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 683, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog-text {
+  color: #9b9b9b;
+  transition-property: color;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+/* line 690, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog:hover {
+  color: white !important;
+  border-color: white;
+  background-color: rgba(60, 60, 60, 0.5);
+}
+
+/* line 697, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog-content:hover > .xiv-ui-viewboxdialogs-infodialog-text {
+  color: white;
+}
+
+/* line 702, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog-title {
+  opacity: 0;
+  transition-property: opacity;
+}
+
+/* line 709, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog,
+.xiv-ui-viewboxdialogs-infodialog-title {
+  transition-duration: .15s;
+  transition-timing-function: ease-out;
+}
+
+/* line 716, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog:hover > .xiv-ui-viewboxdialogs-infodialog-title {
+  opacity: 1;
+}
+
+/* line 736, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxdialogs-infodialog-text {
+  white-space: nowrap;
+  text-align: left;
+  font-size: 12px;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 755, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-generic-toggle {
+  width: 15px;
+  height: 15px;
+  opacity: .5;
+}
+
+/* line 762, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-generic-toggle-on {
+  opacity: 1;
+  background-color: black;
+}
+
+/* line 769, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-generic-zippytree {
+  top: 30px;
+  width: calc(100% - 20px);
+  height: calc(100% - 30px);
+}
+
+/* line 777, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-generic-dialog {
+  width: 470px;
+  height: 330px;
+  cursor: default;
+  z-index: 1000000;
+}
+
+/* line 786, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-viewframe-grab {
+  cursor: hand;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+/* line 795, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-viewframe-grabbing {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+/* line 801, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-viewframe-grab-custom {
+  cursor: url(https://mail.google.com/mail/images/2/openhand.cur), default !important;
+}
+
+/* line 806, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-viewframe-grabbing-custom {
+  cursor: url(https://mail.google.com/mail/images/2/closedhand.cur), default !important;
+}
+
+/* line 811, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-viewframe-zoom-in {
+  cursor: zoom-in;
+  cursor: -webkit-zoom-in;
+}
+
+/* line 817, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-viewframe-zoom-out {
+  cursor: zoom-out;
+  cursor: -webkit-zoom-out;
+}
+
+/* line 824, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-zoom-follower {
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  position: absolute;
+  z-index: 1000;
+  visibility: hidden;
+  text-wrap: none;
+  width: 200px;
+}
+
+/* line 835, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-levelsdialog {
+  position: absolute;
+  font-size: 12px;
+  top: 0px;
+  color: white;
+  left: 0px;
+  width: 200px;
+  z-index: 10;
+  cursor: default;
+  border: solid 1px;
+  border-radius: 5px;
+  overflow: visible;
+  /* transition styles */
+  height: 150px;
+  border-color: transparent;
+  background-color: transparent;
+  transition-property: height, background-color, border-color;
+}
+
+/* line 856, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-levelsdialog:hover {
+  height: 440px;
+  background-color: rgba(0, 0, 0, 0.9);
+  border-color: white;
+}
+
+/* line 863, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-levelsdialog-title {
+  opacity: 0;
+  transition-property: opacity;
+}
+
+/* line 868, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-levelsdialog,
+.xiv-ui-viewboxinteractorhandler-levelsdialog-title {
+  transition-duration: .3s;
+  /*transition-timing-function: ease-out;*/
+}
+
+/* line 874, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-levelsdialog:hover > .xiv-ui-viewboxinteractorhandler-levelsdialog-title {
+  opacity: 1;
+}
+
+/* line 878, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-levelsdialog-max:hover > .xiv-ui-viewboxinteractorhandler-levelsdialog-title {
+  opacity: 1;
+}
+
+/* line 885, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-histdetails {
+  position: relative;
+  height: 17px;
+  width: 100%;
+  cursor: pointer;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  border: solid 1px rgba(80, 80, 80, 0);
+  transition-property: height, border;
+  transition-duration: .3s;
+  overflow: hidden;
+}
+
+/* line 901, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-histdetails-expandbutton {
+  background-color: #505050;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 15px;
+  width: 100%;
+  padding-left: 5px;
+  padding-top: 1px;
+  z-index: 2;
+}
+
+/* line 915, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-histdetails-fadebottom {
+  visibility: hidden;
+  position: absolute;
+  width: 100%;
+  top: calc(100% - 100px);
+  height: 100px;
+  left: 0px;
+  background: linear-gradient(to bottom, transparent 0%, black 100%);
+}
+
+/* line 926, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxinteractorhandler-histdetails:hover {
+  border: solid 1px #505050;
+  height: 110px;
+}
+
+/*
+ * Standard styling for the Modal
+ *
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 938, ../xiv/sass/xiv.scss */
+.xiv-ui-nomobilemodal {
+  background-color: black;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+}
+
+/* line 948, ../xiv/sass/xiv.scss */
+.xiv-ui-nomobilemodal-content {
+  color: white;
+  font-size: 12px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  color: white;
+  text-align: center;
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+/* line 961, ../xiv/sass/xiv.scss */
+.xiv-ui-modal {
+  position: fixed;
+  background-color: black;
+  border: none;
+  z-index: 2;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+}
+
+/* line 973, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-windowed {
+  position: fixed;
+  border: solid 1px black;
+  border-radius: 20px;
+  top: 10px;
+  left: 10px;
+  height: calc(100% - 20px);
+  width: calc(100% - 20px);
+}
+
+/* line 986, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-background {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: inline-block;
+}
+
+/* line 998, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-background-black {
+  background-color: black;
+  color: black;
+}
+
+/* line 1004, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-close-button {
+  position: absolute;
+  cursor: pointer;
+  top: 10px;
+  left: 100%;
+  margin-left: -20px;
+  width: 10px;
+  height: 10px;
+  z-index: 103;
+}
+
+/* line 1016, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-fullscreen-button, .xiv-ui-modal-windowed-button {
+  position: absolute;
+  cursor: pointer;
+  top: 27px;
+  left: 100%;
+  margin-left: -20px;
+  width: 11px;
+  height: 11px;
+  z-index: 1000;
+}
+
+/* line 1036, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-popup-button {
+  position: absolute;
+  cursor: pointer;
+  top: 45px;
+  left: 100%;
+  margin-left: -21px;
+  width: 12px;
+  height: 12px;
+  z-index: 1000;
+}
+
+/* line 1050, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-insertcolumn-button, .xiv-ui-modal-removecolumn-button,
+.xiv-ui-modal-insertrow-button, .xiv-ui-modal-removerow-button {
+  position: absolute;
+  cursor: pointer;
+  z-index: 2;
+}
+
+/* line 1059, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-insertcolumn-button, .xiv-ui-modal-removecolumn-button {
+  left: 100%;
+  top: 50%;
+  margin-left: -19px;
+  width: 8px;
+  height: 24px;
+}
+
+/* line 1068, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-insertcolumn-button {
+  margin-top: -10px;
+}
+
+/* line 1073, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-removecolumn-button {
+  margin-top: 10px;
+}
+
+/* line 1080, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-insertrow-button, .xiv-ui-modal-removerow-button {
+  top: 100%;
+  left: 50%;
+  margin-top: -23px;
+  width: 24px;
+  height: 8px;
+}
+
+/* line 1090, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-insertrow-button {
+  margin-left: -10px;
+}
+
+/* line 1095, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-removerow-button {
+  margin-left: 10px;
+}
+
+/* line 1100, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-projecttab-bounds {
+  position: absolute;
+  top: 29px;
+  left: 0px;
+  height: calc(100% - 58px);
+  width: 30%;
+  background-color: rgba(120, 220, 120, 0);
+}
+
+/* line 1110, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-projecttab {
+  left: 0px;
+  height: calc(100% - 60px);
+  top: 29px;
+  border-radius: 0px;
+}
+
+/* line 1118, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-projecttab-dragger {
+  left: calc(100%);
+  width: 10px;
+  background-color: #2d2d2d;
+  top: 29px;
+  height: calc(100% - 58px);
+  border-radius: 0px 4px 4px 0px;
+  opacity: 0;
+}
+
+/* line 1130, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-projecttab-dragger-handle {
+  position: absolute;
+  width: 4px;
+  left: 3px;
+  height: 30px;
+  top: calc(50% - 15px);
+  background-color: #646464;
+  border-radius: 4px;
+}
+
+/* line 1142, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-addsubjects {
+  width: 87%;
+  height: 40px;
+  line-height: 40px;
+  top: calc(100% - 50px);
+  background-color: #646464;
+  position: absolute;
+  left: 8%;
+  z-index: 200;
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+  cursor: pointer;
+  opacity: .7;
+  border-radius: 5px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 1161, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-addsubjects-hovered {
+  opacity: 1;
+}
+
+/* line 1166, ../xiv/sass/xiv.scss */
+.xiv-ui-modal-foldericon {
+  position: absolute;
+  left: calc(50% - 9px);
+  height: 15px;
+  width: 15px;
+  opacity: .5;
+  top: 5px;
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 1179, ../xiv/sass/xiv.scss */
+.xiv-ui-thumbnail {
+  position: absolute;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1188, ../xiv/sass/xiv.scss */
+.xiv-ui-thumbnailgallery {
+  position: absolute;
+  left: 0px;
+  width: calc(100% - 10px);
+}
+
+/* line 1196, ../xiv/sass/xiv.scss */
+.xiv-ui-thumbnailgallery-thumbnail-dragging {
+  position: absolute;
+  width: 87px;
+  height: 87px;
+  top: 0px;
+  left: 0px;
+  cursor: pointer;
+  background-color: black;
+  z-index: 2;
+  opacity: .85;
+  width: 150px;
+  background-color: transparent;
+  opacity: 0.5;
+}
+
+/*#
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 1215, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxhandler-handle {
+  position: relative;
+  cursor: pointer;
+  width: 7px;
+  margin-left: -1px;
+  height: 17px;
+  opacity: .5;
+}
+
+/* line 1226, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxhandler-viewboxdragclone {
+  border: solid 1px white;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+}
+
+/* line 1233, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxhandler-closebutton {
+  position: absolute;
+  height: 9px;
+  width: 9px;
+  outline: 0;
+  cursor: pointer;
+  opacity: .6;
+}
+
+/* line 1244, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxhandler-closebutton-hovered {
+  opacity: 1;
+}
+
+/* line 1250, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxhandler-addrowbutton {
+  position: absolute;
+  height: 5px;
+  width: 10px;
+  outline: 0;
+  cursor: pointer;
+  opacity: .6;
+}
+
+/* line 1261, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxhandler-addrowbutton-hovered {
+  opacity: 1;
+}
+
+/* line 1266, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxhandler-addcolumnbutton {
+  position: absolute;
+  height: 10px;
+  width: 5px;
+  margin-left: 5px;
+  outline: 0;
+  cursor: pointer;
+  opacity: .6;
+}
+
+/* line 1278, ../xiv/sass/xiv.scss */
+.xiv-ui-viewboxhandler-addcolumnbutton-hovered {
+  opacity: 1;
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 1286, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-layouthandler {
+  position: absolute;
+  background: black;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1305, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-layout {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1316, ../xiv/sass/xiv.scss */
+.xiv-ui-levelscontroller {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* line 1324, ../xiv/sass/xiv.scss */
+.xiv-ui-levelscontroller-sliderlabel,
+.xiv-ui-levelscontroller-twothumbsliderlabel {
+  position: absolute;
+  font-size: 12px;
+  top: 6px;
+}
+
+/* line 1332, ../xiv/sass/xiv.scss */
+.xiv-ui-levelscontroller-twothumbsliderlabel {
+  left: 10px;
+  font-size: 10px;
+  top: 0px;
+}
+
+/* line 1338, ../xiv/sass/xiv.scss */
+.xiv-ui-levelscontroller-slidercontroller,
+.xiv-ui-levelscontroller-twothumbslidercontroller {
+  height: 40px;
+}
+
+/* line 1344, ../xiv/sass/xiv.scss */
+.xiv-ui-levelscontroller-slidercontroller {
+  width: 80%;
+}
+
+/* line 1348, ../xiv/sass/xiv.scss */
+.xiv-ui-levelscontroller-twothumbslidercontroller {
+  height: 45px;
+  width: 90%;
+}
+
+/* line 1355, ../xiv/sass/xiv.scss */
+.xiv-ui-levelscontroller-slider {
+  left: 0%;
+  top: 28px;
+  width: 95%;
+}
+
+/* line 1362, ../xiv/sass/xiv.scss */
+.xiv-ui-levelscontroller-twothumbslider {
+  left: 7%;
+  top: 24px;
+  width: 100%;
+}
+
+/* line 1369, ../xiv/sass/xiv.scss */
+.xiv-ui-levelscontroller-slidervalue {
+  left: calc(100% - 52px);
+  width: 50px;
+  top: 4px;
+}
+
+/* line 1376, ../xiv/sass/xiv.scss */
+.xiv-ui-levelscontroller-twothumbslidervalue,
+.xiv-ui-levelscontroller-twothumbsliderextent {
+  left: 10px;
+  top: 32px;
+}
+
+/* line 1382, ../xiv/sass/xiv.scss */
+.xiv-ui-levelscontroller-twothumbsliderextent {
+  left: calc(100% - 37px);
+}
+
+/* line 1389, ../xiv/sass/xiv.scss */
+.xiv-ui-levelscontroller-checkbox {
+  top: 28px;
+  width: 110px;
+}
+
+/* line 1394, ../xiv/sass/xiv.scss */
+.xiv-ui-levelscontroller-checkboxholder {
+  top: 0px;
+  width: 10px;
+  outline: none;
+  left: calc(100% - 15px);
+}
+
+/* line 1402, ../xiv/sass/xiv.scss */
+.xiv-ui-levelscontroller-checkboxcontroller {
+  height: 15px;
+  outline: none;
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 1414, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-conventional {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* line 1421, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-conventional-x, .xiv-ui-layouts-conventional-y,
+.xiv-ui-layouts-conventional-z, .xiv-ui-layouts-conventional-v {
+  position: absolute;
+}
+
+/* line 1427, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-conventional-v {
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 65%;
+  z-index: 4;
+  border-left: none;
+  border-top: none;
+  border-right: none;
+  border-bottom: solid 1px #323232;
+}
+
+/* line 1441, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-conventional-x, .xiv-ui-layouts-conventional-y,
+.xiv-ui-layouts-conventional-z {
+  top: 65%;
+  height: 35%;
+  width: 33.33%;
+}
+
+/* line 1449, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-conventional-x {
+  left: 33.33%;
+  /*border-left: solid 1px rgb(50,50,50);*/
+}
+
+/* line 1455, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-conventional-y {
+  left: 66.66%;
+  border-left: solid 1px #323232;
+}
+
+/* line 1461, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-conventional-z {
+  left: 0px;
+  border-right: solid 1px #323232;
+}
+
+/* line 1468, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-conventional-x-resizeboundary,
+.xiv-ui-layouts-conventional-y-resizeboundary,
+.xiv-ui-layouts-conventional-z-resizeboundary,
+.xiv-ui-layouts-conventional-v-resizeboundary {
+  position: absolute;
+  z-index: -1;
+}
+
+/* line 1477, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-conventional-x-resizeboundary {
+  /**
+  background-color: purple;
+  opacity: .5;
+  z-index: 20;
+  */
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1493, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-fourup {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* line 1500, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-fourup-x, .xiv-ui-layouts-fourup-y,
+.xiv-ui-layouts-fourup-z, .xiv-ui-layouts-fourup-v {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+}
+
+/* line 1508, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-fourup-x-resizeboundary {
+  /*
+  background-color: blue;
+  opacity: .3;
+  */
+  z-index: -1;
+}
+
+/* line 1517, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-fourup-v {
+  left: 50%;
+  top: 0%;
+  border-left: none;
+  border-top: none;
+  border-right: none;
+  border-bottom: solid 1px #323232;
+}
+
+/* line 1529, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-fourup-x {
+  left: 0%;
+  top: 50%;
+  border-left: none;
+  border-top: none;
+  border-right: solid 1px #323232;
+  border-bottom: none;
+}
+
+/* line 1539, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-fourup-y {
+  border-left: none;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  left: 50%;
+  top: 50%;
+}
+
+/* line 1549, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-fourup-z {
+  border-left: none;
+  border-top: none;
+  border-right: solid 1px #323232;
+  border-bottom: solid 1px #323232;
+  left: 0%;
+  top: 0%;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1565, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-twodrow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* line 1573, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-twodrow-x, .xiv-ui-layouts-twodrow-y,
+.xiv-ui-layouts-twodrow-z {
+  position: absolute;
+  top: 0px;
+  height: 100%;
+  width: 33.33%;
+}
+
+/* line 1583, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-twodrow-x {
+  left: 0px;
+}
+
+/* line 1588, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-twodrow-y {
+  left: 33.33%;
+  border-left: solid 1px #323232;
+}
+
+/* line 1594, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-twodrow-z {
+  left: 66.66%;
+  border-left: solid 1px #323232;
+}
+
+/* line 1601, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-twodrow-x-resizeboundary,
+.xiv-ui-layouts-twodrow-y-resizeboundary,
+.xiv-ui-layouts-twodrow-z-resizeboundary {
+  position: absolute;
+  z-index: -1;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1616, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-twodwidescreen {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* line 1624, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-twodwidescreen-y,
+.xiv-ui-layouts-twodwidescreen-z {
+  position: absolute;
+  left: 66%;
+  height: 50%;
+  width: 33.33%;
+}
+
+/* line 1633, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-twodwidescreen-y {
+  top: 0px;
+  border-bottom: solid 1px #323232;
+}
+
+/* line 1639, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-twodwidescreen-z {
+  top: 50%;
+}
+
+/* line 1644, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-twodwidescreen-x {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 66%;
+  height: 100%;
+  border-right: solid 1px #323232;
+}
+
+/* line 1655, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-twodwidescreen-x-resizeboundary,
+.xiv-ui-layouts-twodwidescreen-y-resizeboundary,
+.xiv-ui-layouts-twodwidescreen-z-resizeboundary {
+  position: absolute;
+  z-index: -1;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1667, ../xiv/sass/xiv.scss */
+.xiv-ui-progressbarpanel {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: black;
+  text-align: middle;
+  z-index: 2;
+}
+
+/* line 1676, ../xiv/sass/xiv.scss */
+.xiv-ui-progressbarpanel-thumb {
+  position: absolute;
+  height: 100%;
+  top: 0px;
+  background-color: cornflowerblue;
+  border-radius: 1px;
+}
+
+/* line 1684, ../xiv/sass/xiv.scss */
+.xiv-ui-progressbarpanel-progbarholder {
+  position: absolute;
+  height: 1px;
+  width: 95%;
+  top: calc(50% - 1px);
+  background-color: #1e1e1e;
+  border-radius: 1px;
+  border: none;
+  left: 2.5%;
+  overflow: visible;
+}
+
+/* line 1697, ../xiv/sass/xiv.scss */
+.xiv-ui-progressbarpanel-progressbar {
+  background: cornflowerblue;
+  height: 100%;
+  top: 0px;
+}
+
+/* line 1704, ../xiv/sass/xiv.scss */
+.xiv-ui-progressbarpanel-labelholder {
+  position: absolute;
+  height: 15px;
+  top: calc(50% - 15px);
+  left: 2.5%;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  visibility: hidden;
+}
+
+@-webkit-keyframes endNode {
+  from {
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0px 0px 2px 1px rgba(255, 255, 255, 0.05);
+  }
+  /*
+    50% { 
+        background-color: rgba(255,255,255, 1);
+        box-shadow: 0px 0px 2px 3px rgba(255,255,255, .8);
+    }
+  */
+  to {
+    background-color: white;
+    box-shadow: 0px 0px 2px 3px rgba(255, 255, 255, 0.8);
+  }
+}
+/* line 1733, ../xiv/sass/xiv.scss */
+.xiv-ui-progressbarpanel-endnode {
+  position: absolute;
+  top: 0px;
+  left: calc(100% - 4px);
+  height: 100%;
+  width: 4px;
+  border-radius: 2px;
+  z-index: 2;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0px 0px 2px 1px rgba(255, 255, 255, 0.05);
+}
+
+/* line 1746, ../xiv/sass/xiv.scss */
+.xiv-ui-progressbarpanel-endnode-glow {
+  -webkit-animation-fill-mode: forwards;
+  -webkit-animation-name: endNode;
+  -webkit-animation-duration: .5s;
+  -webkit-animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-name: endNode;
+  animation-duration: .5s;
+  animation-iteration-count: 1;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1761, ../xiv/sass/xiv.scss */
+.xiv-ui-histogram {
+  position: absolute;
+  height: 120px;
+  z-index: 5000;
+  top: -12px;
+}
+
+/* line 1768, ../xiv/sass/xiv.scss */
+.xiv-ui-histogram-canvas,
+.xiv-ui-histogram-linecanvas {
+  position: absolute;
+  left: calc(10% - 1px);
+  width: calc(80% - 2px);
+  height: 85px;
+  top: 20px;
+}
+
+/* line 1778, ../xiv/sass/xiv.scss */
+.xiv-ui-histogram-canvas {
+  background-color: white;
+}
+
+/* line 1784, ../xiv/sass/xiv.scss */
+.xiv-ui-histogram-clipmax,
+.xiv-ui-histogram-clipmin,
+.xiv-ui-histogram-max,
+.xiv-ui-histogram-min {
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+  position: absolute;
+  height: 14px;
+  white-space: nowrap;
+}
+
+/* line 1795, ../xiv/sass/xiv.scss */
+.xiv-ui-histogram-clipmax,
+.xiv-ui-histogram-clipmin {
+  top: 7px;
+}
+
+/* line 1802, ../xiv/sass/xiv.scss */
+.xiv-ui-histogram-max,
+.xiv-ui-histogram-min {
+  top: calc(100% - 12px);
+}
+
+/* line 1808, ../xiv/sass/xiv.scss */
+.xiv-ui-histogram-max {
+  width: 100%;
+  text-align: right;
+}
+
+/* line 1814, ../xiv/sass/xiv.scss */
+.xiv-ui-histogram-min {
+  left: 0px;
+  text-align: left;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1825, ../xiv/sass/xiv.scss */
+.xiv-ui-viewablegroupmenu {
+  cursor: pointer;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
+  background-color: #323232;
+  border: solid 1px #9b9b9b;
+  border-radius: 4px;
+  z-index: 5002;
+}
+
+/* line 1842, ../xiv/sass/xiv.scss */
+.xiv-ui-viewablegroupmenu-thumbnailgallery {
+  position: absolute;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  left: 0px;
+  top: 20px;
+  height: calc(100% - 20px);
+  width: 100%;
+  background-color: black;
+  border-top: solid 1px #9b9b9b;
+}
+
+/* line 1856, ../xiv/sass/xiv.scss */
+.xiv-ui-viewablegroupmenu-header {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+  margin-top: 2px;
+  margin-left: 4px;
+  color: white;
+  font-size: 10px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/* line 1868, ../xiv/sass/xiv.scss */
+.xiv-ui-viewablegroupmenu-thumbnail {
+  width: 100%;
+  height: 150px;
+}
+
+/* line 1874, ../xiv/sass/xiv.scss */
+.xiv-ui-viewablegroupmenu-background {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  z-index: 1000;
+  background-color: black;
+}
+
+/* line 1887, ../xiv/sass/xiv.scss */
+.xiv-ui-viewablegroupmenu-thumbnail-image {
+  width: 140px;
+  height: 140px;
+  top: 5px;
+  left: 5px;
+  border: solid 1px #646464;
+}
+
+/* line 1896, ../xiv/sass/xiv.scss */
+.xiv-ui-viewablegroupmenu-thumbnail-text {
+  position: absolute;
+  left: 160px;
+  top: calc(50% - 7px);
+  color: white;
+  font-size: 14px;
+  font-family: Helvetica,"Helvetica neue", Arial, sans-serif;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1910, ../xiv/sass/xiv.scss */
+.xiv-ui-crosshairs-vertical,
+.xiv-ui-crosshairs-horizontal {
+  position: absolute;
+  background-color: #7d7d7d;
+}
+
+/* line 1918, ../xiv/sass/xiv.scss */
+.xiv-ui-crosshairs-vertical {
+  width: 1px;
+  height: 100%;
+  top: 0px;
+  left: 50%;
+}
+
+/* line 1926, ../xiv/sass/xiv.scss */
+.xiv-ui-crosshairs-horizontal {
+  width: 100%;
+  height: 1px;
+  top: 50%;
+  left: 0px;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1938, ../xiv/sass/xiv.scss */
+.xiv-ui-framedisplay {
+  position: absolute;
+  top: 6px;
+  height: 20px;
+  width: 80px;
+  left: calc(100% - 90px);
+  text-wrap: none;
+}
+
+/* line 1948, ../xiv/sass/xiv.scss */
+.xiv-ui-framedisplay-text {
+  font-size: 10px;
+}
+
+/*
+ * @author kumar.sunil.p@gmail.com (Sunil Kumar)
+ */
+/* line 1956, ../xiv/sass/xiv.scss */
+.xiv-ui-zoomdisplay {
+  position: absolute;
+  top: 22px;
+  height: 20px;
+  width: 80px;
+  left: calc(100% - 90px);
+  text-wrap: none;
+  font-size: 10px !important;
+}
+
+/* line 1967, ../xiv/sass/xiv.scss */
+.xiv-ui-zoomdisplay-text {
+  font-size: 10px;
+}
+
+/*
+* @author kumar.sunil.p@gmail.com (Sunil Kumar)
+*/
+/* line 1974, ../xiv/sass/xiv.scss */
+.xiv-ui-playbutton {
+  position: absolute;
+  top: calc(100% - 15px);
+  left: 9px;
+  height: 9px;
+  width: 9px;
+  cursor: pointer;
+}
+
+/* line 1985, ../xiv/sass/xiv.scss */
+.xiv-ui-playbutton-image {
+  height: 9px;
+  width: 9px;
+  opacity: .6;
+}
+
+/* line 1994, ../xiv/sass/xiv.scss */
+.xiv-ui-layouts-layoutframe:hover > .xiv-ui-layouts-xyzvlayout-slider {
+  opacity: 1;
+}
