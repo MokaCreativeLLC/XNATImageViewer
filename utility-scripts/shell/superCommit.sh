@@ -20,13 +20,6 @@ echo "-----------"
 echo 'SUCCESS!'
 #exit 0
 
-echo "\n\nMIN: Creating new css min."
-echo "-----------"
-cd $XNATIMAGEVIEWER_HOME/utility-scripts/python
-python cssSlimmer.py
-echo "-----------"
-echo 'SUCCESS!'
-
 echo "\n\nMIN: Minifying xiv."
 echo "-----------"
 cd $XNATIMAGEVIEWER_HOME/src/main/scripts/viewer
