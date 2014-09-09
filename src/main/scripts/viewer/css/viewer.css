@@ -4176,23 +4176,19 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 * @author kumar.sunil.p@gmail.com (Sunil Kumar)
 */
 /* line 1967, ../xiv/sass/xiv.scss */
-.xiv-ui-playbutton {
+.xiv-ui-playbutton-image, .xiv-ui-playbutton {
   position: absolute;
-  left: 9px;
-  width: 9px;
-  cursor: pointer;
-  opacity: 1;
-  top: calc(100% - 18px);
-  height: 6px;
-  transition-property: opacity, top;
-  -webkit-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-out;
-}
-
-/* line 1983, ../xiv/sass/xiv.scss */
-.xiv-ui-playbutton-image {
+  top: 0px;
+  left: 0px;
   height: 6px;
   width: 9px;
   opacity: .6;
+}
+
+/* line 1978, ../xiv/sass/xiv.scss */
+.xiv-ui-playbutton {
+  cursor: pointer;
+  opacity: 1;
+  left: 9px;
+  top: calc(100% - 13px);
 }
