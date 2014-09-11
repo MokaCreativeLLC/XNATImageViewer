@@ -96,6 +96,15 @@ xiv.ui.ViewBox = function () {
 	'class': xiv.ui.ViewBox.CSS.VIEWFRAME
     });
     goog.dom.append(this.getElement(), this.viewFrameElt_);
+    // borders
+    goog.array.forEach(['top', 'bottom', 'left', 'right'], function(key){
+	goog.dom.append(this.viewFrameElt_, goog.dom.createDom('div', {
+	    'id': xiv.ui.ViewBox.ID_PREFIX + '_ViewFrameBorder_' + 
+		goog.string.createUniqueString(),
+	    'class': xiv.ui.ViewBox.CSS.VIEWFRAME + '-border-' + key
+	}))
+    }.bind(this))
+		       
     
     //
     // add progress bar panel
@@ -1621,7 +1630,7 @@ xiv.ui.ViewBox.prototype.addMenu_topLeft_ = function() {
 	'class' : xiv.ui.ViewBox.CSS.MENU_TOP_LEFT,
 	'viewbox': this.getElement().id
     });
-    goog.dom.append(this.getElement(), this.menus_.TOP_LEFT);
+    goog.dom.insertChildAt(this.getElement(), this.menus_.TOP_LEFT, 0);
 }
 
 
@@ -1637,7 +1646,7 @@ xiv.ui.ViewBox.prototype.addMenu_left_ = function() {
 	'viewbox': this.getElement().id
     });
     this.menus_.LEFT.style.opacity = 0;
-    goog.dom.append(this.getElement(), this.menus_.LEFT);
+    goog.dom.insertChildAt(this.getElement(), this.menus_.LEFT, 1);
 }
 
 

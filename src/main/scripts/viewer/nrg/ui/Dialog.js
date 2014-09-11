@@ -77,6 +77,15 @@ nrg.ui.Dialog.CSS = {
 };
 
 
+/**
+ * @const
+ * @private
+ */
+nrg.ui.Dialog.prototype.DRAG_MARGINS = {
+    x: 20,
+    y: 20
+}
+
 
 
 /**
@@ -123,7 +132,7 @@ nrg.ui.Dialog.prototype.draggable_ = true;
 
 /**
  * Dragger.
- * @type {?goog.fx.Dragger}
+  * @type {?goog.fx.Dragger}
  * @private
  */
 nrg.ui.Dialog.prototype.dragger_ = null;
@@ -136,6 +145,12 @@ nrg.ui.Dialog.prototype.dragger_ = null;
  */
 nrg.ui.Dialog.prototype.posOnClose_ = null;
 
+
+/**
+ * @private
+ * @type {?goog.math.Rect}
+ */
+nrg.ui.Dialog.prototype.prevDraggerLimits_ = null;
 
 
 
@@ -442,6 +457,17 @@ nrg.ui.Dialog.prototype.updateLimits = function() {
 
 
 
+
+/**
+ * @public
+ * @return {?goog.math.Rect}
+ */
+nrg.ui.Dialog.prototype.getPreviousDraggerLimits = function() {
+    return this.prevDraggerLimits_;
+}
+
+
+
 /**
  * @public
  * @return {?goog.math.Rect}
@@ -477,6 +503,8 @@ nrg.ui.Dialog.prototype.setDraggerLimits_ = function(e) {
     var viewSize = goog.dom.getViewportSize(win);
     var dialogSize = goog.style.getSize(this.getElement());
 
+    this.prevDraggerLimits_ = this.dragger_.limits.clone();
+
     if (goog.style.getComputedPosition(this.getElement()) == 'fixed') {
 	//
 	// Ensure position:fixed dialogs can't be dragged beyond the viewport.
@@ -484,24 +512,19 @@ nrg.ui.Dialog.prototype.setDraggerLimits_ = function(e) {
 	this.dragger_.setLimits(new goog.math.Rect(
 	    0, 
 	    0,
-	    Math.max(0, viewSize.width - dialogSize.width),
-	    Math.max(0, viewSize.height - dialogSize.height)));
+	    Math.max(0, viewSize.width - this.DRAG_MARGINS.x),
+	    Math.max(0, viewSize.height - this.DRAG_MARGINS.y)));
     } else {
 	//
-	// Set limits to parent only if the dialog size less than that of 
-	// the parent
+	// Set limits to to a certain pixels surrounding box around the parent
 	//
-	var w = (dialogSize.width <= parentSize.width) ?  
-	    parentSize.width - dialogSize.width : 0;
-	var h = (dialogSize.height <= parentSize.height) ?  
-	    parentSize.height - dialogSize.height : 0;
-
+	//window.console.log("here...", parentSize);
 	this.dragger_.setLimits(
 	    new goog.math.Rect(
-		    -1 * dialogSize.width, 
-		    -1 * dialogSize.height, 
-		parentSize.width + dialogSize.width, 
-		parentSize.height + dialogSize.height));
+		    -1 * this.DRAG_MARGINS.x, 
+		    -1 * this.DRAG_MARGINS.y, 
+		parentSize.width + this.DRAG_MARGINS.x, 
+		parentSize.height + this.DRAG_MARGINS.y));
     }
 };
 
@@ -840,6 +863,10 @@ nrg.ui.Dialog.prototype.disposeInternal = function() {
 	delete this.posOnClose_;
     }
 
+    if (goog.isDefAndNotNull(this.prevDraggerLimits_)){
+	goog.object.clear(this.prevDraggerLimits_);
+	delete this.prevDraggerLimits_;
+    }
 
 }
 
@@ -886,6 +913,8 @@ goog.exportSymbol('nrg.ui.Dialog.prototype.getTextElements',
 	nrg.ui.Dialog.prototype.getTextElements);
 goog.exportSymbol('nrg.ui.Dialog.prototype.resizeToContents',
 	nrg.ui.Dialog.prototype.resizeToContents);
+goog.exportSymbol('nrg.ui.Dialog.prototype.getPreviousDraggerLimits',
+	nrg.ui.Dialog.prototype.getPreviousDraggerLimits);
 goog.exportSymbol('nrg.ui.Dialog.prototype.getDraggerLimits',
 	nrg.ui.Dialog.prototype.getDraggerLimits);
 goog.exportSymbol('nrg.ui.Dialog.prototype.disposeInternal',
