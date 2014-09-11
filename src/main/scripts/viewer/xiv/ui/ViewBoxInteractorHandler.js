@@ -664,7 +664,7 @@ xiv.ui.ViewBoxInteractorHandler.prototype.onMouseUp_ = function(e) {
  * @private
  */
 xiv.ui.ViewBoxInteractorHandler.prototype.onKey_ = function(e) {
-    window.console.log('On key:', e.keyCode, this.dialogKeys_);
+    //window.console.log('On key:', e.keyCode, this.dialogKeys_);
     //window.console.log("IS MOUSE OVER", this.isMouseOverViewBox_);
     if (!this.ViewBox_.isMouseOver()) { return }
 
