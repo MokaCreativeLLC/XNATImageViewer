@@ -444,6 +444,16 @@ box-sizing:border-box;
   z-index:0;
 }
 
+
+.xiv-ui-viewbox-instructions {
+    @include nrg-font(12px);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    color: rgb(120,120,120);
+}
+
 .xiv-ui-viewbox:hover {
   z-index:2;
 }
@@ -1235,6 +1245,7 @@ box-sizing:border-box;
 
 
 .xiv-ui-thumbnailgallery-thumbnail-dragging {
+    @include nrg-notransition;
     position: absolute;
     width: 87px;
     height: 87px;
@@ -1246,7 +1257,8 @@ box-sizing:border-box;
     opacity: .85;
     width: 150px;
     background-color: rgba(0,0,0,0);
-    opacity: .5
+    opacity: .5;
+    border: none;
 }/*#
  * @author kumar.sunil.p@gmail.com (Sunil Kumar)
  */

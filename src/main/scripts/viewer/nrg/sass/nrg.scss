@@ -18,6 +18,14 @@
   transition-timing-function: $timing; 
 }
 
+
+@mixin nrg-notransition {
+   -moz-transition: none;
+    -webkit-transition: none;
+    -o-transition: color 0 ease-in;
+    transition: none;
+}
+
 @mixin nrg-icon($h: 15px, $w: 15px){
     height: $h;
     width: $w;
