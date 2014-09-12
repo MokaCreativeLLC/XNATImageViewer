@@ -86,24 +86,8 @@ xiv.ui.ViewBox = function () {
     this.addMenu_topLeft_();
 
 
-    /**
-     * @type {!Element}
-     * @private
-     */	
-    this.viewFrameElt_ = goog.dom.createDom('div', {
-	'id': xiv.ui.ViewBox.ID_PREFIX + '_ViewFrame_' + 
-	    goog.string.createUniqueString(),
-	'class': xiv.ui.ViewBox.CSS.VIEWFRAME
-    });
-    goog.dom.append(this.getElement(), this.viewFrameElt_);
-    // borders
-    goog.array.forEach(['top', 'bottom', 'left', 'right'], function(key){
-	goog.dom.append(this.viewFrameElt_, goog.dom.createDom('div', {
-	    'id': xiv.ui.ViewBox.ID_PREFIX + '_ViewFrameBorder_' + 
-		goog.string.createUniqueString(),
-	    'class': xiv.ui.ViewBox.CSS.VIEWFRAME + '-border-' + key
-	}))
-    }.bind(this))
+    this.createViewFrameAndBorders_();
+    this.createInstructionElement_();
 		       
     
     //
@@ -164,6 +148,7 @@ xiv.ui.ViewBox.CSS_SUFFIX = {
     COMPONENT_HIGHLIGHT: 'component-highlight',
     VIEWABLEGROUPMENU: 'viewablegroupmenu',
     EMPTYMENUBUTTON: 'emptymenubutton',
+    INSTRUCTIONS: 'instructions'
 }
 
 
@@ -434,6 +419,9 @@ xiv.ui.ViewBox.prototype.getViewableGroupMenu =  function() {
  * @private
  */
 xiv.ui.ViewBox.prototype.highlightFade_ =  function(opt_subtractor) {
+
+    window.console.log("HIGHLIGHT FADE");
+
     var timer = new goog.Timer();
     var duration = 200;
     var interval = duration / 10;
@@ -454,8 +442,7 @@ xiv.ui.ViewBox.prototype.highlightFade_ =  function(opt_subtractor) {
 	    str = 
 		"0px 0px 0px 2px rgba(255,255,255," + 
 		opt_subtractor(counter/duration) +")";
-	    this.viewFrameElt_.style.boxShadow = str;
-		
+	    this.viewFrameElt_['style']['boxShadow'] = str; 
 	    if (counter > duration){
 		timer.stop();
 		timer.dispose();
@@ -555,7 +542,7 @@ xiv.ui.ViewBox.prototype.setLayout = function(layout) {
 xiv.ui.ViewBox.prototype.onRenderStart_ = function(){
     this.ProgressBarPanel_.setValue(0);
     this.ProgressBarPanel_.showValue(true);
-    this.showSubComponent_(this.ProgressBarPanel_, 0);
+    this.showSubComponent_(this.ProgressBarPanel_, 0);    
     //this.highlight();
 }
 
@@ -630,6 +617,53 @@ xiv.ui.ViewBox.prototype.onRendering_ = function(e){
 xiv.ui.ViewBox.ControllersSet = function(controller, folders){
     this.CONTROLLER = controller;
     this.FOLDERS = folders;
+}
+
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.createViewFrameAndBorders_ = function(){ 
+    /**
+     * @type {!Element}
+     * @private
+     */	
+    this.viewFrameElt_ = goog.dom.createDom('div', {
+	'id': xiv.ui.ViewBox.ID_PREFIX + '_ViewFrame_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.ViewBox.CSS.VIEWFRAME
+    });
+    goog.dom.append(this.getElement(), this.viewFrameElt_);
+
+    // borders
+    goog.array.forEach(['top', 'bottom', 'left', 'right'], function(key){
+	goog.dom.append(this.viewFrameElt_, goog.dom.createDom('div', {
+	    'id': xiv.ui.ViewBox.ID_PREFIX + '_ViewFrameBorder_' + 
+		goog.string.createUniqueString(),
+	    'class': xiv.ui.ViewBox.CSS.VIEWFRAME + '-border-' + key
+	}))
+    }.bind(this))
+}
+
+
+/**
+ * @private
+ */
+xiv.ui.ViewBox.prototype.createInstructionElement_ = function(){ 
+    /**
+     * @type {!Element}
+     * @private
+     */	
+    this.instructionElt_ = goog.dom.createDom('div', {
+	'id': xiv.ui.ViewBox.ID_PREFIX + '_Instruction_' + 
+	    goog.string.createUniqueString(),
+	'class': xiv.ui.ViewBox.CSS.INSTRUCTIONS
+    });
+    this.instructionElt_.innerHTML = 
+	"Click or drag and drop any left thumbnail to view."
+    goog.dom.append(this.getElement(), this.instructionElt_);
+    //window.console.log(this.instructionElt_);
 }
 
 
@@ -1082,6 +1116,11 @@ xiv.ui.ViewBox.prototype.load = function (ViewableSet, opt_initLoadComponents) {
     // Hide the progress bar
     //
     this.hideSubComponent_(this.ProgressBarPanel_, 0);
+
+    //
+    // Remove the instructions
+    //
+    goog.dom.removeNode(this.instructionElt_);
 
 
     //
@@ -2350,6 +2389,7 @@ xiv.ui.ViewBox.prototype.disposeInternal = function () {
     delete this.menus_;
 
     // Primitive types
+    delete this.instructionElt_;
     delete this.Viewables_;
     delete this.hasLoadComponents_;
     delete this.zipDownloading_;

@@ -1248,8 +1248,18 @@ xiv.ui.Modal.prototype.onThumbnailDragOut_ = function(e){
  * @private
  */
 xiv.ui.Modal.prototype.onThumbnailDragOver_ = function(e){
-    this.ViewBoxHandler_.getViewBoxByElement(
-	e.thumbnailTargetElement).highlight();
+
+    var ViewBox = this.ViewBoxHandler_.getViewBoxByElement(
+	e['thumbnailTarget']);
+
+    /*
+    window.console.log(
+	'target:', 
+	e['thumbnailTarget'],
+	ViewBox.highlight);
+    */
+
+    ViewBox.highlight();
 }
 
 
@@ -1285,8 +1295,14 @@ xiv.ui.Modal.prototype.onThumbnailClicked_ = function(e){
  */
 xiv.ui.Modal.prototype.onThumbnailDroppedIntoViewBox_ = function(e) {
 
+    
     var ViewBox =  
 	this.ViewBoxHandler_.getViewBoxByElement(e.targetElement);
+
+    //
+    // Unhighlight the viewBox
+    //
+    ViewBox.unhighlight();
 
 
     //

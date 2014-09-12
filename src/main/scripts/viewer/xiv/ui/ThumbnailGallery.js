@@ -342,10 +342,15 @@ xiv.ui.ThumbnailGallery.prototype.createDragElement_ = function(srcElt) {
     // Create  and return the drag element
     var dragEl =  
 	this.Thumbs_[thumbId].getElement().cloneNode(true);
+
     dragEl.setAttribute('id', xiv.ui.ThumbnailGallery.DRAGGER_ID + 
 		       dragEl.id);
+    goog.dom.classes.remove(dragEl, 'nrg-ui-thumbnail-hoverable');
+
+    //window.console.log(dragEl);
+    //dragEl = dragEl+1;
     goog.dom.classes.add(dragEl, 
-			 xiv.ui.ThumbnailGallery.CSS.THUMBNAIL_DRAGGING);
+			 'xiv-ui-thumbnailgallery-thumbnail-dragging');
     return dragEl;
 }
 
@@ -359,7 +364,7 @@ xiv.ui.ThumbnailGallery.prototype.createDragElement_ = function(srcElt) {
 xiv.ui.ThumbnailGallery.prototype.onDragOver_ = function (event) {
     this.dispatchEvent({
 	type: xiv.ui.ThumbnailGallery.EventType.THUMBNAIL_DRAG_OVER,
-	thumbnailTargetElement: event.dropTargetItem.element
+	'thumbnailTarget': event.dropTargetItem.element
     });
 }
 
