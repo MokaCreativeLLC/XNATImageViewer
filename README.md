@@ -3,7 +3,7 @@ The XNATImageViewer is the official HTML5 web neuroimage viewing module for [XNA
 Demo
 --------------
 [![Demo](https://raw.githubusercontent.com/MokaCreativeLLC/XNATImageViewer/master/src/main/images/viewer/xiv/ui/Demo/Demo-orig.jpg)](http://mokacreativellc.github.io/XNATImageViewer/Demo.html)
-[Click here on image.](http://mokacreativellc.github.io/XNATImageViewer/Demo.html).
+[Click here or on image](http://mokacreativellc.github.io/XNATImageViewer/Demo.html).
 
 
 Features
