@@ -78,7 +78,7 @@ nrg.ui.ErrorDialog.prototype.render = function(opt_parentElement) {
 
     if (!goog.isDefAndNotNull(this.errorImage_)){
 	this.errorImage_ = this.addImage(
-	    serverRoot + 
+	    this.serverRoot + 
 		'/images/viewer/xiv/ui/Overlay/sadbrain-white.png');
 	    goog.dom.classes.add(this.errorImage_, 
 				 nrg.ui.ErrorDialog.CSS.IMAGE);

@@ -46,6 +46,17 @@ nrg.ui.Component = function (opt_domHelper) {
 
     // apply CSS hierarchy
     this.applyCssHierarchy_();
+
+    try {
+	serverRoot += '';
+    }
+    catch (err){
+	/**
+	 * @protected
+	 * @type {!string}
+	 */
+	this.serverRoot = '';
+    }
 };
 goog.inherits(nrg.ui.Component, goog.ui.Component);
 goog.exportSymbol('nrg.ui.Component', nrg.ui.Component);
@@ -402,6 +413,9 @@ nrg.ui.Component.prototype.disposeInternal = function() {
     this.iconBaseUrl = null;  
     this.iconUrl = null; 
     this.imagePrefix = null;
+    if (goog.isDefAndNotNull(this.serverRoot)){
+	delete this.serverRoot;
+    }
 
     // Size and pos
     this.currSize = null;

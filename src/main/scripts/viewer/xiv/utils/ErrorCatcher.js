@@ -41,6 +41,16 @@ xiv.utils.ErrorCatcher.HYPERLINK_COLOR = '#5CB8E6';
 
 
 
+/**
+ * @const
+ * @public
+ */
+xiv.utils.ErrorCatcher.executeTestError = function(){
+    throw "TEST ERROR!"
+};
+
+
+
 
 /**
  * @public
@@ -324,6 +334,14 @@ xiv.utils.ErrorCatcher.prototype.onErrorCallback_ = null;
 
 
 
+/**
+ * @return {!Array.string}
+ * @public
+ */
+xiv.utils.ErrorCatcher.prototype.getConsoleLog = function(){
+    return this.consoleLog_;
+}
+
 
 /**
  * @param {!Function} callback
@@ -358,7 +376,9 @@ xiv.utils.ErrorCatcher.prototype.listenForConsoleOutput_ = function() {
     this.windowConsoleLog_ = window.console.log;
 
     this.newConsoleLog_ = function(){
-	that.windowConsoleLog_.apply(this, arguments);
+	if (that.windowConsoleLog_){
+	    that.windowConsoleLog_.apply(this, arguments);
+	}
 	var argText = '';
 	goog.array.forEach(arguments, function(argument, i){
 	    if (i > 0) { argText += ' ' };
@@ -409,13 +429,10 @@ xiv.utils.ErrorCatcher.prototype.waitForError = function(toggle) {
  */
 xiv.utils.ErrorCatcher.prototype.onError = 
 function(opt_errorMsg, opt_url, opt_lineNumber){
-    
-    //window.console.log('ON ERROR');
 
     if (goog.isDefAndNotNull(this.ErrorDialog_)){
 	return;
     }
-
 
     if (goog.isDefAndNotNull(this.onErrorCallback_)){
 	this.onErrorCallback_();
@@ -531,16 +548,20 @@ xiv.utils.ErrorCatcher.prototype.dispose = function(){
 
 
 
-goog.exportSymbol('xiv.utils.ErrorCatcher.isCompatible',
-	xiv.utils.ErrorCatcher.isCompatible);
-goog.exportSymbol('xiv.utils.ErrorCatcher.checkForWebGL',
-	xiv.utils.ErrorCatcher.checkForWebGL);
 goog.exportSymbol('xiv.utils.ErrorCatcher.EventType',
 	xiv.utils.ErrorCatcher.EventType);
+goog.exportSymbol('xiv.utils.ErrorCatcher.isCompatible',
+	xiv.utils.ErrorCatcher.isCompatible);
+goog.exportSymbol('xiv.utils.ErrorCatcher.executeTestError',
+	xiv.utils.ErrorCatcher.executeTestError);
+goog.exportSymbol('xiv.utils.ErrorCatcher.checkForWebGL',
+	xiv.utils.ErrorCatcher.checkForWebGL);
 goog.exportSymbol('xiv.utils.ErrorCatcher.prototype.setOnErrorCallback',
 	xiv.utils.ErrorCatcher.prototype.setOnErrorCallback);
 goog.exportSymbol('xiv.utils.ErrorCatcher.prototype.setDialogParent',
 	xiv.utils.ErrorCatcher.prototype.setDialogParent);
+goog.exportSymbol('xiv.utils.ErrorCatcher.prototype.getConsoleLog',
+	xiv.utils.ErrorCatcher.prototype.getConsoleLog);
 goog.exportSymbol('xiv.utils.ErrorCatcher.prototype.waitForError',
 	xiv.utils.ErrorCatcher.prototype.waitForError);
 goog.exportSymbol('xiv.utils.ErrorCatcher.prototype.clear',

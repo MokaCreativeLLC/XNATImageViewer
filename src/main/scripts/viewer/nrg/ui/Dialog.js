@@ -31,9 +31,24 @@ goog.require('nrg.fx');
  * @extends {goog.ui.Dialog}
  */
 nrg.ui.Dialog = function () {
+
+    try {
+	/**
+	 * @protected
+	 * @type {!string}
+	 */
+	this.serverRoot = serverRoot;
+    } catch (error) {
+	/**
+	 * @protected
+	 * @type {!string}
+	 */
+	this.serverRoot = '';
+    }
+
+
     goog.base(this);
     this.setEscapeToCancel(false);
-
 }
 goog.inherits(nrg.ui.Dialog, goog.ui.Dialog);
 goog.exportSymbol('nrg.ui.Dialog', nrg.ui.Dialog);
@@ -263,7 +278,8 @@ nrg.ui.Dialog.prototype.modifyCloseButton_ = function() {
 	    goog.string.createUniqueString(),
 	'class': nrg.ui.Dialog.CSS.CLOSEBUTTON_IMAGE
     })
-    this.closeButton_.src = serverRoot + 
+
+    this.closeButton_.src = this.serverRoot + 
 	'/images/viewer/xiv/ui/Modal/close.png';
 
     //
@@ -834,6 +850,10 @@ nrg.ui.Dialog.prototype.disposeInternal = function() {
     delete this.content_;
     delete this.closeButton_;
     delete this.closeSpan_;
+
+    if (goog.isDefAndNotNull(this.serverRoot)){
+	delete this.serverRoot;
+    }
 
 
      if (goog.isDefAndNotNull(this.overlay_)){
