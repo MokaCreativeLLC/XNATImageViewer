@@ -1,10 +1,10 @@
-goog.provide('xiv.utils.objectAnalyzer');
+goog.provide('xiv.utils.ObjectAnalyzer');
 
 /**
  * @constructor
  */
-xiv.utils.objectAnalyzer = {};
-goog.exportSymbol('xiv.utils.objectAnalyzer', xiv.utils.objectAnalyzer);
+xiv.utils.ObjectAnalyzer = {};
+goog.exportSymbol('xiv.utils.ObjectAnalyzer', xiv.utils.ObjectAnalyzer);
 
 
 
@@ -12,7 +12,7 @@ goog.exportSymbol('xiv.utils.objectAnalyzer', xiv.utils.objectAnalyzer);
  * @param {Object}
  * @private
  */
-xiv.utils.objectAnalyzer.tallyMethods_ = function(obj) {
+xiv.utils.ObjectAnalyzer.tallyMethods_ = function(obj) {
 
     var result = [];
     for (var id in obj) {
@@ -47,7 +47,7 @@ xiv.utils.objectAnalyzer.tallyMethods_ = function(obj) {
  * @param {objName}
  * @private
  */
-xiv.utils.objectAnalyzer.printMethods_ = function (obj, objName) {
+xiv.utils.ObjectAnalyzer.printMethods_ = function (obj, objName) {
 
     var skippables = [
 	'CSS_CLASS_PREFIX',
@@ -60,7 +60,7 @@ xiv.utils.objectAnalyzer.printMethods_ = function (obj, objName) {
     var methodExporter = function(obj, objName) {
 
 	var allMethods = '';
-	var publicMethods = xiv.utils.objectAnalyzer.tallyMethods_(obj);
+	var publicMethods = xiv.utils.ObjectAnalyzer.tallyMethods_(obj);
 	goog.array.forEach(publicMethods, function(pMethod){
             pMethod = objName + '.' + pMethod;
 
@@ -110,20 +110,24 @@ xiv.utils.objectAnalyzer.printMethods_ = function (obj, objName) {
 
 /**
  * @param {!Object}
+ * @return {!string}
  * @public
  */
-xiv.utils.objectAnalyzer.outputExportables = function(obj){
+xiv.utils.ObjectAnalyzer.outputExportables = function(obj){
+    var str = '';
+    var val, str1, str2, str3;
     for (var key in obj){
-	var val = obj[key];
-	window.console.log(key.toUpperCase());
-	window.console.log(xiv.utils.objectAnalyzer.printMethods_(val, key));
-	window.console.log('\n\n');
+	val = obj[key];
+	str1 = key.toUpperCase()
+	str2 = xiv.utils.ObjectAnalyzer.printMethods_(val, key)
+	str+= str1 + "\n" + str2 + "\n\b";
     }
+    return str
 };
 
 
-goog.exportSymbol('xiv.utils.objectAnalyzer.outputExportables', 
-		  xiv.utils.objectAnalyzer.outputExportables);
+goog.exportSymbol('xiv.utils.ObjectAnalyzer.outputExportables', 
+		  xiv.utils.ObjectAnalyzer.outputExportables);
 
 
 

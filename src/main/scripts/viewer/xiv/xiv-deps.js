@@ -54,7 +54,7 @@ goog.addDependency('../../../xiv/ui/layouts/TwoDWidescreen.js', ['xiv.ui.layouts
 goog.addDependency('../../../xiv/ui/layouts/XyzvLayout.js', ['xiv.ui.layouts.XyzvLayout'], ['goog.array', 'goog.dom', 'goog.dom.classes', 'goog.object', 'goog.string', 'goog.style', 'nrg.string', 'nrg.ui.Slider', 'xiv.ui.Crosshairs', 'xiv.ui.FrameDisplay', 'xiv.ui.FrameSlider', 'xiv.ui.PlayButton', 'xiv.ui.ZoomDisplay', 'xiv.ui.layouts.Layout', 'xiv.ui.layouts.LayoutFrame']);
 goog.addDependency('../../../xiv/ui/ui.js', ['xiv.ui'], []);
 goog.addDependency('../../../xiv/utils/ErrorCatcher.js', ['xiv.utils.ErrorCatcher'], ['goog.Disposable', 'goog.array', 'goog.events', 'goog.style', 'nrg.fx', 'nrg.ui.Dialog', 'nrg.ui.ErrorDialog']);
-goog.addDependency('../../../xiv/utils/objectAnalyzer.js', ['xiv.utils.objectAnalyzer'], []);
+goog.addDependency('../../../xiv/utils/ObjectAnalyzer.js', ['xiv.utils.ObjectAnalyzer'], []);
 goog.addDependency('../../../xiv/utils/utils.js', ['xiv.utils'], []);
 goog.addDependency('../../../xiv/vis/RenderEngine.js', ['xiv.vis.RenderEngine'], ['goog.events', 'goog.events.EventTarget']);
 goog.addDependency('../../../xiv/vis/XtkEngine.js', ['xiv.vis.XtkEngine'], ['X.fibers', 'X.mesh', 'X.object', 'X.renderer', 'X.renderer2D', 'X.renderer3D', 'X.sphere', 'X.volume', 'goog.array', 'goog.events', 'goog.object', 'goog.string', 'goog.string.path', 'gxnat.slicerNode.Annotations', 'gxnat.vis.RenderProperties', 'gxnat.vis.ViewableGroup', 'nrg.string', 'xiv.ui.XtkController', 'xiv.ui.XtkControllerTree', 'xiv.vis.RenderEngine', 'xiv.vis.XtkPlane', 'xiv.vis.XtkPlane2D', 'xiv.vis.XtkPlane3D']);

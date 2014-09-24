@@ -80,7 +80,7 @@ gxnat.jsonGet = function(url, callback, opt_suffix){
 	}
 	queryUrl += opt_suffix;
     }
-    //window.console.log('Getting XNAT json: \'' +  queryUrl + '\'');
+    window.console.log('Getting XNAT json: \'' +  queryUrl + '\'', url);
     gxnat.get(queryUrl, callback, 'json');
 }
 
@@ -106,6 +106,7 @@ gxnat.get = function(url, callback, opt_getType){
 	switch (opt_getType) {
 	case undefined: 
 	    callback(xhr);
+	    break;
 	case 'json':
 	    var responseJson = xhr.getResponseJson();
 	    if (responseJson.hasOwnProperty('ResultSet')){
